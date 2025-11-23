@@ -3774,7 +3774,8 @@
       EDGE_DATA.list.push(newEdge);
       saveEdgeData();
       forgeTheTopology();
-      selectTheConnection(newId);
+      // Keep the node selected so the toolbar stays visible
+      claimTheImmortal(currentNodeId);
     });
 
     /* -------------------- FREE-DRAW MODE -------------------- */
