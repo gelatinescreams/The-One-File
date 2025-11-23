@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="--panel: #495569; --panel-alt: #0e1c34; --accent: #58dfd2; --danger: #271111; --text-main: #e2e7ee; --text-soft: #7c96bb; --topbar-bg: #1081ea; --topbar-border: #010d28; --topbar-height: 100px; --sidebar-width: 600px;"><head>
+<html lang="en" style="--panel: #002970; --panel-alt: #0e1c34; --accent: #58dfd2; --danger: #271111; --text-main: #e2e7ee; --text-soft: #7c96bb; --topbar-bg: #1081ea; --topbar-border: #010d28; --topbar-height: 100px; --sidebar-width: 600px;"><head>
   <meta charset="UTF-8">
   <title>The One File</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,6 +25,14 @@
     * {
       box-sizing: border-box;
       user-select: none;
+    }
+
+    /* Allow text selection in text inputs and contentEditable elements */
+    input,
+    textarea,
+    [contenteditable="true"] {
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     body {
@@ -305,6 +313,8 @@
       cursor: text;
       flex: 1;
       min-width: 60px;
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .legend-label.editing {
@@ -567,6 +577,7 @@
     }
 
     /* -------------------- DETAILS PANEL -------------------- */
+	/* there are some dirty hacks here to be included at a later date */
     .details-panel {
       background: var(--panel-alt);
       padding: 22px;
@@ -596,8 +607,8 @@
     }
 	
 	body {
-      overflow-x: hidden;   /* keep horizontal lock */
-      overflow-y: hidden;   /* REMOVE this from your file */
+      overflow-x: hidden;
+      overflow-y: hidden;   
 	}
 
 	main {
@@ -833,6 +844,8 @@
       color: var(--text-main);
       font-size: clamp(14px, 1.6vw, 18px);
       margin-bottom: 15px;
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     .modal-content input[type="color"] {
@@ -954,6 +967,8 @@
       background: #0d141f;
       padding: 4px;
       border-radius: 6px;
+      user-select: text;
+      -webkit-user-select: text;
     }
   </style>
 </head>
@@ -991,6 +1006,10 @@
         When you click <strong>Save File</strong>, this page generates a new updated
         HTML file that contains all of your changes. Replace your old file with the
         new one to keep your edits.
+      </p>
+      <p style="margin-top:12px; padding-top:12px; border-top:1px solid var(--edge-main);">
+        <strong>🔒 Encryption:</strong> Check the "Encrypt" box before saving to password-protect
+        your network topology data. You'll need the password to open the file later.
       </p>
       <div class="modal-buttons">
         <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1125,6 +1144,10 @@
       <h1 id="page-title" class="editable-page-title">New tile</h1>
       <div class="save-row">
         <button id="save-file-btn" class="save-btn" type="button">Save File</button>
+        <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-soft); cursor:pointer; user-select:none;">
+          <input type="checkbox" id="encrypt-toggle" style="cursor:pointer;">
+          <span title="Encrypt data with password">🔒 Encrypt</span>
+        </label>
         <span id="save-help-btn" class="help-icon" title="Why save?">?</span>
       </div>
     </div>
@@ -1408,7 +1431,7 @@
     "background": "#d4d7dd",
     "topbarBg": "#1081ea",
     "topbarBorder": "#010d28",
-    "panel": "#495569",
+    "panel": "#002970",
     "panelAlt": "#0e1c34",
     "accent": "#58dfd2",
     "danger": "#271111",
@@ -1428,7 +1451,7 @@
   <script>
     /* ==================================================================================
      * THE ONE FILE
-     * "There can be only one". A all in one file topology maker with a Highlander theme.
+     * "There can be only one". A all in one file topology maker. 
      * 
      * This is your last backup when all others fail. A completely self-contained
      * network topology visualization tool that works as a single HTML file.
@@ -1438,8 +1461,8 @@
     /* -------------------- CORE STATE -------------------- */
     const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent);
 
-    let NODE_DATA;
-    let EDGE_DATA;
+    let NODE_DATA = {}; // Initialize with empty object as safe default
+    let EDGE_DATA = { list: [] };
     let EDGE_LEGEND = {};
     let savedPositions = {};
     let savedSizes = {};
@@ -1706,20 +1729,56 @@
     }
 
     /* Initialize state from embedded JSON data */
-    (function awakeTheImmortal() {
+    (async function awakeTheImmortal() {
       let initialState = {};
       const stateEl = document.getElementById("topology-state");
       if (stateEl && stateEl.textContent.trim()) {
         try {
-          initialState = JSON.parse(stateEl.textContent);
+          let stateText = stateEl.textContent.trim();
+          
+          // Check if data is encrypted
+          if (isEncrypted(stateText)) {
+            let decrypted = false;
+            let attempts = 0;
+            const maxAttempts = 3;
+            
+            while (!decrypted && attempts < maxAttempts) {
+              const password = prompt('This file is encrypted. Enter password to decrypt:\n(Attempt ' + (attempts + 1) + ' of ' + maxAttempts + ')');
+              
+              if (!password) {
+                alert('Decryption cancelled. File will load with default data.');
+                break;
+              }
+              
+              try {
+                stateText = await decryptData(stateText, password);
+                decrypted = true;
+              } catch (e) {
+                attempts++;
+                if (attempts < maxAttempts) {
+                  alert('Incorrect password. Please try again.');
+                } else {
+                  alert('Maximum attempts reached. File will load with default data.');
+                }
+              }
+            }
+            
+            if (!decrypted) {
+              stateText = '{}';
+            }
+          }
+          
+          initialState = JSON.parse(stateText);
         } catch (e) {
+          console.error('Failed to load state:', e);
           initialState = {};
         }
       }
 
-      NODE_DATA = initialState.nodeData || BASE_NODE_DATA;
+      // Only use BASE_NODE_DATA if initialState is completely empty
+      NODE_DATA = initialState.nodeData ? initialState.nodeData : BASE_NODE_DATA;
 
-      EDGE_DATA = initialState.edgeData || {
+      EDGE_DATA = initialState.edgeData ? initialState.edgeData : {
         list: [
           { id: "host-diesel", from: "host", to: "diesel", width: 4, color: "#475569", type: "main", notes: [] },
           { id: "host-percy", from: "host", to: "percy", width: 4, color: "#475569", type: "main", notes: [] },
@@ -1746,6 +1805,19 @@
       }
 
       wieldThePower();
+      
+      // Initialize the graph after data is loaded
+      forgeTheTopology();
+      updateViewBox();
+      
+      // Select first node if available
+      const initialNodes = Object.keys(NODE_DATA);
+      if (initialNodes.length > 0) {
+        claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0]);
+      } else {
+        document.getElementById("node-panel").style.display = "none";
+        document.getElementById("topology-toolbar").style.display = "none";
+      }
     })();
 
     function saveEdgeData() {
@@ -2325,6 +2397,12 @@
     /* -------------------- BUILD GRAPH -------------------- */
     /* Main rendering function : builds the complete SVG topology visualization */
     function forgeTheTopology() {
+      // Safety check: ensure NODE_DATA is initialized
+      if (!NODE_DATA || !EDGE_DATA) {
+        console.warn('forgeTheTopology called before data initialized');
+        return;
+      }
+      
       const svg = document.getElementById("map");
       svg.innerHTML = "";
 
@@ -2382,7 +2460,7 @@
       }
 
       // Ensure all positions are synced to savedPositions for drag consistency
-      // Also constrain any out-of-bounds positions
+      // Also constrain any out of bounds positions
       Object.keys(positions).forEach(id => {
         let pos = savedPositions[id] || positions[id];
         const nodeSize = savedSizes[id] || 55;
@@ -2642,6 +2720,107 @@
 
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
+
+        // Touch support for mobile devices
+        g.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          isDragging = true;
+
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          const touch = e.touches[0];
+          pt.x = touch.clientX;
+          pt.y = touch.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          startX = svgP.x - pos.x;
+          startY = svgP.y - pos.y;
+          e.stopPropagation();
+        });
+
+        const handleTouchMove = (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          const touch = e.touches[0];
+          pt.x = touch.clientX;
+          pt.y = touch.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          
+          // Calculate new position
+          let newX = svgP.x - startX;
+          let newY = svgP.y - startY;
+          
+          // Constrain to canvas bounds with padding
+          const nodeSize = savedSizes[id] || 55;
+          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
+          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
+          
+          pos.x = newX;
+          pos.y = newY;
+          g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
+          
+          // Update both local positions and savedPositions for curve calculations
+          positions[id] = { x: pos.x, y: pos.y };
+          savedPositions[id] = { x: pos.x, y: pos.y };
+          
+          // Update minimap
+          updateMinimap();
+          
+          // Update all edges connected to this node
+          document.querySelectorAll(".edge").forEach(edgeEl => {
+            const fromId = edgeEl.dataset.from;
+            const toId = edgeEl.dataset.to;
+            
+            if (fromId === id || toId === id) {
+              // Get positions : prefer savedPositions, fall back to default
+              const p1 = savedPositions[fromId] || positions[fromId] || { x: 600, y: 350 };
+              const p2 = savedPositions[toId] || positions[toId] || { x: 600, y: 350 };
+              
+              // Check if this is a line or path
+              if (edgeEl.tagName === "line") {
+                edgeEl.setAttribute("x1", p1.x);
+                edgeEl.setAttribute("y1", p1.y);
+                edgeEl.setAttribute("x2", p2.x);
+                edgeEl.setAttribute("y2", p2.y);
+              } else if (edgeEl.tagName === "path") {
+                // Recalculate curve for path
+                const edgeId = edgeEl.dataset.edgeId;
+                const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+                if (edge) {
+                  const pairTotal = edge._pairTotal || 1;
+                  const pairIndex = edge._pairIndex || 0;
+                  
+                  const midX = (p1.x + p2.x) / 2;
+                  const midY = (p1.y + p2.y) / 2;
+                  const dx = p2.x - p1.x;
+                  const dy = p2.y - p1.y;
+                  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                  const perpX = -dy / len;
+                  const perpY = dx / len;
+                  
+                  let offsetAmount = 0;
+                  if (pairTotal > 1) {
+                    offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+                  }
+                  const ctrlX = midX + perpX * offsetAmount;
+                  const ctrlY = midY + perpY * offsetAmount;
+                  edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
+                }
+              }
+            }
+          });
+        };
+
+        const handleTouchEnd = () => {
+          if (isDragging) {
+            isDragging = false;
+            savedPositions[id] = {x: pos.x, y: pos.y};
+          }
+        };
+
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
 
         g.style.cursor = "grab";
 
@@ -3030,16 +3209,7 @@
     }
 
     /* -------------------- INIT -------------------- */
-    forgeTheTopology();
-    updateViewBox();
-    // Select first node if available
-    const initialNodes = Object.keys(NODE_DATA);
-    if (initialNodes.length > 0) {
-      claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0]);
-    } else {
-      document.getElementById("node-panel").style.display = "none";
-      document.getElementById("topology-toolbar").style.display = "none";
-    }
+    // Initialization now happens inside awakeTheImmortal() after data is loaded
 
     // Rebuild graph on window resize
     window.addEventListener("resize", () => {
@@ -3080,6 +3250,49 @@
         zoomTo(canvasState.zoom * delta, mouseX, mouseY);
       }, { passive: false });
 
+      // Pinch-to-zoom support for mobile
+      let initialPinchDistance = 0;
+      let initialPinchZoom = 1;
+      let pinchCenter = { x: 0.5, y: 0.5 };
+
+      viewport.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          initialPinchDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          initialPinchZoom = canvasState.zoom;
+          
+          // Calculate center point of pinch
+          const rect = viewport.getBoundingClientRect();
+          const centerX = (touch1.clientX + touch2.clientX) / 2;
+          const centerY = (touch1.clientY + touch2.clientY) / 2;
+          pinchCenter.x = (centerX - rect.left) / rect.width;
+          pinchCenter.y = (centerY - rect.top) / rect.height;
+        }
+      });
+
+      viewport.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          
+          if (initialPinchDistance > 0) {
+            const scale = currentDistance / initialPinchDistance;
+            const newZoom = initialPinchZoom * scale;
+            zoomTo(newZoom, pinchCenter.x, pinchCenter.y);
+          }
+        }
+      }, { passive: false });
+
       // Pan with mouse drag on empty space or with space key held
       let panStartViewX = 0;
       let panStartViewY = 0;
@@ -3093,6 +3306,22 @@
           canvasState.isPanning = true;
           canvasState.panStartX = e.clientX;
           canvasState.panStartY = e.clientY;
+          panStartViewX = canvasState.panX;
+          panStartViewY = canvasState.panY;
+          viewport.classList.add("panning");
+        }
+      });
+
+      // Touch support for viewport panning
+      viewport.addEventListener("touchstart", (e) => {
+        // Check if touching empty space
+        const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+        
+        if (isEmptySpace && e.touches.length === 1) {
+          e.preventDefault();
+          canvasState.isPanning = true;
+          canvasState.panStartX = e.touches[0].clientX;
+          canvasState.panStartY = e.touches[0].clientY;
           panStartViewX = canvasState.panX;
           panStartViewY = canvasState.panY;
           viewport.classList.add("panning");
@@ -3120,7 +3349,37 @@
         updateViewBox();
       });
 
+      // Touch support for panning movement
+      document.addEventListener("touchmove", (e) => {
+        if (!canvasState.isPanning || !e.touches[0]) return;
+        
+        const dx = e.touches[0].clientX - canvasState.panStartX;
+        const dy = e.touches[0].clientY - canvasState.panStartY;
+        
+        const rect = viewport.getBoundingClientRect();
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        // Convert screen pixels to canvas units
+        const canvasDx = (dx / rect.width) * viewWidth;
+        const canvasDy = (dy / rect.height) * viewHeight;
+        
+        canvasState.panX = panStartViewX - canvasDx;
+        canvasState.panY = panStartViewY - canvasDy;
+        
+        constrainPan();
+        updateViewBox();
+      });
+
       document.addEventListener("mouseup", () => {
+        if (canvasState.isPanning) {
+          canvasState.isPanning = false;
+          viewport.classList.remove("panning");
+        }
+      });
+
+      // Touch support for pan end
+      document.addEventListener("touchend", () => {
         if (canvasState.isPanning) {
           canvasState.isPanning = false;
           viewport.classList.remove("panning");
@@ -3166,9 +3425,23 @@
         updatePanFromMinimap(e);
       });
 
+      // Touch support for minimap
+      minimapContainer.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        minimapDragging = true;
+        updatePanFromMinimapTouch(e);
+      });
+
       document.addEventListener("mousemove", (e) => {
         if (minimapDragging) {
           updatePanFromMinimap(e);
+        }
+      });
+
+      // Touch support for minimap movement
+      document.addEventListener("touchmove", (e) => {
+        if (minimapDragging && e.touches[0]) {
+          updatePanFromMinimapTouch(e);
         }
       });
 
@@ -3176,10 +3449,31 @@
         minimapDragging = false;
       });
 
+      // Touch support for minimap end
+      document.addEventListener("touchend", () => {
+        minimapDragging = false;
+      });
+
       function updatePanFromMinimap(e) {
         const rect = minimapContainer.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width;
         const y = (e.clientY - rect.top) / rect.height;
+        
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        canvasState.panX = x * CANVAS_WIDTH - viewWidth / 2;
+        canvasState.panY = y * CANVAS_HEIGHT - viewHeight / 2;
+        
+        constrainPan();
+        updateViewBox();
+      }
+
+      function updatePanFromMinimapTouch(e) {
+        const rect = minimapContainer.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = (touch.clientX - rect.left) / rect.width;
+        const y = (touch.clientY - rect.top) / rect.height;
         
         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
@@ -3559,6 +3853,37 @@
           document.addEventListener("mouseup", upHandler);
         });
 
+        // Touch support for mobile
+        c.addEventListener("touchstart", (e) => {
+          if (!freeDrawMode) return;
+          e.preventDefault();
+          e.stopPropagation();
+          let dragging = true;
+          const svgEl = svgMap;
+
+          const touchMoveHandler = (ev) => {
+            if (!dragging || !ev.touches[0]) return;
+            const pt = svgEl.createSVGPoint();
+            pt.x = ev.touches[0].clientX;
+            pt.y = ev.touches[0].clientY;
+            const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+            const i = parseInt(c.dataset.index, 10);
+            if (Number.isNaN(i) || !freeDrawPoints[i]) return;
+            freeDrawPoints[i].x = svgP.x;
+            freeDrawPoints[i].y = svgP.y;
+            updateFreeDrawGraphics();
+          };
+
+          const touchUpHandler = () => {
+            dragging = false;
+            document.removeEventListener("touchmove", touchMoveHandler);
+            document.removeEventListener("touchend", touchUpHandler);
+          };
+
+          document.addEventListener("touchmove", touchMoveHandler);
+          document.addEventListener("touchend", touchUpHandler);
+        });
+
         svg.appendChild(c);
         freeDrawPointEls.push(c);
       });
@@ -3653,6 +3978,22 @@
       pt.y = e.clientY;
       const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
       addFreeDrawPoint(svgP.x, svgP.y);
+    });
+
+    /* Touch support for free-draw mode */
+    svgMap.addEventListener("touchend", (e) => {
+      if (!freeDrawMode) return;
+      const target = e.target;
+      if (target && target.classList && target.classList.contains("free-point")) return;
+      if (e.changedTouches && e.changedTouches[0]) {
+        e.preventDefault();
+        const svgEl = svgMap;
+        const pt = svgEl.createSVGPoint();
+        pt.x = e.changedTouches[0].clientX;
+        pt.y = e.changedTouches[0].clientY;
+        const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+        addFreeDrawPoint(svgP.x, svgP.y);
+      }
     });
 
     /* ==================================================================================
@@ -3772,9 +4113,87 @@
       }
     });
 
+
+    /* ENCRYPTION (WEB CRYPTO API) */
+    /* Derive a cryptographic key from a password using PBKDF2 */
+    async function deriveKey(password, salt) {
+      const encoder = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+      
+      return crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    /* Encrypt data with a password */
+    async function encryptData(data, password) {
+      const encoder = new TextEncoder();
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt);
+      
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encoder.encode(data)
+      );
+      
+      // Combine salt + iv + encrypted data
+      const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+      result.set(salt, 0);
+      result.set(iv, salt.length);
+      result.set(new Uint8Array(encrypted), salt.length + iv.length);
+      
+      // Return as base64 with encryption marker
+      return 'ENCRYPTED:' + btoa(String.fromCharCode(...result));
+    }
+
+    /* Decrypt data with a password */
+    async function decryptData(encryptedData, password) {
+      // Remove encryption marker
+      const base64Data = encryptedData.replace('ENCRYPTED:', '');
+      const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      
+      // Extract salt, iv, and encrypted content
+      const salt = data.slice(0, 16);
+      const iv = data.slice(16, 28);
+      const encrypted = data.slice(28);
+      
+      const key = await deriveKey(password, salt);
+      
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encrypted
+      );
+      
+      const decoder = new TextDecoder();
+      return decoder.decode(decrypted);
+    }
+
+    /* Check if data is encrypted */
+    function isEncrypted(data) {
+      return typeof data === 'string' && data.startsWith('ENCRYPTED:');
+    }
+
     /* ==================================================================================
      * PERSISTENCE (BECOME IMMORTAL)
-     * "There can be only one". Your last backup when all others fail
+     * "There can be only one".
      * ================================================================================== */
 
     /* -------------------- SAVE FILE / EXPORT -------------------- */
@@ -3821,8 +4240,52 @@
     }
 
     /* Download the current state as a self-contained HTML file */
-    function becomeImmortal() {
-      const html = assembleTheImmortalForm();
+    async function becomeImmortal() {
+      const encryptEnabled = document.getElementById('encrypt-toggle').checked;
+      let stateData = JSON.stringify(captureTheQuickening(), null, 2);
+      
+      // If encryption is enabled, prompt for password and encrypt
+      if (encryptEnabled) {
+        const password = prompt('Enter a password to encrypt your data:\n(Remember this password - you will need it to open this file!)');
+        if (!password) {
+          alert('Encryption cancelled. File not saved.');
+          return;
+        }
+        
+        const confirmPassword = prompt('Confirm your password:');
+        if (password !== confirmPassword) {
+          alert('Passwords do not match. File not saved.');
+          return;
+        }
+        
+        try {
+          stateData = await encryptData(stateData, password);
+        } catch (e) {
+          alert('Encryption failed: ' + e.message);
+          return;
+        }
+      }
+      
+      const clone = document.documentElement.cloneNode(true);
+
+      // Update nodes-json
+      const nodeScript = clone.querySelector("#nodes-json");
+      if (nodeScript) {
+        nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
+      }
+
+      // Update topology-state with potentially encrypted data
+      let stateScript = clone.querySelector("#topology-state");
+      if (!stateScript) {
+        stateScript = document.createElement("script");
+        stateScript.id = "topology-state";
+        stateScript.type = "application/json";
+        const body = clone.querySelector("body") || clone;
+        body.appendChild(stateScript);
+      }
+      stateScript.textContent = stateData;
+
+      const html = "<!DOCTYPE html>\n" + clone.outerHTML;
       const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
