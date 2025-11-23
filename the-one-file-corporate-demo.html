@@ -1,0 +1,5149 @@
+<!DOCTYPE html>
+<html lang="en" style="--panel: #002970; --panel-alt: #0e1c34; --accent: #58dfd2; --danger: #271111; --text-main: #e2e7ee; --text-soft: #7c96bb; --topbar-bg: #1081ea; --topbar-border: #010d28; --topbar-height: 100px; --sidebar-width: 600px;"><head>
+  <meta charset="UTF-8">
+  <title>The One File</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* -------------------- THEME -------------------- */
+    :root {
+      color-scheme: dark;
+      --bg: #050608;
+      --panel: #0b0e13;
+      --panel-alt: #10141b;
+      --accent: #4fd1c5;
+      --danger: #f56565;
+      --text-main: #e2e8f0;
+      --text-soft: #94a3b8;
+      --edge-main: #475569;
+      --node-min: 35px;
+      --node-max: 70px;
+      --topbar-bg: rgba(9, 12, 20, 0.9);
+      --topbar-border: #1f2533;
+    }
+
+    /* -------------------- GLOBAL -------------------- */
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    /* Allow text selection in text inputs and contentEditable elements */
+    input,
+    textarea,
+    [contenteditable="true"] {
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(circle at top, #1e2532 0, #050608 70%);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* -------------------- HEADER -------------------- */
+    header {
+      padding: 0 20px;
+      height: var(--topbar-height, 52px);
+      min-height: var(--topbar-height, 52px);
+      background: var(--topbar-bg);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--topbar-border);
+      gap: 16px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    header h1 {
+      font-size: clamp(22px, 3vw, 32px);
+      margin: 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .editable-page-title {
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .editable-page-title:hover {
+      opacity: 0.7;
+    }
+
+    .save-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .save-btn {
+      padding: 6px 12px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .save-btn:hover {
+      opacity: 0.9;
+    }
+
+    .help-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--edge-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-soft);
+      background: rgba(15, 23, 42, 0.9);
+      flex-shrink: 0;
+    }
+
+    .help-icon:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    #settings-btn {
+      background: var(--panel);
+      color: var(--text-main);
+      border: 1px solid var(--edge-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    #settings-btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* -------------------- LAYOUT -------------------- */
+    main {
+      display: grid;
+      grid-template-columns: 1fr var(--sidebar-width, 350px);
+      flex: 1;
+    }
+
+    main.sidebar-collapsed {
+      grid-template-columns: 1fr 0;
+    }
+
+    /* Tablet */
+    @media(max-width: 1024px){
+      main {
+        grid-template-columns: 1fr var(--sidebar-width, 300px);
+      }
+    }
+
+    /* Mobile */
+    @media(max-width: 768px){
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60vh 40vh;
+      }
+      main.sidebar-collapsed {
+        grid-template-rows: 1fr 0;
+      }
+    }
+
+    /* Fold screens */
+    @media(max-width: 380px){
+      main {
+        grid-template-rows: 50vh 50vh;
+      }
+    }
+
+    /* -------------------- TOPOLOGY PANEL -------------------- */
+    .topology-panel {
+      background: var(--panel);
+      border-right: 1px solid #111827;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Toolbar for "Add Line" (top-right) */
+    .topology-toolbar {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      z-index: 20;
+      font-size: 13px;
+    }
+
+    .topology-toolbar label {
+      color: var(--text-soft);
+    }
+
+    .topology-toolbar select {
+      padding: 4px 6px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .topology-toolbar button {
+      padding: 4px 10px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Free-draw toolbar (top-left) */
+    .draw-toolbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 8px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      z-index: 20;
+      font-size: 13px;
+    }
+
+    .draw-toolbar button {
+      padding: 4px 8px;
+      background: var(--panel);
+      color: var(--text-main);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .draw-toolbar button:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .draw-toolbar input[type="color"] {
+      width: 30px;
+      height: 22px;
+      border-radius: 4px;
+      border: 1px solid var(--edge-main);
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    /* Legend (bottom-left) */
+    .legend-container {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      font-size: 12px;
+      z-index: 20;
+      max-width: 260px;
+    }
+
+    .legend-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #020617;
+      flex-shrink: 0;
+    }
+
+    .legend-label {
+      outline: none;
+      cursor: text;
+      flex: 1;
+      min-width: 60px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .legend-label.editing {
+      border-bottom: 1px dashed var(--accent);
+    }
+
+    /* -------------------- CANVAS VIEWPORT -------------------- */
+    .canvas-viewport {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+
+    .canvas-viewport.panning {
+      cursor: grabbing !important;
+    }
+
+    .canvas-viewport.panning * {
+      cursor: grabbing !important;
+    }
+
+    .canvas-viewport svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: 
+        linear-gradient(rgba(71, 85, 105, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71, 85, 105, 0.1) 1px, transparent 1px),
+        linear-gradient(rgba(71, 85, 105, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71, 85, 105, 0.05) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+      background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+    }
+
+    /* -------------------- ZOOM/PAN TOOLBAR -------------------- */
+    .zoom-toolbar {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      z-index: 20;
+    }
+
+    .zoom-toolbar button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: var(--panel);
+      color: var(--text-main);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .zoom-toolbar button:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .zoom-toolbar .zoom-level {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 2px 0;
+      min-width: 32px;
+    }
+
+    .zoom-toolbar .divider {
+      height: 1px;
+      background: var(--edge-main);
+      margin: 2px 0;
+    }
+
+    /* -------------------- MINIMAP -------------------- */
+    .minimap-container {
+      position: absolute;
+      bottom: 10px;
+      right: 60px;
+      width: 150px;
+      height: 100px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      z-index: 19;
+      overflow: hidden;
+    }
+
+    .minimap-container svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .minimap-viewport {
+      fill: rgba(79, 209, 197, 0.2);
+      stroke: var(--accent);
+      stroke-width: 2;
+      cursor: move;
+    }
+
+    .minimap-node {
+      fill: var(--text-soft);
+    }
+
+    .minimap-edge {
+      stroke: var(--edge-main);
+      stroke-width: 1;
+    }
+
+    /* Canvas hint */
+    .canvas-hint {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px 16px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #1f2937;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-soft);
+      z-index: 18;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .canvas-hint.visible {
+      opacity: 1;
+    }
+
+    /* -------------------- EDGES -------------------- */
+    .edge {
+      stroke: var(--edge-main);
+      stroke-width: 4;
+      opacity: .75;
+      transition: .25s ease-in-out;
+      cursor: pointer;
+    }
+
+    .edge.backup {
+      stroke: var(--danger);
+      stroke-width: 5;
+    }
+
+    .edge.active {
+      opacity: 1;
+      stroke-width: 7;
+    }
+
+    /* Free-draw preview */
+    .free-preview {
+      fill: none;
+      stroke-dasharray: 4 4;
+      pointer-events: none;
+    }
+
+    /* Free-draw control points */
+    .free-point {
+      fill: #e5e7eb;
+      stroke: #0f172a;
+      stroke-width: 1.5;
+      cursor: grab;
+    }
+
+    /* -------------------- NODES -------------------- */
+    .node-circle {
+      fill: #0c111a;
+      stroke: #1e293b;
+      stroke-width: 4;
+      transition: .25s ease;
+      transform-origin: center center;
+    }
+
+    /* Hover bounce */
+    .node-group:hover .node-circle {
+      transform: scale(1.08);
+      filter: drop-shadow(0 0 10px rgba(79,209,197,.45));
+    }
+
+    .node-group:hover .node-label,
+    .node-group:hover .node-sub {
+      transform: scale(1.08);
+    }
+
+    /* Active pulse */
+    .node-group.active .node-circle {
+      stroke: var(--accent);
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% {
+        filter: drop-shadow(0 0 4px #4fd1c5);
+      }
+      50%{
+        filter: drop-shadow(0 0 14px #4fd1c5);
+      }
+      100%{
+        filter: drop-shadow(0 0 4px #4fd1c5);
+      }
+    }
+
+    /* TEXT */
+    .node-label {
+      fill: var(--text-main);
+      font-size: 18px;
+      text-anchor: middle;
+      font-weight: 600;
+    }
+
+    .node-sub {
+      fill: var(--text-soft);
+      font-size: 13px;
+      text-anchor: middle;
+    }
+
+    /* Tablet text */
+    @media(max-width: 1024px){
+      .node-label {
+        font-size: 28px;
+      }
+      .node-sub {
+        font-size: 20px;
+      }
+    }
+
+    /* Mobile text */
+    @media(max-width: 768px){
+      .node-label {
+        font-size: 70px;
+      }
+      .node-sub {
+        font-size: 50px;
+      }
+    }
+
+    /* Fold screen text */
+    @media(max-width: 380px){
+      .node-label {
+        font-size: 60px;
+      }
+      .node-sub {
+        font-size: 42px;
+      }
+    }
+
+    /* -------------------- DETAILS PANEL -------------------- */
+	/* there are some dirty hacks here to be included at a later date */
+    .details-panel {
+      background: var(--panel-alt);
+      padding: 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+      transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+    }
+	
+	.details-panel {
+	  min-width: 260px !important;
+	}
+	
+	.details-panel {
+      overflow-y: auto !important;
+      overflow-x: hidden;
+	}
+	
+    .details-panel.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      overflow: hidden;
+      opacity: 0;
+    }
+	
+	body {
+      overflow-x: hidden;
+      overflow-y: hidden;   
+	}
+
+	main {
+      overflow: hidden;     /* keep the layout stable */
+	}
+
+	.details-panel {
+	  overflow-y: auto !important;
+      overflow-x: hidden;
+	}
+	
+    .details-panel.collapsed {
+      min-width: 0 !important;
+	}
+    /* Sidebar toggle button */
+    .sidebar-toggle {
+      position: absolute;
+      left: -16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 60px;
+      background: var(--panel-alt);
+      border: 1px solid var(--edge-main);
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-soft);
+      font-size: 10px;
+      z-index: 25;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-toggle:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .sidebar-toggle.collapsed {
+      left: 0;
+      border-right: 1px solid var(--edge-main);
+      border-radius: 0 8px 8px 0;
+      position: fixed;
+      right: 0;
+      left: auto;
+    }
+
+    .details-name {
+      font-size: clamp(22px, 2.5vw, 30px);
+      font-weight: 700;
+    }
+
+    .details-ip {
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--text-soft);
+    }
+
+    .details-role {
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--accent);
+    }
+
+    /* SIZE CONTROLS */
+    .size-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .size-controls label {
+      font-size: clamp(14px, 1.6vw, 18px);
+      color: var(--text-soft);
+    }
+
+    .size-controls input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .size-controls button {
+      padding: 6px 12px;
+      background: var(--panel);
+      color: var(--text-main);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: clamp(12px, 1.4vw, 16px);
+    }
+
+    .size-controls button:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* STYLE CONTROLS */
+    .style-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--edge-main);
+    }
+
+    .style-section summary {
+      cursor: pointer;
+      font-size: clamp(14px, 1.6vw, 20px);
+      text-transform: uppercase;
+      color: var(--text-soft);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .style-section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .style-section summary::after {
+      content: '▼';
+      transition: transform 0.2s;
+    }
+
+    .style-section[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    .style-content {
+      margin-top: 10px;
+    }
+
+    .style-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 8px 0;
+    }
+
+    .style-row label {
+      font-size: clamp(13px, 1.5vw, 17px);
+      color: var(--text-soft);
+      min-width: 80px;
+    }
+
+    .style-row input[type="color"] {
+      width: 50px;
+      height: 30px;
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    .style-row input[type="number"] {
+      width: 70px;
+      padding: 4px 8px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: clamp(12px, 1.4vw, 16px);
+    }
+
+    .style-row select {
+      flex: 1;
+      padding: 4px 8px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: clamp(12px, 1.4vw, 16px);
+      cursor: pointer;
+    }
+
+    .editable-text {
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .editable-text:hover {
+      opacity: 0.7;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--panel-alt);
+      padding: 25px;
+      border-radius: 8px;
+      border: 1px solid var(--edge-main);
+      min-width: 300px;
+      max-width: 90%;
+    }
+
+    .modal-content h3 {
+      margin: 0 0 15px 0;
+      color: var(--text-main);
+      font-size: clamp(18px, 2vw, 24px);
+    }
+
+    .modal-content p {
+      color: var(--text-soft);
+      font-size: clamp(14px, 1.6vw, 18px);
+      margin: 0 0 20px 0;
+    }
+
+    .modal-content input:not([type="color"]),
+    .modal-content select {
+      width: 100%;
+      padding: 10px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: clamp(14px, 1.6vw, 18px);
+      margin-bottom: 15px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .modal-content input[type="color"] {
+      width: 60px;
+      height: 36px;
+      padding: 2px;
+      border: 2px solid var(--edge-main);
+      border-radius: 6px;
+      cursor: pointer;
+      background: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .modal-content input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .modal-content input[type="color"]::-webkit-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .modal-buttons button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: clamp(14px, 1.6vw, 18px);
+      font-weight: 600;
+    }
+
+    .modal-buttons .btn-cancel {
+      background: var(--panel);
+      color: var(--text-main);
+      border: 1px solid var(--edge-main);
+    }
+
+    .modal-buttons .btn-save {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .modal-buttons .btn-delete {
+      background: var(--danger);
+      color: white;
+    }
+
+    .confirm-modal p {
+      color: var(--text-soft);
+      font-size: clamp(14px, 1.6vw, 18px);
+      margin: 0 0 20px 0;
+    }
+
+    /* BADGES */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      border: 1px solid var(--edge-main);
+      padding: 5px 12px;
+      border-radius: 22px;
+      font-size: clamp(12px, 1.4vw, 18px);
+    }
+
+    .badge.wg {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* LISTS */
+    .section-label {
+      margin-top: 8px;
+      font-size: clamp(14px, 1.6vw, 20px);
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+
+    .list li {
+      margin: 6px 0;
+      font-size: clamp(14px, 1.6vw, 20px);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .list li:hover {
+      color: var(--accent);
+    }
+
+    .delete-note {
+      color: var(--danger);
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+
+    .list li:hover .delete-note {
+      opacity: 1;
+    }
+
+    /* Editable notes */
+    .editing {
+      outline: 2px solid var(--accent);
+      background: #0d141f;
+      padding: 4px;
+      border-radius: 6px;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+  </style>
+</head>
+<body style="background: rgb(212, 215, 221);">
+  <!-- Edit Modal -->
+  <div class="modal" id="edit-modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Edit Name</h3>
+      <input type="text" id="modal-input">
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="modal-cancel">Cancel</button>
+        <button class="btn-save" id="modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal confirm-modal" id="confirm-modal">
+    <div class="modal-content">
+      <h3>Confirm</h3>
+      <p id="confirm-message">Are you sure?</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="confirm-cancel">Cancel</button>
+        <button class="btn-delete" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Info Modal -->
+  <div class="modal" id="save-info-modal">
+    <div class="modal-content">
+      <h3>Why do I need to save?</h3>
+      <p>
+        Browsers are not allowed to overwrite local files automatically.
+        When you click <strong>Save File</strong>, this page generates a new updated
+        HTML file that contains all of your changes. Replace your old file with the
+        new one to keep your edits.
+      </p>
+      <p style="margin-top:12px; padding-top:12px; border-top:1px solid var(--edge-main);">
+        <strong>🔒 Encryption:</strong> Check the "Encrypt" box before saving to password-protect
+        your network topology data. You'll need the password to open the file later.
+      </p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="save-info-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal" id="settings-modal">
+    <div class="modal-content" style="max-width: 400px;">
+      <h3>Page Settings</h3>
+
+      <details class="style-section" open="">
+        <summary>Background</summary>
+        <div class="style-content">
+          <div class="style-row">
+            <label>Solid Color</label>
+            <input type="color" id="page-bg-color" value="#050608">
+          </div>
+          <p style="margin-top:4px; font-size:12px; color:var(--text-soft);">
+            Change to apply a flat background color.
+          </p>
+        </div>
+      </details>
+
+      <details class="style-section" open="">
+        <summary>Top Bar</summary>
+        <div class="style-content">
+          <div class="style-row">
+            <label>Background</label>
+            <input type="color" id="topbar-bg-color" value="#0b0e13">
+          </div>
+          <div class="style-row">
+            <label>Border</label>
+            <input type="color" id="topbar-border-color" value="#1f2533">
+          </div>
+        </div>
+      </details>
+
+      <details class="style-section" open="">
+        <summary>Theme Colors</summary>
+        <div class="style-content">
+          <div class="style-row">
+            <label>Panel</label>
+            <input type="color" id="panel-color" value="#0b0e13">
+          </div>
+          <div class="style-row">
+            <label>Panel Alt</label>
+            <input type="color" id="panel-alt-color" value="#10141b">
+          </div>
+          <div class="style-row">
+            <label>Accent</label>
+            <input type="color" id="accent-color" value="#4fd1c5">
+          </div>
+          <div class="style-row">
+            <label>Danger</label>
+            <input type="color" id="danger-color" value="#f56565">
+          </div>
+          <div class="style-row">
+            <label>Text Main</label>
+            <input type="color" id="text-main-color" value="#e2e8f0">
+          </div>
+          <div class="style-row">
+            <label>Text Soft</label>
+            <input type="color" id="text-soft-color" value="#94a3b8">
+          </div>
+        </div>
+      </details>
+
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="settings-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Node Modal -->
+  <div class="modal" id="add-node-modal">
+    <div class="modal-content">
+      <h3>Add New Node</h3>
+      <label style="display:block; margin-bottom:4px; color:var(--text-soft); font-size:13px;">Name</label>
+      <input type="text" id="new-node-name" placeholder="e.g. web-server">
+      <label style="display:block; margin-bottom:4px; color:var(--text-soft); font-size:13px;">IP / Subtitle</label>
+      <input type="text" id="new-node-ip" placeholder="e.g. 192.168.1.100">
+      <label style="display:block; margin-bottom:4px; color:var(--text-soft); font-size:13px;">Tags (comma separated)</label>
+      <input type="text" id="new-node-tags" placeholder="e.g. Docker, nginx, WG: vpn">
+      <label style="display:block; margin-bottom:4px; color:var(--text-soft); font-size:13px;">Shape</label>
+      <select id="new-node-shape">
+        <optgroup label="Basic Shapes">
+          <option value="circle">Circle</option>
+          <option value="square">Square</option>
+          <option value="rectangle">Rectangle</option>
+          <option value="triangle">Triangle</option>
+          <option value="hexagon">Hexagon</option>
+          <option value="diamond">Diamond</option>
+          <option value="star">Star</option>
+          <option value="stop-sign">Stop Sign</option>
+        </optgroup>
+        <optgroup label="Network Equipment">
+          <option value="server">Server</option>
+          <option value="pc">PC / Desktop</option>
+          <option value="laptop">Laptop</option>
+          <option value="phone">Phone / Mobile</option>
+          <option value="router">Router</option>
+          <option value="switch">Switch</option>
+          <option value="firewall">Firewall</option>
+          <option value="cloud">Cloud</option>
+          <option value="database">Database</option>
+          <option value="printer">Printer</option>
+        </optgroup>
+      </select>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="add-node-cancel">Cancel</button>
+        <button class="btn-save" id="add-node-save">Add Node</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clear All Confirm Modal -->
+  <div class="modal confirm-modal" id="clear-all-modal">
+    <div class="modal-content">
+      <h3>⚠️ Clear All Nodes</h3>
+      <p>This will remove ALL nodes and connections. This cannot be undone until you reload without saving. Are you sure?</p>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="clear-all-cancel">Cancel</button>
+        <button class="btn-delete" id="clear-all-confirm">Clear Everything</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="title-block">
+      <h1 id="page-title" class="editable-page-title">New tile</h1>
+      <div class="save-row">
+        <button id="save-file-btn" class="save-btn" type="button">Save File</button>
+        <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-soft); cursor:pointer; user-select:none;">
+          <input type="checkbox" id="encrypt-toggle" style="cursor:pointer;">
+          <span title="Encrypt data with password">🔒 Encrypt</span>
+        </label>
+        <span id="save-help-btn" class="help-icon" title="Why save?">?</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button id="add-node-btn" class="save-btn" title="Add new node" style="background:var(--accent);">+ Node</button>
+      <button id="clear-all-btn" title="Clear all nodes" style="padding:6px 12px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:600;">Clear All</button>
+      <button id="settings-btn" title="Page settings">⚙️</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="topology-panel">
+      <!-- Free-draw toolbar (top-left) -->
+      <div class="draw-toolbar" id="draw-toolbar">
+        <button id="draw-toggle" title="Draw custom line">✏️</button>
+        <input type="color" id="draw-color" value="#f97316" title="Line color">
+        <button id="draw-undo" style="display: none;" title="Undo last point">Undo</button>
+      </div>
+
+      <!-- Add-line toolbar (top-right) -->
+      <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
+        <label for="add-line-select">Add line to:</label>
+        <select id="add-line-select"><option value="diesel">diesel</option><option value="percy">percy</option><option value="gordon">gordon</option><option value="henry">henry</option><option value="pbs-remote">PBS Remote</option></select>
+        <input type="color" id="add-line-color" value="#475569" title="Line color" style="width:30px; height:24px; border:1px solid var(--edge-main); border-radius:4px; cursor:pointer; background:transparent; padding:0;">
+        <select id="add-line-direction" title="Line direction">
+          <option value="none">No arrows</option>
+          <option value="forward">→ Forward</option>
+          <option value="backward">← Backward</option>
+          <option value="both">↔ Both</option>
+        </select>
+        <button id="add-line-btn">Add</button>
+      </div>
+
+      <!-- Canvas hint -->
+      <div class="canvas-hint" id="canvas-hint">Scroll to zoom • Drag empty space to pan • Hold Space + drag</div>
+
+      <!-- Legend (bottom-left) -->
+      <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div></div>
+
+      <!-- Canvas viewport wrapper -->
+      <div class="canvas-viewport" id="canvas-viewport">
+        <svg id="map" viewBox="0 0 4000 3000" style=""><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
+      </div>
+
+      <!-- Minimap -->
+      <div class="minimap-container" id="minimap-container">
+        <svg id="minimap" viewBox="0 0 4000 3000">
+          <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
+        </svg>
+      </div>
+
+      <!-- Zoom toolbar -->
+      <div class="zoom-toolbar" id="zoom-toolbar">
+        <button id="zoom-in-btn" title="Zoom in">+</button>
+        <div class="zoom-level" id="zoom-level">100%</div>
+        <button id="zoom-out-btn" title="Zoom out">-</button>
+        <div class="divider"></div>
+        <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
+        <button id="zoom-reset-btn" title="Reset view">R</button>
+      </div>
+    </section>
+
+    <aside class="details-panel" id="details-panel">
+      <!-- Sidebar toggle button -->
+      <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">◀</button>
+      
+      <!-- NODE PANEL -->
+      <div id="node-panel" style="display: none;">
+        <div class="details-name editable-text" id="node-name">Proxmox Host</div>
+        <div class="details-ip editable-text" id="node-ip">162.250.121.10</div>
+        <div class="details-role" id="node-role">Hypervisor</div>
+        <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>Proxmox VE 9</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>64GB RAM</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge wg" style="cursor: pointer; position: relative;"><span>WG: mgmt</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+
+        <div class="size-controls">
+          <label>Size:</label>
+          <input type="range" id="size-slider" min="20" max="200" value="55">
+          <span id="size-value">55</span>
+          <button id="reset-size">Reset</button>
+        </div>
+
+        <details class="style-section">
+          <summary>Styling</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Screen:</label>
+              <select id="style-scope">
+                <option value="all">All</option>
+                <option value="desktop">Desktop</option>
+                <option value="tablet">Tablet</option>
+                <option value="mobile">Mobile</option>
+                <option value="fold">Fold</option>
+              </select>
+            </div>
+
+            <div class="style-row">
+              <label>Shape:</label>
+              <select id="shape-select">
+                <optgroup label="Basic Shapes">
+                  <option value="circle">Circle</option>
+                  <option value="square">Square</option>
+                  <option value="rectangle">Rectangle</option>
+                  <option value="triangle">Triangle</option>
+                  <option value="hexagon">Hexagon</option>
+                  <option value="diamond">Diamond</option>
+                  <option value="star">Star</option>
+                  <option value="stop-sign">Stop Sign</option>
+                </optgroup>
+                <optgroup label="Network Equipment">
+                  <option value="server">Server</option>
+                  <option value="pc">PC / Desktop</option>
+                  <option value="laptop">Laptop</option>
+                  <option value="phone">Phone / Mobile</option>
+                  <option value="router">Router</option>
+                  <option value="switch">Switch</option>
+                  <option value="firewall">Firewall</option>
+                  <option value="cloud">Cloud</option>
+                  <option value="database">Database</option>
+                  <option value="printer">Printer</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="style-row">
+              <label>Circle Color:</label>
+              <input type="color" id="circle-color" value="#1e293b">
+            </div>
+
+            <div class="style-row">
+              <label>Title Color:</label>
+              <input type="color" id="title-color" value="#e2e8f0">
+            </div>
+
+            <div class="style-row">
+              <label>Title Font:</label>
+              <select id="title-font">
+                <option value="system-ui, sans-serif">System UI</option>
+                <option value="monospace">Monospace</option>
+                <option value="serif">Serif</option>
+                <option value="cursive">Cursive</option>
+                <option value="'Courier New', monospace">Courier</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times</option>
+              </select>
+            </div>
+
+            <div class="style-row">
+              <label>Title Size:</label>
+              <input type="number" id="title-size" min="8" max="100" value="18">
+            </div>
+
+            <div class="style-row">
+              <label>Sub Color:</label>
+              <input type="color" id="sub-color" value="#94a3b8">
+            </div>
+
+            <div class="style-row">
+              <label>Sub Font:</label>
+              <select id="sub-font">
+                <option value="system-ui, sans-serif">System UI</option>
+                <option value="monospace">Monospace</option>
+                <option value="serif">Serif</option>
+                <option value="cursive">Cursive</option>
+                <option value="'Courier New', monospace">Courier</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Times New Roman', serif">Times</option>
+              </select>
+            </div>
+
+            <div class="style-row">
+              <label>Sub Size:</label>
+              <input type="number" id="sub-size" min="6" max="80" value="13">
+            </div>
+
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--edge-main);">
+              <div style="font-size:12px; color:var(--text-soft); margin-bottom:8px; text-transform:uppercase;">Text Position</div>
+              <div class="style-row">
+                <label>Name Y:</label>
+                <input type="number" id="title-offset-y" min="-100" max="100" value="0" style="width:60px;">
+              </div>
+              <div class="style-row">
+                <label>Name X:</label>
+                <input type="number" id="title-offset-x" min="-100" max="100" value="0" style="width:60px;">
+              </div>
+              <div class="style-row">
+                <label>IP Y:</label>
+                <input type="number" id="sub-offset-y" min="-100" max="100" value="0" style="width:60px;">
+              </div>
+              <div class="style-row">
+                <label>IP X:</label>
+                <input type="number" id="sub-offset-x" min="-100" max="100" value="0" style="width:60px;">
+              </div>
+            </div>
+
+            <button id="reset-styles" style="width: 100%; margin-top: 10px; padding: 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: clamp(13px, 1.5vw, 17px);">
+              Reset Styles
+            </button>
+          </div>
+        </details>
+
+        <div class="section-label">Notes</div>
+        <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Double-click to edit notes.</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">Notes save automatically.</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">This entire file runs offline.</span><span class="delete-note">✕</span></li></ul>
+        <div style="margin-top: 10px; display: flex; gap: 8px;">
+          <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1; padding: 8px 12px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: clamp(14px, 1.6vw, 18px);">
+          <button id="add-note-btn" style="padding: 8px 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600;">
+            Add
+          </button>
+        </div>
+      <button id="delete-node-btn" style="margin-top: 15px; padding: 10px 16px; background: var(--danger); color: rgb(255, 255, 255); border: none; border-radius: 6px; cursor: pointer; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600; width: 100%;">Delete Node</button></div>
+
+      <!-- EDGE PANEL -->
+      <div id="edge-panel" style="display: none;">
+        <div class="details-name" id="edge-title">Custom line</div>
+
+        <div class="style-row" style="margin-top:10px;">
+          <label>Width:</label>
+          <input type="number" id="edge-width" min="1" max="20" value="4">
+        </div>
+
+        <div class="style-row">
+          <label>Color:</label>
+          <input type="color" id="edge-color" value="#475569">
+        </div>
+
+        <div class="style-row">
+          <label>Direction:</label>
+          <select id="edge-direction">
+            <option value="none">No arrows</option>
+            <option value="forward">→ Forward</option>
+            <option value="backward">← Backward</option>
+            <option value="both">↔ Bidirectional</option>
+          </select>
+        </div>
+
+        <div class="section-label">Line Notes</div>
+        <ul class="list" id="edge-notes"></ul>
+        <div style="margin-top: 10px; display: flex; gap: 8px;">
+          <input type="text" id="new-edge-note" placeholder="Add note..." style="flex: 1; padding: 8px 12px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: clamp(14px, 1.6vw, 18px);">
+          <button id="add-edge-note" style="padding: 8px 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600;">
+            Add
+          </button>
+        </div>
+
+        <button id="delete-edge" style="margin-top:15px; padding:10px 16px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:clamp(14px,1.6vw,18px); font-weight:600;">
+          Delete Line
+        </button>
+      </div>
+	   <details class="style-section" open="">
+        <summary>Page Layout</summary>
+        <div class="style-content">
+          <div class="style-row">
+            <label>Topbar Height</label>
+            <input type="range" id="topbar-height" min="40" max="100" value="52" style="flex:1;">
+            <span id="topbar-height-val" style="min-width:35px; text-align:right;">100px</span>
+          </div>
+          <div class="style-row">
+            <label>Sidebar Width</label>
+            <input type="range" id="sidebar-width" min="200" max="600" value="350" style="flex:1;">
+            <span id="sidebar-width-val" style="min-width:45px; text-align:right;">600px</span>
+          </div>
+        </div>
+      </details>
+    </aside>
+	
+  </main>
+
+  <!-- ---------- EMBEDDED JSON DATA ---------- -->
+  <script id="nodes-json" type="application/json">{
+  "internet": {
+    "shape": "cloud",
+    "name": "Internet",
+    "ip": "0.0.0.0",
+    "role": "External",
+    "tags": ["External"],
+    "notes": ["Public internet"]
+  },
+  "edge-firewall": {
+    "shape": "firewall",
+    "name": "Edge Firewall",
+    "ip": "203.0.113.1",
+    "role": "Security",
+    "tags": ["Firewall", "Palo Alto", "HA"],
+    "notes": ["PA-5220", "Active-Passive HA", "10Gbps throughput"]
+  },
+  "core-router-1": {
+    "shape": "router",
+    "name": "Core Router 1",
+    "ip": "10.0.0.1",
+    "role": "Core",
+    "tags": ["Router", "Cisco", "BGP"],
+    "notes": ["Cisco Catalyst 9600", "OSPF + BGP", "Redundant PSU"]
+  },
+  "core-router-2": {
+    "shape": "router",
+    "name": "Core Router 2",
+    "ip": "10.0.0.2",
+    "role": "Core",
+    "tags": ["Router", "Cisco", "BGP"],
+    "notes": ["Cisco Catalyst 9600", "OSPF + BGP", "Redundant PSU"]
+  },
+  "core-switch-1": {
+    "shape": "switch",
+    "name": "Core Switch 1",
+    "ip": "10.0.0.10",
+    "role": "Core",
+    "tags": ["Switch", "Cisco", "Stack"],
+    "notes": ["Cisco Catalyst 9500", "VSS", "40Gbps uplinks"]
+  },
+  "core-switch-2": {
+    "shape": "switch",
+    "name": "Core Switch 2",
+    "ip": "10.0.0.11",
+    "role": "Core",
+    "tags": ["Switch", "Cisco", "Stack"],
+    "notes": ["Cisco Catalyst 9500", "VSS", "40Gbps uplinks"]
+  },
+  "load-balancer": {
+    "shape": "server",
+    "name": "Load Balancer",
+    "ip": "10.1.0.10",
+    "role": "DMZ",
+    "tags": ["F5", "HA", "DMZ"],
+    "notes": ["F5 BIG-IP", "SSL offloading", "Active-Standby"]
+  },
+  "web-server-1": {
+    "shape": "server",
+    "name": "Web Server 1",
+    "ip": "10.1.0.20",
+    "role": "DMZ",
+    "tags": ["Web", "Nginx", "DMZ"],
+    "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+  },
+  "web-server-2": {
+    "shape": "server",
+    "name": "Web Server 2",
+    "ip": "10.1.0.21",
+    "role": "DMZ",
+    "tags": ["Web", "Nginx", "DMZ"],
+    "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+  },
+  "web-server-3": {
+    "shape": "server",
+    "name": "Web Server 3",
+    "ip": "10.1.0.22",
+    "role": "DMZ",
+    "tags": ["Web", "Nginx", "DMZ"],
+    "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+  },
+  "internal-fw": {
+    "shape": "firewall",
+    "name": "Internal Firewall",
+    "ip": "10.2.0.1",
+    "role": "Security",
+    "tags": ["Firewall", "FortiGate"],
+    "notes": ["FortiGate 600E", "IPS enabled", "App control"]
+  },
+  "ad-dc-1": {
+    "shape": "server",
+    "name": "Domain Controller 1",
+    "ip": "10.2.1.10",
+    "role": "Internal",
+    "tags": ["AD", "DNS", "Windows"],
+    "notes": ["Windows Server 2022", "Primary DC", "FSMO roles"]
+  },
+  "ad-dc-2": {
+    "shape": "server",
+    "name": "Domain Controller 2",
+    "ip": "10.2.1.11",
+    "role": "Internal",
+    "tags": ["AD", "DNS", "Windows"],
+    "notes": ["Windows Server 2022", "Secondary DC", "Replica"]
+  },
+  "file-server": {
+    "shape": "database",
+    "name": "File Server",
+    "ip": "10.2.1.20",
+    "role": "Internal",
+    "tags": ["Storage", "SMB", "Windows"],
+    "notes": ["Windows Server 2022", "50TB storage", "DFS replication"]
+  },
+  "db-primary": {
+    "shape": "database",
+    "name": "Database Primary",
+    "ip": "10.3.0.10",
+    "role": "Data Center",
+    "tags": ["Database", "PostgreSQL", "Primary"],
+    "notes": ["PostgreSQL 15", "Primary node", "64GB RAM"]
+  },
+  "db-replica": {
+    "shape": "database",
+    "name": "Database Replica",
+    "ip": "10.3.0.11",
+    "role": "Data Center",
+    "tags": ["Database", "PostgreSQL", "Replica"],
+    "notes": ["PostgreSQL 15", "Read replica", "Streaming replication"]
+  },
+  "app-server-1": {
+    "shape": "server",
+    "name": "App Server 1",
+    "ip": "10.3.0.20",
+    "role": "Data Center",
+    "tags": ["Application", "Java", "Production"],
+    "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+  },
+  "app-server-2": {
+    "shape": "server",
+    "name": "App Server 2",
+    "ip": "10.3.0.21",
+    "role": "Data Center",
+    "tags": ["Application", "Java", "Production"],
+    "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+  },
+  "app-server-3": {
+    "shape": "server",
+    "name": "App Server 3",
+    "ip": "10.3.0.22",
+    "role": "Data Center",
+    "tags": ["Application", "Java", "Production"],
+    "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+  },
+  "k8s-master-1": {
+    "shape": "server",
+    "name": "K8s Master 1",
+    "ip": "10.3.1.10",
+    "role": "Data Center",
+    "tags": ["Kubernetes", "Master", "Container"],
+    "notes": ["K8s 1.28", "Control plane", "etcd"]
+  },
+  "k8s-master-2": {
+    "shape": "server",
+    "name": "K8s Master 2",
+    "ip": "10.3.1.11",
+    "role": "Data Center",
+    "tags": ["Kubernetes", "Master", "Container"],
+    "notes": ["K8s 1.28", "Control plane", "etcd"]
+  },
+  "k8s-worker-1": {
+    "shape": "server",
+    "name": "K8s Worker 1",
+    "ip": "10.3.1.20",
+    "role": "Data Center",
+    "tags": ["Kubernetes", "Worker", "Container"],
+    "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+  },
+  "k8s-worker-2": {
+    "shape": "server",
+    "name": "K8s Worker 2",
+    "ip": "10.3.1.21",
+    "role": "Data Center",
+    "tags": ["Kubernetes", "Worker", "Container"],
+    "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+  },
+  "k8s-worker-3": {
+    "shape": "server",
+    "name": "K8s Worker 3",
+    "ip": "10.3.1.22",
+    "role": "Data Center",
+    "tags": ["Kubernetes", "Worker", "Container"],
+    "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+  },
+  "backup-server": {
+    "shape": "database",
+    "name": "Backup Server",
+    "ip": "10.4.0.10",
+    "role": "Management",
+    "tags": ["Backup", "Veeam"],
+    "notes": ["Veeam B&R", "100TB capacity", "Offsite replication"]
+  },
+  "monitoring": {
+    "shape": "server",
+    "name": "Monitoring",
+    "ip": "10.4.0.20",
+    "role": "Management",
+    "tags": ["Monitoring", "Grafana", "Prometheus"],
+    "notes": ["Prometheus + Grafana", "500+ endpoints", "Alert manager"]
+  },
+  "vpn-gateway": {
+    "shape": "firewall",
+    "name": "VPN Gateway",
+    "ip": "10.0.1.10",
+    "role": "Security",
+    "tags": ["VPN", "SSL-VPN", "Remote"],
+    "notes": ["Cisco AnyConnect", "MFA enabled", "Split tunnel"]
+  },
+  "san-storage": {
+    "shape": "database",
+    "name": "SAN Storage",
+    "ip": "10.5.0.10",
+    "role": "Storage",
+    "tags": ["SAN", "iSCSI", "FC"],
+    "notes": ["Pure Storage", "200TB usable", "All-flash array"]
+  },
+  "branch-router": {
+    "shape": "router",
+    "name": "Branch Office Router",
+    "ip": "10.100.0.1",
+    "role": "Branch",
+    "tags": ["Remote", "SD-WAN"],
+    "notes": ["Site-to-site VPN", "SD-WAN enabled", "MPLS backup"]
+  },
+  "branch-switch": {
+    "shape": "switch",
+    "name": "Branch Switch",
+    "ip": "10.100.0.10",
+    "role": "Branch",
+    "tags": ["Switch", "Remote"],
+    "notes": ["24-port managed", "PoE+", "Local VLAN routing"]
+  },
+  "workstation-vlan": {
+    "shape": "pc",
+    "name": "User Workstations",
+    "ip": "10.2.10.0/24",
+    "role": "Internal",
+    "tags": ["Users", "VLAN10"],
+    "notes": ["250+ endpoints", "802.1X auth", "Windows 11"]
+  },
+  "guest-wifi-controller": {
+    "shape": "router",
+    "name": "WiFi Controller",
+    "ip": "10.10.0.1",
+    "role": "Guest",
+    "tags": ["WiFi", "Controller"],
+    "notes": ["Cisco WLC", "50+ APs", "Captive portal"]
+  },
+  "remote-workers": {
+    "shape": "laptop",
+    "name": "Remote Workers",
+    "ip": "VPN Pool",
+    "role": "Remote",
+    "tags": ["VPN", "Remote"],
+    "notes": ["200+ users", "SSL VPN", "MFA required"]
+  },
+  "mail-server": {
+    "shape": "server",
+    "name": "Mail Server",
+    "ip": "10.2.2.10",
+    "role": "Internal",
+    "tags": ["Email", "Exchange"],
+    "notes": ["Exchange 2019", "500 mailboxes", "Hybrid O365"]
+  }
+}</script>
+
+  <!-- Topology state (will be updated on Save File) -->
+  <script id="topology-state" type="application/json">{
+  "nodeData": {
+    "internet": {
+      "shape": "cloud",
+      "name": "Internet",
+      "ip": "0.0.0.0",
+      "role": "External",
+      "tags": ["External"],
+      "notes": ["Public internet"]
+    },
+    "edge-firewall": {
+      "shape": "firewall",
+      "name": "Edge Firewall",
+      "ip": "203.0.113.1",
+      "role": "Security",
+      "tags": ["Firewall", "Palo Alto", "HA"],
+      "notes": ["PA-5220", "Active-Passive HA", "10Gbps throughput"]
+    },
+    "core-router-1": {
+      "shape": "router",
+      "name": "Core Router 1",
+      "ip": "10.0.0.1",
+      "role": "Core",
+      "tags": ["Router", "Cisco", "BGP"],
+      "notes": ["Cisco Catalyst 9600", "OSPF + BGP", "Redundant PSU"]
+    },
+    "core-router-2": {
+      "shape": "router",
+      "name": "Core Router 2",
+      "ip": "10.0.0.2",
+      "role": "Core",
+      "tags": ["Router", "Cisco", "BGP"],
+      "notes": ["Cisco Catalyst 9600", "OSPF + BGP", "Redundant PSU"]
+    },
+    "core-switch-1": {
+      "shape": "switch",
+      "name": "Core Switch 1",
+      "ip": "10.0.0.10",
+      "role": "Core",
+      "tags": ["Switch", "Cisco", "Stack"],
+      "notes": ["Cisco Catalyst 9500", "VSS", "40Gbps uplinks"]
+    },
+    "core-switch-2": {
+      "shape": "switch",
+      "name": "Core Switch 2",
+      "ip": "10.0.0.11",
+      "role": "Core",
+      "tags": ["Switch", "Cisco", "Stack"],
+      "notes": ["Cisco Catalyst 9500", "VSS", "40Gbps uplinks"]
+    },
+    "load-balancer": {
+      "shape": "server",
+      "name": "Load Balancer",
+      "ip": "10.1.0.10",
+      "role": "DMZ",
+      "tags": ["F5", "HA", "DMZ"],
+      "notes": ["F5 BIG-IP", "SSL offloading", "Active-Standby"]
+    },
+    "web-server-1": {
+      "shape": "server",
+      "name": "Web Server 1",
+      "ip": "10.1.0.20",
+      "role": "DMZ",
+      "tags": ["Web", "Nginx", "DMZ"],
+      "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+    },
+    "web-server-2": {
+      "shape": "server",
+      "name": "Web Server 2",
+      "ip": "10.1.0.21",
+      "role": "DMZ",
+      "tags": ["Web", "Nginx", "DMZ"],
+      "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+    },
+    "web-server-3": {
+      "shape": "server",
+      "name": "Web Server 3",
+      "ip": "10.1.0.22",
+      "role": "DMZ",
+      "tags": ["Web", "Nginx", "DMZ"],
+      "notes": ["Ubuntu 22.04", "Nginx reverse proxy", "SSL certificates"]
+    },
+    "internal-fw": {
+      "shape": "firewall",
+      "name": "Internal Firewall",
+      "ip": "10.2.0.1",
+      "role": "Security",
+      "tags": ["Firewall", "FortiGate"],
+      "notes": ["FortiGate 600E", "IPS enabled", "App control"]
+    },
+    "ad-dc-1": {
+      "shape": "server",
+      "name": "Domain Controller 1",
+      "ip": "10.2.1.10",
+      "role": "Internal",
+      "tags": ["AD", "DNS", "Windows"],
+      "notes": ["Windows Server 2022", "Primary DC", "FSMO roles"]
+    },
+    "ad-dc-2": {
+      "shape": "server",
+      "name": "Domain Controller 2",
+      "ip": "10.2.1.11",
+      "role": "Internal",
+      "tags": ["AD", "DNS", "Windows"],
+      "notes": ["Windows Server 2022", "Secondary DC", "Replica"]
+    },
+    "file-server": {
+      "shape": "database",
+      "name": "File Server",
+      "ip": "10.2.1.20",
+      "role": "Internal",
+      "tags": ["Storage", "SMB", "Windows"],
+      "notes": ["Windows Server 2022", "50TB storage", "DFS replication"]
+    },
+    "db-primary": {
+      "shape": "database",
+      "name": "Database Primary",
+      "ip": "10.3.0.10",
+      "role": "Data Center",
+      "tags": ["Database", "PostgreSQL", "Primary"],
+      "notes": ["PostgreSQL 15", "Primary node", "64GB RAM"]
+    },
+    "db-replica": {
+      "shape": "database",
+      "name": "Database Replica",
+      "ip": "10.3.0.11",
+      "role": "Data Center",
+      "tags": ["Database", "PostgreSQL", "Replica"],
+      "notes": ["PostgreSQL 15", "Read replica", "Streaming replication"]
+    },
+    "app-server-1": {
+      "shape": "server",
+      "name": "App Server 1",
+      "ip": "10.3.0.20",
+      "role": "Data Center",
+      "tags": ["Application", "Java", "Production"],
+      "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+    },
+    "app-server-2": {
+      "shape": "server",
+      "name": "App Server 2",
+      "ip": "10.3.0.21",
+      "role": "Data Center",
+      "tags": ["Application", "Java", "Production"],
+      "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+    },
+    "app-server-3": {
+      "shape": "server",
+      "name": "App Server 3",
+      "ip": "10.3.0.22",
+      "role": "Data Center",
+      "tags": ["Application", "Java", "Production"],
+      "notes": ["RHEL 9", "Tomcat cluster", "32GB RAM"]
+    },
+    "k8s-master-1": {
+      "shape": "server",
+      "name": "K8s Master 1",
+      "ip": "10.3.1.10",
+      "role": "Data Center",
+      "tags": ["Kubernetes", "Master", "Container"],
+      "notes": ["K8s 1.28", "Control plane", "etcd"]
+    },
+    "k8s-master-2": {
+      "shape": "server",
+      "name": "K8s Master 2",
+      "ip": "10.3.1.11",
+      "role": "Data Center",
+      "tags": ["Kubernetes", "Master", "Container"],
+      "notes": ["K8s 1.28", "Control plane", "etcd"]
+    },
+    "k8s-worker-1": {
+      "shape": "server",
+      "name": "K8s Worker 1",
+      "ip": "10.3.1.20",
+      "role": "Data Center",
+      "tags": ["Kubernetes", "Worker", "Container"],
+      "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+    },
+    "k8s-worker-2": {
+      "shape": "server",
+      "name": "K8s Worker 2",
+      "ip": "10.3.1.21",
+      "role": "Data Center",
+      "tags": ["Kubernetes", "Worker", "Container"],
+      "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+    },
+    "k8s-worker-3": {
+      "shape": "server",
+      "name": "K8s Worker 3",
+      "ip": "10.3.1.22",
+      "role": "Data Center",
+      "tags": ["Kubernetes", "Worker", "Container"],
+      "notes": ["64GB RAM", "24 cores", "NVMe storage"]
+    },
+    "backup-server": {
+      "shape": "database",
+      "name": "Backup Server",
+      "ip": "10.4.0.10",
+      "role": "Management",
+      "tags": ["Backup", "Veeam"],
+      "notes": ["Veeam B&R", "100TB capacity", "Offsite replication"]
+    },
+    "monitoring": {
+      "shape": "server",
+      "name": "Monitoring",
+      "ip": "10.4.0.20",
+      "role": "Management",
+      "tags": ["Monitoring", "Grafana", "Prometheus"],
+      "notes": ["Prometheus + Grafana", "500+ endpoints", "Alert manager"]
+    },
+    "vpn-gateway": {
+      "shape": "firewall",
+      "name": "VPN Gateway",
+      "ip": "10.0.1.10",
+      "role": "Security",
+      "tags": ["VPN", "SSL-VPN", "Remote"],
+      "notes": ["Cisco AnyConnect", "MFA enabled", "Split tunnel"]
+    },
+    "san-storage": {
+      "shape": "database",
+      "name": "SAN Storage",
+      "ip": "10.5.0.10",
+      "role": "Storage",
+      "tags": ["SAN", "iSCSI", "FC"],
+      "notes": ["Pure Storage", "200TB usable", "All-flash array"]
+    },
+    "branch-router": {
+      "shape": "router",
+      "name": "Branch Office Router",
+      "ip": "10.100.0.1",
+      "role": "Branch",
+      "tags": ["Remote", "SD-WAN"],
+      "notes": ["Site-to-site VPN", "SD-WAN enabled", "MPLS backup"]
+    },
+    "branch-switch": {
+      "shape": "switch",
+      "name": "Branch Switch",
+      "ip": "10.100.0.10",
+      "role": "Branch",
+      "tags": ["Switch", "Remote"],
+      "notes": ["24-port managed", "PoE+", "Local VLAN routing"]
+    },
+    "workstation-vlan": {
+      "shape": "pc",
+      "name": "User Workstations",
+      "ip": "10.2.10.0/24",
+      "role": "Internal",
+      "tags": ["Users", "VLAN10"],
+      "notes": ["250+ endpoints", "802.1X auth", "Windows 11"]
+    },
+    "guest-wifi-controller": {
+      "shape": "router",
+      "name": "WiFi Controller",
+      "ip": "10.10.0.1",
+      "role": "Guest",
+      "tags": ["WiFi", "Controller"],
+      "notes": ["Cisco WLC", "50+ APs", "Captive portal"]
+    },
+    "remote-workers": {
+      "shape": "laptop",
+      "name": "Remote Workers",
+      "ip": "VPN Pool",
+      "role": "Remote",
+      "tags": ["VPN", "Remote"],
+      "notes": ["200+ users", "SSL VPN", "MFA required"]
+    },
+    "mail-server": {
+      "shape": "server",
+      "name": "Mail Server",
+      "ip": "10.2.2.10",
+      "role": "Internal",
+      "tags": ["Email", "Exchange"],
+      "notes": ["Exchange 2019", "500 mailboxes", "Hybrid O365"]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {"id": "e1", "from": "internet", "to": "edge-firewall", "width": 8, "color": "#ef4444", "direction": "both", "type": "wan", "notes": ["10 Gbps ISP"]},
+      {"id": "e2", "from": "edge-firewall", "to": "core-router-1", "width": 7, "color": "#f97316", "direction": "both", "type": "core", "notes": ["10 Gbps trunk"]},
+      {"id": "e3", "from": "edge-firewall", "to": "core-router-2", "width": 7, "color": "#f97316", "direction": "both", "type": "core", "notes": ["10 Gbps trunk"]},
+      {"id": "e4", "from": "core-router-1", "to": "core-router-2", "width": 6, "color": "#3b82f6", "direction": "both", "type": "core", "notes": ["HSRP/VRRP"]},
+      {"id": "e5", "from": "core-router-1", "to": "core-switch-1", "width": 6, "color": "#3b82f6", "direction": "both", "type": "core", "notes": ["40 Gbps"]},
+      {"id": "e6", "from": "core-router-2", "to": "core-switch-2", "width": 6, "color": "#3b82f6", "direction": "both", "type": "core", "notes": ["40 Gbps"]},
+      {"id": "e7", "from": "core-switch-1", "to": "core-switch-2", "width": 5, "color": "#3b82f6", "direction": "both", "type": "core", "notes": ["VSS link"]},
+      {"id": "e8", "from": "core-router-1", "to": "load-balancer", "width": 5, "color": "#8b5cf6", "direction": "both", "type": "dmz", "notes": ["DMZ VLAN"]},
+      {"id": "e9", "from": "load-balancer", "to": "web-server-1", "width": 4, "color": "#8b5cf6", "direction": "both", "type": "dmz", "notes": []},
+      {"id": "e10", "from": "load-balancer", "to": "web-server-2", "width": 4, "color": "#8b5cf6", "direction": "both", "type": "dmz", "notes": []},
+      {"id": "e11", "from": "load-balancer", "to": "web-server-3", "width": 4, "color": "#8b5cf6", "direction": "both", "type": "dmz", "notes": []},
+      {"id": "e12", "from": "core-switch-1", "to": "internal-fw", "width": 6, "color": "#10b981", "direction": "both", "type": "internal", "notes": ["Internal zone"]},
+      {"id": "e13", "from": "core-switch-2", "to": "internal-fw", "width": 6, "color": "#10b981", "direction": "both", "type": "internal", "notes": ["Internal zone"]},
+      {"id": "e14", "from": "internal-fw", "to": "ad-dc-1", "width": 4, "color": "#10b981", "direction": "both", "type": "internal", "notes": []},
+      {"id": "e15", "from": "internal-fw", "to": "ad-dc-2", "width": 4, "color": "#10b981", "direction": "both", "type": "internal", "notes": []},
+      {"id": "e16", "from": "internal-fw", "to": "file-server", "width": 4, "color": "#10b981", "direction": "both", "type": "internal", "notes": []},
+      {"id": "e17", "from": "internal-fw", "to": "workstation-vlan", "width": 5, "color": "#10b981", "direction": "both", "type": "internal", "notes": ["User VLAN"]},
+      {"id": "e18", "from": "internal-fw", "to": "mail-server", "width": 4, "color": "#10b981", "direction": "both", "type": "internal", "notes": []},
+      {"id": "e19", "from": "core-switch-1", "to": "db-primary", "width": 5, "color": "#06b6d4", "direction": "both", "type": "datacenter", "notes": ["Data Center"]},
+      {"id": "e20", "from": "db-primary", "to": "db-replica", "width": 4, "color": "#14b8a6", "direction": "forward", "type": "replication", "notes": ["DB replication"]},
+      {"id": "e21", "from": "core-switch-1", "to": "app-server-1", "width": 4, "color": "#06b6d4", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e22", "from": "core-switch-1", "to": "app-server-2", "width": 4, "color": "#06b6d4", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e23", "from": "core-switch-1", "to": "app-server-3", "width": 4, "color": "#06b6d4", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e24", "from": "app-server-1", "to": "db-primary", "width": 3, "color": "#64748b", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e25", "from": "app-server-2", "to": "db-primary", "width": 3, "color": "#64748b", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e26", "from": "app-server-3", "to": "db-primary", "width": 3, "color": "#64748b", "direction": "both", "type": "datacenter", "notes": []},
+      {"id": "e27", "from": "core-switch-2", "to": "k8s-master-1", "width": 4, "color": "#ec4899", "direction": "both", "type": "k8s", "notes": ["K8s cluster"]},
+      {"id": "e28", "from": "core-switch-2", "to": "k8s-master-2", "width": 4, "color": "#ec4899", "direction": "both", "type": "k8s", "notes": ["K8s cluster"]},
+      {"id": "e29", "from": "k8s-master-1", "to": "k8s-worker-1", "width": 3, "color": "#ec4899", "direction": "both", "type": "k8s", "notes": []},
+      {"id": "e30", "from": "k8s-master-1", "to": "k8s-worker-2", "width": 3, "color": "#ec4899", "direction": "both", "type": "k8s", "notes": []},
+      {"id": "e31", "from": "k8s-master-2", "to": "k8s-worker-3", "width": 3, "color": "#ec4899", "direction": "both", "type": "k8s", "notes": []},
+      {"id": "e32", "from": "core-switch-2", "to": "backup-server", "width": 4, "color": "#f59e0b", "direction": "both", "type": "mgmt", "notes": ["Mgmt network"]},
+      {"id": "e33", "from": "core-switch-2", "to": "monitoring", "width": 3, "color": "#f59e0b", "direction": "both", "type": "mgmt", "notes": ["Mgmt network"]},
+      {"id": "e34", "from": "core-router-1", "to": "vpn-gateway", "width": 4, "color": "#a855f7", "direction": "both", "type": "vpn", "notes": ["Remote access"]},
+      {"id": "e35", "from": "vpn-gateway", "to": "remote-workers", "width": 3, "color": "#a855f7", "direction": "both", "type": "vpn", "notes": ["SSL VPN"]},
+      {"id": "e36", "from": "core-switch-1", "to": "san-storage", "width": 5, "color": "#0ea5e9", "direction": "both", "type": "storage", "notes": ["Storage network"]},
+      {"id": "e37", "from": "san-storage", "to": "db-primary", "width": 3, "color": "#0ea5e9", "direction": "both", "type": "storage", "notes": ["iSCSI LUNs"]},
+      {"id": "e38", "from": "san-storage", "to": "app-server-1", "width": 2, "color": "#0ea5e9", "direction": "both", "type": "storage", "notes": []},
+      {"id": "e39", "from": "edge-firewall", "to": "branch-router", "width": 4, "color": "#84cc16", "direction": "both", "type": "branch", "notes": ["Site-to-site VPN"]},
+      {"id": "e40", "from": "branch-router", "to": "branch-switch", "width": 3, "color": "#84cc16", "direction": "both", "type": "branch", "notes": []},
+      {"id": "e41", "from": "core-router-2", "to": "guest-wifi-controller", "width": 3, "color": "#fbbf24", "direction": "both", "type": "guest", "notes": ["Guest VLAN"]}
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN / Internet (10 Gbps)",
+    "#f97316": "Core Layer (10-40 Gbps)",
+    "#3b82f6": "Core Switching & HSRP",
+    "#8b5cf6": "DMZ Network",
+    "#10b981": "Internal Corporate Network",
+    "#06b6d4": "Data Center / Application Tier",
+    "#14b8a6": "Database Replication",
+    "#64748b": "App-to-DB Connections",
+    "#ec4899": "Kubernetes Cluster",
+    "#f59e0b": "Management Network",
+    "#a855f7": "VPN / Remote Access",
+    "#0ea5e9": "Storage Area Network (SAN)",
+    "#84cc16": "Branch Office WAN",
+    "#fbbf24": "Guest WiFi Network"
+  },
+  "nodePositions": {
+    "internet": {"x": 600, "y": 80},
+    "edge-firewall": {"x": 600, "y": 250},
+    "core-router-1": {"x": 400, "y": 420},
+    "core-router-2": {"x": 800, "y": 420},
+    "core-switch-1": {"x": 400, "y": 600},
+    "core-switch-2": {"x": 800, "y": 600},
+    "load-balancer": {"x": 200, "y": 500},
+    "web-server-1": {"x": 80, "y": 650},
+    "web-server-2": {"x": 200, "y": 700},
+    "web-server-3": {"x": 320, "y": 650},
+    "internal-fw": {"x": 600, "y": 780},
+    "ad-dc-1": {"x": 500, "y": 950},
+    "ad-dc-2": {"x": 620, "y": 950},
+    "file-server": {"x": 740, "y": 950},
+    "mail-server": {"x": 860, "y": 950},
+    "workstation-vlan": {"x": 980, "y": 950},
+    "db-primary": {"x": 200, "y": 850},
+    "db-replica": {"x": 100, "y": 1000},
+    "app-server-1": {"x": 200, "y": 1050},
+    "app-server-2": {"x": 320, "y": 1050},
+    "app-server-3": {"x": 440, "y": 1050},
+    "k8s-master-1": {"x": 900, "y": 700},
+    "k8s-master-2": {"x": 1020, "y": 700},
+    "k8s-worker-1": {"x": 850, "y": 850},
+    "k8s-worker-2": {"x": 970, "y": 850},
+    "k8s-worker-3": {"x": 1090, "y": 850},
+    "backup-server": {"x": 1050, "y": 600},
+    "monitoring": {"x": 1150, "y": 700},
+    "vpn-gateway": {"x": 350, "y": 250},
+    "remote-workers": {"x": 180, "y": 120},
+    "san-storage": {"x": 100, "y": 750},
+    "branch-router": {"x": 1000, "y": 250},
+    "branch-switch": {"x": 1120, "y": 380},
+    "guest-wifi-controller": {"x": 1050, "y": 480}
+  },
+  "nodeSizes": {
+    "internet": 55,
+    "edge-firewall": 70,
+    "core-router-1": 65,
+    "core-router-2": 65,
+    "core-switch-1": 60,
+    "core-switch-2": 60,
+    "load-balancer": 55,
+    "web-server-1": 45,
+    "web-server-2": 45,
+    "web-server-3": 45,
+    "internal-fw": 60,
+    "ad-dc-1": 50,
+    "ad-dc-2": 50,
+    "file-server": 50,
+    "db-primary": 55,
+    "db-replica": 50,
+    "app-server-1": 45,
+    "app-server-2": 45,
+    "app-server-3": 45,
+    "k8s-master-1": 50,
+    "k8s-master-2": 50,
+    "k8s-worker-1": 45,
+    "k8s-worker-2": 45,
+    "k8s-worker-3": 45,
+    "backup-server": 50,
+    "monitoring": 45,
+    "vpn-gateway": 50,
+    "san-storage": 55,
+    "branch-router": 50,
+    "branch-switch": 45,
+    "workstation-vlan": 50,
+    "guest-wifi-controller": 45,
+    "remote-workers": 45,
+    "mail-server": 45
+  },
+  "nodeStyles": {},
+  "page": {
+    "title": "Corporate Network Infrastructure",
+    "background": "#d4d7dd",
+    "topbarBg": "#1081ea",
+    "topbarBorder": "#010d28",
+    "panel": "#002970",
+    "panelAlt": "#0e1c34",
+    "accent": "#58dfd2",
+    "danger": "#271111",
+    "textMain": "#e2e7ee",
+    "textSoft": "#7c96bb",
+    "topbarHeight": 100,
+    "sidebarWidth": 600,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 1,
+    "panX": 0,
+    "panY": 0
+  }
+}</script>
+
+  <script>
+    /* ==================================================================================
+     * THE ONE FILE
+     * "There can be only one". A all in one file topology maker. 
+     * 
+     * This is your last backup when all others fail. A completely self-contained
+     * network topology visualization tool that works as a single HTML file.
+     * Open it anywhere, anytime and your network lives forever.
+     * ================================================================================== */
+
+    /* -------------------- CORE STATE -------------------- */
+    const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent);
+
+    let NODE_DATA = {}; // Initialize with empty object as safe default
+    let EDGE_DATA = { list: [] };
+    let EDGE_LEGEND = {};
+    let savedPositions = {};
+    let savedSizes = {};
+    let savedStyles = {};
+
+    const DEFAULT_PAGE_STATE = {
+      title: "Network Topology",
+      background: "", // empty = use default gradient
+      topbarBg: "rgba(9, 12, 20, 0.9)",
+      topbarBorder: "#1f2533",
+      panel: "#0b0e13",
+      panelAlt: "#10141b",
+      accent: "#4fd1c5",
+      danger: "#f56565",
+      textMain: "#e2e8f0",
+      textSoft: "#94a3b8",
+      topbarHeight: 52,
+      sidebarWidth: 350,
+      sidebarCollapsed: false
+    };
+
+    let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
+
+    /* -------------------- CANVAS STATE (ZOOM/PAN) -------------------- */
+    const CANVAS_WIDTH = 4000;
+    const CANVAS_HEIGHT = 3000;
+    const CANVAS_PADDING = 100; // Padding to keep nodes within bounds
+    
+    let canvasState = {
+      zoom: 1,
+      panX: 0,
+      panY: 0,
+      minZoom: 0.25,  // Don't zoom out more than 25% (prevents losing nodes)
+      maxZoom: 4,
+      isPanning: false,
+      panStartX: 0,
+      panStartY: 0,
+      spacePressed: false
+    };
+
+    function getViewBox() {
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      return {
+        x: canvasState.panX,
+        y: canvasState.panY,
+        width: viewWidth,
+        height: viewHeight
+      };
+    }
+
+    function updateViewBox() {
+      const svg = document.getElementById("map");
+      const vb = getViewBox();
+      svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
+      
+      // Update zoom level display
+      const zoomLevel = document.getElementById("zoom-level");
+      if (zoomLevel) {
+        zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
+      }
+      
+      // Update minimap viewport
+      updateMinimap();
+    }
+
+    function updateMinimap() {
+      const minimapViewport = document.getElementById("minimap-viewport");
+      const minimapSvg = document.getElementById("minimap");
+      if (!minimapViewport || !minimapSvg) return;
+      
+      const vb = getViewBox();
+      minimapViewport.setAttribute("x", vb.x);
+      minimapViewport.setAttribute("y", vb.y);
+      minimapViewport.setAttribute("width", vb.width);
+      minimapViewport.setAttribute("height", vb.height);
+      
+      // Update minimap nodes
+      const minimapNodes = minimapSvg.querySelectorAll(".minimap-node");
+      minimapNodes.forEach(n => n.remove());
+      const minimapEdges = minimapSvg.querySelectorAll(".minimap-edge");
+      minimapEdges.forEach(e => e.remove());
+      
+      // Draw edges on minimap
+      EDGE_DATA.list.forEach(edge => {
+        if (edge.type === "custom") return;
+        const p1 = savedPositions[edge.from];
+        const p2 = savedPositions[edge.to];
+        if (!p1 || !p2) return;
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", p1.x);
+        line.setAttribute("y1", p1.y);
+        line.setAttribute("x2", p2.x);
+        line.setAttribute("y2", p2.y);
+        line.classList.add("minimap-edge");
+        minimapSvg.insertBefore(line, minimapViewport);
+      });
+      
+      // Draw nodes on minimap
+      Object.entries(savedPositions).forEach(([id, pos]) => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", 40);
+        circle.classList.add("minimap-node");
+        minimapSvg.insertBefore(circle, minimapViewport);
+      });
+    }
+
+    function zoomTo(newZoom, centerX, centerY) {
+      const oldZoom = canvasState.zoom;
+      newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom));
+      
+      if (centerX !== undefined && centerY !== undefined) {
+        // Zoom towards the specified point
+        const oldWidth = CANVAS_WIDTH / oldZoom;
+        const oldHeight = CANVAS_HEIGHT / oldZoom;
+        const newWidth = CANVAS_WIDTH / newZoom;
+        const newHeight = CANVAS_HEIGHT / newZoom;
+        
+        // Calculate the point in canvas coordinates
+        const pointX = canvasState.panX + (centerX * oldWidth);
+        const pointY = canvasState.panY + (centerY * oldHeight);
+        
+        // Adjust pan to keep that point in the same screen position
+        canvasState.panX = pointX - (centerX * newWidth);
+        canvasState.panY = pointY - (centerY * newHeight);
+      }
+      
+      canvasState.zoom = newZoom;
+      constrainPan();
+      updateViewBox();
+    }
+
+    function constrainPan() {
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      
+      // Keep at least some of the canvas visible
+      const minVisiblePortion = 0.1;
+      const maxPanX = CANVAS_WIDTH - viewWidth * minVisiblePortion;
+      const maxPanY = CANVAS_HEIGHT - viewHeight * minVisiblePortion;
+      const minPanX = -viewWidth * (1 - minVisiblePortion);
+      const minPanY = -viewHeight * (1 - minVisiblePortion);
+      
+      canvasState.panX = Math.max(minPanX, Math.min(maxPanX, canvasState.panX));
+      canvasState.panY = Math.max(minPanY, Math.min(maxPanY, canvasState.panY));
+    }
+
+    function fitToContent() {
+      // Find bounding box of all nodes
+      const positions = Object.values(savedPositions);
+      if (positions.length === 0) {
+        resetView();
+        return;
+      }
+      
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      positions.forEach(pos => {
+        minX = Math.min(minX, pos.x - 100);
+        minY = Math.min(minY, pos.y - 100);
+        maxX = Math.max(maxX, pos.x + 100);
+        maxY = Math.max(maxY, pos.y + 100);
+      });
+      
+      const contentWidth = maxX - minX + 200;
+      const contentHeight = maxY - minY + 200;
+      
+      const viewport = document.getElementById("canvas-viewport");
+      const vpRect = viewport.getBoundingClientRect();
+      const aspectRatio = vpRect.width / vpRect.height;
+      const contentAspect = contentWidth / contentHeight;
+      
+      let newZoom;
+      if (contentAspect > aspectRatio) {
+        newZoom = (vpRect.width / contentWidth) * (CANVAS_WIDTH / vpRect.width);
+      } else {
+        newZoom = (vpRect.height / contentHeight) * (CANVAS_HEIGHT / vpRect.height);
+      }
+      
+      newZoom = Math.max(canvasState.minZoom, Math.min(2, newZoom));
+      
+      const viewWidth = CANVAS_WIDTH / newZoom;
+      const viewHeight = CANVAS_HEIGHT / newZoom;
+      
+      canvasState.zoom = newZoom;
+      canvasState.panX = minX - 100 - (viewWidth - contentWidth) / 2;
+      canvasState.panY = minY - 100 - (viewHeight - contentHeight) / 2;
+      
+      constrainPan();
+      updateViewBox();
+    }
+
+    function resetView() {
+      canvasState.zoom = 1;
+      canvasState.panX = 0;
+      canvasState.panY = 0;
+      updateViewBox();
+    }
+
+    /* Apply the current theme settings to the DOM */
+    function wieldThePower() {
+      const root = document.documentElement;
+
+      root.style.setProperty("--panel", PAGE_STATE.panel);
+      root.style.setProperty("--panel-alt", PAGE_STATE.panelAlt);
+      root.style.setProperty("--accent", PAGE_STATE.accent);
+      root.style.setProperty("--danger", PAGE_STATE.danger);
+      root.style.setProperty("--text-main", PAGE_STATE.textMain);
+      root.style.setProperty("--text-soft", PAGE_STATE.textSoft);
+      root.style.setProperty("--topbar-bg", PAGE_STATE.topbarBg);
+      root.style.setProperty("--topbar-border", PAGE_STATE.topbarBorder);
+
+      // Layout settings
+      const topbarHeight = PAGE_STATE.topbarHeight || 52;
+      const sidebarWidth = PAGE_STATE.sidebarWidth || 350;
+      root.style.setProperty("--topbar-height", topbarHeight + "px");
+      root.style.setProperty("--sidebar-width", sidebarWidth + "px");
+
+      // Update layout inputs if they exist
+      const topbarHeightInput = document.getElementById("topbar-height");
+      const topbarHeightVal = document.getElementById("topbar-height-val");
+      const sidebarWidthInput = document.getElementById("sidebar-width");
+      const sidebarWidthVal = document.getElementById("sidebar-width-val");
+      
+      if (topbarHeightInput) topbarHeightInput.value = topbarHeight;
+      if (topbarHeightVal) topbarHeightVal.textContent = topbarHeight + "px";
+      if (sidebarWidthInput) sidebarWidthInput.value = sidebarWidth;
+      if (sidebarWidthVal) sidebarWidthVal.textContent = sidebarWidth + "px";
+
+      // Apply sidebar collapsed state
+      const mainEl = document.querySelector("main");
+      const detailsPanel = document.getElementById("details-panel");
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+      
+      if (PAGE_STATE.sidebarCollapsed) {
+        if (mainEl) mainEl.classList.add("sidebar-collapsed");
+        if (detailsPanel) detailsPanel.classList.add("collapsed");
+        if (sidebarToggle) {
+          sidebarToggle.classList.add("collapsed");
+          sidebarToggle.textContent = "▶";
+        }
+      } else {
+        if (mainEl) mainEl.classList.remove("sidebar-collapsed");
+        if (detailsPanel) detailsPanel.classList.remove("collapsed");
+        if (sidebarToggle) {
+          sidebarToggle.classList.remove("collapsed");
+          sidebarToggle.textContent = "◀";
+        }
+      }
+
+      if (PAGE_STATE.background) {
+        document.body.style.background = PAGE_STATE.background;
+      } else {
+        document.body.style.background = "radial-gradient(circle at top, #1e2532 0, #050608 70%)";
+      }
+
+      document.title = PAGE_STATE.title || DEFAULT_PAGE_STATE.title;
+      const titleEl = document.getElementById("page-title");
+      if (titleEl) {
+        titleEl.textContent = PAGE_STATE.title || DEFAULT_PAGE_STATE.title;
+      }
+    }
+
+    /* Initialize state from embedded JSON data */
+    (async function awakeTheImmortal() {
+      let initialState = {};
+      const stateEl = document.getElementById("topology-state");
+      if (stateEl && stateEl.textContent.trim()) {
+        try {
+          let stateText = stateEl.textContent.trim();
+          
+          // Check if data is encrypted
+          if (isEncrypted(stateText)) {
+            let decrypted = false;
+            let attempts = 0;
+            const maxAttempts = 3;
+            
+            while (!decrypted && attempts < maxAttempts) {
+              const password = prompt('This file is encrypted. Enter password to decrypt:\n(Attempt ' + (attempts + 1) + ' of ' + maxAttempts + ')');
+              
+              if (!password) {
+                alert('Decryption cancelled. File will load with default data.');
+                break;
+              }
+              
+              try {
+                stateText = await decryptData(stateText, password);
+                decrypted = true;
+              } catch (e) {
+                attempts++;
+                if (attempts < maxAttempts) {
+                  alert('Incorrect password. Please try again.');
+                } else {
+                  alert('Maximum attempts reached. File will load with default data.');
+                }
+              }
+            }
+            
+            if (!decrypted) {
+              stateText = '{}';
+            }
+          }
+          
+          initialState = JSON.parse(stateText);
+        } catch (e) {
+          console.error('Failed to load state:', e);
+          initialState = {};
+        }
+      }
+
+      // Only use BASE_NODE_DATA if initialState is completely empty
+      NODE_DATA = initialState.nodeData ? initialState.nodeData : BASE_NODE_DATA;
+
+      EDGE_DATA = initialState.edgeData ? initialState.edgeData : {
+        list: [
+          { id: "host-diesel", from: "host", to: "diesel", width: 4, color: "#475569", type: "main", notes: [] },
+          { id: "host-percy", from: "host", to: "percy", width: 4, color: "#475569", type: "main", notes: [] },
+          { id: "host-gordon", from: "host", to: "gordon", width: 4, color: "#475569", type: "main", notes: [] },
+          { id: "host-henry", from: "host", to: "henry", width: 4, color: "#475569", type: "main", notes: [] },
+          { id: "henry-pbs-remote", from: "henry", to: "pbs-remote", width: 5, color: "#f56565", type: "backup", notes: [] }
+        ]
+      };
+
+      EDGE_LEGEND = initialState.edgeLegend || {};
+      savedPositions = initialState.nodePositions || {};
+      savedSizes = initialState.nodeSizes || {};
+      savedStyles = initialState.nodeStyles || {};
+
+      if (initialState.page) {
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, initialState.page);
+      }
+
+      // Restore canvas state if saved
+      if (initialState.canvas) {
+        canvasState.zoom = initialState.canvas.zoom || 1;
+        canvasState.panX = initialState.canvas.panX || 0;
+        canvasState.panY = initialState.canvas.panY || 0;
+      }
+
+      wieldThePower();
+      
+      // Initialize the graph after data is loaded
+      forgeTheTopology();
+      updateViewBox();
+      
+      // Select first node if available
+      const initialNodes = Object.keys(NODE_DATA);
+      if (initialNodes.length > 0) {
+        claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0]);
+      } else {
+        document.getElementById("node-panel").style.display = "none";
+        document.getElementById("topology-toolbar").style.display = "none";
+      }
+    })();
+
+    function saveEdgeData() {
+      // in-memory only; persisted when user clicks Save File
+    }
+
+    function saveEdgeLegend() {
+      // in-memory only; persisted when user clicks Save File
+    }
+
+    /* -------------------- BREAKPOINT + STYLE HELPERS -------------------- */
+    function getBreakpointKey() {
+      const w = window.innerWidth;
+      if (w <= 380) return "fold";
+      if (w <= 768) return "mobile";
+      if (w <= 1024) return "tablet";
+      return "desktop";
+    }
+
+    function resolveStylesEntry(styleEntry) {
+      if (!styleEntry) return {};
+
+      if (
+        styleEntry.circleColor ||
+        styleEntry.titleColor ||
+        styleEntry.titleFont ||
+        styleEntry.titleSize ||
+        styleEntry.subColor ||
+        styleEntry.subFont ||
+        styleEntry.subSize
+      ) {
+        return styleEntry;
+      }
+
+      const bp = getBreakpointKey();
+      const base = styleEntry.all || {};
+      const bpStyles = styleEntry[bp] || {};
+      return Object.assign({}, base, bpStyles);
+    }
+
+    function resolveStylesForNode(id) {
+      const styleEntry = savedStyles[id];
+      if (!styleEntry) return {};
+      return resolveStylesEntry(styleEntry);
+    }
+
+    function ensureStyleEntry(id) {
+      if (!savedStyles[id]) savedStyles[id] = {};
+      const entry = savedStyles[id];
+      const flatProps = [
+        "circleColor","titleColor","titleFont","titleSize",
+        "subColor","subFont","subSize"
+      ];
+      const isFlat = flatProps.some(p => Object.prototype.hasOwnProperty.call(entry, p));
+      if (isFlat) {
+        const all = entry.all || {};
+        flatProps.forEach(p => {
+          if (entry[p] !== undefined) {
+            all[p] = entry[p];
+            delete entry[p];
+          }
+        });
+        entry.all = all;
+      }
+      return entry;
+    }
+
+    /* -------------------- SIZE HELPER -------------------- */
+    function getDefaultSize() {
+      if (window.innerWidth <= 380) return 120;
+      if (window.innerWidth <= 768) return 140;
+      if (window.innerWidth <= 1024) return 70;
+      return 55;
+    }
+
+    /* -------------------- SHAPE HELPERS -------------------- */
+    function createShapeElement(shape, size) {
+      const ns = "http://www.w3.org/2000/svg";
+
+      if (shape === "circle") {
+        const c = document.createElementNS(ns, "circle");
+        c.setAttribute("r", size);
+        return c;
+      }
+
+      if (shape === "square") {
+        const r = document.createElementNS(ns, "rect");
+        const s = size * 2;
+        r.setAttribute("x", -size);
+        r.setAttribute("y", -size);
+        r.setAttribute("width", s);
+        r.setAttribute("height", s);
+        r.setAttribute("rx", 4);
+        return r;
+      }
+
+      if (shape === "rectangle") {
+        const r = document.createElementNS(ns, "rect");
+        r.setAttribute("x", -size * 1.4);
+        r.setAttribute("y", -size * 0.8);
+        r.setAttribute("width", size * 2.8);
+        r.setAttribute("height", size * 1.6);
+        r.setAttribute("rx", 6);
+        return r;
+      }
+
+      if (shape === "triangle") {
+        const p = document.createElementNS(ns, "polygon");
+        const h = size * 1.8;
+        const w = size * 2;
+        p.setAttribute("points", `0,${-h} ${w/2},${h/2} ${-w/2},${h/2}`);
+        return p;
+      }
+
+      if (shape === "hexagon") {
+        const p = document.createElementNS(ns, "polygon");
+        const s = size;
+        const pts = [
+          [0, -s],
+          [s * 0.86, -s * 0.5],
+          [s * 0.86, s * 0.5],
+          [0, s],
+          [-s * 0.86, s * 0.5],
+          [-s * 0.86, -s * 0.5]
+        ].map(pt => pt.join(",")).join(" ");
+        p.setAttribute("points", pts);
+        return p;
+      }
+
+      if (shape === "stop-sign") {
+        const p = document.createElementNS(ns, "polygon");
+        const r = size;
+        const ptsArr = [];
+        for (let i = 0; i < 8; i++) {
+          const a = (Math.PI / 4) * i + Math.PI / 8;
+          ptsArr.push([Math.cos(a) * r, Math.sin(a) * r]);
+        }
+        const pts = ptsArr.map(pt => pt.join(",")).join(" ");
+        p.setAttribute("points", pts);
+        return p;
+      }
+
+      if (shape === "star") {
+        const p = document.createElementNS(ns, "polygon");
+        const outer = size;
+        const inner = size * 0.45;
+        let pts = "";
+        for (let i = 0; i < 10; i++) {
+          const a = (Math.PI / 5) * i - Math.PI / 2;
+          const r = i % 2 === 0 ? outer : inner;
+          pts += `${Math.cos(a) * r},${Math.sin(a) * r} `;
+        }
+        p.setAttribute("points", pts.trim());
+        return p;
+      }
+
+      if (shape === "diamond") {
+        const p = document.createElementNS(ns, "polygon");
+        const s = size;
+        p.setAttribute("points", `0,${-s} ${s},0 0,${s} ${-s},0`);
+        return p;
+      }
+
+      // ---- NETWORK EQUIPMENT SHAPES ----
+
+      if (shape === "server") {
+        // Rack server : horizontal rectangle with drive bays
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 1.2);
+        body.setAttribute("y", -size * 0.6);
+        body.setAttribute("width", size * 2.4);
+        body.setAttribute("height", size * 1.2);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        // Drive bay lines
+        for (let i = 0; i < 3; i++) {
+          const line = document.createElementNS(ns, "line");
+          line.setAttribute("x1", -size * 0.9 + i * size * 0.5);
+          line.setAttribute("y1", -size * 0.3);
+          line.setAttribute("x2", -size * 0.9 + i * size * 0.5);
+          line.setAttribute("y2", size * 0.3);
+          line.style.stroke = "currentColor";
+          line.style.strokeWidth = "2";
+          line.style.opacity = "0.5";
+          g.appendChild(line);
+        }
+        // LED indicator
+        const led = document.createElementNS(ns, "circle");
+        led.setAttribute("cx", size * 0.9);
+        led.setAttribute("cy", 0);
+        led.setAttribute("r", size * 0.1);
+        led.style.fill = "#4ade80";
+        g.appendChild(led);
+        return g;
+      }
+
+      if (shape === "pc" || shape === "desktop") {
+        // Monitor with stand
+        const g = document.createElementNS(ns, "g");
+        // Monitor
+        const monitor = document.createElementNS(ns, "rect");
+        monitor.setAttribute("x", -size * 0.9);
+        monitor.setAttribute("y", -size * 0.8);
+        monitor.setAttribute("width", size * 1.8);
+        monitor.setAttribute("height", size * 1.2);
+        monitor.setAttribute("rx", 4);
+        g.appendChild(monitor);
+        // Screen
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size * 0.75);
+        screen.setAttribute("y", -size * 0.65);
+        screen.setAttribute("width", size * 1.5);
+        screen.setAttribute("height", size * 0.9);
+        screen.setAttribute("rx", 2);
+        screen.style.fill = "#1e293b";
+        g.appendChild(screen);
+        // Stand neck
+        const neck = document.createElementNS(ns, "rect");
+        neck.setAttribute("x", -size * 0.15);
+        neck.setAttribute("y", size * 0.4);
+        neck.setAttribute("width", size * 0.3);
+        neck.setAttribute("height", size * 0.3);
+        g.appendChild(neck);
+        // Stand base
+        const base = document.createElementNS(ns, "rect");
+        base.setAttribute("x", -size * 0.5);
+        base.setAttribute("y", size * 0.7);
+        base.setAttribute("width", size * 1);
+        base.setAttribute("height", size * 0.15);
+        base.setAttribute("rx", 2);
+        g.appendChild(base);
+        return g;
+      }
+
+      if (shape === "laptop") {
+        const g = document.createElementNS(ns, "g");
+        // Screen (angled)
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size * 0.8);
+        screen.setAttribute("y", -size * 0.9);
+        screen.setAttribute("width", size * 1.6);
+        screen.setAttribute("height", size * 1.1);
+        screen.setAttribute("rx", 4);
+        g.appendChild(screen);
+        // Keyboard/base
+        const base = document.createElementNS(ns, "rect");
+        base.setAttribute("x", -size * 0.9);
+        base.setAttribute("y", size * 0.25);
+        base.setAttribute("width", size * 1.8);
+        base.setAttribute("height", size * 0.6);
+        base.setAttribute("rx", 4);
+        g.appendChild(base);
+        // Touchpad
+        const pad = document.createElementNS(ns, "rect");
+        pad.setAttribute("x", -size * 0.25);
+        pad.setAttribute("y", size * 0.45);
+        pad.setAttribute("width", size * 0.5);
+        pad.setAttribute("height", size * 0.25);
+        pad.setAttribute("rx", 2);
+        pad.style.fill = "#1e293b";
+        g.appendChild(pad);
+        return g;
+      }
+
+      if (shape === "phone" || shape === "mobile") {
+        const g = document.createElementNS(ns, "g");
+        // Phone body
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.45);
+        body.setAttribute("y", -size);
+        body.setAttribute("width", size * 0.9);
+        body.setAttribute("height", size * 2);
+        body.setAttribute("rx", 8);
+        g.appendChild(body);
+        // Screen
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size * 0.38);
+        screen.setAttribute("y", -size * 0.85);
+        screen.setAttribute("width", size * 0.76);
+        screen.setAttribute("height", size * 1.6);
+        screen.setAttribute("rx", 4);
+        screen.style.fill = "#1e293b";
+        g.appendChild(screen);
+        // Home button / notch
+        const btn = document.createElementNS(ns, "rect");
+        btn.setAttribute("x", -size * 0.15);
+        btn.setAttribute("y", size * 0.82);
+        btn.setAttribute("width", size * 0.3);
+        btn.setAttribute("height", size * 0.06);
+        btn.setAttribute("rx", 2);
+        btn.style.fill = "#475569";
+        g.appendChild(btn);
+        return g;
+      }
+
+      if (shape === "router") {
+        const g = document.createElementNS(ns, "g");
+        // Router body
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 1.1);
+        body.setAttribute("y", -size * 0.3);
+        body.setAttribute("width", size * 2.2);
+        body.setAttribute("height", size * 0.8);
+        body.setAttribute("rx", 6);
+        g.appendChild(body);
+        // Antennas
+        for (let i = -1; i <= 1; i++) {
+          const ant = document.createElementNS(ns, "rect");
+          ant.setAttribute("x", i * size * 0.6 - size * 0.05);
+          ant.setAttribute("y", -size * 0.9);
+          ant.setAttribute("width", size * 0.1);
+          ant.setAttribute("height", size * 0.6);
+          ant.setAttribute("rx", 2);
+          g.appendChild(ant);
+          // Antenna tip
+          const tip = document.createElementNS(ns, "circle");
+          tip.setAttribute("cx", i * size * 0.6);
+          tip.setAttribute("cy", -size * 0.95);
+          tip.setAttribute("r", size * 0.08);
+          g.appendChild(tip);
+        }
+        // LEDs
+        for (let i = 0; i < 4; i++) {
+          const led = document.createElementNS(ns, "circle");
+          led.setAttribute("cx", -size * 0.7 + i * size * 0.35);
+          led.setAttribute("cy", size * 0.1);
+          led.setAttribute("r", size * 0.06);
+          led.style.fill = i < 2 ? "#4ade80" : "#facc15";
+          g.appendChild(led);
+        }
+        return g;
+      }
+
+      if (shape === "switch") {
+        const g = document.createElementNS(ns, "g");
+        // Switch body (wide rectangle)
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 1.4);
+        body.setAttribute("y", -size * 0.4);
+        body.setAttribute("width", size * 2.8);
+        body.setAttribute("height", size * 0.8);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        // Ports
+        for (let i = 0; i < 8; i++) {
+          const port = document.createElementNS(ns, "rect");
+          port.setAttribute("x", -size * 1.2 + i * size * 0.32);
+          port.setAttribute("y", -size * 0.15);
+          port.setAttribute("width", size * 0.22);
+          port.setAttribute("height", size * 0.3);
+          port.setAttribute("rx", 1);
+          port.style.fill = "#1e293b";
+          g.appendChild(port);
+        }
+        return g;
+      }
+
+      if (shape === "firewall") {
+        const g = document.createElementNS(ns, "g");
+        // Wall shape with bricks
+        const wall = document.createElementNS(ns, "rect");
+        wall.setAttribute("x", -size);
+        wall.setAttribute("y", -size * 0.8);
+        wall.setAttribute("width", size * 2);
+        wall.setAttribute("height", size * 1.6);
+        wall.setAttribute("rx", 4);
+        g.appendChild(wall);
+        // Brick pattern : horizontal lines
+        for (let row = 0; row < 3; row++) {
+          const line = document.createElementNS(ns, "line");
+          line.setAttribute("x1", -size * 0.85);
+          line.setAttribute("y1", -size * 0.5 + row * size * 0.45);
+          line.setAttribute("x2", size * 0.85);
+          line.setAttribute("y2", -size * 0.5 + row * size * 0.45);
+          line.style.stroke = "#475569";
+          line.style.strokeWidth = "2";
+          g.appendChild(line);
+        }
+        // Vertical brick lines (staggered)
+        for (let row = 0; row < 4; row++) {
+          const offset = row % 2 === 0 ? 0 : size * 0.35;
+          for (let col = 0; col < 3; col++) {
+            const line = document.createElementNS(ns, "line");
+            const x = -size * 0.5 + col * size * 0.7 + offset;
+            if (x > -size * 0.85 && x < size * 0.85) {
+              line.setAttribute("x1", x);
+              line.setAttribute("y1", -size * 0.8 + row * size * 0.45);
+              line.setAttribute("x2", x);
+              line.setAttribute("y2", -size * 0.8 + row * size * 0.45 + size * 0.45);
+              line.style.stroke = "#475569";
+              line.style.strokeWidth = "2";
+              g.appendChild(line);
+            }
+          }
+        }
+        return g;
+      }
+
+      if (shape === "cloud") {
+        const p = document.createElementNS(ns, "path");
+        const s = size;
+        // Cloud shape path
+        p.setAttribute("d", `
+          M ${-s*0.8} ${s*0.2}
+          Q ${-s*1.1} ${s*0.2} ${-s*1.1} ${-s*0.1}
+          Q ${-s*1.1} ${-s*0.5} ${-s*0.7} ${-s*0.5}
+          Q ${-s*0.7} ${-s*0.9} ${-s*0.2} ${-s*0.9}
+          Q ${s*0.1} ${-s*1.1} ${s*0.5} ${-s*0.8}
+          Q ${s*1} ${-s*0.8} ${s*1.1} ${-s*0.3}
+          Q ${s*1.3} ${-s*0.1} ${s*1.1} ${s*0.2}
+          Q ${s*1.1} ${s*0.5} ${s*0.7} ${s*0.5}
+          L ${-s*0.5} ${s*0.5}
+          Q ${-s*0.9} ${s*0.5} ${-s*0.9} ${s*0.2}
+          Z
+        `);
+        return p;
+      }
+
+      if (shape === "database") {
+        const g = document.createElementNS(ns, "g");
+        // Cylinder body
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.7);
+        body.setAttribute("y", -size * 0.6);
+        body.setAttribute("width", size * 1.4);
+        body.setAttribute("height", size * 1.4);
+        g.appendChild(body);
+        // Top ellipse
+        const top = document.createElementNS(ns, "ellipse");
+        top.setAttribute("cx", 0);
+        top.setAttribute("cy", -size * 0.6);
+        top.setAttribute("rx", size * 0.7);
+        top.setAttribute("ry", size * 0.25);
+        g.appendChild(top);
+        // Bottom ellipse
+        const bottom = document.createElementNS(ns, "ellipse");
+        bottom.setAttribute("cx", 0);
+        bottom.setAttribute("cy", size * 0.8);
+        bottom.setAttribute("rx", size * 0.7);
+        bottom.setAttribute("ry", size * 0.25);
+        g.appendChild(bottom);
+        // Middle lines for 3D effect
+        const mid1 = document.createElementNS(ns, "ellipse");
+        mid1.setAttribute("cx", 0);
+        mid1.setAttribute("cy", -size * 0.15);
+        mid1.setAttribute("rx", size * 0.7);
+        mid1.setAttribute("ry", size * 0.2);
+        mid1.style.fill = "none";
+        mid1.style.stroke = "#475569";
+        mid1.style.strokeWidth = "2";
+        g.appendChild(mid1);
+        const mid2 = document.createElementNS(ns, "ellipse");
+        mid2.setAttribute("cx", 0);
+        mid2.setAttribute("cy", size * 0.35);
+        mid2.setAttribute("rx", size * 0.7);
+        mid2.setAttribute("ry", size * 0.2);
+        mid2.style.fill = "none";
+        mid2.style.stroke = "#475569";
+        mid2.style.strokeWidth = "2";
+        g.appendChild(mid2);
+        return g;
+      }
+
+      if (shape === "printer") {
+        const g = document.createElementNS(ns, "g");
+        // Main body
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size);
+        body.setAttribute("y", -size * 0.4);
+        body.setAttribute("width", size * 2);
+        body.setAttribute("height", size * 0.9);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        // Paper input tray (top)
+        const trayTop = document.createElementNS(ns, "rect");
+        trayTop.setAttribute("x", -size * 0.7);
+        trayTop.setAttribute("y", -size * 0.8);
+        trayTop.setAttribute("width", size * 1.4);
+        trayTop.setAttribute("height", size * 0.4);
+        trayTop.setAttribute("rx", 2);
+        trayTop.style.fill = "#1e293b";
+        g.appendChild(trayTop);
+        // Paper output (bottom)
+        const trayOut = document.createElementNS(ns, "rect");
+        trayOut.setAttribute("x", -size * 0.6);
+        trayOut.setAttribute("y", size * 0.5);
+        trayOut.setAttribute("width", size * 1.2);
+        trayOut.setAttribute("height", size * 0.35);
+        trayOut.setAttribute("rx", 2);
+        g.appendChild(trayOut);
+        // Paper
+        const paper = document.createElementNS(ns, "rect");
+        paper.setAttribute("x", -size * 0.5);
+        paper.setAttribute("y", size * 0.3);
+        paper.setAttribute("width", size * 1);
+        paper.setAttribute("height", size * 0.5);
+        paper.style.fill = "#e2e8f0";
+        g.appendChild(paper);
+        return g;
+      }
+
+      const c = document.createElementNS(ns, "circle");
+      c.setAttribute("r", size);
+      return c;
+    }
+
+    function createNodeShape(id, size) {
+      const shapeType = (NODE_DATA[id] && NODE_DATA[id].shape) || "circle";
+      const shapeEl = createShapeElement(shapeType, size);
+      shapeEl.classList.add("node-circle");
+      const styles = resolveStylesForNode(id);
+      if (styles.circleColor) {
+        shapeEl.style.stroke = styles.circleColor;
+      }
+      return shapeEl;
+    }
+
+    /* -------------------- CURRENT SELECTION -------------------- */
+    let currentNodeId = "host";
+    let currentEdgeId = null;
+    let currentStyleScope = "all";
+
+    /* -------------------- LEGEND -------------------- */
+    /* Rebuild the connection type legend display */
+    function forgeTheLegend() {
+      const container = document.getElementById("edge-legend");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const title = document.createElement("div");
+      title.className = "legend-title";
+      title.textContent = "Line Legend";
+      container.appendChild(title);
+
+      const colors = [...new Set(EDGE_DATA.list.map(e => e.color).filter(Boolean))];
+      if (colors.length === 0) {
+        container.style.display = "none";
+        return;
+      }
+
+      colors.forEach(color => {
+        if (!EDGE_LEGEND[color]) {
+          EDGE_LEGEND[color] = "you can edit me too";
+        }
+
+        const item = document.createElement("div");
+        item.className = "legend-item";
+
+        const swatch = document.createElement("span");
+        swatch.className = "legend-swatch";
+        swatch.style.backgroundColor = color;
+
+        const label = document.createElement("span");
+        label.className = "legend-label";
+        label.textContent = EDGE_LEGEND[color];
+        label.contentEditable = true;
+
+        label.addEventListener("focus", () => {
+          label.classList.add("editing");
+        });
+
+        label.addEventListener("blur", () => {
+          label.classList.remove("editing");
+          const text = label.textContent.trim() || "you can edit me too";
+          EDGE_LEGEND[color] = text;
+          saveEdgeLegend();
+        });
+
+        item.append(swatch, label);
+        container.appendChild(item);
+      });
+
+      container.style.display = "flex";
+    }
+
+    /* -------------------- BUILD GRAPH -------------------- */
+    /* Main rendering function : builds the complete SVG topology visualization */
+    function forgeTheTopology() {
+      // Safety check: ensure NODE_DATA is initialized
+      if (!NODE_DATA || !EDGE_DATA) {
+        console.warn('forgeTheTopology called before data initialized');
+        return;
+      }
+      
+      const svg = document.getElementById("map");
+      svg.innerHTML = "";
+
+      const ns = "http://www.w3.org/2000/svg";
+
+      // Draw canvas boundary rectangle
+      const boundary = document.createElementNS(ns, "rect");
+      boundary.setAttribute("x", CANVAS_PADDING);
+      boundary.setAttribute("y", CANVAS_PADDING);
+      boundary.setAttribute("width", CANVAS_WIDTH - CANVAS_PADDING * 2);
+      boundary.setAttribute("height", CANVAS_HEIGHT - CANVAS_PADDING * 2);
+      boundary.setAttribute("fill", "none");
+      boundary.setAttribute("stroke", "rgba(71, 85, 105, 0.3)");
+      boundary.setAttribute("stroke-width", "2");
+      boundary.setAttribute("stroke-dasharray", "10 5");
+      boundary.setAttribute("rx", "8");
+      svg.appendChild(boundary);
+
+      // Canvas center for default positioning
+      const centerX = CANVAS_WIDTH / 2;
+      const centerY = CANVAS_HEIGHT / 2;
+
+      // Build positions dynamically from all nodes
+      let positions = {};
+
+      // For every node in NODE_DATA, assign either its saved position or a default center position
+      Object.keys(NODE_DATA).forEach(id => {
+        positions[id] = savedPositions[id] || { x: centerX, y: centerY };
+      });
+
+      // Only adjust for screen size if no saved positions
+      if (Object.keys(savedPositions).length === 0) {
+        // Position nodes in a nice layout centered on the canvas
+        const nodeIds = Object.keys(NODE_DATA);
+        const baseY = centerY - 300;
+        
+        if (nodeIds.length > 0) {
+          // First node at top center
+          positions[nodeIds[0]] = { x: centerX, y: baseY };
+          
+          // Arrange remaining nodes in a circle/arc below
+          const remaining = nodeIds.slice(1);
+          const radius = 350;
+          const startAngle = Math.PI * 0.3;
+          const endAngle = Math.PI * 0.7;
+          
+          remaining.forEach((id, i) => {
+            const angle = startAngle + (endAngle - startAngle) * (i / Math.max(1, remaining.length - 1));
+            positions[id] = {
+              x: centerX + Math.cos(angle) * radius * (i % 2 === 0 ? 1 : 1.3),
+              y: baseY + 200 + Math.sin(angle) * radius * 0.8 + (i * 80)
+            };
+          });
+        }
+      }
+
+      // Ensure all positions are synced to savedPositions for drag consistency
+      // Also constrain any out of bounds positions
+      Object.keys(positions).forEach(id => {
+        let pos = savedPositions[id] || positions[id];
+        const nodeSize = savedSizes[id] || 55;
+        
+        // Constrain to canvas bounds
+        pos.x = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, pos.x));
+        pos.y = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, pos.y));
+        
+        positions[id] = { x: pos.x, y: pos.y };
+        savedPositions[id] = { x: pos.x, y: pos.y };
+      });
+
+      // Count edges between each pair of nodes to handle overlaps
+      const edgePairCount = {};
+      const edgePairIndex = {};
+      EDGE_DATA.list.forEach(edge => {
+        if (edge.type === "custom") return;
+        // Create a consistent key regardless of direction
+        const key = [edge.from, edge.to].sort().join("||");
+        edgePairCount[key] = (edgePairCount[key] || 0) + 1;
+      });
+
+      // Track current index for each pair
+      EDGE_DATA.list.forEach(edge => {
+        if (edge.type === "custom") return;
+        const key = [edge.from, edge.to].sort().join("||");
+        if (!edgePairIndex[key]) edgePairIndex[key] = 0;
+        edge._pairIndex = edgePairIndex[key];
+        edge._pairTotal = edgePairCount[key];
+        edgePairIndex[key]++;
+      });
+
+      // Draw edges (lines + custom polylines)
+      EDGE_DATA.list.forEach(edge => {
+        // Custom polyline edge
+        if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
+          const poly = document.createElementNS(ns, "polyline");
+          poly.classList.add("edge");
+          poly.dataset.edgeId = edge.id;
+          poly.style.stroke = edge.color || "#475569";
+          poly.style.strokeWidth = edge.width || 4;
+          poly.setAttribute("fill", "none");
+          const ptsStr = edge.points.map(p => `${p.x},${p.y}`).join(" ");
+          poly.setAttribute("points", ptsStr);
+
+          poly.addEventListener("click", (e) => {
+            e.stopPropagation();
+            selectTheConnection(edge.id);
+          });
+
+          svg.appendChild(poly);
+          return;
+        }
+
+        // Standard line between two nodes
+        const p1 = positions[edge.from];
+        const p2 = positions[edge.to];
+        if (!p1 || !p2) return;
+
+        const pairTotal = edge._pairTotal || 1;
+        const pairIndex = edge._pairIndex || 0;
+
+        // Calculate curve offset (0 for single edges, spread for multiples)
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+        
+        // Perpendicular vector for curve offset
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        const perpX = -dy / len;
+        const perpY = dx / len;
+        
+        // Offset amount based on index (0 for single, spread evenly for multiples)
+        let offsetAmount = 0;
+        if (pairTotal > 1) {
+          offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+        }
+        const ctrlX = midX + perpX * offsetAmount;
+        const ctrlY = midY + perpY * offsetAmount;
+
+        // Always use path for consistency (straight line when offset is 0)
+        const path = document.createElementNS(ns, "path");
+        path.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
+        path.setAttribute("fill", "none");
+        path.classList.add("edge");
+        if (edge.type === "backup") path.classList.add("backup");
+        path.dataset.edgeId = edge.id;
+        path.dataset.from = edge.from;
+        path.dataset.to = edge.to;
+        path.style.stroke = edge.color;
+        path.style.strokeWidth = edge.width;
+
+        path.addEventListener("click", (e) => {
+          e.stopPropagation();
+          selectTheConnection(edge.id);
+        });
+
+        svg.appendChild(path);
+      });
+
+      // Draw nodes
+      Object.entries(positions).forEach(([id,pos]) => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg","g");
+        g.classList.add("node-group");
+        g.dataset.nodeId = id;
+        g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
+
+        let r = savedSizes[id] || 55;
+        if (!savedSizes[id]) {
+          if (window.innerWidth <= 380) r = 120;
+          else if (window.innerWidth <= 768) r = 140;
+          else if (window.innerWidth <= 1024) r = 70;
+        }
+
+        const styles = resolveStylesForNode(id);
+        const shapeEl = createNodeShape(id, r);
+
+        // Text offsets
+        const titleOffsetX = styles.titleOffsetX || 0;
+        const titleOffsetY = styles.titleOffsetY || 0;
+        const subOffsetX = styles.subOffsetX || 0;
+        const subOffsetY = styles.subOffsetY || 0;
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+        label.classList.add("node-label");
+        label.setAttribute("x", titleOffsetX);
+        label.setAttribute("y", -r*0.28 + titleOffsetY);
+        const labelFontSize = (styles.titleSize || (r * 0.33));
+        label.style.fontSize = labelFontSize + "px";
+        label.textContent = NODE_DATA[id].name;
+        if (styles.titleColor) label.style.fill = styles.titleColor;
+        if (styles.titleFont) label.style.fontFamily = styles.titleFont;
+        label.style.cursor = "pointer";
+        label.addEventListener("click", (e) => {
+          e.stopPropagation();
+          editNodeName(id);
+        });
+
+        const sub = document.createElementNS("http://www.w3.org/2000/svg","text");
+        sub.classList.add("node-sub");
+        sub.setAttribute("x", subOffsetX);
+        sub.setAttribute("y", r*0.4 + subOffsetY);
+        const subFontSize = (styles.subSize || (r * 0.24));
+        sub.style.fontSize = subFontSize + "px";
+        sub.textContent = NODE_DATA[id].ip;
+        if (styles.subColor) sub.style.fill = styles.subColor;
+        if (styles.subFont) sub.style.fontFamily = styles.subFont;
+        sub.style.cursor = "pointer";
+        sub.addEventListener("click", (e) => {
+          e.stopPropagation();
+          editNodeIp(id);
+        });
+
+        g.append(shapeEl,label,sub);
+
+        // Dragging
+        let isDragging = false;
+        let startX, startY;
+
+        g.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          isDragging = true;
+
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          pt.x = e.clientX;
+          pt.y = e.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          startX = svgP.x - pos.x;
+          startY = svgP.y - pos.y;
+          g.style.cursor = "grabbing";
+          e.stopPropagation();
+        });
+
+        const handleMouseMove = (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          pt.x = e.clientX;
+          pt.y = e.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          
+          // Calculate new position
+          let newX = svgP.x - startX;
+          let newY = svgP.y - startY;
+          
+          // Constrain to canvas bounds with padding
+          const nodeSize = savedSizes[id] || 55;
+          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
+          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
+          
+          pos.x = newX;
+          pos.y = newY;
+          g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
+          
+          // Update both local positions and savedPositions for curve calculations
+          positions[id] = { x: pos.x, y: pos.y };
+          savedPositions[id] = { x: pos.x, y: pos.y };
+          
+          // Update minimap
+          updateMinimap();
+          
+          // Update all edges connected to this node
+          document.querySelectorAll(".edge").forEach(edgeEl => {
+            const fromId = edgeEl.dataset.from;
+            const toId = edgeEl.dataset.to;
+            
+            if (fromId === id || toId === id) {
+              // Get positions : prefer savedPositions, fall back to default
+              const p1 = savedPositions[fromId] || positions[fromId] || { x: 600, y: 350 };
+              const p2 = savedPositions[toId] || positions[toId] || { x: 600, y: 350 };
+              
+              // Check if this is a line or path
+              if (edgeEl.tagName === "line") {
+                edgeEl.setAttribute("x1", p1.x);
+                edgeEl.setAttribute("y1", p1.y);
+                edgeEl.setAttribute("x2", p2.x);
+                edgeEl.setAttribute("y2", p2.y);
+              } else if (edgeEl.tagName === "path") {
+                // Recalculate curve for path
+                const edgeId = edgeEl.dataset.edgeId;
+                const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+                if (edge) {
+                  const pairTotal = edge._pairTotal || 1;
+                  const pairIndex = edge._pairIndex || 0;
+                  
+                  const midX = (p1.x + p2.x) / 2;
+                  const midY = (p1.y + p2.y) / 2;
+                  const dx = p2.x - p1.x;
+                  const dy = p2.y - p1.y;
+                  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                  const perpX = -dy / len;
+                  const perpY = dx / len;
+                  
+                  let offsetAmount = 0;
+                  if (pairTotal > 1) {
+                    offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+                  }
+                  const ctrlX = midX + perpX * offsetAmount;
+                  const ctrlY = midY + perpY * offsetAmount;
+                  edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
+                }
+              }
+            }
+          });
+        };
+
+        const handleMouseUp = () => {
+          if (isDragging) {
+            isDragging = false;
+            g.style.cursor = "grab";
+            savedPositions[id] = {x: pos.x, y: pos.y};
+          }
+        };
+
+        document.addEventListener("mousemove", handleMouseMove);
+        document.addEventListener("mouseup", handleMouseUp);
+
+        // Touch support for mobile devices
+        g.addEventListener("touchstart", (e) => {
+          e.preventDefault();
+          isDragging = true;
+
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          const touch = e.touches[0];
+          pt.x = touch.clientX;
+          pt.y = touch.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          startX = svgP.x - pos.x;
+          startY = svgP.y - pos.y;
+          e.stopPropagation();
+        });
+
+        const handleTouchMove = (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+          const svgEl = document.getElementById("map");
+          const pt = svgEl.createSVGPoint();
+          const touch = e.touches[0];
+          pt.x = touch.clientX;
+          pt.y = touch.clientY;
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+          
+          // Calculate new position
+          let newX = svgP.x - startX;
+          let newY = svgP.y - startY;
+          
+          // Constrain to canvas bounds with padding
+          const nodeSize = savedSizes[id] || 55;
+          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
+          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
+          
+          pos.x = newX;
+          pos.y = newY;
+          g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
+          
+          // Update both local positions and savedPositions for curve calculations
+          positions[id] = { x: pos.x, y: pos.y };
+          savedPositions[id] = { x: pos.x, y: pos.y };
+          
+          // Update minimap
+          updateMinimap();
+          
+          // Update all edges connected to this node
+          document.querySelectorAll(".edge").forEach(edgeEl => {
+            const fromId = edgeEl.dataset.from;
+            const toId = edgeEl.dataset.to;
+            
+            if (fromId === id || toId === id) {
+              // Get positions : prefer savedPositions, fall back to default
+              const p1 = savedPositions[fromId] || positions[fromId] || { x: 600, y: 350 };
+              const p2 = savedPositions[toId] || positions[toId] || { x: 600, y: 350 };
+              
+              // Check if this is a line or path
+              if (edgeEl.tagName === "line") {
+                edgeEl.setAttribute("x1", p1.x);
+                edgeEl.setAttribute("y1", p1.y);
+                edgeEl.setAttribute("x2", p2.x);
+                edgeEl.setAttribute("y2", p2.y);
+              } else if (edgeEl.tagName === "path") {
+                // Recalculate curve for path
+                const edgeId = edgeEl.dataset.edgeId;
+                const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+                if (edge) {
+                  const pairTotal = edge._pairTotal || 1;
+                  const pairIndex = edge._pairIndex || 0;
+                  
+                  const midX = (p1.x + p2.x) / 2;
+                  const midY = (p1.y + p2.y) / 2;
+                  const dx = p2.x - p1.x;
+                  const dy = p2.y - p1.y;
+                  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                  const perpX = -dy / len;
+                  const perpY = dx / len;
+                  
+                  let offsetAmount = 0;
+                  if (pairTotal > 1) {
+                    offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+                  }
+                  const ctrlX = midX + perpX * offsetAmount;
+                  const ctrlY = midY + perpY * offsetAmount;
+                  edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
+                }
+              }
+            }
+          });
+        };
+
+        const handleTouchEnd = () => {
+          if (isDragging) {
+            isDragging = false;
+            savedPositions[id] = {x: pos.x, y: pos.y};
+          }
+        };
+
+        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchend", handleTouchEnd);
+
+        g.style.cursor = "grab";
+
+        g.addEventListener("click",(e) => {
+          if (!isDragging) {
+            claimTheImmortal(id);
+          }
+        });
+
+        svg.appendChild(g);
+      });
+
+      forgeTheLegend();
+      updateMinimap();
+    }
+
+    /* -------------------- MODALS -------------------- */
+    function showEditModal(title, currentValue, onSave) {
+      const modal = document.getElementById("edit-modal");
+      const input = document.getElementById("modal-input");
+      const titleEl = document.getElementById("modal-title");
+      const saveBtn = document.getElementById("modal-save");
+      const cancelBtn = document.getElementById("modal-cancel");
+
+      titleEl.textContent = title;
+      input.value = currentValue;
+      modal.classList.add("active");
+      input.focus();
+      input.select();
+
+      const handleSave = () => {
+        if (input.value.trim()) {
+          onSave(input.value.trim());
+        }
+        modal.classList.remove("active");
+        saveBtn.removeEventListener("click", handleSave);
+        cancelBtn.removeEventListener("click", handleCancel);
+        input.removeEventListener("keypress", handleEnter);
+      };
+
+      const handleCancel = () => {
+        modal.classList.remove("active");
+        saveBtn.removeEventListener("click", handleSave);
+        cancelBtn.removeEventListener("click", handleCancel);
+        input.removeEventListener("keypress", handleEnter);
+      };
+
+      const handleEnter = (e) => {
+        if (e.key === "Enter") handleSave();
+      };
+
+      saveBtn.addEventListener("click", handleSave);
+      cancelBtn.addEventListener("click", handleCancel);
+      input.addEventListener("keypress", handleEnter);
+
+      modal.addEventListener("click", function bgHandler(e) {
+        if (e.target === modal) {
+          handleCancel();
+          modal.removeEventListener("click", bgHandler);
+        }
+      });
+    }
+
+    /* Show a confirmation dialog for destructive actions */
+    function challengeTheImmortal(message, onConfirm) {
+      const modal = document.getElementById("confirm-modal");
+      const messageEl = document.getElementById("confirm-message");
+      const deleteBtn = document.getElementById("confirm-delete");
+      const cancelBtn = document.getElementById("confirm-cancel");
+
+      messageEl.textContent = message;
+      modal.classList.add("active");
+
+      const handleConfirm = () => {
+        onConfirm();
+        modal.classList.remove("active");
+        deleteBtn.removeEventListener("click", handleConfirm);
+        cancelBtn.removeEventListener("click", handleCancel);
+      };
+
+      const handleCancel = () => {
+        modal.classList.remove("active");
+        deleteBtn.removeEventListener("click", handleConfirm);
+        cancelBtn.removeEventListener("click", handleCancel);
+      };
+
+      deleteBtn.addEventListener("click", handleConfirm);
+      cancelBtn.addEventListener("click", handleCancel);
+
+      modal.addEventListener("click", function bgHandler(e) {
+        if (e.target === modal) {
+          handleCancel();
+          modal.removeEventListener("click", bgHandler);
+        }
+      });
+    }
+
+    /* -------------------- EDIT PAGE TITLE -------------------- */
+    const pageTitleEl = document.getElementById("page-title");
+    if (pageTitleEl) {
+      pageTitleEl.addEventListener("click", () => {
+        showEditModal("Edit Title", PAGE_STATE.title || DEFAULT_PAGE_STATE.title, (newTitle) => {
+          PAGE_STATE.title = newTitle;
+          wieldThePower();
+        });
+      });
+    }
+
+    /* -------------------- SELECT NODE -------------------- */
+    function editNodeName(id) {
+      showEditModal("Edit Name", NODE_DATA[id].name, (newName) => {
+        NODE_DATA[id].name = newName;
+        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`);
+        if (nodeGroup) {
+          const label = nodeGroup.querySelector(".node-label");
+          if (label) label.textContent = newName;
+        }
+        if (currentNodeId === id) {
+          document.getElementById("node-name").textContent = newName;
+        }
+      });
+    }
+
+    function editNodeIp(id) {
+      showEditModal("Edit IP/Subtitle", NODE_DATA[id].ip, (newIp) => {
+        NODE_DATA[id].ip = newIp;
+        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`);
+        if (nodeGroup) {
+          const sub = nodeGroup.querySelector(".node-sub");
+          if (sub) sub.textContent = newIp;
+        }
+        if (currentNodeId === id) {
+          document.getElementById("node-ip").textContent = newIp;
+        }
+      });
+    }
+
+    /* Select a node and show its details in the sidebar */
+    function claimTheImmortal(id) {
+      currentNodeId = id;
+      currentEdgeId = null;
+      const data = NODE_DATA[id];
+
+      document.querySelectorAll(".node-group").forEach(n => {
+        n.classList.toggle("active", n.dataset.nodeId === id);
+      });
+
+      document.querySelectorAll(".edge").forEach(e => {
+        const active = e.dataset.from === id || e.dataset.to === id;
+        e.classList.toggle("active", active);
+      });
+
+      document.getElementById("node-panel").style.display = "block";
+      document.getElementById("edge-panel").style.display = "none";
+
+      const toolbar = document.getElementById("topology-toolbar");
+      toolbar.style.display = "flex";
+
+      document.getElementById("node-name").textContent = data.name;
+      document.getElementById("node-ip").textContent = data.ip;
+      document.getElementById("node-role").textContent = data.role;
+
+      document.getElementById("node-name").onclick = () => editNodeName(id);
+      document.getElementById("node-ip").onclick = () => editNodeIp(id);
+
+      const currentSize = savedSizes[id] || getDefaultSize();
+      document.getElementById("size-slider").value = currentSize;
+      document.getElementById("size-value").textContent = currentSize;
+
+      const styleEntry = savedStyles[id] || {};
+      const resolvedStyles = resolveStylesEntry(styleEntry);
+      const scopeKey = currentStyleScope || "all";
+      const flatProps = ["circleColor","titleColor","titleFont","titleSize","subColor","subFont","subSize"];
+      const isFlat = flatProps.some(p => Object.prototype.hasOwnProperty.call(styleEntry, p));
+      const scopedStyles = isFlat ? styleEntry : (styleEntry[scopeKey] || {});
+
+      const circleColorInput = document.getElementById("circle-color");
+      const titleColorInput = document.getElementById("title-color");
+      const titleFontSelect = document.getElementById("title-font");
+      const titleSizeInput = document.getElementById("title-size");
+      const subColorInput = document.getElementById("sub-color");
+      const subFontSelect = document.getElementById("sub-font");
+      const subSizeInput = document.getElementById("sub-size");
+      const shapeSelect = document.getElementById("shape-select");
+      const scopeSelect = document.getElementById("style-scope");
+
+      circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || "#1e293b";
+      titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || "#e2e8f0";
+      titleFontSelect.value = scopedStyles.titleFont || resolvedStyles.titleFont || "system-ui, sans-serif";
+      titleSizeInput.value = scopedStyles.titleSize || resolvedStyles.titleSize || 18;
+      subColorInput.value = scopedStyles.subColor || resolvedStyles.subColor || "#94a3b8";
+      subFontSelect.value = scopedStyles.subFont || resolvedStyles.subFont || "system-ui, sans-serif";
+      subSizeInput.value = scopedStyles.subSize || resolvedStyles.subSize || 13;
+      shapeSelect.value = data.shape || "circle";
+      scopeSelect.value = currentStyleScope || "all";
+
+      // Populate text offset values
+      document.getElementById("title-offset-y").value = scopedStyles.titleOffsetY || resolvedStyles.titleOffsetY || 0;
+      document.getElementById("title-offset-x").value = scopedStyles.titleOffsetX || resolvedStyles.titleOffsetX || 0;
+      document.getElementById("sub-offset-y").value = scopedStyles.subOffsetY || resolvedStyles.subOffsetY || 0;
+      document.getElementById("sub-offset-x").value = scopedStyles.subOffsetX || resolvedStyles.subOffsetX || 0;
+
+      const tagEl = document.getElementById("node-tags");
+      tagEl.innerHTML = "";
+      data.tags.forEach((tag, i) => {
+        const b = document.createElement("span");
+        b.className = "badge";
+        if (tag.toLowerCase().includes("wg")) b.classList.add("wg");
+        b.style.cursor = "pointer";
+        b.style.position = "relative";
+        
+        const tagText = document.createElement("span");
+        tagText.textContent = tag;
+        tagText.addEventListener("click", (e) => {
+          e.stopPropagation();
+          showEditModal("Edit Tag", tag, (newTag) => {
+            if (newTag) {
+              data.tags[i] = newTag;
+              claimTheImmortal(id);
+            }
+          });
+        });
+        
+        const deleteTag = document.createElement("span");
+        deleteTag.textContent = " ✕";
+        deleteTag.style.opacity = "0.6";
+        deleteTag.style.marginLeft = "4px";
+        deleteTag.style.fontSize = "10px";
+        deleteTag.addEventListener("click", (e) => {
+          e.stopPropagation();
+          data.tags.splice(i, 1);
+          claimTheImmortal(id);
+        });
+        
+        b.append(tagText, deleteTag);
+        tagEl.append(b);
+      });
+      
+      // Add tag button
+      const addTagBtn = document.createElement("span");
+      addTagBtn.className = "badge";
+      addTagBtn.style.cursor = "pointer";
+      addTagBtn.style.opacity = "0.6";
+      addTagBtn.style.borderStyle = "dashed";
+      addTagBtn.textContent = "+ Add";
+      addTagBtn.addEventListener("click", () => {
+        showEditModal("Add Tag(s) : comma separated", "", (newTagStr) => {
+          if (newTagStr) {
+            // Support comma-separated tags
+            const newTags = newTagStr.split(",").map(t => t.trim()).filter(t => t);
+            newTags.forEach(t => data.tags.push(t));
+            claimTheImmortal(id);
+          }
+        });
+      });
+      tagEl.append(addTagBtn);
+
+      const notesEl = document.getElementById("node-notes");
+      notesEl.innerHTML = "";
+      data.notes.forEach((note, i) => {
+        const li = document.createElement("li");
+        const noteText = document.createElement("span");
+        noteText.textContent = note;
+        noteText.style.flex = "1";
+
+        const deleteBtn = document.createElement("span");
+        deleteBtn.className = "delete-note";
+        deleteBtn.textContent = "✕";
+        deleteBtn.addEventListener("click",(e) => {
+          e.stopPropagation();
+          challengeTheImmortal("Are you sure you want to delete this note?", () => {
+            data.notes.splice(i,1);
+            claimTheImmortal(id);
+          });
+        });
+
+        li.append(noteText, deleteBtn);
+
+        noteText.addEventListener("dblclick",() => {
+          noteText.classList.add("editing");
+          noteText.contentEditable = true;
+          noteText.focus();
+        });
+
+        noteText.addEventListener("blur",() => {
+          noteText.classList.remove("editing");
+          noteText.contentEditable = false;
+          data.notes[i] = noteText.textContent;
+        });
+
+        notesEl.append(li);
+      });
+
+      // Populate Add Line dropdown with other nodes
+      const addLineSelect = document.getElementById("add-line-select");
+      addLineSelect.innerHTML = "";
+      Object.entries(NODE_DATA).forEach(([nodeId,node]) => {
+        if (nodeId !== id) {
+          const opt = document.createElement("option");
+          opt.value = nodeId;
+          opt.textContent = node.name;
+          addLineSelect.appendChild(opt);
+        }
+      });
+    }
+
+    /* -------------------- SELECT EDGE -------------------- */
+    /* Select an edge and show its details in the sidebar */
+    function selectTheConnection(id) {
+      currentEdgeId = id;
+
+      document.getElementById("node-panel").style.display = "none";
+      document.getElementById("edge-panel").style.display = "block";
+      document.getElementById("topology-toolbar").style.display = "none";
+
+      document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+      document.querySelectorAll(".edge").forEach(e => {
+        e.classList.toggle("active", e.dataset.edgeId === id);
+      });
+
+      const edge = EDGE_DATA.list.find(e => e.id === id);
+      if (!edge) return;
+
+      // Direction symbol for title
+      const directionSymbols = {
+        "none": "⇄",
+        "forward": "→",
+        "backward": "←",
+        "both": "↔"
+      };
+      const dirSymbol = directionSymbols[edge.direction] || "⇄";
+
+      let titleText = "Custom line";
+      if (edge.from || edge.to) {
+        const fromName = edge.from ? (NODE_DATA[edge.from]?.name || edge.from) : "";
+        const toName = edge.to ? (NODE_DATA[edge.to]?.name || edge.to) : "";
+        titleText = `${fromName || "?"} ${dirSymbol} ${toName || "?"}`;
+      }
+
+      document.getElementById("edge-title").textContent = titleText;
+
+      const widthInput = document.getElementById("edge-width");
+      const colorInput = document.getElementById("edge-color");
+      const directionSelect = document.getElementById("edge-direction");
+      widthInput.value = edge.width;
+      colorInput.value = edge.color;
+      directionSelect.value = edge.direction || "none";
+
+      const list = document.getElementById("edge-notes");
+      list.innerHTML = "";
+
+      edge.notes.forEach((note,i) => {
+        const li = document.createElement("li");
+        const txt = document.createElement("span");
+        txt.textContent = note;
+        txt.style.flex = "1";
+
+        const del = document.createElement("span");
+        del.className = "delete-note";
+        del.textContent = "✕";
+        del.addEventListener("click",(e) => {
+          e.stopPropagation();
+          challengeTheImmortal("Delete this line note?", () => {
+            edge.notes.splice(i,1);
+            saveEdgeData();
+            selectTheConnection(id);
+          });
+        });
+
+        txt.addEventListener("dblclick", () => {
+          txt.classList.add("editing");
+          txt.contentEditable = true;
+          txt.focus();
+        });
+
+        txt.addEventListener("blur", () => {
+          txt.classList.remove("editing");
+          txt.contentEditable = false;
+          edge.notes[i] = txt.textContent;
+          saveEdgeData();
+        });
+
+        li.append(txt, del);
+        list.appendChild(li);
+      });
+    }
+
+    /* -------------------- INIT -------------------- */
+    // Initialization now happens inside awakeTheImmortal() after data is loaded
+
+    // Rebuild graph on window resize
+    window.addEventListener("resize", () => {
+      forgeTheTopology();
+      if (currentEdgeId) {
+        selectTheConnection(currentEdgeId);
+      } else if (currentNodeId && NODE_DATA[currentNodeId]) {
+        claimTheImmortal(currentNodeId);
+      } else {
+        const availableNodes = Object.keys(NODE_DATA);
+        if (availableNodes.length > 0) {
+          claimTheImmortal(availableNodes[0]);
+        }
+      }
+    });
+
+    /* -------------------- ZOOM/PAN CONTROLS -------------------- */
+    (function initZoomPan() {
+      const viewport = document.getElementById("canvas-viewport");
+      const svg = document.getElementById("map");
+      const hint = document.getElementById("canvas-hint");
+      
+      // Show hint briefly on load
+      setTimeout(() => {
+        hint.classList.add("visible");
+        setTimeout(() => hint.classList.remove("visible"), 4000);
+      }, 1000);
+
+      // Zoom with mouse wheel
+      viewport.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = (e.clientX - rect.left) / rect.width;
+        const mouseY = (e.clientY - rect.top) / rect.height;
+        
+        const delta = e.deltaY > 0 ? 0.9 : 1.1;
+        zoomTo(canvasState.zoom * delta, mouseX, mouseY);
+      }, { passive: false });
+
+      // Pinch-to-zoom support for mobile
+      let initialPinchDistance = 0;
+      let initialPinchZoom = 1;
+      let pinchCenter = { x: 0.5, y: 0.5 };
+
+      viewport.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          initialPinchDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          initialPinchZoom = canvasState.zoom;
+          
+          // Calculate center point of pinch
+          const rect = viewport.getBoundingClientRect();
+          const centerX = (touch1.clientX + touch2.clientX) / 2;
+          const centerY = (touch1.clientY + touch2.clientY) / 2;
+          pinchCenter.x = (centerX - rect.left) / rect.width;
+          pinchCenter.y = (centerY - rect.top) / rect.height;
+        }
+      });
+
+      viewport.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const touch1 = e.touches[0];
+          const touch2 = e.touches[1];
+          const currentDistance = Math.hypot(
+            touch2.clientX - touch1.clientX,
+            touch2.clientY - touch1.clientY
+          );
+          
+          if (initialPinchDistance > 0) {
+            const scale = currentDistance / initialPinchDistance;
+            const newZoom = initialPinchZoom * scale;
+            zoomTo(newZoom, pinchCenter.x, pinchCenter.y);
+          }
+        }
+      }, { passive: false });
+
+      // Pan with mouse drag on empty space or with space key held
+      let panStartViewX = 0;
+      let panStartViewY = 0;
+
+      viewport.addEventListener("mousedown", (e) => {
+        // Check if clicking on empty space or space is held
+        const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+        
+        if (isEmptySpace || canvasState.spacePressed) {
+          e.preventDefault();
+          canvasState.isPanning = true;
+          canvasState.panStartX = e.clientX;
+          canvasState.panStartY = e.clientY;
+          panStartViewX = canvasState.panX;
+          panStartViewY = canvasState.panY;
+          viewport.classList.add("panning");
+        }
+      });
+
+      // Touch support for viewport panning
+      viewport.addEventListener("touchstart", (e) => {
+        // Check if touching empty space
+        const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+        
+        if (isEmptySpace && e.touches.length === 1) {
+          e.preventDefault();
+          canvasState.isPanning = true;
+          canvasState.panStartX = e.touches[0].clientX;
+          canvasState.panStartY = e.touches[0].clientY;
+          panStartViewX = canvasState.panX;
+          panStartViewY = canvasState.panY;
+          viewport.classList.add("panning");
+        }
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!canvasState.isPanning) return;
+        
+        const dx = e.clientX - canvasState.panStartX;
+        const dy = e.clientY - canvasState.panStartY;
+        
+        const rect = viewport.getBoundingClientRect();
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        // Convert screen pixels to canvas units
+        const canvasDx = (dx / rect.width) * viewWidth;
+        const canvasDy = (dy / rect.height) * viewHeight;
+        
+        canvasState.panX = panStartViewX - canvasDx;
+        canvasState.panY = panStartViewY - canvasDy;
+        
+        constrainPan();
+        updateViewBox();
+      });
+
+      // Touch support for panning movement
+      document.addEventListener("touchmove", (e) => {
+        if (!canvasState.isPanning || !e.touches[0]) return;
+        
+        const dx = e.touches[0].clientX - canvasState.panStartX;
+        const dy = e.touches[0].clientY - canvasState.panStartY;
+        
+        const rect = viewport.getBoundingClientRect();
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        // Convert screen pixels to canvas units
+        const canvasDx = (dx / rect.width) * viewWidth;
+        const canvasDy = (dy / rect.height) * viewHeight;
+        
+        canvasState.panX = panStartViewX - canvasDx;
+        canvasState.panY = panStartViewY - canvasDy;
+        
+        constrainPan();
+        updateViewBox();
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (canvasState.isPanning) {
+          canvasState.isPanning = false;
+          viewport.classList.remove("panning");
+        }
+      });
+
+      // Touch support for pan end
+      document.addEventListener("touchend", () => {
+        if (canvasState.isPanning) {
+          canvasState.isPanning = false;
+          viewport.classList.remove("panning");
+        }
+      });
+
+      // Space key for pan mode
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && !e.repeat && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+          e.preventDefault();
+          canvasState.spacePressed = true;
+          viewport.style.cursor = "grab";
+        }
+      });
+
+      document.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+          canvasState.spacePressed = false;
+          viewport.style.cursor = "";
+        }
+      });
+
+      // Zoom buttons
+      document.getElementById("zoom-in-btn").addEventListener("click", () => {
+        zoomTo(canvasState.zoom * 1.25, 0.5, 0.5);
+      });
+
+      document.getElementById("zoom-out-btn").addEventListener("click", () => {
+        zoomTo(canvasState.zoom * 0.8, 0.5, 0.5);
+      });
+
+      document.getElementById("zoom-fit-btn").addEventListener("click", fitToContent);
+      document.getElementById("zoom-reset-btn").addEventListener("click", resetView);
+
+      // Minimap interaction
+      const minimapContainer = document.getElementById("minimap-container");
+      const minimapSvg = document.getElementById("minimap");
+      let minimapDragging = false;
+
+      minimapContainer.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        minimapDragging = true;
+        updatePanFromMinimap(e);
+      });
+
+      // Touch support for minimap
+      minimapContainer.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        minimapDragging = true;
+        updatePanFromMinimapTouch(e);
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (minimapDragging) {
+          updatePanFromMinimap(e);
+        }
+      });
+
+      // Touch support for minimap movement
+      document.addEventListener("touchmove", (e) => {
+        if (minimapDragging && e.touches[0]) {
+          updatePanFromMinimapTouch(e);
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        minimapDragging = false;
+      });
+
+      // Touch support for minimap end
+      document.addEventListener("touchend", () => {
+        minimapDragging = false;
+      });
+
+      function updatePanFromMinimap(e) {
+        const rect = minimapContainer.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        canvasState.panX = x * CANVAS_WIDTH - viewWidth / 2;
+        canvasState.panY = y * CANVAS_HEIGHT - viewHeight / 2;
+        
+        constrainPan();
+        updateViewBox();
+      }
+
+      function updatePanFromMinimapTouch(e) {
+        const rect = minimapContainer.getBoundingClientRect();
+        const touch = e.touches[0];
+        const x = (touch.clientX - rect.left) / rect.width;
+        const y = (touch.clientY - rect.top) / rect.height;
+        
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        canvasState.panX = x * CANVAS_WIDTH - viewWidth / 2;
+        canvasState.panY = y * CANVAS_HEIGHT - viewHeight / 2;
+        
+        constrainPan();
+        updateViewBox();
+      }
+
+      // Keyboard shortcuts for zoom
+      document.addEventListener("keydown", (e) => {
+        if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") return;
+        
+        if ((e.key === "+" || e.key === "=") && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          zoomTo(canvasState.zoom * 1.25, 0.5, 0.5);
+        } else if (e.key === "-" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          zoomTo(canvasState.zoom * 0.8, 0.5, 0.5);
+        } else if (e.key === "0" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          resetView();
+        }
+      });
+
+      // Initial fit to content
+      setTimeout(() => {
+        fitToContent();
+      }, 100);
+    })();
+
+    /* -------------------- SIZE CONTROLS -------------------- */
+    const sizeSlider = document.getElementById("size-slider");
+    const sizeValue = document.getElementById("size-value");
+    const resetSizeBtn = document.getElementById("reset-size");
+
+    sizeSlider.addEventListener("input", () => {
+      const newSize = parseInt(sizeSlider.value, 10);
+      sizeValue.textContent = newSize;
+      savedSizes[currentNodeId] = newSize;
+
+      const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+      if (nodeGroup) {
+        const oldShape = nodeGroup.querySelector(".node-circle");
+        if (oldShape) oldShape.remove();
+
+        const shapeType = (NODE_DATA[currentNodeId] && NODE_DATA[currentNodeId].shape) || "circle";
+        const newShape = createShapeElement(shapeType, newSize);
+        newShape.classList.add("node-circle");
+        const styles = resolveStylesForNode(currentNodeId);
+        if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+        nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
+
+        const label = nodeGroup.querySelector(".node-label");
+        const sub = nodeGroup.querySelector(".node-sub");
+        if (label) {
+          label.setAttribute("y", -newSize * 0.28);
+          const labelSize = (styles.titleSize || (newSize * 0.33));
+          label.style.fontSize = labelSize + "px";
+        }
+        if (sub) {
+          sub.setAttribute("y", newSize * 0.4);
+          const subSize = (styles.subSize || (newSize * 0.24));
+          sub.style.fontSize = subSize + "px";
+        }
+      }
+    });
+
+    resetSizeBtn.addEventListener("click", () => {
+      delete savedSizes[currentNodeId];
+
+      const defaultSize = getDefaultSize();
+      sizeSlider.value = defaultSize;
+      sizeValue.textContent = defaultSize;
+
+      const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+      if (nodeGroup) {
+        const oldShape = nodeGroup.querySelector(".node-circle");
+        if (oldShape) oldShape.remove();
+
+        const shapeType = (NODE_DATA[currentNodeId] && NODE_DATA[currentNodeId].shape) || "circle";
+        const newShape = createNodeShape(currentNodeId, defaultSize);
+        nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
+
+        const styles = resolveStylesForNode(currentNodeId);
+        if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+
+        const label = nodeGroup.querySelector(".node-label");
+        const sub = nodeGroup.querySelector(".node-sub");
+        if (label) {
+          label.setAttribute("y", -defaultSize * 0.28);
+          const labelSize = (styles.titleSize || (defaultSize * 0.33));
+          label.style.fontSize = labelSize + "px";
+        }
+        if (sub) {
+          sub.setAttribute("y", defaultSize * 0.4);
+          const subSize = (styles.subSize || (defaultSize * 0.24));
+          sub.style.fontSize = subSize + "px";
+        }
+      }
+    });
+
+    /* -------------------- STYLE CONTROLS -------------------- */
+    const applyStyle = (property, value) => {
+      const styleEntry = ensureStyleEntry(currentNodeId);
+      const scopeKey = currentStyleScope || "all";
+      if (!styleEntry[scopeKey]) styleEntry[scopeKey] = {};
+      styleEntry[scopeKey][property] = value;
+
+      const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+      if (!nodeGroup) return;
+      const shapeEl = nodeGroup.querySelector(".node-circle");
+      const label = nodeGroup.querySelector(".node-label");
+      const sub = nodeGroup.querySelector(".node-sub");
+
+      if (property === "circleColor" && shapeEl) shapeEl.style.stroke = value;
+      else if (property === "titleColor" && label) label.style.fill = value;
+      else if (property === "titleFont" && label) label.style.fontFamily = value;
+      else if (property === "titleSize" && label) label.style.fontSize = value + "px";
+      else if (property === "subColor" && sub) sub.style.fill = value;
+      else if (property === "subFont" && sub) sub.style.fontFamily = value;
+      else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
+    };
+
+    document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value));
+    document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value));
+    document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value));
+    document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)));
+    document.getElementById("sub-color").addEventListener("input", (e) => applyStyle("subColor", e.target.value));
+    document.getElementById("sub-font").addEventListener("change", (e) => applyStyle("subFont", e.target.value));
+    document.getElementById("sub-size").addEventListener("input", (e) => applyStyle("subSize", parseInt(e.target.value, 10)));
+
+    // Text position offset controls
+    document.getElementById("title-offset-y").addEventListener("input", (e) => {
+      applyStyle("titleOffsetY", parseInt(e.target.value, 10) || 0);
+      forgeTheTopology();
+      if (currentNodeId) claimTheImmortal(currentNodeId);
+    });
+    document.getElementById("title-offset-x").addEventListener("input", (e) => {
+      applyStyle("titleOffsetX", parseInt(e.target.value, 10) || 0);
+      forgeTheTopology();
+      if (currentNodeId) claimTheImmortal(currentNodeId);
+    });
+    document.getElementById("sub-offset-y").addEventListener("input", (e) => {
+      applyStyle("subOffsetY", parseInt(e.target.value, 10) || 0);
+      forgeTheTopology();
+      if (currentNodeId) claimTheImmortal(currentNodeId);
+    });
+    document.getElementById("sub-offset-x").addEventListener("input", (e) => {
+      applyStyle("subOffsetX", parseInt(e.target.value, 10) || 0);
+      forgeTheTopology();
+      if (currentNodeId) claimTheImmortal(currentNodeId);
+    });
+
+    document.getElementById("reset-styles").addEventListener("click", () => {
+      delete savedStyles[currentNodeId];
+      forgeTheTopology();
+      claimTheImmortal(currentNodeId);
+    });
+
+    /* Screen scope selector */
+    document.getElementById("style-scope").addEventListener("change", (e) => {
+      currentStyleScope = e.target.value || "all";
+      claimTheImmortal(currentNodeId);
+    });
+
+    /* Shape selector */
+    document.getElementById("shape-select").addEventListener("change", (e) => {
+      const shape = e.target.value || "circle";
+      NODE_DATA[currentNodeId].shape = shape;
+      const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+      if (!nodeGroup) return;
+      const oldShape = nodeGroup.querySelector(".node-circle");
+      if (oldShape) oldShape.remove();
+      const size = savedSizes[currentNodeId] || getDefaultSize();
+      const newShape = createNodeShape(currentNodeId, size);
+      nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
+    });
+
+    /* -------------------- NODE NOTES ADD -------------------- */
+    const addNoteBtn = document.getElementById("add-note-btn");
+    const noteInput = document.getElementById("new-note-input");
+
+    addNoteBtn.addEventListener("click",() => {
+      const newNote = noteInput.value.trim();
+      if (newNote && currentNodeId) {
+        NODE_DATA[currentNodeId].notes.push(newNote);
+        claimTheImmortal(currentNodeId);
+        noteInput.value = "";
+      }
+    });
+
+    noteInput.addEventListener("keypress",(e) => {
+      if (e.key === "Enter") {
+        addNoteBtn.click();
+      }
+    });
+
+    /* -------------------- EDGE EDIT CONTROLS -------------------- */
+    document.getElementById("edge-width").addEventListener("input", () => {
+      if (!currentEdgeId) return;
+      const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+      if (!edge) return;
+      const v = parseInt(document.getElementById("edge-width").value, 10);
+      if (Number.isNaN(v) || v <= 0) return;
+      edge.width = v;
+      saveEdgeData();
+      const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`);
+      if (el) el.style.strokeWidth = v;
+    });
+
+    document.getElementById("edge-color").addEventListener("input", () => {
+      if (!currentEdgeId) return;
+      const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+      if (!edge) return;
+      const color = document.getElementById("edge-color").value;
+      edge.color = color;
+      saveEdgeData();
+      const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`);
+      if (el) el.style.stroke = color;
+      forgeTheLegend();
+    });
+
+    document.getElementById("edge-direction").addEventListener("change", () => {
+      if (!currentEdgeId) return;
+      const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+      if (!edge) return;
+      edge.direction = document.getElementById("edge-direction").value;
+      saveEdgeData();
+      forgeTheTopology();
+      selectTheConnection(currentEdgeId);
+    });
+
+    const addEdgeNoteBtn = document.getElementById("add-edge-note");
+    const newEdgeNoteInput = document.getElementById("new-edge-note");
+
+    addEdgeNoteBtn.addEventListener("click", () => {
+      const txt = newEdgeNoteInput.value.trim();
+      if (!txt || !currentEdgeId) return;
+      const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+      if (!edge) return;
+      edge.notes.push(txt);
+      saveEdgeData();
+      newEdgeNoteInput.value = "";
+      selectTheConnection(currentEdgeId);
+    });
+
+    newEdgeNoteInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        addEdgeNoteBtn.click();
+      }
+    });
+
+    document.getElementById("delete-edge").addEventListener("click", () => {
+      if (!currentEdgeId) return;
+      challengeTheImmortal("Are you sure you want to delete this line?", () => {
+        EDGE_DATA.list = EDGE_DATA.list.filter(e => e.id !== currentEdgeId);
+        saveEdgeData();
+        currentEdgeId = null;
+        forgeTheTopology();
+        const availableNodes = Object.keys(NODE_DATA);
+        if (availableNodes.length > 0) {
+          claimTheImmortal(availableNodes[0]);
+        } else {
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("topology-toolbar").style.display = "none";
+        }
+      });
+    });
+
+    /* -------------------- ADD LINE TOOLBAR -------------------- */
+    document.getElementById("add-line-btn").addEventListener("click", () => {
+      if (!currentNodeId) return;
+      const select = document.getElementById("add-line-select");
+      const directionSelect = document.getElementById("add-line-direction");
+      const colorInput = document.getElementById("add-line-color");
+      const targetId = select.value;
+      if (!targetId || targetId === currentNodeId) return;
+
+      const direction = directionSelect.value || "none";
+      const lineColor = colorInput.value || "#475569";
+
+      const newId = `${currentNodeId}-${targetId}-${Date.now()}`;
+      const newEdge = {
+        id: newId,
+        from: currentNodeId,
+        to: targetId,
+        width: 4,
+        color: lineColor,
+        direction: direction,
+        type: "main",
+        notes: []
+      };
+
+      EDGE_DATA.list.push(newEdge);
+      saveEdgeData();
+      forgeTheTopology();
+      // Keep the node selected so the toolbar stays visible
+      claimTheImmortal(currentNodeId);
+    });
+
+    /* -------------------- FREE-DRAW MODE -------------------- */
+    let freeDrawMode = false;
+    let freeDrawPoints = [];
+    let freeDrawPolylineEl = null;
+    let freeDrawPointEls = [];
+
+    const drawToggleBtn = document.getElementById("draw-toggle");
+    const drawUndoBtn = document.getElementById("draw-undo");
+    const drawColorInput = document.getElementById("draw-color");
+    const svgMap = document.getElementById("map");
+
+    function updateFreeDrawGraphics() {
+      const ns = "http://www.w3.org/2000/svg";
+      const svg = svgMap;
+
+      if (!freeDrawPolylineEl && freeDrawPoints.length > 0) {
+        freeDrawPolylineEl = document.createElementNS(ns,"polyline");
+        freeDrawPolylineEl.classList.add("edge","free-preview");
+        freeDrawPolylineEl.setAttribute("fill","none");
+        svg.appendChild(freeDrawPolylineEl);
+      }
+
+      if (freeDrawPolylineEl) {
+        if (freeDrawPoints.length === 0) {
+          freeDrawPolylineEl.remove();
+          freeDrawPolylineEl = null;
+        } else {
+          const ptsStr = freeDrawPoints.map(p => `${p.x},${p.y}`).join(" ");
+          freeDrawPolylineEl.setAttribute("points", ptsStr);
+          freeDrawPolylineEl.style.stroke = drawColorInput.value || "#475569";
+          freeDrawPolylineEl.style.strokeWidth = 3;
+        }
+      }
+
+      freeDrawPointEls.forEach(el => el.remove());
+      freeDrawPointEls = [];
+
+      freeDrawPoints.forEach((p, idx) => {
+        const c = document.createElementNS(ns,"circle");
+        c.classList.add("free-point");
+        c.setAttribute("cx", p.x);
+        c.setAttribute("cy", p.y);
+        c.setAttribute("r", 5);
+        c.dataset.index = String(idx);
+
+        // Drag handlers
+        c.addEventListener("mousedown", (e) => {
+          if (!freeDrawMode) return;
+          e.preventDefault();
+          e.stopPropagation();
+          let dragging = true;
+          const svgEl = svgMap;
+
+          const moveHandler = (ev) => {
+            if (!dragging) return;
+            const pt = svgEl.createSVGPoint();
+            pt.x = ev.clientX;
+            pt.y = ev.clientY;
+            const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+            const i = parseInt(c.dataset.index, 10);
+            if (Number.isNaN(i) || !freeDrawPoints[i]) return;
+            freeDrawPoints[i].x = svgP.x;
+            freeDrawPoints[i].y = svgP.y;
+            updateFreeDrawGraphics();
+          };
+
+          const upHandler = () => {
+            dragging = false;
+            document.removeEventListener("mousemove", moveHandler);
+            document.removeEventListener("mouseup", upHandler);
+          };
+
+          document.addEventListener("mousemove", moveHandler);
+          document.addEventListener("mouseup", upHandler);
+        });
+
+        // Touch support for mobile
+        c.addEventListener("touchstart", (e) => {
+          if (!freeDrawMode) return;
+          e.preventDefault();
+          e.stopPropagation();
+          let dragging = true;
+          const svgEl = svgMap;
+
+          const touchMoveHandler = (ev) => {
+            if (!dragging || !ev.touches[0]) return;
+            const pt = svgEl.createSVGPoint();
+            pt.x = ev.touches[0].clientX;
+            pt.y = ev.touches[0].clientY;
+            const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+            const i = parseInt(c.dataset.index, 10);
+            if (Number.isNaN(i) || !freeDrawPoints[i]) return;
+            freeDrawPoints[i].x = svgP.x;
+            freeDrawPoints[i].y = svgP.y;
+            updateFreeDrawGraphics();
+          };
+
+          const touchUpHandler = () => {
+            dragging = false;
+            document.removeEventListener("touchmove", touchMoveHandler);
+            document.removeEventListener("touchend", touchUpHandler);
+          };
+
+          document.addEventListener("touchmove", touchMoveHandler);
+          document.addEventListener("touchend", touchUpHandler);
+        });
+
+        svg.appendChild(c);
+        freeDrawPointEls.push(c);
+      });
+
+      drawUndoBtn.style.display = freeDrawPoints.length ? "inline-block" : "none";
+    }
+
+    function addFreeDrawPoint(x, y) {
+      freeDrawPoints.push({x,y});
+      updateFreeDrawGraphics();
+    }
+
+    function startFreeDraw() {
+      freeDrawMode = true;
+      freeDrawPoints = [];
+      if (freeDrawPolylineEl) {
+        freeDrawPolylineEl.remove();
+        freeDrawPolylineEl = null;
+      }
+      freeDrawPointEls.forEach(el => el.remove());
+      freeDrawPointEls = [];
+      svgMap.style.cursor = "crosshair";
+      drawToggleBtn.textContent = "Done";
+      drawUndoBtn.style.display = "none";
+    }
+
+    function finishFreeDraw() {
+      freeDrawMode = false;
+      svgMap.style.cursor = "";
+      drawToggleBtn.textContent = "✏️";
+
+      if (freeDrawPoints.length >= 2) {
+        const color = drawColorInput.value || "#475569";
+        const newId = "custom-" + Date.now();
+        const pointsCopy = freeDrawPoints.map(p => ({x:p.x, y:p.y}));
+        EDGE_DATA.list.push({
+          id: newId,
+          type: "custom",
+          color,
+          width: 4,
+          points: pointsCopy,
+          notes: []
+        });
+        saveEdgeData();
+
+        freeDrawPoints = [];
+        if (freeDrawPolylineEl) {
+          freeDrawPolylineEl.remove();
+          freeDrawPolylineEl = null;
+        }
+        freeDrawPointEls.forEach(el => el.remove());
+        freeDrawPointEls = [];
+        forgeTheTopology();
+        selectTheConnection(newId);
+      } else {
+        freeDrawPoints = [];
+        if (freeDrawPolylineEl) {
+          freeDrawPolylineEl.remove();
+          freeDrawPolylineEl = null;
+        }
+        freeDrawPointEls.forEach(el => el.remove());
+        freeDrawPointEls = [];
+        forgeTheLegend();
+      }
+
+      drawUndoBtn.style.display = "none";
+    }
+
+    drawToggleBtn.addEventListener("click", () => {
+      if (freeDrawMode) {
+        finishFreeDraw();
+      } else {
+        startFreeDraw();
+      }
+    });
+
+    drawUndoBtn.addEventListener("click", () => {
+      if (!freeDrawMode || !freeDrawPoints.length) return;
+      freeDrawPoints.pop();
+      updateFreeDrawGraphics();
+    });
+
+    /* Click on SVG to add points in free-draw mode */
+    svgMap.addEventListener("click", (e) => {
+      if (!freeDrawMode) return;
+      if (e.button !== 0) return;
+      const target = e.target;
+      if (target && target.classList && target.classList.contains("free-point")) return;
+      const svgEl = svgMap;
+      const pt = svgEl.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+      addFreeDrawPoint(svgP.x, svgP.y);
+    });
+
+    /* Touch support for free-draw mode */
+    svgMap.addEventListener("touchend", (e) => {
+      if (!freeDrawMode) return;
+      const target = e.target;
+      if (target && target.classList && target.classList.contains("free-point")) return;
+      if (e.changedTouches && e.changedTouches[0]) {
+        e.preventDefault();
+        const svgEl = svgMap;
+        const pt = svgEl.createSVGPoint();
+        pt.x = e.changedTouches[0].clientX;
+        pt.y = e.changedTouches[0].clientY;
+        const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+        addFreeDrawPoint(svgP.x, svgP.y);
+      }
+    });
+
+    /* ==================================================================================
+     * EVENT HANDLERS
+     * ================================================================================== */
+
+    /* -------------------- PAGE SETTINGS HOOKS -------------------- */
+    const settingsBtn = document.getElementById("settings-btn");
+    const settingsModal = document.getElementById("settings-modal");
+    const settingsClose = document.getElementById("settings-close");
+
+    settingsBtn.addEventListener("click", () => {
+      // Sync inputs with current PAGE_STATE
+      document.getElementById("page-bg-color").value = PAGE_STATE.background || "#050608";
+      document.getElementById("topbar-bg-color").value = PAGE_STATE.topbarBg || "#0b0e13";
+      document.getElementById("topbar-border-color").value = PAGE_STATE.topbarBorder || "#1f2533";
+      document.getElementById("panel-color").value = PAGE_STATE.panel || "#0b0e13";
+      document.getElementById("panel-alt-color").value = PAGE_STATE.panelAlt || "#10141b";
+      document.getElementById("accent-color").value = PAGE_STATE.accent || "#4fd1c5";
+      document.getElementById("danger-color").value = PAGE_STATE.danger || "#f56565";
+      document.getElementById("text-main-color").value = PAGE_STATE.textMain || "#e2e8f0";
+      document.getElementById("text-soft-color").value = PAGE_STATE.textSoft || "#94a3b8";
+
+      settingsModal.classList.add("active");
+    });
+
+    settingsClose.addEventListener("click", () => {
+      settingsModal.classList.remove("active");
+    });
+
+    settingsModal.addEventListener("click", (e) => {
+      if (e.target === settingsModal) {
+        settingsModal.classList.remove("active");
+      }
+    });
+
+    document.getElementById("page-bg-color").addEventListener("input", (e) => {
+      PAGE_STATE.background = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("topbar-bg-color").addEventListener("input", (e) => {
+      PAGE_STATE.topbarBg = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("topbar-border-color").addEventListener("input", (e) => {
+      PAGE_STATE.topbarBorder = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("panel-color").addEventListener("input", (e) => {
+      PAGE_STATE.panel = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("panel-alt-color").addEventListener("input", (e) => {
+      PAGE_STATE.panelAlt = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("accent-color").addEventListener("input", (e) => {
+      PAGE_STATE.accent = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("danger-color").addEventListener("input", (e) => {
+      PAGE_STATE.danger = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("text-main-color").addEventListener("input", (e) => {
+      PAGE_STATE.textMain = e.target.value;
+      wieldThePower();
+    });
+
+    document.getElementById("text-soft-color").addEventListener("input", (e) => {
+      PAGE_STATE.textSoft = e.target.value;
+      wieldThePower();
+    });
+
+    /* -------------------- LAYOUT CONTROLS -------------------- */
+    document.getElementById("topbar-height").addEventListener("input", (e) => {
+      PAGE_STATE.topbarHeight = parseInt(e.target.value, 10);
+      document.getElementById("topbar-height-val").textContent = PAGE_STATE.topbarHeight + "px";
+      wieldThePower();
+    });
+
+    document.getElementById("sidebar-width").addEventListener("input", (e) => {
+      PAGE_STATE.sidebarWidth = parseInt(e.target.value, 10);
+      document.getElementById("sidebar-width-val").textContent = PAGE_STATE.sidebarWidth + "px";
+      wieldThePower();
+    });
+
+    /* -------------------- SIDEBAR TOGGLE -------------------- */
+    document.getElementById("sidebar-toggle").addEventListener("click", () => {
+      PAGE_STATE.sidebarCollapsed = !PAGE_STATE.sidebarCollapsed;
+      wieldThePower();
+    });
+
+    /* -------------------- SAVE HELP POPUP -------------------- */
+    const saveHelpBtn = document.getElementById("save-help-btn");
+    const saveInfoModal = document.getElementById("save-info-modal");
+    const saveInfoClose = document.getElementById("save-info-close");
+
+    saveHelpBtn.addEventListener("click", () => {
+      saveInfoModal.classList.add("active");
+    });
+
+    saveInfoClose.addEventListener("click", () => {
+      saveInfoModal.classList.remove("active");
+    });
+
+    saveInfoModal.addEventListener("click", (e) => {
+      if (e.target === saveInfoModal) {
+        saveInfoModal.classList.remove("active");
+      }
+    });
+
+
+    /* ENCRYPTION (WEB CRYPTO API) */
+    /* Derive a cryptographic key from a password using PBKDF2 */
+    async function deriveKey(password, salt) {
+      const encoder = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        'PBKDF2',
+        false,
+        ['deriveKey']
+      );
+      
+      return crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: salt,
+          iterations: 100000,
+          hash: 'SHA-256'
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+      );
+    }
+
+    /* Encrypt data with a password */
+    async function encryptData(data, password) {
+      const encoder = new TextEncoder();
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt);
+      
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encoder.encode(data)
+      );
+      
+      // Combine salt + iv + encrypted data
+      const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+      result.set(salt, 0);
+      result.set(iv, salt.length);
+      result.set(new Uint8Array(encrypted), salt.length + iv.length);
+      
+      // Return as base64 with encryption marker
+      return 'ENCRYPTED:' + btoa(String.fromCharCode(...result));
+    }
+
+    /* Decrypt data with a password */
+    async function decryptData(encryptedData, password) {
+      // Remove encryption marker
+      const base64Data = encryptedData.replace('ENCRYPTED:', '');
+      const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      
+      // Extract salt, iv, and encrypted content
+      const salt = data.slice(0, 16);
+      const iv = data.slice(16, 28);
+      const encrypted = data.slice(28);
+      
+      const key = await deriveKey(password, salt);
+      
+      const decrypted = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv },
+        key,
+        encrypted
+      );
+      
+      const decoder = new TextDecoder();
+      return decoder.decode(decrypted);
+    }
+
+    /* Check if data is encrypted */
+    function isEncrypted(data) {
+      return typeof data === 'string' && data.startsWith('ENCRYPTED:');
+    }
+
+    /* ==================================================================================
+     * PERSISTENCE (BECOME IMMORTAL)
+     * "There can be only one".
+     * ================================================================================== */
+
+    /* -------------------- SAVE FILE / EXPORT -------------------- */
+    /* Capture the complete current state for persistence */
+    function captureTheQuickening() {
+      return {
+        nodeData: NODE_DATA,
+        edgeData: EDGE_DATA,
+        edgeLegend: EDGE_LEGEND,
+        nodePositions: savedPositions,
+        nodeSizes: savedSizes,
+        nodeStyles: savedStyles,
+        page: PAGE_STATE,
+        canvas: {
+          zoom: canvasState.zoom,
+          panX: canvasState.panX,
+          panY: canvasState.panY
+        }
+      };
+    }
+
+    /* Build a complete standalone HTML file with all current data */
+    function assembleTheImmortalForm() {
+      const clone = document.documentElement.cloneNode(true);
+
+      // Update nodes-json
+      const nodeScript = clone.querySelector("#nodes-json");
+      if (nodeScript) {
+        nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
+      }
+
+      // Update topology-state
+      let stateScript = clone.querySelector("#topology-state");
+      if (!stateScript) {
+        stateScript = document.createElement("script");
+        stateScript.id = "topology-state";
+        stateScript.type = "application/json";
+        const body = clone.querySelector("body") || clone;
+        body.appendChild(stateScript);
+      }
+      stateScript.textContent = JSON.stringify(captureTheQuickening(), null, 2);
+
+      return "<!DOCTYPE html>\n" + clone.outerHTML;
+    }
+
+    /* Download the current state as a self-contained HTML file */
+    async function becomeImmortal() {
+      const encryptEnabled = document.getElementById('encrypt-toggle').checked;
+      let stateData = JSON.stringify(captureTheQuickening(), null, 2);
+      
+      // If encryption is enabled, prompt for password and encrypt
+      if (encryptEnabled) {
+        const password = prompt('Enter a password to encrypt your data:\n(Remember this password - you will need it to open this file!)');
+        if (!password) {
+          alert('Encryption cancelled. File not saved.');
+          return;
+        }
+        
+        const confirmPassword = prompt('Confirm your password:');
+        if (password !== confirmPassword) {
+          alert('Passwords do not match. File not saved.');
+          return;
+        }
+        
+        try {
+          stateData = await encryptData(stateData, password);
+        } catch (e) {
+          alert('Encryption failed: ' + e.message);
+          return;
+        }
+      }
+      
+      const clone = document.documentElement.cloneNode(true);
+
+      // Update nodes-json
+      const nodeScript = clone.querySelector("#nodes-json");
+      if (nodeScript) {
+        nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
+      }
+
+      // Update topology-state with potentially encrypted data
+      let stateScript = clone.querySelector("#topology-state");
+      if (!stateScript) {
+        stateScript = document.createElement("script");
+        stateScript.id = "topology-state";
+        stateScript.type = "application/json";
+        const body = clone.querySelector("body") || clone;
+        body.appendChild(stateScript);
+      }
+      stateScript.textContent = stateData;
+
+      const html = "<!DOCTYPE html>\n" + clone.outerHTML;
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeTitle = (PAGE_STATE.title || document.title || "network-topology")
+        .toLowerCase()
+        .replace(/[^a-z0-9\-]+/g,"-");
+      a.download = safeTitle + ".html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("save-file-btn").addEventListener("click", becomeImmortal);
+
+    /* -------------------- ADD NODE FEATURE -------------------- */
+    const addNodeBtn = document.getElementById("add-node-btn");
+    const addNodeModal = document.getElementById("add-node-modal");
+    const addNodeCancel = document.getElementById("add-node-cancel");
+    const addNodeSave = document.getElementById("add-node-save");
+
+    addNodeBtn.addEventListener("click", () => {
+      // Reset form
+      document.getElementById("new-node-name").value = "";
+      document.getElementById("new-node-ip").value = "";
+      document.getElementById("new-node-tags").value = "";
+      document.getElementById("new-node-shape").value = "circle";
+      addNodeModal.classList.add("active");
+      document.getElementById("new-node-name").focus();
+    });
+
+    addNodeCancel.addEventListener("click", () => {
+      addNodeModal.classList.remove("active");
+    });
+
+    addNodeModal.addEventListener("click", (e) => {
+      if (e.target === addNodeModal) {
+        addNodeModal.classList.remove("active");
+      }
+    });
+
+    addNodeSave.addEventListener("click", () => {
+      const name = document.getElementById("new-node-name").value.trim();
+      const ip = document.getElementById("new-node-ip").value.trim();
+      const tagsStr = document.getElementById("new-node-tags").value.trim();
+      const shape = document.getElementById("new-node-shape").value;
+
+      if (!name) {
+        alert("Please enter a node name.");
+        return;
+      }
+
+      // Parse tags from comma-separated string
+      const tags = tagsStr ? tagsStr.split(",").map(t => t.trim()).filter(t => t) : [];
+
+      // Generate a unique ID from the name
+      let baseId = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (!baseId) baseId = "node";
+      let nodeId = baseId;
+      let counter = 1;
+      while (NODE_DATA[nodeId]) {
+        nodeId = baseId + "-" + counter;
+        counter++;
+      }
+
+      // Create the new node
+      NODE_DATA[nodeId] = {
+        shape: shape || "circle",
+        name: name,
+        ip: ip || "0.0.0.0",
+        role: "",
+        tags: tags,
+        notes: []
+      };
+
+      // Place new node at center of canvas (will be draggable)
+      const centerX = CANVAS_WIDTH / 2;
+      const centerY = CANVAS_HEIGHT / 2;
+      savedPositions[nodeId] = { x: centerX, y: centerY };
+
+      addNodeModal.classList.remove("active");
+      forgeTheTopology();
+      claimTheImmortal(nodeId);
+    });
+
+    // Allow Enter key in the add node form
+    ["new-node-name", "new-node-ip", "new-node-tags"].forEach(inputId => {
+      document.getElementById(inputId).addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          addNodeSave.click();
+        }
+      });
+    });
+
+    /* -------------------- CLEAR ALL FEATURE -------------------- */
+    const clearAllBtn = document.getElementById("clear-all-btn");
+    const clearAllModal = document.getElementById("clear-all-modal");
+    const clearAllCancel = document.getElementById("clear-all-cancel");
+    const clearAllConfirm = document.getElementById("clear-all-confirm");
+
+    clearAllBtn.addEventListener("click", () => {
+      clearAllModal.classList.add("active");
+    });
+
+    clearAllCancel.addEventListener("click", () => {
+      clearAllModal.classList.remove("active");
+    });
+
+    clearAllModal.addEventListener("click", (e) => {
+      if (e.target === clearAllModal) {
+        clearAllModal.classList.remove("active");
+      }
+    });
+
+    clearAllConfirm.addEventListener("click", () => {
+      // Clear all data
+      NODE_DATA = {};
+      EDGE_DATA = { list: [] };
+      EDGE_LEGEND = {};
+      savedPositions = {};
+      savedSizes = {};
+      savedStyles = {};
+
+      clearAllModal.classList.remove("active");
+
+      // Rebuild empty graph
+      forgeTheTopology();
+
+      // Hide panels since there's nothing selected
+      document.getElementById("node-panel").style.display = "none";
+      document.getElementById("edge-panel").style.display = "none";
+      document.getElementById("topology-toolbar").style.display = "none";
+
+      currentNodeId = null;
+      currentEdgeId = null;
+    });
+
+    /* -------------------- DELETE NODE FEATURE -------------------- */
+    // Add delete button to node panel if not exists
+    (function addDeleteNodeButton() {
+      const nodePanel = document.getElementById("node-panel");
+      if (!nodePanel) return;
+
+      // Check if button already exists
+      if (document.getElementById("delete-node-btn")) return;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.id = "delete-node-btn";
+      deleteBtn.textContent = "Delete Node";
+      deleteBtn.style.cssText = "margin-top:15px; padding:10px 16px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:clamp(14px,1.6vw,18px); font-weight:600; width:100%;";
+
+      deleteBtn.addEventListener("click", () => {
+        if (!currentNodeId) return;
+        challengeTheImmortal(`Delete node "${NODE_DATA[currentNodeId]?.name || currentNodeId}" and all its connections?`, () => {
+          // Remove all edges connected to this node
+          EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== currentNodeId && e.to !== currentNodeId);
+
+          // Remove the node
+          delete NODE_DATA[currentNodeId];
+          delete savedPositions[currentNodeId];
+          delete savedSizes[currentNodeId];
+          delete savedStyles[currentNodeId];
+
+          currentNodeId = null;
+          currentEdgeId = null;
+
+          forgeTheTopology();
+
+          // Select first available node or hide panels
+          const remainingNodes = Object.keys(NODE_DATA);
+          if (remainingNodes.length > 0) {
+            claimTheImmortal(remainingNodes[0]);
+          } else {
+            document.getElementById("node-panel").style.display = "none";
+            document.getElementById("edge-panel").style.display = "none";
+            document.getElementById("topology-toolbar").style.display = "none";
+          }
+        });
+      });
+
+      nodePanel.appendChild(deleteBtn);
+    })();
+  </script>
+
+
+</body></html>
