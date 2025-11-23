@@ -1,5 +1,4 @@
-
-
+![The One File](assets/theonefile.jpg)
 
 # The One File
 - In the end there can only be "The ONE File". A portable, self contained network topology planner designed to remain usable when primary and secondary systems are unavailable. This file acts as the final layer in a 1-2-3 backup strategy and provides an editable workspace for documenting homelabs, office networks, and production environments.
@@ -10,8 +9,6 @@
 - Supports homelabs, enterprise layouts, and hybrid infrastructures  
 - Structured for repeatable documentation workflows  
 - Durable fallback reference in disaster recovery scenarios
-
-![The One File](assets/theonefile.jpg)
 
 ## Use Cases
 - Designing new network topologies  
