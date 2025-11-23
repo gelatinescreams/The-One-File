@@ -11,6 +11,8 @@
 - Structured for repeatable documentation workflows  
 - Durable fallback reference in disaster recovery scenarios
 
+![The One File](assets/theonefile.jpg)
+
 ## Use Cases
 - Designing new network topologies  
 - Documenting existing infrastructure for audits  
