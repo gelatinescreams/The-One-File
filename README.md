@@ -2,7 +2,7 @@
 
 # The One File - Network Topology Maker
 
-In the end there can only be "The ONE File". A portable and completely self contained network topology builder. The canvas, the logic, the settings, your nodes, your connections, and your notes all live inside a single standalone HTML file. Any modern browser can open it without setup(is the idea).
+In the end there can only be "The ONE File". A portable and completely self contained network topology builder. The canvas, the logic, the settings, your nodes, your connections, and your notes all live inside a single standalone HTML file. Any modern browser can open and edit it without any prior setup. (is the idea)
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png)
 
