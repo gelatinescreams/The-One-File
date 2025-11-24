@@ -36,6 +36,7 @@ Instead of building another hosted application, I built a file.
 - Office network layouts  
 - Rack diagrams  
 - VLAN and subnet planning  
+- Mind Maps
 - Logical and physical maps  
 - Encrypted break glass documentation  
 - Offline or air gapped environments  

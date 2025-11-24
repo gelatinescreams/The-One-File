@@ -2481,13 +2481,7 @@
         NODE_DATA = initialState.nodeData ? initialState.nodeData : BASE_NODE_DATA;
 
         EDGE_DATA = initialState.edgeData ? initialState.edgeData : {
-          list: [
-            { id: "host-diesel", from: "host", to: "diesel", width: 4, color: "#475569", type: "main", notes: [] },
-            { id: "host-percy", from: "host", to: "percy", width: 4, color: "#475569", type: "main", notes: [] },
-            { id: "host-gordon", from: "host", to: "gordon", width: 4, color: "#475569", type: "main", notes: [] },
-            { id: "host-henry", from: "host", to: "henry", width: 4, color: "#475569", type: "main", notes: [] },
-            { id: "henry-pbs-remote", from: "henry", to: "pbs-remote", width: 5, color: "#f56565", type: "backup", notes: [] }
-          ]
+          list: []
         };
 
         EDGE_LEGEND = initialState.edgeLegend || {};
