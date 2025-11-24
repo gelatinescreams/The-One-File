@@ -1460,7 +1460,7 @@
   "nodeSizes": {},
   "nodeStyles": {},
   "page": {
-    "title": "Network Topology",
+    "title": "The One File",
     "background": "",
     "topbarBg": "rgba(9, 12, 20, 0.9)",
     "topbarBorder": "#1f2533",
@@ -1485,7 +1485,9 @@
   <script>
 
     const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent);
-
+    let currentNodeId = "host";
+    let currentEdgeId = null;
+    let currentStyleScope = "all";
     let NODE_DATA = {}; 
     let EDGE_DATA = { list: [] };
     let EDGE_LEGEND = {};
@@ -1494,7 +1496,7 @@
     let savedStyles = {};
 
     const DEFAULT_PAGE_STATE = {
-      title: "Network Topology",
+      title: "The One File",
       background: "", 
       topbarBg: "rgba(9, 12, 20, 0.9)",
       topbarBorder: "#1f2533",
@@ -2356,10 +2358,6 @@
       }
       return shapeEl;
     }
-
-    let currentNodeId = "host";
-    let currentEdgeId = null;
-    let currentStyleScope = "all";
 
     function forgeTheLegend() {
       const container = document.getElementById("edge-legend");

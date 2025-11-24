@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" style="--panel: #002970; --panel-alt: #0e1c34; --accent: #58dfd2; --danger: #271111; --text-main: #e2e7ee; --text-soft: #7c96bb; --topbar-bg: #1081ea; --topbar-border: #010d28; --topbar-height: 100px; --sidebar-width: 600px;"><head>
+<html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 100px; --sidebar-width: 435px; --mobile-footer-height: 20vh;"><head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>The One File</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- 
+     * ==================================================================================
+     * THE ONE FILE
+     * "There can be only one". A all in one file topology maker.
+     * 
+     * This is your last backup when all others fail. A completely self-contained
+     * network topology visualization tool that works as a single HTML file.
+     * Open it anywhere, anytime and the idea lives forever.
+     * ==================================================================================
+-->
   <style>
-    /* -------------------- THEME -------------------- */
+
     :root {
       color-scheme: dark;
       --bg: #050608;
@@ -21,13 +34,11 @@
       --topbar-border: #1f2533;
     }
 
-    /* -------------------- GLOBAL -------------------- */
     * {
       box-sizing: border-box;
       user-select: none;
     }
 
-    /* Allow text selection in text inputs and contentEditable elements */
     input,
     textarea,
     [contenteditable="true"] {
@@ -46,7 +57,6 @@
       overflow: hidden;
     }
 
-    /* -------------------- HEADER -------------------- */
     header {
       padding: 0 20px;
       height: var(--topbar-height, 52px);
@@ -143,7 +153,6 @@
       color: var(--bg);
     }
 
-    /* -------------------- LAYOUT -------------------- */
     main {
       display: grid;
       grid-template-columns: 1fr var(--sidebar-width, 350px);
@@ -154,32 +163,33 @@
       grid-template-columns: 1fr 0;
     }
 
-    /* Tablet */
     @media(max-width: 1024px){
       main {
         grid-template-columns: 1fr var(--sidebar-width, 300px);
       }
     }
 
-    /* Mobile */
     @media(max-width: 768px){
       main {
         grid-template-columns: 1fr;
-        grid-template-rows: 60vh 40vh;
+        grid-template-rows: calc(100vh - var(--topbar-height, 52px) - var(--mobile-footer-height, 40vh)) var(--mobile-footer-height, 40vh);
       }
       main.sidebar-collapsed {
         grid-template-rows: 1fr 0;
       }
-    }
 
-    /* Fold screens */
-    @media(max-width: 380px){
-      main {
-        grid-template-rows: 50vh 50vh;
+      .details-panel {
+        max-height: var(--mobile-footer-height, 40vh);
+        height: 100%;
       }
     }
 
-    /* -------------------- TOPOLOGY PANEL -------------------- */
+    @media(max-width: 380px){
+      main {
+        grid-template-rows: calc(100vh - var(--topbar-height, 52px) - var(--mobile-footer-height, 40vh)) var(--mobile-footer-height, 40vh);
+      }
+    }
+
     .topology-panel {
       background: var(--panel);
       border-right: 1px solid #111827;
@@ -187,7 +197,6 @@
       overflow: hidden;
     }
 
-    /* Toolbar for "Add Line" (top-right) */
     .topology-toolbar {
       position: absolute;
       top: 10px;
@@ -228,7 +237,6 @@
       font-weight: 600;
     }
 
-    /* Free-draw toolbar (top-left) */
     .draw-toolbar {
       position: absolute;
       top: 10px;
@@ -242,6 +250,7 @@
       border-radius: 6px;
       z-index: 20;
       font-size: 13px;
+      pointer-events: auto;
     }
 
     .draw-toolbar button {
@@ -269,7 +278,16 @@
       cursor: pointer;
     }
 
-    /* Legend (bottom-left) */
+    .draw-toolbar select {
+      padding: 4px 6px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
     .legend-container {
       position: absolute;
       left: 10px;
@@ -284,6 +302,7 @@
       font-size: 12px;
       z-index: 20;
       max-width: 260px;
+      pointer-events: auto;
     }
 
     .legend-title {
@@ -321,7 +340,6 @@
       border-bottom: 1px dashed var(--accent);
     }
 
-    /* -------------------- CANVAS VIEWPORT -------------------- */
     .canvas-viewport {
       position: absolute;
       top: 0;
@@ -352,7 +370,6 @@
       background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
     }
 
-    /* -------------------- ZOOM/PAN TOOLBAR -------------------- */
     .zoom-toolbar {
       position: absolute;
       bottom: 10px;
@@ -403,7 +420,6 @@
       margin: 2px 0;
     }
 
-    /* -------------------- MINIMAP -------------------- */
     .minimap-container {
       position: absolute;
       bottom: 10px;
@@ -438,7 +454,6 @@
       stroke-width: 1;
     }
 
-    /* Canvas hint */
     .canvas-hint {
       position: absolute;
       top: 50px;
@@ -460,7 +475,6 @@
       opacity: 1;
     }
 
-    /* -------------------- EDGES -------------------- */
     .edge {
       stroke: var(--edge-main);
       stroke-width: 4;
@@ -479,14 +493,12 @@
       stroke-width: 7;
     }
 
-    /* Free-draw preview */
     .free-preview {
       fill: none;
       stroke-dasharray: 4 4;
       pointer-events: none;
     }
 
-    /* Free-draw control points */
     .free-point {
       fill: #e5e7eb;
       stroke: #0f172a;
@@ -494,7 +506,6 @@
       cursor: grab;
     }
 
-    /* -------------------- NODES -------------------- */
     .node-circle {
       fill: #0c111a;
       stroke: #1e293b;
@@ -503,7 +514,6 @@
       transform-origin: center center;
     }
 
-    /* Hover bounce */
     .node-group:hover .node-circle {
       transform: scale(1.08);
       filter: drop-shadow(0 0 10px rgba(79,209,197,.45));
@@ -514,7 +524,6 @@
       transform: scale(1.08);
     }
 
-    /* Active pulse */
     .node-group.active .node-circle {
       stroke: var(--accent);
       animation: pulse 1.2s infinite ease-in-out;
@@ -532,7 +541,6 @@
       }
     }
 
-    /* TEXT */
     .node-label {
       fill: var(--text-main);
       font-size: 18px;
@@ -546,7 +554,6 @@
       text-anchor: middle;
     }
 
-    /* Tablet text */
     @media(max-width: 1024px){
       .node-label {
         font-size: 28px;
@@ -556,7 +563,6 @@
       }
     }
 
-    /* Mobile text */
     @media(max-width: 768px){
       .node-label {
         font-size: 70px;
@@ -566,7 +572,6 @@
       }
     }
 
-    /* Fold screen text */
     @media(max-width: 380px){
       .node-label {
         font-size: 60px;
@@ -576,8 +581,6 @@
       }
     }
 
-    /* -------------------- DETAILS PANEL -------------------- */
-	/* there are some dirty hacks here to be included at a later date */
     .details-panel {
       background: var(--panel-alt);
       padding: 22px;
@@ -588,16 +591,16 @@
       position: relative;
       transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
     }
-	
+
 	.details-panel {
 	  min-width: 260px !important;
 	}
-	
+
 	.details-panel {
       overflow-y: auto !important;
       overflow-x: hidden;
 	}
-	
+
     .details-panel.collapsed {
       width: 0 !important;
       min-width: 0 !important;
@@ -605,25 +608,25 @@
       overflow: hidden;
       opacity: 0;
     }
-	
+
 	body {
       overflow-x: hidden;
       overflow-y: hidden;   
 	}
 
 	main {
-      overflow: hidden;     /* keep the layout stable */
+      overflow: hidden;     
 	}
 
 	.details-panel {
 	  overflow-y: auto !important;
       overflow-x: hidden;
 	}
-	
+
     .details-panel.collapsed {
       min-width: 0 !important;
 	}
-    /* Sidebar toggle button */
+
     .sidebar-toggle {
       position: absolute;
       left: -16px;
@@ -674,7 +677,6 @@
       color: var(--accent);
     }
 
-    /* SIZE CONTROLS */
     .size-controls {
       display: flex;
       gap: 10px;
@@ -707,7 +709,6 @@
       color: var(--bg);
     }
 
-    /* STYLE CONTROLS */
     .style-section {
       margin-top: 15px;
       padding-top: 15px;
@@ -729,6 +730,16 @@
     .style-section summary::-webkit-details-marker {
       display: none;
     }
+
+	.password-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff; 
+      z-index: 9999;
+	}
 
     .style-section summary::after {
       content: '▼';
@@ -795,7 +806,6 @@
       opacity: 0.7;
     }
 
-    /* MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -907,7 +917,6 @@
       margin: 0 0 20px 0;
     }
 
-    /* BADGES */
     .badge-row {
       display: flex;
       flex-wrap: wrap;
@@ -926,7 +935,6 @@
       border-color: var(--accent);
     }
 
-    /* LISTS */
     .section-label {
       margin-top: 8px;
       font-size: clamp(14px, 1.6vw, 20px);
@@ -961,7 +969,6 @@
       opacity: 1;
     }
 
-    /* Editable notes */
     .editing {
       outline: 2px solid var(--accent);
       background: #0d141f;
@@ -972,8 +979,8 @@
     }
   </style>
 </head>
-<body style="background: rgb(212, 215, 221);">
-  <!-- Edit Modal -->
+<body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);">
+
   <div class="modal" id="edit-modal">
     <div class="modal-content">
       <h3 id="modal-title">Edit Name</h3>
@@ -985,11 +992,10 @@
     </div>
   </div>
 
-  <!-- Confirm Modal -->
   <div class="modal confirm-modal" id="confirm-modal">
     <div class="modal-content">
       <h3>Confirm</h3>
-      <p id="confirm-message">Are you sure?</p>
+      <p id="confirm-message">Are you sure you want to delete this line?</p>
       <div class="modal-buttons">
         <button class="btn-cancel" id="confirm-cancel">Cancel</button>
         <button class="btn-delete" id="confirm-delete">Delete</button>
@@ -997,7 +1003,6 @@
     </div>
   </div>
 
-  <!-- Save Info Modal -->
   <div class="modal" id="save-info-modal">
     <div class="modal-content">
       <h3>Why do I need to save?</h3>
@@ -1008,8 +1013,8 @@
         new one to keep your edits.
       </p>
       <p style="margin-top:12px; padding-top:12px; border-top:1px solid var(--edge-main);">
-        <strong>🔒 Encryption:</strong> Check the "Encrypt" box before saving to password-protect
-        your network topology data. You'll need the password to open the file later.
+        <strong>🔒 Encryption:</strong> Check the "Encrypt" box before saving to password protect
+        your data. You'll need the password to open the file later. No recovery possible!!
       </p>
       <div class="modal-buttons">
         <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1017,7 +1022,6 @@
     </div>
   </div>
 
-  <!-- Settings Modal -->
   <div class="modal" id="settings-modal">
     <div class="modal-content" style="max-width: 400px;">
       <h3>Page Settings</h3>
@@ -1079,13 +1083,28 @@
         </div>
       </details>
 
+      <details class="style-section" open="">
+        <summary>Import / Export Data</summary>
+        <div class="style-content">
+          <p style="margin-bottom:12px; font-size:13px; color:var(--text-soft);">
+            Export/Import your data to upgrade/downgrade versions of The One File.
+          </p>
+          <button id="export-data-btn" style="width: 100%; margin-bottom: 10px; padding: 10px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">
+            Export Data (JSON)
+          </button>
+          <button id="import-data-btn" style="width: 100%; padding: 10px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">
+            Import Data (JSON)
+          </button>
+          <input type="file" id="import-data-file" accept=".json" style="display: none;">
+        </div>
+      </details>
+
       <div class="modal-buttons">
         <button class="btn-cancel" id="settings-close">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Add Node Modal -->
   <div class="modal" id="add-node-modal">
     <div class="modal-content">
       <h3>Add New Node</h3>
@@ -1127,10 +1146,9 @@
     </div>
   </div>
 
-  <!-- Clear All Confirm Modal -->
   <div class="modal confirm-modal" id="clear-all-modal">
     <div class="modal-content">
-      <h3>⚠️ Clear All Nodes</h3>
+      <h3>Clear All Nodes</h3>
       <p>This will remove ALL nodes and connections. This cannot be undone until you reload without saving. Are you sure?</p>
       <div class="modal-buttons">
         <button class="btn-cancel" id="clear-all-cancel">Cancel</button>
@@ -1141,12 +1159,12 @@
 
   <header>
     <div class="title-block">
-      <h1 id="page-title" class="editable-page-title">New tile</h1>
+      <h1 id="page-title" class="editable-page-title">The One File</h1>
       <div class="save-row">
         <button id="save-file-btn" class="save-btn" type="button">Save File</button>
         <label style="display:flex; align-items:center; gap:4px; font-size:12px; color:var(--text-soft); cursor:pointer; user-select:none;">
           <input type="checkbox" id="encrypt-toggle" style="cursor:pointer;">
-          <span title="Encrypt data with password">🔒 Encrypt</span>
+          <span title="Encrypt data with password">Encrypt</span>
         </label>
         <span id="save-help-btn" class="help-icon" title="Why save?">?</span>
       </div>
@@ -1160,17 +1178,27 @@
 
   <main>
     <section class="topology-panel">
-      <!-- Free-draw toolbar (top-left) -->
+
       <div class="draw-toolbar" id="draw-toolbar">
         <button id="draw-toggle" title="Draw custom line">✏️</button>
         <input type="color" id="draw-color" value="#f97316" title="Line color">
+        <select id="draw-style" title="Line style">
+          <option value="solid">Solid</option>
+          <option value="dashed">Dashed</option>
+          <option value="dotted">Dotted</option>
+        </select>
+        <select id="draw-arrow" title="Arrow direction">
+          <option value="none">No arrows</option>
+          <option value="forward">→ Right</option>
+          <option value="backward">← Left</option>
+          <option value="both">↔ Both</option>
+        </select>
         <button id="draw-undo" style="display: none;" title="Undo last point">Undo</button>
       </div>
 
-      <!-- Add-line toolbar (top-right) -->
       <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
         <label for="add-line-select">Add line to:</label>
-        <select id="add-line-select"><option value="diesel">diesel</option><option value="percy">percy</option><option value="gordon">gordon</option><option value="henry">henry</option><option value="pbs-remote">PBS Remote</option></select>
+        <select id="add-line-select"><option value="wew">wew</option></select>
         <input type="color" id="add-line-color" value="#475569" title="Line color" style="width:30px; height:24px; border:1px solid var(--edge-main); border-radius:4px; cursor:pointer; background:transparent; padding:0;">
         <select id="add-line-direction" title="Line direction">
           <option value="none">No arrows</option>
@@ -1181,28 +1209,23 @@
         <button id="add-line-btn">Add</button>
       </div>
 
-      <!-- Canvas hint -->
       <div class="canvas-hint" id="canvas-hint">Scroll to zoom • Drag empty space to pan • Hold Space + drag</div>
 
-      <!-- Legend (bottom-left) -->
       <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div></div>
 
-      <!-- Canvas viewport wrapper -->
       <div class="canvas-viewport" id="canvas-viewport">
-        <svg id="map" viewBox="0 0 4000 3000" style=""><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
+        <svg id="map" viewBox="914.6107126923603 654.9372179200348 1972.4132256089326 1479.3099192066995" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
       </div>
 
-      <!-- Minimap -->
       <div class="minimap-container" id="minimap-container">
         <svg id="minimap" viewBox="0 0 4000 3000">
-          <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
+          <rect class="minimap-viewport" id="minimap-viewport" x="914.6107126923603" y="654.9372179200348" width="1972.4132256089326" height="1479.3099192066995"></rect>
         </svg>
       </div>
 
-      <!-- Zoom toolbar -->
       <div class="zoom-toolbar" id="zoom-toolbar">
         <button id="zoom-in-btn" title="Zoom in">+</button>
-        <div class="zoom-level" id="zoom-level">100%</div>
+        <div class="zoom-level" id="zoom-level">203%</div>
         <button id="zoom-out-btn" title="Zoom out">-</button>
         <div class="divider"></div>
         <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -1211,15 +1234,14 @@
     </section>
 
     <aside class="details-panel" id="details-panel">
-      <!-- Sidebar toggle button -->
+
       <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">◀</button>
-      
-      <!-- NODE PANEL -->
+
       <div id="node-panel" style="display: none;">
-        <div class="details-name editable-text" id="node-name">Proxmox Host</div>
-        <div class="details-ip editable-text" id="node-ip">162.250.121.10</div>
-        <div class="details-role" id="node-role">Hypervisor</div>
-        <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>Proxmox VE 9</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>64GB RAM</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge wg" style="cursor: pointer; position: relative;"><span>WG: mgmt</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+        <div class="details-name editable-text" id="node-name">wewew</div>
+        <div class="details-ip editable-text" id="node-ip">wew</div>
+        <div class="details-role" id="node-role"></div>
+        <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>wew</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
 
         <div class="size-controls">
           <label>Size:</label>
@@ -1348,7 +1370,7 @@
         </details>
 
         <div class="section-label">Notes</div>
-        <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Double-click to edit notes.</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">Notes save automatically.</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">This entire file runs offline.</span><span class="delete-note">✕</span></li></ul>
+        <ul class="list" id="node-notes"></ul>
         <div style="margin-top: 10px; display: flex; gap: 8px;">
           <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1; padding: 8px 12px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: clamp(14px, 1.6vw, 18px);">
           <button id="add-note-btn" style="padding: 8px 16px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600;">
@@ -1357,7 +1379,6 @@
         </div>
       <button id="delete-node-btn" style="margin-top: 15px; padding: 10px 16px; background: var(--danger); color: rgb(255, 255, 255); border: none; border-radius: 6px; cursor: pointer; font-size: clamp(14px, 1.6vw, 18px); font-weight: 600; width: 100%;">Delete Node</button></div>
 
-      <!-- EDGE PANEL -->
       <div id="edge-panel" style="display: none;">
         <div class="details-name" id="edge-title">Custom line</div>
 
@@ -1369,6 +1390,15 @@
         <div class="style-row">
           <label>Color:</label>
           <input type="color" id="edge-color" value="#475569">
+        </div>
+
+        <div class="style-row">
+          <label>Line Style:</label>
+          <select id="edge-line-style">
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+          </select>
         </div>
 
         <div class="style-row">
@@ -1405,15 +1435,19 @@
           <div class="style-row">
             <label>Sidebar Width</label>
             <input type="range" id="sidebar-width" min="200" max="600" value="350" style="flex:1;">
-            <span id="sidebar-width-val" style="min-width:45px; text-align:right;">600px</span>
+            <span id="sidebar-width-val" style="min-width:45px; text-align:right;">435px</span>
+          </div>
+          <div class="style-row">
+            <label>Mobile Footer Height</label>
+            <input type="range" id="mobile-footer-height" min="20" max="70" value="40" style="flex:1;">
+            <span id="mobile-footer-height-val" style="min-width:45px; text-align:right;">20%</span>
           </div>
         </div>
       </details>
     </aside>
-	
+
   </main>
 
-  <!-- ---------- EMBEDDED JSON DATA ---------- -->
   <script id="nodes-json" type="application/json">{
   "internet": {
     "shape": "cloud",
@@ -2122,19 +2156,11 @@
 }</script>
 
   <script>
-    /* ==================================================================================
-     * THE ONE FILE
-     * "There can be only one". A all in one file topology maker. 
-     * 
-     * This is your last backup when all others fail. A completely self-contained
-     * network topology visualization tool that works as a single HTML file.
-     * Open it anywhere, anytime and your network lives forever.
-     * ================================================================================== */
-
-    /* -------------------- CORE STATE -------------------- */
     const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent);
-
-    let NODE_DATA = {}; // Initialize with empty object as safe default
+    let currentNodeId = "host";
+    let currentEdgeId = null;
+    let currentStyleScope = "all";
+    let NODE_DATA = {}; 
     let EDGE_DATA = { list: [] };
     let EDGE_LEGEND = {};
     let savedPositions = {};
@@ -2143,7 +2169,7 @@
 
     const DEFAULT_PAGE_STATE = {
       title: "Network Topology",
-      background: "", // empty = use default gradient
+      background: "", 
       topbarBg: "rgba(9, 12, 20, 0.9)",
       topbarBorder: "#1f2533",
       panel: "#0b0e13",
@@ -2154,21 +2180,21 @@
       textSoft: "#94a3b8",
       topbarHeight: 52,
       sidebarWidth: 350,
+      mobileFooterHeight: 40, 
       sidebarCollapsed: false
     };
 
     let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
 
-    /* -------------------- CANVAS STATE (ZOOM/PAN) -------------------- */
     const CANVAS_WIDTH = 4000;
     const CANVAS_HEIGHT = 3000;
-    const CANVAS_PADDING = 100; // Padding to keep nodes within bounds
-    
+    const CANVAS_PADDING = 100; 
+
     let canvasState = {
       zoom: 1,
       panX: 0,
       panY: 0,
-      minZoom: 0.25,  // Don't zoom out more than 25% (prevents losing nodes)
+      minZoom: 0.25,  
       maxZoom: 4,
       isPanning: false,
       panStartX: 0,
@@ -2191,14 +2217,12 @@
       const svg = document.getElementById("map");
       const vb = getViewBox();
       svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
-      
-      // Update zoom level display
+
       const zoomLevel = document.getElementById("zoom-level");
       if (zoomLevel) {
         zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
       }
-      
-      // Update minimap viewport
+
       updateMinimap();
     }
 
@@ -2206,26 +2230,24 @@
       const minimapViewport = document.getElementById("minimap-viewport");
       const minimapSvg = document.getElementById("minimap");
       if (!minimapViewport || !minimapSvg) return;
-      
+
       const vb = getViewBox();
       minimapViewport.setAttribute("x", vb.x);
       minimapViewport.setAttribute("y", vb.y);
       minimapViewport.setAttribute("width", vb.width);
       minimapViewport.setAttribute("height", vb.height);
-      
-      // Update minimap nodes
+
       const minimapNodes = minimapSvg.querySelectorAll(".minimap-node");
       minimapNodes.forEach(n => n.remove());
       const minimapEdges = minimapSvg.querySelectorAll(".minimap-edge");
       minimapEdges.forEach(e => e.remove());
-      
-      // Draw edges on minimap
+
       EDGE_DATA.list.forEach(edge => {
         if (edge.type === "custom") return;
         const p1 = savedPositions[edge.from];
         const p2 = savedPositions[edge.to];
         if (!p1 || !p2) return;
-        
+
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", p1.x);
         line.setAttribute("y1", p1.y);
@@ -2234,8 +2256,7 @@
         line.classList.add("minimap-edge");
         minimapSvg.insertBefore(line, minimapViewport);
       });
-      
-      // Draw nodes on minimap
+
       Object.entries(savedPositions).forEach(([id, pos]) => {
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", pos.x);
@@ -2249,23 +2270,21 @@
     function zoomTo(newZoom, centerX, centerY) {
       const oldZoom = canvasState.zoom;
       newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom));
-      
+
       if (centerX !== undefined && centerY !== undefined) {
-        // Zoom towards the specified point
+
         const oldWidth = CANVAS_WIDTH / oldZoom;
         const oldHeight = CANVAS_HEIGHT / oldZoom;
         const newWidth = CANVAS_WIDTH / newZoom;
         const newHeight = CANVAS_HEIGHT / newZoom;
-        
-        // Calculate the point in canvas coordinates
+
         const pointX = canvasState.panX + (centerX * oldWidth);
         const pointY = canvasState.panY + (centerY * oldHeight);
-        
-        // Adjust pan to keep that point in the same screen position
+
         canvasState.panX = pointX - (centerX * newWidth);
         canvasState.panY = pointY - (centerY * newHeight);
       }
-      
+
       canvasState.zoom = newZoom;
       constrainPan();
       updateViewBox();
@@ -2274,26 +2293,25 @@
     function constrainPan() {
       const viewWidth = CANVAS_WIDTH / canvasState.zoom;
       const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-      
-      // Keep at least some of the canvas visible
+
       const minVisiblePortion = 0.1;
       const maxPanX = CANVAS_WIDTH - viewWidth * minVisiblePortion;
       const maxPanY = CANVAS_HEIGHT - viewHeight * minVisiblePortion;
       const minPanX = -viewWidth * (1 - minVisiblePortion);
       const minPanY = -viewHeight * (1 - minVisiblePortion);
-      
+
       canvasState.panX = Math.max(minPanX, Math.min(maxPanX, canvasState.panX));
       canvasState.panY = Math.max(minPanY, Math.min(maxPanY, canvasState.panY));
     }
 
     function fitToContent() {
-      // Find bounding box of all nodes
+
       const positions = Object.values(savedPositions);
       if (positions.length === 0) {
         resetView();
         return;
       }
-      
+
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
       positions.forEach(pos => {
         minX = Math.min(minX, pos.x - 100);
@@ -2301,31 +2319,31 @@
         maxX = Math.max(maxX, pos.x + 100);
         maxY = Math.max(maxY, pos.y + 100);
       });
-      
+
       const contentWidth = maxX - minX + 200;
       const contentHeight = maxY - minY + 200;
-      
+
       const viewport = document.getElementById("canvas-viewport");
       const vpRect = viewport.getBoundingClientRect();
       const aspectRatio = vpRect.width / vpRect.height;
       const contentAspect = contentWidth / contentHeight;
-      
+
       let newZoom;
       if (contentAspect > aspectRatio) {
         newZoom = (vpRect.width / contentWidth) * (CANVAS_WIDTH / vpRect.width);
       } else {
         newZoom = (vpRect.height / contentHeight) * (CANVAS_HEIGHT / vpRect.height);
       }
-      
+
       newZoom = Math.max(canvasState.minZoom, Math.min(2, newZoom));
-      
+
       const viewWidth = CANVAS_WIDTH / newZoom;
       const viewHeight = CANVAS_HEIGHT / newZoom;
-      
+
       canvasState.zoom = newZoom;
       canvasState.panX = minX - 100 - (viewWidth - contentWidth) / 2;
       canvasState.panY = minY - 100 - (viewHeight - contentHeight) / 2;
-      
+
       constrainPan();
       updateViewBox();
     }
@@ -2337,7 +2355,6 @@
       updateViewBox();
     }
 
-    /* Apply the current theme settings to the DOM */
     function wieldThePower() {
       const root = document.documentElement;
 
@@ -2350,28 +2367,31 @@
       root.style.setProperty("--topbar-bg", PAGE_STATE.topbarBg);
       root.style.setProperty("--topbar-border", PAGE_STATE.topbarBorder);
 
-      // Layout settings
       const topbarHeight = PAGE_STATE.topbarHeight || 52;
       const sidebarWidth = PAGE_STATE.sidebarWidth || 350;
+      const mobileFooterHeight = PAGE_STATE.mobileFooterHeight || 40;
       root.style.setProperty("--topbar-height", topbarHeight + "px");
       root.style.setProperty("--sidebar-width", sidebarWidth + "px");
+      root.style.setProperty("--mobile-footer-height", mobileFooterHeight + "vh");
 
-      // Update layout inputs if they exist
       const topbarHeightInput = document.getElementById("topbar-height");
       const topbarHeightVal = document.getElementById("topbar-height-val");
       const sidebarWidthInput = document.getElementById("sidebar-width");
       const sidebarWidthVal = document.getElementById("sidebar-width-val");
-      
+      const mobileFooterHeightInput = document.getElementById("mobile-footer-height");
+      const mobileFooterHeightVal = document.getElementById("mobile-footer-height-val");
+
       if (topbarHeightInput) topbarHeightInput.value = topbarHeight;
       if (topbarHeightVal) topbarHeightVal.textContent = topbarHeight + "px";
       if (sidebarWidthInput) sidebarWidthInput.value = sidebarWidth;
       if (sidebarWidthVal) sidebarWidthVal.textContent = sidebarWidth + "px";
+      if (mobileFooterHeightInput) mobileFooterHeightInput.value = mobileFooterHeight;
+      if (mobileFooterHeightVal) mobileFooterHeightVal.textContent = mobileFooterHeight + "%";
 
-      // Apply sidebar collapsed state
       const mainEl = document.querySelector("main");
       const detailsPanel = document.getElementById("details-panel");
       const sidebarToggle = document.getElementById("sidebar-toggle");
-      
+
       if (PAGE_STATE.sidebarCollapsed) {
         if (mainEl) mainEl.classList.add("sidebar-collapsed");
         if (detailsPanel) detailsPanel.classList.add("collapsed");
@@ -2401,28 +2421,28 @@
       }
     }
 
-    /* Initialize state from embedded JSON data */
     (async function awakeTheImmortal() {
       let initialState = {};
+      let decryptionCancelled = false;
       const stateEl = document.getElementById("topology-state");
       if (stateEl && stateEl.textContent.trim()) {
         try {
           let stateText = stateEl.textContent.trim();
-          
-          // Check if data is encrypted
+
           if (isEncrypted(stateText)) {
             let decrypted = false;
             let attempts = 0;
             const maxAttempts = 3;
-            
+
             while (!decrypted && attempts < maxAttempts) {
               const password = prompt('This file is encrypted. Enter password to decrypt:\n(Attempt ' + (attempts + 1) + ' of ' + maxAttempts + ')');
-              
+
               if (!password) {
-                alert('Decryption cancelled. File will load with default data.');
+                alert('Decryption cancelled. The file will not be loaded.');
+                decryptionCancelled = true;
                 break;
               }
-              
+
               try {
                 stateText = await decryptData(stateText, password);
                 decrypted = true;
@@ -2431,16 +2451,17 @@
                 if (attempts < maxAttempts) {
                   alert('Incorrect password. Please try again.');
                 } else {
-                  alert('Maximum attempts reached. File will load with default data.');
+                  alert('Maximum attempts reached. The file will not be loaded.');
+                  decryptionCancelled = true;
                 }
               }
             }
-            
+
             if (!decrypted) {
               stateText = '{}';
             }
           }
-          
+
           initialState = JSON.parse(stateText);
         } catch (e) {
           console.error('Failed to load state:', e);
@@ -2448,29 +2469,37 @@
         }
       }
 
-      // Only use BASE_NODE_DATA if initialState is completely empty
-      NODE_DATA = initialState.nodeData ? initialState.nodeData : BASE_NODE_DATA;
+      if (decryptionCancelled) {
+        NODE_DATA = {};
+        EDGE_DATA = { list: [] };
+        EDGE_LEGEND = {};
+        savedPositions = {};
+        savedSizes = {};
+        savedStyles = {};
+      } else {
 
-      EDGE_DATA = initialState.edgeData ? initialState.edgeData : {
-        list: [
-          { id: "host-diesel", from: "host", to: "diesel", width: 4, color: "#475569", type: "main", notes: [] },
-          { id: "host-percy", from: "host", to: "percy", width: 4, color: "#475569", type: "main", notes: [] },
-          { id: "host-gordon", from: "host", to: "gordon", width: 4, color: "#475569", type: "main", notes: [] },
-          { id: "host-henry", from: "host", to: "henry", width: 4, color: "#475569", type: "main", notes: [] },
-          { id: "henry-pbs-remote", from: "henry", to: "pbs-remote", width: 5, color: "#f56565", type: "backup", notes: [] }
-        ]
-      };
+        NODE_DATA = initialState.nodeData ? initialState.nodeData : BASE_NODE_DATA;
 
-      EDGE_LEGEND = initialState.edgeLegend || {};
-      savedPositions = initialState.nodePositions || {};
-      savedSizes = initialState.nodeSizes || {};
-      savedStyles = initialState.nodeStyles || {};
+        EDGE_DATA = initialState.edgeData ? initialState.edgeData : {
+          list: [
+            { id: "host-diesel", from: "host", to: "diesel", width: 4, color: "#475569", type: "main", notes: [] },
+            { id: "host-percy", from: "host", to: "percy", width: 4, color: "#475569", type: "main", notes: [] },
+            { id: "host-gordon", from: "host", to: "gordon", width: 4, color: "#475569", type: "main", notes: [] },
+            { id: "host-henry", from: "host", to: "henry", width: 4, color: "#475569", type: "main", notes: [] },
+            { id: "henry-pbs-remote", from: "henry", to: "pbs-remote", width: 5, color: "#f56565", type: "backup", notes: [] }
+          ]
+        };
+
+        EDGE_LEGEND = initialState.edgeLegend || {};
+        savedPositions = initialState.nodePositions || {};
+        savedSizes = initialState.nodeSizes || {};
+        savedStyles = initialState.nodeStyles || {};
+      }
 
       if (initialState.page) {
         PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, initialState.page);
       }
 
-      // Restore canvas state if saved
       if (initialState.canvas) {
         canvasState.zoom = initialState.canvas.zoom || 1;
         canvasState.panX = initialState.canvas.panX || 0;
@@ -2478,12 +2507,10 @@
       }
 
       wieldThePower();
-      
-      // Initialize the graph after data is loaded
+
       forgeTheTopology();
       updateViewBox();
-      
-      // Select first node if available
+
       const initialNodes = Object.keys(NODE_DATA);
       if (initialNodes.length > 0) {
         claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0]);
@@ -2494,14 +2521,13 @@
     })();
 
     function saveEdgeData() {
-      // in-memory only; persisted when user clicks Save File
+
     }
 
     function saveEdgeLegend() {
-      // in-memory only; persisted when user clicks Save File
+
     }
 
-    /* -------------------- BREAKPOINT + STYLE HELPERS -------------------- */
     function getBreakpointKey() {
       const w = window.innerWidth;
       if (w <= 380) return "fold";
@@ -2558,7 +2584,6 @@
       return entry;
     }
 
-    /* -------------------- SIZE HELPER -------------------- */
     function getDefaultSize() {
       if (window.innerWidth <= 380) return 120;
       if (window.innerWidth <= 768) return 140;
@@ -2566,7 +2591,6 @@
       return 55;
     }
 
-    /* -------------------- SHAPE HELPERS -------------------- */
     function createShapeElement(shape, size) {
       const ns = "http://www.w3.org/2000/svg";
 
@@ -2654,10 +2678,8 @@
         return p;
       }
 
-      // ---- NETWORK EQUIPMENT SHAPES ----
-
       if (shape === "server") {
-        // Rack server : horizontal rectangle with drive bays
+
         const g = document.createElementNS(ns, "g");
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size * 1.2);
@@ -2666,7 +2688,7 @@
         body.setAttribute("height", size * 1.2);
         body.setAttribute("rx", 4);
         g.appendChild(body);
-        // Drive bay lines
+
         for (let i = 0; i < 3; i++) {
           const line = document.createElementNS(ns, "line");
           line.setAttribute("x1", -size * 0.9 + i * size * 0.5);
@@ -2678,7 +2700,7 @@
           line.style.opacity = "0.5";
           g.appendChild(line);
         }
-        // LED indicator
+
         const led = document.createElementNS(ns, "circle");
         led.setAttribute("cx", size * 0.9);
         led.setAttribute("cy", 0);
@@ -2689,9 +2711,9 @@
       }
 
       if (shape === "pc" || shape === "desktop") {
-        // Monitor with stand
+
         const g = document.createElementNS(ns, "g");
-        // Monitor
+
         const monitor = document.createElementNS(ns, "rect");
         monitor.setAttribute("x", -size * 0.9);
         monitor.setAttribute("y", -size * 0.8);
@@ -2699,7 +2721,7 @@
         monitor.setAttribute("height", size * 1.2);
         monitor.setAttribute("rx", 4);
         g.appendChild(monitor);
-        // Screen
+
         const screen = document.createElementNS(ns, "rect");
         screen.setAttribute("x", -size * 0.75);
         screen.setAttribute("y", -size * 0.65);
@@ -2708,14 +2730,14 @@
         screen.setAttribute("rx", 2);
         screen.style.fill = "#1e293b";
         g.appendChild(screen);
-        // Stand neck
+
         const neck = document.createElementNS(ns, "rect");
         neck.setAttribute("x", -size * 0.15);
         neck.setAttribute("y", size * 0.4);
         neck.setAttribute("width", size * 0.3);
         neck.setAttribute("height", size * 0.3);
         g.appendChild(neck);
-        // Stand base
+
         const base = document.createElementNS(ns, "rect");
         base.setAttribute("x", -size * 0.5);
         base.setAttribute("y", size * 0.7);
@@ -2728,7 +2750,7 @@
 
       if (shape === "laptop") {
         const g = document.createElementNS(ns, "g");
-        // Screen (angled)
+
         const screen = document.createElementNS(ns, "rect");
         screen.setAttribute("x", -size * 0.8);
         screen.setAttribute("y", -size * 0.9);
@@ -2736,7 +2758,7 @@
         screen.setAttribute("height", size * 1.1);
         screen.setAttribute("rx", 4);
         g.appendChild(screen);
-        // Keyboard/base
+
         const base = document.createElementNS(ns, "rect");
         base.setAttribute("x", -size * 0.9);
         base.setAttribute("y", size * 0.25);
@@ -2744,7 +2766,7 @@
         base.setAttribute("height", size * 0.6);
         base.setAttribute("rx", 4);
         g.appendChild(base);
-        // Touchpad
+
         const pad = document.createElementNS(ns, "rect");
         pad.setAttribute("x", -size * 0.25);
         pad.setAttribute("y", size * 0.45);
@@ -2758,7 +2780,7 @@
 
       if (shape === "phone" || shape === "mobile") {
         const g = document.createElementNS(ns, "g");
-        // Phone body
+
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size * 0.45);
         body.setAttribute("y", -size);
@@ -2766,7 +2788,7 @@
         body.setAttribute("height", size * 2);
         body.setAttribute("rx", 8);
         g.appendChild(body);
-        // Screen
+
         const screen = document.createElementNS(ns, "rect");
         screen.setAttribute("x", -size * 0.38);
         screen.setAttribute("y", -size * 0.85);
@@ -2775,7 +2797,7 @@
         screen.setAttribute("rx", 4);
         screen.style.fill = "#1e293b";
         g.appendChild(screen);
-        // Home button / notch
+
         const btn = document.createElementNS(ns, "rect");
         btn.setAttribute("x", -size * 0.15);
         btn.setAttribute("y", size * 0.82);
@@ -2789,7 +2811,7 @@
 
       if (shape === "router") {
         const g = document.createElementNS(ns, "g");
-        // Router body
+
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size * 1.1);
         body.setAttribute("y", -size * 0.3);
@@ -2797,7 +2819,7 @@
         body.setAttribute("height", size * 0.8);
         body.setAttribute("rx", 6);
         g.appendChild(body);
-        // Antennas
+
         for (let i = -1; i <= 1; i++) {
           const ant = document.createElementNS(ns, "rect");
           ant.setAttribute("x", i * size * 0.6 - size * 0.05);
@@ -2806,14 +2828,14 @@
           ant.setAttribute("height", size * 0.6);
           ant.setAttribute("rx", 2);
           g.appendChild(ant);
-          // Antenna tip
+
           const tip = document.createElementNS(ns, "circle");
           tip.setAttribute("cx", i * size * 0.6);
           tip.setAttribute("cy", -size * 0.95);
           tip.setAttribute("r", size * 0.08);
           g.appendChild(tip);
         }
-        // LEDs
+
         for (let i = 0; i < 4; i++) {
           const led = document.createElementNS(ns, "circle");
           led.setAttribute("cx", -size * 0.7 + i * size * 0.35);
@@ -2827,7 +2849,7 @@
 
       if (shape === "switch") {
         const g = document.createElementNS(ns, "g");
-        // Switch body (wide rectangle)
+
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size * 1.4);
         body.setAttribute("y", -size * 0.4);
@@ -2835,7 +2857,7 @@
         body.setAttribute("height", size * 0.8);
         body.setAttribute("rx", 4);
         g.appendChild(body);
-        // Ports
+
         for (let i = 0; i < 8; i++) {
           const port = document.createElementNS(ns, "rect");
           port.setAttribute("x", -size * 1.2 + i * size * 0.32);
@@ -2851,7 +2873,7 @@
 
       if (shape === "firewall") {
         const g = document.createElementNS(ns, "g");
-        // Wall shape with bricks
+
         const wall = document.createElementNS(ns, "rect");
         wall.setAttribute("x", -size);
         wall.setAttribute("y", -size * 0.8);
@@ -2859,7 +2881,7 @@
         wall.setAttribute("height", size * 1.6);
         wall.setAttribute("rx", 4);
         g.appendChild(wall);
-        // Brick pattern : horizontal lines
+
         for (let row = 0; row < 3; row++) {
           const line = document.createElementNS(ns, "line");
           line.setAttribute("x1", -size * 0.85);
@@ -2870,7 +2892,7 @@
           line.style.strokeWidth = "2";
           g.appendChild(line);
         }
-        // Vertical brick lines (staggered)
+
         for (let row = 0; row < 4; row++) {
           const offset = row % 2 === 0 ? 0 : size * 0.35;
           for (let col = 0; col < 3; col++) {
@@ -2893,7 +2915,7 @@
       if (shape === "cloud") {
         const p = document.createElementNS(ns, "path");
         const s = size;
-        // Cloud shape path
+
         p.setAttribute("d", `
           M ${-s*0.8} ${s*0.2}
           Q ${-s*1.1} ${s*0.2} ${-s*1.1} ${-s*0.1}
@@ -2912,28 +2934,28 @@
 
       if (shape === "database") {
         const g = document.createElementNS(ns, "g");
-        // Cylinder body
+
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size * 0.7);
         body.setAttribute("y", -size * 0.6);
         body.setAttribute("width", size * 1.4);
         body.setAttribute("height", size * 1.4);
         g.appendChild(body);
-        // Top ellipse
+
         const top = document.createElementNS(ns, "ellipse");
         top.setAttribute("cx", 0);
         top.setAttribute("cy", -size * 0.6);
         top.setAttribute("rx", size * 0.7);
         top.setAttribute("ry", size * 0.25);
         g.appendChild(top);
-        // Bottom ellipse
+
         const bottom = document.createElementNS(ns, "ellipse");
         bottom.setAttribute("cx", 0);
         bottom.setAttribute("cy", size * 0.8);
         bottom.setAttribute("rx", size * 0.7);
         bottom.setAttribute("ry", size * 0.25);
         g.appendChild(bottom);
-        // Middle lines for 3D effect
+
         const mid1 = document.createElementNS(ns, "ellipse");
         mid1.setAttribute("cx", 0);
         mid1.setAttribute("cy", -size * 0.15);
@@ -2957,7 +2979,7 @@
 
       if (shape === "printer") {
         const g = document.createElementNS(ns, "g");
-        // Main body
+
         const body = document.createElementNS(ns, "rect");
         body.setAttribute("x", -size);
         body.setAttribute("y", -size * 0.4);
@@ -2965,7 +2987,7 @@
         body.setAttribute("height", size * 0.9);
         body.setAttribute("rx", 4);
         g.appendChild(body);
-        // Paper input tray (top)
+
         const trayTop = document.createElementNS(ns, "rect");
         trayTop.setAttribute("x", -size * 0.7);
         trayTop.setAttribute("y", -size * 0.8);
@@ -2974,7 +2996,7 @@
         trayTop.setAttribute("rx", 2);
         trayTop.style.fill = "#1e293b";
         g.appendChild(trayTop);
-        // Paper output (bottom)
+
         const trayOut = document.createElementNS(ns, "rect");
         trayOut.setAttribute("x", -size * 0.6);
         trayOut.setAttribute("y", size * 0.5);
@@ -2982,7 +3004,7 @@
         trayOut.setAttribute("height", size * 0.35);
         trayOut.setAttribute("rx", 2);
         g.appendChild(trayOut);
-        // Paper
+
         const paper = document.createElementNS(ns, "rect");
         paper.setAttribute("x", -size * 0.5);
         paper.setAttribute("y", size * 0.3);
@@ -3009,13 +3031,8 @@
       return shapeEl;
     }
 
-    /* -------------------- CURRENT SELECTION -------------------- */
-    let currentNodeId = "host";
-    let currentEdgeId = null;
-    let currentStyleScope = "all";
 
-    /* -------------------- LEGEND -------------------- */
-    /* Rebuild the connection type legend display */
+
     function forgeTheLegend() {
       const container = document.getElementById("edge-legend");
       if (!container) return;
@@ -3040,6 +3057,14 @@
         const item = document.createElement("div");
         item.className = "legend-item";
 
+        item.addEventListener("mousedown", (e) => {
+          e.stopPropagation();
+        });
+
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+
         const swatch = document.createElement("span");
         swatch.className = "legend-swatch";
         swatch.style.backgroundColor = color;
@@ -3048,6 +3073,18 @@
         label.className = "legend-label";
         label.textContent = EDGE_LEGEND[color];
         label.contentEditable = true;
+
+        label.addEventListener("mousedown", (e) => {
+          e.stopPropagation();
+        });
+
+        label.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+
+        label.addEventListener("touchstart", (e) => {
+          e.stopPropagation();
+        });
 
         label.addEventListener("focus", () => {
           label.classList.add("editing");
@@ -3060,6 +3097,13 @@
           saveEdgeLegend();
         });
 
+        label.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            label.blur();
+          }
+        });
+
         item.append(swatch, label);
         container.appendChild(item);
       });
@@ -3067,21 +3111,50 @@
       container.style.display = "flex";
     }
 
-    /* -------------------- BUILD GRAPH -------------------- */
-    /* Main rendering function : builds the complete SVG topology visualization */
     function forgeTheTopology() {
-      // Safety check: ensure NODE_DATA is initialized
+
       if (!NODE_DATA || !EDGE_DATA) {
         console.warn('forgeTheTopology called before data initialized');
         return;
       }
-      
+
       const svg = document.getElementById("map");
       svg.innerHTML = "";
 
       const ns = "http://www.w3.org/2000/svg";
 
-      // Draw canvas boundary rectangle
+      const defs = document.createElementNS(ns, "defs");
+
+      const markerForward = document.createElementNS(ns, "marker");
+      markerForward.id = "arrow-forward";
+      markerForward.setAttribute("markerWidth", "10");
+      markerForward.setAttribute("markerHeight", "10");
+      markerForward.setAttribute("refX", "9");
+      markerForward.setAttribute("refY", "3");
+      markerForward.setAttribute("orient", "auto");
+      markerForward.setAttribute("markerUnits", "strokeWidth");
+      const pathForward = document.createElementNS(ns, "path");
+      pathForward.setAttribute("d", "M0,0 L0,6 L9,3 z");
+      pathForward.setAttribute("fill", "context-stroke");
+      markerForward.appendChild(pathForward);
+      defs.appendChild(markerForward);
+
+      const markerBackward = document.createElementNS(ns, "marker");
+      markerBackward.id = "arrow-backward";
+      markerBackward.setAttribute("markerWidth", "10");
+      markerBackward.setAttribute("markerHeight", "10");
+      markerBackward.setAttribute("refX", "0");
+      markerBackward.setAttribute("refY", "3");
+      markerBackward.setAttribute("orient", "auto");
+      markerBackward.setAttribute("markerUnits", "strokeWidth");
+      const pathBackward = document.createElementNS(ns, "path");
+      pathBackward.setAttribute("d", "M9,0 L9,6 L0,3 z");
+      pathBackward.setAttribute("fill", "context-stroke");
+      markerBackward.appendChild(pathBackward);
+      defs.appendChild(markerBackward);
+
+      svg.appendChild(defs);
+
       const boundary = document.createElementNS(ns, "rect");
       boundary.setAttribute("x", CANVAS_PADDING);
       boundary.setAttribute("y", CANVAS_PADDING);
@@ -3094,34 +3167,29 @@
       boundary.setAttribute("rx", "8");
       svg.appendChild(boundary);
 
-      // Canvas center for default positioning
       const centerX = CANVAS_WIDTH / 2;
       const centerY = CANVAS_HEIGHT / 2;
 
-      // Build positions dynamically from all nodes
       let positions = {};
 
-      // For every node in NODE_DATA, assign either its saved position or a default center position
       Object.keys(NODE_DATA).forEach(id => {
         positions[id] = savedPositions[id] || { x: centerX, y: centerY };
       });
 
-      // Only adjust for screen size if no saved positions
       if (Object.keys(savedPositions).length === 0) {
-        // Position nodes in a nice layout centered on the canvas
+
         const nodeIds = Object.keys(NODE_DATA);
         const baseY = centerY - 300;
-        
+
         if (nodeIds.length > 0) {
-          // First node at top center
+
           positions[nodeIds[0]] = { x: centerX, y: baseY };
-          
-          // Arrange remaining nodes in a circle/arc below
+
           const remaining = nodeIds.slice(1);
           const radius = 350;
           const startAngle = Math.PI * 0.3;
           const endAngle = Math.PI * 0.7;
-          
+
           remaining.forEach((id, i) => {
             const angle = startAngle + (endAngle - startAngle) * (i / Math.max(1, remaining.length - 1));
             positions[id] = {
@@ -3132,31 +3200,26 @@
         }
       }
 
-      // Ensure all positions are synced to savedPositions for drag consistency
-      // Also constrain any out of bounds positions
       Object.keys(positions).forEach(id => {
         let pos = savedPositions[id] || positions[id];
         const nodeSize = savedSizes[id] || 55;
-        
-        // Constrain to canvas bounds
+
         pos.x = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, pos.x));
         pos.y = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, pos.y));
-        
+
         positions[id] = { x: pos.x, y: pos.y };
         savedPositions[id] = { x: pos.x, y: pos.y };
       });
 
-      // Count edges between each pair of nodes to handle overlaps
       const edgePairCount = {};
       const edgePairIndex = {};
       EDGE_DATA.list.forEach(edge => {
         if (edge.type === "custom") return;
-        // Create a consistent key regardless of direction
+
         const key = [edge.from, edge.to].sort().join("||");
         edgePairCount[key] = (edgePairCount[key] || 0) + 1;
       });
 
-      // Track current index for each pair
       EDGE_DATA.list.forEach(edge => {
         if (edge.type === "custom") return;
         const key = [edge.from, edge.to].sort().join("||");
@@ -3166,9 +3229,8 @@
         edgePairIndex[key]++;
       });
 
-      // Draw edges (lines + custom polylines)
       EDGE_DATA.list.forEach(edge => {
-        // Custom polyline edge
+
         if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
           const poly = document.createElementNS(ns, "polyline");
           poly.classList.add("edge");
@@ -3176,6 +3238,26 @@
           poly.style.stroke = edge.color || "#475569";
           poly.style.strokeWidth = edge.width || 4;
           poly.setAttribute("fill", "none");
+
+          const lineStyle = edge.lineStyle || "solid";
+          if (lineStyle === "dashed") {
+            poly.style.strokeDasharray = "10,5";
+          } else if (lineStyle === "dotted") {
+            poly.style.strokeDasharray = "2,4";
+          } else {
+            poly.style.strokeDasharray = "none";
+          }
+
+          const direction = edge.direction || "none";
+          if (direction === "forward") {
+            poly.setAttribute("marker-end", "url(#arrow-forward)");
+          } else if (direction === "backward") {
+            poly.setAttribute("marker-start", "url(#arrow-backward)");
+          } else if (direction === "both") {
+            poly.setAttribute("marker-start", "url(#arrow-backward)");
+            poly.setAttribute("marker-end", "url(#arrow-forward)");
+          }
+
           const ptsStr = edge.points.map(p => `${p.x},${p.y}`).join(" ");
           poly.setAttribute("points", ptsStr);
 
@@ -3188,7 +3270,6 @@
           return;
         }
 
-        // Standard line between two nodes
         const p1 = positions[edge.from];
         const p2 = positions[edge.to];
         if (!p1 || !p2) return;
@@ -3196,18 +3277,15 @@
         const pairTotal = edge._pairTotal || 1;
         const pairIndex = edge._pairIndex || 0;
 
-        // Calculate curve offset (0 for single edges, spread for multiples)
         const midX = (p1.x + p2.x) / 2;
         const midY = (p1.y + p2.y) / 2;
-        
-        // Perpendicular vector for curve offset
+
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
         const len = Math.sqrt(dx * dx + dy * dy) || 1;
         const perpX = -dy / len;
         const perpY = dx / len;
-        
-        // Offset amount based on index (0 for single, spread evenly for multiples)
+
         let offsetAmount = 0;
         if (pairTotal > 1) {
           offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
@@ -3215,7 +3293,6 @@
         const ctrlX = midX + perpX * offsetAmount;
         const ctrlY = midY + perpY * offsetAmount;
 
-        // Always use path for consistency (straight line when offset is 0)
         const path = document.createElementNS(ns, "path");
         path.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
         path.setAttribute("fill", "none");
@@ -3235,7 +3312,6 @@
         svg.appendChild(path);
       });
 
-      // Draw nodes
       Object.entries(positions).forEach(([id,pos]) => {
         const g = document.createElementNS("http://www.w3.org/2000/svg","g");
         g.classList.add("node-group");
@@ -3252,7 +3328,6 @@
         const styles = resolveStylesForNode(id);
         const shapeEl = createNodeShape(id, r);
 
-        // Text offsets
         const titleOffsetX = styles.titleOffsetX || 0;
         const titleOffsetY = styles.titleOffsetY || 0;
         const subOffsetX = styles.subOffsetX || 0;
@@ -3290,7 +3365,6 @@
 
         g.append(shapeEl,label,sub);
 
-        // Dragging
         let isDragging = false;
         let startX, startY;
 
@@ -3317,51 +3391,45 @@
           pt.x = e.clientX;
           pt.y = e.clientY;
           const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-          
-          // Calculate new position
+
           let newX = svgP.x - startX;
           let newY = svgP.y - startY;
-          
-          // Constrain to canvas bounds with padding
+
           const nodeSize = savedSizes[id] || 55;
           newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
           newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
-          
+
           pos.x = newX;
           pos.y = newY;
           g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
-          
-          // Update both local positions and savedPositions for curve calculations
+
           positions[id] = { x: pos.x, y: pos.y };
           savedPositions[id] = { x: pos.x, y: pos.y };
-          
-          // Update minimap
+
           updateMinimap();
-          
-          // Update all edges connected to this node
+
           document.querySelectorAll(".edge").forEach(edgeEl => {
             const fromId = edgeEl.dataset.from;
             const toId = edgeEl.dataset.to;
-            
+
             if (fromId === id || toId === id) {
-              // Get positions : prefer savedPositions, fall back to default
+
               const p1 = savedPositions[fromId] || positions[fromId] || { x: 600, y: 350 };
               const p2 = savedPositions[toId] || positions[toId] || { x: 600, y: 350 };
-              
-              // Check if this is a line or path
+
               if (edgeEl.tagName === "line") {
                 edgeEl.setAttribute("x1", p1.x);
                 edgeEl.setAttribute("y1", p1.y);
                 edgeEl.setAttribute("x2", p2.x);
                 edgeEl.setAttribute("y2", p2.y);
               } else if (edgeEl.tagName === "path") {
-                // Recalculate curve for path
+
                 const edgeId = edgeEl.dataset.edgeId;
                 const edge = EDGE_DATA.list.find(e => e.id === edgeId);
                 if (edge) {
                   const pairTotal = edge._pairTotal || 1;
                   const pairIndex = edge._pairIndex || 0;
-                  
+
                   const midX = (p1.x + p2.x) / 2;
                   const midY = (p1.y + p2.y) / 2;
                   const dx = p2.x - p1.x;
@@ -3369,7 +3437,7 @@
                   const len = Math.sqrt(dx * dx + dy * dy) || 1;
                   const perpX = -dy / len;
                   const perpY = dx / len;
-                  
+
                   let offsetAmount = 0;
                   if (pairTotal > 1) {
                     offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
@@ -3394,7 +3462,6 @@
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
 
-        // Touch support for mobile devices
         g.addEventListener("touchstart", (e) => {
           e.preventDefault();
           isDragging = true;
@@ -3408,7 +3475,7 @@
           startX = svgP.x - pos.x;
           startY = svgP.y - pos.y;
           e.stopPropagation();
-        });
+        }, { passive: false });
 
         const handleTouchMove = (e) => {
           if (!isDragging) return;
@@ -3419,51 +3486,45 @@
           pt.x = touch.clientX;
           pt.y = touch.clientY;
           const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
-          
-          // Calculate new position
+
           let newX = svgP.x - startX;
           let newY = svgP.y - startY;
-          
-          // Constrain to canvas bounds with padding
+
           const nodeSize = savedSizes[id] || 55;
           newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
           newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
-          
+
           pos.x = newX;
           pos.y = newY;
           g.setAttribute("transform",`translate(${pos.x},${pos.y})`);
-          
-          // Update both local positions and savedPositions for curve calculations
+
           positions[id] = { x: pos.x, y: pos.y };
           savedPositions[id] = { x: pos.x, y: pos.y };
-          
-          // Update minimap
+
           updateMinimap();
-          
-          // Update all edges connected to this node
+
           document.querySelectorAll(".edge").forEach(edgeEl => {
             const fromId = edgeEl.dataset.from;
             const toId = edgeEl.dataset.to;
-            
+
             if (fromId === id || toId === id) {
-              // Get positions : prefer savedPositions, fall back to default
+
               const p1 = savedPositions[fromId] || positions[fromId] || { x: 600, y: 350 };
               const p2 = savedPositions[toId] || positions[toId] || { x: 600, y: 350 };
-              
-              // Check if this is a line or path
+
               if (edgeEl.tagName === "line") {
                 edgeEl.setAttribute("x1", p1.x);
                 edgeEl.setAttribute("y1", p1.y);
                 edgeEl.setAttribute("x2", p2.x);
                 edgeEl.setAttribute("y2", p2.y);
               } else if (edgeEl.tagName === "path") {
-                // Recalculate curve for path
+
                 const edgeId = edgeEl.dataset.edgeId;
                 const edge = EDGE_DATA.list.find(e => e.id === edgeId);
                 if (edge) {
                   const pairTotal = edge._pairTotal || 1;
                   const pairIndex = edge._pairIndex || 0;
-                  
+
                   const midX = (p1.x + p2.x) / 2;
                   const midY = (p1.y + p2.y) / 2;
                   const dx = p2.x - p1.x;
@@ -3471,7 +3532,7 @@
                   const len = Math.sqrt(dx * dx + dy * dy) || 1;
                   const perpX = -dy / len;
                   const perpY = dx / len;
-                  
+
                   let offsetAmount = 0;
                   if (pairTotal > 1) {
                     offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
@@ -3492,7 +3553,7 @@
           }
         };
 
-        document.addEventListener("touchmove", handleTouchMove);
+        document.addEventListener("touchmove", handleTouchMove, { passive: false });
         document.addEventListener("touchend", handleTouchEnd);
 
         g.style.cursor = "grab";
@@ -3510,7 +3571,6 @@
       updateMinimap();
     }
 
-    /* -------------------- MODALS -------------------- */
     function showEditModal(title, currentValue, onSave) {
       const modal = document.getElementById("edit-modal");
       const input = document.getElementById("modal-input");
@@ -3557,7 +3617,6 @@
       });
     }
 
-    /* Show a confirmation dialog for destructive actions */
     function challengeTheImmortal(message, onConfirm) {
       const modal = document.getElementById("confirm-modal");
       const messageEl = document.getElementById("confirm-message");
@@ -3591,7 +3650,6 @@
       });
     }
 
-    /* -------------------- EDIT PAGE TITLE -------------------- */
     const pageTitleEl = document.getElementById("page-title");
     if (pageTitleEl) {
       pageTitleEl.addEventListener("click", () => {
@@ -3602,7 +3660,6 @@
       });
     }
 
-    /* -------------------- SELECT NODE -------------------- */
     function editNodeName(id) {
       showEditModal("Edit Name", NODE_DATA[id].name, (newName) => {
         NODE_DATA[id].name = newName;
@@ -3631,7 +3688,6 @@
       });
     }
 
-    /* Select a node and show its details in the sidebar */
     function claimTheImmortal(id) {
       currentNodeId = id;
       currentEdgeId = null;
@@ -3690,7 +3746,6 @@
       shapeSelect.value = data.shape || "circle";
       scopeSelect.value = currentStyleScope || "all";
 
-      // Populate text offset values
       document.getElementById("title-offset-y").value = scopedStyles.titleOffsetY || resolvedStyles.titleOffsetY || 0;
       document.getElementById("title-offset-x").value = scopedStyles.titleOffsetX || resolvedStyles.titleOffsetX || 0;
       document.getElementById("sub-offset-y").value = scopedStyles.subOffsetY || resolvedStyles.subOffsetY || 0;
@@ -3704,7 +3759,7 @@
         if (tag.toLowerCase().includes("wg")) b.classList.add("wg");
         b.style.cursor = "pointer";
         b.style.position = "relative";
-        
+
         const tagText = document.createElement("span");
         tagText.textContent = tag;
         tagText.addEventListener("click", (e) => {
@@ -3716,7 +3771,7 @@
             }
           });
         });
-        
+
         const deleteTag = document.createElement("span");
         deleteTag.textContent = " ✕";
         deleteTag.style.opacity = "0.6";
@@ -3727,12 +3782,11 @@
           data.tags.splice(i, 1);
           claimTheImmortal(id);
         });
-        
+
         b.append(tagText, deleteTag);
         tagEl.append(b);
       });
-      
-      // Add tag button
+
       const addTagBtn = document.createElement("span");
       addTagBtn.className = "badge";
       addTagBtn.style.cursor = "pointer";
@@ -3742,7 +3796,7 @@
       addTagBtn.addEventListener("click", () => {
         showEditModal("Add Tag(s) : comma separated", "", (newTagStr) => {
           if (newTagStr) {
-            // Support comma-separated tags
+
             const newTags = newTagStr.split(",").map(t => t.trim()).filter(t => t);
             newTags.forEach(t => data.tags.push(t));
             claimTheImmortal(id);
@@ -3787,7 +3841,6 @@
         notesEl.append(li);
       });
 
-      // Populate Add Line dropdown with other nodes
       const addLineSelect = document.getElementById("add-line-select");
       addLineSelect.innerHTML = "";
       Object.entries(NODE_DATA).forEach(([nodeId,node]) => {
@@ -3800,8 +3853,6 @@
       });
     }
 
-    /* -------------------- SELECT EDGE -------------------- */
-    /* Select an edge and show its details in the sidebar */
     function selectTheConnection(id) {
       currentEdgeId = id;
 
@@ -3817,7 +3868,6 @@
       const edge = EDGE_DATA.list.find(e => e.id === id);
       if (!edge) return;
 
-      // Direction symbol for title
       const directionSymbols = {
         "none": "⇄",
         "forward": "→",
@@ -3838,9 +3888,11 @@
       const widthInput = document.getElementById("edge-width");
       const colorInput = document.getElementById("edge-color");
       const directionSelect = document.getElementById("edge-direction");
+      const lineStyleSelect = document.getElementById("edge-line-style");
       widthInput.value = edge.width;
       colorInput.value = edge.color;
       directionSelect.value = edge.direction || "none";
+      lineStyleSelect.value = edge.lineStyle || "solid";
 
       const list = document.getElementById("edge-notes");
       list.innerHTML = "";
@@ -3881,10 +3933,6 @@
       });
     }
 
-    /* -------------------- INIT -------------------- */
-    // Initialization now happens inside awakeTheImmortal() after data is loaded
-
-    // Rebuild graph on window resize
     window.addEventListener("resize", () => {
       forgeTheTopology();
       if (currentEdgeId) {
@@ -3899,31 +3947,27 @@
       }
     });
 
-    /* -------------------- ZOOM/PAN CONTROLS -------------------- */
     (function initZoomPan() {
       const viewport = document.getElementById("canvas-viewport");
       const svg = document.getElementById("map");
       const hint = document.getElementById("canvas-hint");
-      
-      // Show hint briefly on load
+
       setTimeout(() => {
         hint.classList.add("visible");
         setTimeout(() => hint.classList.remove("visible"), 4000);
       }, 1000);
 
-      // Zoom with mouse wheel
       viewport.addEventListener("wheel", (e) => {
         e.preventDefault();
-        
+
         const rect = viewport.getBoundingClientRect();
         const mouseX = (e.clientX - rect.left) / rect.width;
         const mouseY = (e.clientY - rect.top) / rect.height;
-        
+
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         zoomTo(canvasState.zoom * delta, mouseX, mouseY);
       }, { passive: false });
 
-      // Pinch-to-zoom support for mobile
       let initialPinchDistance = 0;
       let initialPinchZoom = 1;
       let pinchCenter = { x: 0.5, y: 0.5 };
@@ -3938,15 +3982,14 @@
             touch2.clientY - touch1.clientY
           );
           initialPinchZoom = canvasState.zoom;
-          
-          // Calculate center point of pinch
+
           const rect = viewport.getBoundingClientRect();
           const centerX = (touch1.clientX + touch2.clientX) / 2;
           const centerY = (touch1.clientY + touch2.clientY) / 2;
           pinchCenter.x = (centerX - rect.left) / rect.width;
           pinchCenter.y = (centerY - rect.top) / rect.height;
         }
-      });
+      }, { passive: false });
 
       viewport.addEventListener("touchmove", (e) => {
         if (e.touches.length === 2) {
@@ -3957,7 +4000,7 @@
             touch2.clientX - touch1.clientX,
             touch2.clientY - touch1.clientY
           );
-          
+
           if (initialPinchDistance > 0) {
             const scale = currentDistance / initialPinchDistance;
             const newZoom = initialPinchZoom * scale;
@@ -3966,14 +4009,19 @@
         }
       }, { passive: false });
 
-      // Pan with mouse drag on empty space or with space key held
       let panStartViewX = 0;
       let panStartViewY = 0;
 
       viewport.addEventListener("mousedown", (e) => {
-        // Check if clicking on empty space or space is held
+
+        if (e.target.closest('.draw-toolbar') || 
+            e.target.closest('.topology-toolbar') || 
+            e.target.closest('.legend-container')) {
+          return;
+        }
+
         const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-        
+
         if (isEmptySpace || canvasState.spacePressed) {
           e.preventDefault();
           canvasState.isPanning = true;
@@ -3985,11 +4033,16 @@
         }
       });
 
-      // Touch support for viewport panning
       viewport.addEventListener("touchstart", (e) => {
-        // Check if touching empty space
+
+        if (e.target.closest('.draw-toolbar') || 
+            e.target.closest('.topology-toolbar') || 
+            e.target.closest('.legend-container')) {
+          return;
+        }
+
         const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-        
+
         if (isEmptySpace && e.touches.length === 1) {
           e.preventDefault();
           canvasState.isPanning = true;
@@ -3999,47 +4052,44 @@
           panStartViewY = canvasState.panY;
           viewport.classList.add("panning");
         }
-      });
+      }, { passive: false });
 
       document.addEventListener("mousemove", (e) => {
         if (!canvasState.isPanning) return;
-        
+
         const dx = e.clientX - canvasState.panStartX;
         const dy = e.clientY - canvasState.panStartY;
-        
+
         const rect = viewport.getBoundingClientRect();
         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-        
-        // Convert screen pixels to canvas units
+
         const canvasDx = (dx / rect.width) * viewWidth;
         const canvasDy = (dy / rect.height) * viewHeight;
-        
+
         canvasState.panX = panStartViewX - canvasDx;
         canvasState.panY = panStartViewY - canvasDy;
-        
+
         constrainPan();
         updateViewBox();
       });
 
-      // Touch support for panning movement
       document.addEventListener("touchmove", (e) => {
         if (!canvasState.isPanning || !e.touches[0]) return;
-        
+
         const dx = e.touches[0].clientX - canvasState.panStartX;
         const dy = e.touches[0].clientY - canvasState.panStartY;
-        
+
         const rect = viewport.getBoundingClientRect();
         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-        
-        // Convert screen pixels to canvas units
+
         const canvasDx = (dx / rect.width) * viewWidth;
         const canvasDy = (dy / rect.height) * viewHeight;
-        
+
         canvasState.panX = panStartViewX - canvasDx;
         canvasState.panY = panStartViewY - canvasDy;
-        
+
         constrainPan();
         updateViewBox();
       });
@@ -4051,7 +4101,6 @@
         }
       });
 
-      // Touch support for pan end
       document.addEventListener("touchend", () => {
         if (canvasState.isPanning) {
           canvasState.isPanning = false;
@@ -4059,9 +4108,13 @@
         }
       });
 
-      // Space key for pan mode
       document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && !e.repeat && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "TEXTAREA") {
+
+        const isEditing = document.activeElement.tagName === "INPUT" || 
+                         document.activeElement.tagName === "TEXTAREA" ||
+                         document.activeElement.isContentEditable;
+
+        if (e.code === "Space" && !e.repeat && !isEditing) {
           e.preventDefault();
           canvasState.spacePressed = true;
           viewport.style.cursor = "grab";
@@ -4075,7 +4128,6 @@
         }
       });
 
-      // Zoom buttons
       document.getElementById("zoom-in-btn").addEventListener("click", () => {
         zoomTo(canvasState.zoom * 1.25, 0.5, 0.5);
       });
@@ -4087,7 +4139,6 @@
       document.getElementById("zoom-fit-btn").addEventListener("click", fitToContent);
       document.getElementById("zoom-reset-btn").addEventListener("click", resetView);
 
-      // Minimap interaction
       const minimapContainer = document.getElementById("minimap-container");
       const minimapSvg = document.getElementById("minimap");
       let minimapDragging = false;
@@ -4098,12 +4149,11 @@
         updatePanFromMinimap(e);
       });
 
-      // Touch support for minimap
       minimapContainer.addEventListener("touchstart", (e) => {
         e.preventDefault();
         minimapDragging = true;
         updatePanFromMinimapTouch(e);
-      });
+      }, { passive: false });
 
       document.addEventListener("mousemove", (e) => {
         if (minimapDragging) {
@@ -4111,7 +4161,6 @@
         }
       });
 
-      // Touch support for minimap movement
       document.addEventListener("touchmove", (e) => {
         if (minimapDragging && e.touches[0]) {
           updatePanFromMinimapTouch(e);
@@ -4122,7 +4171,6 @@
         minimapDragging = false;
       });
 
-      // Touch support for minimap end
       document.addEventListener("touchend", () => {
         minimapDragging = false;
       });
@@ -4131,13 +4179,13 @@
         const rect = minimapContainer.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width;
         const y = (e.clientY - rect.top) / rect.height;
-        
+
         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-        
+
         canvasState.panX = x * CANVAS_WIDTH - viewWidth / 2;
         canvasState.panY = y * CANVAS_HEIGHT - viewHeight / 2;
-        
+
         constrainPan();
         updateViewBox();
       }
@@ -4147,21 +4195,20 @@
         const touch = e.touches[0];
         const x = (touch.clientX - rect.left) / rect.width;
         const y = (touch.clientY - rect.top) / rect.height;
-        
+
         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-        
+
         canvasState.panX = x * CANVAS_WIDTH - viewWidth / 2;
         canvasState.panY = y * CANVAS_HEIGHT - viewHeight / 2;
-        
+
         constrainPan();
         updateViewBox();
       }
 
-      // Keyboard shortcuts for zoom
       document.addEventListener("keydown", (e) => {
         if (document.activeElement.tagName === "INPUT" || document.activeElement.tagName === "TEXTAREA") return;
-        
+
         if ((e.key === "+" || e.key === "=") && (e.ctrlKey || e.metaKey)) {
           e.preventDefault();
           zoomTo(canvasState.zoom * 1.25, 0.5, 0.5);
@@ -4174,13 +4221,11 @@
         }
       });
 
-      // Initial fit to content
       setTimeout(() => {
         fitToContent();
       }, 100);
     })();
 
-    /* -------------------- SIZE CONTROLS -------------------- */
     const sizeSlider = document.getElementById("size-slider");
     const sizeValue = document.getElementById("size-value");
     const resetSizeBtn = document.getElementById("reset-size");
@@ -4251,7 +4296,6 @@
       }
     });
 
-    /* -------------------- STYLE CONTROLS -------------------- */
     const applyStyle = (property, value) => {
       const styleEntry = ensureStyleEntry(currentNodeId);
       const scopeKey = currentStyleScope || "all";
@@ -4281,7 +4325,6 @@
     document.getElementById("sub-font").addEventListener("change", (e) => applyStyle("subFont", e.target.value));
     document.getElementById("sub-size").addEventListener("input", (e) => applyStyle("subSize", parseInt(e.target.value, 10)));
 
-    // Text position offset controls
     document.getElementById("title-offset-y").addEventListener("input", (e) => {
       applyStyle("titleOffsetY", parseInt(e.target.value, 10) || 0);
       forgeTheTopology();
@@ -4309,13 +4352,11 @@
       claimTheImmortal(currentNodeId);
     });
 
-    /* Screen scope selector */
     document.getElementById("style-scope").addEventListener("change", (e) => {
       currentStyleScope = e.target.value || "all";
       claimTheImmortal(currentNodeId);
     });
 
-    /* Shape selector */
     document.getElementById("shape-select").addEventListener("change", (e) => {
       const shape = e.target.value || "circle";
       NODE_DATA[currentNodeId].shape = shape;
@@ -4328,7 +4369,6 @@
       nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
     });
 
-    /* -------------------- NODE NOTES ADD -------------------- */
     const addNoteBtn = document.getElementById("add-note-btn");
     const noteInput = document.getElementById("new-note-input");
 
@@ -4347,7 +4387,6 @@
       }
     });
 
-    /* -------------------- EDGE EDIT CONTROLS -------------------- */
     document.getElementById("edge-width").addEventListener("input", () => {
       if (!currentEdgeId) return;
       const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
@@ -4377,6 +4416,16 @@
       const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
       if (!edge) return;
       edge.direction = document.getElementById("edge-direction").value;
+      saveEdgeData();
+      forgeTheTopology();
+      selectTheConnection(currentEdgeId);
+    });
+
+    document.getElementById("edge-line-style").addEventListener("change", () => {
+      if (!currentEdgeId) return;
+      const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+      if (!edge) return;
+      edge.lineStyle = document.getElementById("edge-line-style").value;
       saveEdgeData();
       forgeTheTopology();
       selectTheConnection(currentEdgeId);
@@ -4420,7 +4469,6 @@
       });
     });
 
-    /* -------------------- ADD LINE TOOLBAR -------------------- */
     document.getElementById("add-line-btn").addEventListener("click", () => {
       if (!currentNodeId) return;
       const select = document.getElementById("add-line-select");
@@ -4447,11 +4495,10 @@
       EDGE_DATA.list.push(newEdge);
       saveEdgeData();
       forgeTheTopology();
-      // Keep the node selected so the toolbar stays visible
+
       claimTheImmortal(currentNodeId);
     });
 
-    /* -------------------- FREE-DRAW MODE -------------------- */
     let freeDrawMode = false;
     let freeDrawPoints = [];
     let freeDrawPolylineEl = null;
@@ -4460,6 +4507,8 @@
     const drawToggleBtn = document.getElementById("draw-toggle");
     const drawUndoBtn = document.getElementById("draw-undo");
     const drawColorInput = document.getElementById("draw-color");
+    const drawStyleSelect = document.getElementById("draw-style");
+    const drawArrowSelect = document.getElementById("draw-arrow");
     const svgMap = document.getElementById("map");
 
     function updateFreeDrawGraphics() {
@@ -4482,6 +4531,15 @@
           freeDrawPolylineEl.setAttribute("points", ptsStr);
           freeDrawPolylineEl.style.stroke = drawColorInput.value || "#475569";
           freeDrawPolylineEl.style.strokeWidth = 3;
+
+          const lineStyle = drawStyleSelect.value || "solid";
+          if (lineStyle === "dashed") {
+            freeDrawPolylineEl.style.strokeDasharray = "10,5";
+          } else if (lineStyle === "dotted") {
+            freeDrawPolylineEl.style.strokeDasharray = "2,4";
+          } else {
+            freeDrawPolylineEl.style.strokeDasharray = "none";
+          }
         }
       }
 
@@ -4496,7 +4554,6 @@
         c.setAttribute("r", 5);
         c.dataset.index = String(idx);
 
-        // Drag handlers
         c.addEventListener("mousedown", (e) => {
           if (!freeDrawMode) return;
           e.preventDefault();
@@ -4527,7 +4584,6 @@
           document.addEventListener("mouseup", upHandler);
         });
 
-        // Touch support for mobile
         c.addEventListener("touchstart", (e) => {
           if (!freeDrawMode) return;
           e.preventDefault();
@@ -4556,7 +4612,7 @@
 
           document.addEventListener("touchmove", touchMoveHandler);
           document.addEventListener("touchend", touchUpHandler);
-        });
+        }, { passive: false });
 
         svg.appendChild(c);
         freeDrawPointEls.push(c);
@@ -4591,6 +4647,8 @@
 
       if (freeDrawPoints.length >= 2) {
         const color = drawColorInput.value || "#475569";
+        const lineStyle = drawStyleSelect.value || "solid";
+        const arrowDir = drawArrowSelect.value || "none";
         const newId = "custom-" + Date.now();
         const pointsCopy = freeDrawPoints.map(p => ({x:p.x, y:p.y}));
         EDGE_DATA.list.push({
@@ -4598,6 +4656,8 @@
           type: "custom",
           color,
           width: 4,
+          lineStyle: lineStyle,
+          direction: arrowDir,
           points: pointsCopy,
           notes: []
         });
@@ -4640,7 +4700,61 @@
       updateFreeDrawGraphics();
     });
 
-    /* Click on SVG to add points in free-draw mode */
+    const drawToolbar = document.getElementById("draw-toolbar");
+
+    drawToolbar.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+    });
+
+    drawToolbar.addEventListener("click", (e) => {
+
+      if (e.target !== drawToggleBtn && e.target !== drawUndoBtn) {
+        e.stopPropagation();
+      }
+    });
+
+    drawStyleSelect.addEventListener("change", () => {
+      if (freeDrawMode) {
+        updateFreeDrawGraphics();
+      }
+    });
+
+    drawArrowSelect.addEventListener("change", () => {
+      if (freeDrawMode) {
+        updateFreeDrawGraphics();
+      }
+    });
+
+    drawColorInput.addEventListener("input", () => {
+      if (freeDrawMode) {
+        updateFreeDrawGraphics();
+      }
+    });
+
+    drawStyleSelect.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+    });
+
+    drawStyleSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    drawArrowSelect.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+    });
+
+    drawArrowSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    drawColorInput.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+    });
+
+    drawColorInput.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
     svgMap.addEventListener("click", (e) => {
       if (!freeDrawMode) return;
       if (e.button !== 0) return;
@@ -4654,7 +4768,6 @@
       addFreeDrawPoint(svgP.x, svgP.y);
     });
 
-    /* Touch support for free-draw mode */
     svgMap.addEventListener("touchend", (e) => {
       if (!freeDrawMode) return;
       const target = e.target;
@@ -4668,19 +4781,14 @@
         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
         addFreeDrawPoint(svgP.x, svgP.y);
       }
-    });
+    }, { passive: false });
 
-    /* ==================================================================================
-     * EVENT HANDLERS
-     * ================================================================================== */
-
-    /* -------------------- PAGE SETTINGS HOOKS -------------------- */
     const settingsBtn = document.getElementById("settings-btn");
     const settingsModal = document.getElementById("settings-modal");
     const settingsClose = document.getElementById("settings-close");
 
     settingsBtn.addEventListener("click", () => {
-      // Sync inputs with current PAGE_STATE
+
       document.getElementById("page-bg-color").value = PAGE_STATE.background || "#050608";
       document.getElementById("topbar-bg-color").value = PAGE_STATE.topbarBg || "#0b0e13";
       document.getElementById("topbar-border-color").value = PAGE_STATE.topbarBorder || "#1f2533";
@@ -4749,7 +4857,6 @@
       wieldThePower();
     });
 
-    /* -------------------- LAYOUT CONTROLS -------------------- */
     document.getElementById("topbar-height").addEventListener("input", (e) => {
       PAGE_STATE.topbarHeight = parseInt(e.target.value, 10);
       document.getElementById("topbar-height-val").textContent = PAGE_STATE.topbarHeight + "px";
@@ -4762,13 +4869,103 @@
       wieldThePower();
     });
 
-    /* -------------------- SIDEBAR TOGGLE -------------------- */
+    document.getElementById("mobile-footer-height").addEventListener("input", (e) => {
+      PAGE_STATE.mobileFooterHeight = parseInt(e.target.value, 10);
+      document.getElementById("mobile-footer-height-val").textContent = PAGE_STATE.mobileFooterHeight + "%";
+      wieldThePower();
+    });
+
     document.getElementById("sidebar-toggle").addEventListener("click", () => {
       PAGE_STATE.sidebarCollapsed = !PAGE_STATE.sidebarCollapsed;
       wieldThePower();
     });
 
-    /* -------------------- SAVE HELP POPUP -------------------- */
+    document.getElementById("export-data-btn").addEventListener("click", () => {
+      const data = captureTheQuickening();
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeTitle = (PAGE_STATE.title || "network-topology")
+        .toLowerCase()
+        .replace(/[^a-z0-9\-]+/g, "-");
+      const timestamp = new Date().toISOString().split('T')[0];
+      a.download = `${safeTitle}-data-${timestamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("import-data-btn").addEventListener("click", () => {
+      document.getElementById("import-data-file").click();
+    });
+
+    document.getElementById("import-data-file").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (!data.nodeData || !data.edgeData) {
+          alert("Invalid data file. Missing required fields.");
+          return;
+        }
+
+        const confirmMsg = `This will replace all current data with the imported data.\n\nImporting:\n- ${Object.keys(data.nodeData).length} nodes\n- ${data.edgeData.list?.length || 0} connections\n\nContinue?`;
+        if (!confirm(confirmMsg)) {
+          e.target.value = ""; 
+          return;
+        }
+
+        NODE_DATA = data.nodeData || {};
+        EDGE_DATA = data.edgeData || { list: [] };
+        EDGE_LEGEND = data.edgeLegend || {};
+        savedPositions = data.nodePositions || {};
+        savedSizes = data.nodeSizes || {};
+        savedStyles = data.nodeStyles || {};
+
+        if (data.page) {
+          PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, data.page);
+          wieldThePower();
+        }
+
+        if (data.canvas) {
+          canvasState.zoom = data.canvas.zoom || 1;
+          canvasState.panX = data.canvas.panX || 0;
+          canvasState.panY = data.canvas.panY || 0;
+        }
+
+        if (data.page?.title) {
+          document.title = data.page.title;
+          document.querySelector(".editable-page-title").textContent = data.page.title;
+        }
+
+        forgeTheTopology();
+        forgeTheLegend();
+        updateViewBox();
+
+        const nodeIds = Object.keys(NODE_DATA);
+        if (nodeIds.length > 0) {
+          claimTheImmortal(nodeIds[0]);
+        } else {
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("topology-toolbar").style.display = "none";
+        }
+
+        alert("Data imported successfully!");
+        e.target.value = ""; 
+      } catch (err) {
+        console.error("Import error:", err);
+        alert(`Failed to import data: ${err.message}`);
+        e.target.value = ""; 
+      }
+    });
+
     const saveHelpBtn = document.getElementById("save-help-btn");
     const saveInfoModal = document.getElementById("save-info-modal");
     const saveInfoClose = document.getElementById("save-info-close");
@@ -4787,9 +4984,6 @@
       }
     });
 
-
-    /* ENCRYPTION (WEB CRYPTO API) */
-    /* Derive a cryptographic key from a password using PBKDF2 */
     async function deriveKey(password, salt) {
       const encoder = new TextEncoder();
       const keyMaterial = await crypto.subtle.importKey(
@@ -4799,7 +4993,7 @@
         false,
         ['deriveKey']
       );
-      
+
       return crypto.subtle.deriveKey(
         {
           name: 'PBKDF2',
@@ -4814,64 +5008,51 @@
       );
     }
 
-    /* Encrypt data with a password */
     async function encryptData(data, password) {
       const encoder = new TextEncoder();
       const salt = crypto.getRandomValues(new Uint8Array(16));
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const key = await deriveKey(password, salt);
-      
+
       const encrypted = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv: iv },
         key,
         encoder.encode(data)
       );
-      
-      // Combine salt + iv + encrypted data
+
       const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
       result.set(salt, 0);
       result.set(iv, salt.length);
       result.set(new Uint8Array(encrypted), salt.length + iv.length);
-      
-      // Return as base64 with encryption marker
+
       return 'ENCRYPTED:' + btoa(String.fromCharCode(...result));
     }
 
-    /* Decrypt data with a password */
     async function decryptData(encryptedData, password) {
-      // Remove encryption marker
+
       const base64Data = encryptedData.replace('ENCRYPTED:', '');
       const data = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-      
-      // Extract salt, iv, and encrypted content
+
       const salt = data.slice(0, 16);
       const iv = data.slice(16, 28);
       const encrypted = data.slice(28);
-      
+
       const key = await deriveKey(password, salt);
-      
+
       const decrypted = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: iv },
         key,
         encrypted
       );
-      
+
       const decoder = new TextDecoder();
       return decoder.decode(decrypted);
     }
 
-    /* Check if data is encrypted */
     function isEncrypted(data) {
       return typeof data === 'string' && data.startsWith('ENCRYPTED:');
     }
 
-    /* ==================================================================================
-     * PERSISTENCE (BECOME IMMORTAL)
-     * "There can be only one".
-     * ================================================================================== */
-
-    /* -------------------- SAVE FILE / EXPORT -------------------- */
-    /* Capture the complete current state for persistence */
     function captureTheQuickening() {
       return {
         nodeData: NODE_DATA,
@@ -4889,17 +5070,14 @@
       };
     }
 
-    /* Build a complete standalone HTML file with all current data */
     function assembleTheImmortalForm() {
       const clone = document.documentElement.cloneNode(true);
 
-      // Update nodes-json
       const nodeScript = clone.querySelector("#nodes-json");
       if (nodeScript) {
         nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
       }
 
-      // Update topology-state
       let stateScript = clone.querySelector("#topology-state");
       if (!stateScript) {
         stateScript = document.createElement("script");
@@ -4913,25 +5091,23 @@
       return "<!DOCTYPE html>\n" + clone.outerHTML;
     }
 
-    /* Download the current state as a self-contained HTML file */
     async function becomeImmortal() {
       const encryptEnabled = document.getElementById('encrypt-toggle').checked;
       let stateData = JSON.stringify(captureTheQuickening(), null, 2);
-      
-      // If encryption is enabled, prompt for password and encrypt
+
       if (encryptEnabled) {
         const password = prompt('Enter a password to encrypt your data:\n(Remember this password - you will need it to open this file!)');
         if (!password) {
           alert('Encryption cancelled. File not saved.');
           return;
         }
-        
+
         const confirmPassword = prompt('Confirm your password:');
         if (password !== confirmPassword) {
           alert('Passwords do not match. File not saved.');
           return;
         }
-        
+
         try {
           stateData = await encryptData(stateData, password);
         } catch (e) {
@@ -4939,16 +5115,19 @@
           return;
         }
       }
-      
+
       const clone = document.documentElement.cloneNode(true);
 
-      // Update nodes-json
       const nodeScript = clone.querySelector("#nodes-json");
       if (nodeScript) {
-        nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
+        if (encryptEnabled) {
+
+          nodeScript.textContent = JSON.stringify({}, null, 2);
+        } else {
+          nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
+        }
       }
 
-      // Update topology-state with potentially encrypted data
       let stateScript = clone.querySelector("#topology-state");
       if (!stateScript) {
         stateScript = document.createElement("script");
@@ -4976,14 +5155,13 @@
 
     document.getElementById("save-file-btn").addEventListener("click", becomeImmortal);
 
-    /* -------------------- ADD NODE FEATURE -------------------- */
     const addNodeBtn = document.getElementById("add-node-btn");
     const addNodeModal = document.getElementById("add-node-modal");
     const addNodeCancel = document.getElementById("add-node-cancel");
     const addNodeSave = document.getElementById("add-node-save");
 
     addNodeBtn.addEventListener("click", () => {
-      // Reset form
+
       document.getElementById("new-node-name").value = "";
       document.getElementById("new-node-ip").value = "";
       document.getElementById("new-node-tags").value = "";
@@ -5013,10 +5191,8 @@
         return;
       }
 
-      // Parse tags from comma-separated string
       const tags = tagsStr ? tagsStr.split(",").map(t => t.trim()).filter(t => t) : [];
 
-      // Generate a unique ID from the name
       let baseId = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       if (!baseId) baseId = "node";
       let nodeId = baseId;
@@ -5026,7 +5202,6 @@
         counter++;
       }
 
-      // Create the new node
       NODE_DATA[nodeId] = {
         shape: shape || "circle",
         name: name,
@@ -5036,7 +5211,6 @@
         notes: []
       };
 
-      // Place new node at center of canvas (will be draggable)
       const centerX = CANVAS_WIDTH / 2;
       const centerY = CANVAS_HEIGHT / 2;
       savedPositions[nodeId] = { x: centerX, y: centerY };
@@ -5046,7 +5220,6 @@
       claimTheImmortal(nodeId);
     });
 
-    // Allow Enter key in the add node form
     ["new-node-name", "new-node-ip", "new-node-tags"].forEach(inputId => {
       document.getElementById(inputId).addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
@@ -5055,7 +5228,6 @@
       });
     });
 
-    /* -------------------- CLEAR ALL FEATURE -------------------- */
     const clearAllBtn = document.getElementById("clear-all-btn");
     const clearAllModal = document.getElementById("clear-all-modal");
     const clearAllCancel = document.getElementById("clear-all-cancel");
@@ -5076,7 +5248,7 @@
     });
 
     clearAllConfirm.addEventListener("click", () => {
-      // Clear all data
+
       NODE_DATA = {};
       EDGE_DATA = { list: [] };
       EDGE_LEGEND = {};
@@ -5086,10 +5258,8 @@
 
       clearAllModal.classList.remove("active");
 
-      // Rebuild empty graph
       forgeTheTopology();
 
-      // Hide panels since there's nothing selected
       document.getElementById("node-panel").style.display = "none";
       document.getElementById("edge-panel").style.display = "none";
       document.getElementById("topology-toolbar").style.display = "none";
@@ -5098,13 +5268,10 @@
       currentEdgeId = null;
     });
 
-    /* -------------------- DELETE NODE FEATURE -------------------- */
-    // Add delete button to node panel if not exists
     (function addDeleteNodeButton() {
       const nodePanel = document.getElementById("node-panel");
       if (!nodePanel) return;
 
-      // Check if button already exists
       if (document.getElementById("delete-node-btn")) return;
 
       const deleteBtn = document.createElement("button");
@@ -5115,10 +5282,9 @@
       deleteBtn.addEventListener("click", () => {
         if (!currentNodeId) return;
         challengeTheImmortal(`Delete node "${NODE_DATA[currentNodeId]?.name || currentNodeId}" and all its connections?`, () => {
-          // Remove all edges connected to this node
+
           EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== currentNodeId && e.to !== currentNodeId);
 
-          // Remove the node
           delete NODE_DATA[currentNodeId];
           delete savedPositions[currentNodeId];
           delete savedSizes[currentNodeId];
@@ -5129,7 +5295,6 @@
 
           forgeTheTopology();
 
-          // Select first available node or hide panels
           const remainingNodes = Object.keys(NODE_DATA);
           if (remainingNodes.length > 0) {
             claimTheImmortal(remainingNodes[0]);
@@ -5144,6 +5309,5 @@
       nodePanel.appendChild(deleteBtn);
     })();
   </script>
-
 
 </body></html>

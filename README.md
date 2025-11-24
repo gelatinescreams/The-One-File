@@ -19,10 +19,7 @@ I wanted a tool that is:
 
 Instead of building another hosted application, I built a file.
 
----
-
 ## What You Can Use It For
-
 - Homelab mapping  
 - Office network layouts  
 - Rack diagrams  
@@ -30,9 +27,19 @@ Instead of building another hosted application, I built a file.
 - Logical and physical maps  
 - Encrypted break glass documentation  
 - Offline or air gapped environments  
-- Sharing a topology by sending a single file  
+- Sharing a topology by sending a single file
 
----
+## New Updates 11/24/25!
+- Version 1.5 brings a few additions and a few more fixes.
+- Import / Export data to upgrade/downgrade The One File version.
+- Free drawn lines now have styling. Full, dashed and dotted along with arrow directions!
+- Mobile footer styling.
+- Bug fixes: (Too many to count. Squashed many bugs in both desktop and mobile)
+
+## What's next?
+- Version 2.0 with a seperate "online" option that adds self hosted icons from
+- Simple icons or Material
+- Selfh.st self hosted icons
 
 ## Features
 - Zero coding knowledge required    
@@ -78,8 +85,6 @@ Instead of building another hosted application, I built a file.
 ### Customization
 - Full theme editor  
 
----
-
 ## Supported Browsers
 
 - Chrome and Edge  
@@ -88,8 +93,6 @@ Instead of building another hosted application, I built a file.
 - Modern Android and iOS browsers  
 
 If the browser is reasonably modern, it should work.
-
----
 
 ## File Structure
 
