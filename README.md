@@ -6,6 +6,18 @@ In the end there can only be "The ONE File". A portable and completely self cont
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png)
 
+## New Updates 11/24/25!
+- Version 1.5 brings a few additions and a few more fixes.
+- Import / Export data to upgrade/downgrade The One File version.
+- Free drawn lines now have styling. Full, dashed and dotted along with arrow directions!
+- Mobile footer styling.
+- Bug fixes: (Too many to count. Squashed many bugs in both desktop and mobile)
+
+## What's next?
+- Version 2.0 with a seperate "online" option that adds self hosted icons from
+- Simple icons or Material
+- Selfh.st self hosted icons
+
 ## Why It Exists
 
 I wanted a tool that is:
@@ -28,18 +40,6 @@ Instead of building another hosted application, I built a file.
 - Encrypted break glass documentation  
 - Offline or air gapped environments  
 - Sharing a topology by sending a single file
-
-## New Updates 11/24/25!
-- Version 1.5 brings a few additions and a few more fixes.
-- Import / Export data to upgrade/downgrade The One File version.
-- Free drawn lines now have styling. Full, dashed and dotted along with arrow directions!
-- Mobile footer styling.
-- Bug fixes: (Too many to count. Squashed many bugs in both desktop and mobile)
-
-## What's next?
-- Version 2.0 with a seperate "online" option that adds self hosted icons from
-- Simple icons or Material
-- Selfh.st self hosted icons
 
 ## Features
 - Zero coding knowledge required    
