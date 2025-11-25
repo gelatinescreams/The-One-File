@@ -5289,7 +5289,7 @@
     const encryptEnabled = document.getElementById("encrypt-toggle").checked;
     let stateData = JSON.stringify(captureTheQuickening(), null, 2);
     if (encryptEnabled) {
-     const password = prompt("Enter a password to encrypt your data:\n(Remember this password - you will need it to open this file!)", );
+     const password = prompt("Enter a password to encrypt your data:\n(Remember this password! You will need it to open this file and its non recoverable!)", );
      if (!password) {
       alert("Encryption cancelled. File not saved.");
       return;
