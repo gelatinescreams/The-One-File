@@ -1998,43 +1998,394 @@
     </details>
    </aside>
   </main>
-  <script id="nodes-json" type="application/json">
-   {}
-  </script>
-  <script id="topology-state" type="application/json">
-   {
-    "nodeData": {},
-    "edgeData": {
-     "list": []
-    },
-    "edgeLegend": {},
-    "nodePositions": {},
-    "nodeSizes": {},
-    "nodeStyles": {},
-    "iconCache": {},
-    "page": {
-     "title": "The One File: The Networkening",
-     "background": "",
-     "topbarBg": "rgba(9, 12, 20, 0.9)",
-     "topbarBorder": "#1f2533",
-     "panel": "#0b0e13",
-     "panelAlt": "#10141b",
-     "accent": "#4fd1c5",
-     "danger": "#f56565",
-     "textMain": "#e2e8f0",
-     "textSoft": "#94a3b8",
-     "topbarHeight": 100,
-     "sidebarWidth": 435,
-     "mobileFooterHeight": 20,
-     "sidebarCollapsed": false
-    },
-    "canvas": {
-     "zoom": 1,
-     "panX": 0,
-     "panY": 0
-    }
-   }
-  </script>
+<script id="nodes-json" type="application/json">
+{
+ "isp-modem": {
+  "shape": "cloud",
+  "name": "ISP Modem",
+  "ip": "192.168.100.1",
+  "role": "WAN",
+  "tags": ["1Gbps Fiber", "Bridge Mode"],
+  "notes": ["ISP: AT&T Fiber"]
+ },
+ "opnsense": {
+  "shape": "firewall",
+  "name": "OPNsense",
+  "ip": "192.168.1.1",
+  "role": "Router/Firewall",
+  "tags": ["Protectli", "4 port"],
+  "notes": ["DNS: Pi-hole", "VPN: WireGuard"]
+ },
+ "main-switch": {
+  "shape": "switch",
+  "name": "Main Switch",
+  "ip": "192.168.1.2",
+  "role": "Core",
+  "tags": ["UniFi 24 port", "PoE"],
+  "notes": ["USW 24 POE"]
+ },
+ "proxmox": {
+  "shape": "server",
+  "name": "Proxmox",
+  "ip": "192.168.1.10",
+  "role": "Hypervisor",
+  "tags": [{"type": "icon", "library": "simple", "name": "proxmox"}, "Dell R720", "128GB RAM"],
+  "notes": ["2x Xeon E5 2670", "10x VMs running"]
+ },
+ "truenas": {
+  "shape": "database",
+  "name": "TrueNAS",
+  "ip": "192.168.1.11",
+  "role": "NAS",
+  "tags": [{"type": "icon", "library": "selfhst", "name": "truenas"}, "48TB RAW", "ZFS"],
+  "notes": ["6x 8TB WD Red", "RAID Z2"]
+ },
+ "docker-host": {
+  "shape": "server",
+  "name": "Docker Host",
+  "ip": "192.168.1.12",
+  "role": "Containers",
+  "tags": [{"type": "icon", "library": "simple", "name": "docker"}, "Ubuntu 22.04", "32GB RAM"],
+  "notes": ["Dell Optiplex 7050", "35 containers"]
+ },
+ "pi-hole": {
+  "shape": "circle",
+  "name": "Pi-hole",
+  "ip": "192.168.1.53",
+  "role": "DNS",
+  "tags": [{"type": "icon", "library": "selfhst", "name": "pi-hole"}, "Ad Blocking"],
+  "notes": ["Raspberry Pi 4", "Primary DNS"]
+ },
+ "plex": {
+  "shape": "circle",
+  "name": "Plex",
+  "ip": "192.168.1.20",
+  "role": "Media Server",
+  "tags": [{"type": "icon", "library": "selfhst", "name": "plex"}, "Transcoding"],
+  "notes": ["VM on Proxmox", "4 cores", "8GB RAM"]
+ },
+ "jellyfin": {
+  "shape": "circle",
+  "name": "Jellyfin",
+  "ip": "192.168.1.21",
+  "role": "Media Server",
+  "tags": [{"type": "icon", "library": "selfhst", "name": "jellyfin"}, "Open Source"],
+  "notes": ["Container on Docker", "Backup media server"]
+ },
+ "nextcloud": {
+  "shape": "circle",
+  "name": "Nextcloud",
+  "ip": "192.168.1.30",
+  "role": "Cloud Storage",
+  "tags": [{"type": "icon", "library": "simple", "name": "nextcloud"}, "Files", "Calendar"],
+  "notes": ["Container on Docker", "MariaDB backend"]
+ },
+ "bitwarden": {
+  "shape": "circle",
+  "name": "Vaultwarden",
+  "ip": "192.168.1.31",
+  "role": "Password Manager",
+  "tags": [{"type": "icon", "library": "simple", "name": "bitwarden"}, "Self hosted"],
+  "notes": ["Container on Docker", "Bitwarden compatible"]
+ },
+ "homeassistant": {
+  "shape": "circle",
+  "name": "Home Assistant",
+  "ip": "192.168.1.40",
+  "role": "Smart Home",
+  "tags": [{"type": "icon", "library": "simple", "name": "homeassistant"}, "Automation"],
+  "notes": ["VM on Proxmox", "45 devices"]
+ },
+ "portainer": {
+  "shape": "circle",
+  "name": "Portainer",
+  "ip": "192.168.1.50",
+  "role": "Container Mgmt",
+  "tags": [{"type": "icon", "library": "simple", "name": "portainer"}, "Docker GUI"],
+  "notes": ["Managing 35 containers"]
+ },
+ "traefik": {
+  "shape": "circle",
+  "name": "Traefik",
+  "ip": "192.168.1.51",
+  "role": "Reverse Proxy",
+  "tags": [{"type": "icon", "library": "simple", "name": "traefikproxy"}, "SSL"],
+  "notes": ["Container on Docker", "Wildcard cert"]
+ },
+ "grafana": {
+  "shape": "circle",
+  "name": "Grafana",
+  "ip": "192.168.1.60",
+  "role": "Monitoring",
+  "tags": [{"type": "icon", "library": "simple", "name": "grafana"}, "Dashboards"],
+  "notes": ["Container on Docker"]
+ },
+ "prometheus": {
+  "shape": "circle",
+  "name": "Prometheus",
+  "ip": "192.168.1.61",
+  "role": "Metrics",
+  "tags": [{"type": "icon", "library": "simple", "name": "prometheus"}, "Time Series"],
+  "notes": ["Container on Docker", "15d retention"]
+ },
+ "unifi-controller": {
+  "shape": "router",
+  "name": "UniFi Controller",
+  "ip": "192.168.1.70",
+  "role": "WiFi Management",
+  "tags": [{"type": "icon", "library": "simple", "name": "ubiquiti"}, "Network"],
+  "notes": ["Container on Docker", "3 APs"]
+ },
+ "wireguard": {
+  "shape": "router",
+  "name": "WireGuard",
+  "ip": "192.168.1.80",
+  "role": "VPN",
+  "tags": [{"type": "icon", "library": "simple", "name": "wireguard"}, "Remote Access"],
+  "notes": ["VM on Proxmox", "5 clients"]
+ }
+}
+</script>
+<script id="topology-state" type="application/json">
+{
+ "nodeData": {
+  "isp-modem": {
+   "shape": "cloud",
+   "name": "ISP Modem",
+   "ip": "192.168.100.1",
+   "role": "WAN",
+   "tags": ["1Gbps Fiber", "Bridge Mode"],
+   "notes": ["ISP: AT&T Fiber"]
+  },
+  "opnsense": {
+   "shape": "firewall",
+   "name": "OPNsense",
+   "ip": "192.168.1.1",
+   "role": "Router/Firewall",
+   "tags": ["Protectli", "4 port"],
+   "notes": ["DNS: Pi-hole", "VPN: WireGuard"]
+  },
+  "main-switch": {
+   "shape": "switch",
+   "name": "Main Switch",
+   "ip": "192.168.1.2",
+   "role": "Core",
+   "tags": ["UniFi 24 port", "PoE"],
+   "notes": ["USW 24 POE"]
+  },
+  "proxmox": {
+   "shape": "server",
+   "name": "Proxmox",
+   "ip": "192.168.1.10",
+   "role": "Hypervisor",
+   "tags": [{"type": "icon", "library": "simple", "name": "proxmox"}, "Dell R720", "128GB RAM"],
+   "notes": ["2x Xeon E5 2670", "10x VMs running"]
+  },
+  "truenas": {
+   "shape": "database",
+   "name": "TrueNAS",
+   "ip": "192.168.1.11",
+   "role": "NAS",
+   "tags": [{"type": "icon", "library": "selfhst", "name": "truenas"}, "48TB RAW", "ZFS"],
+   "notes": ["6x 8TB WD Red", "RAID Z2"]
+  },
+  "docker-host": {
+   "shape": "server",
+   "name": "Docker Host",
+   "ip": "192.168.1.12",
+   "role": "Containers",
+   "tags": [{"type": "icon", "library": "simple", "name": "docker"}, "Ubuntu 22.04", "32GB RAM"],
+   "notes": ["Dell Optiplex 7050", "35 containers"]
+  },
+  "pi-hole": {
+   "shape": "circle",
+   "name": "Pi-hole",
+   "ip": "192.168.1.53",
+   "role": "DNS",
+   "tags": [{"type": "icon", "library": "selfhst", "name": "pi-hole"}, "Ad Blocking"],
+   "notes": ["Raspberry Pi 4", "Primary DNS"]
+  },
+  "plex": {
+   "shape": "circle",
+   "name": "Plex",
+   "ip": "192.168.1.20",
+   "role": "Media Server",
+   "tags": [{"type": "icon", "library": "selfhst", "name": "plex"}, "Transcoding"],
+   "notes": ["VM on Proxmox", "4 cores", "8GB RAM"]
+  },
+  "jellyfin": {
+   "shape": "circle",
+   "name": "Jellyfin",
+   "ip": "192.168.1.21",
+   "role": "Media Server",
+   "tags": [{"type": "icon", "library": "selfhst", "name": "jellyfin"}, "Open Source"],
+   "notes": ["Container on Docker", "Backup media server"]
+  },
+  "nextcloud": {
+   "shape": "circle",
+   "name": "Nextcloud",
+   "ip": "192.168.1.30",
+   "role": "Cloud Storage",
+   "tags": [{"type": "icon", "library": "simple", "name": "nextcloud"}, "Files", "Calendar"],
+   "notes": ["Container on Docker", "MariaDB backend"]
+  },
+  "bitwarden": {
+   "shape": "circle",
+   "name": "Vaultwarden",
+   "ip": "192.168.1.31",
+   "role": "Password Manager",
+   "tags": [{"type": "icon", "library": "simple", "name": "bitwarden"}, "Self hosted"],
+   "notes": ["Container on Docker", "Bitwarden compatible"]
+  },
+  "homeassistant": {
+   "shape": "circle",
+   "name": "Home Assistant",
+   "ip": "192.168.1.40",
+   "role": "Smart Home",
+   "tags": [{"type": "icon", "library": "simple", "name": "homeassistant"}, "Automation"],
+   "notes": ["VM on Proxmox", "45 devices"]
+  },
+  "portainer": {
+   "shape": "circle",
+   "name": "Portainer",
+   "ip": "192.168.1.50",
+   "role": "Container Mgmt",
+   "tags": [{"type": "icon", "library": "simple", "name": "portainer"}, "Docker GUI"],
+   "notes": ["Managing 35 containers"]
+  },
+  "traefik": {
+   "shape": "circle",
+   "name": "Traefik",
+   "ip": "192.168.1.51",
+   "role": "Reverse Proxy",
+   "tags": [{"type": "icon", "library": "simple", "name": "traefikproxy"}, "SSL"],
+   "notes": ["Container on Docker", "Wildcard cert"]
+  },
+  "grafana": {
+   "shape": "circle",
+   "name": "Grafana",
+   "ip": "192.168.1.60",
+   "role": "Monitoring",
+   "tags": [{"type": "icon", "library": "simple", "name": "grafana"}, "Dashboards"],
+   "notes": ["Container on Docker"]
+  },
+  "prometheus": {
+   "shape": "circle",
+   "name": "Prometheus",
+   "ip": "192.168.1.61",
+   "role": "Metrics",
+   "tags": [{"type": "icon", "library": "simple", "name": "prometheus"}, "Time Series"],
+   "notes": ["Container on Docker", "15d retention"]
+  },
+  "unifi-controller": {
+   "shape": "router",
+   "name": "UniFi Controller",
+   "ip": "192.168.1.70",
+   "role": "WiFi Management",
+   "tags": [{"type": "icon", "library": "simple", "name": "ubiquiti"}, "Network"],
+   "notes": ["Container on Docker", "3 APs"]
+  },
+  "wireguard": {
+   "shape": "router",
+   "name": "WireGuard",
+   "ip": "192.168.1.80",
+   "role": "VPN",
+   "tags": [{"type": "icon", "library": "simple", "name": "wireguard"}, "Remote Access"],
+   "notes": ["VM on Proxmox", "5 clients"]
+  }
+ },
+ "edgeData": {
+  "list": [
+   {"id": "edge-1", "from": "isp-modem", "to": "opnsense", "color": "#ef4444", "width": 6, "notes": ["WAN 1Gbps"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-2", "from": "opnsense", "to": "main-switch", "color": "#10b981", "width": 6, "notes": ["LAN Trunk"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-3", "from": "main-switch", "to": "proxmox", "color": "#8b5cf6", "width": 5, "notes": ["Server VLAN"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-4", "from": "main-switch", "to": "truenas", "color": "#8b5cf6", "width": 5, "notes": ["Storage VLAN", "Jumbo frames"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-5", "from": "main-switch", "to": "docker-host", "color": "#8b5cf6", "width": 5, "notes": ["Server VLAN"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-6", "from": "main-switch", "to": "pi-hole", "color": "#3b82f6", "width": 4, "notes": ["Management VLAN"], "lineStyle": "solid", "direction": "both"},
+   {"id": "edge-7", "from": "proxmox", "to": "plex", "color": "#f59e0b", "width": 4, "notes": ["VM Network"], "lineStyle": "dashed", "direction": "both"},
+   {"id": "edge-8", "from": "proxmox", "to": "homeassistant", "color": "#f59e0b", "width": 4, "notes": ["VM Network"], "lineStyle": "dashed", "direction": "both"},
+   {"id": "edge-9", "from": "proxmox", "to": "wireguard", "color": "#f59e0b", "width": 4, "notes": ["VM Network"], "lineStyle": "dashed", "direction": "both"},
+   {"id": "edge-10", "from": "docker-host", "to": "jellyfin", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-11", "from": "docker-host", "to": "nextcloud", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-12", "from": "docker-host", "to": "bitwarden", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-13", "from": "docker-host", "to": "portainer", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-14", "from": "docker-host", "to": "traefik", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-15", "from": "docker-host", "to": "grafana", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-16", "from": "docker-host", "to": "prometheus", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-17", "from": "docker-host", "to": "unifi-controller", "color": "#06b6d4", "width": 4, "notes": ["Container"], "lineStyle": "dotted", "direction": "both"},
+   {"id": "edge-18", "from": "truenas", "to": "plex", "color": "#ec4899", "width": 3, "notes": ["Media Storage", "NFS"], "lineStyle": "dashed", "direction": "forward"},
+   {"id": "edge-19", "from": "truenas", "to": "jellyfin", "color": "#ec4899", "width": 3, "notes": ["Media Storage", "NFS"], "lineStyle": "dashed", "direction": "forward"},
+   {"id": "edge-20", "from": "truenas", "to": "nextcloud", "color": "#ec4899", "width": 3, "notes": ["Data Storage", "SMB"], "lineStyle": "dashed", "direction": "forward"}
+  ]
+ },
+ "edgeLegend": {
+  "#ef4444": "WAN",
+  "#10b981": "LAN Trunk",
+  "#8b5cf6": "Server VLAN",
+  "#3b82f6": "Management",
+  "#f59e0b": "VM Network",
+  "#06b6d4": "Containers",
+  "#ec4899": "Storage"
+ },
+ "nodePositions": {
+  "isp-modem": {"x": 2000, "y": 200},
+  "opnsense": {"x": 2000, "y": 550},
+  "main-switch": {"x": 2000, "y": 950},
+  "proxmox": {"x": 1200, "y": 1350},
+  "truenas": {"x": 2800, "y": 1350},
+  "docker-host": {"x": 2000, "y": 1350},
+  "pi-hole": {"x": 2000, "y": 1650},
+  "plex": {"x": 600, "y": 1850},
+  "jellyfin": {"x": 1400, "y": 2250},
+  "nextcloud": {"x": 1800, "y": 2250},
+  "bitwarden": {"x": 2200, "y": 2250},
+  "homeassistant": {"x": 1000, "y": 1850},
+  "portainer": {"x": 2600, "y": 2250},
+  "traefik": {"x": 3000, "y": 2250},
+  "grafana": {"x": 3400, "y": 2250},
+  "prometheus": {"x": 3400, "y": 1850},
+  "unifi-controller": {"x": 3000, "y": 1850},
+  "wireguard": {"x": 1400, "y": 1850}
+ },
+ "nodeSizes": {},
+ "nodeStyles": {
+  "pi-hole": {"all": {"icon": {"library": "selfhst", "name": "pi-hole"}}},
+  "plex": {"all": {"icon": {"library": "selfhst", "name": "plex"}}},
+  "jellyfin": {"all": {"icon": {"library": "selfhst", "name": "jellyfin"}}},
+  "nextcloud": {"all": {"icon": {"library": "simple", "name": "nextcloud"}}},
+  "bitwarden": {"all": {"icon": {"library": "simple", "name": "bitwarden"}}},
+  "homeassistant": {"all": {"icon": {"library": "simple", "name": "homeassistant"}}},
+  "portainer": {"all": {"icon": {"library": "simple", "name": "portainer"}}},
+  "traefik": {"all": {"icon": {"library": "simple", "name": "traefikproxy"}}},
+  "grafana": {"all": {"icon": {"library": "simple", "name": "grafana"}}},
+  "prometheus": {"all": {"icon": {"library": "simple", "name": "prometheus"}}},
+  "unifi-controller": {"all": {"icon": {"library": "simple", "name": "ubiquiti"}}},
+  "wireguard": {"all": {"icon": {"library": "simple", "name": "wireguard"}}}
+ },
+ "iconCache": {},
+ "page": {
+  "title": "Homelab",
+  "background": "",
+  "topbarBg": "rgba(9, 12, 20, 0.9)",
+  "topbarBorder": "#1f2533",
+  "panel": "#0b0e13",
+  "panelAlt": "#10141b",
+  "accent": "#4fd1c5",
+  "danger": "#f56565",
+  "textMain": "#e2e8f0",
+  "textSoft": "#94a3b8",
+  "topbarHeight": 100,
+  "sidebarWidth": 435,
+  "mobileFooterHeight": 20,
+  "sidebarCollapsed": false
+ },
+ "canvas": {
+  "zoom": 1,
+  "panX": 0,
+  "panY": 0
+ }
+}
+</script>
   <script>
    const IconLibrary = {
     libraries: {
