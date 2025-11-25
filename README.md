@@ -24,9 +24,9 @@ In the end there can only be "The ONE File". A portable and completely self cont
 | Encryption, export | ✓ | ✓ |
 | Offline only | ✓ |  |
 | No dependencies | ✓ |  |
-| **MDI Icons** |  | ✓ |
-| **Simple Icons** |  | ✓ |
-| **Selfh.st** |  | ✓ |
+| **[MDI Icons](https://pictogrammers.com/library/mdi/)**       |  | ✓ |
+| **[Simple Icons](https://simpleicons.org/?q=ping)**   |  | ✓ |
+| **[Selfh.st Icons](https://selfh.st/icons/)** |  | ✓ |
 
 ## Why It Exists
 
