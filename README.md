@@ -6,20 +6,25 @@ In the end there can only be "The ONE File". A portable and completely self cont
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
-## New Updates 11/25/25!
-- Version 1.90 brings a few additions and a few more fixes.
-- Mobile menu added.
-- Can now hide the line legend. (only pops up after the first line is added)
-- Can now be exported as a png or svg!
-- Import / Export data to upgrade/downgrade The One File version.
-- Free drawn lines now have styling. Full, dashed and dotted along with arrow directions!
-- Mobile footer styling.
-- Bug fixes: (Too many to count. Squashed many bugs in both desktop and mobile)
+## Version 2.0 - 11/25/25 The One File: The Networkening update!
+- Seperate online features version to include icons - OPTIONAL
+- Use theonefile-networkening.html for this version
+- Icon support added (MDI, Simple Icons, Selfh.st)
+- Icons as node shapes
+- Icons as tags on nodes
+- Icons with live preview
 
-## What's next?
-- Version 2.0 with a seperate "online" option that adds self hosted icons from
-- Simple icons or Material
-- Selfh.st self hosted icons
+## Online vs Offline
+
+| Feature | Offline | Online |
+|---------|---------|--------|
+| All core features | ✓ | ✓ |
+| Create/edit/save topologies | ✓ | ✓ |
+| Shapes, lines, styling | ✓ | ✓ |
+| Encryption, export | ✓ | ✓ |
+| **MDI Icons** |  | ✓ |
+| **Simple Icons** |  | ✓ |
+| **Selfh.st** |  | ✓ |
 
 ## Why It Exists
 
@@ -57,7 +62,9 @@ Instead of building another hosted application, I built a file.
 
 ### Nodes
 - Multiple shapes for common devices including servers, routers, switches, firewalls, and clouds  
-- Editable name, IP, role, tags, and notes  
+- *Icon shapes from MDI, Simple Icons, and Selfh.st avaialble in the theonefile-networkening.html version*
+- Editable name, IP, role, tags, and notes
+- *Editable icon shapes from MDI, Simple Icons, and Selfh.st avaialble in the theonefile-networkening.html version*
 - Resizable with full styling controls  
 - Custom fonts, colors, and text offsets  
 - Per breakpoint styling for desktop, tablet, mobile, and fold layouts  
@@ -75,6 +82,7 @@ Instead of building another hosted application, I built a file.
 - Useful for additional networks, zones, boundaries, etc
 
 ### Legend (Bottom left)
+- Can be hidden on both desktop and mobile
 - Automatically built from line colors in use  
 - Editable labels  
 - note: only shows up after first line is generated.
@@ -85,9 +93,10 @@ Instead of building another hosted application, I built a file.
 - Optional AES 256 GCM encryption for sensitive information  
 - Browser native crypto only  
 - No servers involved  
+- *Version theonefile-networkening.html uses 3 server calls from cdn.jsdelivr.net to load icons*
 
 ### Customization
-- Full theme editor  
+- 100% control theme editor  
 
 ## Supported Browsers
 
@@ -98,13 +107,11 @@ Instead of building another hosted application, I built a file.
 
 If the browser is reasonably modern, it should work.
 
-## File Structure
+## Credits
 
-Everything is contained inside the single HTML file:
+Icon support for theonefile-networkening.html version powered by:
+- [Selfh.st Icons](https://selfh.st/icons/) - Self-hosted app icons by the selfh.st community
+- [Material Design Icons](https://pictogrammers.com/library/mdi/) - 7,000+ open source icons by Pictogrammers
+- [Simple Icons](https://simpleicons.org/) - Free SVG icons for popular brands
 
-- CSS  
-- JavaScript  
-- Node data  
-- Connection data  
-- Style and layout settings  
-- Encrypted payload when enabled  
+Thank you to all the icon creators and maintainers for making these resources freely available. 
