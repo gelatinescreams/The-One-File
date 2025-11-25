@@ -16,12 +16,14 @@ In the end there can only be "The ONE File". A portable and completely self cont
 
 ## Online vs Offline
 
-| Feature | Offline | Online |
+| Feature | theonefile.html | theonefile-networkening.html |
 |---------|---------|--------|
 | All core features | ✓ | ✓ |
 | Create/edit/save topologies | ✓ | ✓ |
 | Shapes, lines, styling | ✓ | ✓ |
 | Encryption, export | ✓ | ✓ |
+| Offline only | ✓ |  |
+| No dependencies | ✓ |  |
 | **MDI Icons** |  | ✓ |
 | **Simple Icons** |  | ✓ |
 | **Selfh.st** |  | ✓ |
