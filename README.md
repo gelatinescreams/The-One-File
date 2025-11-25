@@ -5,9 +5,9 @@
 In the end there can only be "The ONE File". A portable and completely self contained network topology builder. The canvas, the logic, the settings, your nodes, your connections, and your notes all live inside a single standalone HTML file. Any modern browser can open and edit it without any prior setup. (is the idea)
 
 *Two editions are now available with 2.0. Both built from the same core design.*
-- **the-one-file.html**
+- **the-one-file.html** [Download the-one-file.html](https://github.com/user-attachments/files/23757835/the-one-file.html)
 A fully self contained topology builder that runs anywhere as a single standalone HTML file and the core of theonefile-networkening.html
-- **theonefile-networkening.html**
+- **theonefile-networkening.html** [Download theonefile-networkening.html](https://github.com/user-attachments/files/23757836/theonefile-networkening.html)
   Adds icon libraries from MDI, Simple Icons, Selfh.st. It functions as a bolt-on layer while keeping the core workflow unchanged.
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
