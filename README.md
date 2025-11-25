@@ -6,8 +6,9 @@ In the end there can only be "The ONE File". A portable and completely self cont
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png)
 
-## New Updates 11/24/25!
-- Version 1.5 brings a few additions and a few more fixes.
+## New Updates 11/25/25!
+- Version 1.75 brings a few additions and a few more fixes.
+- Can now be exported as a png or svg!
 - Import / Export data to upgrade/downgrade The One File version.
 - Free drawn lines now have styling. Full, dashed and dotted along with arrow directions!
 - Mobile footer styling.

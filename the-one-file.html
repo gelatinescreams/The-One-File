@@ -1172,7 +1172,9 @@
     <div style="display:flex; gap:8px; align-items:center;">
       <button id="add-node-btn" class="save-btn" title="Add new node" style="background:var(--accent);">+ Node</button>
       <button id="clear-all-btn" title="Clear all nodes" style="padding:6px 12px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:14px; font-weight:600;">Clear All</button>
-      <button id="settings-btn" title="Page settings">⚙️</button>
+	  <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding:6px 12px; background:var(--panel); color:var(--text-main); border:1px solid var(--edge-main); border-radius:6px; cursor:pointer; font-size:14px; font-weight:600;">📷 PNG</button>	  
+      <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding:6px 12px; background:var(--panel); color:var(--text-main); border:1px solid var(--edge-main); border-radius:6px; cursor:pointer; font-size:14px; font-weight:600;">📄 SVG</button>
+	  <button id="settings-btn" title="Page settings">⚙️</button>
     </div>
   </header>
 
@@ -1238,10 +1240,10 @@
       <button class="sidebar-toggle" id="sidebar-toggle" title="Toggle sidebar">◀</button>
 
       <div id="node-panel" style="display: none;">
-        <div class="details-name editable-text" id="node-name">wewew</div>
-        <div class="details-ip editable-text" id="node-ip">wew</div>
+        <div class="details-name editable-text" id="node-name"></div>
+        <div class="details-ip editable-text" id="node-ip"></div>
         <div class="details-role" id="node-role"></div>
-        <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>wew</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+        <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span></span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
 
         <div class="size-controls">
           <label>Size:</label>
@@ -4628,6 +4630,185 @@
 
       nodePanel.appendChild(deleteBtn);
     })();
-  </script>
+	function screenshotCanvas() {
+      const svg = document.getElementById("map");
+      const svgClone = svg.cloneNode(true);
+      
+      // Get the viewBox or create one based on content
+      const viewBox = svg.getAttribute("viewBox").split(" ").map(Number);
+      const [x, y, width, height] = viewBox;
+      
+      // Set dimensions
+      svgClone.setAttribute("width", width);
+      svgClone.setAttribute("height", height);
+      svgClone.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
+      
+      // Create a wrapper to hold our styled SVG
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "absolute";
+      wrapper.style.left = "-9999px";
+      wrapper.appendChild(svgClone);
+      document.body.appendChild(wrapper);
+      
+      // Inline all styles for each element
+      function inlineStyles(original, clone) {
+        const elements = original.querySelectorAll("*");
+        const clonedElements = clone.querySelectorAll("*");
+        
+        // Get root CSS variables
+        const rootStyles = getComputedStyle(document.documentElement);
+        const bgColor = rootStyles.getPropertyValue('--bg').trim() || '#050608';
+        
+        // Add background rectangle at the beginning
+        const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        bgRect.setAttribute("x", x);
+        bgRect.setAttribute("y", y);
+        bgRect.setAttribute("width", width);
+        bgRect.setAttribute("height", height);
+        bgRect.setAttribute("fill", bgColor);
+        clone.insertBefore(bgRect, clone.firstChild);
+        
+        // Inline styles for each element
+        elements.forEach((el, index) => {
+          const clonedEl = clonedElements[index];
+          if (!clonedEl) return;
+          
+          const computedStyle = getComputedStyle(el);
+          
+          // SVG-specific properties to inline
+          const svgProps = [
+            'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 
+            'stroke-linecap', 'stroke-linejoin', 'opacity',
+            'font-family', 'font-size', 'font-weight', 'font-style',
+            'text-anchor', 'dominant-baseline', 'marker-start', 'marker-end'
+          ];
+          
+          svgProps.forEach(prop => {
+            const value = computedStyle.getPropertyValue(prop);
+            if (value && value !== 'none' && value !== 'normal') {
+              clonedEl.style[prop] = value;
+            }
+          });
+          
+          // Remove classes since we've inlined the styles
+          clonedEl.removeAttribute('class');
+        });
+      }
+      
+      inlineStyles(svg, svgClone);
+      
+      // Serialize the styled SVG
+      const svgData = new XMLSerializer().serializeToString(svgClone);
+      
+      // Clean up
+      document.body.removeChild(wrapper);
+      
+      // Create blob and image
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+      
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        
+        // Draw the image
+        ctx.drawImage(img, 0, 0);
+        
+        // Convert to PNG and download
+        canvas.toBlob(function(blob) {
+          const link = document.createElement("a");
+          const timestamp = new Date().toISOString().slice(0, 10);
+          link.download = `topology-${timestamp}.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          
+          // Cleanup
+          URL.revokeObjectURL(url);
+          URL.revokeObjectURL(link.href);
+        }, 'image/png');
+      };
+      
+      img.onerror = function() {
+        console.error("Failed to load SVG image");
+        alert("Screenshot failed. Please try again.");
+        URL.revokeObjectURL(url);
+      };
+      
+      img.src = url;
+    }
 
+    // Also provide an SVG export option (keeps it vector/scalable)
+    function exportCanvasSVG() {
+      const svg = document.getElementById("map");
+      const svgClone = svg.cloneNode(true);
+      
+      const viewBox = svg.getAttribute("viewBox").split(" ").map(Number);
+      const [x, y, width, height] = viewBox;
+      
+      svgClone.setAttribute("width", width);
+      svgClone.setAttribute("height", height);
+      
+      // Get background color
+      const rootStyles = getComputedStyle(document.documentElement);
+      const bgColor = rootStyles.getPropertyValue('--bg').trim() || '#050608';
+      
+      // Add background
+      const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      bgRect.setAttribute("x", x);
+      bgRect.setAttribute("y", y);
+      bgRect.setAttribute("width", width);
+      bgRect.setAttribute("height", height);
+      bgRect.setAttribute("fill", bgColor);
+      svgClone.insertBefore(bgRect, svgClone.firstChild);
+      
+      // Inline styles
+      const wrapper = document.createElement("div");
+      wrapper.style.position = "absolute";
+      wrapper.style.left = "-9999px";
+      wrapper.appendChild(svgClone);
+      document.body.appendChild(wrapper);
+      
+      const elements = svg.querySelectorAll("*");
+      const clonedElements = svgClone.querySelectorAll("*");
+      
+      elements.forEach((el, index) => {
+        const clonedEl = clonedElements[index];
+        if (!clonedEl) return;
+        
+        const computedStyle = getComputedStyle(el);
+        const svgProps = [
+          'fill', 'stroke', 'stroke-width', 'stroke-dasharray',
+          'stroke-linecap', 'stroke-linejoin', 'opacity',
+          'font-family', 'font-size', 'font-weight', 'font-style',
+          'text-anchor', 'dominant-baseline', 'marker-start', 'marker-end'
+        ];
+        
+        svgProps.forEach(prop => {
+          const value = computedStyle.getPropertyValue(prop);
+          if (value && value !== 'none' && value !== 'normal') {
+            clonedEl.setAttribute(prop, value);
+          }
+        });
+        
+        clonedEl.removeAttribute('class');
+      });
+      
+      const svgData = new XMLSerializer().serializeToString(svgClone);
+      document.body.removeChild(wrapper);
+      
+      const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      const timestamp = new Date().toISOString().slice(0, 10);
+      link.download = `topology-${timestamp}.svg`;
+      link.href = url;
+      link.click();
+      
+      URL.revokeObjectURL(url);
+    }																					 
+  </script>
 </body></html>
