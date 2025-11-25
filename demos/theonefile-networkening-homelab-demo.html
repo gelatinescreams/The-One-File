@@ -2492,7 +2492,7 @@
       <input 
        type="text" 
        id="icon-input-field" 
-       placeholder="e.g. server, docker, home, SpigotMC, opengl"
+       placeholder="e.g. server, jellyfin, docker, home, spigotmc, opengl"
        style="width: 100%; max-width: 400px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: 16px; margin-bottom: 20px;"
       >
       <div id="icon-preview" style="min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;">
@@ -2503,6 +2503,9 @@
     
     let previewTimeout;
     const input = document.getElementById('icon-input-field');
+	input.addEventListener('input', () => {
+    input.value = input.value.toLowerCase();
+    });
     const preview = document.getElementById('icon-preview');
     
     input.addEventListener('input', (e) => {
