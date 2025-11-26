@@ -12,13 +12,13 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 2.0 - 11/25/25 The One File: The Networkening update!
+## Version 2.5 - 11/25/25 The One File: The Networkening update!
+- NEW 2.5 : Icon SEARCH with live preview
 - Seperate online features version to include icons - OPTIONAL
 - Use theonefile-networkening.html for this version
 - Icon support added (MDI, Simple Icons, Selfh.st)
 - Icons as node shapes
 - Icons as tags on nodes
-- Icons with live preview
 
 ## Online vs Offline
 

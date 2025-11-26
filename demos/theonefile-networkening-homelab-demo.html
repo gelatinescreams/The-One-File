@@ -1512,62 +1512,81 @@
   <div class="modal" id="add-node-modal">
    <div class="modal-content">
     <h3>Add New Node</h3>
-    <label style="
-               display: block;
-               margin-bottom: 4px;
-               color: var(--text-soft);
-               font-size: 13px;
-               ">Name</label>
-    <input type="text" id="new-node-name" placeholder="e.g. web-server">
-    <label style="
-               display: block;
-               margin-bottom: 4px;
-               color: var(--text-soft);
-               font-size: 13px;
-               ">IP / Subtitle</label>
-    <input type="text" id="new-node-ip" placeholder="e.g. 192.168.1.100">
-    <label style="
-               display: block;
-               margin-bottom: 4px;
-               color: var(--text-soft);
-               font-size: 13px;
-               ">Tags (comma separated)</label>
-    <input type="text" id="new-node-tags" placeholder="e.g. Docker, nginx, WG: vpn">
-    <label style="
-               display: block;
-               margin-bottom: 4px;
-               color: var(--text-soft);
-               font-size: 13px;
-               ">Shape</label>
-    <select id="new-node-shape">
-     <optgroup label="Basic Shapes">
-      <option value="circle">Circle</option>
-      <option value="square">Square</option>
-      <option value="rectangle">Rectangle</option>
-      <option value="triangle">Triangle</option>
-      <option value="hexagon">Hexagon</option>
-      <option value="diamond">Diamond</option>
-      <option value="star">Star</option>
-      <option value="stop-sign">Stop Sign</option>
-     </optgroup>
-     <optgroup label="Network Equipment">
-      <option value="server">Server</option>
-      <option value="pc">PC / Desktop</option>
-      <option value="laptop">Laptop</option>
-      <option value="phone">Phone / Mobile</option>
-      <option value="router">Router</option>
-      <option value="switch">Switch</option>
-      <option value="firewall">Firewall</option>
-      <option value="cloud">Cloud</option>
-      <option value="database">Database</option>
-      <option value="printer">Printer</option>
-     </optgroup>
-    </select>
-    <button class="pick-icon-btn" id="pick-node-icon-btn">🎨 Or Pick an Icon</button>
-    <div id="selected-node-icon" style="margin-top: 10px; display: none;">
-     <label style="display: block; margin-bottom: 8px; color: var(--text-soft); font-size: 13px;">Selected Icon:</label>
-     <div class="icon-badge" id="selected-node-icon-preview"></div>
+    
+    <div style="background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+     <div style="font-weight: 600; color: var(--text-main); margin-bottom: 12px; font-size: 14px;">Basic Information</div>
+     <label style="
+                display: block;
+                margin-bottom: 4px;
+                color: var(--text-soft);
+                font-size: 13px;
+                ">Name</label>
+     <input type="text" id="new-node-name" placeholder="e.g. web server, jellyfin">
+     <label style="
+                display: block;
+                margin-bottom: 4px;
+                margin-top: 12px;
+                color: var(--text-soft);
+                font-size: 13px;
+                ">IP / Subtitle</label>
+     <input type="text" id="new-node-ip" placeholder="e.g. 192.168.1.100">
     </div>
+    
+    <div style="background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+     <div style="font-weight: 600; color: var(--text-main); margin-bottom: 12px; font-size: 14px;">Tags</div>
+     <label style="
+                display: block;
+                margin-bottom: 4px;
+                color: var(--text-soft);
+                font-size: 13px;
+                ">Text Tags (comma separated)</label>
+     <input type="text" id="new-node-tags" placeholder="e.g. Docker, nginx, WG: vpn">
+     <button class="pick-icon-btn" id="pick-new-node-tag-icon-btn" style="margin-top: 10px;">Add Icon Tag</button>
+     <div id="new-node-icon-tags" style="margin-top: 10px; display: none;">
+      <label style="display: block; margin-bottom: 8px; color: var(--text-soft); font-size: 13px;">Icon Tags:</label>
+      <div id="new-node-icon-tags-list" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;"></div>
+     </div>
+    </div>
+    
+    <div style="background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+     <div style="font-weight: 600; color: var(--text-main); margin-bottom: 12px; font-size: 14px;">Node Appearance</div>
+     <label style="
+                display: block;
+                margin-bottom: 4px;
+                color: var(--text-soft);
+                font-size: 13px;
+                ">Shape</label>
+     <select id="new-node-shape">
+      <optgroup label="Basic Shapes">
+       <option value="circle">Circle</option>
+       <option value="square">Square</option>
+       <option value="rectangle">Rectangle</option>
+       <option value="triangle">Triangle</option>
+       <option value="hexagon">Hexagon</option>
+       <option value="diamond">Diamond</option>
+       <option value="star">Star</option>
+       <option value="stop-sign">Stop Sign</option>
+      </optgroup>
+      <optgroup label="Network Equipment">
+       <option value="server">Server</option>
+       <option value="pc">PC / Desktop</option>
+       <option value="laptop">Laptop</option>
+       <option value="phone">Phone / Mobile</option>
+       <option value="router">Router</option>
+       <option value="switch">Switch</option>
+       <option value="firewall">Firewall</option>
+       <option value="cloud">Cloud</option>
+       <option value="database">Database</option>
+       <option value="printer">Printer</option>
+      </optgroup>
+     </select>
+     <button class="pick-icon-btn" id="pick-node-icon-btn" style="margin-top: 10px;"> Or Pick an web icon for Node Shape</button>
+     <div id="selected-node-icon" style="margin-top: 10px; display: none;">
+      <label style="display: block; margin-bottom: 8px; color: var(--text-soft); font-size: 13px;">Selected Icon:</label>
+      <div class="icon-badge" id="selected-node-icon-preview"></div>
+     </div>
+    </div>
+    
     <div class="modal-buttons">
      <button class="btn-cancel" id="add-node-cancel">Cancel</button>
      <button class="btn-save" id="add-node-save">Add Node</button>
@@ -1998,7 +2017,7 @@
     </details>
    </aside>
   </main>
-<script id="nodes-json" type="application/json">
+  <script id="nodes-json" type="application/json">
 {
  "isp-modem": {
   "shape": "cloud",
@@ -2398,20 +2417,82 @@
      simple: {
       name: 'Simple Icons',
       cdnBase: 'https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/',
+      indexUrl: 'https://cdn.jsdelivr.net/npm/@iconify-json/simple-icons@latest/icons.json',
       icons: []
      },
      selfhst: {
       name: 'Selfh.st',
-      cdnBase: 'https://cdn.jsdelivr.net/gh/selfhst/icons@master/svg/',
-      apiUrl: 'https://api.github.com/repos/selfhst/icons/contents/svg',
+      cdnBase: 'https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/',
+      indexUrl: 'https://raw.githubusercontent.com/selfhst/icons/refs/heads/main/index.json',
       icons: []
      }
     },
     currentLibrary: 'mdi',
     iconCache: {},
+    indexCache: {},
+    indexLoading: {},
     
-    async loadLibrary(library) {
-     return [];
+    async loadLibraryIndex(library) {
+     if (this.indexCache[library]) {
+      return this.indexCache[library];
+     }
+     
+     if (this.indexLoading[library]) {
+      return this.indexLoading[library];
+     }
+     
+     const lib = this.libraries[library];
+     
+     this.indexLoading[library] = (async () => {
+      try {
+       if (library === 'selfhst') {
+        const response = await fetch(lib.indexUrl);
+        const data = await response.json();
+        const icons = data.map(item => ({
+         name: item.Reference,
+         displayName: item.Name,
+         tags: item.Tags ? item.Tags.split(',').map(t => t.trim()).filter(t => t) : [],
+         category: item.Category
+        }));
+        this.indexCache[library] = icons;
+        lib.icons = icons;
+        return icons;
+       } else if (library === 'simple') {
+        const response = await fetch('https://cdn.jsdelivr.net/npm/@iconify-json/simple-icons@latest/icons.json');
+        const data = await response.json();
+        const icons = Object.keys(data.icons).map(slug => ({
+         name: slug,
+         displayName: data.icons[slug].title || slug,
+         tags: data.aliases && data.aliases[slug] ? [data.aliases[slug].parent] : [],
+         hex: data.icons[slug].hex
+        }));
+        this.indexCache[library] = icons;
+        lib.icons = icons;
+        return icons;
+       } else if (library === 'mdi') {
+        const response = await fetch(lib.metaUrl);
+        const data = await response.json();
+        const icons = data.map(item => ({
+         name: item.name,
+         displayName: item.name,
+         tags: item.tags || [],
+         author: item.author
+        }));
+        this.indexCache[library] = icons;
+        lib.icons = icons;
+        return icons;
+       }
+      } catch (error) {
+       console.error(`Failed to load index for ${library}:`, error);
+       this.indexCache[library] = [];
+       lib.icons = [];
+       return [];
+      } finally {
+       delete this.indexLoading[library];
+      }
+     })();
+     
+     return this.indexLoading[library];
     },
     
     async getIcon(library, name) {
@@ -2428,10 +2509,22 @@
      }
      
      const lib = this.libraries[library];
+	 
+     if (library === 'selfhst') {
+      const pngUrl = `${lib.cdnBase}${name}.png`;
+      const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><image href="${pngUrl}" width="24" height="24"/></svg>`;
+      this.iconCache[cacheKey] = svgWrapper;
+      localStorage.setItem(`icon-${cacheKey}`, svgWrapper);
+      return svgWrapper;
+     }
+     
      const url = `${lib.cdnBase}${name}.svg`;
      
      try {
       const response = await fetch(url);
+      if (!response.ok) {
+       throw new Error(`HTTP ${response.status}`);
+      }
       const svg = await response.text();
       
       this.iconCache[cacheKey] = svg;
@@ -2449,14 +2542,19 @@
      if (!lib.icons.length) return [];
      
      const q = query.toLowerCase();
-     return lib.icons.filter(icon => 
-      icon.name.toLowerCase().includes(q) ||
-      icon.keywords.some(k => k.toLowerCase().includes(q))
-     ).slice(0, 100);
+     return lib.icons.filter(icon => {
+      const nameMatch = icon.name.toLowerCase().includes(q);
+      const displayMatch = icon.displayName && icon.displayName.toLowerCase().includes(q);
+      const tagMatch = icon.tags && icon.tags.some(t => t.toLowerCase().includes(q));
+      const categoryMatch = icon.category && icon.category.toLowerCase().includes(q);
+      return nameMatch || displayMatch || tagMatch || categoryMatch;
+     }).slice(0, 50);
     }
    };
    
    let iconPickerCallback = null;
+   let selectedNodeIconData = null;
+   let newNodeIconTags = [];
    
    function openIconPicker(callback) {
     iconPickerCallback = callback;
@@ -2485,87 +2583,114 @@
     };
     
     body.innerHTML = `
-     <div style="text-align: center; padding: 20px;">
-      <p style="color: var(--text-soft); margin-bottom: 15px;">
-       Enter icon name for ${libNames[IconLibrary.currentLibrary]}:
+     <div style="padding: 20px;">
+      <p style="color: var(--text-soft); margin-bottom: 15px; text-align: center;">
+       Search ${libNames[IconLibrary.currentLibrary]}:
       </p>
       <input 
        type="text" 
-       id="icon-input-field" 
-       placeholder="e.g. server, jellyfin, docker, home, spigotmc, opengl"
-       style="width: 100%; max-width: 400px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: 16px; margin-bottom: 20px;"
+       id="icon-search-field" 
+       placeholder="Search icons..."
+       style="width: 100%; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: 16px; margin-bottom: 20px;"
       >
-      <div id="icon-preview" style="min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;">
-       <div style="color: var(--text-soft); font-size: 14px;">Type an icon name to preview</div>
+      <div id="icon-grid-container" style="max-height: 400px; overflow-y: auto;">
+       <div style="text-align: center; color: var(--text-soft); padding: 40px;">
+        Loading icons...
+       </div>
       </div>
      </div>
     `;
     
-    let previewTimeout;
-    const input = document.getElementById('icon-input-field');
-	input.addEventListener('input', () => {
-    input.value = input.value.toLowerCase();
-    });
-    const preview = document.getElementById('icon-preview');
+    const searchField = document.getElementById('icon-search-field');
+    const gridContainer = document.getElementById('icon-grid-container');
     
-    input.addEventListener('input', (e) => {
-     clearTimeout(previewTimeout);
-     const iconName = e.target.value.trim();
-     
-     if (!iconName) {
-      preview.innerHTML = '<div style="color: var(--text-soft); font-size: 14px;">Type an icon name to preview</div>';
+    await IconLibrary.loadLibraryIndex(IconLibrary.currentLibrary);
+    
+    const renderIcons = (icons) => {
+     if (!icons || icons.length === 0) {
+      gridContainer.innerHTML = '<div style="text-align: center; color: var(--text-soft); padding: 40px;">No icons found</div>';
       return;
      }
      
-     preview.innerHTML = '<div style="color: var(--text-soft); font-size: 14px;">Loading...</div>';
+     const grid = document.createElement('div');
+     grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; padding: 10px;';
      
-     previewTimeout = setTimeout(async () => {
-      const svg = await IconLibrary.getIcon(IconLibrary.currentLibrary, iconName);
+     icons.forEach(icon => {
+      const item = document.createElement('div');
+      item.style.cssText = 'display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 15px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; transition: all 0.2s;';
+      item.onmouseover = () => {
+       item.style.background = 'var(--panel)';
+       item.style.borderColor = 'var(--accent)';
+      };
+      item.onmouseout = () => {
+       item.style.background = 'var(--panel-alt)';
+       item.style.borderColor = 'var(--edge-main)';
+      };
       
-      if (svg) {
-       const parser = new DOMParser();
-       const doc = parser.parseFromString(svg, 'image/svg+xml');
-       const svgEl = doc.querySelector('svg');
-       
-       if (svgEl) {
-        svgEl.setAttribute('width', '64');
-        svgEl.setAttribute('height', '64');
-        svgEl.style.fill = 'var(--text-main)';
-        
-        preview.innerHTML = '';
-        preview.appendChild(svgEl);
-        
-        const nameDiv = document.createElement('div');
-        nameDiv.textContent = iconName;
-        nameDiv.style.color = 'var(--text-main)';
-        nameDiv.style.fontSize = '16px';
-        nameDiv.style.marginTop = '10px';
-        preview.appendChild(nameDiv);
-        
-        const useBtn = document.createElement('button');
-        useBtn.textContent = 'Use This Icon';
-        useBtn.style.cssText = 'padding: 10px 20px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 15px;';
-        useBtn.addEventListener('click', () => {
-         if (iconPickerCallback) {
-          iconPickerCallback({
-           library: IconLibrary.currentLibrary,
-           name: iconName,
-           svg: svg
-          });
-         }
-         closeIconPicker();
-        });
-        preview.appendChild(useBtn);
-       } else {
-        preview.innerHTML = '<div style="color: var(--danger);">Invalid SVG</div>';
+      const iconPreview = document.createElement('div');
+      iconPreview.style.cssText = 'width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;';
+      iconPreview.innerHTML = '<div style="color: var(--text-soft); font-size: 12px;">...</div>';
+      
+      IconLibrary.getIcon(IconLibrary.currentLibrary, icon.name).then(svg => {
+       if (svg) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, 'image/svg+xml');
+        const svgEl = doc.querySelector('svg');
+        if (svgEl) {
+         svgEl.setAttribute('width', '48');
+         svgEl.setAttribute('height', '48');
+         svgEl.style.fill = 'var(--text-main)';
+         iconPreview.innerHTML = '';
+         iconPreview.appendChild(svgEl);
+        }
        }
-      } else {
-       preview.innerHTML = `<div style="color: var(--danger);">Icon "${iconName}" not found</div>`;
+      });
+      
+      const name = document.createElement('div');
+      name.textContent = icon.displayName || icon.name;
+      name.style.cssText = 'font-size: 11px; color: var(--text-soft); text-align: center; word-break: break-word; max-width: 100%;';
+      
+      item.appendChild(iconPreview);
+      item.appendChild(name);
+      
+      item.addEventListener('click', async () => {
+       const svg = await IconLibrary.getIcon(IconLibrary.currentLibrary, icon.name);
+       if (iconPickerCallback && svg) {
+        iconPickerCallback({
+         library: IconLibrary.currentLibrary,
+         name: icon.name,
+         svg: svg
+        });
+       }
+       closeIconPicker();
+      });
+      
+      grid.appendChild(item);
+     });
+     
+     gridContainer.innerHTML = '';
+     gridContainer.appendChild(grid);
+    };
+    
+    gridContainer.innerHTML = '<div style="text-align: center; color: var(--text-soft); padding: 40px;">Type to search icons</div>';
+    
+    let searchTimeout;
+    searchField.addEventListener('input', (e) => {
+     clearTimeout(searchTimeout);
+     const query = e.target.value.trim();
+     
+     searchTimeout = setTimeout(() => {
+      if (!query) {
+       gridContainer.innerHTML = '<div style="text-align: center; color: var(--text-soft); padding: 40px;">Type to search icons</div>';
+       return;
       }
-     }, 500);
+      
+      const results = IconLibrary.searchIcons(IconLibrary.currentLibrary, query);
+      renderIcons(results);
+     }, 300);
     });
     
-    input.focus();
+    searchField.focus();
    }
    
    async function displayIcons(icons) {
@@ -5365,6 +5490,9 @@
     document.getElementById("new-node-ip").value = "";
     document.getElementById("new-node-tags").value = "";
     document.getElementById("new-node-shape").value = "circle";
+    newNodeIconTags = [];
+    document.getElementById("new-node-icon-tags").style.display = "none";
+    document.getElementById("new-node-icon-tags-list").innerHTML = "";
     addNodeModal.classList.add("active");
     document.getElementById("new-node-name").focus();
    });
@@ -5386,6 +5514,11 @@
      return;
     }
     const tags = tagsStr ? tagsStr.split(",").map((t) => t.trim()).filter((t) => t) : [];
+    
+    if (newNodeIconTags.length > 0) {
+     tags.push(...newNodeIconTags);
+    }
+    
     let baseId = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     if (!baseId) baseId = "node";
     let nodeId = baseId;
@@ -5414,6 +5547,8 @@
      document.getElementById('selected-node-icon').style.display = 'none';
     }
     
+    newNodeIconTags = [];
+    
     const centerX = CANVAS_WIDTH / 2;
     const centerY = CANVAS_HEIGHT / 2;
     savedPositions[nodeId] = {
@@ -5433,8 +5568,6 @@
      });
     }, );
 
-   let selectedNodeIconData = null;
-   
    document.getElementById('pick-node-icon-btn').addEventListener('click', () => {
     openIconPicker((iconData) => {
      selectedNodeIconData = iconData;
@@ -5471,6 +5604,65 @@
      });
      forgeTheTopology();
      claimTheImmortal(currentNodeId);
+    });
+   });
+   
+   document.getElementById('pick-new-node-tag-icon-btn').addEventListener('click', () => {
+    openIconPicker((iconData) => {
+     newNodeIconTags.push({
+      type: 'icon',
+      library: iconData.library,
+      name: iconData.name
+     });
+     
+     const container = document.getElementById('new-node-icon-tags');
+     const list = document.getElementById('new-node-icon-tags-list');
+     
+     const badge = document.createElement('div');
+     badge.className = 'icon-badge';
+     badge.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; font-size: 13px;';
+     
+     const iconPreview = document.createElement('div');
+     iconPreview.style.cssText = 'width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;';
+     
+     IconLibrary.getIcon(iconData.library, iconData.name).then(svg => {
+      if (svg) {
+       const parser = new DOMParser();
+       const doc = parser.parseFromString(svg, 'image/svg+xml');
+       const svgEl = doc.querySelector('svg');
+       if (svgEl) {
+        svgEl.setAttribute('width', '16');
+        svgEl.setAttribute('height', '16');
+        svgEl.style.fill = 'var(--text-main)';
+        iconPreview.appendChild(svgEl);
+       }
+      }
+     });
+     
+     const name = document.createElement('span');
+     name.textContent = iconData.name;
+     name.style.color = 'var(--text-soft)';
+     
+     const removeBtn = document.createElement('button');
+     removeBtn.textContent = '×';
+     removeBtn.style.cssText = 'background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 4px;';
+     removeBtn.addEventListener('click', () => {
+      const index = newNodeIconTags.findIndex(t => t.type === 'icon' && t.library === iconData.library && t.name === iconData.name);
+      if (index > -1) {
+       newNodeIconTags.splice(index, 1);
+      }
+      badge.remove();
+      if (list.children.length === 0) {
+       container.style.display = 'none';
+      }
+     });
+     
+     badge.appendChild(iconPreview);
+     badge.appendChild(name);
+     badge.appendChild(removeBtn);
+     list.appendChild(badge);
+     
+     container.style.display = 'block';
     });
    });
    
