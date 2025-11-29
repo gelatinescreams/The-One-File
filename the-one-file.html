@@ -347,15 +347,23 @@
    .legend-mini-btn {
     position: absolute;
     left: 10px;
-    bottom: 10px;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
     border: 1px solid #1f2937;
     background: rgba(15, 23, 42, 0.92);
-    font-size: 12px;
+    color: var(--text-main);
+    font-size: 11px;
     cursor: pointer;
     z-index: 20;
     display: none;
+    transition: all 0.2s;
+   }
+
+   .legend-mini-btn:hover,
+   .legend-mini-btn:active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
    }
 
    .legend-title {
@@ -436,17 +444,12 @@
    }
 
    .zoom-toolbar {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     display: flex;
-    flex-direction: column;
     gap: 4px;
     padding: 6px;
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 20;
    }
 
    .zoom-toolbar button {
@@ -485,17 +488,19 @@
     margin: 2px 0;
    }
 
-   .minimap-container {
+   .minimap-zoom-wrapper {
     position: absolute;
     bottom: 10px;
-    right: 60px;
-    width: 150px;
-    height: 100px;
+    right: 10px;
+    z-index: 19;
+   }
+
+   .minimap-container {
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 19;
     overflow: hidden;
+    margin-bottom: 4px;
    }
 
    .minimap-container svg {
@@ -517,6 +522,55 @@
    .minimap-edge {
     stroke: var(--edge-main);
     stroke-width: 1;
+   }
+
+   .minimap-close-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 3px;
+    color: var(--text-soft);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+   }
+
+   .minimap-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+   }
+
+   .toolbar-close-btn {
+    width: 24px;
+    height: 24px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 4px;
+    color: var(--text-soft);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+   }
+
+   .toolbar-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
    }
 
    .canvas-hint {
@@ -1128,7 +1182,6 @@
      left: 10px !important;
      right: auto !important;
      width: auto;
-     display: flex !important;
      gap: 6px;
      padding: 8px;
     }
@@ -1417,6 +1470,7 @@
   <main>
    <section class="topology-panel">
     <div class="draw-toolbar" id="draw-toolbar">
+     <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
      <button id="draw-toggle" title="Draw custom line">✏️</button>
      <input type="color" id="draw-color" value="#f97316" title="Line color">
      <select id="draw-style" title="Line style">
@@ -1433,6 +1487,7 @@
      <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
     </div>
     <div class="topology-toolbar" id="topology-toolbar" style="display: none">
+     <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
      <label for="add-line-select">Add line to:</label>
      <select id="add-line-select">
       <option value=""></option>
@@ -1471,18 +1526,21 @@
       <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
      </svg>
     </div>
-    <div class="minimap-container" id="minimap-container">
-     <svg id="minimap" viewBox="0 0 4000 3000">
-      <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
-     </svg>
-    </div>
-    <div class="zoom-toolbar" id="zoom-toolbar">
-     <button id="zoom-in-btn" title="Zoom in">+</button>
-     <div class="zoom-level" id="zoom-level">100%</div>
-     <button id="zoom-out-btn" title="Zoom out">-</button>
-     <div class="divider"></div>
-     <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
-     <button id="zoom-reset-btn" title="Reset view">R</button>
+    <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper">
+     <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map & zoom">✕</button>
+     <div class="minimap-container" id="minimap-container">
+      <svg id="minimap" viewBox="0 0 4000 3000">
+       <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
+      </svg>
+     </div>
+     <div class="zoom-toolbar" id="zoom-toolbar">
+      <button id="zoom-in-btn" title="Zoom in">+</button>
+      <div class="zoom-level" id="zoom-level">100%</div>
+      <button id="zoom-out-btn" title="Zoom out">-</button>
+      <div class="divider"></div>
+      <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
+      <button id="zoom-reset-btn" title="Reset view">R</button>
+     </div>
     </div>
    </section>
    <aside class="details-panel" id="details-panel">
@@ -1798,7 +1856,13 @@
    let savedSizes = {};
    let savedStyles = {};
    let legendCollapsed = false;
+   let minimapCollapsed = false;
+   let drawToolbarCollapsed = false;
+   let topologyToolbarCollapsed = false;
    let legendMiniBtn = null;
+   let minimapMiniBtn = null;
+   let drawToolbarMiniBtn = null;
+   let topologyToolbarMiniBtn = null;
 
    function ensureLegendMiniButton() {
     if (legendMiniBtn) return legendMiniBtn;
@@ -1809,13 +1873,92 @@
     btn.id = "edge-legend-mini";
     btn.className = "legend-mini-btn";
     btn.textContent = "Legend";
-    btn.addEventListener("click", (e) => {
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
      e.stopPropagation();
+     e.preventDefault();
      legendCollapsed = false;
      updateLegendVisibility();
-    });
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
     panel.appendChild(btn);
     legendMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureMinimapMiniButton() {
+    if (minimapMiniBtn) return minimapMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "minimap-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Map";
+    btn.style.right = "10px";
+    btn.style.left = "auto";
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     minimapCollapsed = false;
+     updateMinimapVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    minimapMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureDrawToolbarMiniButton() {
+    if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "draw-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Draw";
+    btn.style.top = "10px";
+    btn.style.left = "10px";
+    btn.style.right = "auto";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     drawToolbarCollapsed = false;
+     updateDrawToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    drawToolbarMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureTopologyToolbarMiniButton() {
+    if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "topology-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Add Line";
+    btn.style.top = "10px";
+    btn.style.left = "auto";
+    btn.style.right = "40px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     topologyToolbarCollapsed = false;
+     updateTopologyToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    topologyToolbarMiniBtn = btn;
     return btn;
    }
 
@@ -1846,6 +1989,57 @@
      mini.style.display = "inline-flex";
     } else {
      legend.style.display = "flex";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateMinimapVisibility() {
+    const wrapper = document.getElementById("minimap-zoom-wrapper");
+    const mini = ensureMinimapMiniButton();
+    if (!wrapper || !mini) return;
+    
+    if (minimapCollapsed) {
+     wrapper.style.display = "none";
+     mini.style.display = "inline-flex";
+    } else {
+     wrapper.style.display = "block";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateDrawToolbarVisibility() {
+    const toolbar = document.getElementById("draw-toolbar");
+    const mini = ensureDrawToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    if (drawToolbarCollapsed) {
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     toolbar.style.setProperty('display', 'flex', 'important');
+     mini.style.display = "none";
+    }
+   }
+
+   function updateTopologyToolbarVisibility() {
+    const toolbar = document.getElementById("topology-toolbar");
+    const mini = ensureTopologyToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    // Check if we have a selected node (which means toolbar should be available)
+    const hasSelectedNode = currentNodeId !== null;
+    
+    if (!hasSelectedNode) {
+     // No node selected - hide both
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "none";
+    } else if (topologyToolbarCollapsed) {
+     // Node selected but toolbar collapsed - show mini button
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     // Node selected and toolbar not collapsed - show toolbar
+     toolbar.style.setProperty('display', 'flex', 'important');
      mini.style.display = "none";
     }
    }
@@ -2027,6 +2221,49 @@
       menu.classList.remove("open");
      }
     });
+    
+    // Close button event listeners with touch support
+    const minimapCloseBtn = document.getElementById("minimap-close-btn");
+    if (minimapCloseBtn) {
+     const handleMinimapClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      minimapCollapsed = true;
+      updateMinimapVisibility();
+     };
+     minimapCloseBtn.addEventListener("click", handleMinimapClose);
+     minimapCloseBtn.addEventListener("touchend", handleMinimapClose);
+    }
+    
+    const drawToolbarCloseBtn = document.getElementById("draw-toolbar-close-btn");
+    if (drawToolbarCloseBtn) {
+     const handleDrawClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      drawToolbarCollapsed = true;
+      updateDrawToolbarVisibility();
+     };
+     drawToolbarCloseBtn.addEventListener("click", handleDrawClose);
+     drawToolbarCloseBtn.addEventListener("touchend", handleDrawClose);
+    }
+    
+    const topologyToolbarCloseBtn = document.getElementById("topology-toolbar-close-btn");
+    if (topologyToolbarCloseBtn) {
+     const handleTopologyClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      topologyToolbarCollapsed = true;
+      updateTopologyToolbarVisibility();
+     };
+     topologyToolbarCloseBtn.addEventListener("click", handleTopologyClose);
+     topologyToolbarCloseBtn.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+     topologyToolbarCloseBtn.addEventListener("touchend", handleTopologyClose);
+    }
+    
+    // Initialize visibility states
+    updateMinimapVisibility();
+    updateDrawToolbarVisibility();
+    updateTopologyToolbarVisibility();
    });
 
    function wieldThePower() {
@@ -3260,7 +3497,10 @@
     document.getElementById("node-panel").style.display = "block";
     document.getElementById("edge-panel").style.display = "none";
     const toolbar = document.getElementById("topology-toolbar");
-    toolbar.style.display = "flex";
+    if (!topologyToolbarCollapsed) {
+     toolbar.style.display = "flex";
+    }
+    updateTopologyToolbarVisibility();
     document.getElementById("node-name").textContent = data.name;
     document.getElementById("node-ip").textContent = data.ip;
     document.getElementById("node-role").textContent = data.role;

@@ -334,15 +334,23 @@
    .legend-mini-btn {
     position: absolute;
     left: 10px;
-    bottom: 10px;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
     border: 1px solid #1f2937;
     background: rgba(15, 23, 42, 0.92);
-    font-size: 12px;
+    color: var(--text-main);
+    font-size: 11px;
     cursor: pointer;
     z-index: 20;
     display: none;
+    transition: all 0.2s;
+   }
+
+   .legend-mini-btn:hover,
+   .legend-mini-btn:active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
    }
 
    .legend-title {
@@ -423,17 +431,12 @@
    }
 
    .zoom-toolbar {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     display: flex;
-    flex-direction: column;
     gap: 4px;
     padding: 6px;
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 20;
    }
 
    .zoom-toolbar button {
@@ -472,17 +475,19 @@
     margin: 2px 0;
    }
 
-   .minimap-container {
+   .minimap-zoom-wrapper {
     position: absolute;
     bottom: 10px;
-    right: 60px;
-    width: 150px;
-    height: 100px;
+    right: 10px;
+    z-index: 19;
+   }
+
+   .minimap-container {
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 19;
     overflow: hidden;
+    margin-bottom: 4px;
    }
 
    .minimap-container svg {
@@ -504,6 +509,55 @@
    .minimap-edge {
     stroke: var(--edge-main);
     stroke-width: 1;
+   }
+
+   .minimap-close-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 3px;
+    color: var(--text-soft);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+   }
+
+   .minimap-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+   }
+
+   .toolbar-close-btn {
+    width: 24px;
+    height: 24px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 4px;
+    color: var(--text-soft);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+   }
+
+   .toolbar-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
    }
 
    .canvas-hint {
@@ -1115,7 +1169,6 @@
      left: 10px !important;
      right: auto !important;
      width: auto;
-     display: flex !important;
      gap: 6px;
      padding: 8px;
     }
@@ -1397,7 +1450,8 @@
   </header>
   <main>
    <section class="topology-panel">
-    <div class="draw-toolbar" id="draw-toolbar">
+    <div class="draw-toolbar" id="draw-toolbar" style="display: flex !important;">
+     <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
      <button id="draw-toggle" title="Draw custom line">✏️</button>
      <input type="color" id="draw-color" value="#f97316" title="Line color">
      <select id="draw-style" title="Line style">
@@ -1413,7 +1467,8 @@
      </select>
      <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
     </div>
-    <div class="topology-toolbar" id="topology-toolbar" style="display: flex;">
+    <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
+     <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
      <label for="add-line-select">Add line to:</label>
      <select id="add-line-select"><option value="main-router">pfSense Router</option><option value="main-switch">Core Switch</option><option value="nas">TrueNAS</option><option value="plex">Plex Server</option><option value="pihole">Pi-hole</option><option value="homeassistant">Home Assistant</option><option value="docker-host">Docker Host</option><option value="nvr">Frigate NVR</option><option value="gaming-pc">Gaming PC</option><option value="work-laptop">Work Laptop</option><option value="ap-living">AP - Living Room</option><option value="ap-office">AP - Office</option><option value="rpi-monitor">Grafana Monitor</option><option value="iot-devices">IoT Devices</option><option value="printer">Network Printer</option></select>
      <input type="color" id="add-line-color" value="#475569" title="Line color" style="
@@ -1438,20 +1493,23 @@
     <div class="canvas-viewport" id="canvas-viewport">
      <svg id="map" viewBox="-400 -200 2000 1500" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 600 150 Q 600 250 600 350" fill="none" class="edge active" data-edge-id="e1" data-from="isp-modem" data-to="main-router" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 600 350 Q 600 450 600 550" fill="none" class="edge" data-edge-id="e2" data-from="main-router" data-to="main-switch" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 600 550 Q 400 650 200 750" fill="none" class="edge" data-edge-id="e3" data-from="main-switch" data-to="nas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 600 550 Q 490 650 380 750" fill="none" class="edge" data-edge-id="e4" data-from="main-switch" data-to="plex" style="stroke: rgb(71, 85, 105); stroke-width: 4;"></path><path d="M 600 550 Q 580 650 560 750" fill="none" class="edge" data-edge-id="e5" data-from="main-switch" data-to="pihole" style="stroke: rgb(16, 185, 129); stroke-width: 3;"></path><path d="M 600 550 Q 670 650 740 750" fill="none" class="edge" data-edge-id="e6" data-from="main-switch" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 600 550 Q 400 750 200 950" fill="none" class="edge" data-edge-id="e7" data-from="main-switch" data-to="docker-host" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 600 550 Q 800 650 1000 750" fill="none" class="edge" data-edge-id="e8" data-from="main-switch" data-to="nvr" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 600 550 Q 490 750 380 950" fill="none" class="edge" data-edge-id="e9" data-from="main-switch" data-to="gaming-pc" style="stroke: rgb(71, 85, 105); stroke-width: 4;"></path><path d="M 600 550 Q 670 750 740 950" fill="none" class="edge" data-edge-id="e10" data-from="main-switch" data-to="ap-living" style="stroke: rgb(20, 184, 166); stroke-width: 3;"></path><path d="M 600 550 Q 760 750 920 950" fill="none" class="edge" data-edge-id="e11" data-from="main-switch" data-to="ap-office" style="stroke: rgb(20, 184, 166); stroke-width: 3;"></path><path d="M 600 550 Q 580 750 560 950" fill="none" class="edge" data-edge-id="e12" data-from="main-switch" data-to="rpi-monitor" style="stroke: rgb(100, 116, 139); stroke-width: 2;"></path><path d="M 920 950 Q 960 950 1000 950" fill="none" class="edge" data-edge-id="e13" data-from="ap-office" data-to="work-laptop" style="stroke: rgb(167, 139, 250); stroke-width: 2;"></path><path d="M 380 750 Q 290 750 200 750" fill="none" class="edge" data-edge-id="e14" data-from="plex" data-to="nas" style="stroke: rgb(139, 92, 246); stroke-width: 3;"></path><path d="M 740 750 Q 830 750 920 750" fill="none" class="edge" data-edge-id="e15" data-from="homeassistant" data-to="iot-devices" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 600 550 Q 800 550 1000 550" fill="none" class="edge" data-edge-id="e16" data-from="main-switch" data-to="printer" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></path><g class="node-group active" data-node-id="isp-modem" transform="translate(600,150)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55.00000000000001" y="-15" width="110.00000000000001" height="40" rx="6"></rect><rect x="-32.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="-30" cy="-47.5" r="4"></circle><rect x="-2.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="0" cy="-47.5" r="4"></circle><rect x="27.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="30" cy="-47.5" r="4"></circle><circle cx="-35" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-17.5" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle><circle cx="17.5" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">ISP Modem</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.0.1</text></g><g class="node-group" data-node-id="main-router" transform="translate(600,350)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-65" y="-52" width="130" height="104" rx="4"></rect><line x1="-55.25" y1="-32.5" x2="55.25" y2="-32.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-55.25" y1="-3.25" x2="55.25" y2="-3.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-55.25" y1="26" x2="55.25" y2="26" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-32.5" y1="-52" x2="-32.5" y2="-22.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="13" y1="-52" x2="13" y2="-22.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9.75" y1="-22.75" x2="-9.75" y2="6.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="35.75" y1="-22.75" x2="35.75" y2="6.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-32.5" y1="6.5" x2="-32.5" y2="35.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="13" y1="6.5" x2="13" y2="35.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9.75" y1="35.75" x2="-9.75" y2="65" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="35.75" y1="35.75" x2="35.75" y2="65" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; cursor: pointer;">pfSense Router</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; cursor: pointer;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(600,550)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; cursor: pointer;">Core Switch</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; cursor: pointer;">192.168.1.2</text></g><g class="node-group" data-node-id="nas" transform="translate(200,750)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">192.168.1.10</text></g><g class="node-group" data-node-id="plex" transform="translate(380,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Plex Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.15</text></g><g class="node-group" data-node-id="pihole" transform="translate(560,750)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Pi-hole</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.20</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(740,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Home Assistant</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.25</text></g><g class="node-group" data-node-id="docker-host" transform="translate(200,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Docker Host</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.30</text></g><g class="node-group" data-node-id="nvr" transform="translate(1000,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Frigate NVR</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.35</text></g><g class="node-group" data-node-id="gaming-pc" transform="translate(380,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-40.5" y="-36" width="81" height="54" rx="4"></rect><rect x="-33.75" y="-29.25" width="67.5" height="40.5" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-6.75" y="18" width="13.5" height="13.5"></rect><rect x="-22.5" y="31.499999999999996" width="45" height="6.75" rx="2"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Gaming PC</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.100</text></g><g class="node-group" data-node-id="work-laptop" transform="translate(1000,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-36" y="-40.5" width="72" height="49.50000000000001" rx="4"></rect><rect x="-40.5" y="11.25" width="81" height="27" rx="4"></rect><rect x="-11.25" y="20.25" width="22.5" height="11.25" rx="2" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Work Laptop</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.101</text></g><g class="node-group" data-node-id="ap-living" transform="translate(740,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">AP - Living Room</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.50</text></g><g class="node-group" data-node-id="ap-office" transform="translate(920,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">AP - Office</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.51</text></g><g class="node-group" data-node-id="rpi-monitor" transform="translate(560,950)" style="cursor: grab;"><circle r="60" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-48" y="-24" width="96" height="48" rx="4"></rect><line x1="-36" y1="-12" x2="-36" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-16" y1="-12" x2="-16" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4" y1="-12" x2="4" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="36" cy="0" r="4" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-11.200000000000001" style="font-size: 13.2px; cursor: pointer;">Grafana Monitor</text><text class="node-sub" x="0" y="16" style="font-size: 9.6px; cursor: pointer;">192.168.1.40</text></g><g class="node-group" data-node-id="iot-devices" transform="translate(920,750)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-20.25" y="-45" width="40.5" height="90" rx="8"></rect><rect x="-17.1" y="-38.25" width="34.2" height="72" rx="4" style="fill: rgb(30, 41, 59);"></rect><rect x="-6.75" y="36.9" width="13.5" height="2.6999999999999997" rx="2" style="fill: rgb(71, 85, 105);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">IoT Devices</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.0/24</text></g><g class="node-group" data-node-id="printer" transform="translate(1000,550)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-45" y="-18" width="90" height="40.5" rx="4"></rect><rect x="-31.499999999999996" y="-36" width="62.99999999999999" height="18" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-27" y="22.5" width="54" height="15.749999999999998" rx="2"></rect><rect x="-22.5" y="13.5" width="45" height="22.5" style="fill: rgb(226, 232, 240);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Network Printer</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.150</text></g></svg>
     </div>
-    <div class="minimap-container" id="minimap-container">
-     <svg id="minimap" viewBox="0 0 4000 3000">
-      <line x1="600" y1="150" x2="600" y2="350" class="minimap-edge"></line><line x1="600" y1="350" x2="600" y2="550" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="920" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="950" class="minimap-edge"></line><line x1="920" y1="950" x2="1000" y2="950" class="minimap-edge"></line><line x1="380" y1="750" x2="200" y2="750" class="minimap-edge"></line><line x1="740" y1="750" x2="920" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="550" class="minimap-edge"></line><circle cx="600" cy="150" r="40" class="minimap-node"></circle><circle cx="600" cy="350" r="40" class="minimap-node"></circle><circle cx="600" cy="550" r="40" class="minimap-node"></circle><circle cx="200" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="750" r="40" class="minimap-node"></circle><circle cx="560" cy="750" r="40" class="minimap-node"></circle><circle cx="740" cy="750" r="40" class="minimap-node"></circle><circle cx="200" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="950" r="40" class="minimap-node"></circle><circle cx="560" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="550" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-400" y="-200" width="2000" height="1500"></rect>
-     </svg>
+    <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
+     <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
+     <div class="minimap-container" id="minimap-container">
+      <svg id="minimap" viewBox="0 0 4000 3000">
+       <line x1="600" y1="150" x2="600" y2="350" class="minimap-edge"></line><line x1="600" y1="350" x2="600" y2="550" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="920" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="950" class="minimap-edge"></line><line x1="920" y1="950" x2="1000" y2="950" class="minimap-edge"></line><line x1="380" y1="750" x2="200" y2="750" class="minimap-edge"></line><line x1="740" y1="750" x2="920" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="550" class="minimap-edge"></line><circle cx="600" cy="150" r="40" class="minimap-node"></circle><circle cx="600" cy="350" r="40" class="minimap-node"></circle><circle cx="600" cy="550" r="40" class="minimap-node"></circle><circle cx="200" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="750" r="40" class="minimap-node"></circle><circle cx="560" cy="750" r="40" class="minimap-node"></circle><circle cx="740" cy="750" r="40" class="minimap-node"></circle><circle cx="200" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="950" r="40" class="minimap-node"></circle><circle cx="560" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="550" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-400" y="-200" width="2000" height="1500"></rect>
+      </svg>
+     </div>
+     <div class="zoom-toolbar" id="zoom-toolbar">
+      <button id="zoom-in-btn" title="Zoom in">+</button>
+      <div class="zoom-level" id="zoom-level">200%</div>
+      <button id="zoom-out-btn" title="Zoom out">-</button>
+      <div class="divider"></div>
+      <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
+      <button id="zoom-reset-btn" title="Reset view">R</button>
+     </div>
     </div>
-    <div class="zoom-toolbar" id="zoom-toolbar">
-     <button id="zoom-in-btn" title="Zoom in">+</button>
-     <div class="zoom-level" id="zoom-level">200%</div>
-     <button id="zoom-out-btn" title="Zoom out">-</button>
-     <div class="divider"></div>
-     <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
-     <button id="zoom-reset-btn" title="Reset view">R</button>
-    </div>
-   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="display: none;">Legend</button></section>
+   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
    <aside class="details-panel" id="details-panel">
     <div id="node-panel" style="display: block;">
      <div class="details-name editable-text" id="node-name">ISP Modem</div>
@@ -2560,7 +2618,13 @@
    let savedSizes = {};
    let savedStyles = {};
    let legendCollapsed = false;
+   let minimapCollapsed = false;
+   let drawToolbarCollapsed = false;
+   let topologyToolbarCollapsed = false;
    let legendMiniBtn = null;
+   let minimapMiniBtn = null;
+   let drawToolbarMiniBtn = null;
+   let topologyToolbarMiniBtn = null;
 
    function ensureLegendMiniButton() {
     if (legendMiniBtn) return legendMiniBtn;
@@ -2571,13 +2635,92 @@
     btn.id = "edge-legend-mini";
     btn.className = "legend-mini-btn";
     btn.textContent = "Legend";
-    btn.addEventListener("click", (e) => {
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
      e.stopPropagation();
+     e.preventDefault();
      legendCollapsed = false;
      updateLegendVisibility();
-    });
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
     panel.appendChild(btn);
     legendMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureMinimapMiniButton() {
+    if (minimapMiniBtn) return minimapMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "minimap-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Map";
+    btn.style.right = "10px";
+    btn.style.left = "auto";
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     minimapCollapsed = false;
+     updateMinimapVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    minimapMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureDrawToolbarMiniButton() {
+    if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "draw-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Draw";
+    btn.style.top = "10px";
+    btn.style.left = "10px";
+    btn.style.right = "auto";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     drawToolbarCollapsed = false;
+     updateDrawToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    drawToolbarMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureTopologyToolbarMiniButton() {
+    if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "topology-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Add Line";
+    btn.style.top = "10px";
+    btn.style.left = "auto";
+    btn.style.right = "40px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     topologyToolbarCollapsed = false;
+     updateTopologyToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    topologyToolbarMiniBtn = btn;
     return btn;
    }
 
@@ -2608,6 +2751,57 @@
      mini.style.display = "inline-flex";
     } else {
      legend.style.display = "flex";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateMinimapVisibility() {
+    const wrapper = document.getElementById("minimap-zoom-wrapper");
+    const mini = ensureMinimapMiniButton();
+    if (!wrapper || !mini) return;
+    
+    if (minimapCollapsed) {
+     wrapper.style.display = "none";
+     mini.style.display = "inline-flex";
+    } else {
+     wrapper.style.display = "block";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateDrawToolbarVisibility() {
+    const toolbar = document.getElementById("draw-toolbar");
+    const mini = ensureDrawToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    if (drawToolbarCollapsed) {
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     toolbar.style.setProperty('display', 'flex', 'important');
+     mini.style.display = "none";
+    }
+   }
+
+   function updateTopologyToolbarVisibility() {
+    const toolbar = document.getElementById("topology-toolbar");
+    const mini = ensureTopologyToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    // Check if we have a selected node (which means toolbar should be available)
+    const hasSelectedNode = currentNodeId !== null;
+    
+    if (!hasSelectedNode) {
+     // No node selected - hide both
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "none";
+    } else if (topologyToolbarCollapsed) {
+     // Node selected but toolbar collapsed - show mini button
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     // Node selected and toolbar not collapsed - show toolbar
+     toolbar.style.setProperty('display', 'flex', 'important');
      mini.style.display = "none";
     }
    }
@@ -2789,6 +2983,49 @@
       menu.classList.remove("open");
      }
     });
+    
+    // Close button event listeners with touch support
+    const minimapCloseBtn = document.getElementById("minimap-close-btn");
+    if (minimapCloseBtn) {
+     const handleMinimapClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      minimapCollapsed = true;
+      updateMinimapVisibility();
+     };
+     minimapCloseBtn.addEventListener("click", handleMinimapClose);
+     minimapCloseBtn.addEventListener("touchend", handleMinimapClose);
+    }
+    
+    const drawToolbarCloseBtn = document.getElementById("draw-toolbar-close-btn");
+    if (drawToolbarCloseBtn) {
+     const handleDrawClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      drawToolbarCollapsed = true;
+      updateDrawToolbarVisibility();
+     };
+     drawToolbarCloseBtn.addEventListener("click", handleDrawClose);
+     drawToolbarCloseBtn.addEventListener("touchend", handleDrawClose);
+    }
+    
+    const topologyToolbarCloseBtn = document.getElementById("topology-toolbar-close-btn");
+    if (topologyToolbarCloseBtn) {
+     const handleTopologyClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      topologyToolbarCollapsed = true;
+      updateTopologyToolbarVisibility();
+     };
+     topologyToolbarCloseBtn.addEventListener("click", handleTopologyClose);
+     topologyToolbarCloseBtn.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+     topologyToolbarCloseBtn.addEventListener("touchend", handleTopologyClose);
+    }
+    
+    // Initialize visibility states
+    updateMinimapVisibility();
+    updateDrawToolbarVisibility();
+    updateTopologyToolbarVisibility();
    });
 
    function wieldThePower() {
@@ -4022,7 +4259,10 @@
     document.getElementById("node-panel").style.display = "block";
     document.getElementById("edge-panel").style.display = "none";
     const toolbar = document.getElementById("topology-toolbar");
-    toolbar.style.display = "flex";
+    if (!topologyToolbarCollapsed) {
+     toolbar.style.display = "flex";
+    }
+    updateTopologyToolbarVisibility();
     document.getElementById("node-name").textContent = data.name;
     document.getElementById("node-ip").textContent = data.ip;
     document.getElementById("node-role").textContent = data.role;

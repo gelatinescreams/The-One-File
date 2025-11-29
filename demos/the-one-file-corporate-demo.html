@@ -334,15 +334,23 @@
    .legend-mini-btn {
     position: absolute;
     left: 10px;
-    bottom: 10px;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
     border: 1px solid #1f2937;
     background: rgba(15, 23, 42, 0.92);
-    font-size: 12px;
+    color: var(--text-main);
+    font-size: 11px;
     cursor: pointer;
     z-index: 20;
     display: none;
+    transition: all 0.2s;
+   }
+
+   .legend-mini-btn:hover,
+   .legend-mini-btn:active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
    }
 
    .legend-title {
@@ -423,17 +431,12 @@
    }
 
    .zoom-toolbar {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     display: flex;
-    flex-direction: column;
     gap: 4px;
     padding: 6px;
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 20;
    }
 
    .zoom-toolbar button {
@@ -472,17 +475,19 @@
     margin: 2px 0;
    }
 
-   .minimap-container {
+   .minimap-zoom-wrapper {
     position: absolute;
     bottom: 10px;
-    right: 60px;
-    width: 150px;
-    height: 100px;
+    right: 10px;
+    z-index: 19;
+   }
+
+   .minimap-container {
     background: rgba(15, 23, 42, 0.92);
     border: 1px solid #1f2937;
     border-radius: 6px;
-    z-index: 19;
     overflow: hidden;
+    margin-bottom: 4px;
    }
 
    .minimap-container svg {
@@ -504,6 +509,55 @@
    .minimap-edge {
     stroke: var(--edge-main);
     stroke-width: 1;
+   }
+
+   .minimap-close-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 3px;
+    color: var(--text-soft);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+   }
+
+   .minimap-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+   }
+
+   .toolbar-close-btn {
+    width: 24px;
+    height: 24px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--edge-main);
+    border-radius: 4px;
+    color: var(--text-soft);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+   }
+
+   .toolbar-close-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
    }
 
    .canvas-hint {
@@ -643,6 +697,7 @@
    .details-panel {
     background: var(--panel-alt);
     padding: 22px;
+    padding-bottom: 80px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -1114,7 +1169,6 @@
      left: 10px !important;
      right: auto !important;
      width: auto;
-     display: flex !important;
      gap: 6px;
      padding: 8px;
     }
@@ -1396,7 +1450,8 @@
   </header>
   <main>
    <section class="topology-panel">
-    <div class="draw-toolbar" id="draw-toolbar">
+    <div class="draw-toolbar" id="draw-toolbar" style="display: flex !important;">
+     <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
      <button id="draw-toggle" title="Draw custom line">✏️</button>
      <input type="color" id="draw-color" value="#f97316" title="Line color">
      <select id="draw-style" title="Line style">
@@ -1412,7 +1467,8 @@
      </select>
      <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
     </div>
-    <div class="topology-toolbar" id="topology-toolbar" style="display: flex;">
+    <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
+     <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
      <label for="add-line-select">Add line to:</label>
      <select id="add-line-select"><option value="edge-firewall">Edge Firewall</option><option value="core-router-1">Core Router 1</option><option value="core-router-2">Core Router 2</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="load-balancer">Load Balancer</option><option value="web-server-1">Web Server 1</option><option value="web-server-2">Web Server 2</option><option value="web-server-3">Web Server 3</option><option value="internal-fw">Internal Firewall</option><option value="ad-dc-1">Domain Controller 1</option><option value="ad-dc-2">Domain Controller 2</option><option value="file-server">File Server</option><option value="db-primary">Database Primary</option><option value="db-replica">Database Replica</option><option value="app-server-1">App Server 1</option><option value="app-server-2">App Server 2</option><option value="app-server-3">App Server 3</option><option value="k8s-master-1">K8s Master 1</option><option value="k8s-master-2">K8s Master 2</option><option value="k8s-worker-1">K8s Worker 1</option><option value="k8s-worker-2">K8s Worker 2</option><option value="k8s-worker-3">K8s Worker 3</option><option value="backup-server">Backup Server</option><option value="monitoring">Monitoring</option><option value="vpn-gateway">VPN Gateway</option><option value="san-storage">SAN Storage</option><option value="branch-router">Branch Office Router</option><option value="branch-switch">Branch Switch</option><option value="workstation-vlan">User Workstations</option><option value="guest-wifi-controller">WiFi Controller</option><option value="remote-workers">Remote Workers</option><option value="mail-server">Mail Server</option></select>
      <input type="color" id="add-line-color" value="#475569" title="Line color" style="
@@ -1449,20 +1505,23 @@
           Z
          " class="node-circle"></path><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Internet</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">0.0.0.0</text></g><g class="node-group" data-node-id="edge-firewall" transform="translate(600,250)" style="cursor: grab;"><circle r="105" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-70" y="-56" width="140" height="112" rx="4"></rect><line x1="-59.5" y1="-35" x2="59.5" y2="-35" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="-3.5" x2="59.5" y2="-3.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="28" x2="59.5" y2="28" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="-56" x2="-35" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="-56" x2="14" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="-24.5" x2="-10.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="-24.5" x2="38.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="7" x2="-35" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="7" x2="14" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="38.5" x2="-10.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="38.5" x2="38.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-19.6" style="font-size: 23.1px; cursor: pointer;">Edge Firewall</text><text class="node-sub" x="0" y="28" style="font-size: 16.8px; cursor: pointer;">203.0.113.1</text></g><g class="node-group" data-node-id="core-router-1" transform="translate(400,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; cursor: pointer;">Core Router 1</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; cursor: pointer;">10.0.0.1</text></g><g class="node-group" data-node-id="core-router-2" transform="translate(800,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; cursor: pointer;">Core Router 2</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; cursor: pointer;">10.0.0.2</text></g><g class="node-group" data-node-id="core-switch-1" transform="translate(400,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; cursor: pointer;">Core Switch 1</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; cursor: pointer;">10.0.0.10</text></g><g class="node-group" data-node-id="core-switch-2" transform="translate(800,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; cursor: pointer;">Core Switch 2</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; cursor: pointer;">10.0.0.11</text></g><g class="node-group" data-node-id="load-balancer" transform="translate(200,500)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Load Balancer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.0.10</text></g><g class="node-group" data-node-id="web-server-1" transform="translate(145,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Web Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.1.0.20</text></g><g class="node-group" data-node-id="web-server-2" transform="translate(200,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Web Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.1.0.21</text></g><g class="node-group" data-node-id="web-server-3" transform="translate(320,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Web Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.1.0.22</text></g><g class="node-group" data-node-id="internal-fw" transform="translate(600,780)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-48" width="120" height="96" rx="4"></rect><line x1="-51" y1="-30" x2="51" y2="-30" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="-3" x2="51" y2="-3" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="24" x2="51" y2="24" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="-48" x2="-30" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="-48" x2="12" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="-21" x2="-9" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="-21" x2="33" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="6" x2="-30" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="6" x2="12" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="33" x2="-9" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="33" x2="33" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; cursor: pointer;">Internal Firewall</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; cursor: pointer;">10.2.0.1</text></g><g class="node-group" data-node-id="ad-dc-1" transform="translate(500,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Domain Controller 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.2.1.10</text></g><g class="node-group" data-node-id="ad-dc-2" transform="translate(620,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Domain Controller 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.2.1.11</text></g><g class="node-group" data-node-id="file-server" transform="translate(740,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">File Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.2.1.20</text></g><g class="node-group" data-node-id="db-primary" transform="translate(200,850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Database Primary</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.3.0.10</text></g><g class="node-group" data-node-id="db-replica" transform="translate(150,1000)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Database Replica</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.3.0.11</text></g><g class="node-group" data-node-id="app-server-1" transform="translate(200,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">App Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.0.20</text></g><g class="node-group" data-node-id="app-server-2" transform="translate(320,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">App Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.0.21</text></g><g class="node-group" data-node-id="app-server-3" transform="translate(440,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">App Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.0.22</text></g><g class="node-group" data-node-id="k8s-master-1" transform="translate(900,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">K8s Master 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.3.1.10</text></g><g class="node-group" data-node-id="k8s-master-2" transform="translate(1020,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">K8s Master 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.3.1.11</text></g><g class="node-group" data-node-id="k8s-worker-1" transform="translate(850,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">K8s Worker 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.1.20</text></g><g class="node-group" data-node-id="k8s-worker-2" transform="translate(970,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">K8s Worker 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.1.21</text></g><g class="node-group" data-node-id="k8s-worker-3" transform="translate(1090,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">K8s Worker 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.3.1.22</text></g><g class="node-group" data-node-id="backup-server" transform="translate(1050,600)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Backup Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.4.0.10</text></g><g class="node-group" data-node-id="monitoring" transform="translate(1150,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Monitoring</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.4.0.20</text></g><g class="node-group" data-node-id="vpn-gateway" transform="translate(350,250)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-50" y="-40" width="100" height="80" rx="4"></rect><line x1="-42.5" y1="-25" x2="42.5" y2="-25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="-2.5" x2="42.5" y2="-2.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="20" x2="42.5" y2="20" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="-40" x2="-25" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="-40" x2="10" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="-17.5" x2="-7.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="-17.5" x2="27.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="5" x2="-25" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="5" x2="10" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="27.5" x2="-7.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="27.5" x2="27.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">VPN Gateway</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.0.1.10</text></g><g class="node-group" data-node-id="san-storage" transform="translate(155,750)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">SAN Storage</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.5.0.10</text></g><g class="node-group" data-node-id="branch-router" transform="translate(1000,250)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55.00000000000001" y="-15" width="110.00000000000001" height="40" rx="6"></rect><rect x="-32.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="-30" cy="-47.5" r="4"></circle><rect x="-2.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="0" cy="-47.5" r="4"></circle><rect x="27.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="30" cy="-47.5" r="4"></circle><circle cx="-35" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-17.5" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle><circle cx="17.5" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Branch Office Router</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.100.0.1</text></g><g class="node-group" data-node-id="branch-switch" transform="translate(1120,380)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-62.99999999999999" y="-18" width="125.99999999999999" height="36" rx="4"></rect><rect x="-54" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-39.6" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-25.2" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-10.799999999999997" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="3.6000000000000014" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="18" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="32.400000000000006" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="46.8" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Branch Switch</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.100.0.10</text></g><g class="node-group" data-node-id="workstation-vlan" transform="translate(980,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-45" y="-40" width="90" height="60" rx="4"></rect><rect x="-37.5" y="-32.5" width="75" height="45" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-7.5" y="20" width="15" height="15"></rect><rect x="-25" y="35" width="50" height="7.5" rx="2"></rect></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">User Workstations</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">10.2.10.0/24</text></g><g class="node-group" data-node-id="guest-wifi-controller" transform="translate(1050,480)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">WiFi Controller</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.10.0.1</text></g><g class="node-group" data-node-id="remote-workers" transform="translate(180,145)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-36" y="-40.5" width="72" height="49.50000000000001" rx="4"></rect><rect x="-40.5" y="11.25" width="81" height="27" rx="4"></rect><rect x="-11.25" y="20.25" width="22.5" height="11.25" rx="2" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Remote Workers</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">VPN Pool</text></g><g class="node-group" data-node-id="mail-server" transform="translate(860,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Mail Server</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">10.2.2.10</text></g></svg>
     </div>
-    <div class="minimap-container" id="minimap-container">
-     <svg id="minimap" viewBox="0 0 4000 3000">
-      <line x1="600" y1="155" x2="600" y2="250" class="minimap-edge"></line><line x1="600" y1="250" x2="400" y2="420" class="minimap-edge"></line><line x1="600" y1="250" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="400" y2="600" class="minimap-edge"></line><line x1="800" y1="420" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="600" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="420" x2="200" y2="500" class="minimap-edge"></line><line x1="200" y1="500" x2="145" y2="650" class="minimap-edge"></line><line x1="200" y1="500" x2="200" y2="700" class="minimap-edge"></line><line x1="200" y1="500" x2="320" y2="650" class="minimap-edge"></line><line x1="400" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="800" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="600" y1="780" x2="500" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="620" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="980" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="860" y2="950" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="850" class="minimap-edge"></line><line x1="200" y1="850" x2="150" y2="1000" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="320" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="440" y2="1050" class="minimap-edge"></line><line x1="200" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="320" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="440" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="900" y2="700" class="minimap-edge"></line><line x1="800" y1="600" x2="1020" y2="700" class="minimap-edge"></line><line x1="900" y1="700" x2="850" y2="850" class="minimap-edge"></line><line x1="900" y1="700" x2="970" y2="850" class="minimap-edge"></line><line x1="1020" y1="700" x2="1090" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="1050" y2="600" class="minimap-edge"></line><line x1="800" y1="600" x2="1150" y2="700" class="minimap-edge"></line><line x1="400" y1="420" x2="350" y2="250" class="minimap-edge"></line><line x1="350" y1="250" x2="180" y2="145" class="minimap-edge"></line><line x1="400" y1="600" x2="155" y2="750" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="850" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="1050" class="minimap-edge"></line><line x1="600" y1="250" x2="1000" y2="250" class="minimap-edge"></line><line x1="1000" y1="250" x2="1120" y2="380" class="minimap-edge"></line><line x1="800" y1="420" x2="1050" y2="480" class="minimap-edge"></line><circle cx="600" cy="155" r="40" class="minimap-node"></circle><circle cx="600" cy="250" r="40" class="minimap-node"></circle><circle cx="400" cy="420" r="40" class="minimap-node"></circle><circle cx="800" cy="420" r="40" class="minimap-node"></circle><circle cx="400" cy="600" r="40" class="minimap-node"></circle><circle cx="800" cy="600" r="40" class="minimap-node"></circle><circle cx="200" cy="500" r="40" class="minimap-node"></circle><circle cx="145" cy="650" r="40" class="minimap-node"></circle><circle cx="200" cy="700" r="40" class="minimap-node"></circle><circle cx="320" cy="650" r="40" class="minimap-node"></circle><circle cx="600" cy="780" r="40" class="minimap-node"></circle><circle cx="500" cy="950" r="40" class="minimap-node"></circle><circle cx="620" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="860" cy="950" r="40" class="minimap-node"></circle><circle cx="980" cy="950" r="40" class="minimap-node"></circle><circle cx="200" cy="850" r="40" class="minimap-node"></circle><circle cx="150" cy="1000" r="40" class="minimap-node"></circle><circle cx="200" cy="1050" r="40" class="minimap-node"></circle><circle cx="320" cy="1050" r="40" class="minimap-node"></circle><circle cx="440" cy="1050" r="40" class="minimap-node"></circle><circle cx="900" cy="700" r="40" class="minimap-node"></circle><circle cx="1020" cy="700" r="40" class="minimap-node"></circle><circle cx="850" cy="850" r="40" class="minimap-node"></circle><circle cx="970" cy="850" r="40" class="minimap-node"></circle><circle cx="1090" cy="850" r="40" class="minimap-node"></circle><circle cx="1050" cy="600" r="40" class="minimap-node"></circle><circle cx="1150" cy="700" r="40" class="minimap-node"></circle><circle cx="350" cy="250" r="40" class="minimap-node"></circle><circle cx="180" cy="145" r="40" class="minimap-node"></circle><circle cx="155" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="250" r="40" class="minimap-node"></circle><circle cx="1120" cy="380" r="40" class="minimap-node"></circle><circle cx="1050" cy="480" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-352.5" y="-152.5" width="2000" height="1500"></rect>
-     </svg>
+    <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
+     <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
+     <div class="minimap-container" id="minimap-container">
+      <svg id="minimap" viewBox="0 0 4000 3000">
+       <line x1="600" y1="155" x2="600" y2="250" class="minimap-edge"></line><line x1="600" y1="250" x2="400" y2="420" class="minimap-edge"></line><line x1="600" y1="250" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="400" y2="600" class="minimap-edge"></line><line x1="800" y1="420" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="600" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="420" x2="200" y2="500" class="minimap-edge"></line><line x1="200" y1="500" x2="145" y2="650" class="minimap-edge"></line><line x1="200" y1="500" x2="200" y2="700" class="minimap-edge"></line><line x1="200" y1="500" x2="320" y2="650" class="minimap-edge"></line><line x1="400" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="800" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="600" y1="780" x2="500" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="620" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="980" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="860" y2="950" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="850" class="minimap-edge"></line><line x1="200" y1="850" x2="150" y2="1000" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="320" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="440" y2="1050" class="minimap-edge"></line><line x1="200" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="320" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="440" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="900" y2="700" class="minimap-edge"></line><line x1="800" y1="600" x2="1020" y2="700" class="minimap-edge"></line><line x1="900" y1="700" x2="850" y2="850" class="minimap-edge"></line><line x1="900" y1="700" x2="970" y2="850" class="minimap-edge"></line><line x1="1020" y1="700" x2="1090" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="1050" y2="600" class="minimap-edge"></line><line x1="800" y1="600" x2="1150" y2="700" class="minimap-edge"></line><line x1="400" y1="420" x2="350" y2="250" class="minimap-edge"></line><line x1="350" y1="250" x2="180" y2="145" class="minimap-edge"></line><line x1="400" y1="600" x2="155" y2="750" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="850" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="1050" class="minimap-edge"></line><line x1="600" y1="250" x2="1000" y2="250" class="minimap-edge"></line><line x1="1000" y1="250" x2="1120" y2="380" class="minimap-edge"></line><line x1="800" y1="420" x2="1050" y2="480" class="minimap-edge"></line><circle cx="600" cy="155" r="40" class="minimap-node"></circle><circle cx="600" cy="250" r="40" class="minimap-node"></circle><circle cx="400" cy="420" r="40" class="minimap-node"></circle><circle cx="800" cy="420" r="40" class="minimap-node"></circle><circle cx="400" cy="600" r="40" class="minimap-node"></circle><circle cx="800" cy="600" r="40" class="minimap-node"></circle><circle cx="200" cy="500" r="40" class="minimap-node"></circle><circle cx="145" cy="650" r="40" class="minimap-node"></circle><circle cx="200" cy="700" r="40" class="minimap-node"></circle><circle cx="320" cy="650" r="40" class="minimap-node"></circle><circle cx="600" cy="780" r="40" class="minimap-node"></circle><circle cx="500" cy="950" r="40" class="minimap-node"></circle><circle cx="620" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="860" cy="950" r="40" class="minimap-node"></circle><circle cx="980" cy="950" r="40" class="minimap-node"></circle><circle cx="200" cy="850" r="40" class="minimap-node"></circle><circle cx="150" cy="1000" r="40" class="minimap-node"></circle><circle cx="200" cy="1050" r="40" class="minimap-node"></circle><circle cx="320" cy="1050" r="40" class="minimap-node"></circle><circle cx="440" cy="1050" r="40" class="minimap-node"></circle><circle cx="900" cy="700" r="40" class="minimap-node"></circle><circle cx="1020" cy="700" r="40" class="minimap-node"></circle><circle cx="850" cy="850" r="40" class="minimap-node"></circle><circle cx="970" cy="850" r="40" class="minimap-node"></circle><circle cx="1090" cy="850" r="40" class="minimap-node"></circle><circle cx="1050" cy="600" r="40" class="minimap-node"></circle><circle cx="1150" cy="700" r="40" class="minimap-node"></circle><circle cx="350" cy="250" r="40" class="minimap-node"></circle><circle cx="180" cy="145" r="40" class="minimap-node"></circle><circle cx="155" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="250" r="40" class="minimap-node"></circle><circle cx="1120" cy="380" r="40" class="minimap-node"></circle><circle cx="1050" cy="480" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-352.5" y="-152.5" width="2000" height="1500"></rect>
+      </svg>
+     </div>
+     <div class="zoom-toolbar" id="zoom-toolbar">
+      <button id="zoom-in-btn" title="Zoom in">+</button>
+      <div class="zoom-level" id="zoom-level">200%</div>
+      <button id="zoom-out-btn" title="Zoom out">-</button>
+      <div class="divider"></div>
+      <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
+      <button id="zoom-reset-btn" title="Reset view">R</button>
+     </div>
     </div>
-    <div class="zoom-toolbar" id="zoom-toolbar">
-     <button id="zoom-in-btn" title="Zoom in">+</button>
-     <div class="zoom-level" id="zoom-level">200%</div>
-     <button id="zoom-out-btn" title="Zoom out">-</button>
-     <div class="divider"></div>
-     <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
-     <button id="zoom-reset-btn" title="Reset view">R</button>
-    </div>
-   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="display: none;">Legend</button></section>
+   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
    <aside class="details-panel" id="details-panel">
     <div id="node-panel" style="display: block;">
      <div class="details-name editable-text" id="node-name">Internet</div>
@@ -3558,7 +3617,13 @@
    let savedSizes = {};
    let savedStyles = {};
    let legendCollapsed = false;
+   let minimapCollapsed = false;
+   let drawToolbarCollapsed = false;
+   let topologyToolbarCollapsed = false;
    let legendMiniBtn = null;
+   let minimapMiniBtn = null;
+   let drawToolbarMiniBtn = null;
+   let topologyToolbarMiniBtn = null;
 
    function ensureLegendMiniButton() {
     if (legendMiniBtn) return legendMiniBtn;
@@ -3569,13 +3634,92 @@
     btn.id = "edge-legend-mini";
     btn.className = "legend-mini-btn";
     btn.textContent = "Legend";
-    btn.addEventListener("click", (e) => {
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
      e.stopPropagation();
+     e.preventDefault();
      legendCollapsed = false;
      updateLegendVisibility();
-    });
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
     panel.appendChild(btn);
     legendMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureMinimapMiniButton() {
+    if (minimapMiniBtn) return minimapMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "minimap-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Map";
+    btn.style.right = "10px";
+    btn.style.left = "auto";
+    btn.style.bottom = "10px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     minimapCollapsed = false;
+     updateMinimapVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    minimapMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureDrawToolbarMiniButton() {
+    if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "draw-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Draw";
+    btn.style.top = "10px";
+    btn.style.left = "10px";
+    btn.style.right = "auto";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     drawToolbarCollapsed = false;
+     updateDrawToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    drawToolbarMiniBtn = btn;
+    return btn;
+   }
+
+   function ensureTopologyToolbarMiniButton() {
+    if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
+    const panel = document.querySelector(".topology-panel");
+    if (!panel) return null;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "topology-toolbar-mini";
+    btn.className = "legend-mini-btn";
+    btn.textContent = "Add Line";
+    btn.style.top = "10px";
+    btn.style.left = "auto";
+    btn.style.right = "40px";
+    const handleClick = (e) => {
+     e.stopPropagation();
+     e.preventDefault();
+     topologyToolbarCollapsed = false;
+     updateTopologyToolbarVisibility();
+    };
+    btn.addEventListener("click", handleClick);
+    btn.addEventListener("touchend", handleClick);
+    panel.appendChild(btn);
+    topologyToolbarMiniBtn = btn;
     return btn;
    }
 
@@ -3606,6 +3750,57 @@
      mini.style.display = "inline-flex";
     } else {
      legend.style.display = "flex";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateMinimapVisibility() {
+    const wrapper = document.getElementById("minimap-zoom-wrapper");
+    const mini = ensureMinimapMiniButton();
+    if (!wrapper || !mini) return;
+    
+    if (minimapCollapsed) {
+     wrapper.style.display = "none";
+     mini.style.display = "inline-flex";
+    } else {
+     wrapper.style.display = "block";
+     mini.style.display = "none";
+    }
+   }
+
+   function updateDrawToolbarVisibility() {
+    const toolbar = document.getElementById("draw-toolbar");
+    const mini = ensureDrawToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    if (drawToolbarCollapsed) {
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     toolbar.style.setProperty('display', 'flex', 'important');
+     mini.style.display = "none";
+    }
+   }
+
+   function updateTopologyToolbarVisibility() {
+    const toolbar = document.getElementById("topology-toolbar");
+    const mini = ensureTopologyToolbarMiniButton();
+    if (!toolbar || !mini) return;
+    
+    // Check if we have a selected node (which means toolbar should be available)
+    const hasSelectedNode = currentNodeId !== null;
+    
+    if (!hasSelectedNode) {
+     // No node selected - hide both
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "none";
+    } else if (topologyToolbarCollapsed) {
+     // Node selected but toolbar collapsed - show mini button
+     toolbar.style.setProperty('display', 'none', 'important');
+     mini.style.display = "inline-flex";
+    } else {
+     // Node selected and toolbar not collapsed - show toolbar
+     toolbar.style.setProperty('display', 'flex', 'important');
      mini.style.display = "none";
     }
    }
@@ -3787,6 +3982,49 @@
       menu.classList.remove("open");
      }
     });
+    
+    // Close button event listeners with touch support
+    const minimapCloseBtn = document.getElementById("minimap-close-btn");
+    if (minimapCloseBtn) {
+     const handleMinimapClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      minimapCollapsed = true;
+      updateMinimapVisibility();
+     };
+     minimapCloseBtn.addEventListener("click", handleMinimapClose);
+     minimapCloseBtn.addEventListener("touchend", handleMinimapClose);
+    }
+    
+    const drawToolbarCloseBtn = document.getElementById("draw-toolbar-close-btn");
+    if (drawToolbarCloseBtn) {
+     const handleDrawClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      drawToolbarCollapsed = true;
+      updateDrawToolbarVisibility();
+     };
+     drawToolbarCloseBtn.addEventListener("click", handleDrawClose);
+     drawToolbarCloseBtn.addEventListener("touchend", handleDrawClose);
+    }
+    
+    const topologyToolbarCloseBtn = document.getElementById("topology-toolbar-close-btn");
+    if (topologyToolbarCloseBtn) {
+     const handleTopologyClose = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      topologyToolbarCollapsed = true;
+      updateTopologyToolbarVisibility();
+     };
+     topologyToolbarCloseBtn.addEventListener("click", handleTopologyClose);
+     topologyToolbarCloseBtn.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+     topologyToolbarCloseBtn.addEventListener("touchend", handleTopologyClose);
+    }
+    
+    // Initialize visibility states
+    updateMinimapVisibility();
+    updateDrawToolbarVisibility();
+    updateTopologyToolbarVisibility();
    });
 
    function wieldThePower() {
@@ -4646,6 +4884,22 @@
       e.stopPropagation();
       editNodeName(id);
      });
+     
+     // Touch support for mobile editing
+     let labelTouchStart = null;
+     label.addEventListener("touchstart", (e) => {
+      labelTouchStart = Date.now();
+     }, { passive: true });
+     
+     label.addEventListener("touchend", (e) => {
+      if (labelTouchStart && Date.now() - labelTouchStart < 200) {
+       // Quick tap detected (less than 200ms)
+       e.stopPropagation();
+       e.preventDefault();
+       editNodeName(id);
+      }
+      labelTouchStart = null;
+     });
      const sub = document.createElementNS("http://www.w3.org/2000/svg", "text", );
      sub.classList.add("node-sub");
      sub.setAttribute("x", subOffsetX);
@@ -4659,6 +4913,22 @@
      sub.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeIp(id);
+     });
+     
+     // Touch support for mobile editing
+     let subTouchStart = null;
+     sub.addEventListener("touchstart", (e) => {
+      subTouchStart = Date.now();
+     }, { passive: true });
+     
+     sub.addEventListener("touchend", (e) => {
+      if (subTouchStart && Date.now() - subTouchStart < 200) {
+       // Quick tap detected (less than 200ms)
+       e.stopPropagation();
+       e.preventDefault();
+       editNodeIp(id);
+      }
+      subTouchStart = null;
      });
      g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
@@ -4988,7 +5258,10 @@
     document.getElementById("node-panel").style.display = "block";
     document.getElementById("edge-panel").style.display = "none";
     const toolbar = document.getElementById("topology-toolbar");
-    toolbar.style.display = "flex";
+    if (!topologyToolbarCollapsed) {
+     toolbar.style.display = "flex";
+    }
+    updateTopologyToolbarVisibility();
     document.getElementById("node-name").textContent = data.name;
     document.getElementById("node-ip").textContent = data.ip;
     document.getElementById("node-role").textContent = data.role;
