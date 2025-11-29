@@ -53,12 +53,12 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 I wanted a tool that is:
 
-- fully offline  
-- portable  
-- zero setup  
-- stable  
-- fast  
-- dependable in emergencies 
+- fully offline
+- portable
+- zero setup
+- stable
+- fast
+- dependable in emergencies
 
 Instead of building another hosted application, I built a file.
 

@@ -572,9 +572,6 @@
    }
 
    .node-circle {
-    fill: #0c111a;
-    stroke: #1e293b;
-    stroke-width: 4;
     transition: 0.25s ease;
     transform-origin: center center;
    }
@@ -4394,7 +4391,7 @@
      body.appendChild(stateScript);
     }
     stateScript.textContent = JSON.stringify(captureTheQuickening(), null, 2, );
-    return " < !DOCTYPE html > \n " + clone.outerHTML;
+    return "<!DOCTYPE html>\n" + clone.outerHTML;
    }
    async function becomeImmortal() {
     const encryptEnabled = document.getElementById("encrypt-toggle").checked;
@@ -4435,7 +4432,7 @@
      body.appendChild(stateScript);
     }
     stateScript.textContent = stateData;
-    const html = " < !DOCTYPE html > \n " + clone.outerHTML;
+    const html = "<!DOCTYPE html>\n" + clone.outerHTML;
     const blob = new Blob([html], {
      type: "text/html"
     });
