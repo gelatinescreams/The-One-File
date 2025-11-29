@@ -4244,7 +4244,7 @@
     
      const isIconTag = typeof tag === 'object' && tag.type === 'icon';
      
-     if (!isIconTag && tag.toLowerCase().includes("wg")) b.classList.add("wg");
+     if (!isIconTag && typeof tag === 'string' && tag.toLowerCase().includes("wg")) b.classList.add("wg");
      b.style.cursor = "pointer";
      b.style.position = "relative";
      
