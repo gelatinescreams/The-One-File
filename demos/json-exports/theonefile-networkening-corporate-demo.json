@@ -1,0 +1,644 @@
+{
+  "nodeData": {
+    "internet": {
+      "shape": "cloud",
+      "name": "Internet",
+      "ip": "ISP Gateway",
+      "role": "WAN",
+      "tags": [
+        "1Gbps",
+        "Redundant"
+      ],
+      "notes": [
+        "Primary: Fiber",
+        "Backup: Cable"
+      ]
+    },
+    "edge-firewall": {
+      "shape": "firewall",
+      "name": "Edge Firewall",
+      "ip": "192.168.1.1",
+      "role": "Security",
+      "tags": [
+        "Perimeter",
+        "NAT"
+      ],
+      "notes": [
+        "Palo Alto PA-220",
+        "WAN: 100.50.25.10"
+      ]
+    },
+    "core-switch-1": {
+      "shape": "switch",
+      "name": "Core Switch 1",
+      "ip": "10.0.0.1",
+      "role": "Core Network",
+      "tags": [
+        "Layer 3",
+        "10Gb"
+      ],
+      "notes": [
+        "Primary core switch",
+        "Redundant power",
+        "HSRP Active"
+      ]
+    },
+    "core-switch-2": {
+      "shape": "switch",
+      "name": "Core Switch 2",
+      "ip": "10.0.0.2",
+      "role": "Core Network",
+      "tags": [
+        "Layer 3",
+        "10Gb"
+      ],
+      "notes": [
+        "Secondary core switch",
+        "HSRP Standby"
+      ]
+    },
+    "dmz-firewall": {
+      "shape": "firewall",
+      "name": "DMZ Firewall",
+      "ip": "10.10.0.1",
+      "role": "Security",
+      "tags": [
+        "DMZ",
+        "IDS/IPS"
+      ],
+      "notes": [
+        "DMZ segmentation",
+        "Public services"
+      ]
+    },
+    "web-server": {
+      "shape": "server",
+      "name": "Web Server",
+      "ip": "10.10.1.10",
+      "role": "Application",
+      "tags": [
+        "DMZ",
+        "HTTPS"
+      ],
+      "notes": [
+        "Corporate website",
+        "Load balanced"
+      ]
+    },
+    "mail-server": {
+      "shape": "server",
+      "name": "Mail Server",
+      "ip": "10.10.1.20",
+      "role": "Email",
+      "tags": [
+        "DMZ",
+        "SMTP/IMAP"
+      ],
+      "notes": [
+        "Exchange Server 2019"
+      ]
+    },
+    "dist-switch-1": {
+      "shape": "switch",
+      "name": "Distribution SW 1",
+      "ip": "10.1.0.1",
+      "role": "Distribution",
+      "tags": [
+        "Layer 3",
+        "Aggregation"
+      ],
+      "notes": [
+        "Building A distribution"
+      ]
+    },
+    "dist-switch-2": {
+      "shape": "switch",
+      "name": "Distribution SW 2",
+      "ip": "10.2.0.1",
+      "role": "Distribution",
+      "tags": [
+        "Layer 3",
+        "Aggregation"
+      ],
+      "notes": [
+        "Building B distribution"
+      ]
+    },
+    "access-switch-1": {
+      "shape": "switch",
+      "name": "Access SW 1-1",
+      "ip": "10.1.1.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48 port"
+      ],
+      "notes": [
+        "Floor 1 Building A"
+      ]
+    },
+    "access-switch-2": {
+      "shape": "switch",
+      "name": "Access SW 1-2",
+      "ip": "10.1.2.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48-port"
+      ],
+      "notes": [
+        "Floor 2 Building A"
+      ]
+    },
+    "access-switch-3": {
+      "shape": "switch",
+      "name": "Access SW 2-1",
+      "ip": "10.2.1.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48 port"
+      ],
+      "notes": [
+        "Floor 1 Building B"
+      ]
+    },
+    "domain-controller": {
+      "shape": "server",
+      "name": "Domain Controller",
+      "ip": "10.1.10.10",
+      "role": "Identity",
+      "tags": [
+        "Active Directory",
+        "DNS"
+      ],
+      "notes": [
+        "Primary DC",
+        "Windows Server 2022"
+      ]
+    },
+    "file-server": {
+      "shape": "server",
+      "name": "File Server",
+      "ip": "10.1.10.20",
+      "role": "Storage",
+      "tags": [
+        "SMB",
+        "NFS"
+      ],
+      "notes": [
+        "Corporate file shares",
+        "30TB RAID6"
+      ]
+    },
+    "db-server": {
+      "shape": "database",
+      "name": "Database Server",
+      "ip": "10.1.10.30",
+      "role": "Database",
+      "tags": [
+        "SQL Server",
+        "Production"
+      ],
+      "notes": [
+        "SQL Server 2022",
+        "Always On AG"
+      ]
+    },
+    "backup-server": {
+      "shape": "server",
+      "name": "Backup Server",
+      "ip": "10.1.10.40",
+      "role": "Backup",
+      "tags": [
+        "Veeam",
+        "Dedupe"
+      ],
+      "notes": [
+        "Nightly backups",
+        "60TB capacity"
+      ]
+    },
+    "wifi-controller": {
+      "shape": "router",
+      "name": "WiFi Controller",
+      "ip": "10.0.0.100",
+      "role": "Wireless",
+      "tags": [
+        "UniFi",
+        "Management"
+      ],
+      "notes": [
+        "Manages 45 APs"
+      ]
+    },
+    "vpn-gateway": {
+      "shape": "router",
+      "name": "VPN Gateway",
+      "ip": "10.0.0.50",
+      "role": "Remote Access",
+      "tags": [
+        "OpenVPN",
+        "MFA"
+      ],
+      "notes": [
+        "Remote worker access"
+      ]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "edge-1",
+        "from": "internet",
+        "to": "edge-firewall",
+        "color": "#ef4444",
+        "width": 6,
+        "notes": [
+          "WAN Connection",
+          "1Gbps"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-2",
+        "from": "edge-firewall",
+        "to": "core-switch-1",
+        "color": "#f59e0b",
+        "width": 5,
+        "notes": [
+          "Trunk",
+          "VLAN 1,10,20,30"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-3",
+        "from": "edge-firewall",
+        "to": "core-switch-2",
+        "color": "#f59e0b",
+        "width": 5,
+        "notes": [
+          "Trunk",
+          "VLAN 1,10,20,30"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-4",
+        "from": "core-switch-1",
+        "to": "core-switch-2",
+        "color": "#10b981",
+        "width": 6,
+        "notes": [
+          "Inter-switch link",
+          "20Gb LAG"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-5",
+        "from": "core-switch-1",
+        "to": "dmz-firewall",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ segment",
+          "VLAN 100"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-6",
+        "from": "dmz-firewall",
+        "to": "web-server",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-7",
+        "from": "dmz-firewall",
+        "to": "mail-server",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-8",
+        "from": "core-switch-1",
+        "to": "dist-switch-1",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-9",
+        "from": "core-switch-2",
+        "to": "dist-switch-1",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-10",
+        "from": "core-switch-1",
+        "to": "dist-switch-2",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-11",
+        "from": "core-switch-2",
+        "to": "dist-switch-2",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-12",
+        "from": "dist-switch-1",
+        "to": "access-switch-1",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-13",
+        "from": "dist-switch-1",
+        "to": "access-switch-2",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-14",
+        "from": "dist-switch-2",
+        "to": "access-switch-3",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-15",
+        "from": "core-switch-1",
+        "to": "domain-controller",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-16",
+        "from": "core-switch-1",
+        "to": "file-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-17",
+        "from": "core-switch-1",
+        "to": "db-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-18",
+        "from": "core-switch-1",
+        "to": "backup-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-19",
+        "from": "core-switch-1",
+        "to": "wifi-controller",
+        "color": "#06b6d4",
+        "width": 4,
+        "notes": [
+          "Management VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-20",
+        "from": "edge-firewall",
+        "to": "vpn-gateway",
+        "color": "#f59e0b",
+        "width": 4,
+        "notes": [
+          "VPN segment"
+        ],
+        "lineStyle": "dashed",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN / DMZ",
+    "#f59e0b": "Trunk / Uplink",
+    "#10b981": "Core / Distribution",
+    "#3b82f6": "Access Layer",
+    "#8b5cf6": "Server VLAN",
+    "#06b6d4": "Management"
+  },
+  "nodePositions": {
+    "internet": {
+      "x": 2000,
+      "y": 200
+    },
+    "edge-firewall": {
+      "x": 2000,
+      "y": 500
+    },
+    "core-switch-1": {
+      "x": 1700,
+      "y": 900
+    },
+    "core-switch-2": {
+      "x": 2300,
+      "y": 900
+    },
+    "dmz-firewall": {
+      "x": 2800,
+      "y": 900
+    },
+    "web-server": {
+      "x": 2800,
+      "y": 1250
+    },
+    "mail-server": {
+      "x": 2800,
+      "y": 1550
+    },
+    "dist-switch-1": {
+      "x": 1200,
+      "y": 1400
+    },
+    "dist-switch-2": {
+      "x": 2500,
+      "y": 1400
+    },
+    "access-switch-1": {
+      "x": 800,
+      "y": 1900
+    },
+    "access-switch-2": {
+      "x": 1200,
+      "y": 1900
+    },
+    "access-switch-3": {
+      "x": 2500,
+      "y": 1900
+    },
+    "domain-controller": {
+      "x": 1100,
+      "y": 900
+    },
+    "file-server": {
+      "x": 600,
+      "y": 900
+    },
+    "db-server": {
+      "x": 600,
+      "y": 1300
+    },
+    "backup-server": {
+      "x": 1100,
+      "y": 1300
+    },
+    "wifi-controller": {
+      "x": 3200,
+      "y": 1400
+    },
+    "vpn-gateway": {
+      "x": 1400,
+      "y": 500
+    }
+  },
+  "nodeSizes": {},
+  "nodeStyles": {},
+  "iconCache": {},
+  "page": {
+    "title": "Corporate Network",
+    "background": "",
+    "topbarBg": "rgba(9, 12, 20, 0.9)",
+    "topbarBorder": "#1f2533",
+    "panel": "#0b0e13",
+    "panelAlt": "#10141b",
+    "accent": "#4fd1c5",
+    "danger": "#f56565",
+    "textMain": "#e2e8f0",
+    "textSoft": "#94a3b8",
+    "topbarHeight": 100,
+    "sidebarWidth": 435,
+    "mobileFooterHeight": 20,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 1.4285714285714286,
+    "panX": 500,
+    "panY": 0
+  }
+}

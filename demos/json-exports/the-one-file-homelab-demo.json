@@ -1,0 +1,592 @@
+{
+  "nodeData": {
+    "isp-modem": {
+      "shape": "router",
+      "name": "ISP Modem",
+      "ip": "192.168.0.1",
+      "role": "Gateway",
+      "tags": [
+        "ISP",
+        "Gateway"
+      ],
+      "notes": [
+        "Comcast Gigabit",
+        "Bridge mode enabled"
+      ]
+    },
+    "main-router": {
+      "shape": "firewall",
+      "name": "pfSense Router",
+      "ip": "192.168.1.1",
+      "role": "Firewall/Router",
+      "tags": [
+        "pfSense",
+        "Firewall",
+        "VPN"
+      ],
+      "notes": [
+        "Protectli Vault",
+        "WireGuard VPN enabled",
+        "IDS/IPS active"
+      ]
+    },
+    "main-switch": {
+      "shape": "switch",
+      "name": "Core Switch",
+      "ip": "192.168.1.2",
+      "role": "Network",
+      "tags": [
+        "24-port",
+        "Managed",
+        "PoE"
+      ],
+      "notes": [
+        "UniFi Switch 24 PoE",
+        "VLANs: 10,20,30,40"
+      ]
+    },
+    "nas": {
+      "shape": "database",
+      "name": "TrueNAS",
+      "ip": "192.168.1.10",
+      "role": "Storage",
+      "tags": [
+        "Storage",
+        "NAS",
+        "Backup"
+      ],
+      "notes": [
+        "32TB RAID-Z2",
+        "SMB/NFS shares",
+        "Automated backups"
+      ]
+    },
+    "plex": {
+      "shape": "server",
+      "name": "Plex Server",
+      "ip": "192.168.1.15",
+      "role": "Media",
+      "tags": [
+        "Media",
+        "Streaming"
+      ],
+      "notes": [
+        "Intel i7",
+        "Hardware transcoding",
+        "4K capable"
+      ]
+    },
+    "pihole": {
+      "shape": "server",
+      "name": "Pi-hole",
+      "ip": "192.168.1.20",
+      "role": "DNS",
+      "tags": [
+        "DNS",
+        "AdBlock",
+        "RPi"
+      ],
+      "notes": [
+        "Primary DNS",
+        "Blocks 150k domains",
+        "Raspberry Pi 4"
+      ]
+    },
+    "homeassistant": {
+      "shape": "server",
+      "name": "Home Assistant",
+      "ip": "192.168.1.25",
+      "role": "Automation",
+      "tags": [
+        "SmartHome",
+        "IoT"
+      ],
+      "notes": [
+        "50+ devices",
+        "Zigbee/Z-Wave",
+        "Node-RED integration"
+      ]
+    },
+    "docker-host": {
+      "shape": "server",
+      "name": "Docker Host",
+      "ip": "192.168.1.30",
+      "role": "Services",
+      "tags": [
+        "Docker",
+        "Services"
+      ],
+      "notes": [
+        "20+ containers",
+        "Portainer",
+        "Traefik reverse proxy"
+      ]
+    },
+    "nvr": {
+      "shape": "server",
+      "name": "Frigate NVR",
+      "ip": "192.168.1.35",
+      "role": "Security",
+      "tags": [
+        "Security",
+        "Cameras",
+        "AI"
+      ],
+      "notes": [
+        "6 cameras",
+        "Object detection",
+        "24/7 recording"
+      ]
+    },
+    "gaming-pc": {
+      "shape": "pc",
+      "name": "Gaming PC",
+      "ip": "192.168.1.100",
+      "role": "Client",
+      "tags": [
+        "Gaming",
+        "Desktop"
+      ],
+      "notes": [
+        "RTX 4090",
+        "Wired connection"
+      ]
+    },
+    "work-laptop": {
+      "shape": "laptop",
+      "name": "Work Laptop",
+      "ip": "192.168.1.101",
+      "role": "Client",
+      "tags": [
+        "Work",
+        "WiFi"
+      ],
+      "notes": [
+        "MacBook Pro",
+        "VPN to office"
+      ]
+    },
+    "ap-living": {
+      "shape": "router",
+      "name": "AP - Living Room",
+      "ip": "192.168.1.50",
+      "role": "WiFi",
+      "tags": [
+        "WiFi6",
+        "UniFi",
+        "PoE"
+      ],
+      "notes": [
+        "U6-Pro",
+        "2.4/5GHz",
+        "PoE powered"
+      ]
+    },
+    "ap-office": {
+      "shape": "router",
+      "name": "AP - Office",
+      "ip": "192.168.1.51",
+      "role": "WiFi",
+      "tags": [
+        "WiFi6",
+        "UniFi",
+        "PoE"
+      ],
+      "notes": [
+        "U6-Pro",
+        "2.4/5GHz",
+        "PoE powered"
+      ]
+    },
+    "rpi-monitor": {
+      "shape": "server",
+      "name": "Grafana Monitor",
+      "ip": "192.168.1.40",
+      "role": "Monitoring",
+      "tags": [
+        "Monitoring",
+        "RPi",
+        "Grafana"
+      ],
+      "notes": [
+        "Prometheus + Grafana",
+        "Network stats",
+        "Raspberry Pi 4"
+      ]
+    },
+    "iot-devices": {
+      "shape": "phone",
+      "name": "IoT Devices",
+      "ip": "192.168.1.0/24",
+      "role": "IoT",
+      "tags": [
+        "IoT",
+        "VLAN30"
+      ],
+      "notes": [
+        "Smart lights",
+        "Sensors",
+        "Thermostats"
+      ]
+    },
+    "printer": {
+      "shape": "printer",
+      "name": "Network Printer",
+      "ip": "192.168.1.150",
+      "role": "Peripheral",
+      "tags": [
+        "Print",
+        "Scan"
+      ],
+      "notes": [
+        "HP LaserJet",
+        "AirPrint enabled"
+      ]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "e1",
+        "from": "isp-modem",
+        "to": "main-router",
+        "width": 6,
+        "color": "#ef4444",
+        "direction": "forward",
+        "type": "wan",
+        "notes": [
+          "1 Gbps WAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e2",
+        "from": "main-router",
+        "to": "main-switch",
+        "width": 6,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "trunk",
+        "notes": [
+          "10 Gbps trunk"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e3",
+        "from": "main-switch",
+        "to": "nas",
+        "width": 5,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "storage",
+        "notes": [
+          "10 Gbps storage"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e4",
+        "from": "main-switch",
+        "to": "plex",
+        "width": 4,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [
+          "1 Gbps"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e5",
+        "from": "main-switch",
+        "to": "pihole",
+        "width": 3,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "DNS queries"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e6",
+        "from": "main-switch",
+        "to": "homeassistant",
+        "width": 3,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "iot",
+        "notes": [
+          "IoT VLAN 30"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e7",
+        "from": "main-switch",
+        "to": "docker-host",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "services",
+        "notes": [
+          "Services VLAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e8",
+        "from": "main-switch",
+        "to": "nvr",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "cameras",
+        "notes": [
+          "Camera VLAN 40"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e9",
+        "from": "main-switch",
+        "to": "gaming-pc",
+        "width": 4,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [
+          "User VLAN 10"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e10",
+        "from": "main-switch",
+        "to": "ap-living",
+        "width": 3,
+        "color": "#14b8a6",
+        "direction": "both",
+        "type": "poe",
+        "notes": [
+          "PoE 802.3at"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e11",
+        "from": "main-switch",
+        "to": "ap-office",
+        "width": 3,
+        "color": "#14b8a6",
+        "direction": "both",
+        "type": "poe",
+        "notes": [
+          "PoE 802.3at"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e12",
+        "from": "main-switch",
+        "to": "rpi-monitor",
+        "width": 2,
+        "color": "#64748b",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "Monitoring"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e13",
+        "from": "ap-office",
+        "to": "work-laptop",
+        "width": 2,
+        "color": "#a78bfa",
+        "direction": "both",
+        "type": "wifi",
+        "notes": [
+          "WiFi 6 - 5GHz"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e14",
+        "from": "plex",
+        "to": "nas",
+        "width": 3,
+        "color": "#8b5cf6",
+        "direction": "forward",
+        "type": "storage",
+        "notes": [
+          "Media library mount"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e15",
+        "from": "homeassistant",
+        "to": "iot-devices",
+        "width": 3,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "iot",
+        "notes": [
+          "Zigbee/Z-Wave"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e16",
+        "from": "main-switch",
+        "to": "printer",
+        "width": 2,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN Connection (1 Gbps)",
+    "#3b82f6": "Network Trunk (10 Gbps)",
+    "#8b5cf6": "Storage Network",
+    "#475569": "LAN / User VLAN",
+    "#10b981": "Management / DNS",
+    "#f59e0b": "IoT Network (VLAN 30)",
+    "#06b6d4": "Services Network",
+    "#ec4899": "Camera Network (VLAN 40)",
+    "#14b8a6": "PoE Connections",
+    "#64748b": "Monitoring",
+    "#a78bfa": "WiFi Wireless"
+  },
+  "nodePositions": {
+    "isp-modem": {
+      "x": 600,
+      "y": 150
+    },
+    "main-router": {
+      "x": 600,
+      "y": 350
+    },
+    "main-switch": {
+      "x": 600,
+      "y": 550
+    },
+    "nas": {
+      "x": 200,
+      "y": 750
+    },
+    "plex": {
+      "x": 380,
+      "y": 750
+    },
+    "pihole": {
+      "x": 560,
+      "y": 750
+    },
+    "homeassistant": {
+      "x": 740,
+      "y": 750
+    },
+    "docker-host": {
+      "x": 200,
+      "y": 950
+    },
+    "nvr": {
+      "x": 1000,
+      "y": 750
+    },
+    "gaming-pc": {
+      "x": 380,
+      "y": 950
+    },
+    "work-laptop": {
+      "x": 1000,
+      "y": 950
+    },
+    "ap-living": {
+      "x": 740,
+      "y": 950
+    },
+    "ap-office": {
+      "x": 920,
+      "y": 950
+    },
+    "rpi-monitor": {
+      "x": 560,
+      "y": 950
+    },
+    "iot-devices": {
+      "x": 920,
+      "y": 750
+    },
+    "printer": {
+      "x": 1000,
+      "y": 550
+    }
+  },
+  "nodeSizes": {
+    "isp-modem": 50,
+    "main-router": 65,
+    "main-switch": 60,
+    "nas": 55,
+    "plex": 50,
+    "pihole": 45,
+    "homeassistant": 50,
+    "docker-host": 50,
+    "nvr": 50,
+    "gaming-pc": 45,
+    "work-laptop": 45,
+    "ap-living": 45,
+    "ap-office": 45,
+    "rpi-monitor": 40,
+    "iot-devices": 45,
+    "printer": 45
+  },
+  "nodeStyles": {},
+  "page": {
+    "title": "Home Lab Network",
+    "background": "#d4d7dd",
+    "topbarBg": "#1081ea",
+    "topbarBorder": "#010d28",
+    "panel": "#002970",
+    "panelAlt": "#0e1c34",
+    "accent": "#58dfd2",
+    "danger": "#271111",
+    "textMain": "#e2e7ee",
+    "textSoft": "#7c96bb",
+    "topbarHeight": 100,
+    "sidebarWidth": 600,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 2,
+    "panX": -400,
+    "panY": -200
+  }
+}

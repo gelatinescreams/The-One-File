@@ -1,0 +1,1290 @@
+{
+  "nodeData": {
+    "internet": {
+      "shape": "cloud",
+      "name": "Internet",
+      "ip": "0.0.0.0",
+      "role": "External",
+      "tags": [
+        "External"
+      ],
+      "notes": [
+        "Public internet"
+      ]
+    },
+    "edge-firewall": {
+      "shape": "firewall",
+      "name": "Edge Firewall",
+      "ip": "203.0.113.1",
+      "role": "Security",
+      "tags": [
+        "Firewall",
+        "Palo Alto",
+        "HA"
+      ],
+      "notes": [
+        "PA-5220",
+        "Active-Passive HA",
+        "10Gbps throughput"
+      ]
+    },
+    "core-router-1": {
+      "shape": "router",
+      "name": "Core Router 1",
+      "ip": "10.0.0.1",
+      "role": "Core",
+      "tags": [
+        "Router",
+        "Cisco",
+        "BGP"
+      ],
+      "notes": [
+        "Cisco Catalyst 9600",
+        "OSPF + BGP",
+        "Redundant PSU"
+      ]
+    },
+    "core-router-2": {
+      "shape": "router",
+      "name": "Core Router 2",
+      "ip": "10.0.0.2",
+      "role": "Core",
+      "tags": [
+        "Router",
+        "Cisco",
+        "BGP"
+      ],
+      "notes": [
+        "Cisco Catalyst 9600",
+        "OSPF + BGP",
+        "Redundant PSU"
+      ]
+    },
+    "core-switch-1": {
+      "shape": "switch",
+      "name": "Core Switch 1",
+      "ip": "10.0.0.10",
+      "role": "Core",
+      "tags": [
+        "Switch",
+        "Cisco",
+        "Stack"
+      ],
+      "notes": [
+        "Cisco Catalyst 9500",
+        "VSS",
+        "40Gbps uplinks"
+      ]
+    },
+    "core-switch-2": {
+      "shape": "switch",
+      "name": "Core Switch 2",
+      "ip": "10.0.0.11",
+      "role": "Core",
+      "tags": [
+        "Switch",
+        "Cisco",
+        "Stack"
+      ],
+      "notes": [
+        "Cisco Catalyst 9500",
+        "VSS",
+        "40Gbps uplinks"
+      ]
+    },
+    "load-balancer": {
+      "shape": "server",
+      "name": "Load Balancer",
+      "ip": "10.1.0.10",
+      "role": "DMZ",
+      "tags": [
+        "F5",
+        "HA",
+        "DMZ"
+      ],
+      "notes": [
+        "F5 BIG-IP",
+        "SSL offloading",
+        "Active-Standby"
+      ]
+    },
+    "web-server-1": {
+      "shape": "server",
+      "name": "Web Server 1",
+      "ip": "10.1.0.20",
+      "role": "DMZ",
+      "tags": [
+        "Web",
+        "Nginx",
+        "DMZ"
+      ],
+      "notes": [
+        "Ubuntu 22.04",
+        "Nginx reverse proxy",
+        "SSL certificates"
+      ]
+    },
+    "web-server-2": {
+      "shape": "server",
+      "name": "Web Server 2",
+      "ip": "10.1.0.21",
+      "role": "DMZ",
+      "tags": [
+        "Web",
+        "Nginx",
+        "DMZ"
+      ],
+      "notes": [
+        "Ubuntu 22.04",
+        "Nginx reverse proxy",
+        "SSL certificates"
+      ]
+    },
+    "web-server-3": {
+      "shape": "server",
+      "name": "Web Server 3",
+      "ip": "10.1.0.22",
+      "role": "DMZ",
+      "tags": [
+        "Web",
+        "Nginx",
+        "DMZ"
+      ],
+      "notes": [
+        "Ubuntu 22.04",
+        "Nginx reverse proxy",
+        "SSL certificates"
+      ]
+    },
+    "internal-fw": {
+      "shape": "firewall",
+      "name": "Internal Firewall",
+      "ip": "10.2.0.1",
+      "role": "Security",
+      "tags": [
+        "Firewall",
+        "FortiGate"
+      ],
+      "notes": [
+        "FortiGate 600E",
+        "IPS enabled",
+        "App control"
+      ]
+    },
+    "ad-dc-1": {
+      "shape": "server",
+      "name": "Domain Controller 1",
+      "ip": "10.2.1.10",
+      "role": "Internal",
+      "tags": [
+        "AD",
+        "DNS",
+        "Windows"
+      ],
+      "notes": [
+        "Windows Server 2022",
+        "Primary DC",
+        "FSMO roles"
+      ]
+    },
+    "ad-dc-2": {
+      "shape": "server",
+      "name": "Domain Controller 2",
+      "ip": "10.2.1.11",
+      "role": "Internal",
+      "tags": [
+        "AD",
+        "DNS",
+        "Windows"
+      ],
+      "notes": [
+        "Windows Server 2022",
+        "Secondary DC",
+        "Replica"
+      ]
+    },
+    "file-server": {
+      "shape": "database",
+      "name": "File Server",
+      "ip": "10.2.1.20",
+      "role": "Internal",
+      "tags": [
+        "Storage",
+        "SMB",
+        "Windows"
+      ],
+      "notes": [
+        "Windows Server 2022",
+        "50TB storage",
+        "DFS replication"
+      ]
+    },
+    "db-primary": {
+      "shape": "database",
+      "name": "Database Primary",
+      "ip": "10.3.0.10",
+      "role": "Data Center",
+      "tags": [
+        "Database",
+        "PostgreSQL",
+        "Primary"
+      ],
+      "notes": [
+        "PostgreSQL 15",
+        "Primary node",
+        "64GB RAM"
+      ]
+    },
+    "db-replica": {
+      "shape": "database",
+      "name": "Database Replica",
+      "ip": "10.3.0.11",
+      "role": "Data Center",
+      "tags": [
+        "Database",
+        "PostgreSQL",
+        "Replica"
+      ],
+      "notes": [
+        "PostgreSQL 15",
+        "Read replica",
+        "Streaming replication"
+      ]
+    },
+    "app-server-1": {
+      "shape": "server",
+      "name": "App Server 1",
+      "ip": "10.3.0.20",
+      "role": "Data Center",
+      "tags": [
+        "Application",
+        "Java",
+        "Production"
+      ],
+      "notes": [
+        "RHEL 9",
+        "Tomcat cluster",
+        "32GB RAM"
+      ]
+    },
+    "app-server-2": {
+      "shape": "server",
+      "name": "App Server 2",
+      "ip": "10.3.0.21",
+      "role": "Data Center",
+      "tags": [
+        "Application",
+        "Java",
+        "Production"
+      ],
+      "notes": [
+        "RHEL 9",
+        "Tomcat cluster",
+        "32GB RAM"
+      ]
+    },
+    "app-server-3": {
+      "shape": "server",
+      "name": "App Server 3",
+      "ip": "10.3.0.22",
+      "role": "Data Center",
+      "tags": [
+        "Application",
+        "Java",
+        "Production"
+      ],
+      "notes": [
+        "RHEL 9",
+        "Tomcat cluster",
+        "32GB RAM"
+      ]
+    },
+    "k8s-master-1": {
+      "shape": "server",
+      "name": "K8s Master 1",
+      "ip": "10.3.1.10",
+      "role": "Data Center",
+      "tags": [
+        "Kubernetes",
+        "Master",
+        "Container"
+      ],
+      "notes": [
+        "K8s 1.28",
+        "Control plane",
+        "etcd"
+      ]
+    },
+    "k8s-master-2": {
+      "shape": "server",
+      "name": "K8s Master 2",
+      "ip": "10.3.1.11",
+      "role": "Data Center",
+      "tags": [
+        "Kubernetes",
+        "Master",
+        "Container"
+      ],
+      "notes": [
+        "K8s 1.28",
+        "Control plane",
+        "etcd"
+      ]
+    },
+    "k8s-worker-1": {
+      "shape": "server",
+      "name": "K8s Worker 1",
+      "ip": "10.3.1.20",
+      "role": "Data Center",
+      "tags": [
+        "Kubernetes",
+        "Worker",
+        "Container"
+      ],
+      "notes": [
+        "64GB RAM",
+        "24 cores",
+        "NVMe storage"
+      ]
+    },
+    "k8s-worker-2": {
+      "shape": "server",
+      "name": "K8s Worker 2",
+      "ip": "10.3.1.21",
+      "role": "Data Center",
+      "tags": [
+        "Kubernetes",
+        "Worker",
+        "Container"
+      ],
+      "notes": [
+        "64GB RAM",
+        "24 cores",
+        "NVMe storage"
+      ]
+    },
+    "k8s-worker-3": {
+      "shape": "server",
+      "name": "K8s Worker 3",
+      "ip": "10.3.1.22",
+      "role": "Data Center",
+      "tags": [
+        "Kubernetes",
+        "Worker",
+        "Container"
+      ],
+      "notes": [
+        "64GB RAM",
+        "24 cores",
+        "NVMe storage"
+      ]
+    },
+    "backup-server": {
+      "shape": "database",
+      "name": "Backup Server",
+      "ip": "10.4.0.10",
+      "role": "Management",
+      "tags": [
+        "Backup",
+        "Veeam"
+      ],
+      "notes": [
+        "Veeam B&R",
+        "100TB capacity",
+        "Offsite replication"
+      ]
+    },
+    "monitoring": {
+      "shape": "server",
+      "name": "Monitoring",
+      "ip": "10.4.0.20",
+      "role": "Management",
+      "tags": [
+        "Monitoring",
+        "Grafana",
+        "Prometheus"
+      ],
+      "notes": [
+        "Prometheus + Grafana",
+        "500+ endpoints",
+        "Alert manager"
+      ]
+    },
+    "vpn-gateway": {
+      "shape": "firewall",
+      "name": "VPN Gateway",
+      "ip": "10.0.1.10",
+      "role": "Security",
+      "tags": [
+        "VPN",
+        "SSL-VPN",
+        "Remote"
+      ],
+      "notes": [
+        "Cisco AnyConnect",
+        "MFA enabled",
+        "Split tunnel"
+      ]
+    },
+    "san-storage": {
+      "shape": "database",
+      "name": "SAN Storage",
+      "ip": "10.5.0.10",
+      "role": "Storage",
+      "tags": [
+        "SAN",
+        "iSCSI",
+        "FC"
+      ],
+      "notes": [
+        "Pure Storage",
+        "200TB usable",
+        "All-flash array"
+      ]
+    },
+    "branch-router": {
+      "shape": "router",
+      "name": "Branch Office Router",
+      "ip": "10.100.0.1",
+      "role": "Branch",
+      "tags": [
+        "Remote",
+        "SD-WAN"
+      ],
+      "notes": [
+        "Site-to-site VPN",
+        "SD-WAN enabled",
+        "MPLS backup"
+      ]
+    },
+    "branch-switch": {
+      "shape": "switch",
+      "name": "Branch Switch",
+      "ip": "10.100.0.10",
+      "role": "Branch",
+      "tags": [
+        "Switch",
+        "Remote"
+      ],
+      "notes": [
+        "24-port managed",
+        "PoE+",
+        "Local VLAN routing"
+      ]
+    },
+    "workstation-vlan": {
+      "shape": "pc",
+      "name": "User Workstations",
+      "ip": "10.2.10.0/24",
+      "role": "Internal",
+      "tags": [
+        "Users",
+        "VLAN10"
+      ],
+      "notes": [
+        "250+ endpoints",
+        "802.1X auth",
+        "Windows 11"
+      ]
+    },
+    "guest-wifi-controller": {
+      "shape": "router",
+      "name": "WiFi Controller",
+      "ip": "10.10.0.1",
+      "role": "Guest",
+      "tags": [
+        "WiFi",
+        "Controller"
+      ],
+      "notes": [
+        "Cisco WLC",
+        "50+ APs",
+        "Captive portal"
+      ]
+    },
+    "remote-workers": {
+      "shape": "laptop",
+      "name": "Remote Workers",
+      "ip": "VPN Pool",
+      "role": "Remote",
+      "tags": [
+        "VPN",
+        "Remote"
+      ],
+      "notes": [
+        "200+ users",
+        "SSL VPN",
+        "MFA required"
+      ]
+    },
+    "mail-server": {
+      "shape": "server",
+      "name": "Mail Server",
+      "ip": "10.2.2.10",
+      "role": "Internal",
+      "tags": [
+        "Email",
+        "Exchange"
+      ],
+      "notes": [
+        "Exchange 2019",
+        "500 mailboxes",
+        "Hybrid O365"
+      ]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "e1",
+        "from": "internet",
+        "to": "edge-firewall",
+        "width": 8,
+        "color": "#ef4444",
+        "direction": "both",
+        "type": "wan",
+        "notes": [
+          "10 Gbps ISP"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e2",
+        "from": "edge-firewall",
+        "to": "core-router-1",
+        "width": 7,
+        "color": "#f97316",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "10 Gbps trunk"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e3",
+        "from": "edge-firewall",
+        "to": "core-router-2",
+        "width": 7,
+        "color": "#f97316",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "10 Gbps trunk"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e4",
+        "from": "core-router-1",
+        "to": "core-router-2",
+        "width": 6,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "HSRP/VRRP"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e5",
+        "from": "core-router-1",
+        "to": "core-switch-1",
+        "width": 6,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "40 Gbps"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e6",
+        "from": "core-router-2",
+        "to": "core-switch-2",
+        "width": 6,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "40 Gbps"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e7",
+        "from": "core-switch-1",
+        "to": "core-switch-2",
+        "width": 5,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "core",
+        "notes": [
+          "VSS link"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e8",
+        "from": "core-router-1",
+        "to": "load-balancer",
+        "width": 5,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "dmz",
+        "notes": [
+          "DMZ VLAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e9",
+        "from": "load-balancer",
+        "to": "web-server-1",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "dmz",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e10",
+        "from": "load-balancer",
+        "to": "web-server-2",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "dmz",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e11",
+        "from": "load-balancer",
+        "to": "web-server-3",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "dmz",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e12",
+        "from": "core-switch-1",
+        "to": "internal-fw",
+        "width": 6,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [
+          "Internal zone"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e13",
+        "from": "core-switch-2",
+        "to": "internal-fw",
+        "width": 6,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [
+          "Internal zone"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e14",
+        "from": "internal-fw",
+        "to": "ad-dc-1",
+        "width": 4,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e15",
+        "from": "internal-fw",
+        "to": "ad-dc-2",
+        "width": 4,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e16",
+        "from": "internal-fw",
+        "to": "file-server",
+        "width": 4,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e17",
+        "from": "internal-fw",
+        "to": "workstation-vlan",
+        "width": 5,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [
+          "User VLAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e18",
+        "from": "internal-fw",
+        "to": "mail-server",
+        "width": 4,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "internal",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e19",
+        "from": "core-switch-1",
+        "to": "db-primary",
+        "width": 5,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [
+          "Data Center"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e20",
+        "from": "db-primary",
+        "to": "db-replica",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "forward",
+        "type": "replication",
+        "notes": [
+          "DB replication"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e21",
+        "from": "core-switch-1",
+        "to": "app-server-1",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e22",
+        "from": "core-switch-1",
+        "to": "app-server-2",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e23",
+        "from": "core-switch-1",
+        "to": "app-server-3",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e24",
+        "from": "app-server-1",
+        "to": "db-primary",
+        "width": 3,
+        "color": "#64748b",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e25",
+        "from": "app-server-2",
+        "to": "db-primary",
+        "width": 3,
+        "color": "#64748b",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e26",
+        "from": "app-server-3",
+        "to": "db-primary",
+        "width": 3,
+        "color": "#64748b",
+        "direction": "both",
+        "type": "datacenter",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e27",
+        "from": "core-switch-2",
+        "to": "k8s-master-1",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "k8s",
+        "notes": [
+          "K8s cluster"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e28",
+        "from": "core-switch-2",
+        "to": "k8s-master-2",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "k8s",
+        "notes": [
+          "K8s cluster"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e29",
+        "from": "k8s-master-1",
+        "to": "k8s-worker-1",
+        "width": 3,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "k8s",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e30",
+        "from": "k8s-master-1",
+        "to": "k8s-worker-2",
+        "width": 3,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "k8s",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e31",
+        "from": "k8s-master-2",
+        "to": "k8s-worker-3",
+        "width": 3,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "k8s",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e32",
+        "from": "core-switch-2",
+        "to": "backup-server",
+        "width": 4,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "Mgmt network"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e33",
+        "from": "core-switch-2",
+        "to": "monitoring",
+        "width": 3,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "Mgmt network"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e34",
+        "from": "core-router-1",
+        "to": "vpn-gateway",
+        "width": 4,
+        "color": "#a855f7",
+        "direction": "both",
+        "type": "vpn",
+        "notes": [
+          "Remote access"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e35",
+        "from": "vpn-gateway",
+        "to": "remote-workers",
+        "width": 3,
+        "color": "#a855f7",
+        "direction": "both",
+        "type": "vpn",
+        "notes": [
+          "SSL VPN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e36",
+        "from": "core-switch-1",
+        "to": "san-storage",
+        "width": 5,
+        "color": "#0ea5e9",
+        "direction": "both",
+        "type": "storage",
+        "notes": [
+          "Storage network"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e37",
+        "from": "san-storage",
+        "to": "db-primary",
+        "width": 3,
+        "color": "#0ea5e9",
+        "direction": "both",
+        "type": "storage",
+        "notes": [
+          "iSCSI LUNs"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e38",
+        "from": "san-storage",
+        "to": "app-server-1",
+        "width": 2,
+        "color": "#0ea5e9",
+        "direction": "both",
+        "type": "storage",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e39",
+        "from": "edge-firewall",
+        "to": "branch-router",
+        "width": 4,
+        "color": "#84cc16",
+        "direction": "both",
+        "type": "branch",
+        "notes": [
+          "Site-to-site VPN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e40",
+        "from": "branch-router",
+        "to": "branch-switch",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "both",
+        "type": "branch",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e41",
+        "from": "core-router-2",
+        "to": "guest-wifi-controller",
+        "width": 3,
+        "color": "#fbbf24",
+        "direction": "both",
+        "type": "guest",
+        "notes": [
+          "Guest VLAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN / Internet (10 Gbps)",
+    "#f97316": "Core Layer (10-40 Gbps)",
+    "#3b82f6": "Core Switching & HSRP",
+    "#8b5cf6": "DMZ Network",
+    "#10b981": "Internal Corporate Network",
+    "#06b6d4": "Data Center / Application Tier",
+    "#14b8a6": "Database Replication",
+    "#64748b": "App-to-DB Connections",
+    "#ec4899": "Kubernetes Cluster",
+    "#f59e0b": "Management Network",
+    "#a855f7": "VPN / Remote Access",
+    "#0ea5e9": "Storage Area Network (SAN)",
+    "#84cc16": "Branch Office WAN",
+    "#fbbf24": "Guest WiFi Network"
+  },
+  "nodePositions": {
+    "internet": {
+      "x": 600,
+      "y": 155
+    },
+    "edge-firewall": {
+      "x": 600,
+      "y": 250
+    },
+    "core-router-1": {
+      "x": 400,
+      "y": 420
+    },
+    "core-router-2": {
+      "x": 800,
+      "y": 420
+    },
+    "core-switch-1": {
+      "x": 400,
+      "y": 600
+    },
+    "core-switch-2": {
+      "x": 800,
+      "y": 600
+    },
+    "load-balancer": {
+      "x": 200,
+      "y": 500
+    },
+    "web-server-1": {
+      "x": 145,
+      "y": 650
+    },
+    "web-server-2": {
+      "x": 200,
+      "y": 700
+    },
+    "web-server-3": {
+      "x": 320,
+      "y": 650
+    },
+    "internal-fw": {
+      "x": 600,
+      "y": 780
+    },
+    "ad-dc-1": {
+      "x": 500,
+      "y": 950
+    },
+    "ad-dc-2": {
+      "x": 620,
+      "y": 950
+    },
+    "file-server": {
+      "x": 740,
+      "y": 950
+    },
+    "mail-server": {
+      "x": 860,
+      "y": 950
+    },
+    "workstation-vlan": {
+      "x": 980,
+      "y": 950
+    },
+    "db-primary": {
+      "x": 200,
+      "y": 850
+    },
+    "db-replica": {
+      "x": 150,
+      "y": 1000
+    },
+    "app-server-1": {
+      "x": 200,
+      "y": 1050
+    },
+    "app-server-2": {
+      "x": 320,
+      "y": 1050
+    },
+    "app-server-3": {
+      "x": 440,
+      "y": 1050
+    },
+    "k8s-master-1": {
+      "x": 900,
+      "y": 700
+    },
+    "k8s-master-2": {
+      "x": 1020,
+      "y": 700
+    },
+    "k8s-worker-1": {
+      "x": 850,
+      "y": 850
+    },
+    "k8s-worker-2": {
+      "x": 970,
+      "y": 850
+    },
+    "k8s-worker-3": {
+      "x": 1090,
+      "y": 850
+    },
+    "backup-server": {
+      "x": 1050,
+      "y": 600
+    },
+    "monitoring": {
+      "x": 1150,
+      "y": 700
+    },
+    "vpn-gateway": {
+      "x": 350,
+      "y": 250
+    },
+    "remote-workers": {
+      "x": 180,
+      "y": 145
+    },
+    "san-storage": {
+      "x": 155,
+      "y": 750
+    },
+    "branch-router": {
+      "x": 1000,
+      "y": 250
+    },
+    "branch-switch": {
+      "x": 1120,
+      "y": 380
+    },
+    "guest-wifi-controller": {
+      "x": 1050,
+      "y": 480
+    }
+  },
+  "nodeSizes": {
+    "internet": 55,
+    "edge-firewall": 70,
+    "core-router-1": 65,
+    "core-router-2": 65,
+    "core-switch-1": 60,
+    "core-switch-2": 60,
+    "load-balancer": 55,
+    "web-server-1": 45,
+    "web-server-2": 45,
+    "web-server-3": 45,
+    "internal-fw": 60,
+    "ad-dc-1": 50,
+    "ad-dc-2": 50,
+    "file-server": 50,
+    "db-primary": 55,
+    "db-replica": 50,
+    "app-server-1": 45,
+    "app-server-2": 45,
+    "app-server-3": 45,
+    "k8s-master-1": 50,
+    "k8s-master-2": 50,
+    "k8s-worker-1": 45,
+    "k8s-worker-2": 45,
+    "k8s-worker-3": 45,
+    "backup-server": 50,
+    "monitoring": 45,
+    "vpn-gateway": 50,
+    "san-storage": 55,
+    "branch-router": 50,
+    "branch-switch": 45,
+    "workstation-vlan": 50,
+    "guest-wifi-controller": 45,
+    "remote-workers": 45,
+    "mail-server": 45
+  },
+  "nodeStyles": {},
+  "page": {
+    "title": "Corporate Network Infrastructure",
+    "background": "#d4d7dd",
+    "topbarBg": "#1081ea",
+    "topbarBorder": "#010d28",
+    "panel": "#002970",
+    "panelAlt": "#0e1c34",
+    "accent": "#58dfd2",
+    "danger": "#271111",
+    "textMain": "#e2e7ee",
+    "textSoft": "#7c96bb",
+    "topbarHeight": 100,
+    "sidebarWidth": 600,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 2,
+    "panX": -352.5,
+    "panY": -152.5
+  }
+}

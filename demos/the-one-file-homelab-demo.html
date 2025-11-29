@@ -643,6 +643,7 @@
    .details-panel {
     background: var(--panel-alt);
     padding: 22px;
+    padding-bottom: 80px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -3647,6 +3648,22 @@
       e.stopPropagation();
       editNodeName(id);
      });
+     
+     // Touch support for mobile editing
+     let labelTouchStart = null;
+     label.addEventListener("touchstart", (e) => {
+      labelTouchStart = Date.now();
+     }, { passive: true });
+     
+     label.addEventListener("touchend", (e) => {
+      if (labelTouchStart && Date.now() - labelTouchStart < 200) {
+       // Quick tap detected (less than 200ms)
+       e.stopPropagation();
+       e.preventDefault();
+       editNodeName(id);
+      }
+      labelTouchStart = null;
+     });
      const sub = document.createElementNS("http://www.w3.org/2000/svg", "text", );
      sub.classList.add("node-sub");
      sub.setAttribute("x", subOffsetX);
@@ -3660,6 +3677,22 @@
      sub.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeIp(id);
+     });
+     
+     // Touch support for mobile editing
+     let subTouchStart = null;
+     sub.addEventListener("touchstart", (e) => {
+      subTouchStart = Date.now();
+     }, { passive: true });
+     
+     sub.addEventListener("touchend", (e) => {
+      if (subTouchStart && Date.now() - subTouchStart < 200) {
+       // Quick tap detected (less than 200ms)
+       e.stopPropagation();
+       e.preventDefault();
+       editNodeIp(id);
+      }
+      subTouchStart = null;
      });
      g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
