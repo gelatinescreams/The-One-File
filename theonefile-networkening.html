@@ -578,6 +578,11 @@
     transform-origin: center center;
    }
 
+   .node-hit-area {
+    cursor: grab;
+    pointer-events: all;
+   }
+
    .node-group:hover .node-circle {
     transform: scale(1.08);
     filter: drop-shadow(0 0 10px rgba(79, 209, 197, 0.45));
@@ -3503,6 +3508,16 @@
       else if (window.innerWidth <= 1024) r = 70;
      }
      const styles = resolveStylesForNode(id);
+     
+     // Create invisible larger hit area for easier dragging (50% larger than visual size)
+     const ns = "http://www.w3.org/2000/svg";
+     const hitArea = document.createElementNS(ns, "circle");
+     hitArea.setAttribute("r", r * 1.5);
+     hitArea.style.fill = "transparent";
+     hitArea.style.stroke = "none";
+     hitArea.style.cursor = "grab";
+     hitArea.classList.add("node-hit-area");
+     
      const shapeEl = createNodeShape(id, r);
      const titleOffsetX = styles.titleOffsetX || 0;
      const titleOffsetY = styles.titleOffsetY || 0;
@@ -3518,7 +3533,7 @@
      if (styles.titleColor) label.style.fill = styles.titleColor;
      if (styles.titleFont) label.style.fontFamily = styles.titleFont;
      label.style.cursor = "pointer";
-     label.addEventListener("click", (e) => {
+     label.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeName(id);
      });
@@ -3532,11 +3547,11 @@
      if (styles.subColor) sub.style.fill = styles.subColor;
      if (styles.subFont) sub.style.fontFamily = styles.subFont;
      sub.style.cursor = "pointer";
-     sub.addEventListener("click", (e) => {
+     sub.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeIp(id);
      });
-     g.append(shapeEl, label, sub);
+     g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
      let startX, startY;
      g.addEventListener("mousedown", (e) => {
@@ -3550,6 +3565,7 @@
       startX = svgP.x - pos.x;
       startY = svgP.y - pos.y;
       g.style.cursor = "grabbing";
+      hitArea.style.cursor = "grabbing";
       e.stopPropagation();
      });
      const handleMouseMove = (e) => {
@@ -3624,6 +3640,7 @@
       if (isDragging) {
        isDragging = false;
        g.style.cursor = "grab";
+       hitArea.style.cursor = "grab";
        savedPositions[id] = {
         x: pos.x,
         y: pos.y

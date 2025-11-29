@@ -1,23 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" style="
-   --panel: #0b0e13;
-   --panel-alt: #10141b;
-   --accent: #4fd1c5;
-   --danger: #f56565;
-   --text-main: #e2e8f0;
-   --text-soft: #94a3b8;
-   --topbar-bg: rgba(9, 12, 20, 0.9);
-   --topbar-border: #1f2533;
-   --topbar-height: 100px;
-   --sidebar-width: 435px;
-   --mobile-footer-height: 20vh;
-   ">
- <head>
+<html lang="en" style="--panel: #002970; --panel-alt: #0e1c34; --accent: #58dfd2; --danger: #271111; --text-main: #e2e7ee; --text-soft: #7c96bb; --topbar-bg: #1081ea; --topbar-border: #010d28; --topbar-height: 100px; --sidebar-width: 600px; --mobile-footer-height: 40vh;"><head>
   <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>The One File</title>
+  <title>Home Lab Network</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 
          * ====================================================================================
@@ -574,6 +561,11 @@
    .node-circle {
     transition: 0.25s ease;
     transform-origin: center center;
+   }
+
+   .node-hit-area {
+    cursor: grab;
+    pointer-events: all;
    }
 
    .node-group:hover .node-circle {
@@ -1141,13 +1133,7 @@
    }
   </style>
  </head>
- <body style="
-      background: radial-gradient(
-      circle at center top,
-      rgb(30, 37, 50) 0px,
-      rgb(5, 6, 8) 70%
-      );
-      ">
+ <body style="background: rgb(212, 215, 221);">
   <div class="modal" id="edit-modal">
    <div class="modal-content">
     <h3 id="modal-title">Edit Name</h3>
@@ -1354,7 +1340,7 @@
   </div>
   <header>
    <div class="title-block">
-    <h1 id="page-title" class="editable-page-title">The One File</h1>
+    <h1 id="page-title" class="editable-page-title">Home Lab Network</h1>
     <div class="save-row">
      <button id="save-file-btn" class="save-btn" type="button"> Save File </button>
      <label style="
@@ -1426,11 +1412,9 @@
      </select>
      <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
     </div>
-    <div class="topology-toolbar" id="topology-toolbar" style="display: none">
+    <div class="topology-toolbar" id="topology-toolbar" style="display: flex;">
      <label for="add-line-select">Add line to:</label>
-     <select id="add-line-select">
-      <option value=""></option>
-     </select>
+     <select id="add-line-select"><option value="main-router">pfSense Router</option><option value="main-switch">Core Switch</option><option value="nas">TrueNAS</option><option value="plex">Plex Server</option><option value="pihole">Pi-hole</option><option value="homeassistant">Home Assistant</option><option value="docker-host">Docker Host</option><option value="nvr">Frigate NVR</option><option value="gaming-pc">Gaming PC</option><option value="work-laptop">Work Laptop</option><option value="ap-living">AP - Living Room</option><option value="ap-office">AP - Office</option><option value="rpi-monitor">Grafana Monitor</option><option value="iot-devices">IoT Devices</option><option value="printer">Network Printer</option></select>
      <input type="color" id="add-line-color" value="#475569" title="Line color" style="
                   width: 30px;
                   height: 24px;
@@ -1449,52 +1433,34 @@
      <button id="add-line-btn">Add</button>
     </div>
     <div class="canvas-hint" id="canvas-hint"> Scroll to zoom • Drag empty space to pan • Hold Space + drag </div>
-    <div class="legend-container" id="edge-legend" style="display: none">
-     <div class="legend-title">Line Legend</div>
-    </div>
+    <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68);"></span><span class="legend-label" contenteditable="true">WAN Connection (1 Gbps)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246);"></span><span class="legend-label" contenteditable="true">Network Trunk (10 Gbps)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246);"></span><span class="legend-label" contenteditable="true">Storage Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(71, 85, 105);"></span><span class="legend-label" contenteditable="true">LAN / User VLAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129);"></span><span class="legend-label" contenteditable="true">Management / DNS</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11);"></span><span class="legend-label" contenteditable="true">IoT Network (VLAN 30)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212);"></span><span class="legend-label" contenteditable="true">Services Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(236, 72, 153);"></span><span class="legend-label" contenteditable="true">Camera Network (VLAN 40)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(20, 184, 166);"></span><span class="legend-label" contenteditable="true">PoE Connections</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(100, 116, 139);"></span><span class="legend-label" contenteditable="true">Monitoring</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(167, 139, 250);"></span><span class="legend-label" contenteditable="true">WiFi Wireless</span></div></div>
     <div class="canvas-viewport" id="canvas-viewport">
-     <svg id="map" viewBox="0 0 4000 3000" style="">
-      <defs>
-       <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path>
-       </marker>
-       <marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path>
-       </marker>
-      </defs>
-      <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
-     </svg>
+     <svg id="map" viewBox="-400 -200 2000 1500" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 600 150 Q 600 250 600 350" fill="none" class="edge active" data-edge-id="e1" data-from="isp-modem" data-to="main-router" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 600 350 Q 600 450 600 550" fill="none" class="edge" data-edge-id="e2" data-from="main-router" data-to="main-switch" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 600 550 Q 400 650 200 750" fill="none" class="edge" data-edge-id="e3" data-from="main-switch" data-to="nas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 600 550 Q 490 650 380 750" fill="none" class="edge" data-edge-id="e4" data-from="main-switch" data-to="plex" style="stroke: rgb(71, 85, 105); stroke-width: 4;"></path><path d="M 600 550 Q 580 650 560 750" fill="none" class="edge" data-edge-id="e5" data-from="main-switch" data-to="pihole" style="stroke: rgb(16, 185, 129); stroke-width: 3;"></path><path d="M 600 550 Q 670 650 740 750" fill="none" class="edge" data-edge-id="e6" data-from="main-switch" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 600 550 Q 400 750 200 950" fill="none" class="edge" data-edge-id="e7" data-from="main-switch" data-to="docker-host" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 600 550 Q 800 650 1000 750" fill="none" class="edge" data-edge-id="e8" data-from="main-switch" data-to="nvr" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 600 550 Q 490 750 380 950" fill="none" class="edge" data-edge-id="e9" data-from="main-switch" data-to="gaming-pc" style="stroke: rgb(71, 85, 105); stroke-width: 4;"></path><path d="M 600 550 Q 670 750 740 950" fill="none" class="edge" data-edge-id="e10" data-from="main-switch" data-to="ap-living" style="stroke: rgb(20, 184, 166); stroke-width: 3;"></path><path d="M 600 550 Q 760 750 920 950" fill="none" class="edge" data-edge-id="e11" data-from="main-switch" data-to="ap-office" style="stroke: rgb(20, 184, 166); stroke-width: 3;"></path><path d="M 600 550 Q 580 750 560 950" fill="none" class="edge" data-edge-id="e12" data-from="main-switch" data-to="rpi-monitor" style="stroke: rgb(100, 116, 139); stroke-width: 2;"></path><path d="M 920 950 Q 960 950 1000 950" fill="none" class="edge" data-edge-id="e13" data-from="ap-office" data-to="work-laptop" style="stroke: rgb(167, 139, 250); stroke-width: 2;"></path><path d="M 380 750 Q 290 750 200 750" fill="none" class="edge" data-edge-id="e14" data-from="plex" data-to="nas" style="stroke: rgb(139, 92, 246); stroke-width: 3;"></path><path d="M 740 750 Q 830 750 920 750" fill="none" class="edge" data-edge-id="e15" data-from="homeassistant" data-to="iot-devices" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 600 550 Q 800 550 1000 550" fill="none" class="edge" data-edge-id="e16" data-from="main-switch" data-to="printer" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></path><g class="node-group active" data-node-id="isp-modem" transform="translate(600,150)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55.00000000000001" y="-15" width="110.00000000000001" height="40" rx="6"></rect><rect x="-32.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="-30" cy="-47.5" r="4"></circle><rect x="-2.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="0" cy="-47.5" r="4"></circle><rect x="27.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="30" cy="-47.5" r="4"></circle><circle cx="-35" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-17.5" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle><circle cx="17.5" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">ISP Modem</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.0.1</text></g><g class="node-group" data-node-id="main-router" transform="translate(600,350)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-65" y="-52" width="130" height="104" rx="4"></rect><line x1="-55.25" y1="-32.5" x2="55.25" y2="-32.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-55.25" y1="-3.25" x2="55.25" y2="-3.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-55.25" y1="26" x2="55.25" y2="26" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-32.5" y1="-52" x2="-32.5" y2="-22.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="13" y1="-52" x2="13" y2="-22.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9.75" y1="-22.75" x2="-9.75" y2="6.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="35.75" y1="-22.75" x2="35.75" y2="6.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-32.5" y1="6.5" x2="-32.5" y2="35.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="13" y1="6.5" x2="13" y2="35.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9.75" y1="35.75" x2="-9.75" y2="65" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="35.75" y1="35.75" x2="35.75" y2="65" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; cursor: pointer;">pfSense Router</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; cursor: pointer;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(600,550)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; cursor: pointer;">Core Switch</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; cursor: pointer;">192.168.1.2</text></g><g class="node-group" data-node-id="nas" transform="translate(200,750)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">192.168.1.10</text></g><g class="node-group" data-node-id="plex" transform="translate(380,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Plex Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.15</text></g><g class="node-group" data-node-id="pihole" transform="translate(560,750)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Pi-hole</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.20</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(740,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Home Assistant</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.25</text></g><g class="node-group" data-node-id="docker-host" transform="translate(200,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Docker Host</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.30</text></g><g class="node-group" data-node-id="nvr" transform="translate(1000,750)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; cursor: pointer;">Frigate NVR</text><text class="node-sub" x="0" y="20" style="font-size: 12px; cursor: pointer;">192.168.1.35</text></g><g class="node-group" data-node-id="gaming-pc" transform="translate(380,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-40.5" y="-36" width="81" height="54" rx="4"></rect><rect x="-33.75" y="-29.25" width="67.5" height="40.5" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-6.75" y="18" width="13.5" height="13.5"></rect><rect x="-22.5" y="31.499999999999996" width="45" height="6.75" rx="2"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Gaming PC</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.100</text></g><g class="node-group" data-node-id="work-laptop" transform="translate(1000,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-36" y="-40.5" width="72" height="49.50000000000001" rx="4"></rect><rect x="-40.5" y="11.25" width="81" height="27" rx="4"></rect><rect x="-11.25" y="20.25" width="22.5" height="11.25" rx="2" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Work Laptop</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.101</text></g><g class="node-group" data-node-id="ap-living" transform="translate(740,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">AP - Living Room</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.50</text></g><g class="node-group" data-node-id="ap-office" transform="translate(920,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">AP - Office</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.51</text></g><g class="node-group" data-node-id="rpi-monitor" transform="translate(560,950)" style="cursor: grab;"><circle r="60" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-48" y="-24" width="96" height="48" rx="4"></rect><line x1="-36" y1="-12" x2="-36" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-16" y1="-12" x2="-16" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4" y1="-12" x2="4" y2="12" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="36" cy="0" r="4" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-11.200000000000001" style="font-size: 13.2px; cursor: pointer;">Grafana Monitor</text><text class="node-sub" x="0" y="16" style="font-size: 9.6px; cursor: pointer;">192.168.1.40</text></g><g class="node-group" data-node-id="iot-devices" transform="translate(920,750)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-20.25" y="-45" width="40.5" height="90" rx="8"></rect><rect x="-17.1" y="-38.25" width="34.2" height="72" rx="4" style="fill: rgb(30, 41, 59);"></rect><rect x="-6.75" y="36.9" width="13.5" height="2.6999999999999997" rx="2" style="fill: rgb(71, 85, 105);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">IoT Devices</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.0/24</text></g><g class="node-group" data-node-id="printer" transform="translate(1000,550)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-45" y="-18" width="90" height="40.5" rx="4"></rect><rect x="-31.499999999999996" y="-36" width="62.99999999999999" height="18" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-27" y="22.5" width="54" height="15.749999999999998" rx="2"></rect><rect x="-22.5" y="13.5" width="45" height="22.5" style="fill: rgb(226, 232, 240);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; cursor: pointer;">Network Printer</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; cursor: pointer;">192.168.1.150</text></g></svg>
     </div>
     <div class="minimap-container" id="minimap-container">
      <svg id="minimap" viewBox="0 0 4000 3000">
-      <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
+      <line x1="600" y1="150" x2="600" y2="350" class="minimap-edge"></line><line x1="600" y1="350" x2="600" y2="550" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="200" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="380" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="920" y2="950" class="minimap-edge"></line><line x1="600" y1="550" x2="560" y2="950" class="minimap-edge"></line><line x1="920" y1="950" x2="1000" y2="950" class="minimap-edge"></line><line x1="380" y1="750" x2="200" y2="750" class="minimap-edge"></line><line x1="740" y1="750" x2="920" y2="750" class="minimap-edge"></line><line x1="600" y1="550" x2="1000" y2="550" class="minimap-edge"></line><circle cx="600" cy="150" r="40" class="minimap-node"></circle><circle cx="600" cy="350" r="40" class="minimap-node"></circle><circle cx="600" cy="550" r="40" class="minimap-node"></circle><circle cx="200" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="750" r="40" class="minimap-node"></circle><circle cx="560" cy="750" r="40" class="minimap-node"></circle><circle cx="740" cy="750" r="40" class="minimap-node"></circle><circle cx="200" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="750" r="40" class="minimap-node"></circle><circle cx="380" cy="950" r="40" class="minimap-node"></circle><circle cx="1000" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="950" r="40" class="minimap-node"></circle><circle cx="560" cy="950" r="40" class="minimap-node"></circle><circle cx="920" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="550" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-400" y="-200" width="2000" height="1500"></rect>
      </svg>
     </div>
     <div class="zoom-toolbar" id="zoom-toolbar">
      <button id="zoom-in-btn" title="Zoom in">+</button>
-     <div class="zoom-level" id="zoom-level">100%</div>
+     <div class="zoom-level" id="zoom-level">200%</div>
      <button id="zoom-out-btn" title="Zoom out">-</button>
      <div class="divider"></div>
      <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
      <button id="zoom-reset-btn" title="Reset view">R</button>
     </div>
-   </section>
+   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="display: none;">Legend</button></section>
    <aside class="details-panel" id="details-panel">
-    <div id="node-panel" style="display: none">
-     <div class="details-name editable-text" id="node-name"></div>
-     <div class="details-ip editable-text" id="node-ip"></div>
-     <div class="details-role" id="node-role"></div>
-     <div class="badge-row" id="node-tags">
-      <span class="badge" style="cursor: pointer; position: relative">
-       <span></span>
-       <span style="opacity: 0.6; margin-left: 4px; font-size: 10px"> ✕</span>
-      </span>
-      <span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed">+ Add</span>
-     </div>
+    <div id="node-panel" style="display: block;">
+     <div class="details-name editable-text" id="node-name">ISP Modem</div>
+     <div class="details-ip editable-text" id="node-ip">192.168.0.1</div>
+     <div class="details-role" id="node-role">Gateway</div>
+     <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>ISP</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>Gateway</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
      <div class="size-controls">
       <label>Size:</label>
       <input type="range" id="size-slider" min="20" max="200" value="55">
-      <span id="size-value">55</span>
+      <span id="size-value">50</span>
       <button id="reset-size">Reset</button>
      </div>
      <details class="style-section">
@@ -1623,7 +1589,7 @@
       </div>
      </details>
      <div class="section-label">Notes</div>
-     <ul class="list" id="node-notes"></ul>
+     <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Comcast Gigabit</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">Bridge mode enabled</span><span class="delete-note">✕</span></li></ul>
      <div style="margin-top: 10px; display: flex; gap: 8px">
       <input type="text" id="new-note-input" placeholder="Type new note..." style="
                      flex: 1;
@@ -1731,548 +1697,854 @@
       <div class="style-row">
        <label>Sidebar Width</label>
        <input type="range" id="sidebar-width" min="200" max="600" value="350" style="flex: 1">
-       <span id="sidebar-width-val" style="min-width: 45px; text-align: right">435px</span>
+       <span id="sidebar-width-val" style="min-width: 45px; text-align: right">600px</span>
       </div>
       <div class="style-row">
        <label>Mobile Footer Height</label>
        <input type="range" id="mobile-footer-height" min="20" max="70" value="40" style="flex: 1">
-       <span id="mobile-footer-height-val" style="min-width: 45px; text-align: right">20%</span>
+       <span id="mobile-footer-height-val" style="min-width: 45px; text-align: right">40%</span>
       </div>
      </div>
     </details>
    </aside>
   </main>
-  <script id="nodes-json" type="application/json">
-   {
+  <script id="nodes-json" type="application/json">{
+  "isp-modem": {
+    "shape": "router",
+    "name": "ISP Modem",
+    "ip": "192.168.0.1",
+    "role": "Gateway",
+    "tags": [
+      "ISP",
+      "Gateway"
+    ],
+    "notes": [
+      "Comcast Gigabit",
+      "Bridge mode enabled"
+    ]
+  },
+  "main-router": {
+    "shape": "firewall",
+    "name": "pfSense Router",
+    "ip": "192.168.1.1",
+    "role": "Firewall/Router",
+    "tags": [
+      "pfSense",
+      "Firewall",
+      "VPN"
+    ],
+    "notes": [
+      "Protectli Vault",
+      "WireGuard VPN enabled",
+      "IDS/IPS active"
+    ]
+  },
+  "main-switch": {
+    "shape": "switch",
+    "name": "Core Switch",
+    "ip": "192.168.1.2",
+    "role": "Network",
+    "tags": [
+      "24-port",
+      "Managed",
+      "PoE"
+    ],
+    "notes": [
+      "UniFi Switch 24 PoE",
+      "VLANs: 10,20,30,40"
+    ]
+  },
+  "nas": {
+    "shape": "database",
+    "name": "TrueNAS",
+    "ip": "192.168.1.10",
+    "role": "Storage",
+    "tags": [
+      "Storage",
+      "NAS",
+      "Backup"
+    ],
+    "notes": [
+      "32TB RAID-Z2",
+      "SMB/NFS shares",
+      "Automated backups"
+    ]
+  },
+  "plex": {
+    "shape": "server",
+    "name": "Plex Server",
+    "ip": "192.168.1.15",
+    "role": "Media",
+    "tags": [
+      "Media",
+      "Streaming"
+    ],
+    "notes": [
+      "Intel i7",
+      "Hardware transcoding",
+      "4K capable"
+    ]
+  },
+  "pihole": {
+    "shape": "server",
+    "name": "Pi-hole",
+    "ip": "192.168.1.20",
+    "role": "DNS",
+    "tags": [
+      "DNS",
+      "AdBlock",
+      "RPi"
+    ],
+    "notes": [
+      "Primary DNS",
+      "Blocks 150k domains",
+      "Raspberry Pi 4"
+    ]
+  },
+  "homeassistant": {
+    "shape": "server",
+    "name": "Home Assistant",
+    "ip": "192.168.1.25",
+    "role": "Automation",
+    "tags": [
+      "SmartHome",
+      "IoT"
+    ],
+    "notes": [
+      "50+ devices",
+      "Zigbee/Z-Wave",
+      "Node-RED integration"
+    ]
+  },
+  "docker-host": {
+    "shape": "server",
+    "name": "Docker Host",
+    "ip": "192.168.1.30",
+    "role": "Services",
+    "tags": [
+      "Docker",
+      "Services"
+    ],
+    "notes": [
+      "20+ containers",
+      "Portainer",
+      "Traefik reverse proxy"
+    ]
+  },
+  "nvr": {
+    "shape": "server",
+    "name": "Frigate NVR",
+    "ip": "192.168.1.35",
+    "role": "Security",
+    "tags": [
+      "Security",
+      "Cameras",
+      "AI"
+    ],
+    "notes": [
+      "6 cameras",
+      "Object detection",
+      "24/7 recording"
+    ]
+  },
+  "gaming-pc": {
+    "shape": "pc",
+    "name": "Gaming PC",
+    "ip": "192.168.1.100",
+    "role": "Client",
+    "tags": [
+      "Gaming",
+      "Desktop"
+    ],
+    "notes": [
+      "RTX 4090",
+      "Wired connection"
+    ]
+  },
+  "work-laptop": {
+    "shape": "laptop",
+    "name": "Work Laptop",
+    "ip": "192.168.1.101",
+    "role": "Client",
+    "tags": [
+      "Work",
+      "WiFi"
+    ],
+    "notes": [
+      "MacBook Pro",
+      "VPN to office"
+    ]
+  },
+  "ap-living": {
+    "shape": "router",
+    "name": "AP - Living Room",
+    "ip": "192.168.1.50",
+    "role": "WiFi",
+    "tags": [
+      "WiFi6",
+      "UniFi",
+      "PoE"
+    ],
+    "notes": [
+      "U6-Pro",
+      "2.4/5GHz",
+      "PoE powered"
+    ]
+  },
+  "ap-office": {
+    "shape": "router",
+    "name": "AP - Office",
+    "ip": "192.168.1.51",
+    "role": "WiFi",
+    "tags": [
+      "WiFi6",
+      "UniFi",
+      "PoE"
+    ],
+    "notes": [
+      "U6-Pro",
+      "2.4/5GHz",
+      "PoE powered"
+    ]
+  },
+  "rpi-monitor": {
+    "shape": "server",
+    "name": "Grafana Monitor",
+    "ip": "192.168.1.40",
+    "role": "Monitoring",
+    "tags": [
+      "Monitoring",
+      "RPi",
+      "Grafana"
+    ],
+    "notes": [
+      "Prometheus + Grafana",
+      "Network stats",
+      "Raspberry Pi 4"
+    ]
+  },
+  "iot-devices": {
+    "shape": "phone",
+    "name": "IoT Devices",
+    "ip": "192.168.1.0/24",
+    "role": "IoT",
+    "tags": [
+      "IoT",
+      "VLAN30"
+    ],
+    "notes": [
+      "Smart lights",
+      "Sensors",
+      "Thermostats"
+    ]
+  },
+  "printer": {
+    "shape": "printer",
+    "name": "Network Printer",
+    "ip": "192.168.1.150",
+    "role": "Peripheral",
+    "tags": [
+      "Print",
+      "Scan"
+    ],
+    "notes": [
+      "HP LaserJet",
+      "AirPrint enabled"
+    ]
+  }
+}</script>
+  <script id="topology-state" type="application/json">{
+  "nodeData": {
     "isp-modem": {
-     "shape": "router",
-     "name": "ISP Modem",
-     "ip": "192.168.0.1",
-     "role": "Gateway",
-     "tags": ["ISP", "Gateway"],
-     "notes": ["Comcast Gigabit", "Bridge mode enabled"]
-    },
-    "main-router": {
-     "shape": "firewall",
-     "name": "pfSense Router",
-     "ip": "192.168.1.1",
-     "role": "Firewall/Router",
-     "tags": ["pfSense", "Firewall", "VPN"],
-     "notes": ["Protectli Vault", "WireGuard VPN enabled", "IDS/IPS active"]
-    },
-    "main-switch": {
-     "shape": "switch",
-     "name": "Core Switch",
-     "ip": "192.168.1.2",
-     "role": "Network",
-     "tags": ["24-port", "Managed", "PoE"],
-     "notes": ["UniFi Switch 24 PoE", "VLANs: 10,20,30,40"]
-    },
-    "nas": {
-     "shape": "database",
-     "name": "TrueNAS",
-     "ip": "192.168.1.10",
-     "role": "Storage",
-     "tags": ["Storage", "NAS", "Backup"],
-     "notes": ["32TB RAID-Z2", "SMB/NFS shares", "Automated backups"]
-    },
-    "plex": {
-     "shape": "server",
-     "name": "Plex Server",
-     "ip": "192.168.1.15",
-     "role": "Media",
-     "tags": ["Media", "Streaming"],
-     "notes": ["Intel i7", "Hardware transcoding", "4K capable"]
-    },
-    "pihole": {
-     "shape": "server",
-     "name": "Pi-hole",
-     "ip": "192.168.1.20",
-     "role": "DNS",
-     "tags": ["DNS", "AdBlock", "RPi"],
-     "notes": ["Primary DNS", "Blocks 150k domains", "Raspberry Pi 4"]
-    },
-    "homeassistant": {
-     "shape": "server",
-     "name": "Home Assistant",
-     "ip": "192.168.1.25",
-     "role": "Automation",
-     "tags": ["SmartHome", "IoT"],
-     "notes": ["50+ devices", "Zigbee/Z-Wave", "Node-RED integration"]
-    },
-    "docker-host": {
-     "shape": "server",
-     "name": "Docker Host",
-     "ip": "192.168.1.30",
-     "role": "Services",
-     "tags": ["Docker", "Services"],
-     "notes": ["20+ containers", "Portainer", "Traefik reverse proxy"]
-    },
-    "nvr": {
-     "shape": "server",
-     "name": "Frigate NVR",
-     "ip": "192.168.1.35",
-     "role": "Security",
-     "tags": ["Security", "Cameras", "AI"],
-     "notes": ["6 cameras", "Object detection", "24/7 recording"]
-    },
-    "gaming-pc": {
-     "shape": "pc",
-     "name": "Gaming PC",
-     "ip": "192.168.1.100",
-     "role": "Client",
-     "tags": ["Gaming", "Desktop"],
-     "notes": ["RTX 4090", "Wired connection"]
-    },
-    "work-laptop": {
-     "shape": "laptop",
-     "name": "Work Laptop",
-     "ip": "192.168.1.101",
-     "role": "Client",
-     "tags": ["Work", "WiFi"],
-     "notes": ["MacBook Pro", "VPN to office"]
-    },
-    "ap-living": {
-     "shape": "router",
-     "name": "AP - Living Room",
-     "ip": "192.168.1.50",
-     "role": "WiFi",
-     "tags": ["WiFi6", "UniFi", "PoE"],
-     "notes": ["U6-Pro", "2.4/5GHz", "PoE powered"]
-    },
-    "ap-office": {
-     "shape": "router",
-     "name": "AP - Office",
-     "ip": "192.168.1.51",
-     "role": "WiFi",
-     "tags": ["WiFi6", "UniFi", "PoE"],
-     "notes": ["U6-Pro", "2.4/5GHz", "PoE powered"]
-    },
-    "rpi-monitor": {
-     "shape": "server",
-     "name": "Grafana Monitor",
-     "ip": "192.168.1.40",
-     "role": "Monitoring",
-     "tags": ["Monitoring", "RPi", "Grafana"],
-     "notes": ["Prometheus + Grafana", "Network stats", "Raspberry Pi 4"]
-    },
-    "iot-devices": {
-     "shape": "phone",
-     "name": "IoT Devices",
-     "ip": "192.168.1.0/24",
-     "role": "IoT",
-     "tags": ["IoT", "VLAN30"],
-     "notes": ["Smart lights", "Sensors", "Thermostats"]
-    },
-    "printer": {
-     "shape": "printer",
-     "name": "Network Printer",
-     "ip": "192.168.1.150",
-     "role": "Peripheral",
-     "tags": ["Print", "Scan"],
-     "notes": ["HP LaserJet", "AirPrint enabled"]
-    }
-   }
-  </script>
-  <script id="topology-state" type="application/json">
-   {
-    "nodeData": {
-     "isp-modem": {
       "shape": "router",
       "name": "ISP Modem",
       "ip": "192.168.0.1",
       "role": "Gateway",
-      "tags": ["ISP", "Gateway"],
-      "notes": ["Comcast Gigabit", "Bridge mode enabled"]
-     },
-     "main-router": {
+      "tags": [
+        "ISP",
+        "Gateway"
+      ],
+      "notes": [
+        "Comcast Gigabit",
+        "Bridge mode enabled"
+      ]
+    },
+    "main-router": {
       "shape": "firewall",
       "name": "pfSense Router",
       "ip": "192.168.1.1",
       "role": "Firewall/Router",
-      "tags": ["pfSense", "Firewall", "VPN"],
-      "notes": ["Protectli Vault", "WireGuard VPN enabled", "IDS/IPS active"]
-     },
-     "main-switch": {
+      "tags": [
+        "pfSense",
+        "Firewall",
+        "VPN"
+      ],
+      "notes": [
+        "Protectli Vault",
+        "WireGuard VPN enabled",
+        "IDS/IPS active"
+      ]
+    },
+    "main-switch": {
       "shape": "switch",
       "name": "Core Switch",
       "ip": "192.168.1.2",
       "role": "Network",
-      "tags": ["24-port", "Managed", "PoE"],
-      "notes": ["UniFi Switch 24 PoE", "VLANs: 10,20,30,40"]
-     },
-     "nas": {
+      "tags": [
+        "24-port",
+        "Managed",
+        "PoE"
+      ],
+      "notes": [
+        "UniFi Switch 24 PoE",
+        "VLANs: 10,20,30,40"
+      ]
+    },
+    "nas": {
       "shape": "database",
       "name": "TrueNAS",
       "ip": "192.168.1.10",
       "role": "Storage",
-      "tags": ["Storage", "NAS", "Backup"],
-      "notes": ["32TB RAID-Z2", "SMB/NFS shares", "Automated backups"]
-     },
-     "plex": {
+      "tags": [
+        "Storage",
+        "NAS",
+        "Backup"
+      ],
+      "notes": [
+        "32TB RAID-Z2",
+        "SMB/NFS shares",
+        "Automated backups"
+      ]
+    },
+    "plex": {
       "shape": "server",
       "name": "Plex Server",
       "ip": "192.168.1.15",
       "role": "Media",
-      "tags": ["Media", "Streaming"],
-      "notes": ["Intel i7", "Hardware transcoding", "4K capable"]
-     },
-     "pihole": {
+      "tags": [
+        "Media",
+        "Streaming"
+      ],
+      "notes": [
+        "Intel i7",
+        "Hardware transcoding",
+        "4K capable"
+      ]
+    },
+    "pihole": {
       "shape": "server",
       "name": "Pi-hole",
       "ip": "192.168.1.20",
       "role": "DNS",
-      "tags": ["DNS", "AdBlock", "RPi"],
-      "notes": ["Primary DNS", "Blocks 150k domains", "Raspberry Pi 4"]
-     },
-     "homeassistant": {
+      "tags": [
+        "DNS",
+        "AdBlock",
+        "RPi"
+      ],
+      "notes": [
+        "Primary DNS",
+        "Blocks 150k domains",
+        "Raspberry Pi 4"
+      ]
+    },
+    "homeassistant": {
       "shape": "server",
       "name": "Home Assistant",
       "ip": "192.168.1.25",
       "role": "Automation",
-      "tags": ["SmartHome", "IoT"],
-      "notes": ["50+ devices", "Zigbee/Z-Wave", "Node-RED integration"]
-     },
-     "docker-host": {
+      "tags": [
+        "SmartHome",
+        "IoT"
+      ],
+      "notes": [
+        "50+ devices",
+        "Zigbee/Z-Wave",
+        "Node-RED integration"
+      ]
+    },
+    "docker-host": {
       "shape": "server",
       "name": "Docker Host",
       "ip": "192.168.1.30",
       "role": "Services",
-      "tags": ["Docker", "Services"],
-      "notes": ["20+ containers", "Portainer", "Traefik reverse proxy"]
-     },
-     "nvr": {
+      "tags": [
+        "Docker",
+        "Services"
+      ],
+      "notes": [
+        "20+ containers",
+        "Portainer",
+        "Traefik reverse proxy"
+      ]
+    },
+    "nvr": {
       "shape": "server",
       "name": "Frigate NVR",
       "ip": "192.168.1.35",
       "role": "Security",
-      "tags": ["Security", "Cameras", "AI"],
-      "notes": ["6 cameras", "Object detection", "24/7 recording"]
-     },
-     "gaming-pc": {
+      "tags": [
+        "Security",
+        "Cameras",
+        "AI"
+      ],
+      "notes": [
+        "6 cameras",
+        "Object detection",
+        "24/7 recording"
+      ]
+    },
+    "gaming-pc": {
       "shape": "pc",
       "name": "Gaming PC",
       "ip": "192.168.1.100",
       "role": "Client",
-      "tags": ["Gaming", "Desktop"],
-      "notes": ["RTX 4090", "Wired connection"]
-     },
-     "work-laptop": {
+      "tags": [
+        "Gaming",
+        "Desktop"
+      ],
+      "notes": [
+        "RTX 4090",
+        "Wired connection"
+      ]
+    },
+    "work-laptop": {
       "shape": "laptop",
       "name": "Work Laptop",
       "ip": "192.168.1.101",
       "role": "Client",
-      "tags": ["Work", "WiFi"],
-      "notes": ["MacBook Pro", "VPN to office"]
-     },
-     "ap-living": {
+      "tags": [
+        "Work",
+        "WiFi"
+      ],
+      "notes": [
+        "MacBook Pro",
+        "VPN to office"
+      ]
+    },
+    "ap-living": {
       "shape": "router",
       "name": "AP - Living Room",
       "ip": "192.168.1.50",
       "role": "WiFi",
-      "tags": ["WiFi6", "UniFi", "PoE"],
-      "notes": ["U6-Pro", "2.4/5GHz", "PoE powered"]
-     },
-     "ap-office": {
+      "tags": [
+        "WiFi6",
+        "UniFi",
+        "PoE"
+      ],
+      "notes": [
+        "U6-Pro",
+        "2.4/5GHz",
+        "PoE powered"
+      ]
+    },
+    "ap-office": {
       "shape": "router",
       "name": "AP - Office",
       "ip": "192.168.1.51",
       "role": "WiFi",
-      "tags": ["WiFi6", "UniFi", "PoE"],
-      "notes": ["U6-Pro", "2.4/5GHz", "PoE powered"]
-     },
-     "rpi-monitor": {
+      "tags": [
+        "WiFi6",
+        "UniFi",
+        "PoE"
+      ],
+      "notes": [
+        "U6-Pro",
+        "2.4/5GHz",
+        "PoE powered"
+      ]
+    },
+    "rpi-monitor": {
       "shape": "server",
       "name": "Grafana Monitor",
       "ip": "192.168.1.40",
       "role": "Monitoring",
-      "tags": ["Monitoring", "RPi", "Grafana"],
-      "notes": ["Prometheus + Grafana", "Network stats", "Raspberry Pi 4"]
-     },
-     "iot-devices": {
+      "tags": [
+        "Monitoring",
+        "RPi",
+        "Grafana"
+      ],
+      "notes": [
+        "Prometheus + Grafana",
+        "Network stats",
+        "Raspberry Pi 4"
+      ]
+    },
+    "iot-devices": {
       "shape": "phone",
       "name": "IoT Devices",
       "ip": "192.168.1.0/24",
       "role": "IoT",
-      "tags": ["IoT", "VLAN30"],
-      "notes": ["Smart lights", "Sensors", "Thermostats"]
-     },
-     "printer": {
+      "tags": [
+        "IoT",
+        "VLAN30"
+      ],
+      "notes": [
+        "Smart lights",
+        "Sensors",
+        "Thermostats"
+      ]
+    },
+    "printer": {
       "shape": "printer",
       "name": "Network Printer",
       "ip": "192.168.1.150",
       "role": "Peripheral",
-      "tags": ["Print", "Scan"],
-      "notes": ["HP LaserJet", "AirPrint enabled"]
-     }
-    },
-    "edgeData": {
-     "list": [{
-      "id": "e1",
-      "from": "isp-modem",
-      "to": "main-router",
-      "width": 6,
-      "color": "#ef4444",
-      "direction": "forward",
-      "type": "wan",
-      "notes": ["1 Gbps WAN"]
-     }, {
-      "id": "e2",
-      "from": "main-router",
-      "to": "main-switch",
-      "width": 6,
-      "color": "#3b82f6",
-      "direction": "both",
-      "type": "trunk",
-      "notes": ["10 Gbps trunk"]
-     }, {
-      "id": "e3",
-      "from": "main-switch",
-      "to": "nas",
-      "width": 5,
-      "color": "#8b5cf6",
-      "direction": "both",
-      "type": "storage",
-      "notes": ["10 Gbps storage"]
-     }, {
-      "id": "e4",
-      "from": "main-switch",
-      "to": "plex",
-      "width": 4,
-      "color": "#475569",
-      "direction": "both",
-      "type": "lan",
-      "notes": ["1 Gbps"]
-     }, {
-      "id": "e5",
-      "from": "main-switch",
-      "to": "pihole",
-      "width": 3,
-      "color": "#10b981",
-      "direction": "both",
-      "type": "mgmt",
-      "notes": ["DNS queries"]
-     }, {
-      "id": "e6",
-      "from": "main-switch",
-      "to": "homeassistant",
-      "width": 3,
-      "color": "#f59e0b",
-      "direction": "both",
-      "type": "iot",
-      "notes": ["IoT VLAN 30"]
-     }, {
-      "id": "e7",
-      "from": "main-switch",
-      "to": "docker-host",
-      "width": 4,
-      "color": "#06b6d4",
-      "direction": "both",
-      "type": "services",
-      "notes": ["Services VLAN"]
-     }, {
-      "id": "e8",
-      "from": "main-switch",
-      "to": "nvr",
-      "width": 4,
-      "color": "#ec4899",
-      "direction": "both",
-      "type": "cameras",
-      "notes": ["Camera VLAN 40"]
-     }, {
-      "id": "e9",
-      "from": "main-switch",
-      "to": "gaming-pc",
-      "width": 4,
-      "color": "#475569",
-      "direction": "both",
-      "type": "lan",
-      "notes": ["User VLAN 10"]
-     }, {
-      "id": "e10",
-      "from": "main-switch",
-      "to": "ap-living",
-      "width": 3,
-      "color": "#14b8a6",
-      "direction": "both",
-      "type": "poe",
-      "notes": ["PoE 802.3at"]
-     }, {
-      "id": "e11",
-      "from": "main-switch",
-      "to": "ap-office",
-      "width": 3,
-      "color": "#14b8a6",
-      "direction": "both",
-      "type": "poe",
-      "notes": ["PoE 802.3at"]
-     }, {
-      "id": "e12",
-      "from": "main-switch",
-      "to": "rpi-monitor",
-      "width": 2,
-      "color": "#64748b",
-      "direction": "both",
-      "type": "mgmt",
-      "notes": ["Monitoring"]
-     }, {
-      "id": "e13",
-      "from": "ap-office",
-      "to": "work-laptop",
-      "width": 2,
-      "color": "#a78bfa",
-      "direction": "both",
-      "type": "wifi",
-      "notes": ["WiFi 6 - 5GHz"]
-     }, {
-      "id": "e14",
-      "from": "plex",
-      "to": "nas",
-      "width": 3,
-      "color": "#8b5cf6",
-      "direction": "forward",
-      "type": "storage",
-      "notes": ["Media library mount"]
-     }, {
-      "id": "e15",
-      "from": "homeassistant",
-      "to": "iot-devices",
-      "width": 3,
-      "color": "#f59e0b",
-      "direction": "both",
-      "type": "iot",
-      "notes": ["Zigbee/Z-Wave"]
-     }, {
-      "id": "e16",
-      "from": "main-switch",
-      "to": "printer",
-      "width": 2,
-      "color": "#475569",
-      "direction": "both",
-      "type": "lan",
-      "notes": []
-     }]
-    },
-    "edgeLegend": {
-     "#ef4444": "WAN Connection (1 Gbps)",
-     "#3b82f6": "Network Trunk (10 Gbps)",
-     "#8b5cf6": "Storage Network",
-     "#475569": "LAN / User VLAN",
-     "#10b981": "Management / DNS",
-     "#f59e0b": "IoT Network (VLAN 30)",
-     "#06b6d4": "Services Network",
-     "#ec4899": "Camera Network (VLAN 40)",
-     "#14b8a6": "PoE Connections",
-     "#64748b": "Monitoring",
-     "#a78bfa": "WiFi Wireless"
-    },
-    "nodePositions": {
-     "isp-modem": {
+      "tags": [
+        "Print",
+        "Scan"
+      ],
+      "notes": [
+        "HP LaserJet",
+        "AirPrint enabled"
+      ]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "e1",
+        "from": "isp-modem",
+        "to": "main-router",
+        "width": 6,
+        "color": "#ef4444",
+        "direction": "forward",
+        "type": "wan",
+        "notes": [
+          "1 Gbps WAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e2",
+        "from": "main-router",
+        "to": "main-switch",
+        "width": 6,
+        "color": "#3b82f6",
+        "direction": "both",
+        "type": "trunk",
+        "notes": [
+          "10 Gbps trunk"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e3",
+        "from": "main-switch",
+        "to": "nas",
+        "width": 5,
+        "color": "#8b5cf6",
+        "direction": "both",
+        "type": "storage",
+        "notes": [
+          "10 Gbps storage"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e4",
+        "from": "main-switch",
+        "to": "plex",
+        "width": 4,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [
+          "1 Gbps"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e5",
+        "from": "main-switch",
+        "to": "pihole",
+        "width": 3,
+        "color": "#10b981",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "DNS queries"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e6",
+        "from": "main-switch",
+        "to": "homeassistant",
+        "width": 3,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "iot",
+        "notes": [
+          "IoT VLAN 30"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e7",
+        "from": "main-switch",
+        "to": "docker-host",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "both",
+        "type": "services",
+        "notes": [
+          "Services VLAN"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e8",
+        "from": "main-switch",
+        "to": "nvr",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "both",
+        "type": "cameras",
+        "notes": [
+          "Camera VLAN 40"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e9",
+        "from": "main-switch",
+        "to": "gaming-pc",
+        "width": 4,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [
+          "User VLAN 10"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e10",
+        "from": "main-switch",
+        "to": "ap-living",
+        "width": 3,
+        "color": "#14b8a6",
+        "direction": "both",
+        "type": "poe",
+        "notes": [
+          "PoE 802.3at"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e11",
+        "from": "main-switch",
+        "to": "ap-office",
+        "width": 3,
+        "color": "#14b8a6",
+        "direction": "both",
+        "type": "poe",
+        "notes": [
+          "PoE 802.3at"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e12",
+        "from": "main-switch",
+        "to": "rpi-monitor",
+        "width": 2,
+        "color": "#64748b",
+        "direction": "both",
+        "type": "mgmt",
+        "notes": [
+          "Monitoring"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e13",
+        "from": "ap-office",
+        "to": "work-laptop",
+        "width": 2,
+        "color": "#a78bfa",
+        "direction": "both",
+        "type": "wifi",
+        "notes": [
+          "WiFi 6 - 5GHz"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e14",
+        "from": "plex",
+        "to": "nas",
+        "width": 3,
+        "color": "#8b5cf6",
+        "direction": "forward",
+        "type": "storage",
+        "notes": [
+          "Media library mount"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e15",
+        "from": "homeassistant",
+        "to": "iot-devices",
+        "width": 3,
+        "color": "#f59e0b",
+        "direction": "both",
+        "type": "iot",
+        "notes": [
+          "Zigbee/Z-Wave"
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "e16",
+        "from": "main-switch",
+        "to": "printer",
+        "width": 2,
+        "color": "#475569",
+        "direction": "both",
+        "type": "lan",
+        "notes": [],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN Connection (1 Gbps)",
+    "#3b82f6": "Network Trunk (10 Gbps)",
+    "#8b5cf6": "Storage Network",
+    "#475569": "LAN / User VLAN",
+    "#10b981": "Management / DNS",
+    "#f59e0b": "IoT Network (VLAN 30)",
+    "#06b6d4": "Services Network",
+    "#ec4899": "Camera Network (VLAN 40)",
+    "#14b8a6": "PoE Connections",
+    "#64748b": "Monitoring",
+    "#a78bfa": "WiFi Wireless"
+  },
+  "nodePositions": {
+    "isp-modem": {
       "x": 600,
       "y": 150
-     },
-     "main-router": {
+    },
+    "main-router": {
       "x": 600,
       "y": 350
-     },
-     "main-switch": {
+    },
+    "main-switch": {
       "x": 600,
       "y": 550
-     },
-     "nas": {
+    },
+    "nas": {
       "x": 200,
       "y": 750
-     },
-     "plex": {
+    },
+    "plex": {
       "x": 380,
       "y": 750
-     },
-     "pihole": {
+    },
+    "pihole": {
       "x": 560,
       "y": 750
-     },
-     "homeassistant": {
+    },
+    "homeassistant": {
       "x": 740,
       "y": 750
-     },
-     "docker-host": {
+    },
+    "docker-host": {
       "x": 200,
       "y": 950
-     },
-     "nvr": {
+    },
+    "nvr": {
       "x": 1000,
       "y": 750
-     },
-     "gaming-pc": {
+    },
+    "gaming-pc": {
       "x": 380,
       "y": 950
-     },
-     "work-laptop": {
+    },
+    "work-laptop": {
       "x": 1000,
       "y": 950
-     },
-     "ap-living": {
+    },
+    "ap-living": {
       "x": 740,
       "y": 950
-     },
-     "ap-office": {
+    },
+    "ap-office": {
       "x": 920,
       "y": 950
-     },
-     "rpi-monitor": {
+    },
+    "rpi-monitor": {
       "x": 560,
       "y": 950
-     },
-     "iot-devices": {
+    },
+    "iot-devices": {
       "x": 920,
       "y": 750
-     },
-     "printer": {
+    },
+    "printer": {
       "x": 1000,
       "y": 550
-     }
-    },
-    "nodeSizes": {
-     "isp-modem": 50,
-     "main-router": 65,
-     "main-switch": 60,
-     "nas": 55,
-     "plex": 50,
-     "pihole": 45,
-     "homeassistant": 50,
-     "docker-host": 50,
-     "nvr": 50,
-     "gaming-pc": 45,
-     "work-laptop": 45,
-     "ap-living": 45,
-     "ap-office": 45,
-     "rpi-monitor": 40,
-     "iot-devices": 45,
-     "printer": 45
-    },
-    "nodeStyles": {},
-    "page": {
-     "title": "Home Lab Network",
-     "background": "#d4d7dd",
-     "topbarBg": "#1081ea",
-     "topbarBorder": "#010d28",
-     "panel": "#002970",
-     "panelAlt": "#0e1c34",
-     "accent": "#58dfd2",
-     "danger": "#271111",
-     "textMain": "#e2e7ee",
-     "textSoft": "#7c96bb",
-     "topbarHeight": 100,
-     "sidebarWidth": 600,
-     "sidebarCollapsed": false
-    },
-    "canvas": {
-     "zoom": 1,
-     "panX": 0,
-     "panY": 0
     }
-   }
-  </script>
+  },
+  "nodeSizes": {
+    "isp-modem": 50,
+    "main-router": 65,
+    "main-switch": 60,
+    "nas": 55,
+    "plex": 50,
+    "pihole": 45,
+    "homeassistant": 50,
+    "docker-host": 50,
+    "nvr": 50,
+    "gaming-pc": 45,
+    "work-laptop": 45,
+    "ap-living": 45,
+    "ap-office": 45,
+    "rpi-monitor": 40,
+    "iot-devices": 45,
+    "printer": 45
+  },
+  "nodeStyles": {},
+  "page": {
+    "title": "Home Lab Network",
+    "background": "#d4d7dd",
+    "topbarBg": "#1081ea",
+    "topbarBorder": "#010d28",
+    "panel": "#002970",
+    "panelAlt": "#0e1c34",
+    "accent": "#58dfd2",
+    "danger": "#271111",
+    "textMain": "#e2e7ee",
+    "textSoft": "#7c96bb",
+    "topbarHeight": 100,
+    "sidebarWidth": 600,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 2,
+    "panX": -400,
+    "panY": -200
+  }
+}</script>
   <script>
    const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
    let currentNodeId = "host";
@@ -3346,6 +3618,16 @@
       else if (window.innerWidth <= 1024) r = 70;
      }
      const styles = resolveStylesForNode(id);
+     
+     // Create invisible larger hit area for easier dragging (50% larger than visual size)
+     const ns = "http://www.w3.org/2000/svg";
+     const hitArea = document.createElementNS(ns, "circle");
+     hitArea.setAttribute("r", r * 1.5);
+     hitArea.style.fill = "transparent";
+     hitArea.style.stroke = "none";
+     hitArea.style.cursor = "grab";
+     hitArea.classList.add("node-hit-area");
+     
      const shapeEl = createNodeShape(id, r);
      const titleOffsetX = styles.titleOffsetX || 0;
      const titleOffsetY = styles.titleOffsetY || 0;
@@ -3361,7 +3643,7 @@
      if (styles.titleColor) label.style.fill = styles.titleColor;
      if (styles.titleFont) label.style.fontFamily = styles.titleFont;
      label.style.cursor = "pointer";
-     label.addEventListener("click", (e) => {
+     label.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeName(id);
      });
@@ -3375,11 +3657,11 @@
      if (styles.subColor) sub.style.fill = styles.subColor;
      if (styles.subFont) sub.style.fontFamily = styles.subFont;
      sub.style.cursor = "pointer";
-     sub.addEventListener("click", (e) => {
+     sub.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeIp(id);
      });
-     g.append(shapeEl, label, sub);
+     g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
      let startX, startY;
      g.addEventListener("mousedown", (e) => {
@@ -3393,6 +3675,7 @@
       startX = svgP.x - pos.x;
       startY = svgP.y - pos.y;
       g.style.cursor = "grabbing";
+      hitArea.style.cursor = "grabbing";
       e.stopPropagation();
      });
      const handleMouseMove = (e) => {
@@ -3467,6 +3750,7 @@
       if (isDragging) {
        isDragging = false;
        g.style.cursor = "grab";
+       hitArea.style.cursor = "grab";
        savedPositions[id] = {
         x: pos.x,
         y: pos.y
@@ -5194,5 +5478,5 @@
     URL.revokeObjectURL(url);
    }
   </script>
- </body>
-</html>
+ 
+</body></html>

@@ -11,13 +11,12 @@
    --topbar-height: 100px;
    --sidebar-width: 435px;
    --mobile-footer-height: 20vh;
-   ">
- <head>
+   "><head>
   <meta charset="UTF-8">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>The One File: The Networkening</title>
+  <title>Corporate Network</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 
          * ==================================================================================
@@ -576,6 +575,11 @@
    .node-circle {
     transition: 0.25s ease;
     transform-origin: center center;
+   }
+
+   .node-hit-area {
+    cursor: grab;
+    pointer-events: all;
    }
 
    .node-group:hover .node-circle {
@@ -1602,7 +1606,7 @@
   </div>
   <header>
    <div class="title-block">
-    <h1 id="page-title" class="editable-page-title">The One File: The Networkening</h1>
+    <h1 id="page-title" class="editable-page-title">Corporate Network</h1>
     <div class="save-row">
      <button id="save-file-btn" class="save-btn" type="button"> Save File </button>
      <label style="
@@ -1674,11 +1678,9 @@
      </select>
      <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
     </div>
-    <div class="topology-toolbar" id="topology-toolbar" style="display: none">
+    <div class="topology-toolbar" id="topology-toolbar" style="display: flex;">
      <label for="add-line-select">Add line to:</label>
-     <select id="add-line-select">
-      <option value=""></option>
-     </select>
+     <select id="add-line-select"><option value="edge-firewall">Edge Firewall</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="dmz-firewall">DMZ Firewall</option><option value="web-server">Web Server</option><option value="mail-server">Mail Server</option><option value="dist-switch-1">Distribution SW 1</option><option value="dist-switch-2">Distribution SW 2</option><option value="access-switch-1">Access SW 1-1</option><option value="access-switch-2">Access SW 1-2</option><option value="access-switch-3">Access SW 2-1</option><option value="domain-controller">Domain Controller</option><option value="file-server">File Server</option><option value="db-server">Database Server</option><option value="backup-server">Backup Server</option><option value="wifi-controller">WiFi Controller</option><option value="vpn-gateway">VPN Gateway</option></select>
      <input type="color" id="add-line-color" value="#475569" title="Line color" style="
                   width: 30px;
                   height: 24px;
@@ -1697,48 +1699,42 @@
      <button id="add-line-btn">Add</button>
     </div>
     <div class="canvas-hint" id="canvas-hint"> Scroll to zoom • Drag empty space to pan • Hold Space + drag </div>
-    <div class="legend-container" id="edge-legend" style="display: none">
-     <div class="legend-title">Line Legend</div>
-    </div>
+    <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68);"></span><span class="legend-label" contenteditable="true">WAN / DMZ</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11);"></span><span class="legend-label" contenteditable="true">Trunk / Uplink</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129);"></span><span class="legend-label" contenteditable="true">Core / Distribution</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246);"></span><span class="legend-label" contenteditable="true">Access Layer</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246);"></span><span class="legend-label" contenteditable="true">Server VLAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212);"></span><span class="legend-label" contenteditable="true">Management</span></div></div>
     <div class="canvas-viewport" id="canvas-viewport">
-     <svg id="map" viewBox="0 0 4000 3000" style="">
-      <defs>
-       <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path>
-       </marker>
-       <marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path>
-       </marker>
-      </defs>
-      <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
-     </svg>
+     <svg id="map" viewBox="500 0 2800 2100" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 2000 200 Q 2000 350 2000 500" fill="none" class="edge active" data-edge-id="edge-1" data-from="internet" data-to="edge-firewall" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 2000 500 Q 1850 700 1700 900" fill="none" class="edge" data-edge-id="edge-2" data-from="edge-firewall" data-to="core-switch-1" style="stroke: rgb(245, 158, 11); stroke-width: 5;"></path><path d="M 2000 500 Q 2150 700 2300 900" fill="none" class="edge" data-edge-id="edge-3" data-from="edge-firewall" data-to="core-switch-2" style="stroke: rgb(245, 158, 11); stroke-width: 5;"></path><path d="M 1700 900 Q 2000 900 2300 900" fill="none" class="edge" data-edge-id="edge-4" data-from="core-switch-1" data-to="core-switch-2" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 1700 900 Q 2250 900 2800 900" fill="none" class="edge" data-edge-id="edge-5" data-from="core-switch-1" data-to="dmz-firewall" style="stroke: rgb(239, 68, 68); stroke-width: 4;"></path><path d="M 2800 900 Q 2800 1075 2800 1250" fill="none" class="edge" data-edge-id="edge-6" data-from="dmz-firewall" data-to="web-server" style="stroke: rgb(239, 68, 68); stroke-width: 4;"></path><path d="M 2800 900 Q 2800 1225 2800 1550" fill="none" class="edge" data-edge-id="edge-7" data-from="dmz-firewall" data-to="mail-server" style="stroke: rgb(239, 68, 68); stroke-width: 4;"></path><path d="M 1700 900 Q 1450 1150 1200 1400" fill="none" class="edge" data-edge-id="edge-8" data-from="core-switch-1" data-to="dist-switch-1" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 2300 900 Q 1750 1150 1200 1400" fill="none" class="edge" data-edge-id="edge-9" data-from="core-switch-2" data-to="dist-switch-1" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 1700 900 Q 2100 1150 2500 1400" fill="none" class="edge" data-edge-id="edge-10" data-from="core-switch-1" data-to="dist-switch-2" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 2300 900 Q 2400 1150 2500 1400" fill="none" class="edge" data-edge-id="edge-11" data-from="core-switch-2" data-to="dist-switch-2" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 1200 1400 Q 1000 1650 800 1900" fill="none" class="edge" data-edge-id="edge-12" data-from="dist-switch-1" data-to="access-switch-1" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 1200 1400 Q 1200 1650 1200 1900" fill="none" class="edge" data-edge-id="edge-13" data-from="dist-switch-1" data-to="access-switch-2" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 2500 1400 Q 2500 1650 2500 1900" fill="none" class="edge" data-edge-id="edge-14" data-from="dist-switch-2" data-to="access-switch-3" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 1700 900 Q 1400 900 1100 900" fill="none" class="edge" data-edge-id="edge-15" data-from="core-switch-1" data-to="domain-controller" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 1700 900 Q 1150 900 600 900" fill="none" class="edge" data-edge-id="edge-16" data-from="core-switch-1" data-to="file-server" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 1700 900 Q 1150 1100 600 1300" fill="none" class="edge" data-edge-id="edge-17" data-from="core-switch-1" data-to="db-server" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 1700 900 Q 1400 1100 1100 1300" fill="none" class="edge" data-edge-id="edge-18" data-from="core-switch-1" data-to="backup-server" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 1700 900 Q 2450 1150 3200 1400" fill="none" class="edge" data-edge-id="edge-19" data-from="core-switch-1" data-to="wifi-controller" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 500 Q 1700 500 1400 500" fill="none" class="edge" data-edge-id="edge-20" data-from="edge-firewall" data-to="vpn-gateway" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><g class="node-group active" data-node-id="internet" transform="translate(2000,200)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
+          M -44 11
+          Q -60.50000000000001 11 -60.50000000000001 -5.5
+          Q -60.50000000000001 -27.5 -38.5 -27.5
+          Q -38.5 -49.5 -11 -49.5
+          Q 5.5 -60.50000000000001 27.5 -44
+          Q 55 -44 60.50000000000001 -16.5
+          Q 71.5 -5.5 60.50000000000001 11
+          Q 60.50000000000001 27.5 38.5 27.5
+          L -27.5 27.5
+          Q -49.5 27.5 -49.5 11
+          Z
+         " class="node-circle"></path><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Internet</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">ISP Gateway</text></g><g class="node-group" data-node-id="edge-firewall" transform="translate(2000,500)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Edge Firewall</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">192.168.1.1</text></g><g class="node-group" data-node-id="core-switch-1" transform="translate(1700,900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Core Switch 1</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.0.0.1</text></g><g class="node-group" data-node-id="core-switch-2" transform="translate(2300,900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Core Switch 2</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.0.0.2</text></g><g class="node-group" data-node-id="dmz-firewall" transform="translate(2800,900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">DMZ Firewall</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.10.0.1</text></g><g class="node-group" data-node-id="web-server" transform="translate(2800,1250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Web Server</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.10.1.10</text></g><g class="node-group" data-node-id="mail-server" transform="translate(2800,1550)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Mail Server</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.10.1.20</text></g><g class="node-group" data-node-id="dist-switch-1" transform="translate(1200,1400)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Distribution SW 1</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.0.1</text></g><g class="node-group" data-node-id="dist-switch-2" transform="translate(2500,1400)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Distribution SW 2</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.2.0.1</text></g><g class="node-group" data-node-id="access-switch-1" transform="translate(800,1900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Access SW 1-1</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.1.1</text></g><g class="node-group" data-node-id="access-switch-2" transform="translate(1200,1900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Access SW 1-2</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.2.1</text></g><g class="node-group" data-node-id="access-switch-3" transform="translate(2500,1900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Access SW 2-1</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.2.1.1</text></g><g class="node-group" data-node-id="domain-controller" transform="translate(1100,900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Domain Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.10.10</text></g><g class="node-group" data-node-id="file-server" transform="translate(600,900)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">File Server</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.10.20</text></g><g class="node-group" data-node-id="db-server" transform="translate(600,1300)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Database Server</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.10.30</text></g><g class="node-group" data-node-id="backup-server" transform="translate(1100,1300)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">Backup Server</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.1.10.40</text></g><g class="node-group" data-node-id="wifi-controller" transform="translate(3200,1400)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60.50000000000001" y="-16.5" width="121.00000000000001" height="44" rx="6"></rect><rect x="-35.75" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="-33" cy="-52.25" r="4.4"></circle><rect x="-2.75" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="0" cy="-52.25" r="4.4"></circle><rect x="30.25" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="33" cy="-52.25" r="4.4"></circle><circle cx="-38.5" cy="5.5" r="3.3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-19.25" cy="5.5" r="3.3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5.5" r="3.3" style="fill: rgb(250, 204, 21);"></circle><circle cx="19.249999999999993" cy="5.5" r="3.3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">WiFi Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.0.0.100</text></g><g class="node-group" data-node-id="vpn-gateway" transform="translate(1400,500)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60.50000000000001" y="-16.5" width="121.00000000000001" height="44" rx="6"></rect><rect x="-35.75" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="-33" cy="-52.25" r="4.4"></circle><rect x="-2.75" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="0" cy="-52.25" r="4.4"></circle><rect x="30.25" y="-49.5" width="5.5" height="33" rx="2"></rect><circle cx="33" cy="-52.25" r="4.4"></circle><circle cx="-38.5" cy="5.5" r="3.3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-19.25" cy="5.5" r="3.3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5.5" r="3.3" style="fill: rgb(250, 204, 21);"></circle><circle cx="19.249999999999993" cy="5.5" r="3.3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; cursor: pointer;">VPN Gateway</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; cursor: pointer;">10.0.0.50</text></g></svg>
     </div>
     <div class="minimap-container" id="minimap-container">
      <svg id="minimap" viewBox="0 0 4000 3000">
-      <rect class="minimap-viewport" id="minimap-viewport" x="0" y="0" width="4000" height="3000"></rect>
+      <line x1="2000" y1="200" x2="2000" y2="500" class="minimap-edge"></line><line x1="2000" y1="500" x2="1700" y2="900" class="minimap-edge"></line><line x1="2000" y1="500" x2="2300" y2="900" class="minimap-edge"></line><line x1="1700" y1="900" x2="2300" y2="900" class="minimap-edge"></line><line x1="1700" y1="900" x2="2800" y2="900" class="minimap-edge"></line><line x1="2800" y1="900" x2="2800" y2="1250" class="minimap-edge"></line><line x1="2800" y1="900" x2="2800" y2="1550" class="minimap-edge"></line><line x1="1700" y1="900" x2="1200" y2="1400" class="minimap-edge"></line><line x1="2300" y1="900" x2="1200" y2="1400" class="minimap-edge"></line><line x1="1700" y1="900" x2="2500" y2="1400" class="minimap-edge"></line><line x1="2300" y1="900" x2="2500" y2="1400" class="minimap-edge"></line><line x1="1200" y1="1400" x2="800" y2="1900" class="minimap-edge"></line><line x1="1200" y1="1400" x2="1200" y2="1900" class="minimap-edge"></line><line x1="2500" y1="1400" x2="2500" y2="1900" class="minimap-edge"></line><line x1="1700" y1="900" x2="1100" y2="900" class="minimap-edge"></line><line x1="1700" y1="900" x2="600" y2="900" class="minimap-edge"></line><line x1="1700" y1="900" x2="600" y2="1300" class="minimap-edge"></line><line x1="1700" y1="900" x2="1100" y2="1300" class="minimap-edge"></line><line x1="1700" y1="900" x2="3200" y2="1400" class="minimap-edge"></line><line x1="2000" y1="500" x2="1400" y2="500" class="minimap-edge"></line><circle cx="2000" cy="200" r="40" class="minimap-node"></circle><circle cx="2000" cy="500" r="40" class="minimap-node"></circle><circle cx="1700" cy="900" r="40" class="minimap-node"></circle><circle cx="2300" cy="900" r="40" class="minimap-node"></circle><circle cx="2800" cy="900" r="40" class="minimap-node"></circle><circle cx="2800" cy="1250" r="40" class="minimap-node"></circle><circle cx="2800" cy="1550" r="40" class="minimap-node"></circle><circle cx="1200" cy="1400" r="40" class="minimap-node"></circle><circle cx="2500" cy="1400" r="40" class="minimap-node"></circle><circle cx="800" cy="1900" r="40" class="minimap-node"></circle><circle cx="1200" cy="1900" r="40" class="minimap-node"></circle><circle cx="2500" cy="1900" r="40" class="minimap-node"></circle><circle cx="1100" cy="900" r="40" class="minimap-node"></circle><circle cx="600" cy="900" r="40" class="minimap-node"></circle><circle cx="600" cy="1300" r="40" class="minimap-node"></circle><circle cx="1100" cy="1300" r="40" class="minimap-node"></circle><circle cx="3200" cy="1400" r="40" class="minimap-node"></circle><circle cx="1400" cy="500" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="500" y="0" width="2800" height="2100"></rect>
      </svg>
     </div>
     <div class="zoom-toolbar" id="zoom-toolbar">
      <button id="zoom-in-btn" title="Zoom in">+</button>
-     <div class="zoom-level" id="zoom-level">100%</div>
+     <div class="zoom-level" id="zoom-level">143%</div>
      <button id="zoom-out-btn" title="Zoom out">-</button>
      <div class="divider"></div>
      <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
      <button id="zoom-reset-btn" title="Reset view">R</button>
     </div>
-   </section>
+   <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="display: none;">Legend</button></section>
    <aside class="details-panel" id="details-panel">
-    <div id="node-panel" style="display: none">
-     <div class="details-name editable-text" id="node-name"></div>
-     <div class="details-ip editable-text" id="node-ip"></div>
-     <div class="details-role" id="node-role"></div>
-     <div class="badge-row" id="node-tags">
-      <span class="badge" style="cursor: pointer; position: relative">
-       <span></span>
-       <span style="opacity: 0.6; margin-left: 4px; font-size: 10px"> ✕</span>
-      </span>
-      <span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed">+ Add</span>
-     </div>
+    <div id="node-panel" style="display: block;">
+     <div class="details-name editable-text" id="node-name">Internet</div>
+     <div class="details-ip editable-text" id="node-ip">ISP Gateway</div>
+     <div class="details-role" id="node-role">WAN</div>
+     <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>1Gbps</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>Redundant</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
      <div style="margin-top: 10px; display: flex; gap: 8px">
       <input type="text" id="new-tag-input" placeholder="Add tag..." style="
                      flex: 1;
@@ -1895,7 +1891,7 @@
       </div>
      </details>
      <div class="section-label">Notes</div>
-     <ul class="list" id="node-notes"></ul>
+     <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Primary: Fiber</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">Backup: Cable</span><span class="delete-note">✕</span></li></ul>
      <div style="margin-top: 10px; display: flex; gap: 8px">
       <input type="text" id="new-note-input" placeholder="Type new note..." style="
                      flex: 1;
@@ -2014,380 +2010,897 @@
     </details>
    </aside>
   </main>
-  <script id="nodes-json" type="application/json">
-{
- "internet": {
-  "shape": "cloud",
-  "name": "Internet",
-  "ip": "ISP Gateway",
-  "role": "WAN",
-  "tags": ["1Gbps", "Redundant"],
-  "notes": ["Primary: Fiber", "Backup: Cable"]
- },
- "edge-firewall": {
-  "shape": "firewall",
-  "name": "Edge Firewall",
-  "ip": "192.168.1.1",
-  "role": "Security",
-  "tags": ["Perimeter", "NAT"],
-  "notes": ["Palo Alto PA 220", "WAN: 100.50.25.10"]
- },
- "core-switch-1": {
-  "shape": "switch",
-  "name": "Core Switch 1",
-  "ip": "10.0.0.1",
-  "role": "Core Network",
-  "tags": ["Layer 3", "10Gb"],
-  "notes": ["Primary core switch", "Redundant power", "HSRP Active"]
- },
- "core-switch-2": {
-  "shape": "switch",
-  "name": "Core Switch 2",
-  "ip": "10.0.0.2",
-  "role": "Core Network",
-  "tags": ["Layer 3", "10Gb"],
-  "notes": ["Secondary core switch", "HSRP Standby"]
- },
- "dmz-firewall": {
-  "shape": "firewall",
-  "name": "DMZ Firewall",
-  "ip": "10.10.0.1",
-  "role": "Security",
-  "tags": ["DMZ", "IDS/IPS"],
-  "notes": ["DMZ segmentation", "Public services"]
- },
- "web-server": {
-  "shape": "server",
-  "name": "Web Server",
-  "ip": "10.10.1.10",
-  "role": "Application",
-  "tags": ["DMZ", "HTTPS"],
-  "notes": ["Corporate website", "Load balanced"]
- },
- "mail-server": {
-  "shape": "server",
-  "name": "Mail Server",
-  "ip": "10.10.1.20",
-  "role": "Email",
-  "tags": ["DMZ", "SMTP/IMAP"],
-  "notes": ["Exchange Server 2019"]
- },
- "dist-switch-1": {
-  "shape": "switch",
-  "name": "Distribution SW 1",
-  "ip": "10.1.0.1",
-  "role": "Distribution",
-  "tags": ["Layer 3", "Aggregation"],
-  "notes": ["Building A distribution"]
- },
- "dist-switch-2": {
-  "shape": "switch",
-  "name": "Distribution SW 2",
-  "ip": "10.2.0.1",
-  "role": "Distribution",
-  "tags": ["Layer 3", "Aggregation"],
-  "notes": ["Building B distribution"]
- },
- "access-switch-1": {
-  "shape": "switch",
-  "name": "Access SW 1-1",
-  "ip": "10.1.1.1",
-  "role": "Access Layer",
-  "tags": ["PoE", "48-port"],
-  "notes": ["Floor 1 Building A"]
- },
- "access-switch-2": {
-  "shape": "switch",
-  "name": "Access SW 1-2",
-  "ip": "10.1.2.1",
-  "role": "Access Layer",
-  "tags": ["PoE", "48 port"],
-  "notes": ["Floor 2 Building A"]
- },
- "access-switch-3": {
-  "shape": "switch",
-  "name": "Access SW 2-1",
-  "ip": "10.2.1.1",
-  "role": "Access Layer",
-  "tags": ["PoE", "48-port"],
-  "notes": ["Floor 1 Building B"]
- },
- "domain-controller": {
-  "shape": "server",
-  "name": "Domain Controller",
-  "ip": "10.1.10.10",
-  "role": "Identity",
-  "tags": ["Active Directory", "DNS"],
-  "notes": ["Primary DC", "Windows Server 2022"]
- },
- "file-server": {
-  "shape": "server",
-  "name": "File Server",
-  "ip": "10.1.10.20",
-  "role": "Storage",
-  "tags": ["SMB", "NFS"],
-  "notes": ["Corporate file shares", "30TB RAID6"]
- },
- "db-server": {
-  "shape": "database",
-  "name": "Database Server",
-  "ip": "10.1.10.30",
-  "role": "Database",
-  "tags": ["SQL Server", "Production"],
-  "notes": ["SQL Server 2022", "Always On AG"]
- },
- "backup-server": {
-  "shape": "server",
-  "name": "Backup Server",
-  "ip": "10.1.10.40",
-  "role": "Backup",
-  "tags": ["Veeam", "Dedupe"],
-  "notes": ["Nightly backups", "60TB capacity"]
- },
- "wifi-controller": {
-  "shape": "router",
-  "name": "WiFi Controller",
-  "ip": "10.0.0.100",
-  "role": "Wireless",
-  "tags": ["UniFi", "Management"],
-  "notes": ["Manages 45 APs"]
- },
- "vpn-gateway": {
-  "shape": "router",
-  "name": "VPN Gateway",
-  "ip": "10.0.0.50",
-  "role": "Remote Access",
-  "tags": ["OpenVPN", "MFA"],
-  "notes": ["Remote worker access"]
- }
-}
-</script>
-<script id="topology-state" type="application/json">
-{
- "nodeData": {
+  <script id="nodes-json" type="application/json">{
   "internet": {
-   "shape": "cloud",
-   "name": "Internet",
-   "ip": "ISP Gateway",
-   "role": "WAN",
-   "tags": ["1Gbps", "Redundant"],
-   "notes": ["Primary: Fiber", "Backup: Cable"]
+    "shape": "cloud",
+    "name": "Internet",
+    "ip": "ISP Gateway",
+    "role": "WAN",
+    "tags": [
+      "1Gbps",
+      "Redundant"
+    ],
+    "notes": [
+      "Primary: Fiber",
+      "Backup: Cable"
+    ]
   },
   "edge-firewall": {
-   "shape": "firewall",
-   "name": "Edge Firewall",
-   "ip": "192.168.1.1",
-   "role": "Security",
-   "tags": ["Perimeter", "NAT"],
-   "notes": ["Palo Alto PA-220", "WAN: 100.50.25.10"]
+    "shape": "firewall",
+    "name": "Edge Firewall",
+    "ip": "192.168.1.1",
+    "role": "Security",
+    "tags": [
+      "Perimeter",
+      "NAT"
+    ],
+    "notes": [
+      "Palo Alto PA-220",
+      "WAN: 100.50.25.10"
+    ]
   },
   "core-switch-1": {
-   "shape": "switch",
-   "name": "Core Switch 1",
-   "ip": "10.0.0.1",
-   "role": "Core Network",
-   "tags": ["Layer 3", "10Gb"],
-   "notes": ["Primary core switch", "Redundant power", "HSRP Active"]
+    "shape": "switch",
+    "name": "Core Switch 1",
+    "ip": "10.0.0.1",
+    "role": "Core Network",
+    "tags": [
+      "Layer 3",
+      "10Gb"
+    ],
+    "notes": [
+      "Primary core switch",
+      "Redundant power",
+      "HSRP Active"
+    ]
   },
   "core-switch-2": {
-   "shape": "switch",
-   "name": "Core Switch 2",
-   "ip": "10.0.0.2",
-   "role": "Core Network",
-   "tags": ["Layer 3", "10Gb"],
-   "notes": ["Secondary core switch", "HSRP Standby"]
+    "shape": "switch",
+    "name": "Core Switch 2",
+    "ip": "10.0.0.2",
+    "role": "Core Network",
+    "tags": [
+      "Layer 3",
+      "10Gb"
+    ],
+    "notes": [
+      "Secondary core switch",
+      "HSRP Standby"
+    ]
   },
   "dmz-firewall": {
-   "shape": "firewall",
-   "name": "DMZ Firewall",
-   "ip": "10.10.0.1",
-   "role": "Security",
-   "tags": ["DMZ", "IDS/IPS"],
-   "notes": ["DMZ segmentation", "Public services"]
+    "shape": "firewall",
+    "name": "DMZ Firewall",
+    "ip": "10.10.0.1",
+    "role": "Security",
+    "tags": [
+      "DMZ",
+      "IDS/IPS"
+    ],
+    "notes": [
+      "DMZ segmentation",
+      "Public services"
+    ]
   },
   "web-server": {
-   "shape": "server",
-   "name": "Web Server",
-   "ip": "10.10.1.10",
-   "role": "Application",
-   "tags": ["DMZ", "HTTPS"],
-   "notes": ["Corporate website", "Load balanced"]
+    "shape": "server",
+    "name": "Web Server",
+    "ip": "10.10.1.10",
+    "role": "Application",
+    "tags": [
+      "DMZ",
+      "HTTPS"
+    ],
+    "notes": [
+      "Corporate website",
+      "Load balanced"
+    ]
   },
   "mail-server": {
-   "shape": "server",
-   "name": "Mail Server",
-   "ip": "10.10.1.20",
-   "role": "Email",
-   "tags": ["DMZ", "SMTP/IMAP"],
-   "notes": ["Exchange Server 2019"]
+    "shape": "server",
+    "name": "Mail Server",
+    "ip": "10.10.1.20",
+    "role": "Email",
+    "tags": [
+      "DMZ",
+      "SMTP/IMAP"
+    ],
+    "notes": [
+      "Exchange Server 2019"
+    ]
   },
   "dist-switch-1": {
-   "shape": "switch",
-   "name": "Distribution SW 1",
-   "ip": "10.1.0.1",
-   "role": "Distribution",
-   "tags": ["Layer 3", "Aggregation"],
-   "notes": ["Building A distribution"]
+    "shape": "switch",
+    "name": "Distribution SW 1",
+    "ip": "10.1.0.1",
+    "role": "Distribution",
+    "tags": [
+      "Layer 3",
+      "Aggregation"
+    ],
+    "notes": [
+      "Building A distribution"
+    ]
   },
   "dist-switch-2": {
-   "shape": "switch",
-   "name": "Distribution SW 2",
-   "ip": "10.2.0.1",
-   "role": "Distribution",
-   "tags": ["Layer 3", "Aggregation"],
-   "notes": ["Building B distribution"]
+    "shape": "switch",
+    "name": "Distribution SW 2",
+    "ip": "10.2.0.1",
+    "role": "Distribution",
+    "tags": [
+      "Layer 3",
+      "Aggregation"
+    ],
+    "notes": [
+      "Building B distribution"
+    ]
   },
   "access-switch-1": {
-   "shape": "switch",
-   "name": "Access SW 1-1",
-   "ip": "10.1.1.1",
-   "role": "Access Layer",
-   "tags": ["PoE", "48 port"],
-   "notes": ["Floor 1 Building A"]
+    "shape": "switch",
+    "name": "Access SW 1-1",
+    "ip": "10.1.1.1",
+    "role": "Access Layer",
+    "tags": [
+      "PoE",
+      "48 port"
+    ],
+    "notes": [
+      "Floor 1 Building A"
+    ]
   },
   "access-switch-2": {
-   "shape": "switch",
-   "name": "Access SW 1-2",
-   "ip": "10.1.2.1",
-   "role": "Access Layer",
-   "tags": ["PoE", "48-port"],
-   "notes": ["Floor 2 Building A"]
+    "shape": "switch",
+    "name": "Access SW 1-2",
+    "ip": "10.1.2.1",
+    "role": "Access Layer",
+    "tags": [
+      "PoE",
+      "48-port"
+    ],
+    "notes": [
+      "Floor 2 Building A"
+    ]
   },
   "access-switch-3": {
-   "shape": "switch",
-   "name": "Access SW 2-1",
-   "ip": "10.2.1.1",
-   "role": "Access Layer",
-   "tags": ["PoE", "48 port"],
-   "notes": ["Floor 1 Building B"]
+    "shape": "switch",
+    "name": "Access SW 2-1",
+    "ip": "10.2.1.1",
+    "role": "Access Layer",
+    "tags": [
+      "PoE",
+      "48 port"
+    ],
+    "notes": [
+      "Floor 1 Building B"
+    ]
   },
   "domain-controller": {
-   "shape": "server",
-   "name": "Domain Controller",
-   "ip": "10.1.10.10",
-   "role": "Identity",
-   "tags": ["Active Directory", "DNS"],
-   "notes": ["Primary DC", "Windows Server 2022"]
+    "shape": "server",
+    "name": "Domain Controller",
+    "ip": "10.1.10.10",
+    "role": "Identity",
+    "tags": [
+      "Active Directory",
+      "DNS"
+    ],
+    "notes": [
+      "Primary DC",
+      "Windows Server 2022"
+    ]
   },
   "file-server": {
-   "shape": "server",
-   "name": "File Server",
-   "ip": "10.1.10.20",
-   "role": "Storage",
-   "tags": ["SMB", "NFS"],
-   "notes": ["Corporate file shares", "30TB RAID6"]
+    "shape": "server",
+    "name": "File Server",
+    "ip": "10.1.10.20",
+    "role": "Storage",
+    "tags": [
+      "SMB",
+      "NFS"
+    ],
+    "notes": [
+      "Corporate file shares",
+      "30TB RAID6"
+    ]
   },
   "db-server": {
-   "shape": "database",
-   "name": "Database Server",
-   "ip": "10.1.10.30",
-   "role": "Database",
-   "tags": ["SQL Server", "Production"],
-   "notes": ["SQL Server 2022", "Always On AG"]
+    "shape": "database",
+    "name": "Database Server",
+    "ip": "10.1.10.30",
+    "role": "Database",
+    "tags": [
+      "SQL Server",
+      "Production"
+    ],
+    "notes": [
+      "SQL Server 2022",
+      "Always On AG"
+    ]
   },
   "backup-server": {
-   "shape": "server",
-   "name": "Backup Server",
-   "ip": "10.1.10.40",
-   "role": "Backup",
-   "tags": ["Veeam", "Dedupe"],
-   "notes": ["Nightly backups", "60TB capacity"]
+    "shape": "server",
+    "name": "Backup Server",
+    "ip": "10.1.10.40",
+    "role": "Backup",
+    "tags": [
+      "Veeam",
+      "Dedupe"
+    ],
+    "notes": [
+      "Nightly backups",
+      "60TB capacity"
+    ]
   },
   "wifi-controller": {
-   "shape": "router",
-   "name": "WiFi Controller",
-   "ip": "10.0.0.100",
-   "role": "Wireless",
-   "tags": ["UniFi", "Management"],
-   "notes": ["Manages 45 APs"]
+    "shape": "router",
+    "name": "WiFi Controller",
+    "ip": "10.0.0.100",
+    "role": "Wireless",
+    "tags": [
+      "UniFi",
+      "Management"
+    ],
+    "notes": [
+      "Manages 45 APs"
+    ]
   },
   "vpn-gateway": {
-   "shape": "router",
-   "name": "VPN Gateway",
-   "ip": "10.0.0.50",
-   "role": "Remote Access",
-   "tags": ["OpenVPN", "MFA"],
-   "notes": ["Remote worker access"]
+    "shape": "router",
+    "name": "VPN Gateway",
+    "ip": "10.0.0.50",
+    "role": "Remote Access",
+    "tags": [
+      "OpenVPN",
+      "MFA"
+    ],
+    "notes": [
+      "Remote worker access"
+    ]
   }
- },
- "edgeData": {
-  "list": [
-   {"id": "edge-1", "from": "internet", "to": "edge-firewall", "color": "#ef4444", "width": 6, "notes": ["WAN Connection", "1Gbps"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-2", "from": "edge-firewall", "to": "core-switch-1", "color": "#f59e0b", "width": 5, "notes": ["Trunk", "VLAN 1,10,20,30"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-3", "from": "edge-firewall", "to": "core-switch-2", "color": "#f59e0b", "width": 5, "notes": ["Trunk", "VLAN 1,10,20,30"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-4", "from": "core-switch-1", "to": "core-switch-2", "color": "#10b981", "width": 6, "notes": ["Inter-switch link", "20Gb LAG"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-5", "from": "core-switch-1", "to": "dmz-firewall", "color": "#ef4444", "width": 4, "notes": ["DMZ segment", "VLAN 100"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-6", "from": "dmz-firewall", "to": "web-server", "color": "#ef4444", "width": 4, "notes": ["DMZ VLAN"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-7", "from": "dmz-firewall", "to": "mail-server", "color": "#ef4444", "width": 4, "notes": ["DMZ VLAN"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-8", "from": "core-switch-1", "to": "dist-switch-1", "color": "#10b981", "width": 5, "notes": ["10Gb uplink"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-9", "from": "core-switch-2", "to": "dist-switch-1", "color": "#10b981", "width": 5, "notes": ["10Gb uplink"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-10", "from": "core-switch-1", "to": "dist-switch-2", "color": "#10b981", "width": 5, "notes": ["10Gb uplink"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-11", "from": "core-switch-2", "to": "dist-switch-2", "color": "#10b981", "width": 5, "notes": ["10Gb uplink"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-12", "from": "dist-switch-1", "to": "access-switch-1", "color": "#3b82f6", "width": 4, "notes": ["1Gb access"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-13", "from": "dist-switch-1", "to": "access-switch-2", "color": "#3b82f6", "width": 4, "notes": ["1Gb access"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-14", "from": "dist-switch-2", "to": "access-switch-3", "color": "#3b82f6", "width": 4, "notes": ["1Gb access"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-15", "from": "core-switch-1", "to": "domain-controller", "color": "#8b5cf6", "width": 4, "notes": ["Server VLAN 10"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-16", "from": "core-switch-1", "to": "file-server", "color": "#8b5cf6", "width": 4, "notes": ["Server VLAN 10"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-17", "from": "core-switch-1", "to": "db-server", "color": "#8b5cf6", "width": 4, "notes": ["Server VLAN 10"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-18", "from": "core-switch-1", "to": "backup-server", "color": "#8b5cf6", "width": 4, "notes": ["Server VLAN 10"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-19", "from": "core-switch-1", "to": "wifi-controller", "color": "#06b6d4", "width": 4, "notes": ["Management VLAN"], "lineStyle": "solid", "direction": "both"},
-   {"id": "edge-20", "from": "edge-firewall", "to": "vpn-gateway", "color": "#f59e0b", "width": 4, "notes": ["VPN segment"], "lineStyle": "dashed", "direction": "both"}
-  ]
- },
- "edgeLegend": {
-  "#ef4444": "WAN / DMZ",
-  "#f59e0b": "Trunk / Uplink",
-  "#10b981": "Core / Distribution",
-  "#3b82f6": "Access Layer",
-  "#8b5cf6": "Server VLAN",
-  "#06b6d4": "Management"
- },
- "nodePositions": {
-  "internet": {"x": 2000, "y": 200},
-  "edge-firewall": {"x": 2000, "y": 500},
-  "core-switch-1": {"x": 1700, "y": 900},
-  "core-switch-2": {"x": 2300, "y": 900},
-  "dmz-firewall": {"x": 2800, "y": 900},
-  "web-server": {"x": 2800, "y": 1250},
-  "mail-server": {"x": 2800, "y": 1550},
-  "dist-switch-1": {"x": 1200, "y": 1400},
-  "dist-switch-2": {"x": 2500, "y": 1400},
-  "access-switch-1": {"x": 800, "y": 1900},
-  "access-switch-2": {"x": 1200, "y": 1900},
-  "access-switch-3": {"x": 2500, "y": 1900},
-  "domain-controller": {"x": 1100, "y": 900},
-  "file-server": {"x": 600, "y": 900},
-  "db-server": {"x": 600, "y": 1300},
-  "backup-server": {"x": 1100, "y": 1300},
-  "wifi-controller": {"x": 3200, "y": 1400},
-  "vpn-gateway": {"x": 1400, "y": 500}
- },
- "nodeSizes": {},
- "nodeStyles": {},
- "iconCache": {},
- "page": {
-  "title": "Corporate Network",
-  "background": "",
-  "topbarBg": "rgba(9, 12, 20, 0.9)",
-  "topbarBorder": "#1f2533",
-  "panel": "#0b0e13",
-  "panelAlt": "#10141b",
-  "accent": "#4fd1c5",
-  "danger": "#f56565",
-  "textMain": "#e2e8f0",
-  "textSoft": "#94a3b8",
-  "topbarHeight": 100,
-  "sidebarWidth": 435,
-  "mobileFooterHeight": 20,
-  "sidebarCollapsed": false
- },
- "canvas": {
-  "zoom": 1,
-  "panX": 0,
-  "panY": 0
- }
-}
-</script>
+}</script>
+  <script id="topology-state" type="application/json">{
+  "nodeData": {
+    "internet": {
+      "shape": "cloud",
+      "name": "Internet",
+      "ip": "ISP Gateway",
+      "role": "WAN",
+      "tags": [
+        "1Gbps",
+        "Redundant"
+      ],
+      "notes": [
+        "Primary: Fiber",
+        "Backup: Cable"
+      ]
+    },
+    "edge-firewall": {
+      "shape": "firewall",
+      "name": "Edge Firewall",
+      "ip": "192.168.1.1",
+      "role": "Security",
+      "tags": [
+        "Perimeter",
+        "NAT"
+      ],
+      "notes": [
+        "Palo Alto PA-220",
+        "WAN: 100.50.25.10"
+      ]
+    },
+    "core-switch-1": {
+      "shape": "switch",
+      "name": "Core Switch 1",
+      "ip": "10.0.0.1",
+      "role": "Core Network",
+      "tags": [
+        "Layer 3",
+        "10Gb"
+      ],
+      "notes": [
+        "Primary core switch",
+        "Redundant power",
+        "HSRP Active"
+      ]
+    },
+    "core-switch-2": {
+      "shape": "switch",
+      "name": "Core Switch 2",
+      "ip": "10.0.0.2",
+      "role": "Core Network",
+      "tags": [
+        "Layer 3",
+        "10Gb"
+      ],
+      "notes": [
+        "Secondary core switch",
+        "HSRP Standby"
+      ]
+    },
+    "dmz-firewall": {
+      "shape": "firewall",
+      "name": "DMZ Firewall",
+      "ip": "10.10.0.1",
+      "role": "Security",
+      "tags": [
+        "DMZ",
+        "IDS/IPS"
+      ],
+      "notes": [
+        "DMZ segmentation",
+        "Public services"
+      ]
+    },
+    "web-server": {
+      "shape": "server",
+      "name": "Web Server",
+      "ip": "10.10.1.10",
+      "role": "Application",
+      "tags": [
+        "DMZ",
+        "HTTPS"
+      ],
+      "notes": [
+        "Corporate website",
+        "Load balanced"
+      ]
+    },
+    "mail-server": {
+      "shape": "server",
+      "name": "Mail Server",
+      "ip": "10.10.1.20",
+      "role": "Email",
+      "tags": [
+        "DMZ",
+        "SMTP/IMAP"
+      ],
+      "notes": [
+        "Exchange Server 2019"
+      ]
+    },
+    "dist-switch-1": {
+      "shape": "switch",
+      "name": "Distribution SW 1",
+      "ip": "10.1.0.1",
+      "role": "Distribution",
+      "tags": [
+        "Layer 3",
+        "Aggregation"
+      ],
+      "notes": [
+        "Building A distribution"
+      ]
+    },
+    "dist-switch-2": {
+      "shape": "switch",
+      "name": "Distribution SW 2",
+      "ip": "10.2.0.1",
+      "role": "Distribution",
+      "tags": [
+        "Layer 3",
+        "Aggregation"
+      ],
+      "notes": [
+        "Building B distribution"
+      ]
+    },
+    "access-switch-1": {
+      "shape": "switch",
+      "name": "Access SW 1-1",
+      "ip": "10.1.1.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48 port"
+      ],
+      "notes": [
+        "Floor 1 Building A"
+      ]
+    },
+    "access-switch-2": {
+      "shape": "switch",
+      "name": "Access SW 1-2",
+      "ip": "10.1.2.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48-port"
+      ],
+      "notes": [
+        "Floor 2 Building A"
+      ]
+    },
+    "access-switch-3": {
+      "shape": "switch",
+      "name": "Access SW 2-1",
+      "ip": "10.2.1.1",
+      "role": "Access Layer",
+      "tags": [
+        "PoE",
+        "48 port"
+      ],
+      "notes": [
+        "Floor 1 Building B"
+      ]
+    },
+    "domain-controller": {
+      "shape": "server",
+      "name": "Domain Controller",
+      "ip": "10.1.10.10",
+      "role": "Identity",
+      "tags": [
+        "Active Directory",
+        "DNS"
+      ],
+      "notes": [
+        "Primary DC",
+        "Windows Server 2022"
+      ]
+    },
+    "file-server": {
+      "shape": "server",
+      "name": "File Server",
+      "ip": "10.1.10.20",
+      "role": "Storage",
+      "tags": [
+        "SMB",
+        "NFS"
+      ],
+      "notes": [
+        "Corporate file shares",
+        "30TB RAID6"
+      ]
+    },
+    "db-server": {
+      "shape": "database",
+      "name": "Database Server",
+      "ip": "10.1.10.30",
+      "role": "Database",
+      "tags": [
+        "SQL Server",
+        "Production"
+      ],
+      "notes": [
+        "SQL Server 2022",
+        "Always On AG"
+      ]
+    },
+    "backup-server": {
+      "shape": "server",
+      "name": "Backup Server",
+      "ip": "10.1.10.40",
+      "role": "Backup",
+      "tags": [
+        "Veeam",
+        "Dedupe"
+      ],
+      "notes": [
+        "Nightly backups",
+        "60TB capacity"
+      ]
+    },
+    "wifi-controller": {
+      "shape": "router",
+      "name": "WiFi Controller",
+      "ip": "10.0.0.100",
+      "role": "Wireless",
+      "tags": [
+        "UniFi",
+        "Management"
+      ],
+      "notes": [
+        "Manages 45 APs"
+      ]
+    },
+    "vpn-gateway": {
+      "shape": "router",
+      "name": "VPN Gateway",
+      "ip": "10.0.0.50",
+      "role": "Remote Access",
+      "tags": [
+        "OpenVPN",
+        "MFA"
+      ],
+      "notes": [
+        "Remote worker access"
+      ]
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "edge-1",
+        "from": "internet",
+        "to": "edge-firewall",
+        "color": "#ef4444",
+        "width": 6,
+        "notes": [
+          "WAN Connection",
+          "1Gbps"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-2",
+        "from": "edge-firewall",
+        "to": "core-switch-1",
+        "color": "#f59e0b",
+        "width": 5,
+        "notes": [
+          "Trunk",
+          "VLAN 1,10,20,30"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-3",
+        "from": "edge-firewall",
+        "to": "core-switch-2",
+        "color": "#f59e0b",
+        "width": 5,
+        "notes": [
+          "Trunk",
+          "VLAN 1,10,20,30"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-4",
+        "from": "core-switch-1",
+        "to": "core-switch-2",
+        "color": "#10b981",
+        "width": 6,
+        "notes": [
+          "Inter-switch link",
+          "20Gb LAG"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-5",
+        "from": "core-switch-1",
+        "to": "dmz-firewall",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ segment",
+          "VLAN 100"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-6",
+        "from": "dmz-firewall",
+        "to": "web-server",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-7",
+        "from": "dmz-firewall",
+        "to": "mail-server",
+        "color": "#ef4444",
+        "width": 4,
+        "notes": [
+          "DMZ VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-8",
+        "from": "core-switch-1",
+        "to": "dist-switch-1",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-9",
+        "from": "core-switch-2",
+        "to": "dist-switch-1",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-10",
+        "from": "core-switch-1",
+        "to": "dist-switch-2",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-11",
+        "from": "core-switch-2",
+        "to": "dist-switch-2",
+        "color": "#10b981",
+        "width": 5,
+        "notes": [
+          "10Gb uplink"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-12",
+        "from": "dist-switch-1",
+        "to": "access-switch-1",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-13",
+        "from": "dist-switch-1",
+        "to": "access-switch-2",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-14",
+        "from": "dist-switch-2",
+        "to": "access-switch-3",
+        "color": "#3b82f6",
+        "width": 4,
+        "notes": [
+          "1Gb access"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-15",
+        "from": "core-switch-1",
+        "to": "domain-controller",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-16",
+        "from": "core-switch-1",
+        "to": "file-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-17",
+        "from": "core-switch-1",
+        "to": "db-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-18",
+        "from": "core-switch-1",
+        "to": "backup-server",
+        "color": "#8b5cf6",
+        "width": 4,
+        "notes": [
+          "Server VLAN 10"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-19",
+        "from": "core-switch-1",
+        "to": "wifi-controller",
+        "color": "#06b6d4",
+        "width": 4,
+        "notes": [
+          "Management VLAN"
+        ],
+        "lineStyle": "solid",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-20",
+        "from": "edge-firewall",
+        "to": "vpn-gateway",
+        "color": "#f59e0b",
+        "width": 4,
+        "notes": [
+          "VPN segment"
+        ],
+        "lineStyle": "dashed",
+        "direction": "both",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "edgeLegend": {
+    "#ef4444": "WAN / DMZ",
+    "#f59e0b": "Trunk / Uplink",
+    "#10b981": "Core / Distribution",
+    "#3b82f6": "Access Layer",
+    "#8b5cf6": "Server VLAN",
+    "#06b6d4": "Management"
+  },
+  "nodePositions": {
+    "internet": {
+      "x": 2000,
+      "y": 200
+    },
+    "edge-firewall": {
+      "x": 2000,
+      "y": 500
+    },
+    "core-switch-1": {
+      "x": 1700,
+      "y": 900
+    },
+    "core-switch-2": {
+      "x": 2300,
+      "y": 900
+    },
+    "dmz-firewall": {
+      "x": 2800,
+      "y": 900
+    },
+    "web-server": {
+      "x": 2800,
+      "y": 1250
+    },
+    "mail-server": {
+      "x": 2800,
+      "y": 1550
+    },
+    "dist-switch-1": {
+      "x": 1200,
+      "y": 1400
+    },
+    "dist-switch-2": {
+      "x": 2500,
+      "y": 1400
+    },
+    "access-switch-1": {
+      "x": 800,
+      "y": 1900
+    },
+    "access-switch-2": {
+      "x": 1200,
+      "y": 1900
+    },
+    "access-switch-3": {
+      "x": 2500,
+      "y": 1900
+    },
+    "domain-controller": {
+      "x": 1100,
+      "y": 900
+    },
+    "file-server": {
+      "x": 600,
+      "y": 900
+    },
+    "db-server": {
+      "x": 600,
+      "y": 1300
+    },
+    "backup-server": {
+      "x": 1100,
+      "y": 1300
+    },
+    "wifi-controller": {
+      "x": 3200,
+      "y": 1400
+    },
+    "vpn-gateway": {
+      "x": 1400,
+      "y": 500
+    }
+  },
+  "nodeSizes": {},
+  "nodeStyles": {},
+  "iconCache": {},
+  "page": {
+    "title": "Corporate Network",
+    "background": "",
+    "topbarBg": "rgba(9, 12, 20, 0.9)",
+    "topbarBorder": "#1f2533",
+    "panel": "#0b0e13",
+    "panelAlt": "#10141b",
+    "accent": "#4fd1c5",
+    "danger": "#f56565",
+    "textMain": "#e2e8f0",
+    "textSoft": "#94a3b8",
+    "topbarHeight": 100,
+    "sidebarWidth": 435,
+    "mobileFooterHeight": 20,
+    "sidebarCollapsed": false
+  },
+  "canvas": {
+    "zoom": 1.4285714285714286,
+    "panX": 500,
+    "panY": 0
+  }
+}</script>
   <script>
    const IconLibrary = {
     libraries: {
@@ -3840,6 +4353,16 @@
       else if (window.innerWidth <= 1024) r = 70;
      }
      const styles = resolveStylesForNode(id);
+     
+     // Create invisible larger hit area for easier dragging (50% larger than visual size)
+     const ns = "http://www.w3.org/2000/svg";
+     const hitArea = document.createElementNS(ns, "circle");
+     hitArea.setAttribute("r", r * 1.5);
+     hitArea.style.fill = "transparent";
+     hitArea.style.stroke = "none";
+     hitArea.style.cursor = "grab";
+     hitArea.classList.add("node-hit-area");
+     
      const shapeEl = createNodeShape(id, r);
      const titleOffsetX = styles.titleOffsetX || 0;
      const titleOffsetY = styles.titleOffsetY || 0;
@@ -3855,7 +4378,7 @@
      if (styles.titleColor) label.style.fill = styles.titleColor;
      if (styles.titleFont) label.style.fontFamily = styles.titleFont;
      label.style.cursor = "pointer";
-     label.addEventListener("click", (e) => {
+     label.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeName(id);
      });
@@ -3869,11 +4392,11 @@
      if (styles.subColor) sub.style.fill = styles.subColor;
      if (styles.subFont) sub.style.fontFamily = styles.subFont;
      sub.style.cursor = "pointer";
-     sub.addEventListener("click", (e) => {
+     sub.addEventListener("dblclick", (e) => {
       e.stopPropagation();
       editNodeIp(id);
      });
-     g.append(shapeEl, label, sub);
+     g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
      let startX, startY;
      g.addEventListener("mousedown", (e) => {
@@ -3887,6 +4410,7 @@
       startX = svgP.x - pos.x;
       startY = svgP.y - pos.y;
       g.style.cursor = "grabbing";
+      hitArea.style.cursor = "grabbing";
       e.stopPropagation();
      });
      const handleMouseMove = (e) => {
@@ -3961,6 +4485,7 @@
       if (isDragging) {
        isDragging = false;
        g.style.cursor = "grab";
+       hitArea.style.cursor = "grab";
        savedPositions[id] = {
         x: pos.x,
         y: pos.y
@@ -5870,5 +6395,5 @@
     URL.revokeObjectURL(url);
    }
   </script>
- </body>
-</html>
+ 
+</body></html>
