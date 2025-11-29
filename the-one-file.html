@@ -1864,6 +1864,13 @@
    let drawToolbarMiniBtn = null;
    let topologyToolbarMiniBtn = null;
 
+   function isMobileDevice() {
+    const touch = matchMedia("(pointer: coarse)").matches;
+    const smallViewport = matchMedia("(max-width: 850px)").matches;
+    const portrait = matchMedia("(orientation: portrait)").matches;
+    return touch && (smallViewport || portrait);
+   }
+
    function ensureLegendMiniButton() {
     if (legendMiniBtn) return legendMiniBtn;
     const panel = document.querySelector(".topology-panel");
@@ -1997,7 +2004,6 @@
     const wrapper = document.getElementById("minimap-zoom-wrapper");
     const mini = ensureMinimapMiniButton();
     if (!wrapper || !mini) return;
-    
     if (minimapCollapsed) {
      wrapper.style.display = "none";
      mini.style.display = "inline-flex";
@@ -2011,7 +2017,6 @@
     const toolbar = document.getElementById("draw-toolbar");
     const mini = ensureDrawToolbarMiniButton();
     if (!toolbar || !mini) return;
-    
     if (drawToolbarCollapsed) {
      toolbar.style.setProperty('display', 'none', 'important');
      mini.style.display = "inline-flex";
@@ -2025,20 +2030,14 @@
     const toolbar = document.getElementById("topology-toolbar");
     const mini = ensureTopologyToolbarMiniButton();
     if (!toolbar || !mini) return;
-    
-    // Check if we have a selected node (which means toolbar should be available)
     const hasSelectedNode = currentNodeId !== null;
-    
     if (!hasSelectedNode) {
-     // No node selected - hide both
      toolbar.style.setProperty('display', 'none', 'important');
      mini.style.display = "none";
     } else if (topologyToolbarCollapsed) {
-     // Node selected but toolbar collapsed - show mini button
      toolbar.style.setProperty('display', 'none', 'important');
      mini.style.display = "inline-flex";
     } else {
-     // Node selected and toolbar not collapsed - show toolbar
      toolbar.style.setProperty('display', 'flex', 'important');
      mini.style.display = "none";
     }
@@ -2221,8 +2220,6 @@
       menu.classList.remove("open");
      }
     });
-    
-    // Close button event listeners with touch support
     const minimapCloseBtn = document.getElementById("minimap-close-btn");
     if (minimapCloseBtn) {
      const handleMinimapClose = (e) => {
@@ -2234,7 +2231,6 @@
      minimapCloseBtn.addEventListener("click", handleMinimapClose);
      minimapCloseBtn.addEventListener("touchend", handleMinimapClose);
     }
-    
     const drawToolbarCloseBtn = document.getElementById("draw-toolbar-close-btn");
     if (drawToolbarCloseBtn) {
      const handleDrawClose = (e) => {
@@ -2246,7 +2242,6 @@
      drawToolbarCloseBtn.addEventListener("click", handleDrawClose);
      drawToolbarCloseBtn.addEventListener("touchend", handleDrawClose);
     }
-    
     const topologyToolbarCloseBtn = document.getElementById("topology-toolbar-close-btn");
     if (topologyToolbarCloseBtn) {
      const handleTopologyClose = (e) => {
@@ -2256,11 +2251,11 @@
       updateTopologyToolbarVisibility();
      };
      topologyToolbarCloseBtn.addEventListener("click", handleTopologyClose);
-     topologyToolbarCloseBtn.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+     topologyToolbarCloseBtn.addEventListener("touchstart", (e) => e.preventDefault(), {
+      passive: false
+     });
      topologyToolbarCloseBtn.addEventListener("touchend", handleTopologyClose);
     }
-    
-    // Initialize visibility states
     updateMinimapVisibility();
     updateDrawToolbarVisibility();
     updateTopologyToolbarVisibility();
@@ -2880,28 +2875,89 @@
      const swatch = document.createElement("span");
      swatch.className = "legend-swatch";
      swatch.style.backgroundColor = color;
+     swatch.style.cursor = "pointer";
+     swatch.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const edgeWithColor = EDGE_DATA.list.find(edge => edge.color === color);
+      if (edgeWithColor) {
+       selectTheConnection(edgeWithColor.id);
+      }
+     });
+     let swatchTouchStart = null;
+     let swatchTouchMoved = false;
+     swatch.addEventListener("touchstart", (e) => {
+      swatchTouchStart = Date.now();
+      swatchTouchMoved = false;
+     }, {
+      passive: false
+     });
+     swatch.addEventListener("touchmove", (e) => {
+      swatchTouchMoved = true;
+     }, {
+      passive: false
+     });
+     swatch.addEventListener("touchend", (e) => {
+      if (swatchTouchStart && !swatchTouchMoved && Date.now() - swatchTouchStart < 400) {
+       e.stopPropagation();
+       e.preventDefault();
+       const edgeWithColor = EDGE_DATA.list.find(edge => edge.color === color);
+       if (edgeWithColor) {
+        selectTheConnection(edgeWithColor.id);
+       }
+      }
+      swatchTouchStart = null;
+      swatchTouchMoved = false;
+     }, {
+      passive: false
+     });
      const label = document.createElement("span");
      label.className = "legend-label";
      label.textContent = EDGE_LEGEND[color];
-     label.contentEditable = true;
-     label.addEventListener("mousedown", (e) => e.stopPropagation());
-     label.addEventListener("click", (e) => e.stopPropagation());
-     label.addEventListener("touchstart", (e) => e.stopPropagation());
-     label.addEventListener("focus", () => {
-      label.classList.add("editing");
-     });
-     label.addEventListener("blur", () => {
-      label.classList.remove("editing");
-      const text = label.textContent.trim() || "you can edit me too";
-      EDGE_LEGEND[color] = text;
-      saveEdgeLegend();
-     });
-     label.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-       e.preventDefault();
-       label.blur();
-      }
-     });
+     if (isMobileDevice()) {
+      label.style.cursor = "pointer";
+      let labelTapStart = null;
+      let labelTapMoved = false;
+      label.addEventListener("touchstart", (e) => {
+       labelTapStart = Date.now();
+       labelTapMoved = false;
+       e.stopPropagation();
+      });
+      label.addEventListener("touchmove", (e) => {
+       labelTapMoved = true;
+      });
+      label.addEventListener("touchend", (e) => {
+       if (labelTapStart && !labelTapMoved && Date.now() - labelTapStart < 400) {
+        e.preventDefault();
+        e.stopPropagation();
+        const currentText = label.textContent;
+        const newText = prompt("Edit legend label:", currentText);
+        if (newText !== null && newText.trim()) {
+         label.textContent = newText.trim();
+         EDGE_LEGEND[color] = newText.trim();
+         saveEdgeLegend();
+        }
+       }
+       labelTapStart = null;
+       labelTapMoved = false;
+      });
+     } else {
+      label.contentEditable = true;
+      label.addEventListener("focus", () => {
+       label.classList.add("editing");
+      });
+      label.addEventListener("blur", () => {
+       label.classList.remove("editing");
+       const text = label.textContent.trim() || "you can edit me too";
+       EDGE_LEGEND[color] = text;
+       saveEdgeLegend();
+      });
+      label.addEventListener("keydown", (e) => {
+       if (e.key === "Enter") {
+        e.preventDefault();
+        label.blur();
+       }
+      });
+     }
      item.append(swatch, label);
      container.appendChild(item);
     });
@@ -3041,11 +3097,47 @@
       }
       const ptsStr = edge.points.map((p) => `${p.x},${p.y}`).join(" ");
       poly.setAttribute("points", ptsStr);
+      const polyHit = document.createElementNS(ns, "polyline");
+      polyHit.setAttribute("points", ptsStr);
+      polyHit.style.fill = "none";
+      polyHit.style.stroke = "transparent";
+      polyHit.style.strokeWidth = "20";
+      polyHit.style.cursor = "pointer";
+      polyHit.dataset.edgeId = edge.id;
+      polyHit.addEventListener("click", (e) => {
+       e.stopPropagation();
+       selectTheConnection(edge.id);
+      });
+      let edgeTouchStart = null;
+      let edgeTouchMoved = false;
+      polyHit.addEventListener("touchstart", (e) => {
+       edgeTouchStart = Date.now();
+       edgeTouchMoved = false;
+      }, {
+       passive: false
+      });
+      polyHit.addEventListener("touchmove", (e) => {
+       edgeTouchMoved = true;
+      }, {
+       passive: false
+      });
+      polyHit.addEventListener("touchend", (e) => {
+       if (edgeTouchStart && !edgeTouchMoved && Date.now() - edgeTouchStart < 400) {
+        e.stopPropagation();
+        e.preventDefault();
+        selectTheConnection(edge.id);
+       }
+       edgeTouchStart = null;
+       edgeTouchMoved = false;
+      }, {
+       passive: false
+      });
       poly.addEventListener("click", (e) => {
        e.stopPropagation();
        selectTheConnection(edge.id);
       });
       svg.appendChild(poly);
+      svg.appendChild(polyHit);
       return;
      }
      const p1 = positions[edge.from];
@@ -3076,11 +3168,47 @@
      path.dataset.to = edge.to;
      path.style.stroke = edge.color;
      path.style.strokeWidth = edge.width;
+     const pathHit = document.createElementNS(ns, "path");
+     pathHit.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+     pathHit.setAttribute("fill", "none");
+     pathHit.style.stroke = "transparent";
+     pathHit.style.strokeWidth = "20";
+     pathHit.style.cursor = "pointer";
+     pathHit.dataset.edgeId = edge.id;
+     pathHit.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectTheConnection(edge.id);
+     });
+     let pathTouchStart = null;
+     let pathTouchMoved = false;
+     pathHit.addEventListener("touchstart", (e) => {
+      pathTouchStart = Date.now();
+      pathTouchMoved = false;
+     }, {
+      passive: false
+     });
+     pathHit.addEventListener("touchmove", (e) => {
+      pathTouchMoved = true;
+     }, {
+      passive: false
+     });
+     pathHit.addEventListener("touchend", (e) => {
+      if (pathTouchStart && !pathTouchMoved && Date.now() - pathTouchStart < 400) {
+       e.stopPropagation();
+       e.preventDefault();
+       selectTheConnection(edge.id);
+      }
+      pathTouchStart = null;
+      pathTouchMoved = false;
+     }, {
+      passive: false
+     });
      path.addEventListener("click", (e) => {
       e.stopPropagation();
       selectTheConnection(edge.id);
      });
      svg.appendChild(path);
+     svg.appendChild(pathHit);
     });
     Object.entries(positions).forEach(([id, pos]) => {
      const g = document.createElementNS("http://www.w3.org/2000/svg", "g", );
@@ -3094,8 +3222,6 @@
       else if (window.innerWidth <= 1024) r = 70;
      }
      const styles = resolveStylesForNode(id);
-     
-     // Create invisible larger hit area for easier dragging (50% larger than visual size)
      const ns = "http://www.w3.org/2000/svg";
      const hitArea = document.createElementNS(ns, "circle");
      hitArea.setAttribute("r", r * 1.5);
@@ -3103,7 +3229,6 @@
      hitArea.style.stroke = "none";
      hitArea.style.cursor = "grab";
      hitArea.classList.add("node-hit-area");
-     
      const shapeEl = createNodeShape(id, r);
      const titleOffsetX = styles.titleOffsetX || 0;
      const titleOffsetY = styles.titleOffsetY || 0;
@@ -3118,27 +3243,7 @@
      label.textContent = NODE_DATA[id].name;
      if (styles.titleColor) label.style.fill = styles.titleColor;
      if (styles.titleFont) label.style.fontFamily = styles.titleFont;
-     label.style.cursor = "pointer";
-     label.addEventListener("dblclick", (e) => {
-      e.stopPropagation();
-      editNodeName(id);
-     });
-     
-     // Touch support for mobile editing
-     let labelTouchStart = null;
-     label.addEventListener("touchstart", (e) => {
-      labelTouchStart = Date.now();
-     }, { passive: true });
-     
-     label.addEventListener("touchend", (e) => {
-      if (labelTouchStart && Date.now() - labelTouchStart < 200) {
-       // Quick tap detected (less than 200ms)
-       e.stopPropagation();
-       e.preventDefault();
-       editNodeName(id);
-      }
-      labelTouchStart = null;
-     });
+     label.style.pointerEvents = "none";
      const sub = document.createElementNS("http://www.w3.org/2000/svg", "text", );
      sub.classList.add("node-sub");
      sub.setAttribute("x", subOffsetX);
@@ -3148,27 +3253,7 @@
      sub.textContent = NODE_DATA[id].ip;
      if (styles.subColor) sub.style.fill = styles.subColor;
      if (styles.subFont) sub.style.fontFamily = styles.subFont;
-     sub.style.cursor = "pointer";
-     sub.addEventListener("dblclick", (e) => {
-      e.stopPropagation();
-      editNodeIp(id);
-     });
-     
-     // Touch support for mobile editing
-     let subTouchStart = null;
-     sub.addEventListener("touchstart", (e) => {
-      subTouchStart = Date.now();
-     }, { passive: true });
-     
-     sub.addEventListener("touchend", (e) => {
-      if (subTouchStart && Date.now() - subTouchStart < 200) {
-       // Quick tap detected (less than 200ms)
-       e.stopPropagation();
-       e.preventDefault();
-       editNodeIp(id);
-      }
-      subTouchStart = null;
-     });
+     sub.style.pointerEvents = "none";
      g.append(hitArea, shapeEl, label, sub);
      let isDragging = false;
      let startX, startY;
@@ -3267,24 +3352,30 @@
      };
      document.addEventListener("mousemove", handleMouseMove);
      document.addEventListener("mouseup", handleMouseUp);
+     let touchStartTime = 0;
+     let touchStartX = 0;
+     let touchStartY = 0;
+     let touchMoved = false;
      g.addEventListener("touchstart",
       (e) => {
        e.preventDefault();
-       isDragging = true;
+       touchStartTime = Date.now();
+       touchMoved = false;
        const svgEl = document.getElementById("map");
        const pt = svgEl.createSVGPoint();
        const touch = e.touches[0];
        pt.x = touch.clientX;
        pt.y = touch.clientY;
        const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+       touchStartX = svgP.x;
+       touchStartY = svgP.y;
        startX = svgP.x - pos.x;
        startY = svgP.y - pos.y;
        e.stopPropagation();
       }, {
        passive: false
       }, );
-     const handleTouchMove = (e) => {
-      if (!isDragging) return;
+     g.addEventListener("touchmove", (e) => {
       e.preventDefault();
       const svgEl = document.getElementById("map");
       const pt = svgEl.createSVGPoint();
@@ -3292,6 +3383,13 @@
       pt.x = touch.clientX;
       pt.y = touch.clientY;
       const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+      const dx = Math.abs(svgP.x - touchStartX);
+      const dy = Math.abs(svgP.y - touchStartY);
+      if (dx > 10 || dy > 10) {
+       touchMoved = true;
+       isDragging = true;
+      }
+      if (!isDragging) return;
       let newX = svgP.x - startX;
       let newY = svgP.y - startY;
       const nodeSize = savedSizes[id] || 55;
@@ -3351,8 +3449,14 @@
         }
        }
       });
-     };
-     const handleTouchEnd = () => {
+     }, {
+      passive: false
+     });
+     g.addEventListener("touchend", (e) => {
+      const touchDuration = Date.now() - touchStartTime;
+      if (!touchMoved && touchDuration < 400) {
+       claimTheImmortal(id);
+      }
       if (isDragging) {
        isDragging = false;
        savedPositions[id] = {
@@ -3360,11 +3464,8 @@
         y: pos.y
        };
       }
-     };
-     document.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
+      touchMoved = false;
      });
-     document.addEventListener("touchend", handleTouchEnd);
      g.style.cursor = "grab";
      g.addEventListener("click", (e) => {
       if (!isDragging) {
@@ -4681,7 +4782,7 @@
      body.appendChild(stateScript);
     }
     stateScript.textContent = JSON.stringify(captureTheQuickening(), null, 2, );
-    return "<!DOCTYPE html>\n" + clone.outerHTML;
+    return "<!DOCTYPE html> \n " + clone.outerHTML;
    }
    async function becomeImmortal() {
     const encryptEnabled = document.getElementById("encrypt-toggle").checked;
@@ -4722,7 +4823,7 @@
      body.appendChild(stateScript);
     }
     stateScript.textContent = stateData;
-    const html = "<!DOCTYPE html>\n" + clone.outerHTML;
+    const html = "<!DOCTYPE html> \n " + clone.outerHTML;
     const blob = new Blob([html], {
      type: "text/html"
     });
