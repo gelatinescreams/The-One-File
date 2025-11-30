@@ -91,9 +91,9 @@ Instead of building another hosted application, I built a file.
 
 ### Nodes
 - Multiple shapes for common devices including servers, routers, switches, firewalls, and clouds  
-- *Icon shapes from MDI, Simple Icons, and Selfh.st avaialble in the theonefile-networkening.html version*
+- *Icon shapes from MDI, Simple Icons, and Selfh.st available in the theonefile-networkening.html version*
 - Editable name, IP, role, tags, and notes
-- *Editable icon shapes from MDI, Simple Icons, and Selfh.st avaialble in the theonefile-networkening.html version*
+- *Editable icon shapes from MDI, Simple Icons, and Selfh.st available in the theonefile-networkening.html version*
 - Resizable with full styling controls  
 - Custom fonts, colors, and text offsets  
 - Per breakpoint styling for desktop, tablet, mobile, and fold layouts  
