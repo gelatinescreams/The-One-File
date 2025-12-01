@@ -9,7 +9,7 @@ In the end there can only be "The ONE File". A portable and completely self cont
 A fully self contained topology builder that runs anywhere as a single standalone HTML file and the core of theonefile-networkening.html
 
 - **theonefile-networkening.html** [Download theonefile-networkening.html](https://github.com/user-attachments/files/23759413/theonefile-networkening.html)
-  Add live status/ping per node and adds icon libraries from MDI, Simple Icons, Selfh.st. It functions as a bolt-on layer while keeping the core workflow unchanged.
+  Which adds online features like live status/ping per node and icons from awesome libraries from MDI, Simple Icons, Selfh.st. It functions as a bolt-on layer while keeping the core workflow unchanged. Still one file!
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
