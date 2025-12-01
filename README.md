@@ -14,7 +14,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
 
-## Version 3.0 - 12/1/25
+## Version 3.1 - 12/1/25
+- NEW 3.1 Desktop and mobile view fixes. *thank you discord testers*
 - NEW 3.0 Total mobile rewrite for core the-one-file.html
 - NEW 3.0 Total css rewrite for core the-one-file.html
 - NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html

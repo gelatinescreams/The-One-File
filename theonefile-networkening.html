@@ -841,6 +841,7 @@
       justify-content: center;
       align-items: center;
       overflow: auto;
+      padding-top: var(--topbar-height, 52px);
       }
       .modal.active {
       display: flex;
@@ -852,6 +853,8 @@
       border: 1px solid var(--edge-main);
       min-width: 300px;
       max-width: 90%;
+      max-height: calc(100vh - var(--topbar-height, 52px) - 40px);
+      overflow-y: auto;
       }
       .modal-content h3 {
       margin: 0 0 15px 0;
@@ -1226,7 +1229,6 @@
       }
       .modal-content {
       background: var(--panel-alt);
-      padding-top: 150px;
       }
       }
     </style>
@@ -2036,12 +2038,12 @@
               <input type="range" id="topbar-height" min="40" max="100" value="52" style="flex: 1">
               <span id="topbar-height-val" style="min-width: 35px; text-align: right">100px</span>
             </div>
-            <div class="style-row">
+            <div class="style-row" id="sidebar-width-row">
               <label>Sidebar Width</label>
               <input type="range" id="sidebar-width" min="200" max="600" value="350" style="flex: 1">
               <span id="sidebar-width-val" style="min-width: 45px; text-align: right">435px</span>
             </div>
-            <div class="style-row">
+            <div class="style-row" id="mobile-footer-row">
               <label>Mobile Footer Height</label>
               <input type="range" id="mobile-footer-height" min="20" max="70" value="40" style="flex: 1">
               <span id="mobile-footer-height-val" style="min-width: 45px; text-align: right">20%</span>
@@ -3049,6 +3051,19 @@
        const titleEl = document.getElementById("page-title");
        if (titleEl) {
         titleEl.textContent = PAGE_STATE.title || DEFAULT_PAGE_STATE.title;
+       }
+       
+       const sidebarWidthRow = document.getElementById("sidebar-width-row");
+       const mobileFooterRow = document.getElementById("mobile-footer-row");
+       const isMobile = isMobileDevice();
+       if (sidebarWidthRow) {
+        sidebarWidthRow.style.display = isMobile ? "none" : "flex";
+       }
+       if (mobileFooterRow) {
+        mobileFooterRow.style.display = isMobile ? "flex" : "none";
+       }
+       if (sidebarToggle) {
+        sidebarToggle.style.display = isMobile ? "none" : "flex";
        }
       }
       (async function awakeTheImmortal() {
@@ -4375,6 +4390,20 @@
        function claimTheImmortal(id) {
         currentNodeId = id;
         currentEdgeId = null;
+        
+        if (isMobileDevice()) {
+         const currentHeight = PAGE_STATE.mobileFooterHeight || 40;
+         if (currentHeight <= 20) {
+          PAGE_STATE.mobileFooterHeight = 50;
+          const root = document.documentElement;
+          root.style.setProperty("--mobile-footer-height", "50vh");
+          const mobileFooterHeightInput = document.getElementById("mobile-footer-height");
+          const mobileFooterHeightVal = document.getElementById("mobile-footer-height-val");
+          if (mobileFooterHeightInput) mobileFooterHeightInput.value = 50;
+          if (mobileFooterHeightVal) mobileFooterHeightVal.textContent = "50%";
+         }
+        }
+        
         const data = NODE_DATA[id];
         document.querySelectorAll(".node-group").forEach((n) => {
          n.classList.toggle("active", n.dataset.nodeId === id);
@@ -4607,6 +4636,20 @@
       
        function selectTheConnection(id) {
         currentEdgeId = id;
+        
+        if (isMobileDevice()) {
+         const currentHeight = PAGE_STATE.mobileFooterHeight || 40;
+         if (currentHeight <= 20) {
+          PAGE_STATE.mobileFooterHeight = 50;
+          const root = document.documentElement;
+          root.style.setProperty("--mobile-footer-height", "50vh");
+          const mobileFooterHeightInput = document.getElementById("mobile-footer-height");
+          const mobileFooterHeightVal = document.getElementById("mobile-footer-height-val");
+          if (mobileFooterHeightInput) mobileFooterHeightInput.value = 50;
+          if (mobileFooterHeightVal) mobileFooterHeightVal.textContent = "50%";
+         }
+        }
+        
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("edge-panel").style.display = "block";
         document.getElementById("topology-toolbar").style.display = "none";

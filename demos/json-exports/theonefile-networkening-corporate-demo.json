@@ -3,7 +3,7 @@
     "internet": {
       "shape": "cloud",
       "name": "Internet",
-      "ip": "ISP Gateway",
+      "ip": "google.com",
       "role": "WAN",
       "tags": [
         "1Gbps",
@@ -12,7 +12,15 @@
       "notes": [
         "Primary: Fiber",
         "Backup: Cable"
-      ]
+      ],
+      "ping": {
+        "enabled": true,
+        "protocol": "custom",
+        "customUrl": "https://google.com",
+        "timeout": 3000,
+        "status": "online",
+        "lastCheck": "2025-12-01T22:23:03.139Z"
+      }
     },
     "edge-firewall": {
       "shape": "firewall",
@@ -545,8 +553,8 @@
   },
   "nodePositions": {
     "internet": {
-      "x": 2000,
-      "y": 200
+      "x": 2061.6986083984375,
+      "y": 247
     },
     "edge-firewall": {
       "x": 2000,
@@ -617,8 +625,17 @@
       "y": 500
     }
   },
-  "nodeSizes": {},
-  "nodeStyles": {},
+  "nodeSizes": {
+    "internet": 147
+  },
+  "nodeStyles": {
+    "internet": {
+      "all": {
+        "pingOffsetY": -70,
+        "pingOffsetX": -41
+      }
+    }
+  },
   "iconCache": {},
   "page": {
     "title": "Corporate Network",
@@ -634,11 +651,15 @@
     "topbarHeight": 100,
     "sidebarWidth": 435,
     "mobileFooterHeight": 20,
-    "sidebarCollapsed": false
+    "sidebarCollapsed": false,
+    "autoPingEnabled": true,
+    "autoPingInterval": 30
   },
+  "autoPingEnabled": true,
+  "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.4285714285714286,
-    "panX": 500,
-    "panY": 0
+    "zoom": 1.8449542414285727,
+    "panX": 899.3140601482708,
+    "panY": -168.61201570259038
   }
 }
