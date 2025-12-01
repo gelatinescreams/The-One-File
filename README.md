@@ -19,10 +19,12 @@ A fully self contained topology builder that runs anywhere as a single standalon
 - NEW 3.0 Total mobile rewrite for core the-one-file.html
 - NEW 3.0 Total css rewrite for core the-one-file.html
 - NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html
-- [Click here for a full online demo of the the-one-file.html-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
-- [Click here for a full online demo of the the-one-file.html-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
-- [Click here for a full online demo of the theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
-- [Click here for a full online demo of the theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
+- Online Demos:
+- [the-one-file.html-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
+- [the-one-file.html-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
+#
+- [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
+- [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
 - NEW 2.8 : Icon SEARCH with live preview
 - Seperate online features version to include icons - OPTIONAL
 - Use theonefile-networkening.html for this version
