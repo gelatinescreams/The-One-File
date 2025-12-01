@@ -14,9 +14,13 @@ A fully self contained topology builder that runs anywhere as a single standalon
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
 
-## Version 2.8 - 11/29/25 The One File: The Networkening update!
-- Totally collapsible mobile interface
-- Mobile core added for future features
+## Version 3.0 - 12/1/25
+- NEW 3.0 Total mobile rewrite for core the-one-file.html
+- NEW 3.0 Total css rewrite for core the-one-file.html
+- NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html
+- Click here for a full online demo of the theonefile-networkening.html
+- [Click here for a full online demo of the theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
+- [Click here for a full online demo of the theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
 - NEW 2.8 : Icon SEARCH with live preview
 - Seperate online features version to include icons - OPTIONAL
 - Use theonefile-networkening.html for this version
