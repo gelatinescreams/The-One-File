@@ -9,7 +9,7 @@ In the end there can only be "The ONE File". A portable and completely self cont
 A fully self contained topology builder that runs anywhere as a single standalone HTML file and the core of theonefile-networkening.html
 
 - **theonefile-networkening.html**
-  Adds online features like live status/ping per node and icons from awesome libraries such as MDI, Simple Icons, Selfh.st. It functions as a bolt-on layer while keeping the core workflow unchanged. Still one file!
+  Adds online features like live status/ping per node and icons from awesome libraries such as MDI, Simple Icons, Selfh.st. It functions as a bolt on layer while keeping the core workflow unchanged. Still one file!
 
 ![The One File](assets/corporate.png) ![The One File](assets/homelab.png) ![The One File](assets/mobilepreviews.jpg)
 
@@ -18,7 +18,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 - NEW 3.5 *Another major realease. Thank you to Discord testers!!*
 - NEW 3.5 Add Text Labels Anywhere** Click the "T" button to place custom text annotations anywhere on your canvas with full styling control
 - NEW 3.5 Draw Rectangles/Boxes** Create visual boundaries, zones, or highlighted areas with filled or outlined rectangles in any color
-- NEW 3.5 Bulk Operations** Select multiple nodes at once with right click (or double-tap on mobile) and perform batch operations:
+- NEW 3.5 Bulk Operations** Select multiple nodes at once with right click (or double tap on mobile) and perform batch operations:
   - Align Left, Right, Top, or Bottom
   - Distribute Horizontally or Vertically
   - Clone all selected nodes
@@ -32,23 +32,23 @@ A fully self contained topology builder that runs anywhere as a single standalon
   - `Ctrl/Cmd + Minus` Zoom out
   - `Ctrl/Cmd + 0` Reset view
   - `Space + Drag` Pan canvas
-- NEW 3.5 Mobile Gestures** Touch-optimized controls:
-  - **Double-tap** to select multiple nodes
-  - **Double-tap** to clone and align nodes
+- NEW 3.5 Mobile Gestures** Touch optimized controls:
+  - **Double tap** to select multiple nodes
+  - **Double tap** to clone and align nodes
   - Resizable mobile footer with drag handle
   - Touch friendly bulk operations modal
-- NEW 3.5 Per-Breakpoint Styling** Customize node appearance independently for Desktop, Tablet, Mobile, and Fold layouts
+- NEW 3.5 Per Breakpoint Styling** Customize node appearance independently for Desktop, Tablet, Mobile, and Fold layouts
 - NEW 3.5 Live node search with visual highlighting
 - NEW 3.5 Added MAC field to node
 - NEW 3.5 Added Rack field to node
 - NEW 3.5 Live node search with visual highlighting
-- NEW 3.5 Upgraded Military Grade Encryption** AES-256-GCM encryption with PBKDF2 key derivation (200,000 iterations)
+- NEW 3.5 Upgraded Military Grade Encryption** AES 256 GCM encryption with PBKDF2 key derivation (200,000 iterations)
   - Browser native encryption, zero server involvement
   - Password protect sensitive network documentation
   - Non recoverable (no backdoors, your data stays truly private)
   - Perfect for break glass documentation with credentials
 - NEW 3.1 Live Status Monitoring** *(networkening version only)*
-- NEW 3.1 Real-time ping/status indicators on nodes
+- NEW 3.1 Real time ping/status indicators on nodes
 - NEW 3.1 Visual online/offline/checking indicators
 - Online Demos:
 - [the-one-file.html-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
@@ -136,7 +136,7 @@ Instead of building another hosted application, I built a file.
 - Works with touch and mobile  
 - Clear grid and boundary indicators
 - Precise zoom controls with level display
-- Right-click context menu for quick actions
+- Right click context menu for quick actions
 - **Free Draw Mode** Draw custom polylines, rectangles, and text labels anywhere:
   - Custom lines with points you place
   - Rectangles (filled or outlined) for zones/boundaries
@@ -152,11 +152,11 @@ Instead of building another hosted application, I built a file.
 - Resizable with full styling controls  
 - Custom fonts, colors, and text offsets  
 - **Per breakpoint styling** for desktop, tablet, mobile, and fold layouts : customize appearance independently for each screen size
-- **Right-click to clone** nodes with smart positioning
-- **Multi-select support** with click-drag or right-click selection
+- **Right click to clone** nodes with smart positioning
+- **Multi select support** with click-drag or right-click selection
 
 ### Bulk Operations
-- **Multi-select nodes** for batch operations
+- **Multi select nodes** for batch operations
 - **Bulk Align**: Align selected nodes left, right, top, or bottom
 - **Bulk Distribute**: Evenly space nodes horizontally or vertically
 - **Bulk Clone**: Duplicate multiple nodes at once
@@ -170,7 +170,7 @@ Instead of building another hosted application, I built a file.
 - **Auto Status Checking** with configurable intervals (5-3600 seconds)
 - Status check scheduling with next check timer
 - Last run timestamp tracking
-- Per-node ping enable/disable settings
+- Per node ping enable/disable settings
 - Visual ping indicators with color coding
 
 ### Connections
@@ -203,7 +203,7 @@ Instead of building another hosted application, I built a file.
   - SHA 256 hashing algorithm
   - Cryptographically secure random 16 byte salt per file
   - Unique 12 byte initialization vector (IV) per encryption
-- **Browser native Web Crypto API** no third-party encryption libraries
+- **Browser native Web Crypto API** no third party encryption libraries
 - **Zero server communication** all encryption/decryption happens locally in your browser
 - **Password confirmation** required before saving encrypted files
 - **Non recoverable** no backdoors, no password reset, no recovery options
@@ -215,15 +215,18 @@ Instead of building another hosted application, I built a file.
 ### Mobile Experience
 - **Completely rewritten mobile UI** in version 3.0
 - **Resizable mobile footer** with drag handle for custom panel sizing
-- **Touch-optimized controls** throughout the interface
-- **Mobile bulk operations modal** for efficient multi-node editing
-- **Double-tap gestures**:
-  - Double-tap to select multiple nodes (equivalent to right-click on desktop)
-  - Double-tap to clone and align nodes
+- **Touch optimized controls** throughout the interface
+- **Mobile bulk operations modal** for efficient multi node editing
+- **Double tap gestures**:
+  - Double tap to select multiple nodes (equivalent to right click on desktop)
+  - Double tap to clone and align nodes
 - Responsive layout that adapts to screen orientation
 - Optimized for phones, tablets, and foldable devices
 
 ### Keyboard Shortcuts
+
+[keyboard-shortcuts.md](keyboard-shortcuts.md)
+
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + Z` | Undo |
@@ -239,7 +242,7 @@ Instead of building another hosted application, I built a file.
 
 ### Customization
 - 100% control theme editor
-- Per-breakpoint node styling for responsive designs
+- Per breakpoint node styling for responsive designs
 - Custom color schemes and backgrounds
 - Adjustable panel sizes and layouts
 
@@ -255,7 +258,7 @@ If the browser is reasonably modern, it should work.
 ## Credits
 
 Icon support for theonefile-networkening.html version powered by:
-- [Selfh.st Icons](https://selfh.st/icons/) : Self-hosted app icons by the selfh.st community
+- [Selfh.st Icons](https://selfh.st/icons/) : Self hosted app icons by the selfh.st community
 - [Material Design Icons](https://pictogrammers.com/library/mdi/) : 7,000+ open source icons by Pictogrammers
 - [Simple Icons](https://simpleicons.org/) : Free SVG icons for popular brands
 
