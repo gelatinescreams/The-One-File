@@ -42,6 +42,11 @@ A fully self contained topology builder that runs anywhere as a single standalon
 - NEW 3.5 Added MAC field to node
 - NEW 3.5 Added Rack field to node
 - NEW 3.5 Live node search with visual highlighting
+- NEW 3.5 Upgraded Military Grade Encryption** AES-256-GCM encryption with PBKDF2 key derivation (200,000 iterations)
+  - Browser native encryption, zero server involvement
+  - Password protect sensitive network documentation
+  - Non recoverable (no backdoors, your data stays truly private)
+  - Perfect for break glass documentation with credentials
 - NEW 3.1 Live Status Monitoring** *(networkening version only)*
 - NEW 3.1 Real-time ping/status indicators on nodes
 - NEW 3.1 Visual online/offline/checking indicators
@@ -66,6 +71,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 | Encryption, export | ✓ | ✓ |
 | Bulk operations | ✓ | ✓ |
 | Multi select | ✓ | ✓ |
+| **AES 256 GCM encryption (OPTIONAL)** | ✓ | ✓ |
 | Live node search | ✓ | ✓ |
 | Per device styling | ✓ | ✓ |
 | Mobile optimized | ✓ | ✓ |
@@ -188,6 +194,23 @@ Instead of building another hosted application, I built a file.
 - Browser native crypto only  
 - No servers involved  
 - *Version theonefile-networkening.html uses 3 server calls from cdn.jsdelivr.net to load icons*
+
+### Security & Encryption
+**Industry Standard Protection:**
+- **AES 256 GCM** encryption (authenticated encryption with 256 bit keys)
+- **PBKDF2** key derivation with:
+  - 200,000 iterations (protection against brute force attacks)
+  - SHA 256 hashing algorithm
+  - Cryptographically secure random 16 byte salt per file
+  - Unique 12 byte initialization vector (IV) per encryption
+- **Browser native Web Crypto API** no third-party encryption libraries
+- **Zero server communication** all encryption/decryption happens locally in your browser
+- **Password confirmation** required before saving encrypted files
+- **Non recoverable** no backdoors, no password reset, no recovery options
+  - If you forget your password, your data is permanently inaccessible
+  - This is a feature, not a bug so your data stays protected
+- **3 attempt limit** on decryption to prevent brute force attempts
+- **Encrypted data format**: Salt + IV + ciphertext embedded directly in the HTML file
 
 ### Mobile Experience
 - **Completely rewritten mobile UI** in version 3.0
