@@ -1075,6 +1075,12 @@
       }
     ]
   },
+  "rectData": {
+    "list": []
+  },
+  "textData": {
+    "list": []
+  },
   "edgeLegend": {
     "#ef4444": "WAN / Internet (10 Gbps)",
     "#f97316": "Core Layer (10-40 Gbps)",

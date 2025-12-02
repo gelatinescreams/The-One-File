@@ -470,6 +470,12 @@
       }
     ]
   },
+  "rectData": {
+    "list": []
+  },
+  "textData": {
+    "list": []
+  },
   "edgeLegend": {
     "#ef4444": "WAN Connection (1 Gbps)",
     "#3b82f6": "Network Trunk (10 Gbps)",
