@@ -15,7 +15,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ## Version 3.5 : 12/2/25
 
-- NEW 3.5 *Another major realease. Thank you to Discord testers!!*
+- NEW 3.5 *Another major release. Thank you to Discord testers!!*
 - NEW 3.5 Add Text Labels Anywhere** Click the "T" button to place custom text annotations anywhere on your canvas with full styling control
 - NEW 3.5 Draw Rectangles/Boxes** Create visual boundaries, zones, or highlighted areas with filled or outlined rectangles in any color
 - NEW 3.5 Bulk Operations** Select multiple nodes at once with right click (or double tap on mobile) and perform batch operations:
