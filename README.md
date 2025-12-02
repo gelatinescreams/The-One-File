@@ -66,6 +66,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 | Encryption, export | ✓ | ✓ |
 | Bulk operations | ✓ | ✓ |
 | Multi select | ✓ | ✓ |
+| Live node search | ✓ | ✓ |
 | Per device styling | ✓ | ✓ |
 | Mobile optimized | ✓ | ✓ |
 | Offline only | ✓ |  |
@@ -86,12 +87,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 #### Download:
 
-- [the-one-file.html](https://github.com/user-attachments/files/23866860/the-one-file.html)
-- [theonefile-networkening.html](https://github.com/user-attachments/files/23866861/theonefile-networkening.html)
-- [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/23866862/the-one-file-corporate-demo.html)
-- [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/23866863/the-one-file-homelab-demo.html)
-- [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/23866864/theonefile-networkening-corporate-demo.html)
-- [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/23866865/theonefile-networkening-homelab-demo.html)
+- [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/23892001/the-one-file-corporate-demo.html)
+- [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/23892002/the-one-file-homelab-demo.html)
+- [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/23892003/theonefile-networkening-corporate-demo.html)
+- [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/23892004/theonefile-networkening-homelab-demo.html)
 
 ## Why It Exists
 
