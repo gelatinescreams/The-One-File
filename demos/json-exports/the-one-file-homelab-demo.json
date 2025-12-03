@@ -242,6 +242,23 @@
         "HP LaserJet",
         "AirPrint enabled"
       ]
+    },
+    "racked": {
+      "shape": "server",
+      "name": "Racked",
+      "ip": "1.1.1.1",
+      "role": "Rack",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "physical",
+      "assignedRack": "",
+      "rackCapacity": "48",
+      "isRack": true,
+      "locked": false,
+      "groupId": null
     }
   },
   "edgeData": {
@@ -467,6 +484,35 @@
         "notes": [],
         "_pairIndex": 0,
         "_pairTotal": 1
+      },
+      {
+        "id": "custom-1764791440240",
+        "type": "custom",
+        "color": "#f97316",
+        "width": 4,
+        "lineStyle": "solid",
+        "direction": "none",
+        "points": [
+          {
+            "x": 1057.98583984375,
+            "y": 47.89939498901367
+          },
+          {
+            "x": 1295.2431640625,
+            "y": 100.31670379638672
+          },
+          {
+            "x": 1274.5521240234375,
+            "y": 285.1567077636719
+          },
+          {
+            "x": 1133.85302734375,
+            "y": 326.5387878417969
+          }
+        ],
+        "notes": [
+          "Added rack explanation"
+        ]
       }
     ]
   },
@@ -474,7 +520,23 @@
     "list": []
   },
   "textData": {
-    "list": []
+    "list": [
+      {
+        "id": "text-1764791390499",
+        "x": 865.8302001953125,
+        "y": 100.31671142578125,
+        "content": "I am a rack. \nDouble click me on desktop \nor\nlong press on mobile\nto enter rack view",
+        "fontSize": 27,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      }
+    ]
   },
   "edgeLegend": {
     "#ef4444": "WAN Connection (1 Gbps)",
@@ -487,7 +549,8 @@
     "#ec4899": "Camera Network (VLAN 40)",
     "#14b8a6": "PoE Connections",
     "#64748b": "Monitoring",
-    "#a78bfa": "WiFi Wireless"
+    "#a78bfa": "WiFi Wireless",
+    "#f97316": "Rack explanation"
   },
   "nodePositions": {
     "isp-modem": {
@@ -553,6 +616,10 @@
     "printer": {
       "x": 1000,
       "y": 550
+    },
+    "racked": {
+      "x": 1048.601037541801,
+      "y": 341.0225132311335
     }
   },
   "nodeSizes": {
@@ -592,7 +659,8 @@
   },
   "canvas": {
     "zoom": 2,
-    "panX": -400,
+    "panX": -375.69948122909955,
     "panY": -200
-  }
+  },
+  "savedTopologyView": null
 }

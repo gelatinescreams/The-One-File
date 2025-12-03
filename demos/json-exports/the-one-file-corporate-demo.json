@@ -455,7 +455,8 @@
         "Site-to-site VPN",
         "SD-WAN enabled",
         "MPLS backup"
-      ]
+      ],
+      "assignedRack": "racked"
     },
     "branch-switch": {
       "shape": "switch",
@@ -470,7 +471,8 @@
         "24-port managed",
         "PoE+",
         "Local VLAN routing"
-      ]
+      ],
+      "assignedRack": "racked"
     },
     "workstation-vlan": {
       "shape": "pc",
@@ -531,6 +533,23 @@
         "500 mailboxes",
         "Hybrid O365"
       ]
+    },
+    "racked": {
+      "shape": "server",
+      "name": "Racked",
+      "ip": "1.1.1.1",
+      "role": "Rack",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "physical",
+      "assignedRack": "",
+      "rackCapacity": "24",
+      "isRack": true,
+      "locked": false,
+      "groupId": null
     }
   },
   "edgeData": {
@@ -1072,6 +1091,33 @@
         ],
         "_pairIndex": 0,
         "_pairTotal": 1
+      },
+      {
+        "id": "custom-1764791521180",
+        "type": "custom",
+        "color": "#f97316",
+        "width": 4,
+        "lineStyle": "solid",
+        "direction": "forward",
+        "points": [
+          {
+            "x": 1540.7069091796875,
+            "y": 256.9247131347656
+          },
+          {
+            "x": 1772.041015625,
+            "y": 258.7607116699219
+          },
+          {
+            "x": 1823.4486083984375,
+            "y": 401.9675598144531
+          },
+          {
+            "x": 1610.4742431640625,
+            "y": 587.402099609375
+          }
+        ],
+        "notes": []
       }
     ]
   },
@@ -1079,7 +1125,23 @@
     "list": []
   },
   "textData": {
-    "list": []
+    "list": [
+      {
+        "id": "text-1764791492132",
+        "x": 1403.008056640625,
+        "y": 321.1842346191406,
+        "content": "I am a rack.\nDouble click on desktop\nor\nlong press on mobile\nto enter rack view",
+        "fontSize": 32,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      }
+    ]
   },
   "edgeLegend": {
     "#ef4444": "WAN / Internet (10 Gbps)",
@@ -1223,8 +1285,8 @@
       "y": 750
     },
     "branch-router": {
-      "x": 1000,
-      "y": 250
+      "x": 1435.1285400390625,
+      "y": 571.2974548339844
     },
     "branch-switch": {
       "x": 1120,
@@ -1233,6 +1295,10 @@
     "guest-wifi-controller": {
       "x": 1050,
       "y": 480
+    },
+    "racked": {
+      "x": 1534.2808837890625,
+      "y": 634.2197265625
     }
   },
   "nodeSizes": {
@@ -1290,7 +1356,8 @@
   },
   "canvas": {
     "zoom": 2,
-    "panX": -352.5,
+    "panX": -160.35955810546875,
     "panY": -152.5
-  }
+  },
+  "savedTopologyView": null
 }

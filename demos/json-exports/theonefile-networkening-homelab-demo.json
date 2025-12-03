@@ -457,6 +457,31 @@
         "status": "unknown",
         "lastCheck": null
       }
+    },
+    "im-a-rack": {
+      "shape": "server",
+      "name": "IM A RACK",
+      "ip": "",
+      "role": "Rack",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "physical",
+      "assignedRack": "",
+      "rackCapacity": "42",
+      "isRack": true,
+      "locked": true,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     }
   },
   "edgeData": {
@@ -744,6 +769,52 @@
         "direction": "forward",
         "_pairIndex": 0,
         "_pairTotal": 1
+      },
+      {
+        "id": "custom-1764789591702",
+        "type": "custom",
+        "color": "#f97316",
+        "width": 4,
+        "lineStyle": "solid",
+        "direction": "forward",
+        "points": [
+          {
+            "x": 2180.72900390625,
+            "y": 753.431884765625
+          },
+          {
+            "x": 2178.278076171875,
+            "y": 883.335693359375
+          },
+          {
+            "x": 2273.86767578125,
+            "y": 888.2376708984375
+          }
+        ],
+        "notes": []
+      },
+      {
+        "id": "custom-1764791338569",
+        "type": "custom",
+        "color": "#f97316",
+        "width": 4,
+        "lineStyle": "dashed",
+        "direction": "forward",
+        "points": [
+          {
+            "x": 1178.4932861328125,
+            "y": 139.6976776123047
+          },
+          {
+            "x": 1282.2938232421875,
+            "y": 59.62301254272461
+          },
+          {
+            "x": 1730.1187744140625,
+            "y": 127.83476257324219
+          }
+        ],
+        "notes": []
       }
     ]
   },
@@ -751,7 +822,38 @@
     "list": []
   },
   "textData": {
-    "list": []
+    "list": [
+      {
+        "id": "text-1764789550897",
+        "x": 2158.669921875,
+        "y": 621.0770263671875,
+        "content": "DOUBLE CLICK ON DESKTOP\nOR LONG PRESS ON MOBILE\nTO OPEN RACK VIEW",
+        "fontSize": 37,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-1764791291347",
+        "x": 1065.795654296875,
+        "y": 187.14932250976562,
+        "content": "Router is live!\nUses http requests to live ping",
+        "fontSize": 41,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      }
+    ]
   },
   "edgeLegend": {
     "#ef4444": "WAN",
@@ -760,7 +862,8 @@
     "#3b82f6": "Management",
     "#f59e0b": "VM Network",
     "#06b6d4": "Containers",
-    "#ec4899": "Storage"
+    "#ec4899": "Storage",
+    "#f97316": "you can edit me too"
   },
   "nodePositions": {
     "isp-modem": {
@@ -834,10 +937,15 @@
     "wireguard": {
       "x": 1400,
       "y": 1850
+    },
+    "im-a-rack": {
+      "x": 2590.18017578125,
+      "y": 882.6126098632812
     }
   },
   "nodeSizes": {
-    "isp-modem": 127
+    "isp-modem": 127,
+    "im-a-rack": 181
   },
   "nodeStyles": {
     "pi-hole": {
@@ -986,5 +1094,6 @@
     "zoom": 1.2381345439537763,
     "panX": 384.66666666666674,
     "panY": 27
-  }
+  },
+  "savedTopologyView": null
 }
