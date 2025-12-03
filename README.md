@@ -53,12 +53,21 @@ A fully self contained topology builder that runs anywhere as a single standalon
 * **A more detailed list of changes is included below**
   * [Change Log](changelog.md)
  
-* **Core Edition Online Demos**
-* [the-one-file.html-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
-* [the-one-file.html-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
-* **Metworkening Edition Online Demos**
-* [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
-* [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
+# Demos
+
+* **Core Edition**
+  * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
+  * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
+* **Networkening Edition**
+  * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
+  * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
+
+* **Core Edition Password Protected (lambert)**
+  * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-corporate-demo.html)
+  * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-homelab-demo.html)
+* **Networkening Edition Password Protected**
+  * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-corporate-demo.html)
+  * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
 ## Online vs Offline
 
@@ -86,22 +95,6 @@ A fully self contained topology builder that runs anywhere as a single standalon
 | **[Selfh.st Icons](https://selfh.st/icons/)** |  | ✓ |
 | **Auto Status Checking** |  | ✓ |
 | **Live Ping/Health Status** |  | ✓ |
-
-# Demos
-
-* **Core Edition**
-  * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
-* **Networkening Edition**
-  * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
-
-* **Core Edition Password Protected (lambert)**
-  * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-homelab-demo.html)
-* **Networkening Edition Password Protected**
-  * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
 #### Download:
 
