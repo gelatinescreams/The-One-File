@@ -65,7 +65,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 * **Core Edition Password Protected (lambert)**
   * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-corporate-demo.html)
   * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/the-one-file-homelab-demo.html)
-* **Networkening Edition Password Protected**
+* **Networkening Edition Password Protected (lambert)**
   * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-corporate-demo.html)
   * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
