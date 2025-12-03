@@ -1416,6 +1416,79 @@
         </div>
       </div>
     </div>
+    <div class="modal" id="add-rack-modal">
+      <div class="modal-content">
+        <h3>Add New Rack</h3>
+        <label style="
+          display: block;
+          margin-bottom: 4px;
+          color: var(--text-soft);
+          font-size: 13px;
+          ">Rack Name</label>
+        <input type="text" id="new-rack-name" placeholder="e.g. Rack-A, DC1-R01">
+        <label style="
+          display: block;
+          margin-bottom: 4px;
+          color: var(--text-soft);
+          font-size: 13px;
+          ">IP / Network Range (optional)</label>
+        <input type="text" id="new-rack-ip" placeholder="e.g. 192.168.1.0/24">
+        <label style="
+          display: block;
+          margin-bottom: 4px;
+          color: var(--text-soft);
+          font-size: 13px;
+          ">Tags (comma separated)</label>
+        <input type="text" id="new-rack-tags" placeholder="e.g. Production, Data Center 1">
+        <label style="
+          display: block;
+          margin-bottom: 4px;
+          color: var(--text-soft);
+          font-size: 13px;
+          ">Icon / Shape</label>
+        <select id="new-rack-shape">
+          <optgroup label="Basic Shapes">
+            <option value="circle">Circle</option>
+            <option value="square">Square</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="triangle">Triangle</option>
+            <option value="hexagon">Hexagon</option>
+            <option value="diamond">Diamond</option>
+            <option value="star">Star</option>
+            <option value="stop-sign">Stop Sign</option>
+          </optgroup>
+          <optgroup label="Network Equipment">
+            <option value="server" selected="">Server</option>
+            <option value="pc">PC / Desktop</option>
+            <option value="laptop">Laptop</option>
+            <option value="phone">Phone / Mobile</option>
+            <option value="router">Router</option>
+            <option value="switch">Switch</option>
+            <option value="firewall">Firewall</option>
+            <option value="cloud">Cloud</option>
+            <option value="database">Database</option>
+            <option value="printer">Printer</option>
+          </optgroup>
+        </select>
+        <label style="
+          display: block;
+          margin-bottom: 4px;
+          color: var(--text-soft);
+          font-size: 13px;
+          ">Rack Capacity</label>
+        <select id="new-rack-capacity">
+          <option value="42" selected="">42U (Standard Full Rack)</option>
+          <option value="48">48U (Large Rack)</option>
+          <option value="24">24U (Half Rack)</option>
+          <option value="12">12U (Small/Wall Mount)</option>
+          <option value="6">6U (Mini Rack)</option>
+        </select>
+        <div class="modal-buttons">
+          <button class="btn-cancel" id="add-rack-cancel">Cancel</button>
+          <button class="btn-save" id="add-rack-save">Add Rack</button>
+        </div>
+      </div>
+    </div>
     <div class="modal confirm-modal" id="clear-all-modal">
       <div class="modal-content">
         <h3>Clear All Nodes</h3>
@@ -1423,6 +1496,41 @@
         <div class="modal-buttons">
           <button class="btn-cancel" id="clear-all-cancel">Cancel</button>
           <button class="btn-delete" id="clear-all-confirm"> Clear Everything </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="layer-modal">
+      <div class="modal-content" style="max-width: 400px;">
+        <h3>Layer Visibility</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Toggle which layers are visible on the canvas</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
+            <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+            <span style="flex: 1; font-weight: 500;">Physical Layer</span>
+            <span style="font-size: 12px; color: var(--text-soft);">Hardware &amp; cabling</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
+            <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+            <span style="flex: 1; font-weight: 500;">Logical Layer</span>
+            <span style="font-size: 12px; color: var(--text-soft);">VLANs &amp; routing</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
+            <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+            <span style="flex: 1; font-weight: 500;">Security Layer</span>
+            <span style="font-size: 12px; color: var(--text-soft);">Firewalls &amp; zones</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
+            <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+            <span style="flex: 1; font-weight: 500;">Application Layer</span>
+            <span style="font-size: 12px; color: var(--text-soft);">Services &amp; apps</span>
+          </label>
+        </div>
+        <div style="margin-top: 15px; display: flex; gap: 8px;">
+          <button class="btn-cancel" style="flex: 1;" onclick="document.querySelectorAll('#layer-modal input[type=checkbox]').forEach(cb =&gt; cb.checked = false); applyLayerFilter();">Hide All</button>
+          <button class="btn-save" style="flex: 1;" onclick="document.querySelectorAll('#layer-modal input[type=checkbox]').forEach(cb =&gt; cb.checked = true); applyLayerFilter();">Show All</button>
+        </div>
+        <div class="modal-buttons" style="margin-top: 10px;">
+          <button class="btn-cancel" id="layer-modal-close">Close</button>
         </div>
       </div>
     </div>
@@ -1449,27 +1557,21 @@
         </div>
       </div>
       <div id="topbar-menu">
+        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="
+          padding: 6px 12px;
+          background: var(--accent);
+          color: var(--bg);
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          display: none;
+          ">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)"> + Node </button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          " disabled=""> ↶ Undo </button>
-        <button id="redo-btn" title="Redo (Ctrl+Y)" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          " disabled=""> ↷ Redo </button>
+        <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;"> + Rack </button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 1;"> ↶ Undo </button>
+        <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 0.5;" disabled=""> ↷ Redo </button>
         <input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="
           padding: 6px 12px;
           background: var(--panel);
@@ -1479,6 +1581,16 @@
           font-size: 14px;
           width: 180px;
           ">
+        <button id="layers-btn" title="Toggle layer visibility" style="
+          padding: 6px 12px;
+          background: var(--panel);
+          color: var(--text-main);
+          border: 1px solid var(--edge-main);
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+          ">📐 Layers</button>
         <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="
           padding: 6px 12px;
           background: var(--panel);
@@ -1526,7 +1638,7 @@
           <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
           <button id="draw-toggle" title="Draw custom line">✏️</button>
           <button id="rect-toggle" title="Draw rectangle">▭</button>
-          <button id="text-toggle" title="Add text">T</button>
+          <button id="text-toggle" title="Add text" style="">T</button>
           <select id="rect-style" title="Rectangle style">
             <option value="filled">Filled</option>
             <option value="outlined">Outlined</option>
@@ -1543,12 +1655,12 @@
             <option value="backward">← Left</option>
             <option value="both">↔ Both</option>
           </select>
-          <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
+          <button id="draw-undo" style="display: none;" title="Undo last point"> Undo </button>
         </div>
-        <div class="topology-toolbar" id="topology-toolbar" style="display: grid !important;">
+        <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select"><option value="edge-firewall">Edge Firewall</option><option value="core-router-1">Core Router 1</option><option value="core-router-2">Core Router 2</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="load-balancer">Load Balancer</option><option value="web-server-1">Web Server 1</option><option value="web-server-2">Web Server 2</option><option value="web-server-3">Web Server 3</option><option value="internal-fw">Internal Firewall</option><option value="ad-dc-1">Domain Controller 1</option><option value="ad-dc-2">Domain Controller 2</option><option value="file-server">File Server</option><option value="db-primary">Database Primary</option><option value="db-replica">Database Replica</option><option value="app-server-1">App Server 1</option><option value="app-server-2">App Server 2</option><option value="app-server-3">App Server 3</option><option value="k8s-master-1">K8s Master 1</option><option value="k8s-master-2">K8s Master 2</option><option value="k8s-worker-1">K8s Worker 1</option><option value="k8s-worker-2">K8s Worker 2</option><option value="k8s-worker-3">K8s Worker 3</option><option value="backup-server">Backup Server</option><option value="monitoring">Monitoring</option><option value="vpn-gateway">VPN Gateway</option><option value="san-storage">SAN Storage</option><option value="branch-router">Branch Office Router</option><option value="branch-switch">Branch Switch</option><option value="workstation-vlan">User Workstations</option><option value="guest-wifi-controller">WiFi Controller</option><option value="remote-workers">Remote Workers</option><option value="mail-server">Mail Server</option></select>
+          <select id="add-line-select"><option value="internet">Internet</option><option value="edge-firewall">Edge Firewall</option><option value="core-router-1">Core Router 1</option><option value="core-router-2">Core Router 2</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="load-balancer">Load Balancer</option><option value="web-server-1">Web Server 1</option><option value="web-server-2">Web Server 2</option><option value="web-server-3">Web Server 3</option><option value="internal-fw">Internal Firewall</option><option value="ad-dc-1">Domain Controller 1</option><option value="ad-dc-2">Domain Controller 2</option><option value="file-server">File Server</option><option value="db-primary">Database Primary</option><option value="db-replica">Database Replica</option><option value="app-server-1">App Server 1</option><option value="app-server-2">App Server 2</option><option value="app-server-3">App Server 3</option><option value="k8s-master-1">K8s Master 1</option><option value="k8s-master-2">K8s Master 2</option><option value="k8s-worker-1">K8s Worker 1</option><option value="k8s-worker-2">K8s Worker 2</option><option value="k8s-worker-3">K8s Worker 3</option><option value="backup-server">Backup Server</option><option value="monitoring">Monitoring</option><option value="vpn-gateway">VPN Gateway</option><option value="san-storage">SAN Storage</option><option value="branch-router">Branch Office Router</option><option value="branch-switch">Branch Switch</option><option value="workstation-vlan">User Workstations</option><option value="guest-wifi-controller">WiFi Controller</option><option value="remote-workers">Remote Workers</option><option value="mail-server">Mail Server</option></select>
           <input type="color" id="add-line-color" value="#475569" title="Line color" style="
             width: 30px;
             height: 24px;
@@ -1646,6 +1758,12 @@
             <button id="bulk-distribute-v-mobile" class="bulk-action-btn">
             ↕<br><span style="font-size: 12px;">Distribute V</span>
             </button>
+            <button id="bulk-lock-mobile" class="bulk-action-btn">
+            🔒<br><span style="font-size: 12px;">Lock Toggle</span>
+            </button>
+            <button id="bulk-group-mobile" class="bulk-action-btn">
+            ⭕<br><span style="font-size: 12px;">Group Toggle</span>
+            </button>
             <button id="bulk-clone-mobile" class="bulk-action-btn">
             📋<br><span style="font-size: 12px;">Clone All</span>
             </button>
@@ -1668,7 +1786,7 @@
         <div class="canvas-hint" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to clone and align</li><li>Right-click to select multiple</li><li>You have the power</li><li>Your time is NOW!</li></ul></div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">WAN / Internet (10 Gbps)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Core Layer (10-40 Gbps)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Core Switching &amp; HSRP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">DMZ Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Internal Corporate Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Data Center / Application Tier</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(20, 184, 166); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Database Replication</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(100, 116, 139); cursor: pointer;"></span><span class="legend-label" contenteditable="true">App-to-DB Connections</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(236, 72, 153); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Kubernetes Cluster</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Management Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(168, 85, 247); cursor: pointer;"></span><span class="legend-label" contenteditable="true">VPN / Remote Access</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(14, 165, 233); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Storage Area Network (SAN)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(132, 204, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Branch Office WAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 191, 36); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Guest WiFi Network</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="-352.5 -152.5 2000 1500" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 600 155 Q 600 202.5 600 250" fill="none" class="edge active" data-edge-id="e1" data-from="internet" data-to="edge-firewall" style="stroke: rgb(239, 68, 68); stroke-width: 8;"></path><path d="M 600 155 Q 600 202.5 600 250" fill="none" data-edge-id="e1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 500 335 400 420" fill="none" class="edge" data-edge-id="e2" data-from="edge-firewall" data-to="core-router-1" style="stroke: rgb(249, 115, 22); stroke-width: 7;"></path><path d="M 600 250 Q 500 335 400 420" fill="none" data-edge-id="e2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 700 335 800 420" fill="none" class="edge" data-edge-id="e3" data-from="edge-firewall" data-to="core-router-2" style="stroke: rgb(249, 115, 22); stroke-width: 7;"></path><path d="M 600 250 Q 700 335 800 420" fill="none" data-edge-id="e3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 600 420 800 420" fill="none" class="edge" data-edge-id="e4" data-from="core-router-1" data-to="core-router-2" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 400 420 Q 600 420 800 420" fill="none" data-edge-id="e4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 400 510 400 600" fill="none" class="edge" data-edge-id="e5" data-from="core-router-1" data-to="core-switch-1" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 400 420 Q 400 510 400 600" fill="none" data-edge-id="e5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 420 Q 800 510 800 600" fill="none" class="edge" data-edge-id="e6" data-from="core-router-2" data-to="core-switch-2" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 800 420 Q 800 510 800 600" fill="none" data-edge-id="e6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 600 600 800 600" fill="none" class="edge" data-edge-id="e7" data-from="core-switch-1" data-to="core-switch-2" style="stroke: rgb(59, 130, 246); stroke-width: 5;"></path><path d="M 400 600 Q 600 600 800 600" fill="none" data-edge-id="e7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 300 460 200 500" fill="none" class="edge" data-edge-id="e8" data-from="core-router-1" data-to="load-balancer" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 400 420 Q 300 460 200 500" fill="none" data-edge-id="e8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 172.5 575 145 650" fill="none" class="edge" data-edge-id="e9" data-from="load-balancer" data-to="web-server-1" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 172.5 575 145 650" fill="none" data-edge-id="e9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 200 600 200 700" fill="none" class="edge" data-edge-id="e10" data-from="load-balancer" data-to="web-server-2" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 200 600 200 700" fill="none" data-edge-id="e10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 260 575 320 650" fill="none" class="edge" data-edge-id="e11" data-from="load-balancer" data-to="web-server-3" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 260 575 320 650" fill="none" data-edge-id="e11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 500 690 600 780" fill="none" class="edge" data-edge-id="e12" data-from="core-switch-1" data-to="internal-fw" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 400 600 Q 500 690 600 780" fill="none" data-edge-id="e12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 700 690 600 780" fill="none" class="edge" data-edge-id="e13" data-from="core-switch-2" data-to="internal-fw" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 800 600 Q 700 690 600 780" fill="none" data-edge-id="e13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 550 865 500 950" fill="none" class="edge" data-edge-id="e14" data-from="internal-fw" data-to="ad-dc-1" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 550 865 500 950" fill="none" data-edge-id="e14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 610 865 620 950" fill="none" class="edge" data-edge-id="e15" data-from="internal-fw" data-to="ad-dc-2" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 610 865 620 950" fill="none" data-edge-id="e15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 670 865 740 950" fill="none" class="edge" data-edge-id="e16" data-from="internal-fw" data-to="file-server" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 670 865 740 950" fill="none" data-edge-id="e16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 790 865 980 950" fill="none" class="edge" data-edge-id="e17" data-from="internal-fw" data-to="workstation-vlan" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 600 780 Q 790 865 980 950" fill="none" data-edge-id="e17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 730 865 860 950" fill="none" class="edge" data-edge-id="e18" data-from="internal-fw" data-to="mail-server" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 730 865 860 950" fill="none" data-edge-id="e18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 300 725 200 850" fill="none" class="edge" data-edge-id="e19" data-from="core-switch-1" data-to="db-primary" style="stroke: rgb(6, 182, 212); stroke-width: 5;"></path><path d="M 400 600 Q 300 725 200 850" fill="none" data-edge-id="e19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 850 Q 175 925 150 1000" fill="none" class="edge" data-edge-id="e20" data-from="db-primary" data-to="db-replica" style="stroke: rgb(20, 184, 166); stroke-width: 4;"></path><path d="M 200 850 Q 175 925 150 1000" fill="none" data-edge-id="e20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 300 825 200 1050" fill="none" class="edge" data-edge-id="e21" data-from="core-switch-1" data-to="app-server-1" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 300 825 200 1050" fill="none" data-edge-id="e21" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 360 825 320 1050" fill="none" class="edge" data-edge-id="e22" data-from="core-switch-1" data-to="app-server-2" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 360 825 320 1050" fill="none" data-edge-id="e22" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 420 825 440 1050" fill="none" class="edge" data-edge-id="e23" data-from="core-switch-1" data-to="app-server-3" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 420 825 440 1050" fill="none" data-edge-id="e23" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 1050 Q 200 950 200 850" fill="none" class="edge" data-edge-id="e24" data-from="app-server-1" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 200 1050 Q 200 950 200 850" fill="none" data-edge-id="e24" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 320 1050 Q 260 950 200 850" fill="none" class="edge" data-edge-id="e25" data-from="app-server-2" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 320 1050 Q 260 950 200 850" fill="none" data-edge-id="e25" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 440 1050 Q 320 950 200 850" fill="none" class="edge" data-edge-id="e26" data-from="app-server-3" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 440 1050 Q 320 950 200 850" fill="none" data-edge-id="e26" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 850 650 900 700" fill="none" class="edge" data-edge-id="e27" data-from="core-switch-2" data-to="k8s-master-1" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 800 600 Q 850 650 900 700" fill="none" data-edge-id="e27" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 910 650 1020 700" fill="none" class="edge" data-edge-id="e28" data-from="core-switch-2" data-to="k8s-master-2" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 800 600 Q 910 650 1020 700" fill="none" data-edge-id="e28" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 900 700 Q 875 775 850 850" fill="none" class="edge" data-edge-id="e29" data-from="k8s-master-1" data-to="k8s-worker-1" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 900 700 Q 875 775 850 850" fill="none" data-edge-id="e29" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 900 700 Q 935 775 970 850" fill="none" class="edge" data-edge-id="e30" data-from="k8s-master-1" data-to="k8s-worker-2" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 900 700 Q 935 775 970 850" fill="none" data-edge-id="e30" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1020 700 Q 1055 775 1090 850" fill="none" class="edge" data-edge-id="e31" data-from="k8s-master-2" data-to="k8s-worker-3" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 1020 700 Q 1055 775 1090 850" fill="none" data-edge-id="e31" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 925 600 1050 600" fill="none" class="edge" data-edge-id="e32" data-from="core-switch-2" data-to="backup-server" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 800 600 Q 925 600 1050 600" fill="none" data-edge-id="e32" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 975 650 1150 700" fill="none" class="edge" data-edge-id="e33" data-from="core-switch-2" data-to="monitoring" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 800 600 Q 975 650 1150 700" fill="none" data-edge-id="e33" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 375 335 350 250" fill="none" class="edge" data-edge-id="e34" data-from="core-router-1" data-to="vpn-gateway" style="stroke: rgb(168, 85, 247); stroke-width: 4;"></path><path d="M 400 420 Q 375 335 350 250" fill="none" data-edge-id="e34" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 350 250 Q 265 197.5 180 145" fill="none" class="edge" data-edge-id="e35" data-from="vpn-gateway" data-to="remote-workers" style="stroke: rgb(168, 85, 247); stroke-width: 3;"></path><path d="M 350 250 Q 265 197.5 180 145" fill="none" data-edge-id="e35" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 277.5 675 155 750" fill="none" class="edge" data-edge-id="e36" data-from="core-switch-1" data-to="san-storage" style="stroke: rgb(14, 165, 233); stroke-width: 5;"></path><path d="M 400 600 Q 277.5 675 155 750" fill="none" data-edge-id="e36" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 155 750 Q 177.5 800 200 850" fill="none" class="edge" data-edge-id="e37" data-from="san-storage" data-to="db-primary" style="stroke: rgb(14, 165, 233); stroke-width: 3;"></path><path d="M 155 750 Q 177.5 800 200 850" fill="none" data-edge-id="e37" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 155 750 Q 177.5 900 200 1050" fill="none" class="edge" data-edge-id="e38" data-from="san-storage" data-to="app-server-1" style="stroke: rgb(14, 165, 233); stroke-width: 2;"></path><path d="M 155 750 Q 177.5 900 200 1050" fill="none" data-edge-id="e38" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 800 250 1000 250" fill="none" class="edge" data-edge-id="e39" data-from="edge-firewall" data-to="branch-router" style="stroke: rgb(132, 204, 22); stroke-width: 4;"></path><path d="M 600 250 Q 800 250 1000 250" fill="none" data-edge-id="e39" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1000 250 Q 1060 315 1120 380" fill="none" class="edge" data-edge-id="e40" data-from="branch-router" data-to="branch-switch" style="stroke: rgb(132, 204, 22); stroke-width: 3;"></path><path d="M 1000 250 Q 1060 315 1120 380" fill="none" data-edge-id="e40" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 420 Q 925 450 1050 480" fill="none" class="edge" data-edge-id="e41" data-from="core-router-2" data-to="guest-wifi-controller" style="stroke: rgb(251, 191, 36); stroke-width: 3;"></path><path d="M 800 420 Q 925 450 1050 480" fill="none" data-edge-id="e41" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><g class="node-group active" data-node-id="internet" transform="translate(600,155)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
+          <svg id="map" viewBox="-352.5 -152.5 2000 1500" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 600 155 Q 600 202.5 600 250" fill="none" class="edge" data-edge-id="e1" data-from="internet" data-to="edge-firewall" style="stroke: rgb(239, 68, 68); stroke-width: 8;"></path><path d="M 600 155 Q 600 202.5 600 250" fill="none" data-edge-id="e1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 500 335 400 420" fill="none" class="edge" data-edge-id="e2" data-from="edge-firewall" data-to="core-router-1" style="stroke: rgb(249, 115, 22); stroke-width: 7;"></path><path d="M 600 250 Q 500 335 400 420" fill="none" data-edge-id="e2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 700 335 800 420" fill="none" class="edge" data-edge-id="e3" data-from="edge-firewall" data-to="core-router-2" style="stroke: rgb(249, 115, 22); stroke-width: 7;"></path><path d="M 600 250 Q 700 335 800 420" fill="none" data-edge-id="e3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 600 420 800 420" fill="none" class="edge" data-edge-id="e4" data-from="core-router-1" data-to="core-router-2" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 400 420 Q 600 420 800 420" fill="none" data-edge-id="e4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 400 510 400 600" fill="none" class="edge" data-edge-id="e5" data-from="core-router-1" data-to="core-switch-1" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 400 420 Q 400 510 400 600" fill="none" data-edge-id="e5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 420 Q 800 510 800 600" fill="none" class="edge" data-edge-id="e6" data-from="core-router-2" data-to="core-switch-2" style="stroke: rgb(59, 130, 246); stroke-width: 6;"></path><path d="M 800 420 Q 800 510 800 600" fill="none" data-edge-id="e6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 600 600 800 600" fill="none" class="edge" data-edge-id="e7" data-from="core-switch-1" data-to="core-switch-2" style="stroke: rgb(59, 130, 246); stroke-width: 5;"></path><path d="M 400 600 Q 600 600 800 600" fill="none" data-edge-id="e7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 300 460 200 500" fill="none" class="edge" data-edge-id="e8" data-from="core-router-1" data-to="load-balancer" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 400 420 Q 300 460 200 500" fill="none" data-edge-id="e8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 172.5 575 145 650" fill="none" class="edge" data-edge-id="e9" data-from="load-balancer" data-to="web-server-1" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 172.5 575 145 650" fill="none" data-edge-id="e9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 200 600 200 700" fill="none" class="edge" data-edge-id="e10" data-from="load-balancer" data-to="web-server-2" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 200 600 200 700" fill="none" data-edge-id="e10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 500 Q 260 575 320 650" fill="none" class="edge" data-edge-id="e11" data-from="load-balancer" data-to="web-server-3" style="stroke: rgb(139, 92, 246); stroke-width: 4;"></path><path d="M 200 500 Q 260 575 320 650" fill="none" data-edge-id="e11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 500 690 600 780" fill="none" class="edge" data-edge-id="e12" data-from="core-switch-1" data-to="internal-fw" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 400 600 Q 500 690 600 780" fill="none" data-edge-id="e12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 700 690 600 780" fill="none" class="edge" data-edge-id="e13" data-from="core-switch-2" data-to="internal-fw" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 800 600 Q 700 690 600 780" fill="none" data-edge-id="e13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 550 865 500 950" fill="none" class="edge" data-edge-id="e14" data-from="internal-fw" data-to="ad-dc-1" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 550 865 500 950" fill="none" data-edge-id="e14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 610 865 620 950" fill="none" class="edge" data-edge-id="e15" data-from="internal-fw" data-to="ad-dc-2" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 610 865 620 950" fill="none" data-edge-id="e15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 670 865 740 950" fill="none" class="edge" data-edge-id="e16" data-from="internal-fw" data-to="file-server" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 670 865 740 950" fill="none" data-edge-id="e16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 790 865 980 950" fill="none" class="edge" data-edge-id="e17" data-from="internal-fw" data-to="workstation-vlan" style="stroke: rgb(16, 185, 129); stroke-width: 5;"></path><path d="M 600 780 Q 790 865 980 950" fill="none" data-edge-id="e17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 780 Q 730 865 860 950" fill="none" class="edge" data-edge-id="e18" data-from="internal-fw" data-to="mail-server" style="stroke: rgb(16, 185, 129); stroke-width: 4;"></path><path d="M 600 780 Q 730 865 860 950" fill="none" data-edge-id="e18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 300 725 200 850" fill="none" class="edge" data-edge-id="e19" data-from="core-switch-1" data-to="db-primary" style="stroke: rgb(6, 182, 212); stroke-width: 5;"></path><path d="M 400 600 Q 300 725 200 850" fill="none" data-edge-id="e19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 850 Q 175 925 150 1000" fill="none" class="edge" data-edge-id="e20" data-from="db-primary" data-to="db-replica" style="stroke: rgb(20, 184, 166); stroke-width: 4;"></path><path d="M 200 850 Q 175 925 150 1000" fill="none" data-edge-id="e20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 300 825 200 1050" fill="none" class="edge" data-edge-id="e21" data-from="core-switch-1" data-to="app-server-1" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 300 825 200 1050" fill="none" data-edge-id="e21" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 360 825 320 1050" fill="none" class="edge" data-edge-id="e22" data-from="core-switch-1" data-to="app-server-2" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 360 825 320 1050" fill="none" data-edge-id="e22" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 420 825 440 1050" fill="none" class="edge" data-edge-id="e23" data-from="core-switch-1" data-to="app-server-3" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 400 600 Q 420 825 440 1050" fill="none" data-edge-id="e23" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 200 1050 Q 200 950 200 850" fill="none" class="edge" data-edge-id="e24" data-from="app-server-1" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 200 1050 Q 200 950 200 850" fill="none" data-edge-id="e24" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 320 1050 Q 260 950 200 850" fill="none" class="edge" data-edge-id="e25" data-from="app-server-2" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 320 1050 Q 260 950 200 850" fill="none" data-edge-id="e25" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 440 1050 Q 320 950 200 850" fill="none" class="edge" data-edge-id="e26" data-from="app-server-3" data-to="db-primary" style="stroke: rgb(100, 116, 139); stroke-width: 3;"></path><path d="M 440 1050 Q 320 950 200 850" fill="none" data-edge-id="e26" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 850 650 900 700" fill="none" class="edge" data-edge-id="e27" data-from="core-switch-2" data-to="k8s-master-1" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 800 600 Q 850 650 900 700" fill="none" data-edge-id="e27" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 910 650 1020 700" fill="none" class="edge" data-edge-id="e28" data-from="core-switch-2" data-to="k8s-master-2" style="stroke: rgb(236, 72, 153); stroke-width: 4;"></path><path d="M 800 600 Q 910 650 1020 700" fill="none" data-edge-id="e28" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 900 700 Q 875 775 850 850" fill="none" class="edge" data-edge-id="e29" data-from="k8s-master-1" data-to="k8s-worker-1" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 900 700 Q 875 775 850 850" fill="none" data-edge-id="e29" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 900 700 Q 935 775 970 850" fill="none" class="edge" data-edge-id="e30" data-from="k8s-master-1" data-to="k8s-worker-2" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 900 700 Q 935 775 970 850" fill="none" data-edge-id="e30" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1020 700 Q 1055 775 1090 850" fill="none" class="edge" data-edge-id="e31" data-from="k8s-master-2" data-to="k8s-worker-3" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 1020 700 Q 1055 775 1090 850" fill="none" data-edge-id="e31" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 925 600 1050 600" fill="none" class="edge" data-edge-id="e32" data-from="core-switch-2" data-to="backup-server" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 800 600 Q 925 600 1050 600" fill="none" data-edge-id="e32" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 600 Q 975 650 1150 700" fill="none" class="edge" data-edge-id="e33" data-from="core-switch-2" data-to="monitoring" style="stroke: rgb(245, 158, 11); stroke-width: 3;"></path><path d="M 800 600 Q 975 650 1150 700" fill="none" data-edge-id="e33" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 420 Q 375 335 350 250" fill="none" class="edge" data-edge-id="e34" data-from="core-router-1" data-to="vpn-gateway" style="stroke: rgb(168, 85, 247); stroke-width: 4;"></path><path d="M 400 420 Q 375 335 350 250" fill="none" data-edge-id="e34" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 350 250 Q 265 197.5 180 145" fill="none" class="edge" data-edge-id="e35" data-from="vpn-gateway" data-to="remote-workers" style="stroke: rgb(168, 85, 247); stroke-width: 3;"></path><path d="M 350 250 Q 265 197.5 180 145" fill="none" data-edge-id="e35" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 400 600 Q 277.5 675 155 750" fill="none" class="edge" data-edge-id="e36" data-from="core-switch-1" data-to="san-storage" style="stroke: rgb(14, 165, 233); stroke-width: 5;"></path><path d="M 400 600 Q 277.5 675 155 750" fill="none" data-edge-id="e36" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 155 750 Q 177.5 800 200 850" fill="none" class="edge" data-edge-id="e37" data-from="san-storage" data-to="db-primary" style="stroke: rgb(14, 165, 233); stroke-width: 3;"></path><path d="M 155 750 Q 177.5 800 200 850" fill="none" data-edge-id="e37" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 155 750 Q 177.5 900 200 1050" fill="none" class="edge" data-edge-id="e38" data-from="san-storage" data-to="app-server-1" style="stroke: rgb(14, 165, 233); stroke-width: 2;"></path><path d="M 155 750 Q 177.5 900 200 1050" fill="none" data-edge-id="e38" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 600 250 Q 1017.5642700195312 410.6487274169922 1435.1285400390625 571.2974548339844" fill="none" class="edge" data-edge-id="e39" data-from="edge-firewall" data-to="branch-router" style="stroke: rgb(132, 204, 22); stroke-width: 4;"></path><path d="M 600 250 Q 1017.5642700195312 410.6487274169922 1435.1285400390625 571.2974548339844" fill="none" data-edge-id="e39" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1435.1285400390625 571.2974548339844 Q 1277.5642700195312 475.6487274169922 1120 380" fill="none" class="edge" data-edge-id="e40" data-from="branch-router" data-to="branch-switch" style="stroke: rgb(132, 204, 22); stroke-width: 3;"></path><path d="M 1435.1285400390625 571.2974548339844 Q 1277.5642700195312 475.6487274169922 1120 380" fill="none" data-edge-id="e40" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 800 420 Q 925 450 1050 480" fill="none" class="edge" data-edge-id="e41" data-from="core-router-2" data-to="guest-wifi-controller" style="stroke: rgb(251, 191, 36); stroke-width: 3;"></path><path d="M 800 420 Q 925 450 1050 480" fill="none" data-edge-id="e41" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge active" data-edge-id="custom-1764791521180" fill="none" marker-end="url(#arrow-forward)" points="1540.7069091796875,256.9247131347656 1772.041015625,258.7607116699219 1823.4486083984375,401.9675598144531 1610.4742431640625,587.402099609375" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="1540.7069091796875,256.9247131347656 1772.041015625,258.7607116699219 1823.4486083984375,401.9675598144531 1610.4742431640625,587.402099609375" data-edge-id="custom-1764791521180" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="internet" transform="translate(600,155)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
              M -44 11
              Q -60.50000000000001 11 -60.50000000000001 -5.5
              Q -60.50000000000001 -27.5 -38.5 -27.5
@@ -1680,13 +1798,13 @@
              L -27.5 27.5
              Q -49.5 27.5 -49.5 11
              Z
-            " class="node-circle"></path><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Internet</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="edge-firewall" transform="translate(600,250)" style="cursor: grab;"><circle r="105" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-70" y="-56" width="140" height="112" rx="4"></rect><line x1="-59.5" y1="-35" x2="59.5" y2="-35" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="-3.5" x2="59.5" y2="-3.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="28" x2="59.5" y2="28" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="-56" x2="-35" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="-56" x2="14" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="-24.5" x2="-10.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="-24.5" x2="38.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="7" x2="-35" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="7" x2="14" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="38.5" x2="-10.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="38.5" x2="38.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-19.6" style="font-size: 23.1px; pointer-events: none;">Edge Firewall</text><text class="node-sub" x="0" y="28" style="font-size: 16.8px; pointer-events: none;">203.0.113.1</text></g><g class="node-group" data-node-id="core-router-1" transform="translate(400,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; pointer-events: none;">Core Router 1</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; pointer-events: none;">10.0.0.1</text></g><g class="node-group" data-node-id="core-router-2" transform="translate(800,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; pointer-events: none;">Core Router 2</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; pointer-events: none;">10.0.0.2</text></g><g class="node-group" data-node-id="core-switch-1" transform="translate(400,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Core Switch 1</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.0.0.10</text></g><g class="node-group" data-node-id="core-switch-2" transform="translate(800,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Core Switch 2</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.0.0.11</text></g><g class="node-group" data-node-id="load-balancer" transform="translate(200,500)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Load Balancer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.1.0.10</text></g><g class="node-group" data-node-id="web-server-1" transform="translate(145,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.20</text></g><g class="node-group" data-node-id="web-server-2" transform="translate(200,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.21</text></g><g class="node-group" data-node-id="web-server-3" transform="translate(320,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.22</text></g><g class="node-group" data-node-id="internal-fw" transform="translate(600,780)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-48" width="120" height="96" rx="4"></rect><line x1="-51" y1="-30" x2="51" y2="-30" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="-3" x2="51" y2="-3" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="24" x2="51" y2="24" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="-48" x2="-30" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="-48" x2="12" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="-21" x2="-9" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="-21" x2="33" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="6" x2="-30" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="6" x2="12" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="33" x2="-9" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="33" x2="33" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Internal Firewall</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.2.0.1</text></g><g class="node-group" data-node-id="ad-dc-1" transform="translate(500,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Domain Controller 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.10</text></g><g class="node-group" data-node-id="ad-dc-2" transform="translate(620,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Domain Controller 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.11</text></g><g class="node-group" data-node-id="file-server" transform="translate(740,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">File Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.20</text></g><g class="node-group" data-node-id="db-primary" transform="translate(200,850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Database Primary</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.3.0.10</text></g><g class="node-group" data-node-id="db-replica" transform="translate(150,1000)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Database Replica</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.0.11</text></g><g class="node-group" data-node-id="app-server-1" transform="translate(200,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.20</text></g><g class="node-group" data-node-id="app-server-2" transform="translate(320,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.21</text></g><g class="node-group" data-node-id="app-server-3" transform="translate(440,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.22</text></g><g class="node-group" data-node-id="k8s-master-1" transform="translate(900,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">K8s Master 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.1.10</text></g><g class="node-group" data-node-id="k8s-master-2" transform="translate(1020,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">K8s Master 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.1.11</text></g><g class="node-group" data-node-id="k8s-worker-1" transform="translate(850,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.20</text></g><g class="node-group" data-node-id="k8s-worker-2" transform="translate(970,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.21</text></g><g class="node-group" data-node-id="k8s-worker-3" transform="translate(1090,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.22</text></g><g class="node-group" data-node-id="backup-server" transform="translate(1050,600)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Backup Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.4.0.10</text></g><g class="node-group" data-node-id="monitoring" transform="translate(1150,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Monitoring</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.4.0.20</text></g><g class="node-group" data-node-id="vpn-gateway" transform="translate(350,250)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-50" y="-40" width="100" height="80" rx="4"></rect><line x1="-42.5" y1="-25" x2="42.5" y2="-25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="-2.5" x2="42.5" y2="-2.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="20" x2="42.5" y2="20" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="-40" x2="-25" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="-40" x2="10" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="-17.5" x2="-7.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="-17.5" x2="27.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="5" x2="-25" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="5" x2="10" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="27.5" x2="-7.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="27.5" x2="27.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">VPN Gateway</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.0.1.10</text></g><g class="node-group" data-node-id="san-storage" transform="translate(155,750)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">SAN Storage</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.5.0.10</text></g><g class="node-group" data-node-id="branch-router" transform="translate(1000,250)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55.00000000000001" y="-15" width="110.00000000000001" height="40" rx="6"></rect><rect x="-32.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="-30" cy="-47.5" r="4"></circle><rect x="-2.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="0" cy="-47.5" r="4"></circle><rect x="27.5" y="-45" width="5" height="30" rx="2"></rect><circle cx="30" cy="-47.5" r="4"></circle><circle cx="-35" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="-17.5" cy="5" r="3" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle><circle cx="17.5" cy="5" r="3" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Branch Office Router</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.100.0.1</text></g><g class="node-group" data-node-id="branch-switch" transform="translate(1120,380)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-62.99999999999999" y="-18" width="125.99999999999999" height="36" rx="4"></rect><rect x="-54" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-39.6" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-25.2" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-10.799999999999997" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="3.6000000000000014" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="18" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="32.400000000000006" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="46.8" y="-6.75" width="9.9" height="13.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Branch Switch</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.100.0.10</text></g><g class="node-group" data-node-id="workstation-vlan" transform="translate(980,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-45" y="-40" width="90" height="60" rx="4"></rect><rect x="-37.5" y="-32.5" width="75" height="45" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-7.5" y="20" width="15" height="15"></rect><rect x="-25" y="35" width="50" height="7.5" rx="2"></rect></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">User Workstations</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.10.0/24</text></g><g class="node-group" data-node-id="guest-wifi-controller" transform="translate(1050,480)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">WiFi Controller</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.10.0.1</text></g><g class="node-group" data-node-id="remote-workers" transform="translate(180,145)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-36" y="-40.5" width="72" height="49.50000000000001" rx="4"></rect><rect x="-40.5" y="11.25" width="81" height="27" rx="4"></rect><rect x="-11.25" y="20.25" width="22.5" height="11.25" rx="2" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Remote Workers</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">VPN Pool</text></g><g class="node-group" data-node-id="mail-server" transform="translate(860,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Mail Server</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.2.2.10</text></g></svg>
+            " class="node-circle"></path><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Internet</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="edge-firewall" transform="translate(600,250)" style="cursor: grab;"><circle r="105" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-70" y="-56" width="140" height="112" rx="4"></rect><line x1="-59.5" y1="-35" x2="59.5" y2="-35" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="-3.5" x2="59.5" y2="-3.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-59.5" y1="28" x2="59.5" y2="28" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="-56" x2="-35" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="-56" x2="14" y2="-24.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="-24.5" x2="-10.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="-24.5" x2="38.5" y2="7" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-35" y1="7" x2="-35" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="14" y1="7" x2="14" y2="38.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-10.5" y1="38.5" x2="-10.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="38.5" y1="38.5" x2="38.5" y2="70" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-19.6" style="font-size: 23.1px; pointer-events: none;">Edge Firewall</text><text class="node-sub" x="0" y="28" style="font-size: 16.8px; pointer-events: none;">203.0.113.1</text></g><g class="node-group" data-node-id="core-router-1" transform="translate(400,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; pointer-events: none;">Core Router 1</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; pointer-events: none;">10.0.0.1</text></g><g class="node-group" data-node-id="core-router-2" transform="translate(800,420)" style="cursor: grab;"><circle r="97.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-71.5" y="-19.5" width="143" height="52" rx="6"></rect><rect x="-42.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="-39" cy="-61.75" r="5.2"></circle><rect x="-3.25" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="0" cy="-61.75" r="5.2"></circle><rect x="35.75" y="-58.5" width="6.5" height="39" rx="2"></rect><circle cx="39" cy="-61.75" r="5.2"></circle><circle cx="-45.5" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="-22.75" cy="6.5" r="3.9" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle><circle cx="22.75" cy="6.5" r="3.9" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-18.200000000000003" style="font-size: 21.45px; pointer-events: none;">Core Router 2</text><text class="node-sub" x="0" y="26" style="font-size: 15.6px; pointer-events: none;">10.0.0.2</text></g><g class="node-group" data-node-id="core-switch-1" transform="translate(400,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Core Switch 1</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.0.0.10</text></g><g class="node-group" data-node-id="core-switch-2" transform="translate(800,600)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-84" y="-24" width="168" height="48" rx="4"></rect><rect x="-72" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-52.8" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-33.6" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-14.399999999999999" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.799999999999997" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="24" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="43.2" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="62.400000000000006" y="-9" width="13.2" height="18" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Core Switch 2</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.0.0.11</text></g><g class="node-group" data-node-id="load-balancer" transform="translate(200,500)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Load Balancer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.1.0.10</text></g><g class="node-group" data-node-id="web-server-1" transform="translate(145,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.20</text></g><g class="node-group" data-node-id="web-server-2" transform="translate(200,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.21</text></g><g class="node-group" data-node-id="web-server-3" transform="translate(320,650)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Web Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.1.0.22</text></g><g class="node-group" data-node-id="internal-fw" transform="translate(600,780)" style="cursor: grab;"><circle r="90" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-48" width="120" height="96" rx="4"></rect><line x1="-51" y1="-30" x2="51" y2="-30" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="-3" x2="51" y2="-3" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-51" y1="24" x2="51" y2="24" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="-48" x2="-30" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="-48" x2="12" y2="-21" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="-21" x2="-9" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="-21" x2="33" y2="6" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-30" y1="6" x2="-30" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="12" y1="6" x2="12" y2="33" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-9" y1="33" x2="-9" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="33" y1="33" x2="33" y2="60" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-16.8" style="font-size: 19.8px; pointer-events: none;">Internal Firewall</text><text class="node-sub" x="0" y="24" style="font-size: 14.4px; pointer-events: none;">10.2.0.1</text></g><g class="node-group" data-node-id="ad-dc-1" transform="translate(500,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Domain Controller 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.10</text></g><g class="node-group" data-node-id="ad-dc-2" transform="translate(620,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Domain Controller 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.11</text></g><g class="node-group" data-node-id="file-server" transform="translate(740,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">File Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.1.20</text></g><g class="node-group" data-node-id="db-primary" transform="translate(200,850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Database Primary</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.3.0.10</text></g><g class="node-group" data-node-id="db-replica" transform="translate(150,1000)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Database Replica</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.0.11</text></g><g class="node-group" data-node-id="app-server-1" transform="translate(200,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.20</text></g><g class="node-group" data-node-id="app-server-2" transform="translate(320,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.21</text></g><g class="node-group" data-node-id="app-server-3" transform="translate(440,1050)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">App Server 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.0.22</text></g><g class="node-group" data-node-id="k8s-master-1" transform="translate(900,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">K8s Master 1</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.1.10</text></g><g class="node-group" data-node-id="k8s-master-2" transform="translate(1020,700)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-60" y="-30" width="120" height="60" rx="4"></rect><line x1="-45" y1="-15" x2="-45" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-20" y1="-15" x2="-20" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5" y1="-15" x2="5" y2="15" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="45" cy="0" r="5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">K8s Master 2</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.3.1.11</text></g><g class="node-group" data-node-id="k8s-worker-1" transform="translate(850,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 1</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.20</text></g><g class="node-group" data-node-id="k8s-worker-2" transform="translate(970,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 2</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.21</text></g><g class="node-group" data-node-id="k8s-worker-3" transform="translate(1090,850)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">K8s Worker 3</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.3.1.22</text></g><g class="node-group" data-node-id="backup-server" transform="translate(1050,600)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-35" y="-30" width="70" height="70"></rect><ellipse cx="0" cy="-30" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="40" rx="35" ry="12.5"></ellipse><ellipse cx="0" cy="-7.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="17.5" rx="35" ry="10" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">Backup Server</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.4.0.10</text></g><g class="node-group" data-node-id="monitoring" transform="translate(1150,700)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Monitoring</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.4.0.20</text></g><g class="node-group" data-node-id="vpn-gateway" transform="translate(350,250)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-50" y="-40" width="100" height="80" rx="4"></rect><line x1="-42.5" y1="-25" x2="42.5" y2="-25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="-2.5" x2="42.5" y2="-2.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-42.5" y1="20" x2="42.5" y2="20" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="-40" x2="-25" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="-40" x2="10" y2="-17.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="-17.5" x2="-7.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="-17.5" x2="27.5" y2="5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-25" y1="5" x2="-25" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="10" y1="5" x2="10" y2="27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-7.5" y1="27.5" x2="-7.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="27.5" y1="27.5" x2="27.5" y2="50" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">VPN Gateway</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.0.1.10</text></g><g class="node-group" data-node-id="san-storage" transform="translate(155,750)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">SAN Storage</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">10.5.0.10</text></g><g class="node-group" data-node-id="workstation-vlan" transform="translate(980,950)" style="cursor: grab;"><circle r="75" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-45" y="-40" width="90" height="60" rx="4"></rect><rect x="-37.5" y="-32.5" width="75" height="45" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-7.5" y="20" width="15" height="15"></rect><rect x="-25" y="35" width="50" height="7.5" rx="2"></rect></g><text class="node-label" x="0" y="-14.000000000000002" style="font-size: 16.5px; pointer-events: none;">User Workstations</text><text class="node-sub" x="0" y="20" style="font-size: 12px; pointer-events: none;">10.2.10.0/24</text></g><g class="node-group" data-node-id="guest-wifi-controller" transform="translate(1050,480)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-49.50000000000001" y="-13.5" width="99.00000000000001" height="36" rx="6"></rect><rect x="-29.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="-27" cy="-42.75" r="3.6"></circle><rect x="-2.25" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="0" cy="-42.75" r="3.6"></circle><rect x="24.75" y="-40.5" width="4.5" height="27" rx="2"></rect><circle cx="27" cy="-42.75" r="3.6"></circle><circle cx="-31.499999999999996" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="-15.749999999999998" cy="4.5" r="2.6999999999999997" style="fill: rgb(74, 222, 128);"></circle><circle cx="0" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle><circle cx="15.750000000000004" cy="4.5" r="2.6999999999999997" style="fill: rgb(250, 204, 21);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">WiFi Controller</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.10.0.1</text></g><g class="node-group" data-node-id="remote-workers" transform="translate(180,145)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-36" y="-40.5" width="72" height="49.50000000000001" rx="4"></rect><rect x="-40.5" y="11.25" width="81" height="27" rx="4"></rect><rect x="-11.25" y="20.25" width="22.5" height="11.25" rx="2" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Remote Workers</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">VPN Pool</text></g><g class="node-group" data-node-id="mail-server" transform="translate(860,950)" style="cursor: grab;"><circle r="67.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-54" y="-27" width="108" height="54" rx="4"></rect><line x1="-40.5" y1="-13.5" x2="-40.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-18" y1="-13.5" x2="-18" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="4.5" y1="-13.5" x2="4.5" y2="13.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="40.5" cy="0" r="4.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-12.600000000000001" style="font-size: 14.85px; pointer-events: none;">Mail Server</text><text class="node-sub" x="0" y="18" style="font-size: 10.8px; pointer-events: none;">10.2.2.10</text></g><g class="node-group" data-node-id="racked" transform="translate(1534.2808837890625,634.2197265625)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Racked</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">1.1.1.1</text></g><g class="text-group" data-text-id="text-1764791492132"><text class="text-element" x="1403.008056640625" y="321.1842346191406" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 32px; font-weight: normal; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="1403.008056640625" dy="0">I am a rack.</tspan><tspan x="1403.008056640625" dy="38.4">Double click on desktop</tspan><tspan x="1403.008056640625" dy="38.4">or</tspan><tspan x="1403.008056640625" dy="38.4">long press on mobile</tspan><tspan x="1403.008056640625" dy="38.4">to enter rack view</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="1423.008056640625" cy="289.1842346191406" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="1423.008056640625" y="289.1842346191406" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <line x1="600" y1="155" x2="600" y2="250" class="minimap-edge"></line><line x1="600" y1="250" x2="400" y2="420" class="minimap-edge"></line><line x1="600" y1="250" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="400" y2="600" class="minimap-edge"></line><line x1="800" y1="420" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="600" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="420" x2="200" y2="500" class="minimap-edge"></line><line x1="200" y1="500" x2="145" y2="650" class="minimap-edge"></line><line x1="200" y1="500" x2="200" y2="700" class="minimap-edge"></line><line x1="200" y1="500" x2="320" y2="650" class="minimap-edge"></line><line x1="400" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="800" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="600" y1="780" x2="500" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="620" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="980" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="860" y2="950" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="850" class="minimap-edge"></line><line x1="200" y1="850" x2="150" y2="1000" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="320" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="440" y2="1050" class="minimap-edge"></line><line x1="200" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="320" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="440" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="900" y2="700" class="minimap-edge"></line><line x1="800" y1="600" x2="1020" y2="700" class="minimap-edge"></line><line x1="900" y1="700" x2="850" y2="850" class="minimap-edge"></line><line x1="900" y1="700" x2="970" y2="850" class="minimap-edge"></line><line x1="1020" y1="700" x2="1090" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="1050" y2="600" class="minimap-edge"></line><line x1="800" y1="600" x2="1150" y2="700" class="minimap-edge"></line><line x1="400" y1="420" x2="350" y2="250" class="minimap-edge"></line><line x1="350" y1="250" x2="180" y2="145" class="minimap-edge"></line><line x1="400" y1="600" x2="155" y2="750" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="850" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="1050" class="minimap-edge"></line><line x1="600" y1="250" x2="1000" y2="250" class="minimap-edge"></line><line x1="1000" y1="250" x2="1120" y2="380" class="minimap-edge"></line><line x1="800" y1="420" x2="1050" y2="480" class="minimap-edge"></line><circle cx="600" cy="155" r="40" class="minimap-node"></circle><circle cx="600" cy="250" r="40" class="minimap-node"></circle><circle cx="400" cy="420" r="40" class="minimap-node"></circle><circle cx="800" cy="420" r="40" class="minimap-node"></circle><circle cx="400" cy="600" r="40" class="minimap-node"></circle><circle cx="800" cy="600" r="40" class="minimap-node"></circle><circle cx="200" cy="500" r="40" class="minimap-node"></circle><circle cx="145" cy="650" r="40" class="minimap-node"></circle><circle cx="200" cy="700" r="40" class="minimap-node"></circle><circle cx="320" cy="650" r="40" class="minimap-node"></circle><circle cx="600" cy="780" r="40" class="minimap-node"></circle><circle cx="500" cy="950" r="40" class="minimap-node"></circle><circle cx="620" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="860" cy="950" r="40" class="minimap-node"></circle><circle cx="980" cy="950" r="40" class="minimap-node"></circle><circle cx="200" cy="850" r="40" class="minimap-node"></circle><circle cx="150" cy="1000" r="40" class="minimap-node"></circle><circle cx="200" cy="1050" r="40" class="minimap-node"></circle><circle cx="320" cy="1050" r="40" class="minimap-node"></circle><circle cx="440" cy="1050" r="40" class="minimap-node"></circle><circle cx="900" cy="700" r="40" class="minimap-node"></circle><circle cx="1020" cy="700" r="40" class="minimap-node"></circle><circle cx="850" cy="850" r="40" class="minimap-node"></circle><circle cx="970" cy="850" r="40" class="minimap-node"></circle><circle cx="1090" cy="850" r="40" class="minimap-node"></circle><circle cx="1050" cy="600" r="40" class="minimap-node"></circle><circle cx="1150" cy="700" r="40" class="minimap-node"></circle><circle cx="350" cy="250" r="40" class="minimap-node"></circle><circle cx="180" cy="145" r="40" class="minimap-node"></circle><circle cx="155" cy="750" r="40" class="minimap-node"></circle><circle cx="1000" cy="250" r="40" class="minimap-node"></circle><circle cx="1120" cy="380" r="40" class="minimap-node"></circle><circle cx="1050" cy="480" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-352.5" y="-152.5" width="2000" height="1500"></rect>
+              <line x1="600" y1="155" x2="600" y2="250" class="minimap-edge"></line><line x1="600" y1="250" x2="400" y2="420" class="minimap-edge"></line><line x1="600" y1="250" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="800" y2="420" class="minimap-edge"></line><line x1="400" y1="420" x2="400" y2="600" class="minimap-edge"></line><line x1="800" y1="420" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="600" x2="800" y2="600" class="minimap-edge"></line><line x1="400" y1="420" x2="200" y2="500" class="minimap-edge"></line><line x1="200" y1="500" x2="145" y2="650" class="minimap-edge"></line><line x1="200" y1="500" x2="200" y2="700" class="minimap-edge"></line><line x1="200" y1="500" x2="320" y2="650" class="minimap-edge"></line><line x1="400" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="800" y1="600" x2="600" y2="780" class="minimap-edge"></line><line x1="600" y1="780" x2="500" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="620" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="740" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="980" y2="950" class="minimap-edge"></line><line x1="600" y1="780" x2="860" y2="950" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="850" class="minimap-edge"></line><line x1="200" y1="850" x2="150" y2="1000" class="minimap-edge"></line><line x1="400" y1="600" x2="200" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="320" y2="1050" class="minimap-edge"></line><line x1="400" y1="600" x2="440" y2="1050" class="minimap-edge"></line><line x1="200" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="320" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="440" y1="1050" x2="200" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="900" y2="700" class="minimap-edge"></line><line x1="800" y1="600" x2="1020" y2="700" class="minimap-edge"></line><line x1="900" y1="700" x2="850" y2="850" class="minimap-edge"></line><line x1="900" y1="700" x2="970" y2="850" class="minimap-edge"></line><line x1="1020" y1="700" x2="1090" y2="850" class="minimap-edge"></line><line x1="800" y1="600" x2="1050" y2="600" class="minimap-edge"></line><line x1="800" y1="600" x2="1150" y2="700" class="minimap-edge"></line><line x1="400" y1="420" x2="350" y2="250" class="minimap-edge"></line><line x1="350" y1="250" x2="180" y2="145" class="minimap-edge"></line><line x1="400" y1="600" x2="155" y2="750" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="850" class="minimap-edge"></line><line x1="155" y1="750" x2="200" y2="1050" class="minimap-edge"></line><line x1="800" y1="420" x2="1050" y2="480" class="minimap-edge"></line><circle cx="600" cy="155" r="40" class="minimap-node"></circle><circle cx="600" cy="250" r="40" class="minimap-node"></circle><circle cx="400" cy="420" r="40" class="minimap-node"></circle><circle cx="800" cy="420" r="40" class="minimap-node"></circle><circle cx="400" cy="600" r="40" class="minimap-node"></circle><circle cx="800" cy="600" r="40" class="minimap-node"></circle><circle cx="200" cy="500" r="40" class="minimap-node"></circle><circle cx="145" cy="650" r="40" class="minimap-node"></circle><circle cx="200" cy="700" r="40" class="minimap-node"></circle><circle cx="320" cy="650" r="40" class="minimap-node"></circle><circle cx="600" cy="780" r="40" class="minimap-node"></circle><circle cx="500" cy="950" r="40" class="minimap-node"></circle><circle cx="620" cy="950" r="40" class="minimap-node"></circle><circle cx="740" cy="950" r="40" class="minimap-node"></circle><circle cx="860" cy="950" r="40" class="minimap-node"></circle><circle cx="980" cy="950" r="40" class="minimap-node"></circle><circle cx="200" cy="850" r="40" class="minimap-node"></circle><circle cx="150" cy="1000" r="40" class="minimap-node"></circle><circle cx="200" cy="1050" r="40" class="minimap-node"></circle><circle cx="320" cy="1050" r="40" class="minimap-node"></circle><circle cx="440" cy="1050" r="40" class="minimap-node"></circle><circle cx="900" cy="700" r="40" class="minimap-node"></circle><circle cx="1020" cy="700" r="40" class="minimap-node"></circle><circle cx="850" cy="850" r="40" class="minimap-node"></circle><circle cx="970" cy="850" r="40" class="minimap-node"></circle><circle cx="1090" cy="850" r="40" class="minimap-node"></circle><circle cx="1050" cy="600" r="40" class="minimap-node"></circle><circle cx="1150" cy="700" r="40" class="minimap-node"></circle><circle cx="350" cy="250" r="40" class="minimap-node"></circle><circle cx="180" cy="145" r="40" class="minimap-node"></circle><circle cx="155" cy="750" r="40" class="minimap-node"></circle><circle cx="1050" cy="480" r="40" class="minimap-node"></circle><circle cx="1534.2808837890625" cy="634.2197265625" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-352.5" y="-152.5" width="2000" height="1500"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
@@ -1702,7 +1820,7 @@
 		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
 		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
 		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
-		<button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
+		<button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button></section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -1718,10 +1836,10 @@
             <circle cx="26" cy="3" r="2"></circle>
           </svg>
         </div>
-        <div id="node-panel" style="display: block;">
-          <div class="details-name editable-text" id="node-name">Internet</div>
-          <div class="details-ip editable-text" id="node-ip">0.0.0.0</div>
-          <div class="details-role" id="node-role">External</div>
+        <div id="node-panel" style="display: none;">
+          <div class="details-name editable-text" id="node-name">Racked</div>
+          <div class="details-ip editable-text" id="node-ip">1.1.1.1</div>
+          <div class="details-role" id="node-role">Rack</div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">MAC:</span>
             <span class="editable-text" id="node-mac" style="margin-left: 8px; font-size: 14px;">--</span>
@@ -1730,7 +1848,33 @@
             <span style="color: var(--text-soft); font-size: 14px;">Rack Unit:</span>
             <span class="editable-text" id="node-rack" style="margin-left: 8px; font-size: 14px;">--</span>
           </div>
-          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>External</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+          <div class="details-info-row" id="uheight-row" style="display: none;">
+            <span style="color: var(--text-soft); font-size: 14px;">U Height:</span>
+            <span class="editable-text" id="node-uheight" style="margin-left: 8px; font-size: 14px;">1U</span>
+          </div>
+          <div class="details-info-row">
+            <span style="color: var(--text-soft); font-size: 14px;">Layer:</span>
+            <select id="node-layer" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
+              <option value="physical">Physical</option>
+              <option value="logical">Logical</option>
+              <option value="security">Security</option>
+              <option value="application">Application</option>
+            </select>
+          </div>
+          <div class="details-info-row" id="assigned-rack-row" style="display: none;">
+            <span style="color: var(--text-soft); font-size: 14px;">Assigned Rack:</span>
+            <select id="node-assigned-rack" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option><option value="racked">Racked</option></select>
+          </div>
+          <div class="details-info-row" id="rack-capacity-row" style="display: flex;">
+            <span style="color: var(--text-soft); font-size: 14px;">Rack Capacity:</span>
+            <select id="node-rack-capacity" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
+              <option value="42">42U</option>
+              <option value="48">48U</option>
+              <option value="24">24U</option>
+              <option value="12">12U</option>
+            </select>
+          </div>
+          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
           <div class="size-controls">
             <label>Size:</label>
             <input type="range" id="size-slider" min="20" max="200" value="55">
@@ -1863,7 +2007,7 @@
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Public internet</span><span class="delete-note">✕</span></li></ul>
+          <ul class="list" id="node-notes"></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="
               flex: 1;
@@ -1898,7 +2042,7 @@
             width: 100%;
             "> Delete Node </button>
         </div>
-        <div id="edge-panel" style="display: none">
+        <div id="edge-panel" style="display: block;">
           <div class="details-name" id="edge-title">Custom line</div>
           <div class="style-row" style="margin-top: 10px">
             <label>Width:</label>
@@ -1968,7 +2112,7 @@
             font-weight: 600;
             "> Delete Line </button>
         </div>
-        <div id="text-panel" style="display: none">
+        <div id="text-panel" style="display: none;">
           <div class="details-name" id="text-title">Text Element</div>
           <div class="style-row" style="margin-top: 10px">
             <label>Content:</label>
@@ -2066,7 +2210,7 @@
           </div>
           <div class="style-row">
             <label>Background:</label>
-            <input type="color" id="text-bg-color" value="#00000000">
+            <input type="color" id="text-bg-color" value="#000000">
             <label style="margin-left: 10px; display: flex; align-items: center; gap: 6px;">
             <input type="checkbox" id="text-bg-enabled" style="cursor: pointer;">
             <span style="font-size: 13px;">Enable</span>
@@ -2562,7 +2706,8 @@
       "Site-to-site VPN",
       "SD-WAN enabled",
       "MPLS backup"
-    ]
+    ],
+    "assignedRack": "racked"
   },
   "branch-switch": {
     "shape": "switch",
@@ -2577,7 +2722,8 @@
       "24-port managed",
       "PoE+",
       "Local VLAN routing"
-    ]
+    ],
+    "assignedRack": "racked"
   },
   "workstation-vlan": {
     "shape": "pc",
@@ -2638,6 +2784,23 @@
       "500 mailboxes",
       "Hybrid O365"
     ]
+  },
+  "racked": {
+    "shape": "server",
+    "name": "Racked",
+    "ip": "1.1.1.1",
+    "role": "Rack",
+    "tags": [],
+    "notes": [],
+    "mac": "",
+    "rackUnit": "",
+    "uHeight": "1",
+    "layer": "physical",
+    "assignedRack": "",
+    "rackCapacity": "24",
+    "isRack": true,
+    "locked": false,
+    "groupId": null
   }
 }</script>
     <script id="topology-state" type="application/json">{
@@ -3097,7 +3260,8 @@
         "Site-to-site VPN",
         "SD-WAN enabled",
         "MPLS backup"
-      ]
+      ],
+      "assignedRack": "racked"
     },
     "branch-switch": {
       "shape": "switch",
@@ -3112,7 +3276,8 @@
         "24-port managed",
         "PoE+",
         "Local VLAN routing"
-      ]
+      ],
+      "assignedRack": "racked"
     },
     "workstation-vlan": {
       "shape": "pc",
@@ -3173,6 +3338,23 @@
         "500 mailboxes",
         "Hybrid O365"
       ]
+    },
+    "racked": {
+      "shape": "server",
+      "name": "Racked",
+      "ip": "1.1.1.1",
+      "role": "Rack",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "physical",
+      "assignedRack": "",
+      "rackCapacity": "24",
+      "isRack": true,
+      "locked": false,
+      "groupId": null
     }
   },
   "edgeData": {
@@ -3714,6 +3896,33 @@
         ],
         "_pairIndex": 0,
         "_pairTotal": 1
+      },
+      {
+        "id": "custom-1764791521180",
+        "type": "custom",
+        "color": "#f97316",
+        "width": 4,
+        "lineStyle": "solid",
+        "direction": "forward",
+        "points": [
+          {
+            "x": 1540.7069091796875,
+            "y": 256.9247131347656
+          },
+          {
+            "x": 1772.041015625,
+            "y": 258.7607116699219
+          },
+          {
+            "x": 1823.4486083984375,
+            "y": 401.9675598144531
+          },
+          {
+            "x": 1610.4742431640625,
+            "y": 587.402099609375
+          }
+        ],
+        "notes": []
       }
     ]
   },
@@ -3721,7 +3930,23 @@
     "list": []
   },
   "textData": {
-    "list": []
+    "list": [
+      {
+        "id": "text-1764791492132",
+        "x": 1403.008056640625,
+        "y": 321.1842346191406,
+        "content": "I am a rack.\nDouble click on desktop\nor\nlong press on mobile\nto enter rack view",
+        "fontSize": 32,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      }
+    ]
   },
   "edgeLegend": {
     "#ef4444": "WAN / Internet (10 Gbps)",
@@ -3865,8 +4090,8 @@
       "y": 750
     },
     "branch-router": {
-      "x": 1000,
-      "y": 250
+      "x": 1435.1285400390625,
+      "y": 571.2974548339844
     },
     "branch-switch": {
       "x": 1120,
@@ -3875,6 +4100,10 @@
     "guest-wifi-controller": {
       "x": 1050,
       "y": 480
+    },
+    "racked": {
+      "x": 1534.2808837890625,
+      "y": 634.2197265625
     }
   },
   "nodeSizes": {
@@ -3934,11 +4163,13 @@
     "zoom": 2,
     "panX": -352.5,
     "panY": -152.5
-  }
+  },
+  "savedTopologyView": null
 }</script>
     <script>
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
       let currentNodeId = "host";
+	  let textDrawMode = false;
       let currentEdgeId = null;
       let currentStyleScope = "all";
       let NODE_DATA = {};
@@ -3958,6 +4189,12 @@
       let legendCollapsed = false;
       let minimapCollapsed = false;
       let drawToolbarCollapsed = false;
+      let activeLayers = new Set(["physical", "logical", "security", "application"]);
+      let currentView = {
+       mode: "topology",  
+       rackId: null      
+      };
+      let savedTopologyView = null; 
       let topologyToolbarCollapsed = false;
       let legendMiniBtn = null;
       let minimapMiniBtn = null;
@@ -4300,6 +4537,12 @@
       const CANVAS_WIDTH = 4000;
       const CANVAS_HEIGHT = 3000;
       const CANVAS_PADDING = 100;
+      
+      const RACK_U_HEIGHT = 70; 
+      const RACK_WIDTH = 600;
+      const RACK_START_X = CANVAS_WIDTH / 2; 
+      const RACK_START_Y = CANVAS_PADDING + 100;
+      
       let canvasState = {
        zoom: 1,
        panX: 0,
@@ -4332,6 +4575,7 @@
         zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
        }
        updateMinimap();
+       populateRackDropdown();
       }
       
       function updateMinimap() {
@@ -4347,8 +4591,25 @@
        minimapNodes.forEach((n) => n.remove());
        const minimapEdges = minimapSvg.querySelectorAll(".minimap-edge");
        minimapEdges.forEach((e) => e.remove());
+       
        EDGE_DATA.list.forEach((edge) => {
         if (edge.type === "custom") return;
+        
+        const fromNode = NODE_DATA[edge.from];
+        const toNode = NODE_DATA[edge.to];
+        if (!fromNode || !toNode) return;
+        
+        if (currentView.mode === "rack") {
+         if (fromNode.assignedRack !== currentView.rackId || 
+             toNode.assignedRack !== currentView.rackId) {
+          return;
+         }
+        } else {
+         if (fromNode.assignedRack || toNode.assignedRack) {
+          return;
+         }
+        }
+        
         const p1 = savedPositions[edge.from];
         const p2 = savedPositions[edge.to];
         if (!p1 || !p2) return;
@@ -4360,7 +4621,21 @@
         line.classList.add("minimap-edge");
         minimapSvg.insertBefore(line, minimapViewport);
        });
+       
        Object.entries(savedPositions).forEach(([id, pos]) => {
+        const node = NODE_DATA[id];
+        if (!node) return;
+        
+        if (currentView.mode === "rack") {
+         if (node.assignedRack !== currentView.rackId) {
+          return; 
+         }
+        } else {
+         if (node.assignedRack) {
+          return; 
+         }
+        }
+        
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle", );
         circle.setAttribute("cx", pos.x);
         circle.setAttribute("cy", pos.y);
@@ -4500,6 +4775,103 @@
        updateTopologyToolbarVisibility();
       });
       
+      function applyLayerFilter() {
+       activeLayers.clear();
+       if (document.getElementById("layer-physical").checked) activeLayers.add("physical");
+       if (document.getElementById("layer-logical").checked) activeLayers.add("logical");
+       if (document.getElementById("layer-security").checked) activeLayers.add("security");
+       if (document.getElementById("layer-application").checked) activeLayers.add("application");
+       forgeTheTopology();
+      }
+      
+      function isNodeVisible(nodeId) {
+       const node = NODE_DATA[nodeId];
+       if (!node) return false;
+       const nodeLayer = node.layer || "physical";
+       return activeLayers.has(nodeLayer);
+      }
+      
+      function enterRack(rackId) {
+       if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
+       
+       savedTopologyView = {
+        zoom: canvasState.zoom,
+        panX: canvasState.panX,
+        panY: canvasState.panY
+       };
+       
+       currentView.mode = "rack";
+       currentView.rackId = rackId;
+       
+       const backBtn = document.getElementById("back-to-topology-btn");
+       if (backBtn) backBtn.style.display = "inline-block";
+       
+       const hint = document.getElementById("canvas-hint");
+       if (hint) {
+        hint.textContent = `Viewing: ${NODE_DATA[rackId].name} | Double-click empty space to exit`;
+        hint.classList.add("visible");
+       }
+       
+       const rackCapacity = getRackCapacity(rackId);
+       const rackHeight = rackCapacity * RACK_U_HEIGHT;
+       const rackCenterX = RACK_START_X;
+       const rackCenterY = RACK_START_Y + (rackHeight / 2);
+       
+       const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+       const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+       
+       canvasState.panX = rackCenterX - (viewWidth / 2);
+       canvasState.panY = rackCenterY - (viewHeight / 2);
+       
+       constrainPan();
+       updateViewBox();
+       
+       forgeTheTopology();
+      }
+      
+      function exitRack() {
+       currentView.mode = "topology";
+       currentView.rackId = null;
+       
+       const backBtn = document.getElementById("back-to-topology-btn");
+       if (backBtn) backBtn.style.display = "none";
+       
+       const hint = document.getElementById("canvas-hint");
+       if (hint) {
+        hint.classList.remove("visible");
+       }
+       
+       if (savedTopologyView) {
+        canvasState.zoom = savedTopologyView.zoom;
+        canvasState.panX = savedTopologyView.panX;
+        canvasState.panY = savedTopologyView.panY;
+        updateViewBox();
+       }
+       
+       forgeTheTopology();
+      }
+      
+      function getRackCapacity(rackId) {
+       const node = NODE_DATA[rackId];
+       return node && node.rackCapacity ? parseInt(node.rackCapacity) : 42;
+      }
+      
+      function populateRackDropdown() {
+       const dropdown = document.getElementById("node-assigned-rack");
+       if (!dropdown) return;
+       
+       dropdown.innerHTML = '<option value="">None</option>';
+       
+       Object.keys(NODE_DATA).forEach(id => {
+        if (NODE_DATA[id].isRack) {
+         const option = document.createElement("option");
+         option.value = id;
+         option.textContent = NODE_DATA[id].name;
+         dropdown.appendChild(option);
+        }
+       });
+      }
+      
       function wieldThePower() {
        const root = document.documentElement;
        root.style.setProperty("--panel", PAGE_STATE.panel);
@@ -4621,6 +4993,11 @@
         canvasState.panX = initialState.canvas.panX || 0;
         canvasState.panY = initialState.canvas.panY || 0;
        }
+       
+       if (initialState.savedTopologyView) {
+        savedTopologyView = initialState.savedTopologyView;
+       }
+       
        wieldThePower();
        forgeTheTopology();
        updateViewBox();
@@ -5266,8 +5643,69 @@
        boundary.setAttribute("stroke-dasharray", "10 5");
        boundary.setAttribute("rx", "8");
        svg.appendChild(boundary);
+       
+       if (currentView.mode === "rack" && currentView.rackId) {
+        const rackCapacity = getRackCapacity(currentView.rackId);
+        const rackGroup = document.createElementNS(ns, "g");
+        rackGroup.id = "rack-visualization";
+        
+        const rackFrame = document.createElementNS(ns, "rect");
+        rackFrame.setAttribute("x", RACK_START_X - RACK_WIDTH / 2);
+        rackFrame.setAttribute("y", RACK_START_Y);
+        rackFrame.setAttribute("width", RACK_WIDTH);
+        rackFrame.setAttribute("height", rackCapacity * RACK_U_HEIGHT);
+        rackFrame.setAttribute("fill", "rgba(15, 23, 42, 0.3)");
+        rackFrame.setAttribute("stroke", "var(--accent)");
+        rackFrame.setAttribute("stroke-width", "3");
+        rackFrame.setAttribute("rx", "4");
+        rackGroup.appendChild(rackFrame);
+        
+        for (let u = 0; u <= rackCapacity; u++) {
+         const y = RACK_START_Y + u * RACK_U_HEIGHT;
+         
+         const line = document.createElementNS(ns, "line");
+         line.setAttribute("x1", RACK_START_X - RACK_WIDTH / 2);
+         line.setAttribute("y1", y);
+         line.setAttribute("x2", RACK_START_X + RACK_WIDTH / 2);
+         line.setAttribute("y2", y);
+         line.setAttribute("stroke", "rgba(71, 85, 105, 0.4)");
+         line.setAttribute("stroke-width", u % 5 === 0 ? "2" : "1");
+         line.setAttribute("stroke-dasharray", u % 5 === 0 ? "none" : "5,5");
+         rackGroup.appendChild(line);
+         
+         if (u < rackCapacity) {
+          const uNumber = rackCapacity - u; 
+          const text = document.createElementNS(ns, "text");
+          text.setAttribute("x", RACK_START_X - RACK_WIDTH / 2 - 30);
+          text.setAttribute("y", y + RACK_U_HEIGHT / 2);
+          text.setAttribute("text-anchor", "middle");
+          text.setAttribute("dominant-baseline", "middle");
+          text.style.fill = "var(--accent)";
+          text.style.fontSize = "14px";
+          text.style.fontWeight = "bold";
+          text.textContent = `U${uNumber}`;
+          rackGroup.appendChild(text);
+          
+          const textRight = document.createElementNS(ns, "text");
+          textRight.setAttribute("x", RACK_START_X + RACK_WIDTH / 2 + 30);
+          textRight.setAttribute("y", y + RACK_U_HEIGHT / 2);
+          textRight.setAttribute("text-anchor", "middle");
+          textRight.setAttribute("dominant-baseline", "middle");
+          textRight.style.fill = "var(--accent)";
+          textRight.style.fontSize = "14px";
+          textRight.style.fontWeight = "bold";
+          textRight.textContent = `U${uNumber}`;
+          rackGroup.appendChild(textRight);
+         }
+        }
+        
+        svg.appendChild(rackGroup);
+       }
+       
         if (RECT_DATA && RECT_DATA.list) {
          RECT_DATA.list.forEach((rect) => {
+          if (currentView.mode === "rack") return;
+          
           if (rect.style === "filled") {
            const g = document.createElementNS(ns, "g");
            g.classList.add("rect-group");
@@ -5432,14 +5870,28 @@
        const centerX = CANVAS_WIDTH / 2;
        const centerY = CANVAS_HEIGHT / 2;
        let positions = {};
-       Object.keys(NODE_DATA).forEach((id) => {
+              Object.keys(NODE_DATA).forEach((id) => {
+        if (currentView.mode === "rack") {
+         const node = NODE_DATA[id];
+         if (!node || node.assignedRack !== currentView.rackId) {
+          return; 
+         }
+        }
+        
         positions[id] = savedPositions[id] || {
          x: centerX,
          y: centerY
         };
        });
        if (Object.keys(savedPositions).length === 0) {
-        const nodeIds = Object.keys(NODE_DATA);
+        const nodeIds = Object.keys(NODE_DATA).filter(id => {
+         if (currentView.mode === "rack") {
+          const node = NODE_DATA[id];
+          return node && node.assignedRack === currentView.rackId;
+         }
+         return true;
+        });
+        
         const baseY = centerY - 300;
         if (nodeIds.length > 0) {
          positions[nodeIds[0]] = {
@@ -5554,6 +6006,11 @@
           e.stopPropagation();
           selectTheConnection(edge.id);
          });
+         
+         if (currentView.mode === "rack") {
+          return;
+         }
+         
          svg.appendChild(poly);
          svg.appendChild(polyHit);
          return;
@@ -5625,6 +6082,25 @@
          e.stopPropagation();
          selectTheConnection(edge.id);
         });
+        
+        if (currentView.mode === "rack") {
+         const fromNode = NODE_DATA[edge.from];
+         const toNode = NODE_DATA[edge.to];
+         if (!fromNode || !toNode || 
+             fromNode.assignedRack !== currentView.rackId || 
+             toNode.assignedRack !== currentView.rackId) {
+          return; 
+         }
+        }
+        
+        const fromVisible = isNodeVisible(edge.from);
+        const toVisible = isNodeVisible(edge.to);
+        if (!fromVisible || !toVisible) {
+         path.style.opacity = "0.1";
+         path.style.pointerEvents = "none";
+         pathHit.style.pointerEvents = "none";
+        }
+        
         svg.appendChild(path);
         svg.appendChild(pathHit);
         
@@ -5661,6 +6137,21 @@
         }
        });
        Object.entries(positions).forEach(([id, pos]) => {
+        const node = NODE_DATA[id];
+        if (!node) return;
+        
+        if (currentView.mode === "rack") {
+         if (node.assignedRack !== currentView.rackId) return;
+         
+         const rackUnit = parseInt(node.rackUnit) || 1;
+         const uHeight = parseInt(node.uHeight) || 1;
+         const rackCapacity = getRackCapacity(currentView.rackId);
+         pos.x = RACK_START_X;
+         pos.y = RACK_START_Y + (rackUnit - 1) * RACK_U_HEIGHT + (uHeight * RACK_U_HEIGHT) / 2;
+        } else {
+         if (node.assignedRack) return;
+        }
+        
         const g = document.createElementNS("http://www.w3.org/2000/svg", "g", );
         g.classList.add("node-group");
         g.dataset.nodeId = id;
@@ -5705,6 +6196,31 @@
         if (styles.subFont) sub.style.fontFamily = styles.subFont;
         sub.style.pointerEvents = "none";
         g.append(hitArea, shapeEl, label, sub);
+        
+        if (NODE_DATA[id]?.locked) {
+          const lockIcon = document.createElementNS(ns, "text");
+          lockIcon.textContent = "🔒";
+          lockIcon.setAttribute("x", r * 0.6);
+          lockIcon.setAttribute("y", -r * 0.6);
+          lockIcon.style.fontSize = (r * 0.4) + "px";
+          lockIcon.style.pointerEvents = "none";
+          lockIcon.style.userSelect = "none";
+          lockIcon.classList.add("lock-indicator");
+          g.appendChild(lockIcon);
+        }
+        
+        if (NODE_DATA[id]?.groupId) {
+          const groupIndicator = document.createElementNS(ns, "circle");
+          groupIndicator.setAttribute("r", r + 4);
+          groupIndicator.style.fill = "none";
+          groupIndicator.style.stroke = "#4fd1c5";
+          groupIndicator.style.strokeWidth = "3";
+          groupIndicator.style.strokeDasharray = "5,5";
+          groupIndicator.style.pointerEvents = "none";
+          groupIndicator.classList.add("group-indicator");
+          g.insertBefore(groupIndicator, g.firstChild);
+        }
+        
         let isDragging = false;
         let startX, startY;
         let initialPositions = {};
@@ -5723,6 +6239,18 @@
          updateNodeSelection();
          return false;
         });
+        
+        g.addEventListener("touchstart", (e) => {
+         if (NODE_DATA[id].isRack) {
+          longPressTimer = setTimeout(() => {
+           longPressTriggered = true;
+           if (navigator.vibrate) {
+            navigator.vibrate(100);
+           }
+           enterRack(id);
+          }, 500); 
+         }
+        }, { passive: true });
         
         let lastTapTime = 0;
         let lastTapNode = null;
@@ -5757,21 +6285,30 @@
         g.addEventListener("touchend", (e) => {
          if (longPressTimer) {
           clearTimeout(longPressTimer);
+          longPressTimer = null;
          }
          if (longPressTriggered) {
           e.preventDefault();
           e.stopPropagation();
+          longPressTriggered = false;
          }
         });
         
         g.addEventListener("touchmove", (e) => {
          if (longPressTimer) {
           clearTimeout(longPressTimer);
+          longPressTimer = null;
+          longPressTriggered = false;
          }
         });
         
         g.addEventListener("mousedown", (e) => {
          if (e.button === 2) {
+          return;
+         }
+         
+         if (NODE_DATA[id]?.locked) {
+          console.log(`Node "${NODE_DATA[id].name}" is locked`);
           return;
          }
          
@@ -5812,7 +6349,35 @@
          const dx = svgP.x - startX;
          const dy = svgP.y - startY;
          
-         const nodesToMove = selectedNodes.has(id) ? Array.from(selectedNodes) : [id];
+         let nodesToMove = selectedNodes.has(id) ? Array.from(selectedNodes) : [id];
+         
+         const groupIds = new Set();
+         nodesToMove.forEach(nodeId => {
+          const groupId = NODE_DATA[nodeId]?.groupId;
+          if (groupId) {
+            groupIds.add(groupId);
+          }
+         });
+         
+         if (groupIds.size > 0) {
+          Object.keys(NODE_DATA).forEach(nodeId => {
+            const nodeGroupId = NODE_DATA[nodeId]?.groupId;
+            if (nodeGroupId && groupIds.has(nodeGroupId)) {
+              if (!nodesToMove.includes(nodeId)) {
+                nodesToMove.push(nodeId);
+                if (!initialPositions[nodeId]) {
+                  const nodePos = savedPositions[nodeId];
+                  if (nodePos) {
+                    initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+                  }
+                }
+              }
+            }
+          });
+         }
+         
+         nodesToMove = nodesToMove.filter(nodeId => !NODE_DATA[nodeId]?.locked);
+         
          nodesToMove.forEach(nodeId => {
           if (!initialPositions[nodeId]) return;
           const initialPos = initialPositions[nodeId];
@@ -5896,6 +6461,11 @@
         let touchMoved = false;
        g.addEventListener("touchstart",
          (e) => {
+          if (NODE_DATA[id]?.locked) {
+           console.log(`Node "${NODE_DATA[id].name}" is locked`);
+           return;
+          }
+          
           e.preventDefault();
           touchStartTime = Date.now();
           touchMoved = false;
@@ -5945,7 +6515,35 @@
          const deltaX = svgP.x - startX;
          const deltaY = svgP.y - startY;
          
-         const nodesToMove = selectedNodes.has(id) ? Array.from(selectedNodes) : [id];
+         let nodesToMove = selectedNodes.has(id) ? Array.from(selectedNodes) : [id];
+         
+         const groupIds = new Set();
+         nodesToMove.forEach(nodeId => {
+          const groupId = NODE_DATA[nodeId]?.groupId;
+          if (groupId) {
+            groupIds.add(groupId);
+          }
+         });
+         
+         if (groupIds.size > 0) {
+          Object.keys(NODE_DATA).forEach(nodeId => {
+            const nodeGroupId = NODE_DATA[nodeId]?.groupId;
+            if (nodeGroupId && groupIds.has(nodeGroupId)) {
+              if (!nodesToMove.includes(nodeId)) {
+                nodesToMove.push(nodeId);
+                if (!initialPositions[nodeId]) {
+                  const nodePos = savedPositions[nodeId];
+                  if (nodePos) {
+                    initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+                  }
+                }
+              }
+            }
+          });
+         }
+         
+         nodesToMove = nodesToMove.filter(nodeId => !NODE_DATA[nodeId]?.locked);
+         
          nodesToMove.forEach(nodeId => {
           if (!initialPositions[nodeId]) return;
           const initialPos = initialPositions[nodeId];
@@ -6035,6 +6633,20 @@
           claimTheImmortal(id);
          }
         });
+        
+        g.addEventListener("dblclick", (e) => {
+         e.preventDefault();
+         e.stopPropagation();
+         if (NODE_DATA[id].isRack) {
+          enterRack(id);
+         }
+        });
+        
+        if (!isNodeVisible(id)) {
+         g.style.opacity = "0.1";
+         g.style.pointerEvents = "none";
+        }
+        
         svg.appendChild(g);
        });
         if (RECT_DATA && RECT_DATA.list) {
@@ -6196,6 +6808,8 @@
         
         if (TEXT_DATA && TEXT_DATA.list) {
          TEXT_DATA.list.forEach((textItem) => {
+          if (currentView.mode === "rack") return;
+          
           const g = document.createElementNS(ns, "g");
           g.classList.add("text-group");
           g.dataset.textId = textItem.id;
@@ -6402,6 +7016,7 @@
         
        forgeTheLegend();
        updateMinimap();
+       populateRackDropdown();
       }
       
       function showEditModal(title, currentValue, onSave) {
@@ -6548,10 +7163,34 @@
        document.getElementById("node-role").textContent = data.role;
        document.getElementById("node-mac").textContent = data.mac || "--";
        document.getElementById("node-rack").textContent = data.rackUnit || "--";
+       document.getElementById("node-uheight").textContent = (data.uHeight || "1") + "U";
+       document.getElementById("node-layer").value = data.layer || "physical";
+       
+       populateRackDropdown();
+       const assignedRackSelect = document.getElementById("node-assigned-rack");
+       if (assignedRackSelect) {
+        assignedRackSelect.value = data.assignedRack || "";
+       }
+       
+       const rackCapacitySelect = document.getElementById("node-rack-capacity");
+       if (rackCapacitySelect) {
+        rackCapacitySelect.value = data.rackCapacity || "42";
+       }
+       
+       const isRack = data.isRack === true;
+       const isAssignedToRack = !!data.assignedRack;
+       const assignedRackRow = document.getElementById("assigned-rack-row");
+       const rackCapacityRow = document.getElementById("rack-capacity-row");
+       const uheightRow = document.getElementById("uheight-row");
+       if (assignedRackRow) assignedRackRow.style.display = isRack ? "none" : "flex";
+       if (rackCapacityRow) rackCapacityRow.style.display = isRack ? "flex" : "none";
+       if (uheightRow) uheightRow.style.display = isAssignedToRack ? "flex" : "none";
+       
        document.getElementById("node-name").onclick = () => editNodeName(id);
        document.getElementById("node-ip").onclick = () => editNodeIp(id);
        document.getElementById("node-mac").onclick = () => editNodeMac(id);
        document.getElementById("node-rack").onclick = () => editNodeRack(id);
+       document.getElementById("node-uheight").onclick = () => editNodeUHeight(id);
        const currentSize = savedSizes[id] || getDefaultSize();
        document.getElementById("size-slider").value = currentSize;
        document.getElementById("size-value").textContent = currentSize;
@@ -6848,6 +7487,51 @@
         }, );
        let panStartViewX = 0;
        let panStartViewY = 0;
+       
+       let lastEmptyTapTime = 0;
+       let emptyTapTimeout = null;
+       let emptyTapMoved = false;
+       
+       viewport.addEventListener("touchend", (e) => {
+         if (currentView.mode !== "rack") return;
+         
+         if (e.changedTouches.length !== 1) return;
+         
+         const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+         if (!isEmptySpace) return;
+         
+         if (emptyTapMoved) {
+           emptyTapMoved = false;
+           return;
+         }
+         
+         const currentTime = new Date().getTime();
+         const tapGap = currentTime - lastEmptyTapTime;
+         
+         if (tapGap < 300 && tapGap > 0) {
+           e.preventDefault();
+           
+           exitRack();
+           
+           if (navigator.vibrate) {
+             navigator.vibrate(50);
+           }
+           
+           lastEmptyTapTime = 0;
+           if (emptyTapTimeout) {
+             clearTimeout(emptyTapTimeout);
+             emptyTapTimeout = null;
+           }
+         } else {
+           lastEmptyTapTime = currentTime;
+           
+           if (emptyTapTimeout) clearTimeout(emptyTapTimeout);
+           emptyTapTimeout = setTimeout(() => {
+             lastEmptyTapTime = 0;
+           }, 300);
+         }
+       }, { passive: false });
+       
        viewport.addEventListener("mousedown", (e) => {
         if (e.target.closest(".draw-toolbar") || e.target.closest(".topology-toolbar") || e.target.closest(".legend-container")) {
          return;
@@ -6879,6 +7563,7 @@
          const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
          if (isEmptySpace && e.touches.length === 1) {
           e.preventDefault();
+          emptyTapMoved = false;
           canvasState.isPanning = true;
           canvasState.panStartX = e.touches[0].clientX;
           canvasState.panStartY = e.touches[0].clientY;
@@ -6905,6 +7590,7 @@
        });
        document.addEventListener("touchmove", (e) => {
         if (!canvasState.isPanning || !e.touches[0]) return;
+        emptyTapMoved = true; 
         const dx = e.touches[0].clientX - canvasState.panStartX;
         const dy = e.touches[0].clientY - canvasState.panStartY;
         const rect = viewport.getBoundingClientRect();
@@ -7274,7 +7960,6 @@
       let freeDrawPolylineEl = null;
       let freeDrawPointEls = [];
        let rectDrawMode = false;
-       let textDrawMode = false;
        let currentTextId = null;
        let rectStartPoint = null;
        let rectPreviewEl = null;
@@ -7452,6 +8137,11 @@
        drawUndoBtn.style.display = "none";
       }
       drawToggleBtn.addEventListener("click", () => {
+       if (currentView.mode === "rack") {
+        alert("Drawing tools are disabled in rack view. Exit to topology view to use drawing tools.");
+        return;
+       }
+       
        if (freeDrawMode) {
         finishFreeDraw();
        } else {
@@ -7567,6 +8257,11 @@
        }
       
        rectToggleBtn.addEventListener("click", () => {
+        if (currentView.mode === "rack") {
+         alert("Drawing tools are disabled in rack view. Exit to topology view to use drawing tools.");
+         return;
+        }
+        
         if (rectDrawMode) {
          finishRectDraw();
         } else {
@@ -7819,6 +8514,11 @@
       }
       
       textToggleBtn.addEventListener("click", () => {
+       if (currentView.mode === "rack") {
+        alert("Drawing tools are disabled in rack view. Exit to topology view to use drawing tools.");
+        return;
+       }
+       
        if (textDrawMode) {
         finishTextMode();
        } else {
@@ -8380,6 +9080,7 @@
          panX: canvasState.panX,
          panY: canvasState.panY,
         },
+        savedTopologyView: savedTopologyView,
        };
       }
       
@@ -8543,6 +9244,21 @@
         NODE_DATA[id].rackUnit = newRack;
         if (currentNodeId === id) {
          document.getElementById("node-rack").textContent = newRack || "--";
+        }
+       });
+      }
+      
+      function editNodeUHeight(id) {
+       const currentUHeight = NODE_DATA[id].uHeight || "1";
+       showEditModal("Edit U Height", currentUHeight, (newUHeight) => {
+        pushUndo("edit U height");
+        NODE_DATA[id].uHeight = newUHeight;
+        if (currentNodeId === id) {
+         document.getElementById("node-uheight").textContent = (newUHeight || "1") + "U";
+        }
+        if (rackMode) {
+         convertToRackPositions();
+         forgeTheTopology();
         }
        });
       }
@@ -8715,7 +9431,12 @@
         tags: [...source.tags],
         notes: [...source.notes],
         mac: source.mac || "",
-        rackUnit: source.rackUnit || ""
+        rackUnit: source.rackUnit || "",
+        uHeight: source.uHeight || "1",
+        layer: source.layer || "physical",
+        assignedRack: source.assignedRack || "",
+        rackCapacity: source.rackCapacity || "42",
+        isRack: source.isRack || false
        };
        
        const sourcePos = savedPositions[sourceId];
@@ -8856,9 +9577,196 @@
        });
       }
       
+      function nudgeSelectedNodes(direction, distance) {
+        const nodesToNudge = selectedNodes.size > 0 
+          ? Array.from(selectedNodes) 
+          : (currentNodeId ? [currentNodeId] : []);
+        
+        if (nodesToNudge.length === 0) return;
+        
+        const unlockedNodes = nodesToNudge.filter(id => !NODE_DATA[id]?.locked);
+        
+        if (unlockedNodes.length === 0) {
+          console.log("All selected nodes are locked");
+          return;
+        }
+        
+        pushUndo("nudge nodes");
+        
+        unlockedNodes.forEach(id => {
+          if (!savedPositions[id]) {
+            savedPositions[id] = { x: 0, y: 0 };
+          }
+          
+          switch(direction) {
+            case "ArrowUp":
+              savedPositions[id].y -= distance;
+              break;
+            case "ArrowDown":
+              savedPositions[id].y += distance;
+              break;
+            case "ArrowLeft":
+              savedPositions[id].x -= distance;
+              break;
+            case "ArrowRight":
+              savedPositions[id].x += distance;
+              break;
+          }
+        });
+        
+        forgeTheTopology();
+      }
+      
+      function cycleNodes(reverse = false) {
+        const nodeIds = Object.keys(NODE_DATA).filter(id => {
+          if (currentView.mode === "rack" && currentView.rackId) {
+            return NODE_DATA[id].assignedRack === currentView.rackId;
+          }
+          return !NODE_DATA[id].assignedRack;
+        });
+        
+        if (nodeIds.length === 0) return;
+        
+        let currentIndex = nodeIds.indexOf(currentNodeId);
+        
+        if (reverse) {
+          currentIndex = currentIndex <= 0 ? nodeIds.length - 1 : currentIndex - 1;
+        } else {
+          currentIndex = currentIndex >= nodeIds.length - 1 ? 0 : currentIndex + 1;
+        }
+        
+        const nextNodeId = nodeIds[currentIndex];
+        claimTheImmortal(nextNodeId);
+        
+        selectedNodes.clear();
+        updateNodeSelection();
+      }
+      
+      function focusOnSelected() {
+        const nodesToFocus = selectedNodes.size > 0 
+          ? Array.from(selectedNodes) 
+          : (currentNodeId ? [currentNodeId] : []);
+        
+        if (nodesToFocus.length === 0) return;
+        
+        let minX = Infinity, minY = Infinity;
+        let maxX = -Infinity, maxY = -Infinity;
+        
+        nodesToFocus.forEach(id => {
+          const pos = savedPositions[id];
+          if (pos) {
+            const size = savedSizes[id] || 50;
+            minX = Math.min(minX, pos.x - size/2);
+            minY = Math.min(minY, pos.y - size/2);
+            maxX = Math.max(maxX, pos.x + size/2);
+            maxY = Math.max(maxY, pos.y + size/2);
+          }
+        });
+        
+        if (!isFinite(minX)) return;
+        
+        const padding = 100;
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+        const width = maxX - minX + padding * 2;
+        const height = maxY - minY + padding * 2;
+        
+        const zoomX = CANVAS_WIDTH / width;
+        const zoomY = CANVAS_HEIGHT / height;
+        const targetZoom = Math.min(zoomX, zoomY, 2); 
+        
+        canvasState.zoom = targetZoom;
+        canvasState.panX = centerX - (CANVAS_WIDTH / targetZoom) / 2;
+        canvasState.panY = centerY - (CANVAS_HEIGHT / targetZoom) / 2;
+        
+        forgeTheTopology();
+      }
+      
+      function toggleLockSelected() {
+        const nodesToToggle = selectedNodes.size > 0 
+          ? Array.from(selectedNodes) 
+          : (currentNodeId ? [currentNodeId] : []);
+        
+        if (nodesToToggle.length === 0) return;
+        
+        pushUndo("toggle lock");
+        
+        const hasUnlocked = nodesToToggle.some(id => !NODE_DATA[id]?.locked);
+        
+        nodesToToggle.forEach(id => {
+          if (NODE_DATA[id]) {
+            NODE_DATA[id].locked = hasUnlocked;
+          }
+        });
+        
+        forgeTheTopology();
+        
+        const lockState = hasUnlocked ? "locked" : "unlocked";
+        console.log(`${nodesToToggle.length} node(s) ${lockState}`);
+      }
+      
+      function toggleGroupSelected() {
+        const nodesToGroup = Array.from(selectedNodes);
+        
+        if (nodesToGroup.length < 2) {
+          console.log("Select at least 2 nodes to create a group");
+          return;
+        }
+        
+        pushUndo("toggle group");
+        
+        const groupIds = nodesToGroup.map(id => NODE_DATA[id]?.groupId).filter(g => g !== null && g !== undefined);
+        const uniqueGroups = [...new Set(groupIds)];
+        
+        if (uniqueGroups.length === 1 && groupIds.length === nodesToGroup.length) {
+          nodesToGroup.forEach(id => {
+            if (NODE_DATA[id]) {
+              NODE_DATA[id].groupId = null;
+            }
+          });
+          console.log(`Ungrouped ${nodesToGroup.length} node(s)`);
+        } else {
+          const newGroupId = "group-" + Date.now();
+          nodesToGroup.forEach(id => {
+            if (NODE_DATA[id]) {
+              NODE_DATA[id].groupId = newGroupId;
+            }
+          });
+          console.log(`Grouped ${nodesToGroup.length} node(s) into ${newGroupId}`);
+        }
+        
+        forgeTheTopology();
+      }
+      
       function handleKeyDown(event) {
        if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA" || event.target.isContentEditable) {
         return;
+       }
+       
+       if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+        event.preventDefault();
+        const distance = event.shiftKey ? 10 : 1;
+        nudgeSelectedNodes(event.key, distance);
+       }
+       
+       if (event.key === "Tab") {
+        event.preventDefault();
+        cycleNodes(event.shiftKey);
+       }
+       
+       if (event.key === "f" || event.key === "F") {
+        event.preventDefault();
+        focusOnSelected();
+       }
+       
+       if (event.key === "l" || event.key === "L") {
+        event.preventDefault();
+        toggleLockSelected();
+       }
+       
+       if (event.key === "g" || event.key === "G") {
+        event.preventDefault();
+        toggleGroupSelected();
        }
        
        if (event.ctrlKey && event.key === "z") {
@@ -8909,15 +9817,14 @@
           name: newName
          };
          
-         // Get the center of what the user is currently viewing
-const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-const centerX = canvasState.panX + (viewWidth / 2);
-const centerY = canvasState.panY + (viewHeight / 2);
-savedPositions[nodeId] = {
-  x: centerX,
-  y: centerY
-};
+		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+		const centerX = canvasState.panX + (viewWidth / 2);
+		const centerY = canvasState.panY + (viewHeight / 2);
+		savedPositions[nodeId] = {
+		x: centerX,
+		y: centerY
+		};
          
          if (clipboard.size) savedSizes[newId] = clipboard.size;
          if (clipboard.style) savedStyles[newId] = clipboard.style;
@@ -8987,6 +9894,81 @@ savedPositions[nodeId] = {
       const redoBtn = document.getElementById("redo-btn");
       if (undoBtn) undoBtn.addEventListener("click", undo);
       if (redoBtn) redoBtn.addEventListener("click", redo);
+      
+      const backToTopologyBtn = document.getElementById("back-to-topology-btn");
+      if (backToTopologyBtn) {
+       backToTopologyBtn.addEventListener("click", exitRack);
+      }
+      
+      const canvasViewport = document.getElementById("canvas-viewport");
+      if (canvasViewport) {
+       canvasViewport.addEventListener("dblclick", (e) => {
+        if (currentView.mode === "rack" && e.target.id === "map") {
+         exitRack();
+        }
+       });
+      }
+      
+      const layersBtn = document.getElementById("layers-btn");
+      const layerModal = document.getElementById("layer-modal");
+      const layerModalClose = document.getElementById("layer-modal-close");
+      if (layersBtn && layerModal) {
+       layersBtn.addEventListener("click", () => {
+        layerModal.classList.add("active");
+       });
+      }
+      if (layerModalClose && layerModal) {
+       layerModalClose.addEventListener("click", () => {
+        layerModal.classList.remove("active");
+       });
+      }
+      if (layerModal) {
+       layerModal.addEventListener("click", (e) => {
+        if (e.target === layerModal) {
+         layerModal.classList.remove("active");
+        }
+       });
+      }
+      
+      ["physical", "logical", "security", "application"].forEach(layer => {
+       const checkbox = document.getElementById(`layer-${layer}`);
+       if (checkbox) {
+        checkbox.addEventListener("change", applyLayerFilter);
+       }
+      });
+      
+      const layerSelect = document.getElementById("node-layer");
+      if (layerSelect) {
+       layerSelect.addEventListener("change", (e) => {
+        if (currentNodeId) {
+         pushUndo("change layer");
+         NODE_DATA[currentNodeId].layer = e.target.value;
+         forgeTheTopology();
+        }
+       });
+      }
+      
+      const assignedRackSelect = document.getElementById("node-assigned-rack");
+      if (assignedRackSelect) {
+       assignedRackSelect.addEventListener("change", (e) => {
+        if (currentNodeId) {
+         pushUndo("change assigned rack");
+         NODE_DATA[currentNodeId].assignedRack = e.target.value;
+         forgeTheTopology();
+        }
+       });
+      }
+      
+      const rackCapacitySelect = document.getElementById("node-rack-capacity");
+      if (rackCapacitySelect) {
+       rackCapacitySelect.addEventListener("change", (e) => {
+        if (currentNodeId) {
+         pushUndo("change rack capacity");
+         NODE_DATA[currentNodeId].rackCapacity = e.target.value;
+         forgeTheTopology();
+        }
+       });
+      }
       
       const bulkToolbarClose = document.getElementById("bulk-toolbar-close");
       if (bulkToolbarClose) {
@@ -9135,6 +10117,22 @@ savedPositions[nodeId] = {
        });
       }
       
+      const bulkLockMobile = document.getElementById("bulk-lock-mobile");
+      if (bulkLockMobile) {
+       bulkLockMobile.addEventListener("click", () => {
+        toggleLockSelected();
+        closeModalAfterAction();
+       });
+      }
+      
+      const bulkGroupMobile = document.getElementById("bulk-group-mobile");
+      if (bulkGroupMobile) {
+       bulkGroupMobile.addEventListener("click", () => {
+        toggleGroupSelected();
+        closeModalAfterAction();
+       });
+      }
+      
       const bulkClearMobile = document.getElementById("bulk-clear-mobile");
       if (bulkClearMobile) {
        bulkClearMobile.addEventListener("click", () => {
@@ -9158,6 +10156,107 @@ savedPositions[nodeId] = {
        addNodeModal.classList.add("active");
        document.getElementById("new-node-name").focus();
       });
+      
+      const addRackBtn = document.getElementById("add-rack-btn");
+      const addRackModal = document.getElementById("add-rack-modal");
+      const addRackCancel = document.getElementById("add-rack-cancel");
+      const addRackSave = document.getElementById("add-rack-save");
+      
+      if (addRackBtn && addRackModal) {
+       addRackBtn.addEventListener("click", () => {
+        document.getElementById("new-rack-name").value = "";
+        document.getElementById("new-rack-ip").value = "";
+        document.getElementById("new-rack-tags").value = "";
+        document.getElementById("new-rack-shape").value = "server";
+        document.getElementById("new-rack-capacity").value = "42";
+        addRackModal.classList.add("active");
+        document.getElementById("new-rack-name").focus();
+       });
+      }
+      
+      if (addRackCancel && addRackModal) {
+       addRackCancel.addEventListener("click", () => {
+        addRackModal.classList.remove("active");
+       });
+      }
+      
+      if (addRackModal) {
+       addRackModal.addEventListener("click", (e) => {
+        if (e.target === addRackModal) {
+         addRackModal.classList.remove("active");
+        }
+       });
+      }
+      
+      if (addRackSave && addRackModal) {
+       addRackSave.addEventListener("click", () => {
+        const name = document.getElementById("new-rack-name").value.trim();
+        const ip = document.getElementById("new-rack-ip").value.trim();
+        const tagsStr = document.getElementById("new-rack-tags").value.trim();
+        const shape = document.getElementById("new-rack-shape").value;
+        const capacity = document.getElementById("new-rack-capacity").value;
+        
+        if (!name) {
+         alert("Please enter a rack name.");
+         return;
+        }
+        
+        const tags = tagsStr ? tagsStr.split(",").map((t) => t.trim()).filter((t) => t) : [];
+        let baseId = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        if (!baseId) baseId = "rack";
+        let nodeId = baseId;
+        let counter = 1;
+        while (NODE_DATA[nodeId]) {
+         nodeId = baseId + "-" + counter;
+         counter++;
+        }
+        
+        pushUndo("add rack");
+        
+        NODE_DATA[nodeId] = {
+         shape: shape,
+         name: name,
+         ip: ip || "",
+         role: "Rack",
+         tags: tags,
+         notes: [],
+         mac: "",
+         rackUnit: "",
+         uHeight: "1",
+         layer: "physical",
+         assignedRack: "",
+         rackCapacity: capacity,
+         isRack: true,  
+         locked: false, 
+         groupId: null 
+        };
+        
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        const centerX = canvasState.panX + (viewWidth / 2);
+        const centerY = canvasState.panY + (viewHeight / 2);
+        savedPositions[nodeId] = {
+         x: centerX,
+         y: centerY
+        };
+        
+        addRackModal.classList.remove("active");
+        forgeTheTopology();
+        claimTheImmortal(nodeId);
+       });
+       
+       ["new-rack-name", "new-rack-ip", "new-rack-tags"].forEach((inputId) => {
+        const input = document.getElementById(inputId);
+        if (input) {
+         input.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+           addRackSave.click();
+          }
+         });
+        }
+       });
+      }
+      
       addNodeCancel.addEventListener("click", () => {
        addNodeModal.classList.remove("active");
       });
@@ -9193,16 +10292,27 @@ savedPositions[nodeId] = {
         notes: [],
         mac: "",
         rackUnit: "",
+        uHeight: "1",
+        layer: "physical",
+        assignedRack: "",  
+        rackCapacity: "42",
+        isRack: false, 
+        locked: false, 
+        groupId: null 
        };
-       // Get the center of what the user is currently viewing
-const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-const centerX = canvasState.panX + (viewWidth / 2);
-const centerY = canvasState.panY + (viewHeight / 2);
-savedPositions[nodeId] = {
-  x: centerX,
-  y: centerY
-};
+       
+       if (currentView.mode === "rack" && currentView.rackId) {
+        NODE_DATA[nodeId].assignedRack = currentView.rackId;
+       }
+       
+		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+		const centerX = canvasState.panX + (viewWidth / 2);
+		const centerY = canvasState.panY + (viewHeight / 2);
+		savedPositions[nodeId] = {
+		x: centerX,
+		y: centerY
+		};
        pushUndo("add node");
        addNodeModal.classList.remove("active");
        forgeTheTopology();
