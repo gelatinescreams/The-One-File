@@ -92,7 +92,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 | No dependencies | ✓ |  |
 | **[MDI Icons](https://pictogrammers.com/library/mdi/)**       |  | ✓ |
 | **[Simple Icons](https://simpleicons.org/?q=ping)**   |  | ✓ |
-| **[Selfh.st Icons](https://selfh.st/icons/)** |  | ✓ |
+| **[selfh.st/icons](https://selfh.st/icons/)** |  | ✓ |
 | **Auto Status Checking** |  | ✓ |
 | **Live Ping/Health Status** |  | ✓ |
 
@@ -157,9 +157,9 @@ Instead of building another hosted application, I built a file.
 
 ### Nodes
 * Multiple shapes for common devices including servers, routers, switches, firewalls, and clouds  
-* *Icon shapes from MDI, Simple Icons, and Selfh.st available in the theonefile-networkening.html version*
+* *Icon shapes from MDI, Simple Icons, and selfh.st/icons available in the theonefile-networkening.html version*
 * Editable name, IP, role, tags, and notes
-* *Editable icon shapes from MDI, Simple Icons, and Selfh.st available in the theonefile-networkening.html version*
+* *Editable icon shapes from MDI, Simple Icons, and selfh.st/icons available in the theonefile-networkening.html version*
 * Resizable with full styling controls  
 * Custom fonts, colors, and text offsets  
 * **Per breakpoint styling** for desktop, tablet, mobile, and fold layouts : customize appearance independently for each screen size
@@ -336,8 +336,8 @@ If the browser is reasonably modern, it should work.
 ## Credits
 
 Icon support for theonefile-networkening.html version powered by:
-* [Selfh.st Icons](https://selfh.st/icons/) : Self hosted app icons by the selfh.st community
-* [Material Design Icons](https://pictogrammers.com/library/mdi/) : 7,000+ open source icons by Pictogrammers
+* [selfh.st/icons](https://selfh.st/icons/) : Popular self hosted icons
+* [Material Design Icons](https://pictogrammers.com/library/mdi/) : 7,000+ open source icons
 * [Simple Icons](https://simpleicons.org/) : Free SVG icons for popular brands
 
 Thank you to all the icon creators and maintainers for making these resources freely available.
