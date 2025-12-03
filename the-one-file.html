@@ -295,7 +295,7 @@
       background: rgba(15, 23, 42, 0.92);
       border: 1px solid #1f2937;
       border-radius: 6px;
-      z-index: 20;
+      z-index: 99;
       font-size: 13px;
       }
       .topology-toolbar label {
@@ -362,7 +362,7 @@
       background: rgba(15, 23, 42, 0.92);
       border: 1px solid #1f2937;
       border-radius: 6px;
-      z-index: 20;
+      z-index: 99;
       font-size: 13px;
       pointer-events: auto;
       }
@@ -1683,7 +1683,7 @@
             cursor: pointer;
             ">Clear Selection</button>
         </div>
-        <div class="canvas-hint visible" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to clone and align</li><li>Right-click to select multiple</li><li>You have the power</li><li>Your time is NOW!</li></ul></div>
+        <div class="canvas-hint visible" id="canvas-hint"></div>
         <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
         <div class="canvas-viewport" id="canvas-viewport">
           <svg id="map" viewBox="0 0 4000 3000" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
@@ -1704,8 +1704,11 @@
             <button id="zoom-reset-btn" title="Reset view">R</button>
           </div>
         </div>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: inline-flex;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: inline-flex;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: inline-flex;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: inline-flex;">Add Line</button>
-      <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
+        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
+		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
+		</section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -2248,19 +2251,19 @@
       ? [
         "Pinch to zoom",
         "Drag to pan",
-      "Add node from top menu",
-      "Double tap to clone and align",
+        "Add node from top menu",
+        "Double tap to clone and align",
         "Double tap to select multiple",
-      "You have the power",	
-      "Your time is NOW!",
+        "You have the power",	
+        "Your time is NOW!",
       ]
       : [
         "Scroll to zoom",
         "Drag to pan",
         "Right-click to clone and align",
         "Right-click to select multiple",
-      "You have the power",
-      "Your time is NOW!",
+        "You have the power",
+        "Your time is NOW!",
       ];
       
       const list = document.createElement("ul");
@@ -3423,6 +3426,7 @@
       }
       
        function deleteRectangle(rectId) {
+	    pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -5873,6 +5877,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -5978,6 +5983,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -6049,6 +6055,7 @@
        const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
        
        const newId = "text-" + Date.now();
+	   pushUndo("add text");
        TEXT_DATA.list.push({
         id: newId,
         x: svgP.x,
@@ -6129,6 +6136,7 @@
       }
       
       function deleteText(textId) {
+	   pushUndo("delete text");
        TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
        forgeTheTopology();
        
@@ -6142,6 +6150,7 @@
        if (!currentTextId) return;
        const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
        if (textItem) {
+	    pushUndo("edit text");
         textItem.content = e.target.value;
         forgeTheTopology();
        }
@@ -6665,13 +6674,15 @@
       }
       
       function captureState() {
-       return {
-        nodes: JSON.parse(JSON.stringify(NODE_DATA)),
-        edges: JSON.parse(JSON.stringify(EDGE_DATA)),
-        positions: JSON.parse(JSON.stringify(savedPositions)),
-        sizes: JSON.parse(JSON.stringify(savedSizes)),
-        styles: JSON.parse(JSON.stringify(savedStyles)),
-        legend: JSON.parse(JSON.stringify(EDGE_LEGEND))
+	   return {
+       nodes: JSON.parse(JSON.stringify(NODE_DATA)),
+       edges: JSON.parse(JSON.stringify(EDGE_DATA)),
+       positions: JSON.parse(JSON.stringify(savedPositions)),
+       sizes: JSON.parse(JSON.stringify(savedSizes)),
+       styles: JSON.parse(JSON.stringify(savedStyles)),
+       legend: JSON.parse(JSON.stringify(EDGE_LEGEND)),
+       rects: JSON.parse(JSON.stringify(RECT_DATA)),
+       texts: JSON.parse(JSON.stringify(TEXT_DATA))
        };
       }
       
@@ -6704,17 +6715,19 @@
       }
       
       function restoreState(state) {
-       NODE_DATA = state.nodes;
-       EDGE_DATA = state.edges;
-       savedPositions = state.positions;
-       savedSizes = state.sizes;
-       savedStyles = state.styles;
-       EDGE_LEGEND = state.legend;
-       forgeTheTopology();
-       if (currentNodeId && NODE_DATA[currentNodeId]) {
-        claimTheImmortal(currentNodeId);
-       } else if (currentEdgeId) {
-        selectTheConnection(currentEdgeId);
+	   NODE_DATA = state.nodes;
+	   EDGE_DATA = state.edges;
+	   savedPositions = state.positions;
+	   savedSizes = state.sizes;
+	   savedStyles = state.styles;
+	   EDGE_LEGEND = state.legend;
+	   RECT_DATA = state.rects || { list: [] };
+	   TEXT_DATA = state.texts || { list: [] };
+	   forgeTheTopology();
+	   if (currentNodeId && NODE_DATA[currentNodeId]) {
+       claimTheImmortal(currentNodeId);
+	   } else if (currentEdgeId) {
+       selectTheConnection(currentEdgeId);
        }
       }
       
@@ -7115,9 +7128,15 @@
           name: newName
          };
          
-         const centerX = CANVAS_WIDTH / 2;
-         const centerY = CANVAS_HEIGHT / 2;
-         savedPositions[newId] = { x: centerX, y: centerY };
+         // Get the center of what the user is currently viewing
+const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+const centerX = canvasState.panX + (viewWidth / 2);
+const centerY = canvasState.panY + (viewHeight / 2);
+savedPositions[nodeId] = {
+  x: centerX,
+  y: centerY
+};
          
          if (clipboard.size) savedSizes[newId] = clipboard.size;
          if (clipboard.style) savedStyles[newId] = clipboard.style;
@@ -7394,12 +7413,15 @@
         mac: "",
         rackUnit: "",
        };
-       const centerX = CANVAS_WIDTH / 2;
-       const centerY = CANVAS_HEIGHT / 2;
-       savedPositions[nodeId] = {
-        x: centerX,
-        y: centerY
-       };
+       // Get the center of what the user is currently viewing
+const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+const centerX = canvasState.panX + (viewWidth / 2);
+const centerY = canvasState.panY + (viewHeight / 2);
+savedPositions[nodeId] = {
+  x: centerX,
+  y: centerY
+};
        pushUndo("add node");
        addNodeModal.classList.remove("active");
        forgeTheTopology();

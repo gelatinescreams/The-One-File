@@ -2011,7 +2011,7 @@
             cursor: pointer;
             ">Clear Selection</button>
         </div>
-        <div class="canvas-hint visible" id="canvas-hint">Scroll to zoom • Drag to pan • Hold Space + drag</div>
+        <div class="canvas-hint visible" id="canvas-hint"></div>
         <div class="legend-container" id="edge-legend" style="display: none;">
           <div class="legend-title">Line Legend</div>
           <button type="button" class="legend-close-btn">✕</button>
@@ -2045,8 +2045,10 @@
             <button id="zoom-reset-btn" title="Reset view">R</button>
           </div>
         </div>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px;">Add Line</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px;">Add Line</button>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
+		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
       </section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
@@ -3170,14 +3172,14 @@
         "Pinch to zoom",
         "Drag to pan",
         "Double tap to select multiple",
-      "Double tap to select multiple",
-      "Your time is NOW!",
+        "Double tap to select multiple",
+        "Your time is NOW!",
       ]
       : [
         "Scroll to zoom",
         "Drag to pan",
         "Right-click to select multiple",
-      "Your time is NOW!",
+        "Your time is NOW!",
       ];
       
       const list = document.createElement("ul");
@@ -4387,6 +4389,7 @@
        }
       
        function deleteRectangle(rectId) {
+	    pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -6975,6 +6978,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle"); 
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -7080,6 +7084,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -7151,6 +7156,7 @@
         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
         
         const newId = "text-" + Date.now();
+		pushUndo("add text");
         TEXT_DATA.list.push({
          id: newId,
          x: svgP.x,
@@ -7231,6 +7237,7 @@
        }
        
        function deleteText(textId) {
+	    pushUndo("delete text");
         TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
         forgeTheTopology();
         
@@ -7244,6 +7251,7 @@
         if (!currentTextId) return;
         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
         if (textItem) {
+		 pushUndo("edit text");
          textItem.content = e.target.value;
          forgeTheTopology();
         }
@@ -7822,14 +7830,16 @@
        }
        
       function captureState() {
-       return {
+	    return {
         nodes: JSON.parse(JSON.stringify(NODE_DATA)),
         edges: JSON.parse(JSON.stringify(EDGE_DATA)),
         positions: JSON.parse(JSON.stringify(savedPositions)),
         sizes: JSON.parse(JSON.stringify(savedSizes)),
         styles: JSON.parse(JSON.stringify(savedStyles)),
-        legend: JSON.parse(JSON.stringify(EDGE_LEGEND))
-       };
+        legend: JSON.parse(JSON.stringify(EDGE_LEGEND)),
+        rects: JSON.parse(JSON.stringify(RECT_DATA)),
+        texts: JSON.parse(JSON.stringify(TEXT_DATA))
+        };
       }
       
       function pushUndo(action = "") {
@@ -7861,17 +7871,19 @@
       }
       
       function restoreState(state) {
-       NODE_DATA = state.nodes;
+	   NODE_DATA = state.nodes;
        EDGE_DATA = state.edges;
        savedPositions = state.positions;
        savedSizes = state.sizes;
        savedStyles = state.styles;
        EDGE_LEGEND = state.legend;
+       RECT_DATA = state.rects || { list: [] };
+       TEXT_DATA = state.texts || { list: [] };
        forgeTheTopology();
        if (currentNodeId && NODE_DATA[currentNodeId]) {
-        claimTheImmortal(currentNodeId);
+       claimTheImmortal(currentNodeId);
        } else if (currentEdgeId) {
-        selectTheConnection(currentEdgeId);
+       selectTheConnection(currentEdgeId);
        }
       }
       
@@ -8645,12 +8657,15 @@
          document.getElementById('selected-node-icon').style.display = 'none';
         }
         newNodeIconTags = [];
-        const centerX = CANVAS_WIDTH / 2;
-        const centerY = CANVAS_HEIGHT / 2;
-        savedPositions[nodeId] = {
-         x: centerX,
-         y: centerY
-        };
+        // Get the center of what the user is currently viewing
+const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+const centerX = canvasState.panX + (viewWidth / 2);
+const centerY = canvasState.panY + (viewHeight / 2);
+savedPositions[nodeId] = {
+  x: centerX,
+  y: centerY
+};
         addNodeModal.classList.remove("active");
         forgeTheTopology();
         claimTheImmortal(nodeId);
