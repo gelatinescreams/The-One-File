@@ -1570,14 +1570,14 @@
             <input type="checkbox" id="auto-ping-enabled" style="cursor: pointer;">
             <span style="font-size: 14px; font-weight: 600;">Enable automatic status checking</span>
             </label>
-            <div id="auto-ping-settings" style="display: none; padding-left: 20px; border-left: 2px solid var(--edge-main);">
+            <div id="auto-ping-settings" style="display: block; padding-left: 20px; border-left: 2px solid var(--edge-main);">
               <div class="style-row" style="margin-bottom: 12px;">
                 <label>Check Interval (seconds):</label>
                 <input type="number" id="auto-ping-interval" min="5" max="3600" value="30" style="width: 80px; padding: 6px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
               </div>
               <div style="padding: 10px; background: var(--panel); border-radius: 6px; border: 1px solid var(--edge-main); font-size: 12px; color: var(--text-soft);">
                 <div style="margin-bottom: 4px;"><span id="auto-ping-next-check">Next check in: --</span></div>
-                <div><span id="auto-ping-last-run">Last run: 1:15:07 PM</span></div>
+                <div><span id="auto-ping-last-run">Last run: 5:44:27 PM</span></div>
               </div>
             </div>
             <p style="margin-top: 12px; font-size: 12px; color: var(--text-soft); font-style: italic;">
@@ -1995,26 +1995,28 @@
         <div class="canvas-hint" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to select multiple</li><li>Your time is NOW!</li></ul></div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">WAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">LAN Trunk</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Server VLAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Management</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">VM Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Containers</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(236, 72, 153); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Storage</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="1166.8670628835375 -50.355560256801084 1676.3165195536412 1257.237389665231" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" class="edge active" data-edge-id="edge-1" data-from="isp-modem" data-to="opnsense" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" data-edge-id="edge-1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" class="edge" data-edge-id="edge-2" data-from="opnsense" data-to="main-switch" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" data-edge-id="edge-2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" class="edge" data-edge-id="edge-3" data-from="main-switch" data-to="proxmox" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" data-edge-id="edge-3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" class="edge" data-edge-id="edge-4" data-from="main-switch" data-to="truenas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" data-edge-id="edge-4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" class="edge" data-edge-id="edge-5" data-from="main-switch" data-to="docker-host" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" data-edge-id="edge-5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" class="edge" data-edge-id="edge-6" data-from="main-switch" data-to="pi-hole" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" data-edge-id="edge-6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" class="edge" data-edge-id="edge-7" data-from="proxmox" data-to="plex" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" data-edge-id="edge-7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" class="edge" data-edge-id="edge-8" data-from="proxmox" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" data-edge-id="edge-8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" class="edge" data-edge-id="edge-9" data-from="proxmox" data-to="wireguard" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" data-edge-id="edge-9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-10" data-from="docker-host" data-to="jellyfin" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" data-edge-id="edge-10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-11" data-from="docker-host" data-to="nextcloud" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" data-edge-id="edge-11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" class="edge" data-edge-id="edge-12" data-from="docker-host" data-to="bitwarden" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" data-edge-id="edge-12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" class="edge" data-edge-id="edge-13" data-from="docker-host" data-to="portainer" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" data-edge-id="edge-13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" class="edge" data-edge-id="edge-14" data-from="docker-host" data-to="traefik" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" data-edge-id="edge-14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" class="edge" data-edge-id="edge-15" data-from="docker-host" data-to="grafana" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" data-edge-id="edge-15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" class="edge" data-edge-id="edge-16" data-from="docker-host" data-to="prometheus" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" data-edge-id="edge-16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" class="edge" data-edge-id="edge-17" data-from="docker-host" data-to="unifi-controller" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" data-edge-id="edge-17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" class="edge" data-edge-id="edge-18" data-from="truenas" data-to="plex" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" data-edge-id="edge-18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-19" data-from="truenas" data-to="jellyfin" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" data-edge-id="edge-19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-20" data-from="truenas" data-to="nextcloud" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" data-edge-id="edge-20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><g class="node-group active" data-node-id="isp-modem" transform="translate(2000,227)" style="cursor: grab;"><circle r="190.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="152.4" height="152.4" x="-76.2" y="-76.2" style="fill: rgb(255, 0, 0);"><title>OPNsense</title><path d="M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z"></path></svg></g><text class="node-label" x="0" y="-35.56" style="font-size: 41.91px; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="50.800000000000004" style="font-size: 30.48px; pointer-events: none;">192.168.100.1</text><circle class="ping-indicator online" r="7.62" cx="-113.26754382324219" cy="-88.894"></circle></g><g class="node-group" data-node-id="opnsense" transform="translate(1686.82958984375,628.8558959960938)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">OPNsense</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(2000,950)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Main Switch</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.2</text></g><g class="node-group" data-node-id="proxmox" transform="translate(1200,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Proxmox</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.10</text></g><g class="node-group" data-node-id="truenas" transform="translate(2800,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.11</text></g><g class="node-group" data-node-id="docker-host" transform="translate(2000,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Docker Host</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.12</text></g><g class="node-group" data-node-id="pi-hole" transform="translate(2000,1650)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Pi-hole</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.53</text></g><g class="node-group" data-node-id="plex" transform="translate(600,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Plex</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.20</text></g><g class="node-group" data-node-id="jellyfin" transform="translate(1400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/jellyfin.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Jellyfin</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.21</text></g><g class="node-group" data-node-id="nextcloud" transform="translate(1800,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Nextcloud</title><path d="M12.018 6.537c-2.5 0-4.6 1.712-5.241 4.015-.56-1.232-1.793-2.105-3.225-2.105A3.569 3.569 0 0 0 0 12a3.569 3.569 0 0 0 3.552 3.553c1.432 0 2.664-.874 3.224-2.106.641 2.304 2.742 4.016 5.242 4.016 2.487 0 4.576-1.693 5.231-3.977.569 1.21 1.783 2.067 3.198 2.067A3.568 3.568 0 0 0 24 12a3.569 3.569 0 0 0-3.553-3.553c-1.416 0-2.63.858-3.199 2.067-.654-2.284-2.743-3.978-5.23-3.977zm0 2.085c1.878 0 3.378 1.5 3.378 3.378 0 1.878-1.5 3.378-3.378 3.378A3.362 3.362 0 0 1 8.641 12c0-1.878 1.5-3.378 3.377-3.378zm-8.466 1.91c.822 0 1.467.645 1.467 1.468s-.644 1.467-1.467 1.468A1.452 1.452 0 0 1 2.085 12c0-.823.644-1.467 1.467-1.467zm16.895 0c.823 0 1.468.645 1.468 1.468s-.645 1.468-1.468 1.468A1.452 1.452 0 0 1 18.98 12c0-.823.644-1.467 1.467-1.467z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Nextcloud</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.30</text></g><g class="node-group" data-node-id="bitwarden" transform="translate(2200,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Bitwarden</title><path d="M21.722.296A.964.964 0 0 0 21.018 0H2.982a.959.959 0 0 0-.703.296.96.96 0 0 0-.297.702v12c0 .895.174 1.783.523 2.665.349.88.783 1.66 1.3 2.345.517.68 1.132 1.346 1.848 1.993a21.807 21.807 0 0 0 1.98 1.609c.605.427 1.235.83 1.893 1.212.657.381 1.125.638 1.4.772.276.134.5.241.664.311a.916.916 0 0 0 .814 0c.168-.073.389-.177.667-.311.275-.134.743-.394 1.401-.772a25.305 25.305 0 0 0 1.894-1.212A21.891 21.891 0 0 0 18.348 20c.716-.647 1.33-1.31 1.847-1.993s.949-1.463 1.3-2.345c.35-.879.524-1.767.524-2.665V1.001a.95.95 0 0 0-.297-.705zm-2.325 12.815c0 4.344-7.397 8.087-7.397 8.087V2.57h7.397v10.54z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Vaultwarden</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.31</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(1000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Home Assistant</title><path d="M22.939 10.627 13.061.749a1.505 1.505 0 0 0-2.121 0l-9.879 9.878C.478 11.21 0 12.363 0 13.187v9c0 .826.675 1.5 1.5 1.5h9.227l-4.063-4.062a2.034 2.034 0 0 1-.664.113c-1.13 0-2.05-.92-2.05-2.05s.92-2.05 2.05-2.05 2.05.92 2.05 2.05c0 .233-.041.456-.113.665l3.163 3.163V9.928a2.05 2.05 0 0 1-1.15-1.84c0-1.13.92-2.05 2.05-2.05s2.05.92 2.05 2.05a2.05 2.05 0 0 1-1.15 1.84v8.127l3.146-3.146A2.051 2.051 0 0 1 18 12.239c1.13 0 2.05.92 2.05 2.05s-.92 2.05-2.05 2.05c-.25 0-.488-.047-.709-.13L12.9 20.602v3.088h9.6c.825 0 1.5-.675 1.5-1.5v-9c0-.825-.477-1.977-1.061-2.561z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Home Assistant</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.40</text></g><g class="node-group" data-node-id="portainer" transform="translate(2600,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Portainer</title><path d="M12.504 0v1.023l-.01-.015-6.106 3.526H3.417v.751h5.359v3.638h1.942V5.284h1.786v10.416c.027 0 .54-.01.751.091V5.285h.531v10.608c.293.147.55.312.751.54V5.286h6.046v-.75h-1.267l-6.061-3.5V0zm0 1.87v2.664H7.889zm.751.031l4.56 2.633h-4.56zM9.142 5.285h1.21v1.686h-1.21zm-4.736 2.73v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm-2.19 2.171v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm2.18 0v1.951h1.942v-1.95zM4.36 12.43a3.73 3.73 0 00-.494 1.851c0 1.227.604 2.308 1.52 2.986.239-.064.477-.1.724-.11.1 0 .165.01.266.019.284-1.191 1.383-1.988 2.665-1.988.724 0 1.438.201 1.924.668.229-.476.302-1.007.302-1.575 0-.65-.165-1.292-.494-1.85zm4.828 3.16c-1.21 0-2.226.844-2.492 1.97a.922.922 0 00-.275-.009 2.559 2.559 0 00-2.564 2.556 2.565 2.565 0 003.096 2.5A2.579 2.579 0 009.233 24c.862 0 1.622-.43 2.09-1.081a2.557 2.557 0 004.186-1.97c0-.567-.193-1.099-.504-1.52a2.557 2.557 0 00-3.866-2.94 2.574 2.574 0 00-1.951-.898z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Portainer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.50</text></g><g class="node-group" data-node-id="traefik" transform="translate(3000,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Traefik Proxy</title><path d="M12 1.19c1.088 0 2.056.768 2.056 1.714 0 .947-.921 1.715-2.056 1.715-.13 0-.3-.022-.509-.064a.685.685 0 0 0-.475.076l-7.37 4.195a.344.344 0 0 0 .001.597l7.99 4.49c.208.116.461.116.669 0l8.034-4.468a.343.343 0 0 0 .003-.598l-2.507-1.424a.683.683 0 0 0-.67-.003l-2.647 1.468a.234.234 0 0 0-.119.18l-.001.025c0 .946-.921 1.714-2.056 1.714s-2.056-.768-2.056-1.714c0-.947.921-1.715 2.056-1.715.042 0 .09.002.145.007l.087.008.096.013a.685.685 0 0 0 .425-.08l3.913-2.173c.3-.166.662-.171.965-.017l.04.023 5.465 3.104c.686.39.693 1.368.03 1.773l-.037.021-3.656 2.033a.343.343 0 0 0 .007.604l3.62 1.906c.72.378.736 1.402.03 1.804l-10.995 6.272a1.03 1.03 0 0 1-1.019 0L.526 16.43a1.03 1.03 0 0 1 .034-1.806l3.66-1.911a.343.343 0 0 0 .01-.603L.524 10.029a1.03 1.03 0 0 1-.041-1.77l.036-.021L9.618 3.06a.688.688 0 0 0 .308-.369l.011-.036c.32-.952 1.046-1.466 2.063-1.466Zm5.076 12.63-4.492 2.586-.041.022c-.306.158-.671.152-.973-.018l-4.478-2.527a.682.682 0 0 0-.65-.01L3.86 15.224a.343.343 0 0 0-.012.602l7.887 4.515c.21.12.467.121.677 0l7.956-4.547a.343.343 0 0 0-.01-.602l-2.623-1.384a.683.683 0 0 0-.659.012z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Traefik</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.51</text></g><g class="node-group" data-node-id="grafana" transform="translate(3400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Grafana</title><path d="M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Grafana</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.60</text></g><g class="node-group" data-node-id="prometheus" transform="translate(3400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Prometheus</title><path d="M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Prometheus</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.61</text></g><g class="node-group" data-node-id="unifi-controller" transform="translate(3000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Ubiquiti</title><path d="M23.1627 0h-1.4882v1.4882h1.4882zm-5.2072 10.4226V7.4409l.0007.001h2.9755v2.9762h2.9756v.9433c0 1.0906-.0927 2.3827-.306 3.3973-.1194.5672-.3004 1.1308-.5127 1.672-.2175.5537-.468 1.0841-.7408 1.5595a11.6795 11.6795 0 0 1-1.2456 1.7762l-.0253.0294-.0417.0488c-.1148.1347-.2283.2679-.3531.398a11.7612 11.7612 0 0 1-.4494.4492c-1.9046 1.8343-4.3861 2.98-6.9808 3.243-.3122.032-.939.0652-1.2519.0652-.3139-.001-.9397-.0331-1.252-.0651-2.5946-.263-5.0761-1.4097-6.9806-3.243a11.75 11.75 0 0 1-.4495-.4494c-.131-.1356-.249-.2748-.3683-.4154l-.0006-.0004-.0512-.0603a11.6576 11.6576 0 0 1-1.2456-1.7762c-.2727-.4763-.5233-1.0058-.7408-1.5595-.2123-.5414-.3933-1.1048-.5128-1.6718C.1854 13.743.0927 12.452.0927 11.3616V.1864h5.9518v10.2362s0 .7847.0099 1.0415l.0022.0599v.0004c.0127.332.0247.6575.0594.9812.098.919.3014 1.7913.7203 2.5288.1213.213.2443.42.3915.616.8953 1.1939 2.2577 2.0901 3.9573 2.3398.2022.0294.6108.0552.8149.0552.204 0 .6125-.0258.8149-.0552 1.6996-.2497 3.062-1.146 3.9573-2.3398.148-.196.2701-.403.3914-.616.419-.7375.6224-1.6095.7204-2.5288.0346-.3243.047-.6503.0594-.9831l.0022-.0584c.0099-.2568.0099-1.0415.0099-1.0415zm.7427-8.19h2.2326v2.2319h2.9764v2.9764h-2.9764V4.4654h-2.2326V2.2328Z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">UniFi Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.70</text></g><g class="node-group" data-node-id="wireguard" transform="translate(1400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>WireGuard</title><path d="M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">WireGuard</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.80</text></g></svg>
+          <svg id="map" viewBox="384.66666666666674 27 3230.6666666666665 2423" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" class="edge active" data-edge-id="edge-1" data-from="isp-modem" data-to="opnsense" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" data-edge-id="edge-1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" class="edge" data-edge-id="edge-2" data-from="opnsense" data-to="main-switch" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" data-edge-id="edge-2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" class="edge" data-edge-id="edge-3" data-from="main-switch" data-to="proxmox" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" data-edge-id="edge-3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" class="edge" data-edge-id="edge-4" data-from="main-switch" data-to="truenas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" data-edge-id="edge-4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" class="edge" data-edge-id="edge-5" data-from="main-switch" data-to="docker-host" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" data-edge-id="edge-5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" class="edge" data-edge-id="edge-6" data-from="main-switch" data-to="pi-hole" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" data-edge-id="edge-6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" class="edge" data-edge-id="edge-7" data-from="proxmox" data-to="plex" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" data-edge-id="edge-7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" class="edge" data-edge-id="edge-8" data-from="proxmox" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" data-edge-id="edge-8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" class="edge" data-edge-id="edge-9" data-from="proxmox" data-to="wireguard" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" data-edge-id="edge-9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-10" data-from="docker-host" data-to="jellyfin" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" data-edge-id="edge-10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-11" data-from="docker-host" data-to="nextcloud" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" data-edge-id="edge-11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" class="edge" data-edge-id="edge-12" data-from="docker-host" data-to="bitwarden" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" data-edge-id="edge-12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" class="edge" data-edge-id="edge-13" data-from="docker-host" data-to="portainer" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" data-edge-id="edge-13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" class="edge" data-edge-id="edge-14" data-from="docker-host" data-to="traefik" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" data-edge-id="edge-14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" class="edge" data-edge-id="edge-15" data-from="docker-host" data-to="grafana" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" data-edge-id="edge-15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" class="edge" data-edge-id="edge-16" data-from="docker-host" data-to="prometheus" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" data-edge-id="edge-16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" class="edge" data-edge-id="edge-17" data-from="docker-host" data-to="unifi-controller" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" data-edge-id="edge-17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" class="edge" data-edge-id="edge-18" data-from="truenas" data-to="plex" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" data-edge-id="edge-18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-19" data-from="truenas" data-to="jellyfin" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" data-edge-id="edge-19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-20" data-from="truenas" data-to="nextcloud" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" data-edge-id="edge-20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><g class="node-group active" data-node-id="isp-modem" transform="translate(2000,227)" style="cursor: grab;"><circle r="190.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="152.4" height="152.4" x="-76.2" y="-76.2" style="fill: rgb(255, 0, 0);"><title>OPNsense</title><path d="M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z"></path></svg></g><text class="node-label" x="0" y="-35.56" style="font-size: 41.91px; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="50.800000000000004" style="font-size: 30.48px; pointer-events: none;">192.168.100.1</text><circle class="ping-indicator online" r="7.62" cx="-113.54171374511719" cy="-88.894"></circle></g><g class="node-group" data-node-id="opnsense" transform="translate(1686.82958984375,628.8558959960938)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">OPNsense</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(2000,950)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Main Switch</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.2</text></g><g class="node-group" data-node-id="proxmox" transform="translate(1200,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Proxmox</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.10</text></g><g class="node-group" data-node-id="truenas" transform="translate(2800,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.11</text></g><g class="node-group" data-node-id="docker-host" transform="translate(2000,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Docker Host</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.12</text></g><g class="node-group" data-node-id="pi-hole" transform="translate(2000,1650)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Pi-hole</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.53</text></g><g class="node-group" data-node-id="plex" transform="translate(600,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Plex</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.20</text></g><g class="node-group" data-node-id="jellyfin" transform="translate(1400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/jellyfin.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Jellyfin</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.21</text></g><g class="node-group" data-node-id="nextcloud" transform="translate(1800,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Nextcloud</title><path d="M12.018 6.537c-2.5 0-4.6 1.712-5.241 4.015-.56-1.232-1.793-2.105-3.225-2.105A3.569 3.569 0 0 0 0 12a3.569 3.569 0 0 0 3.552 3.553c1.432 0 2.664-.874 3.224-2.106.641 2.304 2.742 4.016 5.242 4.016 2.487 0 4.576-1.693 5.231-3.977.569 1.21 1.783 2.067 3.198 2.067A3.568 3.568 0 0 0 24 12a3.569 3.569 0 0 0-3.553-3.553c-1.416 0-2.63.858-3.199 2.067-.654-2.284-2.743-3.978-5.23-3.977zm0 2.085c1.878 0 3.378 1.5 3.378 3.378 0 1.878-1.5 3.378-3.378 3.378A3.362 3.362 0 0 1 8.641 12c0-1.878 1.5-3.378 3.377-3.378zm-8.466 1.91c.822 0 1.467.645 1.467 1.468s-.644 1.467-1.467 1.468A1.452 1.452 0 0 1 2.085 12c0-.823.644-1.467 1.467-1.467zm16.895 0c.823 0 1.468.645 1.468 1.468s-.645 1.468-1.468 1.468A1.452 1.452 0 0 1 18.98 12c0-.823.644-1.467 1.467-1.467z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Nextcloud</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.30</text></g><g class="node-group" data-node-id="bitwarden" transform="translate(2200,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Bitwarden</title><path d="M21.722.296A.964.964 0 0 0 21.018 0H2.982a.959.959 0 0 0-.703.296.96.96 0 0 0-.297.702v12c0 .895.174 1.783.523 2.665.349.88.783 1.66 1.3 2.345.517.68 1.132 1.346 1.848 1.993a21.807 21.807 0 0 0 1.98 1.609c.605.427 1.235.83 1.893 1.212.657.381 1.125.638 1.4.772.276.134.5.241.664.311a.916.916 0 0 0 .814 0c.168-.073.389-.177.667-.311.275-.134.743-.394 1.401-.772a25.305 25.305 0 0 0 1.894-1.212A21.891 21.891 0 0 0 18.348 20c.716-.647 1.33-1.31 1.847-1.993s.949-1.463 1.3-2.345c.35-.879.524-1.767.524-2.665V1.001a.95.95 0 0 0-.297-.705zm-2.325 12.815c0 4.344-7.397 8.087-7.397 8.087V2.57h7.397v10.54z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Vaultwarden</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.31</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(1000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Home Assistant</title><path d="M22.939 10.627 13.061.749a1.505 1.505 0 0 0-2.121 0l-9.879 9.878C.478 11.21 0 12.363 0 13.187v9c0 .826.675 1.5 1.5 1.5h9.227l-4.063-4.062a2.034 2.034 0 0 1-.664.113c-1.13 0-2.05-.92-2.05-2.05s.92-2.05 2.05-2.05 2.05.92 2.05 2.05c0 .233-.041.456-.113.665l3.163 3.163V9.928a2.05 2.05 0 0 1-1.15-1.84c0-1.13.92-2.05 2.05-2.05s2.05.92 2.05 2.05a2.05 2.05 0 0 1-1.15 1.84v8.127l3.146-3.146A2.051 2.051 0 0 1 18 12.239c1.13 0 2.05.92 2.05 2.05s-.92 2.05-2.05 2.05c-.25 0-.488-.047-.709-.13L12.9 20.602v3.088h9.6c.825 0 1.5-.675 1.5-1.5v-9c0-.825-.477-1.977-1.061-2.561z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Home Assistant</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.40</text></g><g class="node-group" data-node-id="portainer" transform="translate(2600,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Portainer</title><path d="M12.504 0v1.023l-.01-.015-6.106 3.526H3.417v.751h5.359v3.638h1.942V5.284h1.786v10.416c.027 0 .54-.01.751.091V5.285h.531v10.608c.293.147.55.312.751.54V5.286h6.046v-.75h-1.267l-6.061-3.5V0zm0 1.87v2.664H7.889zm.751.031l4.56 2.633h-4.56zM9.142 5.285h1.21v1.686h-1.21zm-4.736 2.73v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm-2.19 2.171v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm2.18 0v1.951h1.942v-1.95zM4.36 12.43a3.73 3.73 0 00-.494 1.851c0 1.227.604 2.308 1.52 2.986.239-.064.477-.1.724-.11.1 0 .165.01.266.019.284-1.191 1.383-1.988 2.665-1.988.724 0 1.438.201 1.924.668.229-.476.302-1.007.302-1.575 0-.65-.165-1.292-.494-1.85zm4.828 3.16c-1.21 0-2.226.844-2.492 1.97a.922.922 0 00-.275-.009 2.559 2.559 0 00-2.564 2.556 2.565 2.565 0 003.096 2.5A2.579 2.579 0 009.233 24c.862 0 1.622-.43 2.09-1.081a2.557 2.557 0 004.186-1.97c0-.567-.193-1.099-.504-1.52a2.557 2.557 0 00-3.866-2.94 2.574 2.574 0 00-1.951-.898z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Portainer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.50</text></g><g class="node-group" data-node-id="traefik" transform="translate(3000,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Traefik Proxy</title><path d="M12 1.19c1.088 0 2.056.768 2.056 1.714 0 .947-.921 1.715-2.056 1.715-.13 0-.3-.022-.509-.064a.685.685 0 0 0-.475.076l-7.37 4.195a.344.344 0 0 0 .001.597l7.99 4.49c.208.116.461.116.669 0l8.034-4.468a.343.343 0 0 0 .003-.598l-2.507-1.424a.683.683 0 0 0-.67-.003l-2.647 1.468a.234.234 0 0 0-.119.18l-.001.025c0 .946-.921 1.714-2.056 1.714s-2.056-.768-2.056-1.714c0-.947.921-1.715 2.056-1.715.042 0 .09.002.145.007l.087.008.096.013a.685.685 0 0 0 .425-.08l3.913-2.173c.3-.166.662-.171.965-.017l.04.023 5.465 3.104c.686.39.693 1.368.03 1.773l-.037.021-3.656 2.033a.343.343 0 0 0 .007.604l3.62 1.906c.72.378.736 1.402.03 1.804l-10.995 6.272a1.03 1.03 0 0 1-1.019 0L.526 16.43a1.03 1.03 0 0 1 .034-1.806l3.66-1.911a.343.343 0 0 0 .01-.603L.524 10.029a1.03 1.03 0 0 1-.041-1.77l.036-.021L9.618 3.06a.688.688 0 0 0 .308-.369l.011-.036c.32-.952 1.046-1.466 2.063-1.466Zm5.076 12.63-4.492 2.586-.041.022c-.306.158-.671.152-.973-.018l-4.478-2.527a.682.682 0 0 0-.65-.01L3.86 15.224a.343.343 0 0 0-.012.602l7.887 4.515c.21.12.467.121.677 0l7.956-4.547a.343.343 0 0 0-.01-.602l-2.623-1.384a.683.683 0 0 0-.659.012z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Traefik</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.51</text></g><g class="node-group" data-node-id="grafana" transform="translate(3400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Grafana</title><path d="M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Grafana</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.60</text></g><g class="node-group" data-node-id="prometheus" transform="translate(3400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Prometheus</title><path d="M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Prometheus</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.61</text></g><g class="node-group" data-node-id="unifi-controller" transform="translate(3000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Ubiquiti</title><path d="M23.1627 0h-1.4882v1.4882h1.4882zm-5.2072 10.4226V7.4409l.0007.001h2.9755v2.9762h2.9756v.9433c0 1.0906-.0927 2.3827-.306 3.3973-.1194.5672-.3004 1.1308-.5127 1.672-.2175.5537-.468 1.0841-.7408 1.5595a11.6795 11.6795 0 0 1-1.2456 1.7762l-.0253.0294-.0417.0488c-.1148.1347-.2283.2679-.3531.398a11.7612 11.7612 0 0 1-.4494.4492c-1.9046 1.8343-4.3861 2.98-6.9808 3.243-.3122.032-.939.0652-1.2519.0652-.3139-.001-.9397-.0331-1.252-.0651-2.5946-.263-5.0761-1.4097-6.9806-3.243a11.75 11.75 0 0 1-.4495-.4494c-.131-.1356-.249-.2748-.3683-.4154l-.0006-.0004-.0512-.0603a11.6576 11.6576 0 0 1-1.2456-1.7762c-.2727-.4763-.5233-1.0058-.7408-1.5595-.2123-.5414-.3933-1.1048-.5128-1.6718C.1854 13.743.0927 12.452.0927 11.3616V.1864h5.9518v10.2362s0 .7847.0099 1.0415l.0022.0599v.0004c.0127.332.0247.6575.0594.9812.098.919.3014 1.7913.7203 2.5288.1213.213.2443.42.3915.616.8953 1.1939 2.2577 2.0901 3.9573 2.3398.2022.0294.6108.0552.8149.0552.204 0 .6125-.0258.8149-.0552 1.6996-.2497 3.062-1.146 3.9573-2.3398.148-.196.2701-.403.3914-.616.419-.7375.6224-1.6095.7204-2.5288.0346-.3243.047-.6503.0594-.9831l.0022-.0584c.0099-.2568.0099-1.0415.0099-1.0415zm.7427-8.19h2.2326v2.2319h2.9764v2.9764h-2.9764V4.4654h-2.2326V2.2328Z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">UniFi Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.70</text></g><g class="node-group" data-node-id="wireguard" transform="translate(1400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>WireGuard</title><path d="M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">WireGuard</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.80</text></g></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <line x1="2000" y1="227" x2="1686.82958984375" y2="628.8558959960938" class="minimap-edge"></line><line x1="1686.82958984375" y1="628.8558959960938" x2="2000" y2="950" class="minimap-edge"></line><line x1="2000" y1="950" x2="1200" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2800" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1650" class="minimap-edge"></line><line x1="1200" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1000" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2200" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2600" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><circle cx="2000" cy="227" r="40" class="minimap-node"></circle><circle cx="1686.82958984375" cy="628.8558959960938" r="40" class="minimap-node"></circle><circle cx="2000" cy="950" r="40" class="minimap-node"></circle><circle cx="1200" cy="1350" r="40" class="minimap-node"></circle><circle cx="2800" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1650" r="40" class="minimap-node"></circle><circle cx="600" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="2250" r="40" class="minimap-node"></circle><circle cx="1800" cy="2250" r="40" class="minimap-node"></circle><circle cx="2200" cy="2250" r="40" class="minimap-node"></circle><circle cx="1000" cy="1850" r="40" class="minimap-node"></circle><circle cx="2600" cy="2250" r="40" class="minimap-node"></circle><circle cx="3000" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="1850" r="40" class="minimap-node"></circle><circle cx="3000" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="1850" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="1166.8670628835375" y="-50.355560256801084" width="1676.3165195536412" height="1257.237389665231"></rect>
+              <line x1="2000" y1="227" x2="1686.82958984375" y2="628.8558959960938" class="minimap-edge"></line><line x1="1686.82958984375" y1="628.8558959960938" x2="2000" y2="950" class="minimap-edge"></line><line x1="2000" y1="950" x2="1200" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2800" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1650" class="minimap-edge"></line><line x1="1200" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1000" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2200" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2600" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><circle cx="2000" cy="227" r="40" class="minimap-node"></circle><circle cx="1686.82958984375" cy="628.8558959960938" r="40" class="minimap-node"></circle><circle cx="2000" cy="950" r="40" class="minimap-node"></circle><circle cx="1200" cy="1350" r="40" class="minimap-node"></circle><circle cx="2800" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1650" r="40" class="minimap-node"></circle><circle cx="600" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="2250" r="40" class="minimap-node"></circle><circle cx="1800" cy="2250" r="40" class="minimap-node"></circle><circle cx="2200" cy="2250" r="40" class="minimap-node"></circle><circle cx="1000" cy="1850" r="40" class="minimap-node"></circle><circle cx="2600" cy="2250" r="40" class="minimap-node"></circle><circle cx="3000" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="1850" r="40" class="minimap-node"></circle><circle cx="3000" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="1850" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="384.66666666666674" y="27" width="3230.6666666666665" height="2423"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">239%</div>
+            <div class="zoom-level" id="zoom-level">124%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
             <button id="zoom-reset-btn" title="Reset view">R</button>
           </div>
         </div>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px;">Add Line</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px;">Add Line</button>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
+		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
       <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
@@ -2557,7 +2559,15 @@
     "notes": [
       "DNS: Pi-hole",
       "VPN: WireGuard"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "main-switch": {
     "shape": "switch",
@@ -2570,7 +2580,15 @@
     ],
     "notes": [
       "USW 24 POE"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "proxmox": {
     "shape": "server",
@@ -2589,7 +2607,15 @@
     "notes": [
       "2x Xeon E5 2670",
       "10x VMs running"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "truenas": {
     "shape": "database",
@@ -2608,7 +2634,15 @@
     "notes": [
       "6x 8TB WD Red",
       "RAID Z2"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "docker-host": {
     "shape": "server",
@@ -2627,7 +2661,15 @@
     "notes": [
       "Dell Optiplex 7050",
       "35 containers"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "pi-hole": {
     "shape": "circle",
@@ -2645,7 +2687,15 @@
     "notes": [
       "Raspberry Pi 4",
       "Primary DNS"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "plex": {
     "shape": "circle",
@@ -2664,7 +2714,15 @@
       "VM on Proxmox",
       "4 cores",
       "8GB RAM"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "jellyfin": {
     "shape": "circle",
@@ -2682,7 +2740,15 @@
     "notes": [
       "Container on Docker",
       "Backup media server"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "nextcloud": {
     "shape": "circle",
@@ -2701,7 +2767,15 @@
     "notes": [
       "Container on Docker",
       "MariaDB backend"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "bitwarden": {
     "shape": "circle",
@@ -2719,7 +2793,15 @@
     "notes": [
       "Container on Docker",
       "Bitwarden compatible"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "homeassistant": {
     "shape": "circle",
@@ -2737,7 +2819,15 @@
     "notes": [
       "VM on Proxmox",
       "45 devices"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "portainer": {
     "shape": "circle",
@@ -2754,7 +2844,15 @@
     ],
     "notes": [
       "Managing 35 containers"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "traefik": {
     "shape": "circle",
@@ -2772,7 +2870,15 @@
     "notes": [
       "Container on Docker",
       "Wildcard cert"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "grafana": {
     "shape": "circle",
@@ -2789,7 +2895,15 @@
     ],
     "notes": [
       "Container on Docker"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "prometheus": {
     "shape": "circle",
@@ -2807,7 +2921,15 @@
     "notes": [
       "Container on Docker",
       "15d retention"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "unifi-controller": {
     "shape": "router",
@@ -2825,7 +2947,15 @@
     "notes": [
       "Container on Docker",
       "3 APs"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   },
   "wireguard": {
     "shape": "router",
@@ -2843,7 +2973,15 @@
     "notes": [
       "VM on Proxmox",
       "5 clients"
-    ]
+    ],
+    "ping": {
+      "enabled": false,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    }
   }
 }</script>
     <script id="topology-state" type="application/json">{
@@ -2882,7 +3020,15 @@
       "notes": [
         "DNS: Pi-hole",
         "VPN: WireGuard"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "main-switch": {
       "shape": "switch",
@@ -2895,7 +3041,15 @@
       ],
       "notes": [
         "USW 24 POE"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "proxmox": {
       "shape": "server",
@@ -2914,7 +3068,15 @@
       "notes": [
         "2x Xeon E5 2670",
         "10x VMs running"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "truenas": {
       "shape": "database",
@@ -2933,7 +3095,15 @@
       "notes": [
         "6x 8TB WD Red",
         "RAID Z2"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "docker-host": {
       "shape": "server",
@@ -2952,7 +3122,15 @@
       "notes": [
         "Dell Optiplex 7050",
         "35 containers"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "pi-hole": {
       "shape": "circle",
@@ -2970,7 +3148,15 @@
       "notes": [
         "Raspberry Pi 4",
         "Primary DNS"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "plex": {
       "shape": "circle",
@@ -2989,7 +3175,15 @@
         "VM on Proxmox",
         "4 cores",
         "8GB RAM"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "jellyfin": {
       "shape": "circle",
@@ -3007,7 +3201,15 @@
       "notes": [
         "Container on Docker",
         "Backup media server"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "nextcloud": {
       "shape": "circle",
@@ -3026,7 +3228,15 @@
       "notes": [
         "Container on Docker",
         "MariaDB backend"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "bitwarden": {
       "shape": "circle",
@@ -3044,7 +3254,15 @@
       "notes": [
         "Container on Docker",
         "Bitwarden compatible"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "homeassistant": {
       "shape": "circle",
@@ -3062,7 +3280,15 @@
       "notes": [
         "VM on Proxmox",
         "45 devices"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "portainer": {
       "shape": "circle",
@@ -3079,7 +3305,15 @@
       ],
       "notes": [
         "Managing 35 containers"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "traefik": {
       "shape": "circle",
@@ -3097,7 +3331,15 @@
       "notes": [
         "Container on Docker",
         "Wildcard cert"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "grafana": {
       "shape": "circle",
@@ -3114,7 +3356,15 @@
       ],
       "notes": [
         "Container on Docker"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "prometheus": {
       "shape": "circle",
@@ -3132,7 +3382,15 @@
       "notes": [
         "Container on Docker",
         "15d retention"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "unifi-controller": {
       "shape": "router",
@@ -3150,7 +3408,15 @@
       "notes": [
         "Container on Docker",
         "3 APs"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
     "wireguard": {
       "shape": "router",
@@ -3168,7 +3434,15 @@
       "notes": [
         "VM on Proxmox",
         "5 clients"
-      ]
+      ],
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     }
   },
   "edgeData": {
@@ -3695,9 +3969,9 @@
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 2.386184204081634,
-    "panX": 1166.8670628835375,
-    "panY": -50.355560256801084
+    "zoom": 1.2381345439537763,
+    "panX": 384.66666666666674,
+    "panY": 27
   }
 }</script>
     <script>
@@ -4269,14 +4543,14 @@
         "Pinch to zoom",
         "Drag to pan",
         "Double tap to select multiple",
-      "Double tap to select multiple",
-      "Your time is NOW!",
+        "Double tap to select multiple",
+        "Your time is NOW!",
       ]
       : [
         "Scroll to zoom",
         "Drag to pan",
         "Right-click to select multiple",
-      "Your time is NOW!",
+        "Your time is NOW!",
       ];
       
       const list = document.createElement("ul");
@@ -5486,6 +5760,7 @@
        }
       
        function deleteRectangle(rectId) {
+	    pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -8074,6 +8349,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle"); 
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -8179,6 +8455,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
+		pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -8250,6 +8527,7 @@
         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
         
         const newId = "text-" + Date.now();
+		pushUndo("add text");
         TEXT_DATA.list.push({
          id: newId,
          x: svgP.x,
@@ -8330,6 +8608,7 @@
        }
        
        function deleteText(textId) {
+	    pushUndo("delete text");
         TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
         forgeTheTopology();
         
@@ -8343,6 +8622,7 @@
         if (!currentTextId) return;
         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
         if (textItem) {
+		 pushUndo("edit text");
          textItem.content = e.target.value;
          forgeTheTopology();
         }
@@ -8921,14 +9201,16 @@
        }
        
       function captureState() {
-       return {
+	    return {
         nodes: JSON.parse(JSON.stringify(NODE_DATA)),
         edges: JSON.parse(JSON.stringify(EDGE_DATA)),
         positions: JSON.parse(JSON.stringify(savedPositions)),
         sizes: JSON.parse(JSON.stringify(savedSizes)),
         styles: JSON.parse(JSON.stringify(savedStyles)),
-        legend: JSON.parse(JSON.stringify(EDGE_LEGEND))
-       };
+        legend: JSON.parse(JSON.stringify(EDGE_LEGEND)),
+        rects: JSON.parse(JSON.stringify(RECT_DATA)),
+        texts: JSON.parse(JSON.stringify(TEXT_DATA))
+        };
       }
       
       function pushUndo(action = "") {
@@ -8960,17 +9242,19 @@
       }
       
       function restoreState(state) {
-       NODE_DATA = state.nodes;
+	   NODE_DATA = state.nodes;
        EDGE_DATA = state.edges;
        savedPositions = state.positions;
        savedSizes = state.sizes;
        savedStyles = state.styles;
        EDGE_LEGEND = state.legend;
+       RECT_DATA = state.rects || { list: [] };
+       TEXT_DATA = state.texts || { list: [] };
        forgeTheTopology();
        if (currentNodeId && NODE_DATA[currentNodeId]) {
-        claimTheImmortal(currentNodeId);
+       claimTheImmortal(currentNodeId);
        } else if (currentEdgeId) {
-        selectTheConnection(currentEdgeId);
+       selectTheConnection(currentEdgeId);
        }
       }
       
@@ -9744,12 +10028,15 @@
          document.getElementById('selected-node-icon').style.display = 'none';
         }
         newNodeIconTags = [];
-        const centerX = CANVAS_WIDTH / 2;
-        const centerY = CANVAS_HEIGHT / 2;
-        savedPositions[nodeId] = {
-         x: centerX,
-         y: centerY
-        };
+        // Get the center of what the user is currently viewing
+const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+const centerX = canvasState.panX + (viewWidth / 2);
+const centerY = canvasState.panY + (viewHeight / 2);
+savedPositions[nodeId] = {
+  x: centerX,
+  y: centerY
+};
         addNodeModal.classList.remove("active");
         forgeTheTopology();
         claimTheImmortal(nodeId);
