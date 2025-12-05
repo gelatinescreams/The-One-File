@@ -37,9 +37,11 @@ A fully self contained topology builder that runs anywhere as a single standalon
 # Demos
 
 * **Core Edition**
+  * [the-one-file.html](https://gelatinescreams.github.io/The-One-File/the-one-file.html)
   * [the-one-file-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-corporate-demo.html)
   * [the-one-file-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/the-one-file-homelab-demo.html)
 * **Networkening Edition**
+  * [the-one-file.html](https://gelatinescreams.github.io/The-One-File/theonefile-networkening.html)
   * [theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
   * [theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
 
