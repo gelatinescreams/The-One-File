@@ -19,8 +19,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
 * **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
 * **NEW 3.9** Snapshots are now implemeted. Auto save and manual save are available.
-* **NEW 3.9** Action audits are now implemeted. This allows you to audit whether or not the file has been tampered in an easy to read log.
-  * *Note: Both snapshots and audits are local browser only and do not trasnfer to another device. This feature is coming in 4.0*
+* **NEW 3.9** Action audits are now implemeted. This allows you to audit whether or not the file has been tampered with in an easy to read log.
+  * *Note: Both snapshots and audits are local browser only and do not transfer to another device. This feature is coming in 4.0*
 * **NEW 3.7** The Rackening!!
   * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
 * **NEW 3.7** Layers upon layers!!
