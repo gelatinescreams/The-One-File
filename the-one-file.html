@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
- <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 93px; --sidebar-width: 435px; --mobile-footer-height: 20vh; --draw-toolbar-height: 0px;"><head>
+ <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 103px; --sidebar-width: 350px; --mobile-footer-height: 40vh; --draw-toolbar-height: 0px;"><head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -336,6 +336,11 @@
       left: auto;
       transform: none;
       }
+	  @media (min-width: 768px) {
+	   .bulk-toolbar-mobile {
+	    display: none !important;
+       }
+      }	  
       .bulk-action-btn {
       padding: 16px;
       background: var(--panel-main);
@@ -1134,6 +1139,116 @@
       user-select: text;
       -webkit-user-select: text;
       }
+      .version-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      }
+      .version-item:hover {
+      background: var(--panel-alt);
+      border-color: var(--accent);
+      }
+      .version-item.current {
+      border-color: var(--accent);
+      background: rgba(79, 209, 197, 0.1);
+      }
+      .version-info {
+      flex: 1;
+      }
+      .version-info .timestamp {
+      font-size: 13px;
+      color: var(--text-main);
+      font-weight: 600;
+      }
+      .version-info .details {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 4px;
+      }
+      .version-actions {
+      display: flex;
+      gap: 6px;
+      }
+      
+      .audit-entry {
+      padding: 8px 12px;
+      background: var(--panel);
+      border-left: 3px solid var(--edge-main);
+      border-radius: 4px;
+      font-size: 12px;
+      }
+      .audit-entry.node { border-left-color: #4fd1c5; }
+      .audit-entry.connection { border-left-color: #9f7aea; }
+      .audit-entry.style { border-left-color: #ed8936; }
+      .audit-entry.rack { border-left-color: #48bb78; }
+      .audit-entry.layer { border-left-color: #4299e1; }
+      .audit-entry .time {
+      color: var(--text-soft);
+      font-size: 10px;
+      }
+      .audit-entry .action {
+      color: var(--text-main);
+      font-weight: 500;
+      }
+      
+      .tab-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      }
+      .tab-item:hover {
+      background: var(--panel-alt);
+      }
+      .tab-item.active {
+      border-color: var(--accent);
+      background: rgba(79, 209, 197, 0.1);
+      }
+      .tab-item .tab-name {
+      font-weight: 600;
+      color: var(--text-main);
+      flex: 1;
+      }
+      .tab-item .tab-stats {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-right: 10px;
+      }
+      .tab-actions {
+      display: flex;
+      gap: 6px;
+      }    
+      .secret-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 6px;
+      border-left: 3px solid var(--danger);
+      }
+      .secret-item .secret-name {
+      font-weight: 600;
+      color: var(--text-main);
+      flex: 1;
+      }
+      .secret-item .secret-status {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-right: 10px;
+      }    
       .mobile-menu-btn {
       display: none;
       background: var(--panel);
@@ -1221,7 +1336,7 @@
       }
     </style>
   </head>
-  <body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);">
+  <body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);" class="">
     <div class="modal" id="edit-modal">
       <div class="modal-content">
         <h3 id="modal-title">Edit Title</h3>
@@ -1246,11 +1361,7 @@
       <div class="modal-content">
         <h3>Why do I need to save?</h3>
         <p> Browsers are not allowed to overwrite local files automatically. When you click <strong>Save File</strong>, this page generates a new updated HTML file that contains all of your changes. Replace your old file with the new one to keep your edits. </p>
-        <p style="
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--edge-main);
-          ">
+        <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
           <strong>Encryption:</strong> Check the "Encrypt" box before saving to password protect your data. You'll need the password to open the file later. No recovery possible!!
         </p>
         <div class="modal-buttons">
@@ -1268,11 +1379,7 @@
               <label>Solid Color</label>
               <input type="color" id="page-bg-color" value="#050608">
             </div>
-            <p style="
-              margin-top: 4px;
-              font-size: 12px;
-              color: var(--text-soft);
-              "> Change to apply a flat background color. </p>
+            <p style="margin-top: 4px;font-size: 12px;color: var(--text-soft);">Change to apply a flat background color.</p>
           </div>
         </details>
         <details class="style-section" open="">
@@ -1325,29 +1432,16 @@
               font-size: 13px;
               color: var(--text-soft);
               "> Export/Import your data to upgrade/downgrade versions of The One File. </p>
-            <button id="export-data-btn" style="
-              width: 100%;
-              margin-bottom: 10px;
-              padding: 10px;
-              background: var(--accent);
-              color: var(--bg);
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-              font-size: 14px;
-              font-weight: 600;
-              "> Export Data (JSON) </button>
-            <button id="import-data-btn" style="
-              width: 100%;
-              padding: 10px;
-              background: var(--panel);
-              color: var(--text-main);
-              border: 1px solid var(--edge-main);
-              border-radius: 6px;
-              cursor: pointer;
-              font-size: 14px;
-              font-weight: 600;
-              "> Import Data (JSON) </button>
+            <button id="export-data-btn" style="width: 100%;margin-bottom: 10px;padding: 10px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Export Data (JSON)</button>
+            <button id="import-data-btn" style="width: 100%;padding: 10px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Import Data (JSON)</button>
+            <input type="file" id="import-data-file" accept=".json" style="display: none">
+          </div>
+        </details>
+		<details class="style-section" open="">
+          <summary>Clear All</summary>
+          <div class="style-content">
+            <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">This deletes everything on the canvas!</p>
+			<button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
         </details>
@@ -1359,33 +1453,13 @@
     <div class="modal" id="add-node-modal">
       <div class="modal-content">
         <h3>Add New Node</h3>
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Name</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Name</label>
         <input type="text" id="new-node-name" placeholder="e.g. web-server">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">IP / Subtitle</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">IP / Subtitle</label>
         <input type="text" id="new-node-ip" placeholder="e.g. 192.168.1.100">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Tags (comma separated)</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Tags (comma separated)</label>
         <input type="text" id="new-node-tags" placeholder="e.g. Docker, nginx, WG: vpn">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Shape</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Shape</label>
         <select id="new-node-shape">
           <optgroup label="Basic Shapes">
             <option value="circle">Circle</option>
@@ -1419,33 +1493,13 @@
     <div class="modal" id="add-rack-modal">
       <div class="modal-content">
         <h3>Add New Rack</h3>
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Rack Name</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Rack Name</label>
         <input type="text" id="new-rack-name" placeholder="e.g. Rack-A, DC1-R01">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">IP / Network Range (optional)</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">IP / Network Range (optional)</label>
         <input type="text" id="new-rack-ip" placeholder="e.g. 192.168.1.0/24">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Tags (comma separated)</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Tags (comma separated)</label>
         <input type="text" id="new-rack-tags" placeholder="e.g. Production, Data Center 1">
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Icon / Shape</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Icon / Shape</label>
         <select id="new-rack-shape">
           <optgroup label="Basic Shapes">
             <option value="circle">Circle</option>
@@ -1470,12 +1524,7 @@
             <option value="printer">Printer</option>
           </optgroup>
         </select>
-        <label style="
-          display: block;
-          margin-bottom: 4px;
-          color: var(--text-soft);
-          font-size: 13px;
-          ">Rack Capacity</label>
+        <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Rack Capacity</label>
         <select id="new-rack-capacity">
           <option value="42" selected="">42U (Standard Full Rack)</option>
           <option value="48">48U (Large Rack)</option>
@@ -1495,7 +1544,7 @@
         <p> This will remove ALL nodes and connections. This cannot be undone until you reload without saving. Are you sure? </p>
         <div class="modal-buttons">
           <button class="btn-cancel" id="clear-all-cancel">Cancel</button>
-          <button class="btn-delete" id="clear-all-confirm"> Clear Everything </button>
+          <button class="btn-delete" id="clear-all-confirm">Clear Everything</button>
         </div>
       </div>
     </div>
@@ -1507,22 +1556,18 @@
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
             <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
             <span style="flex: 1; font-weight: 500;">Physical Layer</span>
-            <span style="font-size: 12px; color: var(--text-soft);">Hardware &amp; cabling</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
             <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
             <span style="flex: 1; font-weight: 500;">Logical Layer</span>
-            <span style="font-size: 12px; color: var(--text-soft);">VLANs &amp; routing</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
             <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
             <span style="flex: 1; font-weight: 500;">Security Layer</span>
-            <span style="font-size: 12px; color: var(--text-soft);">Firewalls &amp; zones</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
             <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
             <span style="flex: 1; font-weight: 500;">Application Layer</span>
-            <span style="font-size: 12px; color: var(--text-soft);">Services &amp; apps</span>
           </label>
         </div>
         <div style="margin-top: 15px; display: flex; gap: 8px;">
@@ -1534,22 +1579,101 @@
         </div>
       </div>
     </div>
+    
+    <div class="modal" id="tabs-modal">
+      <div class="modal-content" style="max-width: 600px;">
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
+        <div id="tabs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="text" id="new-tab-name" placeholder="New tab name..." style="flex: 1; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+          <button class="btn-save" onclick="createNewTab()">+ Add Tab</button>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn-cancel" id="tabs-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal" id="rollback-modal">
+      <div class="modal-content" style="max-width: 700px;">
+        <h3>Version History</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
+          <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn-cancel" id="rollback-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal" id="audit-log-modal">
+      <div class="modal-content" style="max-width: 800px;">
+        <h3>Audit Log</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Track all changes made to your topology</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <select id="audit-filter" style="padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+            <option value="all">All Events</option>
+            <option value="node">Node Operations</option>
+            <option value="connection">Connections</option>
+            <option value="style">Style Changes</option>
+            <option value="rack">Rack Operations</option>
+            <option value="layer">Layer Changes</option>
+          </select>
+          <button class="btn-save" onclick="exportAuditLog()">Export</button>
+        </div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
+          <button class="btn-cancel" id="audit-log-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal" id="secrets-modal">
+      <div class="modal-content" style="max-width: 600px;">
+        <h3>Notes</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Notes can also be stored with AES 256 encryption</p>
+        <div id="secrets-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; margin-bottom: 15px;">
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="text" id="new-secret-name" placeholder="Note name (e.g., 'Root Passwords')..." style="flex: 1; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+          <button class="btn-save" onclick="createNewSecret()">+ Add Note</button>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn-cancel" id="secrets-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal" id="secret-editor-modal">
+      <div class="modal-content" style="max-width: 600px;">
+        <h3 id="secret-editor-title">Edit Note</h3>
+        <textarea id="secret-editor-content" placeholder="Enter sensitive information here..." style="width: 100%; height: 200px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-family: monospace; resize: vertical; margin-bottom: 15px;"></textarea>
+        <div style="margin-bottom: 15px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
+            <span>Encrypt Note</span>
+          </label>
+        </div>
+        <div class="modal-buttons">
+          <button class="btn-cancel" onclick="closeSecretEditor()">Cancel</button>
+          <button class="btn-save" onclick="saveSecret()">Save</button>
+        </div>
+      </div>
+    </div>
+    
     <div id="context-menu" style="display: none !important;">
     </div>
     <header>
       <div class="title-block">
         <h1 id="page-title" class="editable-page-title">The One File</h1>
         <div class="save-row">
-          <button id="save-file-btn" class="save-btn" type="button"> Save File </button>
-          <label style="
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            color: var(--text-soft);
-            cursor: pointer;
-            user-select: none;
-            ">
+          <button id="save-file-btn" class="save-btn" type="button">Save File</button>
+          <label style="display: flex;align-items: center;gap: 4px;font-size: 12px;color: var(--text-soft);cursor: pointer;user-select: none;">
           <input type="checkbox" id="encrypt-toggle" style="cursor: pointer">
           <span title="Encrypt data with password">Encrypt</span>
           </label>
@@ -1557,89 +1681,20 @@
         </div>
       </div>
       <div id="topbar-menu">
-        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="
-          padding: 6px 12px;
-          background: var(--accent);
-          color: var(--bg);
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          display: none;
-          ">← Back to Topology</button>
-        <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)"> + Node </button>
-        <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;"> + Rack </button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          " disabled=""> ↶ Undo </button>
-        <button id="redo-btn" title="Redo (Ctrl+Y)" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          " disabled=""> ↷ Redo </button>
-        <input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          font-size: 14px;
-          width: 180px;
-          ">
-        <button id="layers-btn" title="Toggle layer visibility" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          ">Layers</button>
-        <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          ">PNG </button>
-        <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="
-          padding: 6px 12px;
-          background: var(--panel);
-          color: var(--text-main);
-          border: 1px solid var(--edge-main);
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          ">SVG </button>
+        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
+        <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)" draggable="true">+ Node</button>
+        <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;" draggable="true">+ Rack</button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↶</button>
+        <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↷</button>
+        <input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;font-size: 14px;width: 180px;">
+        <button id="layers-btn" title="Toggle layer visibility" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Layers</button>
+        <button id="tabs-btn" title="Manage document tabs" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Tabs</button>
+        <button id="rollback-btn" title="View version history" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Snapshots</button>
+        <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
+        <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
+        <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
+        <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
         <button id="settings-btn" title="Page settings">⚙️</button>
-        <button id="clear-all-btn" title="Clear all nodes" style="
-          padding: 6px 12px;
-          background: var(--danger);
-          color: #fff;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 600;
-          ">Clear All</button>
       </div>
       <button id="mobile-menu-toggle" class="mobile-menu-btn">☰</button>
       <div class="header-resizer" id="header-resizer">
@@ -1673,7 +1728,7 @@
             <option value="backward">← Left</option>
             <option value="both">↔ Both</option>
           </select>
-          <button id="draw-undo" style="display: none" title="Undo last point"> Undo </button>
+          <button id="draw-undo" style="display: none" title="Undo last point">Undo</button>
         </div>
         <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
@@ -1697,15 +1752,7 @@
             <option value="unifi-controller">UniFi Controller</option>
             <option value="wireguard">WireGuard</option>
           </select>
-          <input type="color" id="add-line-color" value="#475569" title="Line color" style="
-            width: 30px;
-            height: 24px;
-            border: 1px solid var(--edge-main);
-            border-radius: 4px;
-            cursor: pointer;
-            background: transparent;
-            padding: 0;
-            ">
+          <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--edge-main);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">
           <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
             <option value="forward">→ Forward</option>
@@ -1727,97 +1774,28 @@
           <button id="bulk-delete" title="Delete selected" style="background: var(--danger); color: white;">Delete</button>
         </div>
         <div class="bulk-toolbar-mobile" id="bulk-toolbar-mobile" style="display: none">
-          <button type="button" id="bulk-mobile-btn" style="
-            background: var(--accent);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            ">
-          <span id="bulk-count-mobile">0</span> Selected
-          </button>
+          <button type="button" id="bulk-mobile-btn" style="background: var(--accent);color: white;padding: 12px 20px;border-radius: 25px;font-weight: 600;font-size: 16px;box-shadow: 0 4px 12px rgba(0,0,0,0.3);border: none;cursor: pointer;display: flex;align-items: center;gap: 8px;">
+          <span id="bulk-count-mobile">0</span>Selected</button>
         </div>
-        <div id="bulk-actions-modal" style="
-          display: none;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: var(--panel-alt);
-          border-top-left-radius: 20px;
-          border-top-right-radius: 20px;
-          padding: 20px;
-          padding-bottom: env(safe-area-inset-bottom, 20px);
-          box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-          z-index: 10000;
-          max-height: calc(100vh - 80px);
-          overflow-y: auto;
-          ">
+        <div id="bulk-actions-modal" style="display: none;position: fixed;bottom: 0;left: 0;right: 0;background: var(--panel-alt);border-top-left-radius: 20px;border-top-right-radius: 20px;padding: 20px;padding-bottom: env(safe-area-inset-bottom, 20px);box-shadow: 0 -4px 20px rgba(0,0,0,0.5);z-index: 10000;max-height: calc(100vh - 80px);overflow-y: auto;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="margin: 0; color: var(--accent); font-size: 20px;">
-              <span id="bulk-count-modal">0</span> Nodes Selected
-            </h3>
-            <button id="bulk-modal-close" style="
-              background: none;
-              border: none;
-              font-size: 24px;
-              cursor: pointer;
-              color: var(--text-main);
-              padding: 0;
-              width: 32px;
-              height: 32px;
-              ">✕</button>
+              <span id="bulk-count-modal">0</span> Nodes Selected</h3>
+            <button id="bulk-modal-close" style="background: none;border: none;font-size: 24px;cursor: pointer;color: var(--text-main);padding: 0;width: 32px;height: 32px;">✕</button>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <button id="bulk-align-left-mobile" class="bulk-action-btn">
-            ⬅<br><span style="font-size: 12px;">Align Left</span>
-            </button>
-            <button id="bulk-align-right-mobile" class="bulk-action-btn">
-            ➡<br><span style="font-size: 12px;">Align Right</span>
-            </button>
-            <button id="bulk-align-top-mobile" class="bulk-action-btn">
-            ⬆<br><span style="font-size: 12px;">Align Top</span>
-            </button>
-            <button id="bulk-align-bottom-mobile" class="bulk-action-btn">
-            ⬇<br><span style="font-size: 12px;">Align Bottom</span>
-            </button>
-            <button id="bulk-distribute-h-mobile" class="bulk-action-btn">
-            ↔<br><span style="font-size: 12px;">Distribute H</span>
-            </button>
-            <button id="bulk-distribute-v-mobile" class="bulk-action-btn">
-            ↕<br><span style="font-size: 12px;">Distribute V</span>
-            </button>
-            <button id="bulk-lock-mobile" class="bulk-action-btn">
-            🔒<br><span style="font-size: 12px;">Lock Toggle</span>
-            </button>
-            <button id="bulk-group-mobile" class="bulk-action-btn">
-            ⭕<br><span style="font-size: 12px;">Group Toggle</span>
-            </button>
-            <button id="bulk-clone-mobile" class="bulk-action-btn">
-            📋<br><span style="font-size: 12px;">Clone All</span>
-            </button>
-            <button id="bulk-delete-mobile" class="bulk-action-btn" style="background: var(--danger); color: white;">
-            🗑<br><span style="font-size: 12px;">Delete All</span>
-            </button>
+            <button id="bulk-align-left-mobile" class="bulk-action-btn">⬅<br><span style="font-size: 12px;">Align Left</span></button>
+            <button id="bulk-align-right-mobile" class="bulk-action-btn">➡<br><span style="font-size: 12px;">Align Right</span></button>
+            <button id="bulk-align-top-mobile" class="bulk-action-btn">⬆<br><span style="font-size: 12px;">Align Top</span></button>
+            <button id="bulk-align-bottom-mobile" class="bulk-action-btn">⬇<br><span style="font-size: 12px;">Align Bottom</span></button>
+            <button id="bulk-distribute-h-mobile" class="bulk-action-btn">↔<br><span style="font-size: 12px;">Distribute H</span></button>
+            <button id="bulk-distribute-v-mobile" class="bulk-action-btn">↕<br><span style="font-size: 12px;">Distribute V</span></button>
+            <button id="bulk-lock-mobile" class="bulk-action-btn">🔒<br><span style="font-size: 12px;">Lock Toggle</span></button>
+            <button id="bulk-group-mobile" class="bulk-action-btn">⭕<br><span style="font-size: 12px;">Group Toggle</span></button>
+            <button id="bulk-clone-mobile" class="bulk-action-btn">📋<br><span style="font-size: 12px;">Clone All</span></button>
+            <button id="bulk-delete-mobile" class="bulk-action-btn" style="background: var(--danger); color: white;">🗑<br><span style="font-size: 12px;">Delete All</span></button>
           </div>
-          <button id="bulk-clear-mobile" style="
-            width: 100%;
-            margin-top: 16px;
-            padding: 14px;
-            background: var(--panel-main);
-            border: 1px solid var(--edge-main);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 16px;
-            cursor: pointer;
-            ">Clear Selection</button>
+          <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
         <div class="canvas-hint" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to clone and align</li><li>Right-click to select multiple</li><li>You have the power</li><li>Your time is NOW!</li></ul></div>
         <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
@@ -1844,7 +1822,7 @@
 		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
 		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
 		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
-		<button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
+		</section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -1989,11 +1967,7 @@
                 <label>Sub Size:</label>
                 <input type="number" id="sub-size" min="6" max="80" value="13">
               </div>
-              <div style="
-                margin-top: 12px;
-                padding-top: 10px;
-                border-top: 1px solid var(--edge-main);
-                ">
+              <div style="margin-top: 12px;padding-top: 10px;border-top: 1px solid var(--edge-main);">
                 <div style="
                   font-size: 12px;
                   color: var(--text-soft);
@@ -2017,57 +1991,19 @@
                   <input type="number" id="sub-offset-x" min="-100" max="100" value="0" style="width: 60px">
                 </div>
               </div>
-              <button id="reset-styles" style="
-                width: 100%;
-                margin-top: 10px;
-                padding: 8px;
-                background: var(--panel);
-                color: var(--text-main);
-                border: 1px solid var(--edge-main);
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: clamp(13px, 1.5vw, 17px);
-                "> Reset Styles </button>
+              <button id="reset-styles" style="width: 100%;margin-top: 10px;padding: 8px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: clamp(13px, 1.5vw, 17px);">Reset Styles</button>
             </div>
           </details>
           <div class="section-label">Notes</div>
           <ul class="list" id="node-notes">
             <li><span style="flex: 1 1 0%;">ISP: AT&amp;T Fiber</span><span class="delete-note">✕</span></li>
-            <li><span style="flex: 1 1 0%;">set to google for ping sake</span><span class="delete-note">✕</span></li>
+            <li><span style="flex: 1 1 0%;"></span><span class="delete-note">✕</span></li>
           </ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
-            <input type="text" id="new-note-input" placeholder="Type new note..." style="
-              flex: 1;
-              padding: 8px 12px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 6px;
-              color: var(--text-main);
-              font-size: clamp(14px, 1.6vw, 18px);
-              ">
-            <button id="add-note-btn" style="
-              padding: 8px 16px;
-              background: var(--accent);
-              color: var(--bg);
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-              font-size: clamp(14px, 1.6vw, 18px);
-              font-weight: 600;
-              "> Add </button>
+            <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
+            <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
           </div>
-          <button id="delete-node-btn" style="
-            margin-top: 15px;
-            padding: 10px 16px;
-            background: var(--danger);
-            color: rgb(255, 255, 255);
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: clamp(14px, 1.6vw, 18px);
-            font-weight: 600;
-            width: 100%;
-            "> Delete Node </button>
+          <button id="delete-node-btn" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: rgb(255, 255, 255);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Node</button>
         </div>
         <div id="edge-panel" style="display: none">
           <div class="details-name" id="edge-title">Custom line</div>
@@ -2107,65 +2043,20 @@
           <div class="section-label">Line Notes</div>
           <ul class="list" id="edge-notes"></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
-            <input type="text" id="new-edge-note" placeholder="Add note..." style="
-              flex: 1;
-              padding: 8px 12px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 6px;
-              color: var(--text-main);
-              font-size: clamp(14px, 1.6vw, 18px);
-              ">
-            <button id="add-edge-note" style="
-              padding: 8px 16px;
-              background: var(--accent);
-              color: var(--bg);
-              border: none;
-              border-radius: 6px;
-              cursor: pointer;
-              font-size: clamp(14px, 1.6vw, 18px);
-              font-weight: 600;
-              "> Add </button>
+            <input type="text" id="new-edge-note" placeholder="Add note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
+            <button id="add-edge-note" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
           </div>
-          <button id="delete-edge" style="
-            margin-top: 15px;
-            padding: 10px 16px;
-            background: var(--danger);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: clamp(14px, 1.6vw, 18px);
-            font-weight: 600;
-            "> Delete Line </button>
+          <button id="delete-edge" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Delete Line</button>
         </div>
         <div id="text-panel" style="display: none">
           <div class="details-name" id="text-title">Text Element</div>
           <div class="style-row" style="margin-top: 10px">
             <label>Content:</label>
-            <textarea id="text-content" placeholder="Enter text..." style="
-              width: 100%;
-              padding: 8px 12px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 6px;
-              color: var(--text-main);
-              font-size: 14px;
-              min-height: 80px;
-              resize: vertical;
-              font-family: inherit;
-              "></textarea>
+            <textarea id="text-content" placeholder="Enter text..." style="width: 100%;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: 14px;min-height: 80px;resize: vertical;font-family: inherit;"></textarea>
           </div>
           <div class="style-row">
             <label>Font Size:</label>
-            <input type="number" id="text-font-size" min="8" max="200" value="18" style="
-              flex: 1;
-              padding: 6px 10px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 4px;
-              color: var(--text-main);
-              ">
+            <input type="number" id="text-font-size" min="8" max="200" value="18" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);">
           </div>
           <div class="style-row">
             <label>Color:</label>
@@ -2173,15 +2064,7 @@
           </div>
           <div class="style-row">
             <label>Font Weight:</label>
-            <select id="text-font-weight" style="
-              flex: 1;
-              padding: 6px 10px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 4px;
-              color: var(--text-main);
-              cursor: pointer;
-              ">
+            <select id="text-font-weight" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
               <option value="normal">Normal</option>
               <option value="bold">Bold</option>
               <option value="600">Semi-Bold</option>
@@ -2190,30 +2073,14 @@
           </div>
           <div class="style-row">
             <label>Font Style:</label>
-            <select id="text-font-style" style="
-              flex: 1;
-              padding: 6px 10px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 4px;
-              color: var(--text-main);
-              cursor: pointer;
-              ">
+            <select id="text-font-style" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
               <option value="normal">Normal</option>
               <option value="italic">Italic</option>
             </select>
           </div>
           <div class="style-row">
             <label>Text Align:</label>
-            <select id="text-align" style="
-              flex: 1;
-              padding: 6px 10px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 4px;
-              color: var(--text-main);
-              cursor: pointer;
-              ">
+            <select id="text-align" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
               <option value="start">Left</option>
               <option value="middle">Center</option>
               <option value="end">Right</option>
@@ -2221,15 +2088,7 @@
           </div>
           <div class="style-row">
             <label>Text Decoration:</label>
-            <select id="text-decoration" style="
-              flex: 1;
-              padding: 6px 10px;
-              background: var(--panel);
-              border: 1px solid var(--edge-main);
-              border-radius: 4px;
-              color: var(--text-main);
-              cursor: pointer;
-              ">
+            <select id="text-decoration" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
               <option value="none">None</option>
               <option value="underline">Underline</option>
               <option value="line-through">Strike Through</option>
@@ -2248,18 +2107,7 @@
             <input type="range" id="text-opacity" min="0" max="1" step="0.1" value="1" style="flex: 1">
             <span id="text-opacity-val" style="min-width: 35px; text-align: right">100%</span>
           </div>
-          <button id="delete-text" style="
-            margin-top: 15px;
-            padding: 10px 16px;
-            background: var(--danger);
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: clamp(14px, 1.6vw, 18px);
-            font-weight: 600;
-            width: 100%;
-            "> Delete Text </button>
+          <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;"> Delete Text </button>
         </div>
         <details class="style-section" open="">
           <summary>Page Layout</summary>
@@ -2304,19 +2152,39 @@
     "danger": "#f56565",
     "textMain": "#e2e8f0",
     "textSoft": "#94a3b8",
-    "topbarHeight": 93,
-    "sidebarWidth": 435,
-    "mobileFooterHeight": 20,
-    "sidebarCollapsed": false,
-    "autoPingEnabled": false,
-    "autoPingInterval": 30
+    "topbarHeight": 103,
+    "sidebarWidth": 350,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false
   },
   "canvas": {
     "zoom": 1,
     "panX": 0,
     "panY": 0
   },
-  "savedTopologyView": null
+  "savedTopologyView": null,
+  "documentTabs": [
+    {
+      "id": "main",
+      "name": "Main Topology",
+      "nodes": {},
+      "edges": {
+        "list": []
+      },
+      "positions": {},
+      "sizes": {},
+      "styles": {},
+      "legend": {},
+      "rects": {
+        "list": []
+      },
+      "texts": {
+        "list": []
+      }
+    }
+  ],
+  "currentTabIndex": 0,
+  "encryptedSections": {}
 }</script>
     <script>
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
@@ -2365,6 +2233,36 @@
       let dragSelectionStart = null;
       
       let clipboard = null;
+      
+      const ROLLBACK_STORAGE_KEY = "theonefile_rollbacks";
+      const MAX_ROLLBACK_VERSIONS = 50;
+      let rollbackVersions = [];
+      let currentRollbackIndex = -1;
+      
+      const AUDIT_STORAGE_KEY = "theonefile_audit_log";
+      let auditLog = [];
+      const MAX_AUDIT_ENTRIES = 1000;
+      
+      let documentTabs = [{
+        id: "main",
+        name: "Main Topology",
+        nodes: {},
+        edges: { list: [] },
+        positions: {},
+        sizes: {},
+        styles: {},
+        legend: {},
+        rects: { list: [] },
+        texts: { list: [] }
+      }];
+      let currentTabIndex = 0;
+
+      let encryptedSections = {}; 
+      
+      let performanceMode = "auto"; 
+      let cullOffscreenNodes = true;
+      let minimapNeedsUpdate = true;
+      let lastMinimapUpdate = 0;
       
       const MobileManager = {
         isMobile: false,
@@ -2482,6 +2380,7 @@
           this.updateLayoutControls();
         }
       };
+	  
       function isMobileDevice() {
         return MobileManager.isMobile;
       }
@@ -2498,6 +2397,7 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }
+	  
       function ensureLegendMiniButton() {
        if (legendMiniBtn) return legendMiniBtn;
        const panel = document.querySelector(".topology-panel");
@@ -2648,8 +2548,13 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {
+	   if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
+      } else {   
+        toolbar.style.setProperty('display', 'flex', 'important');
+        mini.style.display = "none";	  
+	    }
        }
       }
       
@@ -2664,11 +2569,17 @@
        } else if (topologyToolbarCollapsed) {
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
-       } else {
+       } else {   
+	   if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
+        } else {   
+        toolbar.style.setProperty('display', 'flex', 'important');
+        mini.style.display = "none";	  
+	    }
        }
       }
+	  
       const DEFAULT_PAGE_STATE = {
        title: "The One File",
        background: "",
@@ -3148,6 +3059,27 @@
        
        if (initialState.savedTopologyView) {
         savedTopologyView = initialState.savedTopologyView;
+       }
+       
+       if (initialState.documentTabs) {
+        documentTabs = initialState.documentTabs;
+        currentTabIndex = initialState.currentTabIndex || 0;
+        
+        const currentTab = documentTabs[currentTabIndex];
+        if (currentTab) {
+          NODE_DATA = currentTab.nodes || NODE_DATA;
+          EDGE_DATA = currentTab.edges || EDGE_DATA;
+          savedPositions = currentTab.positions || savedPositions;
+          savedSizes = currentTab.sizes || savedSizes;
+          savedStyles = currentTab.styles || savedStyles;
+          EDGE_LEGEND = currentTab.legend || EDGE_LEGEND;
+          RECT_DATA = currentTab.rects || RECT_DATA;
+          TEXT_DATA = currentTab.texts || TEXT_DATA;
+        }
+       }
+           
+       if (initialState.encryptedSections) {
+        encryptedSections = initialState.encryptedSections;
        }
        
        wieldThePower();
@@ -4460,7 +4392,6 @@
          }
          
          if (NODE_DATA[id]?.locked) {
-          console.log(`Node "${NODE_DATA[id].name}" is locked`);
           return;
          }
          
@@ -4614,7 +4545,6 @@
        g.addEventListener("touchstart",
          (e) => {
           if (NODE_DATA[id]?.locked) {
-           console.log(`Node "${NODE_DATA[id].name}" is locked`);
            return;
           }
           
@@ -7119,7 +7049,6 @@
          document.getElementById("edge-panel").style.display = "none";
          document.getElementById("topology-toolbar").style.display = "none";
         }
-        alert("Data imported successfully!");
         e.target.value = "";
        } catch (err) {
         console.error("Import error:", err);
@@ -7217,6 +7146,16 @@
       }
       
       function captureTheQuickening() {
+       const currentTab = documentTabs[currentTabIndex];
+       currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+       currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+       currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+       currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+       currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+       currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+       currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+       currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+       
        return {
         nodeData: NODE_DATA,
         edgeData: EDGE_DATA,
@@ -7233,6 +7172,9 @@
          panY: canvasState.panY,
         },
         savedTopologyView: savedTopologyView,
+        documentTabs: documentTabs,
+        currentTabIndex: currentTabIndex,
+        encryptedSections: encryptedSections,
        };
       }
       
@@ -7254,6 +7196,8 @@
        return "<!DOCTYPE html> \n " + clone.outerHTML;
       }
       async function becomeImmortal() {
+       saveRollbackVersion("Auto-save");
+       
        const encryptEnabled = document.getElementById("encrypt-toggle").checked;
        let stateData = JSON.stringify(captureTheQuickening(), null, 2);
        if (encryptEnabled) {
@@ -7305,6 +7249,8 @@
        a.click();
        document.body.removeChild(a);
        URL.revokeObjectURL(url);
+       
+       logAuditEvent("save", `File saved: ${safeTitle}.html`);
       }
       
       function captureState() {
@@ -7328,6 +7274,23 @@
        }
        redoStack = [];
        updateUndoButtons();
+       
+       if (action) {
+        const actionTypeMap = {
+          "create node": "node",
+          "delete node": "node",
+          "edit": "node",
+          "create rack": "rack",
+          "add connection": "connection",
+          "delete connection": "connection",
+          "style change": "style",
+          "change layer": "layer",
+          "change assigned rack": "rack",
+        };
+        
+        const type = actionTypeMap[action] || "node";
+        logAuditEvent(type, action);
+       }
       }
       
       function undo() {
@@ -7739,7 +7702,6 @@
         const unlockedNodes = nodesToNudge.filter(id => !NODE_DATA[id]?.locked);
         
         if (unlockedNodes.length === 0) {
-          console.log("All selected nodes are locked");
           return;
         }
         
@@ -7852,16 +7814,13 @@
         });
         
         forgeTheTopology();
-        
+     
         const lockState = hasUnlocked ? "locked" : "unlocked";
-        console.log(`${nodesToToggle.length} node(s) ${lockState}`);
       }
       
       function toggleGroupSelected() {
         const nodesToGroup = Array.from(selectedNodes);
-        
         if (nodesToGroup.length < 2) {
-          console.log("Select at least 2 nodes to create a group");
           return;
         }
         
@@ -7876,7 +7835,6 @@
               NODE_DATA[id].groupId = null;
             }
           });
-          console.log(`Ungrouped ${nodesToGroup.length} node(s)`);
         } else {
           const newGroupId = "group-" + Date.now();
           nodesToGroup.forEach(id => {
@@ -7884,7 +7842,6 @@
               NODE_DATA[id].groupId = newGroupId;
             }
           });
-          console.log(`Grouped ${nodesToGroup.length} node(s) into ${newGroupId}`);
         }
         
         forgeTheTopology();
@@ -8034,6 +7991,624 @@
        }
       }
       
+      function saveRollbackVersion(description = "Auto-save") {
+        const version = {
+          timestamp: Date.now(),
+          description,
+          data: captureTheQuickening()
+        };
+        
+        try {
+          const stored = localStorage.getItem(ROLLBACK_STORAGE_KEY);
+          rollbackVersions = stored ? JSON.parse(stored) : [];
+        } catch (e) {
+          rollbackVersions = [];
+        }
+        
+        rollbackVersions.unshift(version);
+        
+        if (rollbackVersions.length > MAX_ROLLBACK_VERSIONS) {
+          rollbackVersions = rollbackVersions.slice(0, MAX_ROLLBACK_VERSIONS);
+        }
+        
+        try {
+          localStorage.setItem(ROLLBACK_STORAGE_KEY, JSON.stringify(rollbackVersions));
+        } catch (e) {
+          console.warn("Failed to save rollback version:", e);
+        }
+      }
+      
+      function loadRollbackVersions() {
+        try {
+          const stored = localStorage.getItem(ROLLBACK_STORAGE_KEY);
+          rollbackVersions = stored ? JSON.parse(stored) : [];
+          displayRollbackVersions();
+        } catch (e) {
+          console.warn("Failed to load rollback versions:", e);
+          rollbackVersions = [];
+        }
+      }
+      
+      function displayRollbackVersions() {
+        const listEl = document.getElementById("rollback-list");
+        if (!listEl) return;
+        
+        if (rollbackVersions.length === 0) {
+          listEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div>';
+          return;
+        }
+        
+        listEl.innerHTML = rollbackVersions.map((version, index) => {
+          const date = new Date(version.timestamp);
+          const timeStr = date.toLocaleString();
+          const nodeCount = Object.keys(version.data.nodeData || {}).length;
+          const edgeCount = (version.data.edgeData?.list || []).length;
+          
+          return `
+            <div class="version-item" onclick="restoreRollbackVersion(${index})">
+              <div class="version-info">
+                <div class="timestamp">${timeStr}</div>
+                <div class="details">${version.description} • ${nodeCount} nodes • ${edgeCount} connections</div>
+              </div>
+              <div class="version-actions">
+                <button class="btn-cancel" onclick="event.stopPropagation(); deleteRollbackVersion(${index})" title="Delete this version">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      function restoreRollbackVersion(index) {
+        if (!confirm(`Restore version from ${new Date(rollbackVersions[index].timestamp).toLocaleString()}?\n\nYour current work will be lost unless you save first.`)) {
+          return;
+        }
+        
+        const version = rollbackVersions[index];
+        const data = version.data;
+        
+        NODE_DATA = data.nodeData || {};
+        EDGE_DATA = data.edgeData || { list: [] };
+        RECT_DATA = data.rectData || { list: [] };
+        TEXT_DATA = data.textData || { list: [] };
+        EDGE_LEGEND = data.edgeLegend || {};
+        savedPositions = data.nodePositions || {};
+        savedSizes = data.nodeSizes || {};
+        savedStyles = data.nodeStyles || {};
+        PAGE_STATE = data.page || PAGE_STATE;
+        
+        if (data.canvas) {
+          canvasState.zoom = data.canvas.zoom;
+          canvasState.panX = data.canvas.panX;
+          canvasState.panY = data.canvas.panY;
+        }
+        
+        wieldThePower();
+        forgeTheTopology();
+        
+        document.getElementById("rollback-modal").classList.remove("active");
+        
+        logAuditEvent("rollback", `Restored version from ${new Date(version.timestamp).toLocaleString()}`);
+      }
+      
+      function deleteRollbackVersion(index) {
+        if (!confirm("Delete this version from history?")) return;
+        
+        rollbackVersions.splice(index, 1);
+        try {
+          localStorage.setItem(ROLLBACK_STORAGE_KEY, JSON.stringify(rollbackVersions));
+        } catch (e) {
+          console.warn("Failed to delete version:", e);
+        }
+        displayRollbackVersions();
+      }
+      
+      function clearRollbackHistory() {
+        if (!confirm("Clear all version history?\n\nThis cannot be undone.")) return;
+        
+        rollbackVersions = [];
+        localStorage.removeItem(ROLLBACK_STORAGE_KEY);
+        displayRollbackVersions();
+      }
+      
+      function createManualSnapshot() {
+        const description = prompt("Enter a description for this snapshot:", "Manual snapshot");
+        if (!description) return;
+        
+        saveRollbackVersion(description);
+        displayRollbackVersions();
+      }
+      
+      function switchTab(index) {
+        if (index === currentTabIndex) return;
+        
+        const currentTab = documentTabs[currentTabIndex];
+        currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+        currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+        currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+        currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+        currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+        currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+        currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+        currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+
+        currentTabIndex = index;
+        const newTab = documentTabs[index];
+        NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
+        EDGE_DATA = JSON.parse(JSON.stringify(newTab.edges));
+        savedPositions = JSON.parse(JSON.stringify(newTab.positions));
+        savedSizes = JSON.parse(JSON.stringify(newTab.sizes));
+        savedStyles = JSON.parse(JSON.stringify(newTab.styles));
+        EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
+        RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
+        TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+        document.title = newTab.name;
+		document.getElementById("page-title").textContent = newTab.name;
+        forgeTheTopology();
+        displayTabs();
+        
+        logAuditEvent("tab", `Switched to tab: ${newTab.name}`);
+      }
+      
+      function createNewTab() {
+        const nameInput = document.getElementById("new-tab-name");
+        const name = nameInput.value.trim();
+        
+        if (!name) {
+          alert("Please enter a tab name");
+          return;
+        }
+        
+        const newTab = {
+          id: `tab-${Date.now()}`,
+          name,
+          nodes: {},
+          edges: { list: [] },
+          positions: {},
+          sizes: {},
+          styles: {},
+          legend: {},
+          rects: { list: [] },
+          texts: { list: [] }
+        };
+        
+        documentTabs.push(newTab);
+        nameInput.value = "";
+        displayTabs();
+        
+        logAuditEvent("tab", `Created new tab: ${name}`);
+      }
+      
+      function renameTab(index) {
+        const tab = documentTabs[index];
+        const newName = prompt("Enter new name:", tab.name);
+        if (!newName || newName === tab.name) return;
+        
+        tab.name = newName;
+        displayTabs();
+        
+        logAuditEvent("tab", `Renamed tab to: ${newName}`);
+      }
+      
+      function deleteTab(index) {
+        if (documentTabs.length === 1) {
+          alert("Cannot delete the last tab");
+          return;
+        }
+        
+        if (!confirm(`Delete tab "${documentTabs[index].name}"?`)) return;
+        
+        documentTabs.splice(index, 1);
+        
+        if (currentTabIndex >= documentTabs.length) {
+          currentTabIndex = documentTabs.length - 1;
+        }
+        
+        if (currentTabIndex === index) {
+          switchTab(currentTabIndex);
+        }
+        
+        displayTabs();
+      }
+      
+      function displayTabs() {
+        const listEl = document.getElementById("tabs-list");
+        if (!listEl) return;
+        
+        listEl.innerHTML = documentTabs.map((tab, index) => {
+          const nodeCount = Object.keys(tab.nodes).length;
+          const edgeCount = tab.edges.list.length;
+          const isActive = index === currentTabIndex;
+          
+          return `
+            <div class="tab-item ${isActive ? 'active' : ''}" onclick="switchTab(${index})">
+              <div class="tab-name">${tab.name}</div>
+              <div class="tab-stats">${nodeCount} nodes • ${edgeCount} connections</div>
+              <div class="tab-actions">
+                <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(${index})" title="Rename tab">✏️</button>
+                ${documentTabs.length > 1 ? '<button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>' : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function logAuditEvent(type, description, details = {}) {
+        const event = {
+          timestamp: Date.now(),
+          type,
+          description,
+          details,
+          tab: documentTabs[currentTabIndex]?.name || "Main"
+        };
+        
+        auditLog.unshift(event);
+        
+        if (auditLog.length > MAX_AUDIT_ENTRIES) {
+          auditLog = auditLog.slice(0, MAX_AUDIT_ENTRIES);
+        }
+
+        try {
+          localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
+        } catch (e) {
+          console.warn("Failed to save audit log:", e);
+        }
+      }
+      
+      function loadAuditLog() {
+        try {
+          const stored = localStorage.getItem(AUDIT_STORAGE_KEY);
+          auditLog = stored ? JSON.parse(stored) : [];
+        } catch (e) {
+          console.warn("Failed to load audit log:", e);
+          auditLog = [];
+        }
+      }
+      
+      function displayAuditLog(filter = "all") {
+        const listEl = document.getElementById("audit-log-list");
+        if (!listEl) return;
+        
+        const filtered = filter === "all" ? auditLog : auditLog.filter(e => e.type === filter);
+        
+        if (filtered.length === 0) {
+          listEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div>';
+          return;
+        }
+        
+        listEl.innerHTML = filtered.map(event => {
+          const date = new Date(event.timestamp);
+          const timeStr = date.toLocaleString();
+          
+          return `
+            <div class="audit-entry ${event.type}">
+              <div class="time">[${timeStr}] ${event.tab}</div>
+              <div class="action">[${event.type.toUpperCase()}] ${event.description}</div>
+            </div>
+          `;
+        }).join('');
+      }
+      
+      function clearAuditLog() {
+        if (!confirm("Clear all audit log entries?\n\nThis cannot be undone.")) return;
+        
+        auditLog = [];
+        localStorage.removeItem(AUDIT_STORAGE_KEY);
+        displayAuditLog();
+      }
+      
+      function exportAuditLog() {
+        if (auditLog.length === 0) {
+          alert("No audit entries to export");
+          return;
+        }
+        
+        const csv = [
+          ["Timestamp", "Tab", "Type", "Description"],
+          ...auditLog.map(e => [
+            new Date(e.timestamp).toISOString(),
+            e.tab,
+            e.type,
+            e.description
+          ])
+        ].map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
+        
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `audit-log-${Date.now()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      
+      let currentSecretName = null;
+      
+      function createNewSecret() {
+        const nameInput = document.getElementById("new-secret-name");
+        const name = nameInput.value.trim();
+        
+        if (!name) {
+          alert("Please enter a note name");
+          return;
+        }
+        
+        if (encryptedSections[name]) {
+          alert("A note with this name already exists");
+          return;
+        }
+        
+        currentSecretName = name;
+        encryptedSections[name] = { encrypted: false, data: "" };
+        nameInput.value = "";
+        
+        document.getElementById("secret-editor-title").textContent = `New note: ${name}`;
+        document.getElementById("secret-editor-content").value = "";
+        document.getElementById("secrets-modal").classList.remove("active");
+        document.getElementById("secret-editor-modal").classList.add("active");
+        
+        displaySecrets();
+      }
+      
+      function editSecret(name) {
+        currentSecretName = name;
+        const section = encryptedSections[name];
+        
+        if (section.encrypted) {
+          const password = prompt(`Enter password to decrypt "${name}":`);
+          if (!password) return;
+          
+          try {
+            decryptData(section.data, password).then(decrypted => {
+              document.getElementById("secret-editor-title").textContent = `Edit note: ${name}`;
+              document.getElementById("secret-editor-content").value = decrypted;
+              document.getElementById("secrets-modal").classList.remove("active");
+              document.getElementById("secret-editor-modal").classList.add("active");
+            }).catch(e => {
+              alert("Failed to decrypt. Wrong password?");
+            });
+          } catch (e) {
+            alert("Failed to decrypt. Wrong password?");
+          }
+        } else {
+          document.getElementById("secret-editor-title").textContent = `Edit note: ${name}`;
+          document.getElementById("secret-editor-content").value = section.data;
+          document.getElementById("secrets-modal").classList.remove("active");
+          document.getElementById("secret-editor-modal").classList.add("active");
+        }
+      }
+      
+      async function saveSecret() {
+        if (!currentSecretName) return;
+        
+        const content = document.getElementById("secret-editor-content").value;
+        const autoEncrypt = document.getElementById("secret-auto-encrypt").checked;
+        
+        if (autoEncrypt) {
+          const password = prompt(`Enter password to encrypt "${currentSecretName}":`);
+          if (!password) return;
+          
+          const confirmPassword = prompt("Confirm password:");
+          if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return;
+          }
+          
+          try {
+            const encrypted = await encryptData(content, password);
+            encryptedSections[currentSecretName] = { encrypted: true, data: encrypted };
+          } catch (e) {
+            alert("Encryption failed: " + e.message);
+            return;
+          }
+        } else {
+          encryptedSections[currentSecretName] = { encrypted: false, data: content };
+        }
+        
+        closeSecretEditor();
+        displaySecrets();
+        
+        logAuditEvent("secret", `Saved note: ${currentSecretName}`);
+      }
+      
+      function closeSecretEditor() {
+        document.getElementById("secret-editor-modal").classList.remove("active");
+        document.getElementById("secrets-modal").classList.add("active");
+        currentSecretName = null;
+      }
+      
+      function deleteSecret(name) {
+        if (!confirm(`Delete note "${name}"?`)) return;
+        
+        delete encryptedSections[name];
+        displaySecrets();
+        
+        logAuditEvent("secret", `Deleted note: ${name}`);
+      }
+      
+      function displaySecrets() {
+        const listEl = document.getElementById("secrets-list");
+        if (!listEl) return;
+        
+        const secrets = Object.keys(encryptedSections);
+        
+        if (secrets.length === 0) {
+          listEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">No notes yet</div>';
+          return;
+        }
+        
+        listEl.innerHTML = secrets.map(name => {
+          const section = encryptedSections[name];
+          const status = section.encrypted ? "🔒 Encrypted" : "🔓 Plaintext";
+          
+          return `
+            <div class="secret-item">
+              <div class="secret-name">${name}</div>
+              <div class="secret-status">${status}</div>
+              <div class="tab-actions">
+                <button class="btn-cancel" onclick="editSecret('${name}')" title="Edit note">✏️</button>
+                <button class="btn-cancel" onclick="deleteSecret('${name}')" title="Delete note">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      let rafId = null;
+      let lastRender = 0;
+      const RENDER_THROTTLE = 16;
+      
+      function optimizedForgeTheTopology() {
+        if (rafId) return;
+        
+        rafId = requestAnimationFrame((timestamp) => {
+          if (timestamp - lastRender < RENDER_THROTTLE) {
+            rafId = requestAnimationFrame(optimizedForgeTheTopology);
+            return;
+          }
+          
+          lastRender = timestamp;
+          rafId = null;
+          
+          if (cullOffscreenNodes && Object.keys(NODE_DATA).length > 100) {
+            cullOffscreenElements();
+          }
+          
+          forgeTheTopology();
+          
+          if (Date.now() - lastMinimapUpdate > 500) {
+            updateMinimapOptimized();
+            lastMinimapUpdate = Date.now();
+          }
+        });
+      }
+      
+      function cullOffscreenElements() {
+        const viewX = canvasState.panX;
+        const viewY = canvasState.panY;
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        
+        Object.keys(NODE_DATA).forEach(id => {
+          const pos = savedPositions[id];
+          if (!pos) return;
+          
+          const nodeEl = document.querySelector(`[data-node-id="${id}"]`);
+          if (!nodeEl) return;
+          
+          const isVisible = (
+            pos.x + 100 >= viewX &&
+            pos.x - 100 <= viewX + viewWidth &&
+            pos.y + 100 >= viewY &&
+            pos.y - 100 <= viewY + viewHeight
+          );
+          
+          nodeEl.style.display = isVisible ? "" : "none";
+        });
+      }
+      
+      function updateMinimapOptimized() {
+        minimapNeedsUpdate = true;
+      }
+      
+      function setupDragToCreate() {
+        const addNodeBtn = document.getElementById("add-node-btn");
+        const addRackBtn = document.getElementById("add-rack-btn");
+        const canvas = document.getElementById("map");
+        
+        if (!addNodeBtn || !addRackBtn || !canvas) return;
+        
+        let dragType = null;
+        
+        [addNodeBtn, addRackBtn].forEach(btn => {
+          btn.setAttribute("draggable", "true");
+          
+          btn.addEventListener("dragstart", e => {
+            dragType = btn.id === "add-node-btn" ? "node" : "rack";
+            e.dataTransfer.effectAllowed = "copy";
+            e.dataTransfer.setData("text/plain", dragType);
+          });
+        });
+        
+        canvas.addEventListener("dragover", e => {
+          if (dragType) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "copy";
+          }
+        });
+        
+        canvas.addEventListener("drop", e => {
+          if (!dragType) return;
+          
+          e.preventDefault();
+          
+          const rect = canvas.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / canvasState.zoom + canvasState.panX;
+          const y = (e.clientY - rect.top) / canvasState.zoom + canvasState.panY;
+          
+          if (dragType === "node") {
+            createNodeAtPosition(x, y);
+          } else if (dragType === "rack") {
+            createRackAtPosition(x, y);
+          }
+          
+          dragType = null;
+        });
+      }
+      
+      function createNodeAtPosition(x, y) {
+        const timestamp = Date.now();
+        const newId = `host-${timestamp}`;
+        
+        NODE_DATA[newId] = {
+          name: "New Node",
+          ip: "0.0.0.0",
+          shape: "server",
+          role: "",
+          tags: [],
+          notes: "",
+          layer: "physical",
+          isRack: false
+        };
+        
+        savedPositions[newId] = { x, y };
+        savedSizes[newId] = 55;
+        
+        pushUndo("create node");
+        forgeTheTopology();
+        claimTheImmortal(newId);
+        
+        logAuditEvent("node", `Created node at (${Math.round(x)}, ${Math.round(y)})`);
+      }
+      
+      function createRackAtPosition(x, y) {
+        const timestamp = Date.now();
+        const newId = `rack-${timestamp}`;
+        
+        NODE_DATA[newId] = {
+          name: "New Rack",
+          ip: "",
+          shape: "server",
+          role: "rack",
+          tags: [],
+          notes: "",
+          layer: "physical",
+          isRack: true,
+          rackCapacity: 42
+        };
+        
+        savedPositions[newId] = { x, y };
+        savedSizes[newId] = 55;
+        
+        pushUndo("create rack");
+        populateRackDropdown();
+        forgeTheTopology();
+        claimTheImmortal(newId);
+        
+        logAuditEvent("rack", `Created rack at (${Math.round(x)}, ${Math.round(y)})`);
+      }
+      
       document.addEventListener("keydown", handleKeyDown);
       
       document.getElementById("save-file-btn").addEventListener("click", becomeImmortal);
@@ -8081,6 +8656,133 @@
         }
        });
       }
+      
+      ["physical", "logical", "security", "application"].forEach(layer => {
+       const checkbox = document.getElementById(`layer-${layer}`);
+       if (checkbox) {
+        checkbox.addEventListener("change", applyLayerFilter);
+       }
+      });
+            
+      const tabsBtn = document.getElementById("tabs-btn");
+      const tabsModal = document.getElementById("tabs-modal");
+      const tabsModalClose = document.getElementById("tabs-modal-close");
+      
+      if (tabsBtn && tabsModal) {
+        tabsBtn.addEventListener("click", () => {
+          displayTabs();
+          tabsModal.classList.add("active");
+        });
+      }
+      
+      if (tabsModalClose && tabsModal) {
+        tabsModalClose.addEventListener("click", () => {
+          tabsModal.classList.remove("active");
+        });
+      }
+      
+      if (tabsModal) {
+        tabsModal.addEventListener("click", (e) => {
+          if (e.target === tabsModal) {
+            tabsModal.classList.remove("active");
+          }
+        });
+      }
+      
+      const rollbackBtn = document.getElementById("rollback-btn");
+      const rollbackModal = document.getElementById("rollback-modal");
+      const rollbackModalClose = document.getElementById("rollback-modal-close");
+      
+      if (rollbackBtn && rollbackModal) {
+        rollbackBtn.addEventListener("click", () => {
+          loadRollbackVersions();
+          rollbackModal.classList.add("active");
+        });
+      }
+      
+      if (rollbackModalClose && rollbackModal) {
+        rollbackModalClose.addEventListener("click", () => {
+          rollbackModal.classList.remove("active");
+        });
+      }
+      
+      if (rollbackModal) {
+        rollbackModal.addEventListener("click", (e) => {
+          if (e.target === rollbackModal) {
+            rollbackModal.classList.remove("active");
+          }
+        });
+      }
+      
+      const auditLogBtn = document.getElementById("audit-log-btn");
+      const auditLogModal = document.getElementById("audit-log-modal");
+      const auditLogModalClose = document.getElementById("audit-log-modal-close");
+      const auditFilter = document.getElementById("audit-filter");
+      
+      if (auditLogBtn && auditLogModal) {
+        auditLogBtn.addEventListener("click", () => {
+          loadAuditLog();
+          displayAuditLog();
+          auditLogModal.classList.add("active");
+        });
+      }
+      
+      if (auditFilter) {
+        auditFilter.addEventListener("change", (e) => {
+          displayAuditLog(e.target.value);
+        });
+      }
+      
+      if (auditLogModalClose && auditLogModal) {
+        auditLogModalClose.addEventListener("click", () => {
+          auditLogModal.classList.remove("active");
+        });
+      }
+      
+      if (auditLogModal) {
+        auditLogModal.addEventListener("click", (e) => {
+          if (e.target === auditLogModal) {
+            auditLogModal.classList.remove("active");
+          }
+        });
+      }
+      
+      const secretsBtn = document.getElementById("secrets-btn");
+      const secretsModal = document.getElementById("secrets-modal");
+      const secretsModalClose = document.getElementById("secrets-modal-close");
+      const secretEditorModal = document.getElementById("secret-editor-modal");
+      
+      if (secretsBtn && secretsModal) {
+        secretsBtn.addEventListener("click", () => {
+          displaySecrets();
+          secretsModal.classList.add("active");
+        });
+      }
+      
+      if (secretsModalClose && secretsModal) {
+        secretsModalClose.addEventListener("click", () => {
+          secretsModal.classList.remove("active");
+        });
+      }
+      
+      if (secretsModal) {
+        secretsModal.addEventListener("click", (e) => {
+          if (e.target === secretsModal) {
+            secretsModal.classList.remove("active");
+          }
+        });
+      }
+      
+      if (secretEditorModal) {
+        secretEditorModal.addEventListener("click", (e) => {
+          if (e.target === secretEditorModal) {
+            closeSecretEditor();
+          }
+        });
+      }
+      
+      loadAuditLog();
+      setupDragToCreate();
       
       ["physical", "logical", "security", "application"].forEach(layer => {
        const checkbox = document.getElementById(`layer-${layer}`);
@@ -8669,6 +9371,14 @@
        link.click();
        URL.revokeObjectURL(url);
       }
+	   let resizeTimeout;
+       window.addEventListener('resize', () => {
+       clearTimeout(resizeTimeout);
+       resizeTimeout = setTimeout(() => {
+       updateDrawToolbarVisibility();
+       updateTopologyToolbarVisibility();
+       }, 100);
+      });
     </script>
   </body>
 </html>

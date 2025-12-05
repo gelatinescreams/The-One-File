@@ -1,6 +1,39 @@
 ### CHANGE LOG
 *Thank you to Discord testers!!*
 
+## Version 3.7 - 12/3/25
+* **NEW 3.7 Advanced Keyboard Navigation**
+  * **Arrow Keys** Move selected nodes 1 pixel in any direction for precise positioning
+  * **Shift + Arrow Keys** Move selected nodes 10 pixels for faster adjustments
+  * **Tab** Cycle forward through all nodes in current view
+  * **Shift + Tab** Cycle backward through all nodes in current view
+  * **F** Focus camera on selected node(s) with automatic zoom and centering
+* **NEW 3.7 Node Lock System** Prevent accidental movement of positioned nodes
+  * Lock individual nodes or multiple nodes at once
+  * Visual lock indicator on locked nodes
+  * Locked nodes cannot be moved by dragging or keyboard
+  * Works with multi selection for batch operations
+  * Lock status persists in saved files
+* **NEW 3.7 Node Grouping System** Move related nodes together as a unit
+  * Group multiple nodes to move them as a single unit
+  * Visual group indicator (dashed outline) on grouped nodes
+  * Drag any group member and all nodes in the group move together
+  * Groups respect lock status (locked nodes stay in place)
+  * Create and dissolve groups dynamically with keyboard shortcut
+  * Group membership persists in saved files
+* **NEW 3.7 Enhanced Mobile Experience**
+  * **Double tap empty space to exit rack view** Quick navigation without button press
+  * **Lock Toggle button** in mobile multi select menu for easy locking on touch devices
+  * **Group Toggle button** in mobile multi select menu for easy grouping on mobile
+  * Haptic feedback (vibration) for double tap actions on supported devices
+  * Smart gesture detection (pan vs tap) prevents accidental actions
+* **NEW 3.7 Rack View Improvements**
+  * Nodes created while in rack view automatically assign to that rack
+  * Drawing tools (free draw, rectangles, text) properly disabled in rack view with clear feedback
+  * Improved workflow prevents accidentally placing elements in wrong view
+* **A more detailed list of changes is included below**
+  * [Change Log](changelog.md)
+
 ## Version 3.5.1 - 12/2/25
 - **NEW 3.5.1** Small style fixes and mobile refactoring
 

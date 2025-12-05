@@ -1056,6 +1056,7 @@
     }
   },
   "iconCache": {
+    "mdi-airplane": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-airplane\" viewBox=\"0 0 24 24\"><path d=\"M20.56 3.91C21.15 4.5 21.15 5.45 20.56 6.03L16.67 9.92L18.79 19.11L17.38 20.53L13.5 13.1L9.6 17L9.96 19.47L8.89 20.53L7.13 17.35L3.94 15.58L5 14.5L7.5 14.87L11.37 11L3.94 7.09L5.36 5.68L14.55 7.8L18.44 3.91C19 3.33 20 3.33 20.56 3.91Z\" /></svg>",
     "simple-opnsense": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>OPNsense</title><path d=\"M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z\"/></svg>",
     "selfhst-pi-hole": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\"><image href=\"https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png\" width=\"24\" height=\"24\"/></svg>",
     "selfhst-plex": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\"><image href=\"https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png\" width=\"24\" height=\"24\"/></svg>",
@@ -1095,5 +1096,2008 @@
     "panX": 384.66666666666674,
     "panY": 27
   },
-  "savedTopologyView": null
+  "savedTopologyView": null,
+  "documentTabs": [
+    {
+      "id": "main",
+      "name": "Corporate",
+      "nodes": {
+        "internet": {
+          "shape": "cloud",
+          "name": "Internet",
+          "ip": "google.com",
+          "role": "WAN",
+          "tags": [
+            "1Gbps",
+            "Redundant"
+          ],
+          "notes": [
+            "Primary: Fiber",
+            "Backup: Cable"
+          ],
+          "ping": {
+            "enabled": true,
+            "protocol": "custom",
+            "customUrl": "https://google.com",
+            "timeout": 3000,
+            "status": "online",
+            "lastCheck": "2025-12-05T01:31:50.293Z"
+          }
+        },
+        "edge-firewall": {
+          "shape": "firewall",
+          "name": "Edge Firewall",
+          "ip": "192.168.1.1",
+          "role": "Security",
+          "tags": [
+            "Perimeter",
+            "NAT"
+          ],
+          "notes": [
+            "Palo Alto PA-220",
+            "WAN: 100.50.25.10"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "core-switch-1": {
+          "shape": "switch",
+          "name": "Core Switch 1",
+          "ip": "10.0.0.1",
+          "role": "Core Network",
+          "tags": [
+            "Layer 3",
+            "10Gb"
+          ],
+          "notes": [
+            "Primary core switch",
+            "Redundant power",
+            "HSRP Active"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "core-switch-2": {
+          "shape": "switch",
+          "name": "Core Switch 2",
+          "ip": "10.0.0.2",
+          "role": "Core Network",
+          "tags": [
+            "Layer 3",
+            "10Gb"
+          ],
+          "notes": [
+            "Secondary core switch",
+            "HSRP Standby"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "dmz-firewall": {
+          "shape": "firewall",
+          "name": "DMZ Firewall",
+          "ip": "10.10.0.1",
+          "role": "Security",
+          "tags": [
+            "DMZ",
+            "IDS/IPS"
+          ],
+          "notes": [
+            "DMZ segmentation",
+            "Public services"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "web-server": {
+          "shape": "server",
+          "name": "Web Server",
+          "ip": "10.10.1.10",
+          "role": "Application",
+          "tags": [
+            "DMZ",
+            "HTTPS"
+          ],
+          "notes": [
+            "Corporate website",
+            "Load balanced"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "mail-server": {
+          "shape": "server",
+          "name": "Mail Server",
+          "ip": "10.10.1.20",
+          "role": "Email",
+          "tags": [
+            "DMZ",
+            "SMTP/IMAP"
+          ],
+          "notes": [
+            "Exchange Server 2019"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "dist-switch-1": {
+          "shape": "switch",
+          "name": "Distribution SW 1",
+          "ip": "10.1.0.1",
+          "role": "Distribution",
+          "tags": [
+            "Layer 3",
+            "Aggregation"
+          ],
+          "notes": [
+            "Building A distribution"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "dist-switch-2": {
+          "shape": "switch",
+          "name": "Distribution SW 2",
+          "ip": "10.2.0.1",
+          "role": "Distribution",
+          "tags": [
+            "Layer 3",
+            "Aggregation"
+          ],
+          "notes": [
+            "Building B distribution"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "access-switch-1": {
+          "shape": "switch",
+          "name": "Access SW 1-1",
+          "ip": "10.1.1.1",
+          "role": "Access Layer",
+          "tags": [
+            "PoE",
+            "48 port"
+          ],
+          "notes": [
+            "Floor 1 Building A"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "access-switch-2": {
+          "shape": "switch",
+          "name": "Access SW 1-2",
+          "ip": "10.1.2.1",
+          "role": "Access Layer",
+          "tags": [
+            "PoE",
+            "48-port"
+          ],
+          "notes": [
+            "Floor 2 Building A"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "access-switch-3": {
+          "shape": "switch",
+          "name": "Access SW 2-1",
+          "ip": "10.2.1.1",
+          "role": "Access Layer",
+          "tags": [
+            "PoE",
+            "48 port"
+          ],
+          "notes": [
+            "Floor 1 Building B"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "domain-controller": {
+          "shape": "server",
+          "name": "Domain Controller",
+          "ip": "10.1.10.10",
+          "role": "Identity",
+          "tags": [
+            "Active Directory",
+            "DNS"
+          ],
+          "notes": [
+            "Primary DC",
+            "Windows Server 2022"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "file-server": {
+          "shape": "server",
+          "name": "File Server",
+          "ip": "10.1.10.20",
+          "role": "Storage",
+          "tags": [
+            "SMB",
+            "NFS"
+          ],
+          "notes": [
+            "Corporate file shares",
+            "30TB RAID6"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "db-server": {
+          "shape": "database",
+          "name": "Database Server",
+          "ip": "10.1.10.30",
+          "role": "Database",
+          "tags": [
+            "SQL Server",
+            "Production"
+          ],
+          "notes": [
+            "SQL Server 2022",
+            "Always On AG"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "backup-server": {
+          "shape": "server",
+          "name": "Backup Server",
+          "ip": "10.1.10.40",
+          "role": "Backup",
+          "tags": [
+            "Veeam",
+            "Dedupe"
+          ],
+          "notes": [
+            "Nightly backups",
+            "60TB capacity"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "wifi-controller": {
+          "shape": "router",
+          "name": "WiFi Controller",
+          "ip": "10.0.0.100",
+          "role": "Wireless",
+          "tags": [
+            "UniFi",
+            "Management"
+          ],
+          "notes": [
+            "Manages 45 APs"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "vpn-gateway": {
+          "shape": "router",
+          "name": "VPN Gateway",
+          "ip": "10.0.0.50",
+          "role": "Remote Access",
+          "tags": [
+            "OpenVPN",
+            "MFA"
+          ],
+          "notes": [
+            "Remote worker access"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "im-a-rack": {
+          "shape": "server",
+          "name": "IM A RACK",
+          "ip": "",
+          "role": "Rack",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "physical",
+          "assignedRack": "",
+          "rackCapacity": "42",
+          "isRack": true,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "node-in-a-rack": {
+          "shape": "circle",
+          "name": "Node in a rack",
+          "ip": "1.1.1.1",
+          "role": "",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "mdi",
+              "name": "docker"
+            }
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "ping": {
+            "enabled": true,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "online",
+            "lastCheck": "2025-12-05T01:31:50.271Z"
+          },
+          "locked": false,
+          "groupId": null,
+          "assignedRack": "im-a-rack",
+          "layer": "physical"
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-1",
+            "from": "internet",
+            "to": "edge-firewall",
+            "color": "#ef4444",
+            "width": 6,
+            "notes": [
+              "WAN Connection",
+              "1Gbps"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-2",
+            "from": "edge-firewall",
+            "to": "core-switch-1",
+            "color": "#f59e0b",
+            "width": 5,
+            "notes": [
+              "Trunk",
+              "VLAN 1,10,20,30"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-3",
+            "from": "edge-firewall",
+            "to": "core-switch-2",
+            "color": "#f59e0b",
+            "width": 5,
+            "notes": [
+              "Trunk",
+              "VLAN 1,10,20,30"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-4",
+            "from": "core-switch-1",
+            "to": "core-switch-2",
+            "color": "#10b981",
+            "width": 6,
+            "notes": [
+              "Inter-switch link",
+              "20Gb LAG"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-5",
+            "from": "core-switch-1",
+            "to": "dmz-firewall",
+            "color": "#ef4444",
+            "width": 4,
+            "notes": [
+              "DMZ segment",
+              "VLAN 100"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-6",
+            "from": "dmz-firewall",
+            "to": "web-server",
+            "color": "#ef4444",
+            "width": 4,
+            "notes": [
+              "DMZ VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-7",
+            "from": "dmz-firewall",
+            "to": "mail-server",
+            "color": "#ef4444",
+            "width": 4,
+            "notes": [
+              "DMZ VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-8",
+            "from": "core-switch-1",
+            "to": "dist-switch-1",
+            "color": "#10b981",
+            "width": 5,
+            "notes": [
+              "10Gb uplink"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-9",
+            "from": "core-switch-2",
+            "to": "dist-switch-1",
+            "color": "#10b981",
+            "width": 5,
+            "notes": [
+              "10Gb uplink"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-10",
+            "from": "core-switch-1",
+            "to": "dist-switch-2",
+            "color": "#10b981",
+            "width": 5,
+            "notes": [
+              "10Gb uplink"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-11",
+            "from": "core-switch-2",
+            "to": "dist-switch-2",
+            "color": "#10b981",
+            "width": 5,
+            "notes": [
+              "10Gb uplink"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-12",
+            "from": "dist-switch-1",
+            "to": "access-switch-1",
+            "color": "#3b82f6",
+            "width": 4,
+            "notes": [
+              "1Gb access"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-13",
+            "from": "dist-switch-1",
+            "to": "access-switch-2",
+            "color": "#3b82f6",
+            "width": 4,
+            "notes": [
+              "1Gb access"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-14",
+            "from": "dist-switch-2",
+            "to": "access-switch-3",
+            "color": "#3b82f6",
+            "width": 4,
+            "notes": [
+              "1Gb access"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-15",
+            "from": "core-switch-1",
+            "to": "domain-controller",
+            "color": "#8b5cf6",
+            "width": 4,
+            "notes": [
+              "Server VLAN 10"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-16",
+            "from": "core-switch-1",
+            "to": "file-server",
+            "color": "#8b5cf6",
+            "width": 4,
+            "notes": [
+              "Server VLAN 10"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-17",
+            "from": "core-switch-1",
+            "to": "db-server",
+            "color": "#8b5cf6",
+            "width": 4,
+            "notes": [
+              "Server VLAN 10"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-18",
+            "from": "core-switch-1",
+            "to": "backup-server",
+            "color": "#8b5cf6",
+            "width": 4,
+            "notes": [
+              "Server VLAN 10"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-19",
+            "from": "core-switch-1",
+            "to": "wifi-controller",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Management VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-20",
+            "from": "edge-firewall",
+            "to": "vpn-gateway",
+            "color": "#f59e0b",
+            "width": 4,
+            "notes": [
+              "VPN segment"
+            ],
+            "lineStyle": "dashed",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "custom-1764789640610",
+            "type": "custom",
+            "color": "#f97316",
+            "width": 4,
+            "lineStyle": "solid",
+            "direction": "forward",
+            "points": [
+              {
+                "x": 1692.203125,
+                "y": 87.20563507080078
+              },
+              {
+                "x": 1797.742919921875,
+                "y": -18.33414649963379
+              },
+              {
+                "x": 1870.6156005859375,
+                "y": 62.07711410522461
+              }
+            ],
+            "notes": []
+          },
+          {
+            "id": "custom-1764789700766",
+            "type": "custom",
+            "color": "#f97316",
+            "width": 4,
+            "lineStyle": "solid",
+            "direction": "both",
+            "points": [
+              {
+                "x": 3094.37451171875,
+                "y": 531.9804077148438
+              },
+              {
+                "x": 2848.114990234375,
+                "y": 396.2864074707031
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "positions": {
+        "internet": {
+          "x": 2061.6986083984375,
+          "y": 247
+        },
+        "edge-firewall": {
+          "x": 2000,
+          "y": 500
+        },
+        "core-switch-1": {
+          "x": 1700,
+          "y": 900
+        },
+        "core-switch-2": {
+          "x": 2300,
+          "y": 900
+        },
+        "dmz-firewall": {
+          "x": 2800,
+          "y": 900
+        },
+        "web-server": {
+          "x": 2800,
+          "y": 1250
+        },
+        "mail-server": {
+          "x": 2800,
+          "y": 1550
+        },
+        "dist-switch-1": {
+          "x": 1200,
+          "y": 1400
+        },
+        "dist-switch-2": {
+          "x": 2500,
+          "y": 1400
+        },
+        "access-switch-1": {
+          "x": 800,
+          "y": 1900
+        },
+        "access-switch-2": {
+          "x": 1200,
+          "y": 1900
+        },
+        "access-switch-3": {
+          "x": 2500,
+          "y": 1900
+        },
+        "domain-controller": {
+          "x": 1100,
+          "y": 900
+        },
+        "file-server": {
+          "x": 600,
+          "y": 900
+        },
+        "db-server": {
+          "x": 600,
+          "y": 1300
+        },
+        "backup-server": {
+          "x": 1100,
+          "y": 1300
+        },
+        "wifi-controller": {
+          "x": 3200,
+          "y": 1400
+        },
+        "vpn-gateway": {
+          "x": 1442.718505859375,
+          "y": 492.46148681640625
+        },
+        "im-a-rack": {
+          "x": 2626.9840737177465,
+          "y": 397.5428295158845
+        },
+        "node-in-a-rack": {
+          "x": 1991.182621097425,
+          "y": 274.2610469326237
+        }
+      },
+      "sizes": {
+        "internet": 147,
+        "im-a-rack": 200,
+        "node-in-a-rack": 91
+      },
+      "styles": {
+        "internet": {
+          "all": {
+            "pingOffsetY": -70,
+            "pingOffsetX": -41
+          }
+        },
+        "im-a-rack": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "airplane"
+            },
+            "circleColor": "#db0000"
+          }
+        },
+        "node-in-a-rack": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "docker"
+            },
+            "circleColor": "#2a7bfe"
+          }
+        }
+      },
+      "legend": {
+        "#ef4444": "WAN / DMZ",
+        "#f59e0b": "Trunk / Uplink",
+        "#10b981": "Core / Distribution",
+        "#3b82f6": "Access Layer",
+        "#8b5cf6": "Server VLAN",
+        "#06b6d4": "Management",
+        "#f97316": "you can edit me too"
+      },
+      "rects": {
+        "list": []
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-1764789614780",
+            "x": 1513.7906494140625,
+            "y": 145.001220703125,
+            "content": "Google is live!",
+            "fontSize": 48,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-1764789667151",
+            "x": 2755.139404296875,
+            "y": 592.2888336181641,
+            "content": "Double click me on desktop\nor long press on mobile\nto open the rack view",
+            "fontSize": 43,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "tab-1764898321334",
+      "name": "Homelab",
+      "nodes": {
+        "isp-modem": {
+          "shape": "cloud",
+          "name": "OPNSENSE",
+          "ip": "192.168.100.1",
+          "role": "WAN",
+          "tags": [
+            "1Gbps Fiber",
+            "Bridge Mode"
+          ],
+          "notes": [
+            "ISP: AT&T Fiber",
+            "set to google for ping sake"
+          ],
+          "ping": {
+            "enabled": true,
+            "protocol": "custom",
+            "customUrl": "https://google.com",
+            "timeout": 3000,
+            "status": "online",
+            "lastCheck": "2025-12-01T22:25:19.963Z"
+          }
+        },
+        "opnsense": {
+          "shape": "firewall",
+          "name": "OPNsense",
+          "ip": "192.168.1.1",
+          "role": "Router/Firewall",
+          "tags": [
+            "Protectli",
+            "4 port"
+          ],
+          "notes": [
+            "DNS: Pi-hole",
+            "VPN: WireGuard"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "main-switch": {
+          "shape": "switch",
+          "name": "Main Switch",
+          "ip": "192.168.1.2",
+          "role": "Core",
+          "tags": [
+            "UniFi 24 port",
+            "PoE"
+          ],
+          "notes": [
+            "USW 24 POE"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "proxmox": {
+          "shape": "server",
+          "name": "Proxmox",
+          "ip": "192.168.1.10",
+          "role": "Hypervisor",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "proxmox"
+            },
+            "Dell R720",
+            "128GB RAM"
+          ],
+          "notes": [
+            "2x Xeon E5 2670",
+            "10x VMs running"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "truenas": {
+          "shape": "database",
+          "name": "TrueNAS",
+          "ip": "192.168.1.11",
+          "role": "NAS",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "selfhst",
+              "name": "truenas"
+            },
+            "48TB RAW",
+            "ZFS"
+          ],
+          "notes": [
+            "6x 8TB WD Red",
+            "RAID Z2"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "docker-host": {
+          "shape": "server",
+          "name": "Docker Host",
+          "ip": "192.168.1.12",
+          "role": "Containers",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "docker"
+            },
+            "Ubuntu 22.04",
+            "32GB RAM"
+          ],
+          "notes": [
+            "Dell Optiplex 7050",
+            "35 containers"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pi-hole": {
+          "shape": "circle",
+          "name": "Pi-hole",
+          "ip": "192.168.1.53",
+          "role": "DNS",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "selfhst",
+              "name": "pi-hole"
+            },
+            "Ad Blocking"
+          ],
+          "notes": [
+            "Raspberry Pi 4",
+            "Primary DNS"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "plex": {
+          "shape": "circle",
+          "name": "Plex",
+          "ip": "192.168.1.20",
+          "role": "Media Server",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "selfhst",
+              "name": "plex"
+            },
+            "Transcoding"
+          ],
+          "notes": [
+            "VM on Proxmox",
+            "4 cores",
+            "8GB RAM"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "jellyfin": {
+          "shape": "circle",
+          "name": "Jellyfin",
+          "ip": "192.168.1.21",
+          "role": "Media Server",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "selfhst",
+              "name": "jellyfin"
+            },
+            "Open Source"
+          ],
+          "notes": [
+            "Container on Docker",
+            "Backup media server"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "nextcloud": {
+          "shape": "circle",
+          "name": "Nextcloud",
+          "ip": "192.168.1.30",
+          "role": "Cloud Storage",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "nextcloud"
+            },
+            "Files",
+            "Calendar"
+          ],
+          "notes": [
+            "Container on Docker",
+            "MariaDB backend"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "bitwarden": {
+          "shape": "circle",
+          "name": "Vaultwarden",
+          "ip": "192.168.1.31",
+          "role": "Password Manager",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "bitwarden"
+            },
+            "Self hosted"
+          ],
+          "notes": [
+            "Container on Docker",
+            "Bitwarden compatible"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "homeassistant": {
+          "shape": "circle",
+          "name": "Home Assistant",
+          "ip": "192.168.1.40",
+          "role": "Smart Home",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "homeassistant"
+            },
+            "Automation"
+          ],
+          "notes": [
+            "VM on Proxmox",
+            "45 devices"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "portainer": {
+          "shape": "circle",
+          "name": "Portainer",
+          "ip": "192.168.1.50",
+          "role": "Container Mgmt",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "portainer"
+            },
+            "Docker GUI"
+          ],
+          "notes": [
+            "Managing 35 containers"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "traefik": {
+          "shape": "circle",
+          "name": "Traefik",
+          "ip": "192.168.1.51",
+          "role": "Reverse Proxy",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "traefikproxy"
+            },
+            "SSL"
+          ],
+          "notes": [
+            "Container on Docker",
+            "Wildcard cert"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "grafana": {
+          "shape": "circle",
+          "name": "Grafana",
+          "ip": "192.168.1.60",
+          "role": "Monitoring",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "grafana"
+            },
+            "Dashboards"
+          ],
+          "notes": [
+            "Container on Docker"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "prometheus": {
+          "shape": "circle",
+          "name": "Prometheus",
+          "ip": "192.168.1.61",
+          "role": "Metrics",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "prometheus"
+            },
+            "Time Series"
+          ],
+          "notes": [
+            "Container on Docker",
+            "15d retention"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "unifi-controller": {
+          "shape": "router",
+          "name": "UniFi Controller",
+          "ip": "192.168.1.70",
+          "role": "WiFi Management",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "ubiquiti"
+            },
+            "Network"
+          ],
+          "notes": [
+            "Container on Docker",
+            "3 APs"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "wireguard": {
+          "shape": "router",
+          "name": "WireGuard",
+          "ip": "192.168.1.80",
+          "role": "VPN",
+          "tags": [
+            {
+              "type": "icon",
+              "library": "simple",
+              "name": "wireguard"
+            },
+            "Remote Access"
+          ],
+          "notes": [
+            "VM on Proxmox",
+            "5 clients"
+          ],
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "im-a-rack": {
+          "shape": "server",
+          "name": "IM A RACK",
+          "ip": "",
+          "role": "Rack",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "physical",
+          "assignedRack": "",
+          "rackCapacity": "42",
+          "isRack": true,
+          "locked": true,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-1",
+            "from": "isp-modem",
+            "to": "opnsense",
+            "color": "#ef4444",
+            "width": 6,
+            "notes": [
+              "WAN 1Gbps"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-2",
+            "from": "opnsense",
+            "to": "main-switch",
+            "color": "#10b981",
+            "width": 6,
+            "notes": [
+              "LAN Trunk"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-3",
+            "from": "main-switch",
+            "to": "proxmox",
+            "color": "#8b5cf6",
+            "width": 5,
+            "notes": [
+              "Server VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-4",
+            "from": "main-switch",
+            "to": "truenas",
+            "color": "#8b5cf6",
+            "width": 5,
+            "notes": [
+              "Storage VLAN",
+              "Jumbo frames"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-5",
+            "from": "main-switch",
+            "to": "docker-host",
+            "color": "#8b5cf6",
+            "width": 5,
+            "notes": [
+              "Server VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-6",
+            "from": "main-switch",
+            "to": "pi-hole",
+            "color": "#3b82f6",
+            "width": 4,
+            "notes": [
+              "Management VLAN"
+            ],
+            "lineStyle": "solid",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-7",
+            "from": "proxmox",
+            "to": "plex",
+            "color": "#f59e0b",
+            "width": 4,
+            "notes": [
+              "VM Network"
+            ],
+            "lineStyle": "dashed",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-8",
+            "from": "proxmox",
+            "to": "homeassistant",
+            "color": "#f59e0b",
+            "width": 4,
+            "notes": [
+              "VM Network"
+            ],
+            "lineStyle": "dashed",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-9",
+            "from": "proxmox",
+            "to": "wireguard",
+            "color": "#f59e0b",
+            "width": 4,
+            "notes": [
+              "VM Network"
+            ],
+            "lineStyle": "dashed",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-10",
+            "from": "docker-host",
+            "to": "jellyfin",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-11",
+            "from": "docker-host",
+            "to": "nextcloud",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-12",
+            "from": "docker-host",
+            "to": "bitwarden",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-13",
+            "from": "docker-host",
+            "to": "portainer",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-14",
+            "from": "docker-host",
+            "to": "traefik",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-15",
+            "from": "docker-host",
+            "to": "grafana",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-16",
+            "from": "docker-host",
+            "to": "prometheus",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-17",
+            "from": "docker-host",
+            "to": "unifi-controller",
+            "color": "#06b6d4",
+            "width": 4,
+            "notes": [
+              "Container"
+            ],
+            "lineStyle": "dotted",
+            "direction": "both",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-18",
+            "from": "truenas",
+            "to": "plex",
+            "color": "#ec4899",
+            "width": 3,
+            "notes": [
+              "Media Storage",
+              "NFS"
+            ],
+            "lineStyle": "dashed",
+            "direction": "forward",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-19",
+            "from": "truenas",
+            "to": "jellyfin",
+            "color": "#ec4899",
+            "width": 3,
+            "notes": [
+              "Media Storage",
+              "NFS"
+            ],
+            "lineStyle": "dashed",
+            "direction": "forward",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-20",
+            "from": "truenas",
+            "to": "nextcloud",
+            "color": "#ec4899",
+            "width": 3,
+            "notes": [
+              "Data Storage",
+              "SMB"
+            ],
+            "lineStyle": "dashed",
+            "direction": "forward",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "custom-1764789591702",
+            "type": "custom",
+            "color": "#f97316",
+            "width": 4,
+            "lineStyle": "solid",
+            "direction": "forward",
+            "points": [
+              {
+                "x": 2180.72900390625,
+                "y": 753.431884765625
+              },
+              {
+                "x": 2178.278076171875,
+                "y": 883.335693359375
+              },
+              {
+                "x": 2273.86767578125,
+                "y": 888.2376708984375
+              }
+            ],
+            "notes": []
+          },
+          {
+            "id": "custom-1764791338569",
+            "type": "custom",
+            "color": "#f97316",
+            "width": 4,
+            "lineStyle": "dashed",
+            "direction": "forward",
+            "points": [
+              {
+                "x": 1178.4932861328125,
+                "y": 139.6976776123047
+              },
+              {
+                "x": 1282.2938232421875,
+                "y": 59.62301254272461
+              },
+              {
+                "x": 1730.1187744140625,
+                "y": 127.83476257324219
+              }
+            ],
+            "notes": []
+          }
+        ]
+      },
+      "positions": {
+        "isp-modem": {
+          "x": 2000,
+          "y": 227
+        },
+        "opnsense": {
+          "x": 1686.82958984375,
+          "y": 628.8558959960938
+        },
+        "main-switch": {
+          "x": 2000,
+          "y": 950
+        },
+        "proxmox": {
+          "x": 1200,
+          "y": 1350
+        },
+        "truenas": {
+          "x": 2800,
+          "y": 1350
+        },
+        "docker-host": {
+          "x": 2000,
+          "y": 1350
+        },
+        "pi-hole": {
+          "x": 2000,
+          "y": 1650
+        },
+        "plex": {
+          "x": 600,
+          "y": 1850
+        },
+        "jellyfin": {
+          "x": 1400,
+          "y": 2250
+        },
+        "nextcloud": {
+          "x": 1800,
+          "y": 2250
+        },
+        "bitwarden": {
+          "x": 2200,
+          "y": 2250
+        },
+        "homeassistant": {
+          "x": 1000,
+          "y": 1850
+        },
+        "portainer": {
+          "x": 2600,
+          "y": 2250
+        },
+        "traefik": {
+          "x": 3000,
+          "y": 2250
+        },
+        "grafana": {
+          "x": 3400,
+          "y": 2250
+        },
+        "prometheus": {
+          "x": 3400,
+          "y": 1850
+        },
+        "unifi-controller": {
+          "x": 3000,
+          "y": 1850
+        },
+        "wireguard": {
+          "x": 1400,
+          "y": 1850
+        },
+        "im-a-rack": {
+          "x": 2590.18017578125,
+          "y": 882.6126098632812
+        }
+      },
+      "sizes": {
+        "isp-modem": 127,
+        "im-a-rack": 181
+      },
+      "styles": {
+        "pi-hole": {
+          "all": {
+            "icon": {
+              "library": "selfhst",
+              "name": "pi-hole"
+            }
+          }
+        },
+        "plex": {
+          "all": {
+            "icon": {
+              "library": "selfhst",
+              "name": "plex"
+            }
+          }
+        },
+        "jellyfin": {
+          "all": {
+            "icon": {
+              "library": "selfhst",
+              "name": "jellyfin"
+            }
+          }
+        },
+        "nextcloud": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "nextcloud"
+            }
+          }
+        },
+        "bitwarden": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "bitwarden"
+            }
+          }
+        },
+        "homeassistant": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "homeassistant"
+            }
+          }
+        },
+        "portainer": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "portainer"
+            }
+          }
+        },
+        "traefik": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "traefikproxy"
+            }
+          }
+        },
+        "grafana": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "grafana"
+            }
+          }
+        },
+        "prometheus": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "prometheus"
+            }
+          }
+        },
+        "unifi-controller": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "ubiquiti"
+            }
+          }
+        },
+        "wireguard": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "wireguard"
+            }
+          }
+        },
+        "isp-modem": {
+          "all": {
+            "icon": {
+              "library": "simple",
+              "name": "opnsense"
+            },
+            "circleColor": "#ff0000",
+            "pingOffsetY": -48
+          }
+        }
+      },
+      "legend": {
+        "#ef4444": "WAN",
+        "#10b981": "LAN Trunk",
+        "#8b5cf6": "Server VLAN",
+        "#3b82f6": "Management",
+        "#f59e0b": "VM Network",
+        "#06b6d4": "Containers",
+        "#ec4899": "Storage",
+        "#f97316": "you can edit me too"
+      },
+      "rects": {
+        "list": []
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-1764789550897",
+            "x": 2158.669921875,
+            "y": 621.0770263671875,
+            "content": "DOUBLE CLICK ON DESKTOP\nOR LONG PRESS ON MOBILE\nTO OPEN RACK VIEW",
+            "fontSize": 37,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-1764791291347",
+            "x": 1065.795654296875,
+            "y": 187.14932250976562,
+            "content": "Router is live!\nUses http requests to live ping",
+            "fontSize": 41,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      }
+    }
+  ],
+  "currentTabIndex": 1,
+  "encryptedSections": {}
 }

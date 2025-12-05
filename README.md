@@ -13,45 +13,26 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.7 : 12/3/25
+## Version 3.9 : 12/4/25
 
+* **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
+  * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
+* **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
+* **NEW 3.9** Snapshots are now implemeted. Auto save and manual save is available.
+* **NEW 3.9** Action audits are now implemeted. This allows you to audit whether or not the file has been tampered in an easy to read log.
+  * *Note: Both snapshots and audits are local browser only and do not trasnfer to another device. This feature is coming in 4.0*
 * **NEW 3.7** The Rackening!!
   * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
 * **NEW 3.7** Layers upon layers!!
   * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
 * **NEW 3.7** Added Racks and individual rack canvasses!
 * **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
-* **NEW 3.7 Advanced Keyboard Navigation**
-  * **Arrow Keys** Move selected nodes 1 pixel in any direction for precise positioning
-  * **Shift + Arrow Keys** Move selected nodes 10 pixels for faster adjustments
-  * **Tab** Cycle forward through all nodes in current view
-  * **Shift + Tab** Cycle backward through all nodes in current view
-  * **F** Focus camera on selected node(s) with automatic zoom and centering
-* **NEW 3.7 Node Lock System** Prevent accidental movement of positioned nodes
-  * Lock individual nodes or multiple nodes at once
-  * Visual lock indicator on locked nodes
-  * Locked nodes cannot be moved by dragging or keyboard
-  * Works with multi selection for batch operations
-  * Lock status persists in saved files
-* **NEW 3.7 Node Grouping System** Move related nodes together as a unit
-  * Group multiple nodes to move them as a single unit
-  * Visual group indicator (dashed outline) on grouped nodes
-  * Drag any group member and all nodes in the group move together
-  * Groups respect lock status (locked nodes stay in place)
-  * Create and dissolve groups dynamically with keyboard shortcut
-  * Group membership persists in saved files
-* **NEW 3.7 Enhanced Mobile Experience**
-  * **Double tap empty space to exit rack view** Quick navigation without button press
-  * **Lock Toggle button** in mobile multi select menu for easy locking on touch devices
-  * **Group Toggle button** in mobile multi select menu for easy grouping on mobile
-  * Haptic feedback (vibration) for double tap actions on supported devices
-  * Smart gesture detection (pan vs tap) prevents accidental actions
-* **NEW 3.7 Rack View Improvements**
-  * Nodes created while in rack view automatically assign to that rack
-  * Drawing tools (free draw, rectangles, text) properly disabled in rack view with clear feedback
-  * Improved workflow prevents accidentally placing elements in wrong view
-* **A more detailed list of changes is included below**
-  * [Change Log](changelog.md)
+* **NEW 3.7** The Rackening!!
+  * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
+* **NEW 3.7** Layers upon layers!!
+  * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
+* **NEW 3.7** Added Racks and individual rack canvasses!
+* **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
  
 # Demos
 
