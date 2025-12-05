@@ -10211,16 +10211,38 @@
       }
       
       function editNodeUHeight(id) {
-       const currentUHeight = NODE_DATA[id].uHeight || "1";
-       showEditModal("Edit U Height", currentUHeight, (newUHeight) => {
+       const node = NODE_DATA[id];
+       if (!node) return;
+       
+       document.getElementById("modal-title").textContent = "Edit U Height";
+       document.getElementById("modal-input").value = node.uHeight || "1";
+       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("modal-input").focus();
+       
+       const saveHandler = () => {
         pushUndo("edit U height");
-        NODE_DATA[id].uHeight = newUHeight;
-        if (currentNodeId === id) {
-         document.getElementById("node-uheight").textContent = (newUHeight || "1") + "U";
-        }
-        if (rackMode) {
-         convertToRackPositions();
-         forgeTheTopology();
+        const value = document.getElementById("modal-input").value.trim();
+        node.uHeight = value;
+        document.getElementById("edit-modal").style.display = "none";
+        claimTheImmortal(id);
+        forgeTheTopology();
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+       };
+       
+       const cancelHandler = () => {
+        document.getElementById("edit-modal").style.display = "none";
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+       };
+       
+       document.getElementById("modal-save").addEventListener("click", saveHandler);
+       document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
+       
+       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
+        if (e.target === document.getElementById("edit-modal")) {
+         cancelHandler();
+         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
         }
        });
       }
