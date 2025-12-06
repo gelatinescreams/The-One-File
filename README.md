@@ -40,21 +40,21 @@ A fully self contained topology builder that runs anywhere as a single standalon
   
 # Demos
 
-* **Core Edition**       https://therecanonlybe.one/
-  * [the-one-file.html](https://therecanonlybe.one/the-one-file.html)
-  * [the-one-file-corporate-demo.html](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
+* **Core Edition**
+  * [the-one-file.html : Core Edition](https://therecanonlybe.one/the-one-file.html)
+  * [the-one-file-corporate-demo.html : Corporation Core Demo](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
+  * [the-one-file-homelab-demo.html : Homelab Core Demo](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
 * **Networkening Edition**
-  * [the-one-file.html](https://therecanonlybe.one/theonefile-networkening.html)
-  * [theonefile-networkening-corporate-demo.html](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
+  * [the-one-file.html : Networkening Edition](https://therecanonlybe.one/theonefile-networkening.html)
+  * [theonefile-networkening-corporate-demo.html Corporate Networkening Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
+  * [theonefile-networkening-homelab-demo.html Homelab Networkening Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
 
 * **Core Edition Password Protected (lambert)**
-  * [the-one-file-corporate-demo.html](https://therecanonlybe.one/demos/password-protected/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html](https://therecanonlybe.one/demos/password-protected/the-one-file-homelab-demo.html)
+  * [the-one-file-corporate-demo.html corporate password protected core](https://therecanonlybe.one/demos/password-protected/the-one-file-corporate-demo.html)
+  * [the-one-file-homelab-demo.html homlab password protected core](https://therecanonlybe.one/demos/password-protected/the-one-file-homelab-demo.html)
 * **Networkening Edition Password Protected (lambert)**
-  * [theonefile-networkening-corporate-demo.html](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-homelab-demo.html)  
+  * [theonefile-networkening-corporate-demo.html corporate password protected networkening](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-corporate-demo.html)
+  * [theonefile-networkening-homelab-demo.html homelab password protected networkening](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
 ## Online vs Offline
 
@@ -85,10 +85,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 #### Download:
 
-* [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/23973451/the-one-file-corporate-demo.html)
-* [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/23973452/the-one-file-homelab-demo.html)
-* [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/23973453/theonefile-networkening-corporate-demo.html)
-* [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/23973454/theonefile-networkening-homelab-demo.html)
+* [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/23978994/the-one-file-corporate-demo.html)
+* [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/23978995/the-one-file-homelab-demo.html)
+* [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/23978996/theonefile-networkening-corporate-demo.html)
+* [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/23978997/theonefile-networkening-homelab-demo.html)
 
 ## Why It Exists
 
