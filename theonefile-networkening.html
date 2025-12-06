@@ -4490,14 +4490,23 @@
          let swatchTouchStart = null;
          let swatchTouchMoved = false;
          swatch.addEventListener("touchstart", (e) => {
-          swatchTouchStart = Date.now();
-          swatchTouchMoved = false;
-         }, {
+         swatchTouchStart = Date.now();
+         swatchTouchMoved = false;
+         if (e.touches[0]) {
+          swatchTouchStartX = e.touches[0].clientX;
+          swatchTouchStartY = e.touches[0].clientY;
+         }
+        }, {
           passive: false
          });
-         swatch.addEventListener("touchmove", (e) => {
-          swatchTouchMoved = true;
-         }, {
+         let swatchTouchStartX = 0, swatchTouchStartY = 0;
+        swatch.addEventListener("touchmove", (e) => {
+         if (e.touches[0]) {
+          const dx = Math.abs(e.touches[0].clientX - swatchTouchStartX);
+          const dy = Math.abs(e.touches[0].clientY - swatchTouchStartY);
+          if (dx > 10 || dy > 10) swatchTouchMoved = true;
+         }
+        }, {
           passive: false
          });
          swatch.addEventListener("touchend", (e) => {
@@ -4524,10 +4533,19 @@
          label.addEventListener("touchstart", (e) => {
           labelTapStart = Date.now();
           labelTapMoved = false;
+          if (e.touches[0]) {
+           labelTapStartX = e.touches[0].clientX;
+           labelTapStartY = e.touches[0].clientY;
+          }
           e.stopPropagation();
          });
+         let labelTapStartX = 0, labelTapStartY = 0;
          label.addEventListener("touchmove", (e) => {
-          labelTapMoved = true;
+          if (e.touches[0]) {
+           const dx = Math.abs(e.touches[0].clientX - labelTapStartX);
+           const dy = Math.abs(e.touches[0].clientY - labelTapStartY);
+           if (dx > 10 || dy > 10) labelTapMoved = true;
+          }
          });
          label.addEventListener("touchend", (e) => {
           if (labelTapStart && !labelTapMoved && Date.now() - labelTapStart < 400) {
@@ -4968,14 +4986,23 @@
           let edgeTouchStart = null;
           let edgeTouchMoved = false;
           polyHit.addEventListener("touchstart", (e) => {
-           edgeTouchStart = Date.now();
-           edgeTouchMoved = false;
-          }, {
+          edgeTouchStart = Date.now();
+          edgeTouchMoved = false;
+          if (e.touches[0]) {
+           edgeTouchStartX = e.touches[0].clientX;
+           edgeTouchStartY = e.touches[0].clientY;
+          }
+         }, {
            passive: false
           });
-          polyHit.addEventListener("touchmove", (e) => {
-           edgeTouchMoved = true;
-          }, {
+          let edgeTouchStartX = 0, edgeTouchStartY = 0;
+         polyHit.addEventListener("touchmove", (e) => {
+          if (e.touches[0]) {
+           const dx = Math.abs(e.touches[0].clientX - edgeTouchStartX);
+           const dy = Math.abs(e.touches[0].clientY - edgeTouchStartY);
+           if (dx > 10 || dy > 10) edgeTouchMoved = true;
+          }
+         }, {
            passive: false
           });
           polyHit.addEventListener("touchend", (e) => {
@@ -5044,14 +5071,23 @@
          let pathTouchStart = null;
          let pathTouchMoved = false;
          pathHit.addEventListener("touchstart", (e) => {
-          pathTouchStart = Date.now();
-          pathTouchMoved = false;
-         }, {
+         pathTouchStart = Date.now();
+         pathTouchMoved = false;
+         if (e.touches[0]) {
+          pathTouchStartX = e.touches[0].clientX;
+          pathTouchStartY = e.touches[0].clientY;
+         }
+        }, {
           passive: false
          });
-         pathHit.addEventListener("touchmove", (e) => {
-          pathTouchMoved = true;
-         }, {
+         let pathTouchStartX = 0, pathTouchStartY = 0;
+        pathHit.addEventListener("touchmove", (e) => {
+         if (e.touches[0]) {
+          const dx = Math.abs(e.touches[0].clientX - pathTouchStartX);
+          const dy = Math.abs(e.touches[0].clientY - pathTouchStartY);
+          if (dx > 10 || dy > 10) pathTouchMoved = true;
+         }
+        }, {
           passive: false
          });
          pathHit.addEventListener("touchend", (e) => {
@@ -5222,6 +5258,9 @@
          
         g.addEventListener("touchstart", (e) => {
          if (NODE_DATA[id].isRack) {
+          const touch = e.touches[0];
+          longPressStartX = touch.clientX;
+          longPressStartY = touch.clientY;
           longPressTimer = setTimeout(() => {
            longPressTriggered = true;
            if (navigator.vibrate) {
@@ -5282,13 +5321,20 @@
           }
          });
          
-         g.addEventListener("touchmove", (e) => {
-          if (longPressTimer) {
+         let longPressStartX = 0;
+        let longPressStartY = 0;
+        g.addEventListener("touchmove", (e) => {
+         if (longPressTimer) {
+          const touch = e.touches[0];
+          const dx = Math.abs(touch.clientX - longPressStartX);
+          const dy = Math.abs(touch.clientY - longPressStartY);
+          if (dx > 15 || dy > 15) {
            clearTimeout(longPressTimer);
            longPressTimer = null;
            longPressTriggered = false;
           }
-         });
+         }
+        });
          
          g.addEventListener("mousedown", (e) => {
           if (e.button === 2) {
@@ -6566,14 +6612,16 @@
         let lastEmptyTapTime = 0;
         let emptyTapTimeout = null;
         let emptyTapMoved = false;
+        let emptyTapStartX = 0;
+        let emptyTapStartY = 0;
         
         viewport.addEventListener("touchend", (e) => {
           if (currentView.mode !== "rack") return;
           
           if (e.changedTouches.length !== 1) return;
           
-          const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-          if (!isEmptySpace) return;
+		 const isNodeOrEdge = e.target.closest(".node-group") || e.target.closest(".edge-group");
+         if (isNodeOrEdge) return;
           
           if (emptyTapMoved) {
             emptyTapMoved = false;
@@ -6637,6 +6685,8 @@
           if (isEmptySpace && e.touches.length === 1) {
            e.preventDefault();
            emptyTapMoved = false;
+           emptyTapStartX = e.touches[0].clientX;
+           emptyTapStartY = e.touches[0].clientY;
            canvasState.isPanning = true;
            canvasState.panStartX = e.touches[0].clientX;
            canvasState.panStartY = e.touches[0].clientY;
@@ -6661,10 +6711,14 @@
          constrainPan();
          updateViewBox();
         });
-        document.addEventListener("touchmove", (e) => {
-         if (!canvasState.isPanning || !e.touches[0]) return;
-         emptyTapMoved = true; 
-         const dx = e.touches[0].clientX - canvasState.panStartX;
+       document.addEventListener("touchmove", (e) => {
+        if (!canvasState.isPanning || !e.touches[0]) return;
+        const moveDx = Math.abs(e.touches[0].clientX - emptyTapStartX);
+        const moveDy = Math.abs(e.touches[0].clientY - emptyTapStartY);
+        if (moveDx > 15 || moveDy > 15) {
+         emptyTapMoved = true;
+        }
+        const dx = e.touches[0].clientX - canvasState.panStartX;
          const dy = e.touches[0].clientY - canvasState.panStartY;
          const rect = viewport.getBoundingClientRect();
          const viewWidth = CANVAS_WIDTH / canvasState.zoom;

@@ -1,6 +1,13 @@
 ### CHANGE LOG
 *Thank you to Discord testers!!*
 
+## Version 3.9.3 : 12/5/25 Mobile bug fixes
+
+* **NEW 3.9.3** Mobile fixes. 
+* **Various bug fixes including**
+  * Rewrote every mobile touch event
+  * Cleaned mobile core
+  
 ## Version 3.9.2 : 12/5/25 Bug fixes
 
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.

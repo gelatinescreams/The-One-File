@@ -13,8 +13,9 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9.2 : 12/5/25
+## Version 3.9.3 : 12/5/25
 
+* **NEW 3.9.3** Mobile fixes. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **NEW 3.9.2** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
