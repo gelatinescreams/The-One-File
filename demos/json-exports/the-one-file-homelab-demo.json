@@ -12,7 +12,8 @@
       "notes": [
         "Comcast Gigabit",
         "Bridge mode enabled"
-      ]
+      ],
+      "layer": "application"
     },
     "main-router": {
       "shape": "firewall",
@@ -59,7 +60,8 @@
         "32TB RAID-Z2",
         "SMB/NFS shares",
         "Automated backups"
-      ]
+      ],
+      "layer": "security"
     },
     "plex": {
       "shape": "server",
@@ -90,7 +92,8 @@
         "Primary DNS",
         "Blocks 150k domains",
         "Raspberry Pi 4"
-      ]
+      ],
+      "layer": "security"
     },
     "homeassistant": {
       "shape": "server",
@@ -105,7 +108,8 @@
         "50+ devices",
         "Zigbee/Z-Wave",
         "Node-RED integration"
-      ]
+      ],
+      "layer": "security"
     },
     "docker-host": {
       "shape": "server",
@@ -120,7 +124,8 @@
         "20+ containers",
         "Portainer",
         "Traefik reverse proxy"
-      ]
+      ],
+      "layer": "application"
     },
     "nvr": {
       "shape": "server",
@@ -196,7 +201,8 @@
         "U6-Pro",
         "2.4/5GHz",
         "PoE powered"
-      ]
+      ],
+      "layer": "application"
     },
     "rpi-monitor": {
       "shape": "server",
@@ -253,10 +259,44 @@
       "mac": "",
       "rackUnit": "",
       "uHeight": "1",
-      "layer": "physical",
+      "layer": "security",
       "assignedRack": "",
       "rackCapacity": "48",
       "isRack": true,
+      "locked": false,
+      "groupId": null
+    },
+    "server1": {
+      "shape": "server",
+      "name": "Server1",
+      "ip": "0.0.0.0",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": 31,
+      "uHeight": "4",
+      "layer": "physical",
+      "assignedRack": "racked",
+      "rackCapacity": "42",
+      "isRack": false,
+      "locked": false,
+      "groupId": null
+    },
+    "server2": {
+      "shape": "laptop",
+      "name": "Server2",
+      "ip": "0.0.0.0",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": 30,
+      "uHeight": "1",
+      "layer": "physical",
+      "assignedRack": "racked",
+      "rackCapacity": "42",
+      "isRack": false,
       "locked": false,
       "groupId": null
     }
@@ -579,7 +619,7 @@
     },
     "homeassistant": {
       "x": 740,
-      "y": 750
+      "y": 748.1572875976562
     },
     "docker-host": {
       "x": 200,
@@ -620,6 +660,14 @@
     "racked": {
       "x": 1048.601037541801,
       "y": 341.0225132311335
+    },
+    "server1": {
+      "x": 1998.1473388671875,
+      "y": 1379.28564453125
+    },
+    "server2": {
+      "x": 1998.1473388671875,
+      "y": 1462.7010498046875
     }
   },
   "nodeSizes": {
@@ -643,30 +691,26 @@
   "nodeStyles": {},
   "page": {
     "title": "Home Lab Network",
-    "background": "#d4d7dd",
-    "topbarBg": "#1081ea",
-    "topbarBorder": "#010d28",
-    "panel": "#89828c",
-    "panelAlt": "#15131b",
-    "accent": "#807d9b",
-    "danger": "#271111",
-    "textMain": "#ecf3fe",
-    "textSoft": "#7c96bb",
+    "background": "#f00000",
+    "topbarBg": "#bd0f0f",
+    "topbarBorder": "#000000",
+    "panel": "#a05454",
+    "panelAlt": "#620404",
+    "accent": "#ffffff",
+    "danger": "#000000",
+    "textMain": "#ffffff",
+    "textSoft": "#6be43f",
     "topbarHeight": 100,
     "sidebarWidth": 600,
     "mobileFooterHeight": 40,
     "sidebarCollapsed": false
   },
   "canvas": {
-    "zoom": 2,
-    "panX": -375.69948122909955,
-    "panY": -200
+    "zoom": 1.751619175069761,
+    "panX": -42.727030436197765,
+    "panY": -49.999999999999886
   },
-  "savedTopologyView": {
-    "zoom": 2.1346578000000007,
-    "panX": 52.61563032893702,
-    "panY": -76.14765861546203
-  },
+  "savedTopologyView": null,
   "documentTabs": [
     {
       "id": "main",
@@ -714,7 +758,8 @@
             "Cisco Catalyst 9600",
             "OSPF + BGP",
             "Redundant PSU"
-          ]
+          ],
+          "layer": "logical"
         },
         "core-router-2": {
           "shape": "router",
@@ -810,7 +855,8 @@
             "Ubuntu 22.04",
             "Nginx reverse proxy",
             "SSL certificates"
-          ]
+          ],
+          "layer": "logical"
         },
         "web-server-3": {
           "shape": "server",
@@ -1017,7 +1063,8 @@
             "64GB RAM",
             "24 cores",
             "NVMe storage"
-          ]
+          ],
+          "layer": "security"
         },
         "k8s-worker-2": {
           "shape": "server",
@@ -1049,7 +1096,8 @@
             "64GB RAM",
             "24 cores",
             "NVMe storage"
-          ]
+          ],
+          "layer": "security"
         },
         "backup-server": {
           "shape": "database",
@@ -1128,7 +1176,8 @@
             "SD-WAN enabled",
             "MPLS backup"
           ],
-          "assignedRack": "racked"
+          "assignedRack": "racked",
+          "rackUnit": 14
         },
         "branch-switch": {
           "shape": "switch",
@@ -1144,7 +1193,8 @@
             "PoE+",
             "Local VLAN routing"
           ],
-          "assignedRack": "racked"
+          "assignedRack": "racked",
+          "rackUnit": 16
         },
         "workstation-vlan": {
           "shape": "pc",
@@ -1174,7 +1224,8 @@
             "Cisco WLC",
             "50+ APs",
             "Captive portal"
-          ]
+          ],
+          "layer": "logical"
         },
         "remote-workers": {
           "shape": "laptop",
@@ -1189,7 +1240,8 @@
             "200+ users",
             "SSL VPN",
             "MFA required"
-          ]
+          ],
+          "layer": "application"
         },
         "mail-server": {
           "shape": "server",
@@ -1216,10 +1268,27 @@
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "physical",
+          "layer": "application",
           "assignedRack": "",
           "rackCapacity": "24",
           "isRack": true,
+          "locked": false,
+          "groupId": null
+        },
+        "noded": {
+          "shape": "circle",
+          "name": "noded",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "physical",
+          "assignedRack": "",
+          "rackCapacity": "42",
+          "isRack": false,
           "locked": false,
           "groupId": null
         }
@@ -1791,7 +1860,7 @@
           "y": 250
         },
         "core-router-1": {
-          "x": 400,
+          "x": 398.1572570800781,
           "y": 420
         },
         "core-router-2": {
@@ -1883,8 +1952,8 @@
           "y": 850
         },
         "k8s-worker-3": {
-          "x": 1090,
-          "y": 850
+          "x": 1091.8427734375,
+          "y": 848.1572875976562
         },
         "backup-server": {
           "x": 1050,
@@ -1907,20 +1976,24 @@
           "y": 750
         },
         "branch-router": {
-          "x": 1435.1285400390625,
-          "y": 571.2974548339844
+          "x": 1984.1451416015625,
+          "y": 1284.6358642578125
         },
         "branch-switch": {
-          "x": 1120,
-          "y": 380
+          "x": 1984.1451416015625,
+          "y": 1104.947265625
         },
         "guest-wifi-controller": {
           "x": 1050,
           "y": 480
         },
         "racked": {
-          "x": 1534.2808837890625,
+          "x": 1532.4381103515625,
           "y": 634.2197265625
+        },
+        "noded": {
+          "x": 663.8039355578157,
+          "y": 581.0066280839653
         }
       },
       "sizes": {
@@ -1997,10 +2070,26 @@
             "opacity": 1
           }
         ]
+      },
+      "pageState": {
+        "title": "Corporate",
+        "background": "#d4d7dd",
+        "topbarBg": "#496f44",
+        "topbarBorder": "#00ff33",
+        "panel": "#44a781",
+        "panelAlt": "#243521",
+        "accent": "#186d29",
+        "danger": "#166a3a",
+        "textMain": "#ffffff",
+        "textSoft": "#fcfcfd",
+        "topbarHeight": 100,
+        "sidebarWidth": 600,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false
       }
     },
     {
-      "id": "tab-1764897846625",
+      "id": "tab-1764986749626",
       "name": "Homelab",
       "nodes": {
         "isp-modem": {
@@ -2015,7 +2104,8 @@
           "notes": [
             "Comcast Gigabit",
             "Bridge mode enabled"
-          ]
+          ],
+          "layer": "application"
         },
         "main-router": {
           "shape": "firewall",
@@ -2062,7 +2152,8 @@
             "32TB RAID-Z2",
             "SMB/NFS shares",
             "Automated backups"
-          ]
+          ],
+          "layer": "security"
         },
         "plex": {
           "shape": "server",
@@ -2093,7 +2184,8 @@
             "Primary DNS",
             "Blocks 150k domains",
             "Raspberry Pi 4"
-          ]
+          ],
+          "layer": "security"
         },
         "homeassistant": {
           "shape": "server",
@@ -2108,7 +2200,8 @@
             "50+ devices",
             "Zigbee/Z-Wave",
             "Node-RED integration"
-          ]
+          ],
+          "layer": "security"
         },
         "docker-host": {
           "shape": "server",
@@ -2123,7 +2216,8 @@
             "20+ containers",
             "Portainer",
             "Traefik reverse proxy"
-          ]
+          ],
+          "layer": "application"
         },
         "nvr": {
           "shape": "server",
@@ -2199,7 +2293,8 @@
             "U6-Pro",
             "2.4/5GHz",
             "PoE powered"
-          ]
+          ],
+          "layer": "application"
         },
         "rpi-monitor": {
           "shape": "server",
@@ -2256,10 +2351,44 @@
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "physical",
+          "layer": "security",
           "assignedRack": "",
           "rackCapacity": "48",
           "isRack": true,
+          "locked": false,
+          "groupId": null
+        },
+        "server1": {
+          "shape": "server",
+          "name": "Server1",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": 31,
+          "uHeight": "4",
+          "layer": "physical",
+          "assignedRack": "racked",
+          "rackCapacity": "42",
+          "isRack": false,
+          "locked": false,
+          "groupId": null
+        },
+        "server2": {
+          "shape": "laptop",
+          "name": "Server2",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": 30,
+          "uHeight": "1",
+          "layer": "physical",
+          "assignedRack": "racked",
+          "rackCapacity": "42",
+          "isRack": false,
           "locked": false,
           "groupId": null
         }
@@ -2546,7 +2675,7 @@
         },
         "homeassistant": {
           "x": 740,
-          "y": 750
+          "y": 748.1572875976562
         },
         "docker-host": {
           "x": 200,
@@ -2587,6 +2716,14 @@
         "racked": {
           "x": 1048.601037541801,
           "y": 341.0225132311335
+        },
+        "server1": {
+          "x": 1998.1473388671875,
+          "y": 1379.28564453125
+        },
+        "server2": {
+          "x": 1998.1473388671875,
+          "y": 1462.7010498046875
         }
       },
       "sizes": {
@@ -2643,6 +2780,22 @@
             "opacity": 1
           }
         ]
+      },
+      "pageState": {
+        "title": "Home Lab Network",
+        "background": "#f00000",
+        "topbarBg": "#bd0f0f",
+        "topbarBorder": "#000000",
+        "panel": "#a05454",
+        "panelAlt": "#620404",
+        "accent": "#ffffff",
+        "danger": "#000000",
+        "textMain": "#ffffff",
+        "textSoft": "#6be43f",
+        "topbarHeight": 100,
+        "sidebarWidth": 600,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false
       }
     }
   ],

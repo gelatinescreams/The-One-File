@@ -1,5 +1,6 @@
 <!DOCTYPE html> 
- <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 100px; --sidebar-width: 435px; --mobile-footer-height: 20vh; --draw-toolbar-height: 45px;"><head>
+<html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 100px; --sidebar-width: 435px; --mobile-footer-height: 20vh; --draw-toolbar-height: 45px;">
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -339,10 +340,10 @@
       left: auto;
       transform: none;
       }
-	  @media (min-width: 768px) {
-	   .bulk-toolbar-mobile {
-	    display: none !important;
-       }
+      @media (min-width: 768px) {
+      .bulk-toolbar-mobile {
+      display: none !important;
+      }
       }	  
       .bulk-action-btn {
       padding: 16px;
@@ -705,6 +706,9 @@
       cursor: grab;
       }
       .node-circle {
+      fill: #1e293b;
+      stroke: #475569;
+      stroke-width: 2;
       transition: 0.25s ease;
       transform-origin: center center;
       }
@@ -713,12 +717,7 @@
       pointer-events: all;
       }
       .node-group:hover .node-circle {
-      transform: scale(1.08);
       filter: drop-shadow(0 0 10px rgba(79, 209, 197, 0.45));
-      }
-      .node-group:hover .node-label,
-      .node-group:hover .node-sub {
-      transform: scale(1.08);
       }
       .node-group.active .node-circle {
       stroke: var(--accent);
@@ -1420,7 +1419,6 @@
       width: 100%;
       }
       }
-     
       .version-item {
       display: flex;
       justify-content: space-between;
@@ -1550,7 +1548,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="tabs-modal">
       <div class="modal-content" style="max-width: 600px;">
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
@@ -1565,12 +1562,13 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="rollback-modal">
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div>
+        </div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -1580,7 +1578,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="audit-log-modal">
       <div class="modal-content" style="max-width: 800px;">
         <h3>Audit Log</h3>
@@ -1596,14 +1593,15 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div>
+        </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
         </div>
       </div>
     </div>
-    
     <div class="modal" id="secrets-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3>Notes</h3>
@@ -1619,15 +1617,14 @@
         </div>
       </div>
     </div>
-
     <div class="modal" id="secret-editor-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3 id="secret-editor-title">Edit Note</h3>
         <textarea id="secret-editor-content" placeholder="Enter sensitive information here..." style="width: 100%; height: 200px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-family: monospace; resize: vertical; margin-bottom: 15px;"></textarea>
         <div style="margin-bottom: 15px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
-            <span>Encrypt Note</span>
+          <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
+          <span>Encrypt Note</span>
           </label>
         </div>
         <div class="modal-buttons">
@@ -1636,7 +1633,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="edit-modal">
       <div class="modal-content">
         <h3 id="modal-title">Edit Name</h3>
@@ -1661,12 +1657,11 @@
       <div class="modal-content">
         <h3>Why do I need to save?</h3>
         <p> Browsers are not allowed to overwrite local files automatically. When you click <strong>Save File</strong>, this page generates a new updated HTML file that contains all of your changes. Replace your old file with the new one to keep your edits. </p>
-        <p style="
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--edge-main);
-          ">
+        <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
           <strong>Encryption:</strong> Check the "Encrypt" box before saving to password protect your data. You'll need the password to open the file later. No recovery possible!!
+        </p>
+		<p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
+          <strong>Data Decrpytion:</strong> Want to decrpyt your data? Simply export it using json export in top menu after successful password validation
         </p>
         <div class="modal-buttons">
           <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1759,14 +1754,14 @@
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
         </details>
-		<details class="style-section" open="">
+        <details class="style-section" open="">
           <summary>Clear All</summary>
           <div class="style-content">
             <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">This deletes everything on the canvas!</p>
-			<button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
+            <button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
-        </details>		
+        </details>
         <div class="modal-buttons">
           <button class="btn-cancel" id="settings-close">Close</button>
         </div>
@@ -1945,20 +1940,20 @@
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Toggle which layers are visible on the canvas</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Physical Layer</span>
+          <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Physical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Logical Layer</span>
+          <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Logical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Security Layer</span>
+          <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Security Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Application Layer</span>
+          <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Application Layer</span>
           </label>
         </div>
         <div style="margin-top: 15px; display: flex; gap: 8px;">
@@ -2038,7 +2033,25 @@
         <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select"><option value="opnsense">OPNsense</option><option value="main-switch">Main Switch</option><option value="proxmox">Proxmox</option><option value="truenas">TrueNAS</option><option value="docker-host">Docker Host</option><option value="pi-hole">Pi-hole</option><option value="plex">Plex</option><option value="jellyfin">Jellyfin</option><option value="nextcloud">Nextcloud</option><option value="bitwarden">Vaultwarden</option><option value="homeassistant">Home Assistant</option><option value="portainer">Portainer</option><option value="traefik">Traefik</option><option value="grafana">Grafana</option><option value="prometheus">Prometheus</option><option value="unifi-controller">UniFi Controller</option><option value="wireguard">WireGuard</option></select>
+          <select id="add-line-select">
+            <option value="opnsense">OPNsense</option>
+            <option value="main-switch">Main Switch</option>
+            <option value="proxmox">Proxmox</option>
+            <option value="truenas">TrueNAS</option>
+            <option value="docker-host">Docker Host</option>
+            <option value="pi-hole">Pi-hole</option>
+            <option value="plex">Plex</option>
+            <option value="jellyfin">Jellyfin</option>
+            <option value="nextcloud">Nextcloud</option>
+            <option value="bitwarden">Vaultwarden</option>
+            <option value="homeassistant">Home Assistant</option>
+            <option value="portainer">Portainer</option>
+            <option value="traefik">Traefik</option>
+            <option value="grafana">Grafana</option>
+            <option value="prometheus">Prometheus</option>
+            <option value="unifi-controller">UniFi Controller</option>
+            <option value="wireguard">WireGuard</option>
+          </select>
           <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--edge-main);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">
           <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
@@ -2086,9 +2099,22 @@
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
         <div class="canvas-hint" id="canvas-hint"></div>
-        <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
+        <div class="legend-container" id="edge-legend" style="display: none;">
+          <div class="legend-title">Line Legend</div>
+          <button type="button" class="legend-close-btn">✕</button>
+        </div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="0 0 4000 3000" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
+          <svg id="map" viewBox="0 0 4000 3000" style="">
+            <defs>
+              <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path>
+              </marker>
+              <marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path>
+              </marker>
+            </defs>
+            <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
+          </svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
@@ -2107,9 +2133,9 @@
           </div>
         </div>
         <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
-		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
-		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
-		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
+        <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+        <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
       </section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
@@ -2143,7 +2169,9 @@
           </div>
           <div class="details-info-row" id="assigned-rack-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Assigned Rack:</span>
-            <select id="node-assigned-rack" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option></select>
+            <select id="node-assigned-rack" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
+              <option value="">None</option>
+            </select>
           </div>
           <div class="details-info-row" id="rack-capacity-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Rack Capacity:</span>
@@ -2219,9 +2247,13 @@
                 </select>
               </div>
               <button class="pick-icon-btn" id="pick-shape-icon-btn">Or Search Web Icons</button>
-              <div class="style-row">
-                <label>Circle Color:</label>
+			  <div class="style-row">
+                <label>Fill Color:</label>
                 <input type="color" id="circle-color" value="#1e293b">
+              </div>
+              <div class="style-row">
+                <label>Border Color:</label>
+                <input type="color" id="circle-border" value="#475569">
               </div>
               <div class="style-row">
                 <label>Title Color:</label>
@@ -2334,7 +2366,10 @@
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">ISP: AT&amp;T Fiber</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">set to google for ping sake</span><span class="delete-note">✕</span></li></ul>
+          <ul class="list" id="node-notes">
+            <li><span style="flex: 1 1 0%;">ISP: AT&amp;T Fiber</span><span class="delete-note">✕</span></li>
+            <li><span style="flex: 1 1 0%;">set to google for ping sake</span><span class="delete-note">✕</span></li>
+          </ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2444,7 +2479,7 @@
             <span id="text-opacity-val" style="min-width: 35px; text-align: right">100%</span>
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Text</button>
-        </div>	
+        </div>
         <details class="style-section" open="">
           <summary>Page Layout</summary>
           <div class="style-content">
@@ -2463,70 +2498,71 @@
     </main>
     <script id="nodes-json" type="application/json">{}</script>
     <script id="topology-state" type="application/json">{
-  "nodeData": {},
-  "edgeData": {
-    "list": []
-  },
-  "rectData": {
-    "list": []
-  },
-  "textData": {
-    "list": []
-  },
-  "edgeLegend": {},
-  "nodePositions": {},
-  "nodeSizes": {},
-  "nodeStyles": {},
-  "iconCache": {},
-  "page": {
-    "title": "The One File: The Networkening",
-    "background": "",
-    "topbarBg": "rgba(9, 12, 20, 0.9)",
-    "topbarBorder": "#1f2533",
-    "panel": "#0b0e13",
-    "panelAlt": "#10141b",
-    "accent": "#4fd1c5",
-    "danger": "#f56565",
-    "textMain": "#e2e8f0",
-    "textSoft": "#94a3b8",
-    "topbarHeight": 100,
-    "sidebarWidth": 435,
-    "mobileFooterHeight": 20,
-    "sidebarCollapsed": false,
-    "autoPingEnabled": false,
-    "autoPingInterval": 30
-  },
-  "autoPingEnabled": false,
-  "autoPingInterval": 30,
-  "canvas": {
-    "zoom": 1,
-    "panX": 0,
-    "panY": 0
-  },
-  "savedTopologyView": null,
-  "documentTabs": [
-    {
-      "id": "main",
-      "name": "Main Topology",
-      "nodes": {},
-      "edges": {
+      "nodeData": {},
+      "edgeData": {
         "list": []
       },
-      "positions": {},
-      "sizes": {},
-      "styles": {},
-      "legend": {},
-      "rects": {
+      "rectData": {
         "list": []
       },
-      "texts": {
+      "textData": {
         "list": []
+      },
+      "edgeLegend": {},
+      "nodePositions": {},
+      "nodeSizes": {},
+      "nodeStyles": {},
+      "iconCache": {},
+      "page": {
+        "title": "The One File: The Networkening",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 100,
+        "sidebarWidth": 435,
+        "mobileFooterHeight": 20,
+        "sidebarCollapsed": false,
+        "autoPingEnabled": false,
+        "autoPingInterval": 30
+      },
+      "autoPingEnabled": false,
+      "autoPingInterval": 30,
+      "canvas": {
+        "zoom": 1,
+        "panX": 0,
+        "panY": 0
+      },
+      "savedTopologyView": null,
+      "documentTabs": [
+        {
+          "id": "main",
+          "name": "Main Topology",
+          "nodes": {},
+          "edges": {
+            "list": []
+          },
+          "positions": {},
+          "sizes": {},
+          "styles": {},
+          "legend": {},
+          "rects": {
+            "list": []
+          },
+          "texts": {
+            "list": []
+          }
+        }
+      ],
+      "currentTabIndex": 0,
+      "encryptedSections": {}
       }
-    }
-  ],
-  "currentTabIndex": 0,
-  "encryptedSections": {}
-}</script>
+    </script>
     <script>
       const IconLibrary = {
        libraries: {
@@ -2996,7 +3032,7 @@
         }
        });
       });
-	  let textDrawMode = false;
+      let textDrawMode = false;
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
       let currentNodeId = "host";
       let currentEdgeId = null;
@@ -3055,7 +3091,8 @@
         styles: {},
         legend: {},
         rects: { list: [] },
-        texts: { list: [] }
+        texts: { list: [] },
+		pageState: null
       }];
       let currentTabIndex = 0;
       
@@ -3340,16 +3377,16 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
         } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
-	  
+      
       function u8ToBase64(u8) {
       let binary = "";
       for (let i = 0; i < u8.length; i++) binary += String.fromCharCode(u8[i]);
@@ -3362,7 +3399,7 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }  
-	  
+      
       function updateTopologyToolbarVisibility() {
        const toolbar = document.getElementById("topology-toolbar");
        const mini = ensureTopologyToolbarMiniButton();
@@ -3375,16 +3412,16 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {   
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
         } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
-	  
+      
       const DEFAULT_PAGE_STATE = {
        title: "The One File: The Networkening",
        background: "",
@@ -3405,14 +3442,19 @@
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
       const CANVAS_WIDTH = 4000;
-      const CANVAS_HEIGHT = 3000;
+      let CANVAS_HEIGHT = 3000;
+      const BASE_CANVAS_HEIGHT = 3000;
       const CANVAS_PADDING = 100;
       
       const RACK_U_HEIGHT = 70;
       const RACK_WIDTH = 600;
       const RACK_START_X = CANVAS_WIDTH / 2;
       const RACK_START_Y = CANVAS_PADDING + 100;
-      
+      function getRackUHeight(rackId) {
+      const capacity = getRackCapacity(rackId);
+      const availableHeight = CANVAS_HEIGHT - RACK_START_Y - 200;
+      return Math.floor(availableHeight / capacity);
+      }
       let canvasState = {
        zoom: 1,
        panX: 0,
@@ -3490,7 +3532,7 @@
         line.classList.add("minimap-edge");
         minimapSvg.insertBefore(line, minimapViewport);
        });
-	   
+      
        Object.entries(savedPositions).forEach(([id, pos]) => {
         const node = NODE_DATA[id];
         if (!node) return;
@@ -3652,7 +3694,7 @@
        if (document.getElementById("layer-application").checked) activeLayers.add("application");
        forgeTheTopology();    
       }
-    
+      
       function isNodeVisible(nodeId) {  
        const node = NODE_DATA[nodeId];    
        if (!node) return false;     
@@ -3661,13 +3703,12 @@
       }
       
       function enterRack(rackId) {
-       if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
-       
-       savedTopologyView = {
-        zoom: canvasState.zoom,
-        panX: canvasState.panX,
-        panY: canvasState.panY
-       };
+      if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
+      const rackCapacity = getRackCapacity(rackId);
+      const neededHeight = RACK_START_Y + (rackCapacity * RACK_U_HEIGHT) + 200;
+      if (neededHeight > BASE_CANVAS_HEIGHT) {
+      CANVAS_HEIGHT = neededHeight;
+      }
        
        currentView.mode = "rack";
        currentView.rackId = rackId;
@@ -3681,10 +3722,11 @@
         hint.classList.add("visible");
        }
        
-       const rackCapacity = getRackCapacity(rackId);
-       const rackHeight = rackCapacity * RACK_U_HEIGHT;
-       const rackCenterX = RACK_START_X;
-       const rackCenterY = RACK_START_Y + (rackHeight / 2);
+      
+      const rackUHeight = getRackUHeight(rackId);
+      const rackHeight = rackCapacity * rackUHeight;
+      const rackCenterX = RACK_START_X;
+      const rackCenterY = RACK_START_Y + (rackHeight / 2);
        
        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
@@ -3699,8 +3741,9 @@
       }
       
       function exitRack() {
-       currentView.mode = "topology";
-       currentView.rackId = null;
+      CANVAS_HEIGHT = BASE_CANVAS_HEIGHT;
+      currentView.mode = "topology";
+      currentView.rackId = null;
        
        const backBtn = document.getElementById("back-to-topology-btn");
        if (backBtn) backBtn.style.display = "none";
@@ -3902,6 +3945,7 @@
             EDGE_LEGEND = currentTab.legend || EDGE_LEGEND;
             RECT_DATA = currentTab.rects || RECT_DATA;
             TEXT_DATA = currentTab.texts || TEXT_DATA;
+            if (currentTab.pageState) PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, currentTab.pageState);
           }
         }
        }
@@ -3965,7 +4009,7 @@
       function ensureStyleEntry(id) {
        if (!savedStyles[id]) savedStyles[id] = {};
        const entry = savedStyles[id];
-       const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+       const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
        const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(entry, p), );
        if (isFlat) {
         const all = entry.all || {};
@@ -4395,6 +4439,9 @@
        if (styles.circleColor) {
         shapeEl.style.stroke = styles.circleColor;
        }
+	   if (styles.circleBorder) {
+        shapeEl.style.stroke = styles.circleBorder;
+       }
        return shapeEl;
       }
       
@@ -4520,7 +4567,7 @@
        }
       
        function deleteRectangle(rectId) {
-	    pushUndo("delete rectangle");
+      pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -4583,14 +4630,15 @@
         
         if (currentView.mode === "rack" && currentView.rackId) {
          const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
          const rackGroup = document.createElementNS(ns, "g");
-         rackGroup.id = "rack-visualization";
-         
+         rackGroup.id = "rack-visualization";       
          const rackFrame = document.createElementNS(ns, "rect");
          rackFrame.setAttribute("x", RACK_START_X - RACK_WIDTH / 2);
          rackFrame.setAttribute("y", RACK_START_Y);
          rackFrame.setAttribute("width", RACK_WIDTH);
-         rackFrame.setAttribute("height", rackCapacity * RACK_U_HEIGHT);
+         rackFrame.setAttribute("height", rackCapacity * rackUHeight);
+      
          rackFrame.setAttribute("fill", "rgba(15, 23, 42, 0.3)");
          rackFrame.setAttribute("stroke", "var(--accent)");
          rackFrame.setAttribute("stroke-width", "3");
@@ -4598,8 +4646,8 @@
          rackGroup.appendChild(rackFrame);
          
          for (let u = 0; u <= rackCapacity; u++) {
-          const y = RACK_START_Y + u * RACK_U_HEIGHT;
-          
+          const y = RACK_START_Y + u * rackUHeight;
+        
           const line = document.createElementNS(ns, "line");
           line.setAttribute("x1", RACK_START_X - RACK_WIDTH / 2);
           line.setAttribute("y1", y);
@@ -4614,7 +4662,7 @@
            const uNumber = rackCapacity - u;
            const text = document.createElementNS(ns, "text");
            text.setAttribute("x", RACK_START_X - RACK_WIDTH / 2 - 30);
-           text.setAttribute("y", y + RACK_U_HEIGHT / 2);
+           text.setAttribute("y", y + rackUHeight / 2);
            text.setAttribute("text-anchor", "middle");
            text.setAttribute("dominant-baseline", "middle");
            text.style.fill = "var(--accent)";
@@ -4625,7 +4673,7 @@
            
            const textRight = document.createElementNS(ns, "text");
            textRight.setAttribute("x", RACK_START_X + RACK_WIDTH / 2 + 30);
-           textRight.setAttribute("y", y + RACK_U_HEIGHT / 2);
+           textRight.setAttribute("y", y + rackUHeight / 2);
            textRight.setAttribute("text-anchor", "middle");
            textRight.setAttribute("dominant-baseline", "middle");
            textRight.style.fill = "var(--accent)";
@@ -4638,7 +4686,7 @@
          
          svg.appendChild(rackGroup);
         }
-    
+      
         const centerX = CANVAS_WIDTH / 2;
       
         if (RECT_DATA && RECT_DATA.list) {
@@ -4696,11 +4744,11 @@
            });
            
            deleteBtn.addEventListener("touchend", (e) => {
-		   e.stopPropagation();
+      e.stopPropagation();
            e.preventDefault();
            deleteRectangle(rect.id);
            });
-
+      
            let isDragging = false;
            let dragStartX, dragStartY;
            let rectStartX, rectStartY;
@@ -5074,11 +5122,12 @@
          if (currentView.mode === "rack") {
           if (node.assignedRack !== currentView.rackId) return;
           
-          const rackUnit = parseInt(node.rackUnit) || 1;
-          const uHeight = parseInt(node.uHeight) || 1;
-          const rackCapacity = getRackCapacity(currentView.rackId);
-          pos.x = RACK_START_X;
-          pos.y = RACK_START_Y + (rackUnit - 1) * RACK_U_HEIGHT + (uHeight * RACK_U_HEIGHT) / 2;
+         const rackUnit = parseInt(node.rackUnit) || 1;
+      const uHeight = parseInt(node.uHeight) || 1;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      pos.x = RACK_START_X;
+      pos.y = RACK_START_Y + (rackCapacity - rackUnit - uHeight + 1) * rackUHeight + (uHeight * rackUHeight) / 2;
          } else {
           if (node.assignedRack) return;
          }
@@ -5262,10 +5311,16 @@
           
           let nodesToCollect = [];
           if (selectedNodes.has(id)) {
-           nodesToCollect = Array.from(selectedNodes);
-          } else {
-           nodesToCollect = [id];
-          }
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) {
+      initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      }
+      });
+      } else {
+      initialPositions = { [id]: { x: pos.x, y: pos.y } };
+      }
           
           const groupIds = new Set();
           nodesToCollect.forEach(nodeId => {
@@ -5383,14 +5438,24 @@
            }
           });
          };
-         const handleMouseUp = () => {
-          if (isDragging) {
-           pushUndo("move nodes");
-           isDragging = false;
-           g.style.cursor = "grab";
-           hitArea.style.cursor = "grab";
-          }
-         };
+      const handleMouseUp = () => {
+      if (isDragging) {
+      pushUndo("move nodes");
+      isDragging = false;
+      g.style.cursor = "grab";
+      hitArea.style.cursor = "grab";
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const draggedY = savedPositions[id]?.y || pos.y;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      };
          document.addEventListener("mousemove", handleMouseMove);
          document.addEventListener("mouseup", handleMouseUp);
          let touchStartTime = 0;
@@ -5550,20 +5615,30 @@
          }, {
           passive: false
          });
-         g.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - touchStartTime;
-          if (!touchMoved && touchDuration < 400) {
-           claimTheImmortal(id);
-          }
-          if (isDragging) {
-           isDragging = false;
-           savedPositions[id] = {
-            x: pos.x,
-            y: pos.y
-           };
-          }
-          touchMoved = false;
-         });
+      g.addEventListener("touchend", (e) => {
+      const touchDuration = Date.now() - touchStartTime;
+      if (!touchMoved && touchDuration < 400) {
+      claimTheImmortal(id);
+      }
+      if (isDragging) {
+      const draggedY = pos.y;
+      isDragging = false;
+      savedPositions[id] = {
+      x: pos.x,
+      y: pos.y
+      };
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      touchMoved = false;
+      });
          g.style.cursor = "grab";
          g.addEventListener("click", (e) => {
           if (!isDragging) {
@@ -6083,7 +6158,7 @@
         document.getElementById("node-rack").textContent = data.rackUnit || "--";
         document.getElementById("node-uheight").textContent = (data.uHeight || "1") + "U";
         document.getElementById("node-role").textContent = data.role;
-
+      
         populateRackDropdown();
         const assignedRackSelect = document.getElementById("node-assigned-rack");
         if (assignedRackSelect) {
@@ -6115,7 +6190,7 @@
         const styleEntry = savedStyles[id] || {};
         const resolvedStyles = resolveStylesEntry(styleEntry);
         const scopeKey = currentStyleScope || "all";
-        const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+        const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
         const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(styleEntry, p), );
         const scopedStyles = isFlat ? styleEntry : styleEntry[scopeKey] || {};
         const circleColorInput = document.getElementById("circle-color");
@@ -6128,6 +6203,8 @@
         const shapeSelect = document.getElementById("shape-select");
         const scopeSelect = document.getElementById("style-scope");
         circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || "#1e293b";
+        const circleBorderInput = document.getElementById("circle-border");
+        circleBorderInput.value = scopedStyles.circleBorder || resolvedStyles.circleBorder || "#475569";
         titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || "#e2e8f0";
         titleFontSelect.value = scopedStyles.titleFont || resolvedStyles.titleFont || "system-ui, sans-serif";
         titleSizeInput.value = scopedStyles.titleSize || resolvedStyles.titleSize || 18;
@@ -6262,15 +6339,19 @@
          notesEl.append(li);
         });
         const addLineSelect = document.getElementById("add-line-select");
-        addLineSelect.innerHTML = "";
-        Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
-         if (nodeId !== id) {
-          const opt = document.createElement("option");
-          opt.value = nodeId;
-          opt.textContent = node.name;
-          addLineSelect.appendChild(opt);
-         }
-        });
+      addLineSelect.innerHTML = "";
+      const currentRack = data.assignedRack || "";
+      Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
+      if (nodeId !== id) {
+      const nodeRack = node.assignedRack || "";
+      if (currentRack === nodeRack) {
+      const opt = document.createElement("option");
+      opt.value = nodeId;
+      opt.textContent = node.name;
+      addLineSelect.appendChild(opt);
+      }
+      }
+      });
         
         const pingEnabled = data.ping && data.ping.enabled;
         document.getElementById('node-pingable').checked = pingEnabled;
@@ -6718,7 +6799,8 @@
          const newShape = createNodeShape(currentNodeId, newSize);
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
-         if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+         if (styles.circleColor) newShape.style.fill = styles.circleColor;
+		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -6747,7 +6829,8 @@
          const newShape = createNodeShape(currentNodeId, defaultSize);
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
-         if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+         if (styles.circleColor) newShape.style.fill = styles.circleColor;
+		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -6774,7 +6857,8 @@
         const shapeEl = nodeGroup.querySelector(".node-circle");
         const label = nodeGroup.querySelector(".node-label");
         const sub = nodeGroup.querySelector(".node-sub");
-        if (property === "circleColor" && shapeEl) shapeEl.style.stroke = value;
+        if (property === "circleColor" && shapeEl) shapeEl.style.fill = value;
+		else if (property === "circleBorder" && shapeEl) shapeEl.style.stroke = value;
         else if (property === "titleColor" && label) label.style.fill = value;
         else if (property === "titleFont" && label) label.style.fontFamily = value;
         else if (property === "titleSize" && label) label.style.fontSize = value + "px";
@@ -6783,6 +6867,7 @@
         else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
        };
        document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value), );
+	   document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
        document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value), );
        document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value), );
        document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)), );
@@ -7410,7 +7495,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle"); 
+      pushUndo("draw rectangle"); 
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -7516,7 +7601,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle");
+      pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -7593,7 +7678,7 @@
         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
         
         const newId = "text-" + Date.now();
-		pushUndo("add text");
+      pushUndo("add text");
         TEXT_DATA.list.push({
          id: newId,
          x: svgP.x,
@@ -7674,7 +7759,7 @@
        }
        
        function deleteText(textId) {
-	    pushUndo("delete text");
+      pushUndo("delete text");
         TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
         forgeTheTopology();
         
@@ -7688,7 +7773,7 @@
         if (!currentTextId) return;
         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
         if (textItem) {
-		 pushUndo("edit text");
+      pushUndo("edit text");
          textItem.content = e.target.value;
          forgeTheTopology();
         }
@@ -8170,18 +8255,19 @@
        }
       
        function captureTheQuickening() {
-  const currentTab = documentTabs[currentTabIndex];
-  currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
-  currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
-  currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
-  currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
-  currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
-  currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
-  currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
-  currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
-  
-  return {
-    nodeData: NODE_DATA,
+      const currentTab = documentTabs[currentTabIndex];
+      currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+      currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+      currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+      currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+      currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+      currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+      currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+      currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+      currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+       
+      return {
+      nodeData: NODE_DATA,
        edgeData: EDGE_DATA,
        rectData: RECT_DATA,
        textData: TEXT_DATA,
@@ -8209,7 +8295,7 @@
        encryptedSections: encryptedSections,
       };
       }
-
+      
        function assembleTheImmortalForm() {
         const clone = document.documentElement.cloneNode(true);
         const nodeScript = clone.querySelector("#nodes-json");
@@ -8284,7 +8370,7 @@
        }
        
       function captureState() {
-	    return {
+      return {
         nodes: JSON.parse(JSON.stringify(NODE_DATA)),
         edges: JSON.parse(JSON.stringify(EDGE_DATA)),
         positions: JSON.parse(JSON.stringify(savedPositions)),
@@ -8325,7 +8411,7 @@
       }
       
       function restoreState(state) {
-	   NODE_DATA = state.nodes;
+      NODE_DATA = state.nodes;
        EDGE_DATA = state.edges;
        savedPositions = state.positions;
        savedSizes = state.sizes;
@@ -8658,7 +8744,7 @@
         
         forgeTheTopology();
       }
-
+      
       function cycleNodes(reverse = false) {
         const nodeIds = Object.keys(NODE_DATA).filter(id => {
           if (currentView.mode === "rack" && currentView.rackId) {
@@ -8683,7 +8769,7 @@
         selectedNodes.clear();
         updateNodeSelection();
       }
-
+      
       function focusOnSelected() {
         const nodesToFocus = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
@@ -8723,7 +8809,7 @@
         
         forgeTheTopology();
       }
-
+      
       function toggleLockSelected() {
         const nodesToToggle = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
@@ -8742,7 +8828,7 @@
         });
         
         forgeTheTopology();
-
+      
         const lockState = hasUnlocked ? "locked" : "unlocked";
       }
       
@@ -8774,12 +8860,12 @@
         
         forgeTheTopology();
       }
-
+      
       function handleKeyDown(event) {
        if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA" || event.target.isContentEditable) {
         return;
        }
-
+      
        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
         event.preventDefault();
         const distance = event.shiftKey ? 10 : 1;
@@ -9318,7 +9404,7 @@
          }
         });
        }
-
+      
        const tabsBtn = document.getElementById("tabs-btn");
        const tabsModal = document.getElementById("tabs-modal");
        const tabsModalClose = document.getElementById("tabs-modal-close");
@@ -9385,7 +9471,7 @@
            }
          });
        }
-
+      
        const auditFilter = document.getElementById("audit-filter");
        if (auditFilter) {
          auditFilter.addEventListener("change", (e) => {
@@ -9445,12 +9531,14 @@
        const assignedRackSelect = document.getElementById("node-assigned-rack");
        if (assignedRackSelect) {
         assignedRackSelect.addEventListener("change", (e) => {
-         if (currentNodeId) {
-          pushUndo("change assigned rack");
-          NODE_DATA[currentNodeId].assignedRack = e.target.value;
-          forgeTheTopology();
-         }
-        });
+      if (currentNodeId) {
+      pushUndo("change assigned rack");
+      EDGE_DATA.list = EDGE_DATA.list.filter(edge => edge.from !== currentNodeId && edge.to !== currentNodeId);
+      NODE_DATA[currentNodeId].assignedRack = e.target.value;
+      forgeTheTopology();
+      claimTheImmortal(currentNodeId);
+      }
+      });
        }
        
        const rackCapacitySelect = document.getElementById("node-rack-capacity");
@@ -9653,14 +9741,14 @@
          document.getElementById('selected-node-icon').style.display = 'none';
         }
         newNodeIconTags = [];
-		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-		const centerX = canvasState.panX + (viewWidth / 2);
-		const centerY = canvasState.panY + (viewHeight / 2);
-		savedPositions[nodeId] = {
-		x: centerX,
-		y: centerY
-		};
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      const centerX = canvasState.panX + (viewWidth / 2);
+      const centerY = canvasState.panY + (viewHeight / 2);
+      savedPositions[nodeId] = {
+      x: centerX,
+      y: centerY
+      };
         addNodeModal.classList.remove("active");
         forgeTheTopology();
         claimTheImmortal(nodeId);
@@ -9957,7 +10045,8 @@
         currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
         currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
         currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
-        
+        currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+
         currentTabIndex = index;
         const newTab = documentTabs[index];
         NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
@@ -9968,8 +10057,10 @@
         EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
         RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
         TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
+        wieldThePower();
         document.title = newTab.name;
-		document.getElementById("page-title").textContent = newTab.name;
+        document.getElementById("page-title").textContent = newTab.name;
         forgeTheTopology();
         displayTabs();
         
@@ -9995,7 +10086,8 @@
           styles: {},
           legend: {},
           rects: { list: [] },
-          texts: { list: [] }
+          texts: { list: [] },
+		  pageState: null
         };
         
         documentTabs.push(newTab);
@@ -10058,7 +10150,7 @@
           `;
         }).join('');
       }
-
+      
       function logAuditEvent(type, description, details = {}) {
         const event = {
           timestamp: Date.now(),
@@ -10280,7 +10372,7 @@
           `;
         }).join('');
       }
-	  
+      
        const clearAllBtn = document.getElementById("clear-all-btn");
        const clearAllModal = document.getElementById("clear-all-modal");
        const clearAllCancel = document.getElementById("clear-all-cancel");
@@ -10483,7 +10575,7 @@
         link.click();
         URL.revokeObjectURL(url);
        }
-	   let resizeTimeout;
+      let resizeTimeout;
        window.addEventListener('resize', () => {
        clearTimeout(resizeTimeout);
        resizeTimeout = setTimeout(() => {
@@ -10492,5 +10584,5 @@
        }, 100);
       });	   
     </script>
-   </body>
+  </body>
 </html>

@@ -13,8 +13,9 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9 : 12/4/25
+## Version 3.9.2 : 12/5/25
 
+* **NEW 3.9.2** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
 * **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
@@ -33,7 +34,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
 * **NEW 3.7** Added Racks and individual rack canvasses!
 * **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
- 
+  * See more changes in the [changelog.md](changelog.md)
+  
 # Demos
 
 * **Core Edition**

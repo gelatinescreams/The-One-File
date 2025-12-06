@@ -1,6 +1,39 @@
 ### CHANGE LOG
 *Thank you to Discord testers!!*
 
+## Version 3.9.2 : 12/5/25 Bug fixes
+
+* **Various bug fixes including**
+  * Fixed a bug where rack and node colors were not applying correctly
+  * Added node and rack border along with fill to icons
+  * Fixed a bug where rack view can get stuck
+  * Fixed a bug where rack height and rack unit got swapped causing drag errors in rack view
+  * Fixed a bug where lines could be added to a node when the node was inside a rack
+  * Fixed a bug where lines would persist after a node is added to a rack
+  * Fixed various dragging and dropping bugs
+  * Changed the icons to not animate on desktop (this was implemented in version .2, well before the style sidebar)
+
+## Version 3.9 : 12/4/25
+
+* **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
+  * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
+* **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
+* **NEW 3.9** Snapshots are now implemeted. Auto save and manual save is available.
+* **NEW 3.9** Action audits are now implemeted. This allows you to audit whether or not the file has been tampered in an easy to read log.
+  * *Note: Both snapshots and audits are local browser only and do not trasnfer to another device. This feature is coming in 4.0*
+* **NEW 3.7** The Rackening!!
+  * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
+* **NEW 3.7** Layers upon layers!!
+  * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
+* **NEW 3.7** Added Racks and individual rack canvasses!
+* **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
+* **NEW 3.7** The Rackening!!
+  * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
+* **NEW 3.7** Layers upon layers!!
+  * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
+* **NEW 3.7** Added Racks and individual rack canvasses!
+* **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
+
 ## Version 3.7 - 12/3/25
 * **NEW 3.7 Advanced Keyboard Navigation**
   * **Arrow Keys** Move selected nodes 1 pixel in any direction for precise positioning

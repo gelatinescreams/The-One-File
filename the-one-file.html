@@ -1,5 +1,6 @@
 <!DOCTYPE html> 
- <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 103px; --sidebar-width: 350px; --mobile-footer-height: 40vh; --draw-toolbar-height: 0px;"><head>
+<html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 103px; --sidebar-width: 350px; --mobile-footer-height: 40vh; --draw-toolbar-height: 0px;">
+  <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -336,10 +337,10 @@
       left: auto;
       transform: none;
       }
-	  @media (min-width: 768px) {
-	   .bulk-toolbar-mobile {
-	    display: none !important;
-       }
+      @media (min-width: 768px) {
+      .bulk-toolbar-mobile {
+      display: none !important;
+      }
       }	  
       .bulk-action-btn {
       padding: 16px;
@@ -702,7 +703,10 @@
       stroke-width: 1.5;
       cursor: grab;
       }
-      .node-circle {
+	  .node-circle {
+      fill: #1e293b;
+      stroke: #475569;
+      stroke-width: 2;
       transition: 0.25s ease;
       transform-origin: center center;
       }
@@ -711,12 +715,7 @@
       pointer-events: all;
       }
       .node-group:hover .node-circle {
-      transform: scale(1.08);
       filter: drop-shadow(0 0 10px rgba(79, 209, 197, 0.45));
-      }
-      .node-group:hover .node-label,
-      .node-group:hover .node-sub {
-      transform: scale(1.08);
       }
       .node-group.active .node-circle {
       stroke: var(--accent);
@@ -1175,7 +1174,6 @@
       display: flex;
       gap: 6px;
       }
-      
       .audit-entry {
       padding: 8px 12px;
       background: var(--panel);
@@ -1196,7 +1194,6 @@
       color: var(--text-main);
       font-weight: 500;
       }
-      
       .tab-item {
       display: flex;
       justify-content: space-between;
@@ -1330,9 +1327,9 @@
       .canvas-hint {
       top: calc(10px + 120px);
       }
-	  #search-input {
-	  width: 100%;
-	  }
+      #search-input {
+      width: 100%;
+      }
       }
     </style>
   </head>
@@ -1363,6 +1360,9 @@
         <p> Browsers are not allowed to overwrite local files automatically. When you click <strong>Save File</strong>, this page generates a new updated HTML file that contains all of your changes. Replace your old file with the new one to keep your edits. </p>
         <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
           <strong>Encryption:</strong> Check the "Encrypt" box before saving to password protect your data. You'll need the password to open the file later. No recovery possible!!
+        </p>
+		 <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
+          <strong>Data Decrpytion:</strong> Want to decrpyt your data? Simply export it using json export in top menu after successful password validation
         </p>
         <div class="modal-buttons">
           <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1437,11 +1437,11 @@
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
         </details>
-		<details class="style-section" open="">
+        <details class="style-section" open="">
           <summary>Clear All</summary>
           <div class="style-content">
             <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">This deletes everything on the canvas!</p>
-			<button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
+            <button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
         </details>
@@ -1554,20 +1554,20 @@
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Toggle which layers are visible on the canvas</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Physical Layer</span>
+          <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Physical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Logical Layer</span>
+          <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Logical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Security Layer</span>
+          <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Security Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Application Layer</span>
+          <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Application Layer</span>
           </label>
         </div>
         <div style="margin-top: 15px; display: flex; gap: 8px;">
@@ -1579,7 +1579,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="tabs-modal">
       <div class="modal-content" style="max-width: 600px;">
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
@@ -1594,12 +1593,13 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="rollback-modal">
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div>
+        </div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -1609,7 +1609,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="audit-log-modal">
       <div class="modal-content" style="max-width: 800px;">
         <h3>Audit Log</h3>
@@ -1625,14 +1624,15 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div>
+        </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
         </div>
       </div>
     </div>
-    
     <div class="modal" id="secrets-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3>Notes</h3>
@@ -1648,15 +1648,14 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="secret-editor-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3 id="secret-editor-title">Edit Note</h3>
         <textarea id="secret-editor-content" placeholder="Enter sensitive information here..." style="width: 100%; height: 200px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-family: monospace; resize: vertical; margin-bottom: 15px;"></textarea>
         <div style="margin-bottom: 15px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
-            <span>Encrypt Note</span>
+          <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
+          <span>Encrypt Note</span>
           </label>
         </div>
         <div class="modal-buttons">
@@ -1665,7 +1664,6 @@
         </div>
       </div>
     </div>
-    
     <div id="context-menu" style="display: none !important;">
     </div>
     <header>
@@ -1780,7 +1778,8 @@
         <div id="bulk-actions-modal" style="display: none;position: fixed;bottom: 0;left: 0;right: 0;background: var(--panel-alt);border-top-left-radius: 20px;border-top-right-radius: 20px;padding: 20px;padding-bottom: env(safe-area-inset-bottom, 20px);box-shadow: 0 -4px 20px rgba(0,0,0,0.5);z-index: 10000;max-height: calc(100vh - 80px);overflow-y: auto;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="margin: 0; color: var(--accent); font-size: 20px;">
-              <span id="bulk-count-modal">0</span> Nodes Selected</h3>
+              <span id="bulk-count-modal">0</span> Nodes Selected
+            </h3>
             <button id="bulk-modal-close" style="background: none;border: none;font-size: 24px;cursor: pointer;color: var(--text-main);padding: 0;width: 32px;height: 32px;">✕</button>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -1797,10 +1796,32 @@
           </div>
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
-        <div class="canvas-hint" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to clone and align</li><li>Right-click to select multiple</li><li>You have the power</li><li>Your time is NOW!</li></ul></div>
-        <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
+        <div class="canvas-hint" id="canvas-hint">
+          <ul>
+            <li>Scroll to zoom</li>
+            <li>Drag to pan</li>
+            <li>Right-click to clone and align</li>
+            <li>Right-click to select multiple</li>
+            <li>You have the power</li>
+            <li>Your time is NOW!</li>
+          </ul>
+        </div>
+        <div class="legend-container" id="edge-legend" style="display: none;">
+          <div class="legend-title">Line Legend</div>
+          <button type="button" class="legend-close-btn">✕</button>
+        </div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="0 0 4000 3000" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect></svg>
+          <svg id="map" viewBox="0 0 4000 3000" style="">
+            <defs>
+              <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path>
+              </marker>
+              <marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path>
+              </marker>
+            </defs>
+            <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
+          </svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
@@ -1819,10 +1840,10 @@
           </div>
         </div>
         <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
-		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
-		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
-		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
-		</section>
+        <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+        <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
+      </section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -1865,7 +1886,9 @@
           </div>
           <div class="details-info-row" id="assigned-rack-row">
             <span style="color: var(--text-soft); font-size: 14px;">Assigned Rack:</span>
-            <select id="node-assigned-rack" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option></select>
+            <select id="node-assigned-rack" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
+              <option value="">None</option>
+            </select>
           </div>
           <div class="details-info-row" id="rack-capacity-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px;">Rack Capacity:</span>
@@ -1924,8 +1947,12 @@
                 </select>
               </div>
               <div class="style-row">
-                <label>Circle Color:</label>
+                <label>Fill Color:</label>
                 <input type="color" id="circle-color" value="#1e293b">
+              </div>
+              <div class="style-row">
+                <label>Border Color:</label>
+                <input type="color" id="circle-border" value="#475569">
               </div>
               <div class="style-row">
                 <label>Title Color:</label>
@@ -2127,69 +2154,70 @@
     </main>
     <script id="nodes-json" type="application/json">{}</script>
     <script id="topology-state" type="application/json">{
-  "nodeData": {},
-  "edgeData": {
-    "list": []
-  },
-  "rectData": {
-    "list": []
-  },
-  "textData": {
-    "list": []
-  },
-  "edgeLegend": {},
-  "nodePositions": {},
-  "nodeSizes": {},
-  "nodeStyles": {},
-  "page": {
-    "title": "The One File",
-    "background": "",
-    "topbarBg": "rgba(9, 12, 20, 0.9)",
-    "topbarBorder": "#1f2533",
-    "panel": "#0b0e13",
-    "panelAlt": "#10141b",
-    "accent": "#4fd1c5",
-    "danger": "#f56565",
-    "textMain": "#e2e8f0",
-    "textSoft": "#94a3b8",
-    "topbarHeight": 103,
-    "sidebarWidth": 350,
-    "mobileFooterHeight": 40,
-    "sidebarCollapsed": false
-  },
-  "canvas": {
-    "zoom": 1,
-    "panX": 0,
-    "panY": 0
-  },
-  "savedTopologyView": null,
-  "documentTabs": [
-    {
-      "id": "main",
-      "name": "Main Topology",
-      "nodes": {},
-      "edges": {
+      "nodeData": {},
+      "edgeData": {
         "list": []
       },
-      "positions": {},
-      "sizes": {},
-      "styles": {},
-      "legend": {},
-      "rects": {
+      "rectData": {
         "list": []
       },
-      "texts": {
+      "textData": {
         "list": []
+      },
+      "edgeLegend": {},
+      "nodePositions": {},
+      "nodeSizes": {},
+      "nodeStyles": {},
+      "page": {
+        "title": "The One File",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 103,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false
+      },
+      "canvas": {
+        "zoom": 1,
+        "panX": 0,
+        "panY": 0
+      },
+      "savedTopologyView": null,
+      "documentTabs": [
+        {
+          "id": "main",
+          "name": "Main Topology",
+          "nodes": {},
+          "edges": {
+            "list": []
+          },
+          "positions": {},
+          "sizes": {},
+          "styles": {},
+          "legend": {},
+          "rects": {
+            "list": []
+          },
+          "texts": {
+            "list": []
+          }
+        }
+      ],
+      "currentTabIndex": 0,
+      "encryptedSections": {}
       }
-    }
-  ],
-  "currentTabIndex": 0,
-  "encryptedSections": {}
-}</script>
+    </script>
     <script>
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
       let currentNodeId = "host";
-	  let textDrawMode = false;
+      let textDrawMode = false;
       let currentEdgeId = null;
       let currentStyleScope = "all";
       let NODE_DATA = {};
@@ -2253,10 +2281,11 @@
         styles: {},
         legend: {},
         rects: { list: [] },
-        texts: { list: [] }
+        texts: { list: [] },
+		pageState: null
       }];
       let currentTabIndex = 0;
-
+      
       let encryptedSections = {}; 
       
       let performanceMode = "auto"; 
@@ -2380,7 +2409,7 @@
           this.updateLayoutControls();
         }
       };
-	  
+      
       function isMobileDevice() {
         return MobileManager.isMobile;
       }
@@ -2397,7 +2426,7 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }
-	  
+      
       function ensureLegendMiniButton() {
        if (legendMiniBtn) return legendMiniBtn;
        const panel = document.querySelector(".topology-panel");
@@ -2548,13 +2577,13 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
       } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
       
@@ -2570,16 +2599,16 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {   
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
         } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
-	  
+      
       const DEFAULT_PAGE_STATE = {
        title: "The One File",
        background: "",
@@ -2598,14 +2627,19 @@
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
       const CANVAS_WIDTH = 4000;
-      const CANVAS_HEIGHT = 3000;
+      let CANVAS_HEIGHT = 3000;
+      const BASE_CANVAS_HEIGHT = 3000;
       const CANVAS_PADDING = 100;
       
       const RACK_U_HEIGHT = 70; 
       const RACK_WIDTH = 600;
       const RACK_START_X = CANVAS_WIDTH / 2; 
       const RACK_START_Y = CANVAS_PADDING + 100;
-      
+      function getRackUHeight(rackId) {
+      const capacity = getRackCapacity(rackId);
+      const availableHeight = CANVAS_HEIGHT - RACK_START_Y - 200;
+      return Math.floor(availableHeight / capacity);
+      }
       let canvasState = {
        zoom: 1,
        panX: 0,
@@ -2855,7 +2889,12 @@
       }
       
       function enterRack(rackId) {
-       if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
+      if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
+      const rackCapacity = getRackCapacity(rackId);
+      const neededHeight = RACK_START_Y + (rackCapacity * RACK_U_HEIGHT) + 200;
+      if (neededHeight > BASE_CANVAS_HEIGHT) {
+      CANVAS_HEIGHT = neededHeight;
+      }
        
        savedTopologyView = {
         zoom: canvasState.zoom,
@@ -2875,10 +2914,11 @@
         hint.classList.add("visible");
        }
        
-       const rackCapacity = getRackCapacity(rackId);
-       const rackHeight = rackCapacity * RACK_U_HEIGHT;
-       const rackCenterX = RACK_START_X;
-       const rackCenterY = RACK_START_Y + (rackHeight / 2);
+      
+      const rackUHeight = getRackUHeight(rackId);
+      const rackHeight = rackCapacity * rackUHeight;
+      const rackCenterX = RACK_START_X;
+      const rackCenterY = RACK_START_Y + (rackHeight / 2);
        
        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
@@ -2893,8 +2933,9 @@
       }
       
       function exitRack() {
-       currentView.mode = "topology";
-       currentView.rackId = null;
+      CANVAS_HEIGHT = BASE_CANVAS_HEIGHT;
+      currentView.mode = "topology";
+      currentView.rackId = null;
        
        const backBtn = document.getElementById("back-to-topology-btn");
        if (backBtn) backBtn.style.display = "none";
@@ -3075,6 +3116,7 @@
           EDGE_LEGEND = currentTab.legend || EDGE_LEGEND;
           RECT_DATA = currentTab.rects || RECT_DATA;
           TEXT_DATA = currentTab.texts || TEXT_DATA;
+		  if (currentTab.pageState) PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, currentTab.pageState);
         }
        }
            
@@ -3133,7 +3175,7 @@
       function ensureStyleEntry(id) {
        if (!savedStyles[id]) savedStyles[id] = {};
        const entry = savedStyles[id];
-       const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+       const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
        const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(entry, p), );
        if (isFlat) {
         const all = entry.all || {};
@@ -3539,7 +3581,10 @@
        shapeEl.classList.add("node-circle");
        const styles = resolveStylesForNode(id);
        if (styles.circleColor) {
-        shapeEl.style.stroke = styles.circleColor;
+        shapeEl.style.fill = styles.circleColor;
+       }
+       if (styles.circleBorder) {
+        shapeEl.style.stroke = styles.circleBorder;
        }
        return shapeEl;
       }
@@ -3668,7 +3713,7 @@
       }
       
        function deleteRectangle(rectId) {
-	    pushUndo("delete rectangle");
+      pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -3730,6 +3775,7 @@
        
        if (currentView.mode === "rack" && currentView.rackId) {
         const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
         const rackGroup = document.createElementNS(ns, "g");
         rackGroup.id = "rack-visualization";
         
@@ -3737,7 +3783,9 @@
         rackFrame.setAttribute("x", RACK_START_X - RACK_WIDTH / 2);
         rackFrame.setAttribute("y", RACK_START_Y);
         rackFrame.setAttribute("width", RACK_WIDTH);
-        rackFrame.setAttribute("height", rackCapacity * RACK_U_HEIGHT);
+      
+      rackFrame.setAttribute("height", rackCapacity * rackUHeight);
+      
         rackFrame.setAttribute("fill", "rgba(15, 23, 42, 0.3)");
         rackFrame.setAttribute("stroke", "var(--accent)");
         rackFrame.setAttribute("stroke-width", "3");
@@ -3745,7 +3793,8 @@
         rackGroup.appendChild(rackFrame);
         
         for (let u = 0; u <= rackCapacity; u++) {
-         const y = RACK_START_Y + u * RACK_U_HEIGHT;
+         const y = RACK_START_Y + u * rackUHeight;
+      
          
          const line = document.createElementNS(ns, "line");
          line.setAttribute("x1", RACK_START_X - RACK_WIDTH / 2);
@@ -3761,7 +3810,8 @@
           const uNumber = rackCapacity - u; 
           const text = document.createElementNS(ns, "text");
           text.setAttribute("x", RACK_START_X - RACK_WIDTH / 2 - 30);
-          text.setAttribute("y", y + RACK_U_HEIGHT / 2);
+          text.setAttribute("y", y + rackUHeight / 2);
+      
           text.setAttribute("text-anchor", "middle");
           text.setAttribute("dominant-baseline", "middle");
           text.style.fill = "var(--accent)";
@@ -3772,7 +3822,8 @@
           
           const textRight = document.createElementNS(ns, "text");
           textRight.setAttribute("x", RACK_START_X + RACK_WIDTH / 2 + 30);
-          textRight.setAttribute("y", y + RACK_U_HEIGHT / 2);
+          textRight.setAttribute("y", y + rackUHeight / 2);
+      
           textRight.setAttribute("text-anchor", "middle");
           textRight.setAttribute("dominant-baseline", "middle");
           textRight.style.fill = "var(--accent)";
@@ -3839,9 +3890,9 @@
             e.preventDefault();
             deleteRectangle(rect.id);
            });
-		   
+      
            deleteBtn.addEventListener("touchend", (e) => {
-		   e.stopPropagation();
+      e.stopPropagation();
            e.preventDefault();
            deleteRectangle(rect.id);
            });
@@ -4228,10 +4279,12 @@
          if (node.assignedRack !== currentView.rackId) return;
          
          const rackUnit = parseInt(node.rackUnit) || 1;
-         const uHeight = parseInt(node.uHeight) || 1;
-         const rackCapacity = getRackCapacity(currentView.rackId);
-         pos.x = RACK_START_X;
-         pos.y = RACK_START_Y + (rackUnit - 1) * RACK_U_HEIGHT + (uHeight * RACK_U_HEIGHT) / 2;
+      const uHeight = parseInt(node.uHeight) || 1;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      pos.x = RACK_START_X;
+      pos.y = RACK_START_Y + (rackCapacity - rackUnit - uHeight + 1) * rackUHeight + (uHeight * rackUHeight) / 2;
+      
         } else {
          if (node.assignedRack) return;
         }
@@ -4405,17 +4458,20 @@
          startX = svgP.x;
          startY = svgP.y;
          
-         if (selectedNodes.has(id)) {
-          initialPositions = {};
-          selectedNodes.forEach(nodeId => {
-           const nodePos = savedPositions[nodeId];
-           if (nodePos) {
-            initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
-           }
-          });
-         } else {
-          initialPositions = { [id]: { x: pos.x, y: pos.y } };
-         }
+      if (selectedNodes.has(id)) {
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) {
+      initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      }
+      });
+      } else {
+      initialPositions = { [id]: { x: pos.x, y: pos.y } };
+      }
+      if (currentView.mode === "rack") {
+      initialPositions[id] = { x: pos.x, y: pos.y };
+      }
          
          g.style.cursor = "grabbing";
          hitArea.style.cursor = "grabbing";
@@ -4528,14 +4584,25 @@
           }
          });
         };
-        const handleMouseUp = () => {
-         if (isDragging) {
-          pushUndo("move nodes");
-          isDragging = false;
-          g.style.cursor = "grab";
-          hitArea.style.cursor = "grab";
-         }
-        };
+      const handleMouseUp = () => {
+      if (isDragging) {
+      pushUndo("move nodes");
+      isDragging = false;
+      g.style.cursor = "grab";
+      hitArea.style.cursor = "grab";
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const draggedY = savedPositions[id]?.y || pos.y;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      };
         document.addEventListener("mousemove", handleMouseMove);
         document.addEventListener("mouseup", handleMouseUp);
         let touchStartTime = 0;
@@ -4695,20 +4762,31 @@
         }, {
          passive: false
         });
-        g.addEventListener("touchend", (e) => {
-         const touchDuration = Date.now() - touchStartTime;
-         if (!touchMoved && touchDuration < 400) {
-          claimTheImmortal(id);
-         }
-         if (isDragging) {
-          isDragging = false;
-          savedPositions[id] = {
-           x: pos.x,
-           y: pos.y
-          };
-         }
-         touchMoved = false;
-        });
+      g.addEventListener("touchend", (e) => {
+      const touchDuration = Date.now() - touchStartTime;
+      if (!touchMoved && touchDuration < 400) {
+      claimTheImmortal(id);
+      }
+      if (isDragging) {
+      const draggedY = pos.y;
+      isDragging = false;
+      savedPositions[id] = {
+      x: pos.x,
+      y: pos.y
+      };
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      touchMoved = false;
+      });
         g.style.cursor = "grab";
         g.addEventListener("click", (e) => {
          if (!isDragging) {
@@ -5279,7 +5357,7 @@
        const styleEntry = savedStyles[id] || {};
        const resolvedStyles = resolveStylesEntry(styleEntry);
        const scopeKey = currentStyleScope || "all";
-       const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+       const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
        const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(styleEntry, p), );
        const scopedStyles = isFlat ? styleEntry : styleEntry[scopeKey] || {};
        const circleColorInput = document.getElementById("circle-color");
@@ -5292,6 +5370,8 @@
        const shapeSelect = document.getElementById("shape-select");
        const scopeSelect = document.getElementById("style-scope");
        circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || "#1e293b";
+       const circleBorderInput = document.getElementById("circle-border");
+       circleBorderInput.value = scopedStyles.circleBorder || resolvedStyles.circleBorder || "#475569";
        titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || "#e2e8f0";
        titleFontSelect.value = scopedStyles.titleFont || resolvedStyles.titleFont || "system-ui, sans-serif";
        titleSizeInput.value = scopedStyles.titleSize || resolvedStyles.titleSize || 18;
@@ -5384,16 +5464,20 @@
         });
         notesEl.append(li);
        });
-       const addLineSelect = document.getElementById("add-line-select");
-       addLineSelect.innerHTML = "";
-       Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
-        if (nodeId !== id) {
-         const opt = document.createElement("option");
-         opt.value = nodeId;
-         opt.textContent = node.name;
-         addLineSelect.appendChild(opt);
-        }
-       });
+      const addLineSelect = document.getElementById("add-line-select");
+      addLineSelect.innerHTML = "";
+      const currentRack = data.assignedRack || "";
+      Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
+      if (nodeId !== id) {
+      const nodeRack = node.assignedRack || "";
+      if (currentRack === nodeRack) {
+      const opt = document.createElement("option");
+      opt.value = nodeId;
+      opt.textContent = node.name;
+      addLineSelect.appendChild(opt);
+      }
+      }
+      });
       }
       
       function selectTheConnection(id) {
@@ -5809,7 +5893,8 @@
         const newShape = createShapeElement(shapeType, newSize);
         newShape.classList.add("node-circle");
         const styles = resolveStylesForNode(currentNodeId);
-        if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+        if (styles.circleColor) newShape.style.fill = styles.circleColor;
+        if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
         nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
         const label = nodeGroup.querySelector(".node-label");
         const sub = nodeGroup.querySelector(".node-sub");
@@ -5838,7 +5923,8 @@
         const newShape = createNodeShape(currentNodeId, defaultSize);
         nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
         const styles = resolveStylesForNode(currentNodeId);
-        if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+        if (styles.circleColor) newShape.style.fill = styles.circleColor;
+        if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
         const label = nodeGroup.querySelector(".node-label");
         const sub = nodeGroup.querySelector(".node-sub");
         if (label) {
@@ -5863,7 +5949,8 @@
        const shapeEl = nodeGroup.querySelector(".node-circle");
        const label = nodeGroup.querySelector(".node-label");
        const sub = nodeGroup.querySelector(".node-sub");
-       if (property === "circleColor" && shapeEl) shapeEl.style.stroke = value;
+       if (property === "circleColor" && shapeEl) shapeEl.style.fill = value;
+	   else if (property === "circleBorder" && shapeEl) shapeEl.style.stroke = value;
        else if (property === "titleColor" && label) label.style.fill = value;
        else if (property === "titleFont" && label) label.style.fontFamily = value;
        else if (property === "titleSize" && label) label.style.fontSize = value + "px";
@@ -5872,6 +5959,7 @@
        else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
       };
       document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value), );
+      document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
       document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value), );
       document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value), );
       document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)), );
@@ -6435,7 +6523,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle");
+      pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -6541,7 +6629,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle");
+      pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -6618,7 +6706,7 @@
        const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
        
        const newId = "text-" + Date.now();
-	   pushUndo("add text");
+      pushUndo("add text");
        TEXT_DATA.list.push({
         id: newId,
         x: svgP.x,
@@ -6699,7 +6787,7 @@
       }
       
       function deleteText(textId) {
-	   pushUndo("delete text");
+      pushUndo("delete text");
        TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
        forgeTheTopology();
        
@@ -6713,7 +6801,7 @@
        if (!currentTextId) return;
        const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
        if (textItem) {
-	    pushUndo("edit text");
+      pushUndo("edit text");
         textItem.content = e.target.value;
         forgeTheTopology();
        }
@@ -7155,6 +7243,7 @@
        currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
        currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
        currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+       currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
        
        return {
         nodeData: NODE_DATA,
@@ -7254,7 +7343,7 @@
       }
       
       function captureState() {
-	   return {
+      return {
        nodes: JSON.parse(JSON.stringify(NODE_DATA)),
        edges: JSON.parse(JSON.stringify(EDGE_DATA)),
        positions: JSON.parse(JSON.stringify(savedPositions)),
@@ -7312,18 +7401,18 @@
       }
       
       function restoreState(state) {
-	   NODE_DATA = state.nodes;
-	   EDGE_DATA = state.edges;
-	   savedPositions = state.positions;
-	   savedSizes = state.sizes;
-	   savedStyles = state.styles;
-	   EDGE_LEGEND = state.legend;
-	   RECT_DATA = state.rects || { list: [] };
-	   TEXT_DATA = state.texts || { list: [] };
-	   forgeTheTopology();
-	   if (currentNodeId && NODE_DATA[currentNodeId]) {
+      NODE_DATA = state.nodes;
+      EDGE_DATA = state.edges;
+      savedPositions = state.positions;
+      savedSizes = state.sizes;
+      savedStyles = state.styles;
+      EDGE_LEGEND = state.legend;
+      RECT_DATA = state.rects || { list: [] };
+      TEXT_DATA = state.texts || { list: [] };
+      forgeTheTopology();
+      if (currentNodeId && NODE_DATA[currentNodeId]) {
        claimTheImmortal(currentNodeId);
-	   } else if (currentEdgeId) {
+      } else if (currentEdgeId) {
        selectTheConnection(currentEdgeId);
        }
       }
@@ -7353,12 +7442,37 @@
       }
       
       function editNodeRack(id) {
-       const currentRack = NODE_DATA[id].rackUnit || "";
-       showEditModal("Edit Rack Unit", currentRack, (newRack) => {
+       const node = NODE_DATA[id];
+       if (!node) return;
+       
+       document.getElementById("modal-title").textContent = "Edit Rack Unit";
+       document.getElementById("modal-input").value = node.rackUnit || "";
+       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("modal-input").focus();
+       
+       const saveHandler = () => {
         pushUndo("edit rack");
-        NODE_DATA[id].rackUnit = newRack;
-        if (currentNodeId === id) {
-         document.getElementById("node-rack").textContent = newRack || "--";
+        const value = document.getElementById("modal-input").value.trim();
+        node.rackUnit = value;
+        document.getElementById("edit-modal").style.display = "none";
+        claimTheImmortal(id);
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+       };
+       
+       const cancelHandler = () => {
+        document.getElementById("edit-modal").style.display = "none";
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+       };
+       
+       document.getElementById("modal-save").addEventListener("click", saveHandler);
+       document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
+       
+       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
+        if (e.target === document.getElementById("edit-modal")) {
+         cancelHandler();
+         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
         }
        });
       }
@@ -7836,7 +7950,7 @@
         });
         
         forgeTheTopology();
-     
+      
         const lockState = hasUnlocked ? "locked" : "unlocked";
       }
       
@@ -7948,14 +8062,14 @@
           name: newName
          };
          
-		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-		const centerX = canvasState.panX + (viewWidth / 2);
-		const centerY = canvasState.panY + (viewHeight / 2);
-		savedPositions[nodeId] = {
-		x: centerX,
-		y: centerY
-		};
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      const centerX = canvasState.panX + (viewWidth / 2);
+      const centerY = canvasState.panY + (viewHeight / 2);
+      savedPositions[nodeId] = {
+      x: centerX,
+      y: centerY
+      };
          
          if (clipboard.size) savedSizes[newId] = clipboard.size;
          if (clipboard.style) savedStyles[newId] = clipboard.style;
@@ -8152,7 +8266,8 @@
         currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
         currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
         currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
-
+        currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+      
         currentTabIndex = index;
         const newTab = documentTabs[index];
         NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
@@ -8163,8 +8278,10 @@
         EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
         RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
         TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
+               wieldThePower();
         document.title = newTab.name;
-		document.getElementById("page-title").textContent = newTab.name;
+      document.getElementById("page-title").textContent = newTab.name;
         forgeTheTopology();
         displayTabs();
         
@@ -8190,7 +8307,8 @@
           styles: {},
           legend: {},
           rects: { list: [] },
-          texts: { list: [] }
+          texts: { list: [] },
+		  pageState: null
         };
         
         documentTabs.push(newTab);
@@ -8253,7 +8371,7 @@
           `;
         }).join('');
       }
-
+      
       function logAuditEvent(type, description, details = {}) {
         const event = {
           timestamp: Date.now(),
@@ -8268,7 +8386,7 @@
         if (auditLog.length > MAX_AUDIT_ENTRIES) {
           auditLog = auditLog.slice(0, MAX_AUDIT_ENTRIES);
         }
-
+      
         try {
           localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
         } catch (e) {
@@ -8476,7 +8594,7 @@
           `;
         }).join('');
       }
-
+      
       let rafId = null;
       let lastRender = 0;
       const RENDER_THROTTLE = 16;
@@ -8824,16 +8942,18 @@
        });
       }
       
-      const assignedRackSelect = document.getElementById("node-assigned-rack");
-      if (assignedRackSelect) {
-       assignedRackSelect.addEventListener("change", (e) => {
-        if (currentNodeId) {
-         pushUndo("change assigned rack");
-         NODE_DATA[currentNodeId].assignedRack = e.target.value;
-         forgeTheTopology();
-        }
-       });
+       const assignedRackSelect = document.getElementById("node-assigned-rack");
+       if (assignedRackSelect) {
+      assignedRackSelect.addEventListener("change", (e) => {
+      if (currentNodeId) {
+      pushUndo("change assigned rack");
+      EDGE_DATA.list = EDGE_DATA.list.filter(edge => edge.from !== currentNodeId && edge.to !== currentNodeId);
+      NODE_DATA[currentNodeId].assignedRack = e.target.value;
+      forgeTheTopology();
+      claimTheImmortal(currentNodeId);
       }
+      });
+       }
       
       const rackCapacitySelect = document.getElementById("node-rack-capacity");
       if (rackCapacitySelect) {
@@ -9181,14 +9301,14 @@
         NODE_DATA[nodeId].assignedRack = currentView.rackId;
        }
        
-		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-		const centerX = canvasState.panX + (viewWidth / 2);
-		const centerY = canvasState.panY + (viewHeight / 2);
-		savedPositions[nodeId] = {
-		x: centerX,
-		y: centerY
-		};
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      const centerX = canvasState.panX + (viewWidth / 2);
+      const centerY = canvasState.panY + (viewHeight / 2);
+      savedPositions[nodeId] = {
+      x: centerX,
+      y: centerY
+      };
        pushUndo("add node");
        addNodeModal.classList.remove("active");
        forgeTheTopology();
@@ -9393,7 +9513,7 @@
        link.click();
        URL.revokeObjectURL(url);
       }
-	   let resizeTimeout;
+      let resizeTimeout;
        window.addEventListener('resize', () => {
        clearTimeout(resizeTimeout);
        resizeTimeout = setTimeout(() => {

@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
- <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 100px; --sidebar-width: 435px; --mobile-footer-height: 20vh; --draw-toolbar-height: 45px;"><head>
+ <html lang="en" style="--panel: #541c1c; --panel-alt: #701010; --accent: #feb4b4; --danger: #ff5c5c; --text-main: #ffffff; --text-soft: #ffffff; --topbar-bg: #000000; --topbar-border: #000000; --topbar-height: 100px; --sidebar-width: 435px; --mobile-footer-height: 20vh; --draw-toolbar-height: 45px;"><head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -339,10 +339,10 @@
       left: auto;
       transform: none;
       }
-	  @media (min-width: 768px) {
-	   .bulk-toolbar-mobile {
-	    display: none !important;
-       }
+      @media (min-width: 768px) {
+      .bulk-toolbar-mobile {
+      display: none !important;
+      }
       }	  
       .bulk-action-btn {
       padding: 16px;
@@ -705,6 +705,9 @@
       cursor: grab;
       }
       .node-circle {
+      fill: #1e293b;
+      stroke: #475569;
+      stroke-width: 2;
       transition: 0.25s ease;
       transform-origin: center center;
       }
@@ -713,12 +716,7 @@
       pointer-events: all;
       }
       .node-group:hover .node-circle {
-      transform: scale(1.08);
       filter: drop-shadow(0 0 10px rgba(79, 209, 197, 0.45));
-      }
-      .node-group:hover .node-label,
-      .node-group:hover .node-sub {
-      transform: scale(1.08);
       }
       .node-group.active .node-circle {
       stroke: var(--accent);
@@ -1420,7 +1418,6 @@
       width: 100%;
       }
       }
-     
       .version-item {
       display: flex;
       justify-content: space-between;
@@ -1550,14 +1547,13 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="tabs-modal">
       <div class="modal-content" style="max-width: 600px;">
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
         <div id="tabs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
             <div class="tab-item " onclick="switchTab(0)">
               <div class="tab-name">Corporate</div>
-              <div class="tab-stats">20 nodes • 22 connections</div>
+              <div class="tab-stats">21 nodes • 22 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
                 <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
@@ -1566,7 +1562,7 @@
           
             <div class="tab-item active" onclick="switchTab(1)">
               <div class="tab-name">Homelab</div>
-              <div class="tab-stats">19 nodes • 22 connections</div>
+              <div class="tab-stats">0 nodes • 0 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(1)" title="Rename tab">✏️</button>
                 <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
@@ -1582,12 +1578,13 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="rollback-modal">
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div>
+        </div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -1597,7 +1594,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="audit-log-modal">
       <div class="modal-content" style="max-width: 800px;">
         <h3>Audit Log</h3>
@@ -1613,14 +1609,15 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;">
+          <div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div>
+        </div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
         </div>
       </div>
     </div>
-    
     <div class="modal" id="secrets-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3>Notes</h3>
@@ -1636,15 +1633,14 @@
         </div>
       </div>
     </div>
-
     <div class="modal" id="secret-editor-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3 id="secret-editor-title">Edit Note</h3>
         <textarea id="secret-editor-content" placeholder="Enter sensitive information here..." style="width: 100%; height: 200px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-family: monospace; resize: vertical; margin-bottom: 15px;"></textarea>
         <div style="margin-bottom: 15px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
-            <span>Encrypt Note</span>
+          <input type="checkbox" id="secret-auto-encrypt" checked="" style="cursor: pointer;">
+          <span>Encrypt Note</span>
           </label>
         </div>
         <div class="modal-buttons">
@@ -1653,7 +1649,6 @@
         </div>
       </div>
     </div>
-    
     <div class="modal" id="edit-modal">
       <div class="modal-content">
         <h3 id="modal-title">Edit Name</h3>
@@ -1678,12 +1673,11 @@
       <div class="modal-content">
         <h3>Why do I need to save?</h3>
         <p> Browsers are not allowed to overwrite local files automatically. When you click <strong>Save File</strong>, this page generates a new updated HTML file that contains all of your changes. Replace your old file with the new one to keep your edits. </p>
-        <p style="
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--edge-main);
-          ">
+        <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
           <strong>Encryption:</strong> Check the "Encrypt" box before saving to password protect your data. You'll need the password to open the file later. No recovery possible!!
+        </p>
+		<p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
+          <strong>Decrpytion:</strong> Want to decrpyt your data? Simply export it using json export in top menu after successful password validation
         </p>
         <div class="modal-buttons">
           <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1752,14 +1746,14 @@
             <input type="checkbox" id="auto-ping-enabled" style="cursor: pointer;">
             <span style="font-size: 14px; font-weight: 600;">Enable automatic status checking</span>
             </label>
-            <div id="auto-ping-settings" style="display: block; padding-left: 20px; border-left: 2px solid var(--edge-main);">
+            <div id="auto-ping-settings" style="display: none; padding-left: 20px; border-left: 2px solid var(--edge-main);">
               <div class="style-row" style="margin-bottom: 12px;">
                 <label>Check Interval (seconds):</label>
                 <input type="number" id="auto-ping-interval" min="5" max="3600" value="30" style="width: 80px; padding: 6px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
               </div>
               <div style="padding: 10px; background: var(--panel); border-radius: 6px; border: 1px solid var(--edge-main); font-size: 12px; color: var(--text-soft);">
                 <div style="margin-bottom: 4px;"><span id="auto-ping-next-check">Next check in: --</span></div>
-                <div><span id="auto-ping-last-run">Last run: 5:31:49 PM</span></div>
+                <div><span id="auto-ping-last-run">Last run: 1:15:07 PM</span></div>
               </div>
             </div>
             <p style="margin-top: 12px; font-size: 12px; color: var(--text-soft); font-style: italic;">
@@ -1776,14 +1770,14 @@
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
         </details>
-		<details class="style-section" open="">
+        <details class="style-section" open="">
           <summary>Clear All</summary>
           <div class="style-content">
             <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">This deletes everything on the canvas!</p>
-			<button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
+            <button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
             <input type="file" id="import-data-file" accept=".json" style="display: none">
           </div>
-        </details>		
+        </details>
         <div class="modal-buttons">
           <button class="btn-cancel" id="settings-close">Close</button>
         </div>
@@ -1962,20 +1956,20 @@
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Toggle which layers are visible on the canvas</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Physical Layer</span>
+          <input type="checkbox" id="layer-physical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Physical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Logical Layer</span>
+          <input type="checkbox" id="layer-logical" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Logical Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Security Layer</span>
+          <input type="checkbox" id="layer-security" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Security Layer</span>
           </label>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: var(--panel-alt); border-radius: 6px;">
-            <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
-            <span style="flex: 1; font-weight: 500;">Application Layer</span>
+          <input type="checkbox" id="layer-application" checked="" style="cursor: pointer; width: 18px; height: 18px;">
+          <span style="flex: 1; font-weight: 500;">Application Layer</span>
           </label>
         </div>
         <div style="margin-top: 15px; display: flex; gap: 8px;">
@@ -2002,10 +1996,10 @@
         </div>
       </div>
       <div id="topbar-menu">
-        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
+        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: none;">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)">+ Node</button>
         <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;">+ Rack</button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" disabled="" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;opacity: 0.5;">↶</button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 1;">↶</button>
         <button id="redo-btn" title="Redo (Ctrl+Y)" disabled="" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;opacity: 0.5;">↷</button>
         <input id="search-input" type="text" placeholder="Search nodes..." style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;font-size: 14px;">
         <button id="check-all-ping-btn" title="Check status of all enabled nodes" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Check Pings</button>
@@ -2055,7 +2049,7 @@
         <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select"><option value="opnsense">OPNsense</option><option value="main-switch">Main Switch</option><option value="proxmox">Proxmox</option><option value="truenas">TrueNAS</option><option value="docker-host">Docker Host</option><option value="pi-hole">Pi-hole</option><option value="plex">Plex</option><option value="jellyfin">Jellyfin</option><option value="nextcloud">Nextcloud</option><option value="bitwarden">Vaultwarden</option><option value="homeassistant">Home Assistant</option><option value="portainer">Portainer</option><option value="traefik">Traefik</option><option value="grafana">Grafana</option><option value="prometheus">Prometheus</option><option value="unifi-controller">UniFi Controller</option><option value="wireguard">WireGuard</option><option value="im-a-rack">IM A RACK</option></select>
+          <select id="add-line-select"><option value="isp-modem">OPNSENSE</option><option value="opnsense">OPNsense</option><option value="main-switch">Main Switch</option><option value="proxmox">Proxmox</option><option value="truenas">TrueNAS</option><option value="docker-host">Docker Host</option><option value="pi-hole">Pi-hole</option><option value="plex">Plex</option><option value="jellyfin">Jellyfin</option><option value="nextcloud">Nextcloud</option><option value="bitwarden">Vaultwarden</option><option value="homeassistant">Home Assistant</option><option value="portainer">Portainer</option><option value="traefik">Traefik</option><option value="grafana">Grafana</option><option value="prometheus">Prometheus</option><option value="unifi-controller">UniFi Controller</option><option value="wireguard">WireGuard</option></select>
           <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--edge-main);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">
           <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
@@ -2102,21 +2096,21 @@
           </div>
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
-        <div class="canvas-hint" id="canvas-hint"><ul><li>Scroll to zoom</li><li>Drag to pan</li><li>Right-click to select multiple</li><li>Your time is NOW!</li></ul></div>
+        <div class="canvas-hint" id="canvas-hint">Viewing: IM A RACK | Double-click empty space to exit</div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">WAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">LAN Trunk</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Server VLAN</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Management</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">VM Network</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Containers</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(236, 72, 153); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Storage</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="384.66666666666674 27 3230.6666666666665 2423" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" class="edge" data-edge-id="edge-1" data-from="isp-modem" data-to="opnsense" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" data-edge-id="edge-1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" class="edge" data-edge-id="edge-2" data-from="opnsense" data-to="main-switch" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" data-edge-id="edge-2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" class="edge" data-edge-id="edge-3" data-from="main-switch" data-to="proxmox" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" data-edge-id="edge-3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" class="edge" data-edge-id="edge-4" data-from="main-switch" data-to="truenas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" data-edge-id="edge-4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" class="edge" data-edge-id="edge-5" data-from="main-switch" data-to="docker-host" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" data-edge-id="edge-5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" class="edge" data-edge-id="edge-6" data-from="main-switch" data-to="pi-hole" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" data-edge-id="edge-6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" class="edge" data-edge-id="edge-7" data-from="proxmox" data-to="plex" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" data-edge-id="edge-7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" class="edge" data-edge-id="edge-8" data-from="proxmox" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" data-edge-id="edge-8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" class="edge" data-edge-id="edge-9" data-from="proxmox" data-to="wireguard" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" data-edge-id="edge-9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-10" data-from="docker-host" data-to="jellyfin" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" data-edge-id="edge-10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-11" data-from="docker-host" data-to="nextcloud" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" data-edge-id="edge-11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" class="edge" data-edge-id="edge-12" data-from="docker-host" data-to="bitwarden" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" data-edge-id="edge-12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" class="edge" data-edge-id="edge-13" data-from="docker-host" data-to="portainer" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" data-edge-id="edge-13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" class="edge" data-edge-id="edge-14" data-from="docker-host" data-to="traefik" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" data-edge-id="edge-14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" class="edge" data-edge-id="edge-15" data-from="docker-host" data-to="grafana" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" data-edge-id="edge-15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" class="edge" data-edge-id="edge-16" data-from="docker-host" data-to="prometheus" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" data-edge-id="edge-16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" class="edge" data-edge-id="edge-17" data-from="docker-host" data-to="unifi-controller" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" data-edge-id="edge-17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" class="edge" data-edge-id="edge-18" data-from="truenas" data-to="plex" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" data-edge-id="edge-18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-19" data-from="truenas" data-to="jellyfin" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" data-edge-id="edge-19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-20" data-from="truenas" data-to="nextcloud" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" data-edge-id="edge-20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge" data-edge-id="custom-1764789591702" fill="none" marker-end="url(#arrow-forward)" points="2180.72900390625,753.431884765625 2178.278076171875,883.335693359375 2273.86767578125,888.2376708984375" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="2180.72900390625,753.431884765625 2178.278076171875,883.335693359375 2273.86767578125,888.2376708984375" data-edge-id="custom-1764789591702" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><polyline class="edge" data-edge-id="custom-1764791338569" fill="none" marker-end="url(#arrow-forward)" points="1178.4932861328125,139.6976776123047 1282.2938232421875,59.62301254272461 1730.1187744140625,127.83476257324219" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: 10, 5;"></polyline><polyline points="1178.4932861328125,139.6976776123047 1282.2938232421875,59.62301254272461 1730.1187744140625,127.83476257324219" data-edge-id="custom-1764791338569" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="isp-modem" transform="translate(2000,227)" style="cursor: grab;"><circle r="190.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="152.4" height="152.4" x="-76.2" y="-76.2" style="fill: rgb(255, 0, 0);"><title>OPNsense</title><path d="M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z"></path></svg></g><text class="node-label" x="0" y="-35.56" style="font-size: 41.91px; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="50.800000000000004" style="font-size: 30.48px; pointer-events: none;">192.168.100.1</text><circle class="ping-indicator online" r="7.62" cx="-114.12336352539063" cy="-88.894"></circle></g><g class="node-group" data-node-id="opnsense" transform="translate(1686.82958984375,628.8558959960938)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">OPNsense</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(2000,950)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Main Switch</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.2</text></g><g class="node-group" data-node-id="proxmox" transform="translate(1200,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Proxmox</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.10</text></g><g class="node-group" data-node-id="truenas" transform="translate(2800,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.11</text></g><g class="node-group" data-node-id="docker-host" transform="translate(2000,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Docker Host</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.12</text></g><g class="node-group" data-node-id="pi-hole" transform="translate(2000,1650)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Pi-hole</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.53</text></g><g class="node-group" data-node-id="plex" transform="translate(600,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Plex</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.20</text></g><g class="node-group" data-node-id="jellyfin" transform="translate(1400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/jellyfin.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Jellyfin</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.21</text></g><g class="node-group" data-node-id="nextcloud" transform="translate(1800,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Nextcloud</title><path d="M12.018 6.537c-2.5 0-4.6 1.712-5.241 4.015-.56-1.232-1.793-2.105-3.225-2.105A3.569 3.569 0 0 0 0 12a3.569 3.569 0 0 0 3.552 3.553c1.432 0 2.664-.874 3.224-2.106.641 2.304 2.742 4.016 5.242 4.016 2.487 0 4.576-1.693 5.231-3.977.569 1.21 1.783 2.067 3.198 2.067A3.568 3.568 0 0 0 24 12a3.569 3.569 0 0 0-3.553-3.553c-1.416 0-2.63.858-3.199 2.067-.654-2.284-2.743-3.978-5.23-3.977zm0 2.085c1.878 0 3.378 1.5 3.378 3.378 0 1.878-1.5 3.378-3.378 3.378A3.362 3.362 0 0 1 8.641 12c0-1.878 1.5-3.378 3.377-3.378zm-8.466 1.91c.822 0 1.467.645 1.467 1.468s-.644 1.467-1.467 1.468A1.452 1.452 0 0 1 2.085 12c0-.823.644-1.467 1.467-1.467zm16.895 0c.823 0 1.468.645 1.468 1.468s-.645 1.468-1.468 1.468A1.452 1.452 0 0 1 18.98 12c0-.823.644-1.467 1.467-1.467z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Nextcloud</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.30</text></g><g class="node-group" data-node-id="bitwarden" transform="translate(2200,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Bitwarden</title><path d="M21.722.296A.964.964 0 0 0 21.018 0H2.982a.959.959 0 0 0-.703.296.96.96 0 0 0-.297.702v12c0 .895.174 1.783.523 2.665.349.88.783 1.66 1.3 2.345.517.68 1.132 1.346 1.848 1.993a21.807 21.807 0 0 0 1.98 1.609c.605.427 1.235.83 1.893 1.212.657.381 1.125.638 1.4.772.276.134.5.241.664.311a.916.916 0 0 0 .814 0c.168-.073.389-.177.667-.311.275-.134.743-.394 1.401-.772a25.305 25.305 0 0 0 1.894-1.212A21.891 21.891 0 0 0 18.348 20c.716-.647 1.33-1.31 1.847-1.993s.949-1.463 1.3-2.345c.35-.879.524-1.767.524-2.665V1.001a.95.95 0 0 0-.297-.705zm-2.325 12.815c0 4.344-7.397 8.087-7.397 8.087V2.57h7.397v10.54z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Vaultwarden</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.31</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(1000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Home Assistant</title><path d="M22.939 10.627 13.061.749a1.505 1.505 0 0 0-2.121 0l-9.879 9.878C.478 11.21 0 12.363 0 13.187v9c0 .826.675 1.5 1.5 1.5h9.227l-4.063-4.062a2.034 2.034 0 0 1-.664.113c-1.13 0-2.05-.92-2.05-2.05s.92-2.05 2.05-2.05 2.05.92 2.05 2.05c0 .233-.041.456-.113.665l3.163 3.163V9.928a2.05 2.05 0 0 1-1.15-1.84c0-1.13.92-2.05 2.05-2.05s2.05.92 2.05 2.05a2.05 2.05 0 0 1-1.15 1.84v8.127l3.146-3.146A2.051 2.051 0 0 1 18 12.239c1.13 0 2.05.92 2.05 2.05s-.92 2.05-2.05 2.05c-.25 0-.488-.047-.709-.13L12.9 20.602v3.088h9.6c.825 0 1.5-.675 1.5-1.5v-9c0-.825-.477-1.977-1.061-2.561z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Home Assistant</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.40</text></g><g class="node-group" data-node-id="portainer" transform="translate(2600,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Portainer</title><path d="M12.504 0v1.023l-.01-.015-6.106 3.526H3.417v.751h5.359v3.638h1.942V5.284h1.786v10.416c.027 0 .54-.01.751.091V5.285h.531v10.608c.293.147.55.312.751.54V5.286h6.046v-.75h-1.267l-6.061-3.5V0zm0 1.87v2.664H7.889zm.751.031l4.56 2.633h-4.56zM9.142 5.285h1.21v1.686h-1.21zm-4.736 2.73v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm-2.19 2.171v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm2.18 0v1.951h1.942v-1.95zM4.36 12.43a3.73 3.73 0 00-.494 1.851c0 1.227.604 2.308 1.52 2.986.239-.064.477-.1.724-.11.1 0 .165.01.266.019.284-1.191 1.383-1.988 2.665-1.988.724 0 1.438.201 1.924.668.229-.476.302-1.007.302-1.575 0-.65-.165-1.292-.494-1.85zm4.828 3.16c-1.21 0-2.226.844-2.492 1.97a.922.922 0 00-.275-.009 2.559 2.559 0 00-2.564 2.556 2.565 2.565 0 003.096 2.5A2.579 2.579 0 009.233 24c.862 0 1.622-.43 2.09-1.081a2.557 2.557 0 004.186-1.97c0-.567-.193-1.099-.504-1.52a2.557 2.557 0 00-3.866-2.94 2.574 2.574 0 00-1.951-.898z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Portainer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.50</text></g><g class="node-group" data-node-id="traefik" transform="translate(3000,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Traefik Proxy</title><path d="M12 1.19c1.088 0 2.056.768 2.056 1.714 0 .947-.921 1.715-2.056 1.715-.13 0-.3-.022-.509-.064a.685.685 0 0 0-.475.076l-7.37 4.195a.344.344 0 0 0 .001.597l7.99 4.49c.208.116.461.116.669 0l8.034-4.468a.343.343 0 0 0 .003-.598l-2.507-1.424a.683.683 0 0 0-.67-.003l-2.647 1.468a.234.234 0 0 0-.119.18l-.001.025c0 .946-.921 1.714-2.056 1.714s-2.056-.768-2.056-1.714c0-.947.921-1.715 2.056-1.715.042 0 .09.002.145.007l.087.008.096.013a.685.685 0 0 0 .425-.08l3.913-2.173c.3-.166.662-.171.965-.017l.04.023 5.465 3.104c.686.39.693 1.368.03 1.773l-.037.021-3.656 2.033a.343.343 0 0 0 .007.604l3.62 1.906c.72.378.736 1.402.03 1.804l-10.995 6.272a1.03 1.03 0 0 1-1.019 0L.526 16.43a1.03 1.03 0 0 1 .034-1.806l3.66-1.911a.343.343 0 0 0 .01-.603L.524 10.029a1.03 1.03 0 0 1-.041-1.77l.036-.021L9.618 3.06a.688.688 0 0 0 .308-.369l.011-.036c.32-.952 1.046-1.466 2.063-1.466Zm5.076 12.63-4.492 2.586-.041.022c-.306.158-.671.152-.973-.018l-4.478-2.527a.682.682 0 0 0-.65-.01L3.86 15.224a.343.343 0 0 0-.012.602l7.887 4.515c.21.12.467.121.677 0l7.956-4.547a.343.343 0 0 0-.01-.602l-2.623-1.384a.683.683 0 0 0-.659.012z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Traefik</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.51</text></g><g class="node-group" data-node-id="grafana" transform="translate(3400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Grafana</title><path d="M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Grafana</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.60</text></g><g class="node-group" data-node-id="prometheus" transform="translate(3400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Prometheus</title><path d="M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Prometheus</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.61</text></g><g class="node-group" data-node-id="unifi-controller" transform="translate(3000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Ubiquiti</title><path d="M23.1627 0h-1.4882v1.4882h1.4882zm-5.2072 10.4226V7.4409l.0007.001h2.9755v2.9762h2.9756v.9433c0 1.0906-.0927 2.3827-.306 3.3973-.1194.5672-.3004 1.1308-.5127 1.672-.2175.5537-.468 1.0841-.7408 1.5595a11.6795 11.6795 0 0 1-1.2456 1.7762l-.0253.0294-.0417.0488c-.1148.1347-.2283.2679-.3531.398a11.7612 11.7612 0 0 1-.4494.4492c-1.9046 1.8343-4.3861 2.98-6.9808 3.243-.3122.032-.939.0652-1.2519.0652-.3139-.001-.9397-.0331-1.252-.0651-2.5946-.263-5.0761-1.4097-6.9806-3.243a11.75 11.75 0 0 1-.4495-.4494c-.131-.1356-.249-.2748-.3683-.4154l-.0006-.0004-.0512-.0603a11.6576 11.6576 0 0 1-1.2456-1.7762c-.2727-.4763-.5233-1.0058-.7408-1.5595-.2123-.5414-.3933-1.1048-.5128-1.6718C.1854 13.743.0927 12.452.0927 11.3616V.1864h5.9518v10.2362s0 .7847.0099 1.0415l.0022.0599v.0004c.0127.332.0247.6575.0594.9812.098.919.3014 1.7913.7203 2.5288.1213.213.2443.42.3915.616.8953 1.1939 2.2577 2.0901 3.9573 2.3398.2022.0294.6108.0552.8149.0552.204 0 .6125-.0258.8149-.0552 1.6996-.2497 3.062-1.146 3.9573-2.3398.148-.196.2701-.403.3914-.616.419-.7375.6224-1.6095.7204-2.5288.0346-.3243.047-.6503.0594-.9831l.0022-.0584c.0099-.2568.0099-1.0415.0099-1.0415zm.7427-8.19h2.2326v2.2319h2.9764v2.9764h-2.9764V4.4654h-2.2326V2.2328Z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">UniFi Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.70</text></g><g class="node-group" data-node-id="wireguard" transform="translate(1400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>WireGuard</title><path d="M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">WireGuard</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.80</text></g><g class="node-group" data-node-id="im-a-rack" transform="translate(2590.18017578125,882.6126098632812)" style="cursor: grab;"><circle r="271.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-217.2" y="-108.6" width="434.4" height="217.2" rx="4"></rect><line x1="-162.9" y1="-54.3" x2="-162.9" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-72.4" y1="-54.3" x2="-72.4" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="18.099999999999994" y1="-54.3" x2="18.099999999999994" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="162.9" cy="0" r="18.1" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-50.68000000000001" style="font-size: 59.73px; pointer-events: none;">IM A RACK</text><text class="node-sub" x="0" y="72.4" style="font-size: 43.44px; pointer-events: none;"></text><text x="126.69999999999999" y="-126.69999999999999" class="lock-indicator" style="font-size: 54.3px; pointer-events: none;">🔒</text></g><g class="text-group" data-text-id="text-1764789550897"><text class="text-element" x="2158.669921875" y="621.0770263671875" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 37px; font-weight: normal; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="2158.669921875" dy="0">DOUBLE CLICK ON DESKTOP</tspan><tspan x="2158.669921875" dy="44.4">OR LONG PRESS ON MOBILE</tspan><tspan x="2158.669921875" dy="44.4">TO OPEN RACK VIEW</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="2178.669921875" cy="584.0770263671875" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="2178.669921875" y="584.0770263671875" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g><g class="text-group" data-text-id="text-1764791291347"><text class="text-element" x="1065.795654296875" y="187.14932250976562" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 41px; font-weight: bold; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="1065.795654296875" dy="0">Router is live!</tspan><tspan x="1065.795654296875" dy="49.199999999999996">Uses http requests to live ping</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="1085.795654296875" cy="146.14932250976562" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="1085.795654296875" y="146.14932250976562" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g></svg>
+          <svg id="map" viewBox="663.4450887044272 553.9766490681966 2673.1098225911455 2232.046701863607" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" class="edge" data-edge-id="edge-1" data-from="isp-modem" data-to="opnsense" style="stroke: rgb(239, 68, 68); stroke-width: 6;"></path><path d="M 2000 227 Q 1843.414794921875 427.9279479980469 1686.82958984375 628.8558959960938" fill="none" data-edge-id="edge-1" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" class="edge" data-edge-id="edge-2" data-from="opnsense" data-to="main-switch" style="stroke: rgb(16, 185, 129); stroke-width: 6;"></path><path d="M 1686.82958984375 628.8558959960938 Q 1843.414794921875 789.4279479980469 2000 950" fill="none" data-edge-id="edge-2" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" class="edge" data-edge-id="edge-3" data-from="main-switch" data-to="proxmox" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 1600 1150 1200 1350" fill="none" data-edge-id="edge-3" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" class="edge" data-edge-id="edge-4" data-from="main-switch" data-to="truenas" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2400 1150 2800 1350" fill="none" data-edge-id="edge-4" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" class="edge" data-edge-id="edge-5" data-from="main-switch" data-to="docker-host" style="stroke: rgb(139, 92, 246); stroke-width: 5;"></path><path d="M 2000 950 Q 2000 1150 2000 1350" fill="none" data-edge-id="edge-5" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" class="edge" data-edge-id="edge-6" data-from="main-switch" data-to="pi-hole" style="stroke: rgb(59, 130, 246); stroke-width: 4;"></path><path d="M 2000 950 Q 2000 1300 2000 1650" fill="none" data-edge-id="edge-6" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" class="edge" data-edge-id="edge-7" data-from="proxmox" data-to="plex" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 900 1600 600 1850" fill="none" data-edge-id="edge-7" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" class="edge" data-edge-id="edge-8" data-from="proxmox" data-to="homeassistant" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1100 1600 1000 1850" fill="none" data-edge-id="edge-8" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" class="edge" data-edge-id="edge-9" data-from="proxmox" data-to="wireguard" style="stroke: rgb(245, 158, 11); stroke-width: 4;"></path><path d="M 1200 1350 Q 1300 1600 1400 1850" fill="none" data-edge-id="edge-9" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-10" data-from="docker-host" data-to="jellyfin" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1700 1800 1400 2250" fill="none" data-edge-id="edge-10" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-11" data-from="docker-host" data-to="nextcloud" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 1900 1800 1800 2250" fill="none" data-edge-id="edge-11" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" class="edge" data-edge-id="edge-12" data-from="docker-host" data-to="bitwarden" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2100 1800 2200 2250" fill="none" data-edge-id="edge-12" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" class="edge" data-edge-id="edge-13" data-from="docker-host" data-to="portainer" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2300 1800 2600 2250" fill="none" data-edge-id="edge-13" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" class="edge" data-edge-id="edge-14" data-from="docker-host" data-to="traefik" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1800 3000 2250" fill="none" data-edge-id="edge-14" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" class="edge" data-edge-id="edge-15" data-from="docker-host" data-to="grafana" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1800 3400 2250" fill="none" data-edge-id="edge-15" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" class="edge" data-edge-id="edge-16" data-from="docker-host" data-to="prometheus" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2700 1600 3400 1850" fill="none" data-edge-id="edge-16" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" class="edge" data-edge-id="edge-17" data-from="docker-host" data-to="unifi-controller" style="stroke: rgb(6, 182, 212); stroke-width: 4;"></path><path d="M 2000 1350 Q 2500 1600 3000 1850" fill="none" data-edge-id="edge-17" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" class="edge" data-edge-id="edge-18" data-from="truenas" data-to="plex" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 1700 1600 600 1850" fill="none" data-edge-id="edge-18" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" class="edge" data-edge-id="edge-19" data-from="truenas" data-to="jellyfin" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2100 1800 1400 2250" fill="none" data-edge-id="edge-19" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" class="edge" data-edge-id="edge-20" data-from="truenas" data-to="nextcloud" style="stroke: rgb(236, 72, 153); stroke-width: 3;"></path><path d="M 2800 1350 Q 2300 1800 1800 2250" fill="none" data-edge-id="edge-20" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge" data-edge-id="custom-1764789591702" fill="none" marker-end="url(#arrow-forward)" points="2180.72900390625,753.431884765625 2178.278076171875,883.335693359375 2273.86767578125,888.2376708984375" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="2180.72900390625,753.431884765625 2178.278076171875,883.335693359375 2273.86767578125,888.2376708984375" data-edge-id="custom-1764789591702" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><polyline class="edge" data-edge-id="custom-1764791338569" fill="none" marker-end="url(#arrow-forward)" points="1178.4932861328125,139.6976776123047 1282.2938232421875,59.62301254272461 1730.1187744140625,127.83476257324219" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: 10, 5;"></polyline><polyline points="1178.4932861328125,139.6976776123047 1282.2938232421875,59.62301254272461 1730.1187744140625,127.83476257324219" data-edge-id="custom-1764791338569" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="isp-modem" transform="translate(2000,227)" style="cursor: grab;"><circle r="190.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="152.4" height="152.4" x="-76.2" y="-76.2" style="fill: rgb(255, 0, 0);"><title>OPNsense</title><path d="M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z"></path></svg></g><text class="node-label" x="0" y="-35.56" style="font-size: 41.91px; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="50.800000000000004" style="font-size: 30.48px; pointer-events: none;">192.168.100.1</text><circle class="ping-indicator online" r="7.62" cx="-113.22375109863282" cy="-88.894"></circle></g><g class="node-group" data-node-id="opnsense" transform="translate(1686.82958984375,628.8558959960938)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">OPNsense</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.1</text></g><g class="node-group" data-node-id="main-switch" transform="translate(2000,950)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-77" y="-22" width="154" height="44" rx="4"></rect><rect x="-66" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-48.4" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-30.799999999999997" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="-13.199999999999996" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="4.400000000000006" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="22" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="39.60000000000001" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect><rect x="57.2" y="-8.25" width="12.1" height="16.5" rx="1" style="fill: rgb(30, 41, 59);"></rect></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Main Switch</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.2</text></g><g class="node-group" data-node-id="proxmox" transform="translate(1200,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Proxmox</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.10</text></g><g class="node-group" data-node-id="truenas" transform="translate(2800,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-38.5" y="-33" width="77" height="77"></rect><ellipse cx="0" cy="-33" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="44" rx="38.5" ry="13.75"></ellipse><ellipse cx="0" cy="-8.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse><ellipse cx="0" cy="19.25" rx="38.5" ry="11" style="fill: none; stroke: rgb(71, 85, 105); stroke-width: 2;"></ellipse></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">TrueNAS</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.11</text></g><g class="node-group" data-node-id="docker-host" transform="translate(2000,1350)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-66" y="-33" width="132" height="66" rx="4"></rect><line x1="-49.5" y1="-16.5" x2="-49.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-22" y1="-16.5" x2="-22" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="5.5" y1="-16.5" x2="5.5" y2="16.5" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="49.5" cy="0" r="5.5" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Docker Host</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.12</text></g><g class="node-group" data-node-id="pi-hole" transform="translate(2000,1650)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Pi-hole</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.53</text></g><g class="node-group" data-node-id="plex" transform="translate(600,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Plex</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.20</text></g><g class="node-group" data-node-id="jellyfin" transform="translate(1400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><image href="https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/jellyfin.png" width="24" height="24"></image></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Jellyfin</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.21</text></g><g class="node-group" data-node-id="nextcloud" transform="translate(1800,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Nextcloud</title><path d="M12.018 6.537c-2.5 0-4.6 1.712-5.241 4.015-.56-1.232-1.793-2.105-3.225-2.105A3.569 3.569 0 0 0 0 12a3.569 3.569 0 0 0 3.552 3.553c1.432 0 2.664-.874 3.224-2.106.641 2.304 2.742 4.016 5.242 4.016 2.487 0 4.576-1.693 5.231-3.977.569 1.21 1.783 2.067 3.198 2.067A3.568 3.568 0 0 0 24 12a3.569 3.569 0 0 0-3.553-3.553c-1.416 0-2.63.858-3.199 2.067-.654-2.284-2.743-3.978-5.23-3.977zm0 2.085c1.878 0 3.378 1.5 3.378 3.378 0 1.878-1.5 3.378-3.378 3.378A3.362 3.362 0 0 1 8.641 12c0-1.878 1.5-3.378 3.377-3.378zm-8.466 1.91c.822 0 1.467.645 1.467 1.468s-.644 1.467-1.467 1.468A1.452 1.452 0 0 1 2.085 12c0-.823.644-1.467 1.467-1.467zm16.895 0c.823 0 1.468.645 1.468 1.468s-.645 1.468-1.468 1.468A1.452 1.452 0 0 1 18.98 12c0-.823.644-1.467 1.467-1.467z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Nextcloud</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.30</text></g><g class="node-group" data-node-id="bitwarden" transform="translate(2200,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Bitwarden</title><path d="M21.722.296A.964.964 0 0 0 21.018 0H2.982a.959.959 0 0 0-.703.296.96.96 0 0 0-.297.702v12c0 .895.174 1.783.523 2.665.349.88.783 1.66 1.3 2.345.517.68 1.132 1.346 1.848 1.993a21.807 21.807 0 0 0 1.98 1.609c.605.427 1.235.83 1.893 1.212.657.381 1.125.638 1.4.772.276.134.5.241.664.311a.916.916 0 0 0 .814 0c.168-.073.389-.177.667-.311.275-.134.743-.394 1.401-.772a25.305 25.305 0 0 0 1.894-1.212A21.891 21.891 0 0 0 18.348 20c.716-.647 1.33-1.31 1.847-1.993s.949-1.463 1.3-2.345c.35-.879.524-1.767.524-2.665V1.001a.95.95 0 0 0-.297-.705zm-2.325 12.815c0 4.344-7.397 8.087-7.397 8.087V2.57h7.397v10.54z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Vaultwarden</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.31</text></g><g class="node-group" data-node-id="homeassistant" transform="translate(1000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Home Assistant</title><path d="M22.939 10.627 13.061.749a1.505 1.505 0 0 0-2.121 0l-9.879 9.878C.478 11.21 0 12.363 0 13.187v9c0 .826.675 1.5 1.5 1.5h9.227l-4.063-4.062a2.034 2.034 0 0 1-.664.113c-1.13 0-2.05-.92-2.05-2.05s.92-2.05 2.05-2.05 2.05.92 2.05 2.05c0 .233-.041.456-.113.665l3.163 3.163V9.928a2.05 2.05 0 0 1-1.15-1.84c0-1.13.92-2.05 2.05-2.05s2.05.92 2.05 2.05a2.05 2.05 0 0 1-1.15 1.84v8.127l3.146-3.146A2.051 2.051 0 0 1 18 12.239c1.13 0 2.05.92 2.05 2.05s-.92 2.05-2.05 2.05c-.25 0-.488-.047-.709-.13L12.9 20.602v3.088h9.6c.825 0 1.5-.675 1.5-1.5v-9c0-.825-.477-1.977-1.061-2.561z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Home Assistant</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.40</text></g><g class="node-group" data-node-id="portainer" transform="translate(2600,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Portainer</title><path d="M12.504 0v1.023l-.01-.015-6.106 3.526H3.417v.751h5.359v3.638h1.942V5.284h1.786v10.416c.027 0 .54-.01.751.091V5.285h.531v10.608c.293.147.55.312.751.54V5.286h6.046v-.75h-1.267l-6.061-3.5V0zm0 1.87v2.664H7.889zm.751.031l4.56 2.633h-4.56zM9.142 5.285h1.21v1.686h-1.21zm-4.736 2.73v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm-2.19 2.171v1.951h1.942v-1.95zm2.19 0v1.951h1.941v-1.95zm2.18 0v1.951h1.942v-1.95zM4.36 12.43a3.73 3.73 0 00-.494 1.851c0 1.227.604 2.308 1.52 2.986.239-.064.477-.1.724-.11.1 0 .165.01.266.019.284-1.191 1.383-1.988 2.665-1.988.724 0 1.438.201 1.924.668.229-.476.302-1.007.302-1.575 0-.65-.165-1.292-.494-1.85zm4.828 3.16c-1.21 0-2.226.844-2.492 1.97a.922.922 0 00-.275-.009 2.559 2.559 0 00-2.564 2.556 2.565 2.565 0 003.096 2.5A2.579 2.579 0 009.233 24c.862 0 1.622-.43 2.09-1.081a2.557 2.557 0 004.186-1.97c0-.567-.193-1.099-.504-1.52a2.557 2.557 0 00-3.866-2.94 2.574 2.574 0 00-1.951-.898z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Portainer</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.50</text></g><g class="node-group" data-node-id="traefik" transform="translate(3000,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Traefik Proxy</title><path d="M12 1.19c1.088 0 2.056.768 2.056 1.714 0 .947-.921 1.715-2.056 1.715-.13 0-.3-.022-.509-.064a.685.685 0 0 0-.475.076l-7.37 4.195a.344.344 0 0 0 .001.597l7.99 4.49c.208.116.461.116.669 0l8.034-4.468a.343.343 0 0 0 .003-.598l-2.507-1.424a.683.683 0 0 0-.67-.003l-2.647 1.468a.234.234 0 0 0-.119.18l-.001.025c0 .946-.921 1.714-2.056 1.714s-2.056-.768-2.056-1.714c0-.947.921-1.715 2.056-1.715.042 0 .09.002.145.007l.087.008.096.013a.685.685 0 0 0 .425-.08l3.913-2.173c.3-.166.662-.171.965-.017l.04.023 5.465 3.104c.686.39.693 1.368.03 1.773l-.037.021-3.656 2.033a.343.343 0 0 0 .007.604l3.62 1.906c.72.378.736 1.402.03 1.804l-10.995 6.272a1.03 1.03 0 0 1-1.019 0L.526 16.43a1.03 1.03 0 0 1 .034-1.806l3.66-1.911a.343.343 0 0 0 .01-.603L.524 10.029a1.03 1.03 0 0 1-.041-1.77l.036-.021L9.618 3.06a.688.688 0 0 0 .308-.369l.011-.036c.32-.952 1.046-1.466 2.063-1.466Zm5.076 12.63-4.492 2.586-.041.022c-.306.158-.671.152-.973-.018l-4.478-2.527a.682.682 0 0 0-.65-.01L3.86 15.224a.343.343 0 0 0-.012.602l7.887 4.515c.21.12.467.121.677 0l7.956-4.547a.343.343 0 0 0-.01-.602l-2.623-1.384a.683.683 0 0 0-.659.012z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Traefik</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.51</text></g><g class="node-group" data-node-id="grafana" transform="translate(3400,2250)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Grafana</title><path d="M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Grafana</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.60</text></g><g class="node-group" data-node-id="prometheus" transform="translate(3400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Prometheus</title><path d="M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">Prometheus</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.61</text></g><g class="node-group" data-node-id="unifi-controller" transform="translate(3000,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>Ubiquiti</title><path d="M23.1627 0h-1.4882v1.4882h1.4882zm-5.2072 10.4226V7.4409l.0007.001h2.9755v2.9762h2.9756v.9433c0 1.0906-.0927 2.3827-.306 3.3973-.1194.5672-.3004 1.1308-.5127 1.672-.2175.5537-.468 1.0841-.7408 1.5595a11.6795 11.6795 0 0 1-1.2456 1.7762l-.0253.0294-.0417.0488c-.1148.1347-.2283.2679-.3531.398a11.7612 11.7612 0 0 1-.4494.4492c-1.9046 1.8343-4.3861 2.98-6.9808 3.243-.3122.032-.939.0652-1.2519.0652-.3139-.001-.9397-.0331-1.252-.0651-2.5946-.263-5.0761-1.4097-6.9806-3.243a11.75 11.75 0 0 1-.4495-.4494c-.131-.1356-.249-.2748-.3683-.4154l-.0006-.0004-.0512-.0603a11.6576 11.6576 0 0 1-1.2456-1.7762c-.2727-.4763-.5233-1.0058-.7408-1.5595-.2123-.5414-.3933-1.1048-.5128-1.6718C.1854 13.743.0927 12.452.0927 11.3616V.1864h5.9518v10.2362s0 .7847.0099 1.0415l.0022.0599v.0004c.0127.332.0247.6575.0594.9812.098.919.3014 1.7913.7203 2.5288.1213.213.2443.42.3915.616.8953 1.1939 2.2577 2.0901 3.9573 2.3398.2022.0294.6108.0552.8149.0552.204 0 .6125-.0258.8149-.0552 1.6996-.2497 3.062-1.146 3.9573-2.3398.148-.196.2701-.403.3914-.616.419-.7375.6224-1.6095.7204-2.5288.0346-.3243.047-.6503.0594-.9831l.0022-.0584c.0099-.2568.0099-1.0415.0099-1.0415zm.7427-8.19h2.2326v2.2319h2.9764v2.9764h-2.9764V4.4654h-2.2326V2.2328Z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">UniFi Controller</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.70</text></g><g class="node-group" data-node-id="wireguard" transform="translate(1400,1850)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" width="66" height="66" x="-33" y="-33"><title>WireGuard</title><path d="M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18.15px; pointer-events: none;">WireGuard</text><text class="node-sub" x="0" y="22" style="font-size: 13.2px; pointer-events: none;">192.168.1.80</text></g><g class="node-group" data-node-id="im-a-rack" transform="translate(2590.18017578125,882.6126098632812)" style="cursor: grab;"><circle r="271.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><rect x="-217.2" y="-108.6" width="434.4" height="217.2" rx="4"></rect><line x1="-162.9" y1="-54.3" x2="-162.9" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="-72.4" y1="-54.3" x2="-72.4" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><line x1="18.099999999999994" y1="-54.3" x2="18.099999999999994" y2="54.3" style="stroke: currentcolor; stroke-width: 2; opacity: 0.5;"></line><circle cx="162.9" cy="0" r="18.1" style="fill: rgb(74, 222, 128);"></circle></g><text class="node-label" x="0" y="-50.68000000000001" style="font-size: 59.73px; pointer-events: none;">IM A RACK</text><text class="node-sub" x="0" y="72.4" style="font-size: 43.44px; pointer-events: none;"></text><text x="126.69999999999999" y="-126.69999999999999" class="lock-indicator" style="font-size: 54.3px; pointer-events: none;">🔒</text></g><g class="text-group" data-text-id="text-1764789550897"><text class="text-element" x="2158.669921875" y="621.0770263671875" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 37px; font-weight: normal; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="2158.669921875" dy="0">DOUBLE CLICK ON DESKTOP</tspan><tspan x="2158.669921875" dy="44.4">OR LONG PRESS ON MOBILE</tspan><tspan x="2158.669921875" dy="44.4">TO OPEN RACK VIEW</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="2178.669921875" cy="584.0770263671875" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="2178.669921875" y="584.0770263671875" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g><g class="text-group" data-text-id="text-1764791291347"><text class="text-element" x="1065.795654296875" y="187.14932250976562" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 41px; font-weight: bold; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="1065.795654296875" dy="0">Router is live!</tspan><tspan x="1065.795654296875" dy="49.199999999999996">Uses http requests to live ping</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="1085.795654296875" cy="146.14932250976562" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="1085.795654296875" y="146.14932250976562" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <line x1="2000" y1="227" x2="1686.82958984375" y2="628.8558959960938" class="minimap-edge"></line><line x1="1686.82958984375" y1="628.8558959960938" x2="2000" y2="950" class="minimap-edge"></line><line x1="2000" y1="950" x2="1200" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2800" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1650" class="minimap-edge"></line><line x1="1200" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1000" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2200" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2600" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><circle cx="2000" cy="227" r="40" class="minimap-node"></circle><circle cx="1686.82958984375" cy="628.8558959960938" r="40" class="minimap-node"></circle><circle cx="2000" cy="950" r="40" class="minimap-node"></circle><circle cx="1200" cy="1350" r="40" class="minimap-node"></circle><circle cx="2800" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1650" r="40" class="minimap-node"></circle><circle cx="600" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="2250" r="40" class="minimap-node"></circle><circle cx="1800" cy="2250" r="40" class="minimap-node"></circle><circle cx="2200" cy="2250" r="40" class="minimap-node"></circle><circle cx="1000" cy="1850" r="40" class="minimap-node"></circle><circle cx="2600" cy="2250" r="40" class="minimap-node"></circle><circle cx="3000" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="1850" r="40" class="minimap-node"></circle><circle cx="3000" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="1850" r="40" class="minimap-node"></circle><circle cx="2590.18017578125" cy="882.6126098632812" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="384.66666666666674" y="27" width="3230.6666666666665" height="2423"></rect>
+              <line x1="2000" y1="227" x2="1686.82958984375" y2="628.8558959960938" class="minimap-edge"></line><line x1="1686.82958984375" y1="628.8558959960938" x2="2000" y2="950" class="minimap-edge"></line><line x1="2000" y1="950" x2="1200" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2800" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1350" class="minimap-edge"></line><line x1="2000" y1="950" x2="2000" y2="1650" class="minimap-edge"></line><line x1="1200" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1000" y2="1850" class="minimap-edge"></line><line x1="1200" y1="1350" x2="1400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2200" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="2600" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="2250" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3400" y2="1850" class="minimap-edge"></line><line x1="2000" y1="1350" x2="3000" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="600" y2="1850" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1400" y2="2250" class="minimap-edge"></line><line x1="2800" y1="1350" x2="1800" y2="2250" class="minimap-edge"></line><circle cx="2000" cy="227" r="40" class="minimap-node"></circle><circle cx="1686.82958984375" cy="628.8558959960938" r="40" class="minimap-node"></circle><circle cx="2000" cy="950" r="40" class="minimap-node"></circle><circle cx="1200" cy="1350" r="40" class="minimap-node"></circle><circle cx="2800" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1350" r="40" class="minimap-node"></circle><circle cx="2000" cy="1650" r="40" class="minimap-node"></circle><circle cx="600" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="2250" r="40" class="minimap-node"></circle><circle cx="1800" cy="2250" r="40" class="minimap-node"></circle><circle cx="2200" cy="2250" r="40" class="minimap-node"></circle><circle cx="1000" cy="1850" r="40" class="minimap-node"></circle><circle cx="2600" cy="2250" r="40" class="minimap-node"></circle><circle cx="3000" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="2250" r="40" class="minimap-node"></circle><circle cx="3400" cy="1850" r="40" class="minimap-node"></circle><circle cx="3000" cy="1850" r="40" class="minimap-node"></circle><circle cx="1400" cy="1850" r="40" class="minimap-node"></circle><circle cx="2590.18017578125" cy="882.6126098632812" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="663.4450887044272" y="553.9766490681966" width="2673.1098225911455" height="2004.8323669433591"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">124%</div>
+            <div class="zoom-level" id="zoom-level">150%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -2124,9 +2118,9 @@
           </div>
         </div>
         <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
-		<button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
-		<button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
-		<button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
+        <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
+        <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
+        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
       <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
@@ -2144,8 +2138,8 @@
           </svg>
         </div>
         <div id="node-panel" style="display: block;">
-          <div class="details-name editable-text" id="node-name">OPNSENSE</div>
-          <div class="details-ip editable-text" id="node-ip">192.168.100.1</div>
+          <div class="details-name editable-text" id="node-name">IM A RACK</div>
+          <div class="details-ip editable-text" id="node-ip"></div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">MAC:</span>
             <span class="editable-text" id="node-mac" style="flex: 1; cursor: pointer; color: var(--text-main);">--</span>
@@ -2158,11 +2152,11 @@
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">U Height:</span>
             <span class="editable-text" id="node-uheight" style="flex: 1; cursor: pointer; color: var(--text-main);">1U</span>
           </div>
-          <div class="details-info-row" id="assigned-rack-row" style="display: flex;">
+          <div class="details-info-row" id="assigned-rack-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Assigned Rack:</span>
             <select id="node-assigned-rack" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option><option value="im-a-rack">IM A RACK</option></select>
           </div>
-          <div class="details-info-row" id="rack-capacity-row" style="display: none;">
+          <div class="details-info-row" id="rack-capacity-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Rack Capacity:</span>
             <select id="node-rack-capacity" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
               <option value="42">42U</option>
@@ -2181,8 +2175,8 @@
               <option value="application">Application</option>
             </select>
           </div>
-          <div class="details-role" id="node-role">WAN</div>
-          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>1Gbps Fiber</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>Bridge Mode</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+          <div class="details-role" id="node-role">Rack</div>
+          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-tag-input" placeholder="Add tag..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-tag-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2192,10 +2186,10 @@
           <div class="size-controls">
             <label>Size:</label>
             <input type="range" id="size-slider" min="20" max="200" value="55">
-            <span id="size-value">127</span>
+            <span id="size-value">181</span>
             <button id="reset-size">Reset</button>
           </div>
-          <details class="style-section">
+          <details class="style-section" open="">
             <summary>Styling</summary>
             <div class="style-content">
               <div class="style-row">
@@ -2236,9 +2230,13 @@
                 </select>
               </div>
               <button class="pick-icon-btn" id="pick-shape-icon-btn">Or Search Web Icons</button>
-              <div class="style-row">
-                <label>Circle Color:</label>
+			  <div class="style-row">
+                <label>Fill Color:</label>
                 <input type="color" id="circle-color" value="#1e293b">
+              </div>
+              <div class="style-row">
+                <label>Border Color:</label>
+                <input type="color" id="circle-border" value="#475569">
               </div>
               <div class="style-row">
                 <label>Title Color:</label>
@@ -2324,7 +2322,7 @@
               <input type="checkbox" id="node-pingable" style="cursor: pointer;">
               <span style="font-size: 14px;">Enable status check for this node</span>
               </label>
-              <div id="node-ping-options" style="display: block;">
+              <div id="node-ping-options" style="display: none;">
                 <div class="style-row">
                   <label>Protocol:</label>
                   <select id="node-ping-protocol">
@@ -2333,7 +2331,7 @@
                     <option value="custom">Custom URL</option>
                   </select>
                 </div>
-                <div id="node-custom-url-container" style="display: block; margin-top: 8px;">
+                <div id="node-custom-url-container" style="display: none; margin-top: 8px;">
                   <label style="display: block; margin-bottom: 4px; font-size: 13px;">Custom URL:</label>
                   <input type="text" id="node-custom-url" placeholder="e.g. http://192.168.1.1:8080" style="width: 100%;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: 14px;">
                 </div>
@@ -2343,15 +2341,15 @@
                 </div>
                 <div style="margin-top: 12px; padding: 10px; background: var(--panel); border-radius: 6px; border: 1px solid var(--edge-main);">
                   <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px;">Current Status:</div>
-                  <div id="node-ping-status" style="font-size: 14px; font-weight: 600; color: var(--accent);">● Online</div>
-                  <div id="node-ping-last-check" style="font-size: 11px; color: var(--text-soft); margin-top: 4px;">Last checked: 2:25:19 PM</div>
+                  <div id="node-ping-status" style="font-size: 14px; font-weight: 600; color: var(--text-soft);">● Unknown</div>
+                  <div id="node-ping-last-check" style="font-size: 11px; color: var(--text-soft); margin-top: 4px;">Never checked</div>
                 </div>
                 <button id="check-ping-now" style="width: 100%;margin-top: 10px;padding: 8px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Check Status Now</button>
               </div>
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">ISP: AT&amp;T Fiber</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">set to google for ping sake</span><span class="delete-note">✕</span></li></ul>
+          <ul class="list" id="node-notes"></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2461,7 +2459,7 @@
             <span id="text-opacity-val" style="min-width: 35px; text-align: right">100%</span>
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Text</button>
-        </div>	
+        </div>
         <details class="style-section" open="">
           <summary>Page Layout</summary>
           <div class="style-content">
@@ -2961,6 +2959,29 @@
       "status": "unknown",
       "lastCheck": null
     }
+  },
+  "server-1": {
+    "shape": "circle",
+    "name": "Server 1",
+    "ip": "0.0.0.0",
+    "role": "",
+    "tags": [],
+    "notes": [],
+    "mac": "",
+    "rackUnit": 35,
+    "uHeight": "1",
+    "ping": {
+      "enabled": true,
+      "protocol": "http",
+      "customUrl": "",
+      "timeout": 3000,
+      "status": "unknown",
+      "lastCheck": null
+    },
+    "locked": false,
+    "groupId": null,
+    "assignedRack": "im-a-rack",
+    "layer": "physical"
   }
 }</script>
     <script id="topology-state" type="application/json">{
@@ -3447,6 +3468,29 @@
         "status": "unknown",
         "lastCheck": null
       }
+    },
+    "server-1": {
+      "shape": "circle",
+      "name": "Server 1",
+      "ip": "0.0.0.0",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": 35,
+      "uHeight": "1",
+      "ping": {
+        "enabled": true,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "locked": false,
+      "groupId": null,
+      "assignedRack": "im-a-rack",
+      "layer": "physical"
     }
   },
   "edgeData": {
@@ -3906,11 +3950,16 @@
     "im-a-rack": {
       "x": 2590.18017578125,
       "y": 882.6126098632812
+    },
+    "server-1": {
+      "x": 2012.214111328125,
+      "y": 689.1181030273438
     }
   },
   "nodeSizes": {
     "isp-modem": 127,
-    "im-a-rack": 181
+    "im-a-rack": 181,
+    "server-1": 85
   },
   "nodeStyles": {
     "pi-hole": {
@@ -4018,10 +4067,19 @@
         "circleColor": "#ff0000",
         "pingOffsetY": -48
       }
+    },
+    "server-1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "server"
+        }
+      }
     }
   },
   "iconCache": {
     "mdi-airplane": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-airplane\" viewBox=\"0 0 24 24\"><path d=\"M20.56 3.91C21.15 4.5 21.15 5.45 20.56 6.03L16.67 9.92L18.79 19.11L17.38 20.53L13.5 13.1L9.6 17L9.96 19.47L8.89 20.53L7.13 17.35L3.94 15.58L5 14.5L7.5 14.87L11.37 11L3.94 7.09L5.36 5.68L14.55 7.8L18.44 3.91C19 3.33 20 3.33 20.56 3.91Z\" /></svg>",
+    "mdi-docker": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-docker\" viewBox=\"0 0 24 24\"><path d=\"M21.81 10.25C21.75 10.21 21.25 9.82 20.17 9.82C19.89 9.82 19.61 9.85 19.33 9.9C19.12 8.5 17.95 7.79 17.9 7.76L17.61 7.59L17.43 7.86C17.19 8.22 17 8.63 16.92 9.05C16.72 9.85 16.84 10.61 17.25 11.26C16.76 11.54 15.96 11.61 15.79 11.61H2.62C2.28 11.61 2 11.89 2 12.24C2 13.39 2.18 14.54 2.58 15.62C3.03 16.81 3.71 17.69 4.58 18.23C5.56 18.83 7.17 19.17 9 19.17C9.79 19.17 10.61 19.1 11.42 18.95C12.54 18.75 13.62 18.36 14.61 17.79C15.43 17.32 16.16 16.72 16.78 16C17.83 14.83 18.45 13.5 18.9 12.35H19.09C20.23 12.35 20.94 11.89 21.33 11.5C21.59 11.26 21.78 10.97 21.92 10.63L22 10.39L21.81 10.25M3.85 11.24H5.61C5.69 11.24 5.77 11.17 5.77 11.08V9.5C5.77 9.42 5.7 9.34 5.61 9.34H3.85C3.76 9.34 3.69 9.41 3.69 9.5V11.08C3.7 11.17 3.76 11.24 3.85 11.24M6.28 11.24H8.04C8.12 11.24 8.2 11.17 8.2 11.08V9.5C8.2 9.42 8.13 9.34 8.04 9.34H6.28C6.19 9.34 6.12 9.41 6.12 9.5V11.08C6.13 11.17 6.19 11.24 6.28 11.24M8.75 11.24H10.5C10.6 11.24 10.67 11.17 10.67 11.08V9.5C10.67 9.42 10.61 9.34 10.5 9.34H8.75C8.67 9.34 8.6 9.41 8.6 9.5V11.08C8.6 11.17 8.66 11.24 8.75 11.24M11.19 11.24H12.96C13.04 11.24 13.11 11.17 13.11 11.08V9.5C13.11 9.42 13.05 9.34 12.96 9.34H11.19C11.11 9.34 11.04 9.41 11.04 9.5V11.08C11.04 11.17 11.11 11.24 11.19 11.24M6.28 9H8.04C8.12 9 8.2 8.91 8.2 8.82V7.25C8.2 7.16 8.13 7.09 8.04 7.09H6.28C6.19 7.09 6.12 7.15 6.12 7.25V8.82C6.13 8.91 6.19 9 6.28 9M8.75 9H10.5C10.6 9 10.67 8.91 10.67 8.82V7.25C10.67 7.16 10.61 7.09 10.5 7.09H8.75C8.67 7.09 8.6 7.15 8.6 7.25V8.82C8.6 8.91 8.66 9 8.75 9M11.19 9H12.96C13.04 9 13.11 8.91 13.11 8.82V7.25C13.11 7.16 13.04 7.09 12.96 7.09H11.19C11.11 7.09 11.04 7.15 11.04 7.25V8.82C11.04 8.91 11.11 9 11.19 9M11.19 6.72H12.96C13.04 6.72 13.11 6.65 13.11 6.56V5C13.11 4.9 13.04 4.83 12.96 4.83H11.19C11.11 4.83 11.04 4.89 11.04 5V6.56C11.04 6.64 11.11 6.72 11.19 6.72M13.65 11.24H15.41C15.5 11.24 15.57 11.17 15.57 11.08V9.5C15.57 9.42 15.5 9.34 15.41 9.34H13.65C13.57 9.34 13.5 9.41 13.5 9.5V11.08C13.5 11.17 13.57 11.24 13.65 11.24\" /></svg>",
     "simple-opnsense": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>OPNsense</title><path d=\"M5.25 0v5.25h13.5v13.5H24V7.5L16.5 0Zm13.5 18.75H5.25V5.25H0V16.5L7.5 24h11.25Z\"/></svg>",
     "selfhst-pi-hole": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\"><image href=\"https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/pi-hole.png\" width=\"24\" height=\"24\"/></svg>",
     "selfhst-plex": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\"><image href=\"https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/plex.png\" width=\"24\" height=\"24\"/></svg>",
@@ -4034,19 +4092,20 @@
     "simple-grafana": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Grafana</title><path d=\"M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z\"/></svg>",
     "simple-prometheus": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Prometheus</title><path d=\"M12 0C5.373 0 0 5.372 0 12c0 6.627 5.373 12 12 12s12-5.373 12-12c0-6.628-5.373-12-12-12zm0 22.46c-1.885 0-3.414-1.26-3.414-2.814h6.828c0 1.553-1.528 2.813-3.414 2.813zm5.64-3.745H6.36v-2.046h11.28v2.046zm-.04-3.098H6.391c-.037-.043-.075-.086-.111-.13-1.155-1.401-1.427-2.133-1.69-2.879-.005-.025 1.4.287 2.395.511 0 0 .513.119 1.262.255-.72-.843-1.147-1.915-1.147-3.01 0-2.406 1.845-4.508 1.18-6.207.648.053 1.34 1.367 1.387 3.422.689-.951.977-2.69.977-3.755 0-1.103.727-2.385 1.454-2.429-.648 1.069.168 1.984.894 4.256.272.854.237 2.29.447 3.201.07-1.892.395-4.652 1.595-5.605-.529 1.2.079 2.702.494 3.424.671 1.164 1.078 2.047 1.078 3.716a4.642 4.642 0 01-1.11 2.996c.792-.149 1.34-.283 1.34-.283l2.573-.502s-.374 1.538-1.81 3.019z\"/></svg>",
     "simple-ubiquiti": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Ubiquiti</title><path d=\"M23.1627 0h-1.4882v1.4882h1.4882zm-5.2072 10.4226V7.4409l.0007.001h2.9755v2.9762h2.9756v.9433c0 1.0906-.0927 2.3827-.306 3.3973-.1194.5672-.3004 1.1308-.5127 1.672-.2175.5537-.468 1.0841-.7408 1.5595a11.6795 11.6795 0 0 1-1.2456 1.7762l-.0253.0294-.0417.0488c-.1148.1347-.2283.2679-.3531.398a11.7612 11.7612 0 0 1-.4494.4492c-1.9046 1.8343-4.3861 2.98-6.9808 3.243-.3122.032-.939.0652-1.2519.0652-.3139-.001-.9397-.0331-1.252-.0651-2.5946-.263-5.0761-1.4097-6.9806-3.243a11.75 11.75 0 0 1-.4495-.4494c-.131-.1356-.249-.2748-.3683-.4154l-.0006-.0004-.0512-.0603a11.6576 11.6576 0 0 1-1.2456-1.7762c-.2727-.4763-.5233-1.0058-.7408-1.5595-.2123-.5414-.3933-1.1048-.5128-1.6718C.1854 13.743.0927 12.452.0927 11.3616V.1864h5.9518v10.2362s0 .7847.0099 1.0415l.0022.0599v.0004c.0127.332.0247.6575.0594.9812.098.919.3014 1.7913.7203 2.5288.1213.213.2443.42.3915.616.8953 1.1939 2.2577 2.0901 3.9573 2.3398.2022.0294.6108.0552.8149.0552.204 0 .6125-.0258.8149-.0552 1.6996-.2497 3.062-1.146 3.9573-2.3398.148-.196.2701-.403.3914-.616.419-.7375.6224-1.6095.7204-2.5288.0346-.3243.047-.6503.0594-.9831l.0022-.0584c.0099-.2568.0099-1.0415.0099-1.0415zm.7427-8.19h2.2326v2.2319h2.9764v2.9764h-2.9764V4.4654h-2.2326V2.2328Z\"/></svg>",
-    "simple-wireguard": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>WireGuard</title><path d=\"M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z\"/></svg>"
+    "simple-wireguard": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>WireGuard</title><path d=\"M23.98 11.645S24.533 0 11.735 0C.418 0 .064 11.17.064 11.17S-1.6 24 11.997 24C25.04 24 23.98 11.645 23.98 11.645zM8.155 7.576c2.4-1.47 5.469-.571 6.618 1.638.218.419.246 1.063.108 1.503-.477 1.516-1.601 2.366-3.145 2.728.455-.39.817-.832.933-1.442a2.112 2.112 0 0 0-.364-1.677 2.14 2.14 0 0 0-2.465-.75c-.95.36-1.47 1.228-1.377 2.294.087.99.839 1.632 2.245 1.876-.21.111-.372.193-.53.281a5.113 5.113 0 0 0-1.644 1.43c-.143.192-.24.208-.458.075-2.827-1.729-3.009-6.067.078-7.956zM6.04 18.258c-.455.116-.895.286-1.359.438.227-1.532 2.021-2.943 3.539-2.782a3.91 3.91 0 0 0-.74 2.072c-.504.093-.98.155-1.44.272zM15.703 3.3c.448.017.898.01 1.347.02a2.324 2.324 0 0 1 .334.047 3.249 3.249 0 0 1-.34.434c-.16.15-.341.296-.573.069-.055-.055-.187-.042-.283-.044-.447-.005-.894-.02-1.34-.003a8.323 8.323 0 0 0-1.154.118c-.072.013-.178.25-.146.338.078.207.191.435.359.567.619.49 1.277.928 1.9 1.413.604.472 1.167.99 1.51 1.7.446.928.46 1.9.267 2.877-.322 1.63-1.147 2.98-2.483 3.962-.538.395-1.205.62-1.821.903-.543.25-1.1.465-1.644.712-.98.446-1.53 1.51-1.369 2.615.149 1.015 1.04 1.862 2.059 2.037 1.223.21 2.486-.586 2.785-1.83.336-1.397-.423-2.646-1.845-3.024l-.256-.066c.38-.17.708-.291 1.012-.458q.793-.437 1.558-.925c.15-.096.231-.096.36.014.977.846 1.56 1.898 1.724 3.187.27 2.135-.74 4.096-2.646 5.101-2.948 1.555-6.557-.215-7.208-3.484-.558-2.8 1.418-5.34 3.797-5.83 1.023-.211 1.958-.637 2.685-1.425.47-.508.697-.944.775-1.141a3.165 3.165 0 0 0 .217-1.158 2.71 2.71 0 0 0-.237-.992c-.248-.566-1.2-1.466-1.435-1.656l-2.24-1.754c-.079-.065-.168-.06-.36-.047-.23.016-.815.048-1.067-.018.204-.155.76-.38 1-.56-.726-.49-1.554-.314-2.315-.46.176-.328 1.046-.831 1.541-.888a7.323 7.323 0 0 0-.135-.822c-.03-.111-.154-.22-.263-.283-.262-.154-.541-.281-.843-.434a1.755 1.755 0 0 1 .906-.28 3.385 3.385 0 0 1 .908.088c.54.123.97.042 1.399-.324-.338-.136-.676-.26-1.003-.407a9.843 9.843 0 0 1-.942-.493c.85.118 1.671.437 2.54.32l.022-.118-2.018-.47c1.203-.11 2.323-.128 3.384.388.299.146.61.266.897.432.14.08.233.24.348.365.09.098.164.23.276.29.424.225.89.234 1.366.223l.01-.16c.479.15 1.017.702 1.017 1.105-.776 0-1.55-.003-2.325.004-.083 0-.165.061-.247.094.078.046.155.128.235.131z M14.703 2.153a.118.118 0 0 0-.016.19.179.179 0 0 0 .246.065c.075-.038.148-.078.238-.125-.072-.062-.13-.114-.19-.163-.106-.087-.193-.032-.278.033z\"/></svg>",
+    "mdi-server": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server\" viewBox=\"0 0 24 24\"><path d=\"M4,1H20A1,1 0 0,1 21,2V6A1,1 0 0,1 20,7H4A1,1 0 0,1 3,6V2A1,1 0 0,1 4,1M4,9H20A1,1 0 0,1 21,10V14A1,1 0 0,1 20,15H4A1,1 0 0,1 3,14V10A1,1 0 0,1 4,9M4,17H20A1,1 0 0,1 21,18V22A1,1 0 0,1 20,23H4A1,1 0 0,1 3,22V18A1,1 0 0,1 4,17M9,5H10V3H9V5M9,13H10V11H9V13M9,21H10V19H9V21M5,3V5H7V3H5M5,11V13H7V11H5M5,19V21H7V19H5Z\" /></svg>"
   },
   "page": {
     "title": "Homelab",
     "background": "",
-    "topbarBg": "rgba(9, 12, 20, 0.9)",
-    "topbarBorder": "#1f2533",
-    "panel": "#0b0e13",
-    "panelAlt": "#10141b",
-    "accent": "#4fd1c5",
-    "danger": "#f56565",
-    "textMain": "#e2e8f0",
-    "textSoft": "#94a3b8",
+    "topbarBg": "#000000",
+    "topbarBorder": "#000000",
+    "panel": "#541c1c",
+    "panelAlt": "#701010",
+    "accent": "#feb4b4",
+    "danger": "#ff5c5c",
+    "textMain": "#ffffff",
+    "textSoft": "#ffffff",
     "topbarHeight": 100,
     "sidebarWidth": 435,
     "mobileFooterHeight": 20,
@@ -4057,9 +4116,9 @@
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.2381345439537763,
-    "panX": 384.66666666666674,
-    "panY": 27
+    "zoom": 1.4963844605990224,
+    "panX": 663.4450887044272,
+    "panY": 553.9766490681966
   },
   "savedTopologyView": null,
   "documentTabs": [
@@ -4495,7 +4554,7 @@
           ],
           "notes": [],
           "mac": "",
-          "rackUnit": "",
+          "rackUnit": 32,
           "uHeight": "1",
           "ping": {
             "enabled": true,
@@ -4504,6 +4563,29 @@
             "timeout": 3000,
             "status": "online",
             "lastCheck": "2025-12-05T01:31:50.271Z"
+          },
+          "locked": false,
+          "groupId": null,
+          "assignedRack": "im-a-rack",
+          "layer": "physical"
+        },
+        "noded": {
+          "shape": "circle",
+          "name": "noded",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": 29,
+          "uHeight": "1",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
           },
           "locked": false,
           "groupId": null,
@@ -4844,8 +4926,8 @@
       },
       "positions": {
         "internet": {
-          "x": 2061.6986083984375,
-          "y": 247
+          "x": 2107.5723876953125,
+          "y": 295.1676330566406
         },
         "edge-firewall": {
           "x": 2000,
@@ -4916,12 +4998,16 @@
           "y": 492.46148681640625
         },
         "im-a-rack": {
-          "x": 2626.9840737177465,
-          "y": 397.5428295158845
+          "x": 2704.9699135614965,
+          "y": 335.6130504631501
         },
         "node-in-a-rack": {
-          "x": 1991.182621097425,
-          "y": 274.2610469326237
+          "x": 1969.112548828125,
+          "y": 916.9594116210938
+        },
+        "noded": {
+          "x": 2000,
+          "y": 1075.9075927734375
         }
       },
       "sizes": {
@@ -4933,7 +5019,9 @@
         "internet": {
           "all": {
             "pingOffsetY": -70,
-            "pingOffsetX": -41
+            "pingOffsetX": -41,
+            "circleColor": "#000000",
+            "circleBorder": "#eb0000"
           }
         },
         "im-a-rack": {
@@ -4942,7 +5030,8 @@
               "library": "mdi",
               "name": "airplane"
             },
-            "circleColor": "#db0000"
+            "circleColor": "#db0000",
+            "titleSize": 52
           }
         },
         "node-in-a-rack": {
@@ -4971,11 +5060,11 @@
         "list": [
           {
             "id": "text-1764789614780",
-            "x": 1513.7906494140625,
-            "y": 145.001220703125,
+            "x": 1511.4969482421875,
+            "y": 142.70753479003906,
             "content": "Google is live!",
             "fontSize": 48,
-            "color": "#e2e8f0",
+            "color": "#0a0a0a",
             "fontWeight": "normal",
             "fontStyle": "normal",
             "textAlign": "start",
@@ -5000,10 +5089,28 @@
             "opacity": 1
           }
         ]
+      },
+      "pageState": {
+        "title": "Corporate",
+        "background": "#050505",
+        "topbarBg": "#0bb6ef",
+        "topbarBorder": "#000000",
+        "panel": "#18c6c9",
+        "panelAlt": "#161d1c",
+        "accent": "#3eabc1",
+        "danger": "#070603",
+        "textMain": "#ffffff",
+        "textSoft": "#ffffff",
+        "topbarHeight": 100,
+        "sidebarWidth": 435,
+        "mobileFooterHeight": 20,
+        "sidebarCollapsed": false,
+        "autoPingEnabled": false,
+        "autoPingInterval": 30
       }
     },
     {
-      "id": "tab-1764898321334",
+      "id": "tab-1764987729625",
       "name": "Homelab",
       "nodes": {
         "isp-modem": {
@@ -5488,6 +5595,29 @@
             "status": "unknown",
             "lastCheck": null
           }
+        },
+        "server-1": {
+          "shape": "circle",
+          "name": "Server 1",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": 35,
+          "uHeight": "1",
+          "ping": {
+            "enabled": true,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "locked": false,
+          "groupId": null,
+          "assignedRack": "im-a-rack",
+          "layer": "physical"
         }
       },
       "edges": {
@@ -5900,11 +6030,16 @@
         "im-a-rack": {
           "x": 2590.18017578125,
           "y": 882.6126098632812
+        },
+        "server-1": {
+          "x": 2012.214111328125,
+          "y": 689.1181030273438
         }
       },
       "sizes": {
         "isp-modem": 127,
-        "im-a-rack": 181
+        "im-a-rack": 181,
+        "server-1": 85
       },
       "styles": {
         "pi-hole": {
@@ -6012,6 +6147,14 @@
             "circleColor": "#ff0000",
             "pingOffsetY": -48
           }
+        },
+        "server-1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "server"
+            }
+          }
         }
       },
       "legend": {
@@ -6060,6 +6203,24 @@
             "opacity": 1
           }
         ]
+      },
+      "pageState": {
+        "title": "Homelab",
+        "background": "",
+        "topbarBg": "#000000",
+        "topbarBorder": "#000000",
+        "panel": "#541c1c",
+        "panelAlt": "#701010",
+        "accent": "#feb4b4",
+        "danger": "#ff5c5c",
+        "textMain": "#ffffff",
+        "textSoft": "#ffffff",
+        "topbarHeight": 100,
+        "sidebarWidth": 435,
+        "mobileFooterHeight": 20,
+        "sidebarCollapsed": false,
+        "autoPingEnabled": false,
+        "autoPingInterval": 30
       }
     }
   ],
@@ -6535,7 +6696,7 @@
         }
        });
       });
-	  let textDrawMode = false;
+      let textDrawMode = false;
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
       let currentNodeId = "host";
       let currentEdgeId = null;
@@ -6594,7 +6755,8 @@
         styles: {},
         legend: {},
         rects: { list: [] },
-        texts: { list: [] }
+        texts: { list: [] },
+		pageState: null
       }];
       let currentTabIndex = 0;
       
@@ -6879,16 +7041,16 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
         } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
-	  
+      
       function u8ToBase64(u8) {
       let binary = "";
       for (let i = 0; i < u8.length; i++) binary += String.fromCharCode(u8[i]);
@@ -6901,7 +7063,7 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }  
-	  
+      
       function updateTopologyToolbarVisibility() {
        const toolbar = document.getElementById("topology-toolbar");
        const mini = ensureTopologyToolbarMiniButton();
@@ -6914,16 +7076,16 @@
         toolbar.style.setProperty('display', 'none', 'important');
         mini.style.display = "inline-flex";
        } else {   
-	   if (isMobileDevice()) {    	   
+      if (isMobileDevice()) {    	   
         toolbar.style.setProperty('display', 'grid', 'important');
         mini.style.display = "none";
         } else {   
         toolbar.style.setProperty('display', 'flex', 'important');
         mini.style.display = "none";	  
-	    }
+      }
        }
       }
-	  
+      
       const DEFAULT_PAGE_STATE = {
        title: "The One File: The Networkening",
        background: "",
@@ -6944,14 +7106,19 @@
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
       const CANVAS_WIDTH = 4000;
-      const CANVAS_HEIGHT = 3000;
+      let CANVAS_HEIGHT = 3000;
+      const BASE_CANVAS_HEIGHT = 3000;
       const CANVAS_PADDING = 100;
       
       const RACK_U_HEIGHT = 70;
       const RACK_WIDTH = 600;
       const RACK_START_X = CANVAS_WIDTH / 2;
       const RACK_START_Y = CANVAS_PADDING + 100;
-      
+      function getRackUHeight(rackId) {
+      const capacity = getRackCapacity(rackId);
+      const availableHeight = CANVAS_HEIGHT - RACK_START_Y - 200;
+      return Math.floor(availableHeight / capacity);
+      }
       let canvasState = {
        zoom: 1,
        panX: 0,
@@ -7029,7 +7196,7 @@
         line.classList.add("minimap-edge");
         minimapSvg.insertBefore(line, minimapViewport);
        });
-	   
+      
        Object.entries(savedPositions).forEach(([id, pos]) => {
         const node = NODE_DATA[id];
         if (!node) return;
@@ -7191,7 +7358,7 @@
        if (document.getElementById("layer-application").checked) activeLayers.add("application");
        forgeTheTopology();    
       }
-    
+      
       function isNodeVisible(nodeId) {  
        const node = NODE_DATA[nodeId];    
        if (!node) return false;     
@@ -7200,13 +7367,12 @@
       }
       
       function enterRack(rackId) {
-       if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
-       
-       savedTopologyView = {
-        zoom: canvasState.zoom,
-        panX: canvasState.panX,
-        panY: canvasState.panY
-       };
+      if (!NODE_DATA[rackId] || !NODE_DATA[rackId].isRack) return;
+      const rackCapacity = getRackCapacity(rackId);
+      const neededHeight = RACK_START_Y + (rackCapacity * RACK_U_HEIGHT) + 200;
+      if (neededHeight > BASE_CANVAS_HEIGHT) {
+      CANVAS_HEIGHT = neededHeight;
+      }
        
        currentView.mode = "rack";
        currentView.rackId = rackId;
@@ -7220,10 +7386,11 @@
         hint.classList.add("visible");
        }
        
-       const rackCapacity = getRackCapacity(rackId);
-       const rackHeight = rackCapacity * RACK_U_HEIGHT;
-       const rackCenterX = RACK_START_X;
-       const rackCenterY = RACK_START_Y + (rackHeight / 2);
+      
+      const rackUHeight = getRackUHeight(rackId);
+      const rackHeight = rackCapacity * rackUHeight;
+      const rackCenterX = RACK_START_X;
+      const rackCenterY = RACK_START_Y + (rackHeight / 2);
        
        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
@@ -7238,8 +7405,9 @@
       }
       
       function exitRack() {
-       currentView.mode = "topology";
-       currentView.rackId = null;
+      CANVAS_HEIGHT = BASE_CANVAS_HEIGHT;
+      currentView.mode = "topology";
+      currentView.rackId = null;
        
        const backBtn = document.getElementById("back-to-topology-btn");
        if (backBtn) backBtn.style.display = "none";
@@ -7441,6 +7609,7 @@
             EDGE_LEGEND = currentTab.legend || EDGE_LEGEND;
             RECT_DATA = currentTab.rects || RECT_DATA;
             TEXT_DATA = currentTab.texts || TEXT_DATA;
+            if (currentTab.pageState) PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, currentTab.pageState);
           }
         }
        }
@@ -7504,7 +7673,7 @@
       function ensureStyleEntry(id) {
        if (!savedStyles[id]) savedStyles[id] = {};
        const entry = savedStyles[id];
-       const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+       const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
        const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(entry, p), );
        if (isFlat) {
         const all = entry.all || {};
@@ -7934,6 +8103,9 @@
        if (styles.circleColor) {
         shapeEl.style.stroke = styles.circleColor;
        }
+	   if (styles.circleBorder) {
+        shapeEl.style.stroke = styles.circleBorder;
+       }
        return shapeEl;
       }
       
@@ -8059,7 +8231,7 @@
        }
       
        function deleteRectangle(rectId) {
-	    pushUndo("delete rectangle");
+      pushUndo("delete rectangle");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -8122,14 +8294,15 @@
         
         if (currentView.mode === "rack" && currentView.rackId) {
          const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
          const rackGroup = document.createElementNS(ns, "g");
-         rackGroup.id = "rack-visualization";
-         
+         rackGroup.id = "rack-visualization";       
          const rackFrame = document.createElementNS(ns, "rect");
          rackFrame.setAttribute("x", RACK_START_X - RACK_WIDTH / 2);
          rackFrame.setAttribute("y", RACK_START_Y);
          rackFrame.setAttribute("width", RACK_WIDTH);
-         rackFrame.setAttribute("height", rackCapacity * RACK_U_HEIGHT);
+         rackFrame.setAttribute("height", rackCapacity * rackUHeight);
+      
          rackFrame.setAttribute("fill", "rgba(15, 23, 42, 0.3)");
          rackFrame.setAttribute("stroke", "var(--accent)");
          rackFrame.setAttribute("stroke-width", "3");
@@ -8137,8 +8310,8 @@
          rackGroup.appendChild(rackFrame);
          
          for (let u = 0; u <= rackCapacity; u++) {
-          const y = RACK_START_Y + u * RACK_U_HEIGHT;
-          
+          const y = RACK_START_Y + u * rackUHeight;
+        
           const line = document.createElementNS(ns, "line");
           line.setAttribute("x1", RACK_START_X - RACK_WIDTH / 2);
           line.setAttribute("y1", y);
@@ -8153,7 +8326,7 @@
            const uNumber = rackCapacity - u;
            const text = document.createElementNS(ns, "text");
            text.setAttribute("x", RACK_START_X - RACK_WIDTH / 2 - 30);
-           text.setAttribute("y", y + RACK_U_HEIGHT / 2);
+           text.setAttribute("y", y + rackUHeight / 2);
            text.setAttribute("text-anchor", "middle");
            text.setAttribute("dominant-baseline", "middle");
            text.style.fill = "var(--accent)";
@@ -8164,7 +8337,7 @@
            
            const textRight = document.createElementNS(ns, "text");
            textRight.setAttribute("x", RACK_START_X + RACK_WIDTH / 2 + 30);
-           textRight.setAttribute("y", y + RACK_U_HEIGHT / 2);
+           textRight.setAttribute("y", y + rackUHeight / 2);
            textRight.setAttribute("text-anchor", "middle");
            textRight.setAttribute("dominant-baseline", "middle");
            textRight.style.fill = "var(--accent)";
@@ -8177,7 +8350,7 @@
          
          svg.appendChild(rackGroup);
         }
-    
+      
         const centerX = CANVAS_WIDTH / 2;
       
         if (RECT_DATA && RECT_DATA.list) {
@@ -8235,11 +8408,11 @@
            });
            
            deleteBtn.addEventListener("touchend", (e) => {
-		   e.stopPropagation();
+      e.stopPropagation();
            e.preventDefault();
            deleteRectangle(rect.id);
            });
-
+      
            let isDragging = false;
            let dragStartX, dragStartY;
            let rectStartX, rectStartY;
@@ -8613,11 +8786,12 @@
          if (currentView.mode === "rack") {
           if (node.assignedRack !== currentView.rackId) return;
           
-          const rackUnit = parseInt(node.rackUnit) || 1;
-          const uHeight = parseInt(node.uHeight) || 1;
-          const rackCapacity = getRackCapacity(currentView.rackId);
-          pos.x = RACK_START_X;
-          pos.y = RACK_START_Y + (rackUnit - 1) * RACK_U_HEIGHT + (uHeight * RACK_U_HEIGHT) / 2;
+         const rackUnit = parseInt(node.rackUnit) || 1;
+      const uHeight = parseInt(node.uHeight) || 1;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      pos.x = RACK_START_X;
+      pos.y = RACK_START_Y + (rackCapacity - rackUnit - uHeight + 1) * rackUHeight + (uHeight * rackUHeight) / 2;
          } else {
           if (node.assignedRack) return;
          }
@@ -8801,10 +8975,16 @@
           
           let nodesToCollect = [];
           if (selectedNodes.has(id)) {
-           nodesToCollect = Array.from(selectedNodes);
-          } else {
-           nodesToCollect = [id];
-          }
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) {
+      initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      }
+      });
+      } else {
+      initialPositions = { [id]: { x: pos.x, y: pos.y } };
+      }
           
           const groupIds = new Set();
           nodesToCollect.forEach(nodeId => {
@@ -8922,14 +9102,24 @@
            }
           });
          };
-         const handleMouseUp = () => {
-          if (isDragging) {
-           pushUndo("move nodes");
-           isDragging = false;
-           g.style.cursor = "grab";
-           hitArea.style.cursor = "grab";
-          }
-         };
+      const handleMouseUp = () => {
+      if (isDragging) {
+      pushUndo("move nodes");
+      isDragging = false;
+      g.style.cursor = "grab";
+      hitArea.style.cursor = "grab";
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const draggedY = savedPositions[id]?.y || pos.y;
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      };
          document.addEventListener("mousemove", handleMouseMove);
          document.addEventListener("mouseup", handleMouseUp);
          let touchStartTime = 0;
@@ -9089,20 +9279,30 @@
          }, {
           passive: false
          });
-         g.addEventListener("touchend", (e) => {
-          const touchDuration = Date.now() - touchStartTime;
-          if (!touchMoved && touchDuration < 400) {
-           claimTheImmortal(id);
-          }
-          if (isDragging) {
-           isDragging = false;
-           savedPositions[id] = {
-            x: pos.x,
-            y: pos.y
-           };
-          }
-          touchMoved = false;
-         });
+      g.addEventListener("touchend", (e) => {
+      const touchDuration = Date.now() - touchStartTime;
+      if (!touchMoved && touchDuration < 400) {
+      claimTheImmortal(id);
+      }
+      if (isDragging) {
+      const draggedY = pos.y;
+      isDragging = false;
+      savedPositions[id] = {
+      x: pos.x,
+      y: pos.y
+      };
+      if (currentView.mode === "rack" && NODE_DATA[id]?.assignedRack === currentView.rackId) {
+      const rackCapacity = getRackCapacity(currentView.rackId);
+      const rackUHeight = getRackUHeight(currentView.rackId);
+      let newUnit = rackCapacity - Math.round((draggedY - RACK_START_Y) / rackUHeight);
+      newUnit = Math.max(1, Math.min(newUnit, rackCapacity));
+      NODE_DATA[id].rackUnit = newUnit;
+      forgeTheTopology();
+      claimTheImmortal(id);
+      }
+      }
+      touchMoved = false;
+      });
          g.style.cursor = "grab";
          g.addEventListener("click", (e) => {
           if (!isDragging) {
@@ -9622,7 +9822,7 @@
         document.getElementById("node-rack").textContent = data.rackUnit || "--";
         document.getElementById("node-uheight").textContent = (data.uHeight || "1") + "U";
         document.getElementById("node-role").textContent = data.role;
-
+      
         populateRackDropdown();
         const assignedRackSelect = document.getElementById("node-assigned-rack");
         if (assignedRackSelect) {
@@ -9654,7 +9854,7 @@
         const styleEntry = savedStyles[id] || {};
         const resolvedStyles = resolveStylesEntry(styleEntry);
         const scopeKey = currentStyleScope || "all";
-        const flatProps = ["circleColor", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
+        const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
         const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(styleEntry, p), );
         const scopedStyles = isFlat ? styleEntry : styleEntry[scopeKey] || {};
         const circleColorInput = document.getElementById("circle-color");
@@ -9667,6 +9867,8 @@
         const shapeSelect = document.getElementById("shape-select");
         const scopeSelect = document.getElementById("style-scope");
         circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || "#1e293b";
+        const circleBorderInput = document.getElementById("circle-border");
+        circleBorderInput.value = scopedStyles.circleBorder || resolvedStyles.circleBorder || "#475569";
         titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || "#e2e8f0";
         titleFontSelect.value = scopedStyles.titleFont || resolvedStyles.titleFont || "system-ui, sans-serif";
         titleSizeInput.value = scopedStyles.titleSize || resolvedStyles.titleSize || 18;
@@ -9801,15 +10003,19 @@
          notesEl.append(li);
         });
         const addLineSelect = document.getElementById("add-line-select");
-        addLineSelect.innerHTML = "";
-        Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
-         if (nodeId !== id) {
-          const opt = document.createElement("option");
-          opt.value = nodeId;
-          opt.textContent = node.name;
-          addLineSelect.appendChild(opt);
-         }
-        });
+      addLineSelect.innerHTML = "";
+      const currentRack = data.assignedRack || "";
+      Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
+      if (nodeId !== id) {
+      const nodeRack = node.assignedRack || "";
+      if (currentRack === nodeRack) {
+      const opt = document.createElement("option");
+      opt.value = nodeId;
+      opt.textContent = node.name;
+      addLineSelect.appendChild(opt);
+      }
+      }
+      });
         
         const pingEnabled = data.ping && data.ping.enabled;
         document.getElementById('node-pingable').checked = pingEnabled;
@@ -10257,7 +10463,8 @@
          const newShape = createNodeShape(currentNodeId, newSize);
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
-         if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+         if (styles.circleColor) newShape.style.fill = styles.circleColor;
+		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -10286,7 +10493,8 @@
          const newShape = createNodeShape(currentNodeId, defaultSize);
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
-         if (styles.circleColor) newShape.style.stroke = styles.circleColor;
+         if (styles.circleColor) newShape.style.fill = styles.circleColor;
+		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -10313,7 +10521,8 @@
         const shapeEl = nodeGroup.querySelector(".node-circle");
         const label = nodeGroup.querySelector(".node-label");
         const sub = nodeGroup.querySelector(".node-sub");
-        if (property === "circleColor" && shapeEl) shapeEl.style.stroke = value;
+        if (property === "circleColor" && shapeEl) shapeEl.style.fill = value;
+		else if (property === "circleBorder" && shapeEl) shapeEl.style.stroke = value;
         else if (property === "titleColor" && label) label.style.fill = value;
         else if (property === "titleFont" && label) label.style.fontFamily = value;
         else if (property === "titleSize" && label) label.style.fontSize = value + "px";
@@ -10322,6 +10531,7 @@
         else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
        };
        document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value), );
+	   document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
        document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value), );
        document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value), );
        document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)), );
@@ -10949,7 +11159,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle"); 
+      pushUndo("draw rectangle"); 
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -11055,7 +11265,7 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-		pushUndo("draw rectangle");
+      pushUndo("draw rectangle");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
@@ -11132,7 +11342,7 @@
         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
         
         const newId = "text-" + Date.now();
-		pushUndo("add text");
+      pushUndo("add text");
         TEXT_DATA.list.push({
          id: newId,
          x: svgP.x,
@@ -11213,7 +11423,7 @@
        }
        
        function deleteText(textId) {
-	    pushUndo("delete text");
+      pushUndo("delete text");
         TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
         forgeTheTopology();
         
@@ -11227,7 +11437,7 @@
         if (!currentTextId) return;
         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
         if (textItem) {
-		 pushUndo("edit text");
+      pushUndo("edit text");
          textItem.content = e.target.value;
          forgeTheTopology();
         }
@@ -11709,18 +11919,19 @@
        }
       
        function captureTheQuickening() {
-  const currentTab = documentTabs[currentTabIndex];
-  currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
-  currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
-  currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
-  currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
-  currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
-  currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
-  currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
-  currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
-  
-  return {
-    nodeData: NODE_DATA,
+      const currentTab = documentTabs[currentTabIndex];
+      currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+      currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+      currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+      currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+      currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+      currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+      currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+      currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+      currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+       
+      return {
+      nodeData: NODE_DATA,
        edgeData: EDGE_DATA,
        rectData: RECT_DATA,
        textData: TEXT_DATA,
@@ -11748,7 +11959,7 @@
        encryptedSections: encryptedSections,
       };
       }
-
+      
        function assembleTheImmortalForm() {
         const clone = document.documentElement.cloneNode(true);
         const nodeScript = clone.querySelector("#nodes-json");
@@ -11823,7 +12034,7 @@
        }
        
       function captureState() {
-	    return {
+      return {
         nodes: JSON.parse(JSON.stringify(NODE_DATA)),
         edges: JSON.parse(JSON.stringify(EDGE_DATA)),
         positions: JSON.parse(JSON.stringify(savedPositions)),
@@ -11864,7 +12075,7 @@
       }
       
       function restoreState(state) {
-	   NODE_DATA = state.nodes;
+      NODE_DATA = state.nodes;
        EDGE_DATA = state.edges;
        savedPositions = state.positions;
        savedSizes = state.sizes;
@@ -12197,7 +12408,7 @@
         
         forgeTheTopology();
       }
-
+      
       function cycleNodes(reverse = false) {
         const nodeIds = Object.keys(NODE_DATA).filter(id => {
           if (currentView.mode === "rack" && currentView.rackId) {
@@ -12222,7 +12433,7 @@
         selectedNodes.clear();
         updateNodeSelection();
       }
-
+      
       function focusOnSelected() {
         const nodesToFocus = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
@@ -12262,7 +12473,7 @@
         
         forgeTheTopology();
       }
-
+      
       function toggleLockSelected() {
         const nodesToToggle = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
@@ -12281,7 +12492,7 @@
         });
         
         forgeTheTopology();
-
+      
         const lockState = hasUnlocked ? "locked" : "unlocked";
       }
       
@@ -12313,12 +12524,12 @@
         
         forgeTheTopology();
       }
-
+      
       function handleKeyDown(event) {
        if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA" || event.target.isContentEditable) {
         return;
        }
-
+      
        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
         event.preventDefault();
         const distance = event.shiftKey ? 10 : 1;
@@ -12857,7 +13068,7 @@
          }
         });
        }
-
+      
        const tabsBtn = document.getElementById("tabs-btn");
        const tabsModal = document.getElementById("tabs-modal");
        const tabsModalClose = document.getElementById("tabs-modal-close");
@@ -12924,7 +13135,7 @@
            }
          });
        }
-
+      
        const auditFilter = document.getElementById("audit-filter");
        if (auditFilter) {
          auditFilter.addEventListener("change", (e) => {
@@ -12984,12 +13195,14 @@
        const assignedRackSelect = document.getElementById("node-assigned-rack");
        if (assignedRackSelect) {
         assignedRackSelect.addEventListener("change", (e) => {
-         if (currentNodeId) {
-          pushUndo("change assigned rack");
-          NODE_DATA[currentNodeId].assignedRack = e.target.value;
-          forgeTheTopology();
-         }
-        });
+      if (currentNodeId) {
+      pushUndo("change assigned rack");
+      EDGE_DATA.list = EDGE_DATA.list.filter(edge => edge.from !== currentNodeId && edge.to !== currentNodeId);
+      NODE_DATA[currentNodeId].assignedRack = e.target.value;
+      forgeTheTopology();
+      claimTheImmortal(currentNodeId);
+      }
+      });
        }
        
        const rackCapacitySelect = document.getElementById("node-rack-capacity");
@@ -13192,14 +13405,14 @@
          document.getElementById('selected-node-icon').style.display = 'none';
         }
         newNodeIconTags = [];
-		const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-		const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-		const centerX = canvasState.panX + (viewWidth / 2);
-		const centerY = canvasState.panY + (viewHeight / 2);
-		savedPositions[nodeId] = {
-		x: centerX,
-		y: centerY
-		};
+      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+      const centerX = canvasState.panX + (viewWidth / 2);
+      const centerY = canvasState.panY + (viewHeight / 2);
+      savedPositions[nodeId] = {
+      x: centerX,
+      y: centerY
+      };
         addNodeModal.classList.remove("active");
         forgeTheTopology();
         claimTheImmortal(nodeId);
@@ -13496,7 +13709,8 @@
         currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
         currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
         currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
-        
+        currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+
         currentTabIndex = index;
         const newTab = documentTabs[index];
         NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
@@ -13507,8 +13721,10 @@
         EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
         RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
         TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
+        wieldThePower();
         document.title = newTab.name;
-		document.getElementById("page-title").textContent = newTab.name;
+        document.getElementById("page-title").textContent = newTab.name;
         forgeTheTopology();
         displayTabs();
         
@@ -13534,7 +13750,8 @@
           styles: {},
           legend: {},
           rects: { list: [] },
-          texts: { list: [] }
+          texts: { list: [] },
+		  pageState: null
         };
         
         documentTabs.push(newTab);
@@ -13597,7 +13814,7 @@
           `;
         }).join('');
       }
-
+      
       function logAuditEvent(type, description, details = {}) {
         const event = {
           timestamp: Date.now(),
@@ -13819,7 +14036,7 @@
           `;
         }).join('');
       }
-	  
+      
        const clearAllBtn = document.getElementById("clear-all-btn");
        const clearAllModal = document.getElementById("clear-all-modal");
        const clearAllCancel = document.getElementById("clear-all-cancel");
@@ -14022,7 +14239,7 @@
         link.click();
         URL.revokeObjectURL(url);
        }
-	   let resizeTimeout;
+      let resizeTimeout;
        window.addEventListener('resize', () => {
        clearTimeout(resizeTimeout);
        resizeTimeout = setTimeout(() => {
@@ -14031,5 +14248,5 @@
        }, 100);
       });	   
     </script>
-   
+  
 </body></html>
