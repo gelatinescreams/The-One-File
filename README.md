@@ -15,6 +15,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ## Version 3.9.2 : 12/5/25
 
+* **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **NEW 3.9.2** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!

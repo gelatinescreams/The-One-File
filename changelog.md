@@ -3,6 +3,7 @@
 
 ## Version 3.9.2 : 12/5/25 Bug fixes
 
+* **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **Various bug fixes including**
   * Fixed a bug where rack and node colors were not applying correctly
   * Added node and rack border along with fill to icons
