@@ -15,7 +15,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ## Version 3.9.5 : 12/7/25
 
-* **NEW 3.9.4** The Styling Update! Added all available styling options to settings [changelog.md](changelog.md)
+* **NEW 3.9.5** The Styling Update! Added all available styling options to settings [changelog.md](changelog.md)
 * **NEW 3.9.4** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.3** Mobile fixes. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
