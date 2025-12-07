@@ -126,9 +126,9 @@
       color: var(--accent);
       border-color: var(--accent);
       }
-      #settings-btn {
-      background: var(--panel);
-      color: var(--text-main);
+#settings-btn {
+      background: var(--btn-bg, var(--panel));
+      color: var(--btn-text, var(--text-main));
       border: 1px solid var(--edge-main);
       padding: 6px 12px;
       border-radius: 6px;
@@ -288,7 +288,7 @@
       position: relative;
       overflow: hidden;
       }
-      .topology-toolbar {
+.topology-toolbar {
       position: absolute;
       top: 10px;
       right: 10px;
@@ -296,33 +296,38 @@
       align-items: center;
       gap: 8px;
       padding: 6px 10px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
-      z-index: 20;
+      z-index: 99;
       font-size: 13px;
+      color: var(--toolbar-text, #94a3b8);
       }
-      .topology-toolbar label {
-      color: var(--text-soft);
+.topology-toolbar label {
+      color: var(--toolbar-text, var(--text-soft));
       }
-      .topology-toolbar select {
+.topology-toolbar select {
       padding: 4px 6px;
-      background: var(--panel);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, var(--panel));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
-      color: var(--text-main);
+      color: var(--toolbar-btn-text, var(--text-main));
       font-size: 13px;
       cursor: pointer;
       }
-      .topology-toolbar button {
+.topology-toolbar button {
       padding: 4px 10px;
-      background: var(--accent);
-      color: var(--bg);
-      border: none;
+      background: var(--toolbar-btn-bg, var(--panel));
+      color: var(--toolbar-btn-text, var(--text-main));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
       cursor: pointer;
       font-size: 13px;
       font-weight: 600;
+      }
+      .topology-toolbar button:hover {
+      background: var(--accent);
+      color: var(--bg);
       }
       .bulk-toolbar-desktop,
       .bulk-toolbar-mobile {
@@ -360,7 +365,7 @@
       transform: scale(0.95);
       background: var(--accent);
       }
-      .draw-toolbar {
+.draw-toolbar {
       position: absolute;
       top: 10px;
       left: 10px;
@@ -368,18 +373,19 @@
       align-items: center;
       gap: 6px;
       padding: 6px 8px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
-      z-index: 20;
+      z-index: 99;
       font-size: 13px;
       pointer-events: auto;
+      color: var(--toolbar-text, #94a3b8);
       }
-      .draw-toolbar button {
+.draw-toolbar button {
       padding: 4px 8px;
-      background: var(--panel);
-      color: var(--text-main);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, var(--panel));
+      color: var(--toolbar-btn-text, var(--text-main));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
       cursor: pointer;
       font-size: 13px;
@@ -397,16 +403,16 @@
       background: transparent;
       cursor: pointer;
       }
-      .draw-toolbar select {
+.draw-toolbar select {
       padding: 4px 6px;
-      background: var(--panel);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, var(--panel));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
-      color: var(--text-main);
+      color: var(--toolbar-btn-text, var(--text-main));
       font-size: 13px;
       cursor: pointer;
       }
-      .legend-container {
+.legend-container {
       position: absolute;
       left: 10px;
       bottom: 10px;
@@ -414,13 +420,14 @@
       flex-direction: column;
       gap: 6px;
       padding: 8px 10px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
       font-size: 12px;
       z-index: 20;
       max-width: 260px;
       pointer-events: auto;
+      color: var(--toolbar-text, #94a3b8);
       }
       .legend-container {
       padding-right: 22px;
@@ -457,14 +464,14 @@
       background: var(--danger);
       color: #fff;
       }
-      .legend-mini-btn {
+.legend-mini-btn {
       position: absolute;
       left: 10px;
       padding: 4px 8px;
       border-radius: 4px;
-      border: 1px solid #1f2937;
-      background: rgba(15, 23, 42, 0.92);
-      color: var(--text-main);
+      border: 1px solid var(--toolbar-border, #1f2937);
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      color: var(--toolbar-btn-text, var(--text-main));
       font-size: 11px;
       cursor: pointer;
       z-index: 20;
@@ -477,11 +484,11 @@
       color: var(--bg);
       border-color: var(--accent);
       }
-      .legend-title {
+.legend-title {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-soft);
+      color: var(--toolbar-text, var(--text-soft));
       margin-bottom: 2px;
       }
       .legend-item {
@@ -545,21 +552,21 @@
       -1px -1px,
       -1px -1px;
       }
-      .zoom-toolbar {
+.zoom-toolbar {
       display: flex;
       gap: 4px;
       padding: 6px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
       }
-      .zoom-toolbar button {
+.zoom-toolbar button {
       width: 32px;
       height: 32px;
       padding: 0;
-      background: var(--panel);
-      color: var(--text-main);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, var(--panel));
+      color: var(--toolbar-btn-text, var(--text-main));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
       cursor: pointer;
       font-size: 18px;
@@ -573,16 +580,16 @@
       background: var(--accent);
       color: var(--bg);
       }
-      .zoom-toolbar .zoom-level {
+.zoom-toolbar .zoom-level {
       font-size: 11px;
-      color: var(--text-soft);
+      color: var(--toolbar-text, var(--text-soft));
       text-align: center;
       padding: 2px 0;
       min-width: 32px;
       }
-      .zoom-toolbar .divider {
+.zoom-toolbar .divider {
       height: 1px;
-      background: var(--edge-main);
+      background: var(--toolbar-border, var(--edge-main));
       margin: 2px 0;
       }
       .minimap-zoom-wrapper {
@@ -591,9 +598,9 @@
       right: 10px;
       z-index: 99;
       }
-      .minimap-container {
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+.minimap-container {
+      background: var(--toolbar-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
       overflow: hidden;
       margin-bottom: 4px;
@@ -608,23 +615,23 @@
       stroke-width: 2;
       cursor: move;
       }
-      .minimap-node {
-      fill: var(--text-soft);
+.minimap-node {
+      fill: var(--minimap-dots, var(--text-soft));
       }
       .minimap-edge {
       stroke: var(--edge-main);
       stroke-width: 1;
       }
-      .minimap-close-btn {
+.minimap-close-btn {
       position: absolute;
       top: 2px;
       right: 2px;
       width: 18px;
       height: 18px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 3px;
-      color: var(--text-soft);
+      color: var(--toolbar-text, var(--text-soft));
       font-size: 11px;
       cursor: pointer;
       display: flex;
@@ -639,13 +646,13 @@
       color: white;
       border-color: var(--danger);
       }
-      .toolbar-close-btn {
+.toolbar-close-btn {
       width: 24px;
       height: 24px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--edge-main);
+      background: var(--toolbar-btn-bg, rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--toolbar-border, var(--edge-main));
       border-radius: 4px;
-      color: var(--text-soft);
+      color: var(--toolbar-text, var(--text-soft));
       font-size: 12px;
       cursor: pointer;
       display: flex;
@@ -660,17 +667,17 @@
       color: white;
       border-color: var(--danger);
       }
-      .canvas-hint {
+.canvas-hint {
       position: absolute;
       top: 50px;
       left: 50%;
       transform: translateX(-50%);
       padding: 8px 16px;
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid #1f2937;
+      background: var(--canvas-hint-bg, rgba(15, 23, 42, 0.92));
+      border: 1px solid var(--toolbar-border, #1f2937);
       border-radius: 6px;
       font-size: 12px;
-      color: var(--text-soft);
+      color: var(--canvas-hint-color, var(--text-soft));
       z-index: 18;
       pointer-events: none;
       opacity: 0;
@@ -706,8 +713,8 @@
       cursor: grab;
       }
       .node-circle {
-      fill: #1e293b;
-      stroke: #475569;
+      fill: var(--node-fill, #1e293b);
+      stroke: var(--node-stroke, #475569);
       stroke-width: 2;
       transition: 0.25s ease;
       transform-origin: center center;
@@ -787,7 +794,7 @@
       }
       }
       .details-panel {
-      background: var(--panel-alt);
+      background: var(--sidebar-bg, var(--panel-alt));
       padding: 22px;
       padding-bottom: 80px;
       overflow-y: auto;
@@ -837,7 +844,7 @@
       transform: translateY(-50%);
       width: 16px;
       height: 60px;
-      background: var(--panel-alt);
+      background: var(--sidebar-bg, var(--panel-alt));
       border: 1px solid var(--edge-main);
       border-right: none;
       border-radius: 8px 0 0 8px;
@@ -993,7 +1000,6 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
       z-index: 999999;
       justify-content: center;
       align-items: center;
@@ -1094,11 +1100,15 @@
       align-items: center;
       margin: 6px 0;
       }
-      .node-group.selected .node-circle,
-      .node-group.selected rect,
-      .node-group.selected polygon {
-      stroke: #f59e0b;
+	 .node-group.selected .node-circle {
+      stroke: var(--selection-handle, #f59e0b);
       stroke-width: 3;
+      }
+	  .node-group.layer-faded {
+      pointer-events: none;
+      }
+      .edge.layer-faded {
+      pointer-events: none;
       }
       .node-group.search-highlight .node-circle,
       .node-group.search-highlight rect,
@@ -1112,15 +1122,28 @@
       flex-wrap: wrap;
       gap: 8px;
       }
-      .badge {
-      border: 1px solid var(--edge-main);
+     .badge {
+      background: var(--tag-fill, #1e293b);
+      color: var(--tag-text, #e2e8f0);
+      border: 1px solid var(--tag-border, var(--edge-main));
       padding: 5px 12px;
       border-radius: 22px;
       font-size: clamp(12px, 1.4vw, 18px);
       }
-      .badge.wg {
+.badge.wg {
       color: var(--accent);
       border-color: var(--accent);
+      }
+input[type="text"],
+      input[type="number"],
+      input[type="password"],
+      textarea,
+      select {
+      background: var(--input-bg, #0b0e13) !important;
+      color: var(--input-text, #e2e8f0) !important;
+      border-color: var(--input-border, #1f2937) !important;
+      font-family: var(--input-font, Inter, system-ui, sans-serif) !important;
+      font-size: var(--input-font-size, 14px) !important;
       }
       .section-label {
       margin-top: 8px;
@@ -1654,34 +1677,175 @@
       </div>
     </div>
     <div class="modal" id="save-info-modal">
-      <div class="modal-content">
-        <h3>Why do I need to save?</h3>
-        <p> Browsers are not allowed to overwrite local files automatically. When you click <strong>Save File</strong>, this page generates a new updated HTML file that contains all of your changes. Replace your old file with the new one to keep your edits. </p>
-        <p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
-          <strong>Encryption:</strong> Check the "Encrypt" box before saving to password protect your data. You'll need the password to open the file later. No recovery possible!!
-        </p>
-		<p style="margin-top: 12px;padding-top: 12px;border-top: 1px solid var(--edge-main);">
-          <strong>Data Decrpytion:</strong> Want to decrpyt your data? Simply export it using json export in top menu after successful password validation
-        </p>
-        <div class="modal-buttons">
+      <div class="modal-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+        <h3 style="margin-bottom: 16px;">Help</h3>
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+          <button class="help-tab active" data-tab="general" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--accent); color: var(--bg); border-radius: 6px; cursor: pointer; font-weight: 600;">General</button>
+          <button class="help-tab" data-tab="desktop" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--panel); color: var(--text-main); border-radius: 6px; cursor: pointer; font-weight: 600;">Desktop</button>
+          <button class="help-tab" data-tab="mobile" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--panel); color: var(--text-main); border-radius: 6px; cursor: pointer; font-weight: 600;">Mobile</button>
+        </div>
+        <div id="help-tab-general" class="help-tab-content" style="display: block;">
+          <ul style="margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
+            <li><strong>Add Nodes:</strong> Click "+ Node" or "+ Rack" in the top menu</li>
+            <li><strong>Connect Nodes:</strong> Select a node, then use "Add Connection" in the panel</li>
+            <li><strong>Move Nodes:</strong> Drag nodes to reposition them</li>
+            <li><strong>Enter Rack View:</strong> Double click on desktop or Long press on mobile</li>
+            <li><strong>Multi Select:</strong> Right click (desktop) or double tap (mobile)</li>
+            <li><strong>Pan Canvas:</strong> Drag empty space or hold Space + drag</li>
+            <li><strong>Zoom:</strong> Scroll wheel or pinch gesture</li>
+            <li><strong>Free Draw:</strong> Use draw toolbar for drawing lines, boxes/zones , and text</li>
+          </ul>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">Saving & Encryption</h4>
+          <p style="margin-bottom: 8px;">Browsers cannot overwrite local files. Click <strong>Save File</strong> to download an updated HTML with all changes. Replace your old file to keep edits.</p>
+          <p style="margin-bottom: 8px;"><strong>Encryption of data:</strong> Check "Encrypt" before saving to password protect your data. Beware! No recovery possible without password!!</p>
+          <p><strong>Decryption of data:</strong> Export via JSON in top settings menu after successful password validation to decrypt your data. You can then reimport back into the same file and save!</p>
+        </div>
+        <div id="help-tab-desktop" class="help-tab-content" style="display: none;">
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Navigation</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Arrow Keys</code></td>
+              <td style="padding: 8px;">Move selected 1px</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Shift + Arrows</code></td>
+              <td style="padding: 8px;">Move selected 10px</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Tab / Shift+Tab</code></td>
+              <td style="padding: 8px;">Cycle through nodes</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">F</code></td>
+              <td style="padding: 8px;">Focus on selected</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Space + Drag</code></td>
+              <td style="padding: 8px;">Pan canvas</td>
+            </tr>
+          </table>
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Management</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">L</code></td>
+              <td style="padding: 8px;">Lock/unlock selected</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">G</code></td>
+              <td style="padding: 8px;">Group/ungroup selected</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Ctrl+C / Ctrl+V</code></td>
+              <td style="padding: 8px;">Copy / Paste</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Ctrl+D</code></td>
+              <td style="padding: 8px;">Duplicate</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Ctrl+A</code></td>
+              <td style="padding: 8px;">Select all</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Delete</code></td>
+              <td style="padding: 8px;">Delete selected</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Escape</code></td>
+              <td style="padding: 8px;">Clear selection</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Ctrl+Z / Ctrl+Y</code></td>
+              <td style="padding: 8px;">Undo / Redo</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Right Click</code></td>
+              <td style="padding: 8px;">Multi select toggle</td>
+            </tr>
+          </table>
+        </div>
+        <div id="help-tab-mobile" class="help-tab-content" style="display: none;">
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Basic Gestures</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Tap node</strong></td>
+              <td style="padding: 8px;">Select & open properties</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Tap empty</strong></td>
+              <td style="padding: 8px;">Deselect all</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Drag node</strong></td>
+              <td style="padding: 8px;">Move node</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Drag empty</strong></td>
+              <td style="padding: 8px;">Pan canvas</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Pinch</strong></td>
+              <td style="padding: 8px;">Zoom in/out</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Double-tap node</strong></td>
+              <td style="padding: 8px;">Add/remove from selection</td>
+            </tr>
+          </table>
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Rack View</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Long-press rack</strong></td>
+              <td style="padding: 8px;">Enter rack view</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><strong>Double-tap empty</strong></td>
+              <td style="padding: 8px;">Exit rack view</td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-buttons" style="margin-top: 16px;">
           <button class="btn-cancel" id="save-info-close">Close</button>
         </div>
       </div>
     </div>
     <div class="modal" id="settings-modal">
-      <div class="modal-content" style="max-width: 400px">
-        <h3>Page Settings</h3>
-        <details class="style-section" open="">
-          <summary>Background</summary>
+	
+	
+	<div class="modal-content">
+        <h2>Settings</h2>
+        
+        <details class="style-section">
+          <summary>General Theme</summary>
           <div class="style-content">
-            <div class="style-row">
-              <label>Solid Color</label>
-              <input type="color" id="page-bg-color" value="#050608">
+		    <div class="style-row">
+              <label>Main Background</label>
+              <input type="color" id="panel-color" value="#0b0e13">
             </div>
-            <p style="margin-top: 4px;font-size: 12px;color: var(--text-soft);">Change to apply a flat background color.</p>
+            <div class="style-row">
+              <label>Modal Window (popup) Background</label>
+              <input type="color" id="panel-alt-color" value="#10141b">
+            </div>
+            <div class="style-row">
+              <label>Accent Buttons</label>
+              <input type="color" id="accent-color" value="#4fd1c5">
+            </div>
+            <div class="style-row">
+              <label>Danger Buttons</label>
+              <input type="color" id="danger-color" value="#f56565">
+            </div>
+            <div class="style-row">
+              <label>Primary Text</label>
+              <input type="color" id="text-main-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Secondary Text</label>
+              <input type="color" id="text-soft-color" value="#94a3b8">
+            </div>
           </div>
         </details>
-        <details class="style-section" open="">
+		
+        <details class="style-section">
           <summary>Top Bar</summary>
           <div class="style-content">
             <div class="style-row">
@@ -1693,37 +1857,256 @@
               <input type="color" id="topbar-border-color" value="#1f2533">
             </div>
           </div>
-        </details>
-        <details class="style-section" open="">
-          <summary>Theme Colors</summary>
-          <div class="style-content">
+		  <div class="style-content">
             <div class="style-row">
-              <label>Panel</label>
-              <input type="color" id="panel-color" value="#0b0e13">
+              <label>Button Fill</label>
+              <input type="color" id="btn-bg-color" value="#0b0e13">
             </div>
             <div class="style-row">
-              <label>Panel Alt</label>
-              <input type="color" id="panel-alt-color" value="#10141b">
-            </div>
-            <div class="style-row">
-              <label>Accent</label>
-              <input type="color" id="accent-color" value="#4fd1c5">
-            </div>
-            <div class="style-row">
-              <label>Danger</label>
-              <input type="color" id="danger-color" value="#f56565">
-            </div>
-            <div class="style-row">
-              <label>Text Main</label>
-              <input type="color" id="text-main-color" value="#e2e8f0">
-            </div>
-            <div class="style-row">
-              <label>Text Soft</label>
-              <input type="color" id="text-soft-color" value="#94a3b8">
+              <label>Button Text</label>
+              <input type="color" id="btn-text-color" value="#e2e8f0">
             </div>
           </div>
         </details>
-        <details class="style-section" open="">
+		
+        <details class="style-section">
+          <summary>Main Canvas</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Border</label>
+              <input type="color" id="canvas-border-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>Grid Lines</label>
+              <input type="color" id="canvas-grid-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>Grid Size</label>
+              <input type="number" id="canvas-grid-size" value="50" min="20" max="200" style="width:60px;">
+            </div>
+		    <div class="style-row">
+              <label>Background Top</label>
+              <input type="color" id="canvas-gradient-top" value="#1e2532">
+            </div>
+            <div class="style-row">
+              <label>Background Bottom</label>
+              <input type="color" id="canvas-gradient-bottom" value="#050608">
+            </div>
+            <div class="style-row">
+              <label>Solid Background</label>
+              <input type="color" id="page-bg-color" value="#050608">
+            </div>
+            <p style="margin-top:4px;font-size:12px;color:var(--text-soft);">Set solid background to override gradient.</p>
+          </div>
+        </details>
+        <details class="style-section">
+          <summary>Rack Canvas</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Frame Fill</label>
+              <input type="color" id="rack-frame-fill" value="#0f172a">
+            </div>
+            <div class="style-row">
+              <label>Frame Border</label>
+              <input type="color" id="rack-frame-stroke" value="#4fd1c5">
+            </div>
+            <div class="style-row">
+              <label>Grid Lines</label>
+              <input type="color" id="rack-line-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>U Labels</label>
+              <input type="color" id="rack-text-color" value="#4fd1c5">
+            </div>
+          </div>
+       </details>
+	   <details class="style-section">
+          <summary>Canvas Toolbars</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Background</label>
+              <input type="color" id="toolbar-bg-color" value="#0f172a">
+            </div>
+            <div class="style-row">
+              <label>Border</label>
+              <input type="color" id="toolbar-border-color" value="#1f2937">
+            </div>
+            <div class="style-row">
+              <label>Text</label>
+              <input type="color" id="toolbar-text-color" value="#94a3b8">
+            </div>
+            <div class="style-row">
+              <label>Button Fill</label>
+              <input type="color" id="toolbar-btn-bg-color" value="#0b0e13">
+            </div>
+            <div class="style-row">
+              <label>Button Text</label>
+              <input type="color" id="toolbar-btn-text-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Minimap Dots</label>
+              <input type="color" id="minimap-dots-color" value="#94a3b8">
+            </div>
+          </div>
+        </details>
+		
+        <details class="style-section">
+          <summary>Nodes</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Fill</label>
+              <input type="color" id="node-fill-color" value="#1e293b">
+            </div>
+            <div class="style-row">
+              <label>Border</label>
+              <input type="color" id="node-stroke-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>Title Color</label>
+              <input type="color" id="node-title-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Title Size</label>
+              <input type="number" id="node-title-size" value="18" min="8" max="48" style="width:60px;">
+            </div>
+            <div class="style-row">
+              <label>Subtitle Color</label>
+              <input type="color" id="node-sub-color" value="#94a3b8">
+            </div>
+            <div class="style-row">
+              <label>Subtitle Size</label>
+              <input type="number" id="node-sub-size" value="13" min="8" max="48" style="width:60px;">
+            </div>
+            <div class="style-row">
+              <label>Font</label>
+              <select id="node-font-family" style="flex:1;padding:4px;background:var(--panel);color:var(--text-main);border:1px solid var(--topbar-border);border-radius:4px;">
+                <option value="Inter, system-ui, sans-serif">Inter</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Helvetica, sans-serif">Helvetica</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
+          </div>
+        </details>
+        
+        <details class="style-section">
+          <summary>Connections</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Default Color</label>
+              <input type="color" id="default-edge-color" value="#475569">
+            </div>
+          </div>
+        </details>
+        
+        <details class="style-section">
+          <summary>Groups & Editing</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Resize handle Color</label>
+              <input type="color" id="selection-handle-color" value="#f59e0b">
+            </div>
+            <div class="style-row">
+              <label>Resize Handle Size</label>
+              <input type="number" id="selection-handle-size" value="8" min="4" max="16" style="width:60px;">
+            </div>
+            <div class="style-row">
+              <label>Grouped Icon Outline</label>
+              <input type="color" id="group-indicator-color" value="#4fd1c5">
+            </div>
+          </div>
+        </details>
+   
+		<details class="style-section">
+          <summary>Inputs & Dropdowns</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Background</label>
+              <input type="color" id="input-bg-color" value="#0b0e13">
+            </div>
+            <div class="style-row">
+              <label>Text</label>
+              <input type="color" id="input-text-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Border</label>
+              <input type="color" id="input-border-color" value="#1f2937">
+            </div>
+            <div class="style-row">
+              <label>Font</label>
+              <select id="input-font-family" style="flex:1;padding:4px;background:var(--panel);color:var(--text-main);border:1px solid var(--topbar-border);border-radius:4px;">
+                <option value="Inter, system-ui, sans-serif">Inter</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Helvetica, sans-serif">Helvetica</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="monospace">Monospace</option>
+              </select>
+            </div>
+            <div class="style-row">
+              <label>Font Size</label>
+              <input type="number" id="input-font-size" value="14" min="10" max="24" style="width:60px;">
+            </div>
+          </div>
+        </details>
+        <details class="style-section">
+          <summary>Welcome Message</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Enabled</label>
+              <input type="checkbox" id="canvas-hint-enabled" checked style="width:auto;">
+            </div>
+            <div class="style-row">
+              <label>Background</label>
+              <input type="color" id="canvas-hint-bg-color" value="#0f172a">
+            </div>
+            <div class="style-row">
+              <label>Text Color</label>
+              <input type="color" id="canvas-hint-text-color" value="#94a3b8">
+            </div>
+            <div class="style-row" style="flex-direction:column;align-items:stretch;">
+              <label>Custom Text (HTML)</label>
+              <textarea id="canvas-hint-text" rows="4" style="width:100%;margin-top:4px;padding:6px;background:var(--panel);color:var(--text-main);border:1px solid var(--topbar-border);border-radius:4px;font-size:12px;resize:vertical;" placeholder="Leave empty for default"></textarea>
+            </div>
+          </div>
+        </details>
+        
+        <details class="style-section">
+          <summary>Sidebar / Mobile Footer</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Background</label>
+              <input type="color" id="sidebar-bg-color" value="#10141b">
+            </div>
+          </div>
+        </details>
+        
+        <details class="style-section">
+          <summary>Tags</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>Fill</label>
+              <input type="color" id="tag-fill-color" value="#1e293b">
+            </div>
+            <div class="style-row">
+              <label>Text</label>
+              <input type="color" id="tag-text-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Border</label>
+              <input type="color" id="tag-border-color" value="#475569">
+            </div>
+          </div>
+        </details>     
+        <details class="style-section">
+          <summary>Import / Export / Upgrade JSON</summary>
+          <div class="style-content">
+            <button id="export-data-btn" style="width:100%;margin-bottom:10px;padding:10px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Export JSON</button>
+            <button id="import-data-btn" style="width:100%;padding:10px;background:var(--panel);color:var(--text-main);border:1px solid var(--edge-main);border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Import JSON</button>
+            <input type="file" id="import-data-file" accept=".json" style="display:none">
+          </div>
+        </details>
+         <details class="style-section">
           <summary>Auto Status Checking</summary>
           <div class="style-content">
             <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; cursor: pointer;">
@@ -1743,25 +2126,17 @@
             <p style="margin-top: 12px; font-size: 12px; color: var(--text-soft); font-style: italic;">
               Automatically checks all ping enabled nodes at the specified interval. I recommend 30 to 60 seconds for local networks.
             </p>
-          </div>
+			</div>
         </details>
-        <details class="style-section" open="">
-          <summary>Import / Export Data</summary>
+        <details class="style-section">
+          <summary>Danger Zone</summary>
           <div class="style-content">
-            <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">Export / Import your data to upgrade/downgrade versions of The One File.</p>
-            <button id="export-data-btn" style="width: 100%;margin-bottom: 10px;padding: 10px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Export Data (JSON)</button>
-            <button id="import-data-btn" style="width: 100%;padding: 10px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Import Data (JSON)</button>
-            <input type="file" id="import-data-file" accept=".json" style="display: none">
+            <p style="margin-bottom:12px;font-size:13px;color:var(--text-soft);">Permanently delete everything on the canvas.</p>
+            <button id="clear-all-btn" title="Clear all nodes" style="padding:6px 12px;background:var(--danger);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Clear All</button>
+            <input type="file" id="import-data-file" accept=".json" style="display:none">
           </div>
         </details>
-        <details class="style-section" open="">
-          <summary>Clear All</summary>
-          <div class="style-content">
-            <p style="margin-bottom: 12px;font-size: 13px;color: var(--text-soft);">This deletes everything on the canvas!</p>
-            <button id="clear-all-btn" title="Clear all nodes" style="padding: 6px 12px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Clear All</button>
-            <input type="file" id="import-data-file" accept=".json" style="display: none">
-          </div>
-        </details>
+        
         <div class="modal-buttons">
           <button class="btn-cancel" id="settings-close">Close</button>
         </div>
@@ -1983,17 +2358,17 @@
         <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)">+ Node</button>
         <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;">+ Rack</button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" disabled="" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;opacity: 0.5;">↶</button>
-        <button id="redo-btn" title="Redo (Ctrl+Y)" disabled="" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;opacity: 0.5;">↷</button>
-        <input id="search-input" type="text" placeholder="Search nodes..." style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;font-size: 14px;">
-        <button id="check-all-ping-btn" title="Check status of all enabled nodes" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Check Pings</button>
-        <button id="layers-btn" title="Toggle layer visibility" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Layers</button>
-        <button id="tabs-btn" title="Manage document tabs" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Tabs</button>
-        <button id="rollback-btn" title="View version history" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Snapshots</button>
-        <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
-        <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
-        <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
-        <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--panel);color: var(--text-main);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↶</button>
+        <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↷</button>
+<input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="padding: 6px 12px;background: var(--input-bg);color: var(--input-text);border: 1px solid var(--input-border);border-radius: 6px;font-family: var(--input-font);font-size: var(--input-font-size);width: 180px;">
+        <button id="check-all-ping-btn" title="Check status of all enabled nodes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600">Check Pings</button>
+        <button id="layers-btn" title="Toggle layer visibility" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Layers</button>
+        <button id="tabs-btn" title="Manage document tabs" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Tabs</button>
+        <button id="rollback-btn" title="View version history" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Snapshots</button>
+        <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
+        <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
+        <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
+        <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
         <button id="settings-btn" title="Page settings">⚙️</button>
       </div>
       <button id="mobile-menu-toggle" class="mobile-menu-btn">☰</button>
@@ -2010,9 +2385,9 @@
         <div class="draw-toolbar" id="draw-toolbar" style="display: grid !important;">
           <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
           <button id="draw-toggle" title="Draw custom line">✏️</button>
-          <button id="rect-toggle" title="Draw rectangle">▭</button>
+          <button id="rect-toggle" title="Draw zone">▭</button>
           <button id="text-toggle" title="Add text">T</button>
-          <select id="rect-style" title="Rectangle style">
+          <select id="rect-style" title="zone style">
             <option value="filled">Filled</option>
             <option value="outlined">Outlined</option>
           </select>
@@ -2052,8 +2427,7 @@
             <option value="unifi-controller">UniFi Controller</option>
             <option value="wireguard">WireGuard</option>
           </select>
-          <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--edge-main);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">
-          <select id="add-line-direction" title="Line direction">
+<input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">          <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
             <option value="forward">→ Forward</option>
             <option value="backward">← Backward</option>
@@ -2247,7 +2621,7 @@
                 </select>
               </div>
               <button class="pick-icon-btn" id="pick-shape-icon-btn">Or Search Web Icons</button>
-			  <div class="style-row">
+              <div class="style-row">
                 <label>Fill Color:</label>
                 <input type="color" id="circle-color" value="#1e293b">
               </div>
@@ -2262,13 +2636,13 @@
               <div class="style-row">
                 <label>Title Font:</label>
                 <select id="title-font">
-                  <option value="system-ui, sans-serif"> System UI </option>
+                  <option value="system-ui, sans-serif">System UI</option>
                   <option value="monospace">Monospace</option>
                   <option value="serif">Serif</option>
                   <option value="cursive">Cursive</option>
-                  <option value="'Courier New', monospace"> Courier </option>
+                  <option value="'Courier New', monospace">Courier</option>
                   <option value="Arial, sans-serif">Arial</option>
-                  <option value="'Times New Roman', serif"> Times </option>
+                  <option value="'Times New Roman', serif">Times</option>
                 </select>
               </div>
               <div class="style-row">
@@ -2419,6 +2793,35 @@
           </div>
           <button id="delete-edge" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Delete Line</button>
         </div>
+        <div id="rect-panel" style="display: none">
+          <div class="details-name" id="rect-title">Zone</div>
+          <div class="style-row" id="rect-fill-row" style="margin-top: 10px">
+            <label>Fill Color:</label>
+            <input type="color" id="rect-color" value="#f97316">
+          </div>
+          <div class="style-row">
+            <label>Border Color:</label>
+            <input type="color" id="rect-border-color" value="#f97316">
+          </div>
+          <div class="style-row">
+            <label>Border Width:</label>
+            <input type="number" id="rect-border-width" min="0" max="20" value="2">
+          </div>
+          <div class="style-row">
+            <label>Style:</label>
+            <select id="rect-style-select">
+              <option value="filled">Filled</option>
+              <option value="outlined">Outlined</option>
+            </select>
+          </div>
+          <div class="section-label">Zone Notes</div>
+          <ul class="list" id="rect-notes"></ul>
+          <div style="margin-top: 10px; display: flex; gap: 8px">
+            <input type="text" id="new-rect-note" placeholder="Add note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
+            <button id="add-rect-note" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
+          </div>
+          <button id="delete-rect" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Delete Zone</button>
+        </div>
         <div id="text-panel" style="display: none">
           <div class="details-name" id="text-title">Text Element</div>
           <div class="style-row" style="margin-top: 10px">
@@ -2480,7 +2883,7 @@
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Text</button>
         </div>
-        <details class="style-section" open="">
+     <details class="style-section">
           <summary>Page Layout</summary>
           <div class="style-content">
             <div style="padding: 12px; background: var(--panel-alt); border-radius: 6px; color: var(--text-soft); font-size: 13px; line-height: 1.6;">
@@ -2697,7 +3100,7 @@
       let selectedNodeIconData = null;
       let selectedRackIconData = null;
       let newNodeIconTags = [];
-      
+      let freeDrawMode = false;
       async function checkNodeStatus(nodeId) {
        const data = NODE_DATA[nodeId];
        if (!data || !data.ping || !data.ping.enabled) return;
@@ -3041,6 +3444,8 @@
       let EDGE_DATA = {
        list: []
       };
+      let currentRectId = null;
+      let rectDrawMode = false;
       let RECT_DATA = {
        list: []
       };
@@ -3092,7 +3497,7 @@
         legend: {},
         rects: { list: [] },
         texts: { list: [] },
-		pageState: null
+      pageState: null
       }];
       let currentTabIndex = 0;
       
@@ -3102,6 +3507,9 @@
       let redoStack = [];
       const MAX_UNDO_STACK = 50;
       let selectedNodes = new Set();
+      let selectedEdges = new Set();
+      let selectedRects = new Set();
+      let selectedTexts = new Set();
       let isSelecting = false;
       let selectionStart = null;
       let selectionRect = null;
@@ -3161,18 +3569,27 @@
       const hint = document.getElementById("canvas-hint");
       if (!hint) return;
       
+      if (PAGE_STATE.canvasHintText !== undefined && PAGE_STATE.canvasHintText !== "") {
+        hint.innerHTML = PAGE_STATE.canvasHintText;
+        return;
+      }
+      
       const items = this.isMobile
       ? [
         "Pinch to zoom",
         "Drag to pan",
+        "Add node from top menu",
+        "Double tap to clone and align",
         "Double tap to select multiple",
-        "Double tap to select multiple",
+        "You have the power",	
         "Your time is NOW!",
       ]
       : [
         "Scroll to zoom",
         "Drag to pan",
-        "Right-click to select multiple",
+        "Right click to clone and align",
+        "Right click to select multiple",
+        "You have the power",
         "Your time is NOW!",
       ];
       
@@ -3421,7 +3838,7 @@
       }
        }
       }
-      
+      const DEFAULT_CANVAS_HINT = document.getElementById("canvas-hint")?.innerHTML || "";
       const DEFAULT_PAGE_STATE = {
        title: "The One File: The Networkening",
        background: "",
@@ -3430,6 +3847,27 @@
        panel: "#0b0e13",
        panelAlt: "#10141b",
        accent: "#4fd1c5",
+       sidebarBg: "#10141b",
+       btnBg: "#0b0e13",
+       btnText: "#e2e8f0",
+       tagFill: "#1e293b",
+       tagText: "#e2e8f0",
+       tagBorder: "#475569",
+       inputBg: "#0b0e13",
+       inputText: "#e2e8f0",
+       inputBorder: "#1f2937",
+       inputFont: "Inter, system-ui, sans-serif",
+       inputFontSize: 14,
+       toolbarBg: "#0f172a",
+       toolbarBorder: "#1f2937",
+       toolbarText: "#94a3b8",
+       toolbarBtnBg: "#0b0e13",
+       toolbarBtnText: "#e2e8f0",
+       minimapDots: "#94a3b8",
+       canvasHintEnabled: true,
+       canvasHintText: "",
+       canvasHintBg: "#0f172a",
+       canvasHintColor: "#94a3b8",
        danger: "#f56565",
        textMain: "#e2e8f0",
        textSoft: "#94a3b8",
@@ -3437,8 +3875,26 @@
        sidebarWidth: 350,
        mobileFooterHeight: 40,
        sidebarCollapsed: false,
-       autoPingEnabled: false,
-       autoPingInterval: 30,
+       nodeFill: "#1e293b",
+       nodeStroke: "#475569",
+       nodeTitle: "#e2e8f0",
+       nodeSub: "#94a3b8",
+       nodeTitleSize: 18,
+       nodeSubSize: 13,
+       nodeFont: "Inter, system-ui, sans-serif",
+       defaultEdge: "#475569",
+       selectionHandle: "#f59e0b",
+       selectionHandleSize: 8,
+       groupIndicator: "#4fd1c5",
+       canvasGradientTop: "#1e2532",
+       canvasGradientBottom: "#050608",
+       canvasBorder: "#475569",
+       canvasGrid: "#475569",
+       canvasGridSize: 50,
+       rackFrameFill: "#0f172a",
+       rackFrameStroke: "#4fd1c5",
+       rackLineColor: "#475569",
+       rackTextColor: "#4fd1c5",
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
       const CANVAS_WIDTH = 4000;
@@ -3718,7 +4174,7 @@
        
        const hint = document.getElementById("canvas-hint");
        if (hint) {
-        hint.textContent = `Viewing: ${NODE_DATA[rackId].name} | Double-click empty space to exit`;
+        hint.textContent = `Viewing: ${NODE_DATA[rackId].name} | Double click empty space to exit`;
         hint.classList.add("visible");
        }
        
@@ -3788,12 +4244,52 @@
        const root = document.documentElement;
        root.style.setProperty("--panel", PAGE_STATE.panel);
        root.style.setProperty("--panel-alt", PAGE_STATE.panelAlt);
+       root.style.setProperty("--sidebar-bg", PAGE_STATE.sidebarBg || PAGE_STATE.panelAlt);
+       root.style.setProperty("--btn-bg", PAGE_STATE.btnBg || PAGE_STATE.panel);
+       root.style.setProperty("--btn-text", PAGE_STATE.btnText || "#e2e8f0");
+       root.style.setProperty("--tag-fill", PAGE_STATE.tagFill || "#1e293b");
+       root.style.setProperty("--tag-text", PAGE_STATE.tagText || "#e2e8f0");
+       root.style.setProperty("--tag-border", PAGE_STATE.tagBorder || "#475569");
+       root.style.setProperty("--input-bg", PAGE_STATE.inputBg || "#0b0e13");
+       root.style.setProperty("--input-text", PAGE_STATE.inputText || "#e2e8f0");
+       root.style.setProperty("--input-border", PAGE_STATE.inputBorder || "#1f2937");
+       root.style.setProperty("--input-font", PAGE_STATE.inputFont || "Inter, system-ui, sans-serif");
+       root.style.setProperty("--input-font-size", (PAGE_STATE.inputFontSize || 14) + "px");
+       root.style.setProperty("--toolbar-bg", PAGE_STATE.toolbarBg || "#0f172a");
+       root.style.setProperty("--toolbar-border", PAGE_STATE.toolbarBorder || "#1f2937");
+       root.style.setProperty("--toolbar-text", PAGE_STATE.toolbarText || "#94a3b8");
+       root.style.setProperty("--toolbar-btn-bg", PAGE_STATE.toolbarBtnBg || "#0b0e13");
+       root.style.setProperty("--toolbar-btn-text", PAGE_STATE.toolbarBtnText || "#e2e8f0");
+       root.style.setProperty("--minimap-dots", PAGE_STATE.minimapDots || "#94a3b8");
+       root.style.setProperty("--canvas-hint-bg", PAGE_STATE.canvasHintBg || "#0f172a");
+       root.style.setProperty("--canvas-hint-color", PAGE_STATE.canvasHintColor || "#94a3b8");
+       
+       const canvasHint = document.getElementById("canvas-hint");
+       if (canvasHint) {
+        canvasHint.style.display = PAGE_STATE.canvasHintEnabled === false ? "none" : "";
+        if (PAGE_STATE.canvasHintText !== undefined && PAGE_STATE.canvasHintText !== "") {
+         canvasHint.innerHTML = PAGE_STATE.canvasHintText;
+        } else {
+         canvasHint.innerHTML = DEFAULT_CANVAS_HINT;
+        }
+       }
        root.style.setProperty("--accent", PAGE_STATE.accent);
        root.style.setProperty("--danger", PAGE_STATE.danger);
        root.style.setProperty("--text-main", PAGE_STATE.textMain);
        root.style.setProperty("--text-soft", PAGE_STATE.textSoft);
        root.style.setProperty("--topbar-bg", PAGE_STATE.topbarBg);
        root.style.setProperty("--topbar-border", PAGE_STATE.topbarBorder);
+       root.style.setProperty("--node-fill", PAGE_STATE.nodeFill || "#1e293b");
+       root.style.setProperty("--node-stroke", PAGE_STATE.nodeStroke || "#475569");
+       root.style.setProperty("--node-title", PAGE_STATE.nodeTitle || "#e2e8f0");
+       root.style.setProperty("--node-sub", PAGE_STATE.nodeSub || "#94a3b8");
+       root.style.setProperty("--node-title-size", (PAGE_STATE.nodeTitleSize || 18) + "px");
+       root.style.setProperty("--node-sub-size", (PAGE_STATE.nodeSubSize || 13) + "px");
+       root.style.setProperty("--node-font", PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif");
+       root.style.setProperty("--default-edge", PAGE_STATE.defaultEdge || "#475569");
+       root.style.setProperty("--selection-handle", PAGE_STATE.selectionHandle || "#f59e0b");
+       root.style.setProperty("--selection-handle-size", (PAGE_STATE.selectionHandleSize || 8) + "px");
+       root.style.setProperty("--group-indicator", PAGE_STATE.groupIndicator || "#4fd1c5");
        const topbarHeight = PAGE_STATE.topbarHeight || 52;
        const sidebarWidth = PAGE_STATE.sidebarWidth || 350;
        const mobileFooterHeight = PAGE_STATE.mobileFooterHeight || 40;
@@ -3821,7 +4317,7 @@
        if (PAGE_STATE.background) {
         document.body.style.background = PAGE_STATE.background;
        } else {
-        document.body.style.background = "radial-gradient(circle at top, #1e2532 0, #050608 70%)";
+        document.body.style.background = `radial-gradient(circle at top, ${PAGE_STATE.canvasGradientTop || "#1e2532"} 0, ${PAGE_STATE.canvasGradientBottom || "#050608"} 70%)`;
        }
        document.title = PAGE_STATE.title || DEFAULT_PAGE_STATE.title;
        const titleEl = document.getElementById("page-title");
@@ -4436,12 +4932,8 @@
        const shapeType = (NODE_DATA[id] && NODE_DATA[id].shape) || "circle";
        const shapeEl = createShapeElement(shapeType, size);
        shapeEl.classList.add("node-circle");
-       if (styles.circleColor) {
-        shapeEl.style.stroke = styles.circleColor;
-       }
-	   if (styles.circleBorder) {
-        shapeEl.style.stroke = styles.circleBorder;
-       }
+shapeEl.style.fill = styles.circleColor || PAGE_STATE.nodeFill || "#1e293b";
+       shapeEl.style.stroke = styles.circleBorder || PAGE_STATE.nodeStroke || "#475569";
        return shapeEl;
       }
       
@@ -4585,7 +5077,7 @@
        }
       
        function deleteRectangle(rectId) {
-      pushUndo("delete rectangle");
+      pushUndo("delete zone");
         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
         forgeTheTopology();
        }
@@ -4640,13 +5132,45 @@
         boundary.setAttribute("width", CANVAS_WIDTH - CANVAS_PADDING * 2);
         boundary.setAttribute("height", CANVAS_HEIGHT - CANVAS_PADDING * 2);
         boundary.setAttribute("fill", "none");
-        boundary.setAttribute("stroke", "rgba(71, 85, 105, 0.3)");
-        boundary.setAttribute("stroke-width", "2");
+        boundary.setAttribute("stroke", (PAGE_STATE.canvasBorder || "#475569") + "4D");
+        boundary.setAttribute("stroke-width", "20");
         boundary.setAttribute("stroke-dasharray", "10 5");
         boundary.setAttribute("rx", "8");
         svg.appendChild(boundary);
+       
+       if (currentView.mode !== "rack") {
+        const gridGroup = document.createElementNS(ns, "g");
+        gridGroup.id = "canvas-grid";
+        const gridSize = PAGE_STATE.canvasGridSize || 50;
+        const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
+        const majorGridColor = (PAGE_STATE.canvasGrid || "#475569") + "66";
         
-        if (currentView.mode === "rack" && currentView.rackId) {
+        for (let x = CANVAS_PADDING; x <= CANVAS_WIDTH - CANVAS_PADDING; x += gridSize) {
+         const line = document.createElementNS(ns, "line");
+         line.setAttribute("x1", x);
+         line.setAttribute("y1", CANVAS_PADDING);
+         line.setAttribute("x2", x);
+         line.setAttribute("y2", CANVAS_HEIGHT - CANVAS_PADDING);
+         line.setAttribute("stroke", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+         line.setAttribute("stroke-width", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+         gridGroup.appendChild(line);
+        }
+        
+        for (let y = CANVAS_PADDING; y <= CANVAS_HEIGHT - CANVAS_PADDING; y += gridSize) {
+         const line = document.createElementNS(ns, "line");
+         line.setAttribute("x1", CANVAS_PADDING);
+         line.setAttribute("y1", y);
+         line.setAttribute("x2", CANVAS_WIDTH - CANVAS_PADDING);
+         line.setAttribute("y2", y);
+         line.setAttribute("stroke", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+         line.setAttribute("stroke-width", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+         gridGroup.appendChild(line);
+        }
+        
+        svg.appendChild(gridGroup);
+       }
+       
+       if (currentView.mode === "rack" && currentView.rackId) {
          const rackCapacity = getRackCapacity(currentView.rackId);
       const rackUHeight = getRackUHeight(currentView.rackId);
          const rackGroup = document.createElementNS(ns, "g");
@@ -4657,8 +5181,8 @@
          rackFrame.setAttribute("width", RACK_WIDTH);
          rackFrame.setAttribute("height", rackCapacity * rackUHeight);
       
-         rackFrame.setAttribute("fill", "rgba(15, 23, 42, 0.3)");
-         rackFrame.setAttribute("stroke", "var(--accent)");
+         rackFrame.setAttribute("fill", (PAGE_STATE.rackFrameFill || "#0f172a") + "4D");
+         rackFrame.setAttribute("stroke", PAGE_STATE.rackFrameStroke || "#4fd1c5");
          rackFrame.setAttribute("stroke-width", "3");
          rackFrame.setAttribute("rx", "4");
          rackGroup.appendChild(rackFrame);
@@ -4671,7 +5195,7 @@
           line.setAttribute("y1", y);
           line.setAttribute("x2", RACK_START_X + RACK_WIDTH / 2);
           line.setAttribute("y2", y);
-          line.setAttribute("stroke", "rgba(71, 85, 105, 0.4)");
+          line.setAttribute("stroke", (PAGE_STATE.rackLineColor || "#475569") + "66");
           line.setAttribute("stroke-width", u % 5 === 0 ? "2" : "1");
           line.setAttribute("stroke-dasharray", u % 5 === 0 ? "none" : "5,5");
           rackGroup.appendChild(line);
@@ -4683,7 +5207,7 @@
            text.setAttribute("y", y + rackUHeight / 2);
            text.setAttribute("text-anchor", "middle");
            text.setAttribute("dominant-baseline", "middle");
-           text.style.fill = "var(--accent)";
+           text.style.fill = PAGE_STATE.rackTextColor || "#4fd1c5";
            text.style.fontSize = "14px";
            text.style.fontWeight = "bold";
            text.textContent = `U${uNumber}`;
@@ -4694,7 +5218,7 @@
            textRight.setAttribute("y", y + rackUHeight / 2);
            textRight.setAttribute("text-anchor", "middle");
            textRight.setAttribute("dominant-baseline", "middle");
-           textRight.style.fill = "var(--accent)";
+           textRight.style.fill = PAGE_STATE.rackTextColor || "#4fd1c5";
            textRight.style.fontSize = "14px";
            textRight.style.fontWeight = "bold";
            textRight.textContent = `U${uNumber}`;
@@ -4724,9 +5248,48 @@
            rectEl.setAttribute("height", rect.height);
            rectEl.style.fill = rect.color;
            rectEl.style.fillOpacity = "0.3";
-           rectEl.style.stroke = rect.color;
-           rectEl.style.strokeWidth = "2";
+           rectEl.style.stroke = rect.borderColor || rect.color;
+           rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
+           if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
+           else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+           else { rectEl.style.strokeDasharray = "none"; }
            rectEl.style.cursor = "move";
+           
+           rectEl.addEventListener("click", (e) => {
+             if (rectDrawMode) return;
+             e.stopPropagation();
+             currentRectId = rect.id;
+             selectTheRect(rect.id);
+           });
+           
+           rectEl.addEventListener("contextmenu", (e) => {
+             e.preventDefault();
+             e.stopPropagation();
+             if (selectedRects.has(rect.id)) {
+               selectedRects.delete(rect.id);
+             } else {
+               selectedRects.add(rect.id);
+             }
+             updateAllSelections();
+           });
+           
+           let rectLastTap = 0;
+           rectEl.addEventListener("touchend", (e) => {
+             const now = Date.now();
+             if (now - rectLastTap < 300) {
+               e.preventDefault();
+               if (selectedRects.has(rect.id)) {
+                 selectedRects.delete(rect.id);
+               } else {
+                 selectedRects.add(rect.id);
+               }
+               updateAllSelections();
+               if (navigator.vibrate) navigator.vibrate(50);
+               rectLastTap = 0;
+             } else {
+               rectLastTap = now;
+             }
+           }, { passive: false });
            
            const deleteBtn = document.createElementNS(ns, "g");
            deleteBtn.classList.add("rect-delete-btn");
@@ -4772,38 +5335,60 @@
            let rectStartX, rectStartY;
            
            rectEl.addEventListener("mousedown", (e) => {
-            if (rectDrawMode) return;
-            e.preventDefault();
-            e.stopPropagation();
-            isDragging = true;
-            dragStartX = e.clientX;
-            dragStartY = e.clientY;
-            rectStartX = rect.x;
-            rectStartY = rect.y;
-            rectEl.style.cursor = "grabbing";
-           });
+      if (rectDrawMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      rectStartX = rect.x;
+      rectStartY = rect.y;
+      rectEl.style.cursor = "grabbing";
+      
+      if (selectedRects.has(rect.id)) {
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      });
+      selectedRects.forEach(rectId => {
+      const r = RECT_DATA.list.find(x => x.id === rectId);
+      if (r) { r._dragStartX = r.x; r._dragStartY = r.y; }
+      });
+      selectedTexts.forEach(textId => {
+      const t = TEXT_DATA.list.find(x => x.id === textId);
+      if (t) { t._dragStartX = t.x; t._dragStartY = t.y; }
+      });
+      selectedEdges.forEach(edgeId => {
+      const ed = EDGE_DATA.list.find(x => x.id === edgeId);
+      if (ed && ed.points) { ed._dragStartPoints = ed.points.map(p => ({x: p.x, y: p.y})); }
+      });
+      }
+      });
            
-           const moveHandler = (e) => {
-            if (!isDragging || rectDrawMode) return;
-            const svgEl = svg;
-            const pt1 = svgEl.createSVGPoint();
-            pt1.x = dragStartX;
-            pt1.y = dragStartY;
-            const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
-            
-            const pt2 = svgEl.createSVGPoint();
-            pt2.x = e.clientX;
-            pt2.y = e.clientY;
-            const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
-            
-            const dx = svgP2.x - svgP1.x;
-            const dy = svgP2.y - svgP1.y;
-            
-            rect.x = rectStartX + dx;
-            rect.y = rectStartY + dy;
-            
-            forgeTheTopology();
-           };
+      const moveHandler = (e) => {
+      if (!isDragging || rectDrawMode) return;
+      const svgEl = svg;
+      const pt1 = svgEl.createSVGPoint();
+      pt1.x = dragStartX;
+      pt1.y = dragStartY;
+      const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+      const pt2 = svgEl.createSVGPoint();
+      pt2.x = e.clientX;
+      pt2.y = e.clientY;
+      const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+      const dx = svgP2.x - svgP1.x;
+      const dy = svgP2.y - svgP1.y;
+      rect.x = rectStartX + dx;
+      rect.y = rectStartY + dy;
+      if (selectedRects.has(rect.id)) {
+      selectedNodes.forEach(nodeId => { if (initialPositions[nodeId]) { savedPositions[nodeId] = { x: initialPositions[nodeId].x + dx, y: initialPositions[nodeId].y + dy }; } });
+      selectedRects.forEach(rectId => { if (rectId === rect.id) return; const r = RECT_DATA.list.find(x => x.id === rectId); if (r && r._dragStartX !== undefined) { r.x = r._dragStartX + dx; r.y = r._dragStartY + dy; } });
+      selectedTexts.forEach(textId => { const t = TEXT_DATA.list.find(x => x.id === textId); if (t && t._dragStartX !== undefined) { t.x = t._dragStartX + dx; t.y = t._dragStartY + dy; } });
+      selectedEdges.forEach(edgeId => { const ed = EDGE_DATA.list.find(x => x.id === edgeId); if (ed && ed._dragStartPoints) { ed.points.forEach((p, i) => { p.x = ed._dragStartPoints[i].x + dx; p.y = ed._dragStartPoints[i].y + dy; }); } });
+      }
+      forgeTheTopology();
+      };
            
            const upHandler = () => {
             if (isDragging) {
@@ -4865,7 +5450,63 @@
              rectEl.style.cursor = "move";
             }
            }, { passive: false });
-           
+            if (currentRectId === rect.id) {
+      const corners = [
+      { cx: rect.x, cy: rect.y, cursor: 'nwse-resize', dx: -1, dy: -1 },
+      { cx: rect.x + rect.width, cy: rect.y, cursor: 'nesw-resize', dx: 1, dy: -1 },
+      { cx: rect.x, cy: rect.y + rect.height, cursor: 'nesw-resize', dx: -1, dy: 1 },
+      { cx: rect.x + rect.width, cy: rect.y + rect.height, cursor: 'nwse-resize', dx: 1, dy: 1 }
+      ];
+      corners.forEach((corner, idx) => {
+      const handle = document.createElementNS(ns, "circle");
+      handle.setAttribute("cx", corner.cx);
+      handle.setAttribute("cy", corner.cy);
+      handle.setAttribute("r", 8);
+      handle.style.fill = "#f59e0b";
+      handle.style.stroke = "#fff";
+      handle.style.strokeWidth = "2";
+      handle.style.cursor = corner.cursor;
+      handle.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      let dragging = true;
+      const startX = e.clientX, startY = e.clientY;
+      const origX = rect.x, origY = rect.y, origW = rect.width, origH = rect.height;
+      const moveHandler = (ev) => {
+        if (!dragging) return;
+        const pt1 = svg.createSVGPoint(); pt1.x = startX; pt1.y = startY;
+        const pt2 = svg.createSVGPoint(); pt2.x = ev.clientX; pt2.y = ev.clientY;
+        const svgP1 = pt1.matrixTransform(svg.getScreenCTM().inverse());
+        const svgP2 = pt2.matrixTransform(svg.getScreenCTM().inverse());
+        const dx = svgP2.x - svgP1.x, dy = svgP2.y - svgP1.y;
+        if (corner.dx < 0) { rect.x = origX + dx; rect.width = origW - dx; }
+        else { rect.width = origW + dx; }
+        if (corner.dy < 0) { rect.y = origY + dy; rect.height = origH - dy; }
+        else { rect.height = origH + dy; }
+        if (rect.width < 20) rect.width = 20;
+        if (rect.height < 20) rect.height = 20;
+        forgeTheTopology();
+      };
+      const upHandler = () => { dragging = false; document.removeEventListener("mousemove", moveHandler); document.removeEventListener("mouseup", upHandler); };
+      document.addEventListener("mousemove", moveHandler);
+      document.addEventListener("mouseup", upHandler);
+      });
+      g.appendChild(handle);
+      });
+      }
+            if (rect.groupId) {
+             const groupIndicator = document.createElementNS(ns, "rect");
+             groupIndicator.setAttribute("x", rect.x - 4);
+             groupIndicator.setAttribute("y", rect.y - 4);
+             groupIndicator.setAttribute("width", rect.width + 8);
+             groupIndicator.setAttribute("height", rect.height + 8);
+             groupIndicator.style.fill = "none";
+        groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
+             groupIndicator.style.strokeWidth = "3";
+             groupIndicator.style.strokeDasharray = "5,5";
+             groupIndicator.style.pointerEvents = "none";
+             g.insertBefore(groupIndicator, g.firstChild);
+           }
            g.appendChild(rectEl);
            g.appendChild(deleteBtn);
            svg.appendChild(g);
@@ -4947,10 +5588,15 @@
         });
         EDGE_DATA.list.forEach((edge) => {
          if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
+          const customEdgeFaded = currentView.mode !== "rack" && edge.from && edge.to && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
           const poly = document.createElementNS(ns, "polyline");
           poly.classList.add("edge");
+          if (customEdgeFaded) {
+           poly.style.opacity = "0.25";
+           poly.classList.add("layer-faded");
+          }
           poly.dataset.edgeId = edge.id;
-          poly.style.stroke = edge.color || "#475569";
+poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
           poly.style.strokeWidth = edge.width || 4;
           poly.setAttribute("fill", "none");
           const lineStyle = edge.lineStyle || "solid";
@@ -5017,21 +5663,238 @@
            passive: false
           });
           poly.addEventListener("click", (e) => {
-           e.stopPropagation();
-           selectTheConnection(edge.id);
-          });
+          e.stopPropagation();
+          selectTheConnection(edge.id);
+         });
+         
+         polyHit.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (selectedEdges.has(edge.id)) {
+           selectedEdges.delete(edge.id);
+          } else {
+           selectedEdges.add(edge.id);
+          }
+          updateAllSelections();
+         });
+         
+         let customEdgeLastTap = 0;
+         polyHit.addEventListener("touchend", (e) => {
+          const now = Date.now();
+          if (now - customEdgeLastTap < 300) {
+           e.preventDefault();
+           if (selectedEdges.has(edge.id)) {
+            selectedEdges.delete(edge.id);
+           } else {
+            selectedEdges.add(edge.id);
+           }
+           updateAllSelections();
+           if (navigator.vibrate) navigator.vibrate(50);
+           customEdgeLastTap = 0;
+          } else {
+           customEdgeLastTap = now;
+          }
+         }, { passive: false });
+         
+         poly.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (selectedEdges.has(edge.id)) {
+           selectedEdges.delete(edge.id);
+          } else {
+           selectedEdges.add(edge.id);
+          }
+          updateAllSelections();
+         });
+         
+         let edgeLastTap = 0;
+         poly.addEventListener("touchend", (e) => {
+          const now = Date.now();
+          if (now - edgeLastTap < 300) {
+           e.preventDefault();
+           if (selectedEdges.has(edge.id)) {
+            selectedEdges.delete(edge.id);
+           } else {
+            selectedEdges.add(edge.id);
+           }
+           updateAllSelections();
+           if (navigator.vibrate) navigator.vibrate(50);
+           edgeLastTap = 0;
+          } else {
+           edgeLastTap = now;
+          }
+         });
           
           if (currentView.mode === "rack") {
            return;
           }
-          
-          svg.appendChild(poly);
-          svg.appendChild(polyHit);
-          return;
+          if (edge.groupId) {
+      const bounds = edge.points.reduce((acc, p) => ({ minX: Math.min(acc.minX, p.x), minY: Math.min(acc.minY, p.y), maxX: Math.max(acc.maxX, p.x), maxY: Math.max(acc.maxY, p.y) }), { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
+      const groupIndicator = document.createElementNS(ns, "rect");
+      groupIndicator.setAttribute("x", bounds.minX - 8);
+      groupIndicator.setAttribute("y", bounds.minY - 8);
+      groupIndicator.setAttribute("width", bounds.maxX - bounds.minX + 16);
+      groupIndicator.setAttribute("height", bounds.maxY - bounds.minY + 16);
+      groupIndicator.setAttribute("rx", "4");
+      groupIndicator.style.fill = "none";
+  groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
+      groupIndicator.style.strokeWidth = "3";
+      groupIndicator.style.strokeDasharray = "5,5";
+      groupIndicator.style.pointerEvents = "none";
+      svg.appendChild(groupIndicator);
+      }
+         let lineDragging = false;
+      let lineDragStartX, lineDragStartY;
+      let linePointsStart = [];
+      
+      polyHit.addEventListener("mousedown", (e) => {
+      if (freeDrawMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      lineDragging = true;
+      lineDragStartX = e.clientX;
+      lineDragStartY = e.clientY;
+      linePointsStart = edge.points.map(p => ({x: p.x, y: p.y}));
+      
+      if (selectedEdges.has(edge.id)) {
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      });
+      selectedRects.forEach(rectId => {
+      const r = RECT_DATA.list.find(x => x.id === rectId);
+      if (r) { r._dragStartX = r.x; r._dragStartY = r.y; }
+      });
+      selectedTexts.forEach(textId => {
+      const t = TEXT_DATA.list.find(x => x.id === textId);
+      if (t) { t._dragStartX = t.x; t._dragStartY = t.y; }
+      });
+      selectedEdges.forEach(edgeId => {
+      const ed = EDGE_DATA.list.find(x => x.id === edgeId);
+      if (ed && ed.points) { ed._dragStartPoints = ed.points.map(p => ({x: p.x, y: p.y})); }
+      });
+      }
+      });
+      
+      const lineMoveHandler = (e) => {
+      if (!lineDragging || freeDrawMode) return;
+      const svgEl = svg;
+      const pt1 = svgEl.createSVGPoint();
+      pt1.x = lineDragStartX;
+      pt1.y = lineDragStartY;
+      const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+      const pt2 = svgEl.createSVGPoint();
+      pt2.x = e.clientX;
+      pt2.y = e.clientY;
+      const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+      const dx = svgP2.x - svgP1.x;
+      const dy = svgP2.y - svgP1.y;
+      
+      edge.points.forEach((p, i) => { p.x = linePointsStart[i].x + dx; p.y = linePointsStart[i].y + dy; });
+      
+      if (selectedEdges.has(edge.id)) {
+      selectedNodes.forEach(nodeId => {
+      if (initialPositions[nodeId]) {
+       savedPositions[nodeId] = { x: initialPositions[nodeId].x + dx, y: initialPositions[nodeId].y + dy };
+      }
+      });
+      selectedRects.forEach(rectId => {
+      const r = RECT_DATA.list.find(x => x.id === rectId);
+      if (r && r._dragStartX !== undefined) { r.x = r._dragStartX + dx; r.y = r._dragStartY + dy; }
+      });
+      selectedTexts.forEach(textId => {
+      const t = TEXT_DATA.list.find(x => x.id === textId);
+      if (t && t._dragStartX !== undefined) { t.x = t._dragStartX + dx; t.y = t._dragStartY + dy; }
+      });
+      selectedEdges.forEach(edgeId => {
+      if (edgeId === edge.id) return;
+      const ed = EDGE_DATA.list.find(x => x.id === edgeId);
+      if (ed && ed._dragStartPoints) { ed.points.forEach((p, i) => { p.x = ed._dragStartPoints[i].x + dx; p.y = ed._dragStartPoints[i].y + dy; }); }
+      });
+      }
+      forgeTheTopology();
+      };
+      
+      const lineUpHandler = () => { lineDragging = false; };
+      document.addEventListener("mousemove", lineMoveHandler);
+      document.addEventListener("mouseup", lineUpHandler);
+      
+      svg.appendChild(poly);
+      svg.appendChild(polyHit);
+         
+         if (currentEdgeId === edge.id) {
+          edge.points.forEach((p, idx) => {
+           const c = document.createElementNS(ns, "circle");
+           c.classList.add("edge-edit-point");
+           c.setAttribute("cx", p.x);
+           c.setAttribute("cy", p.y);
+c.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
+           c.style.fill = PAGE_STATE.selectionHandle || "#f59e0b";
+           c.style.stroke = "#fff";
+           c.style.strokeWidth = "2";
+           c.style.cursor = "move";
+           c.dataset.edgeId = edge.id;
+           c.dataset.pointIndex = String(idx);
+           
+           c.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let dragging = true;
+            const svgEl = svg;
+            const moveHandler = (ev) => {
+             if (!dragging) return;
+             const pt = svgEl.createSVGPoint();
+             pt.x = ev.clientX;
+             pt.y = ev.clientY;
+             const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+             edge.points[idx].x = svgP.x;
+             edge.points[idx].y = svgP.y;
+             forgeTheTopology();
+            };
+            const upHandler = () => {
+             dragging = false;
+             document.removeEventListener("mousemove", moveHandler);
+             document.removeEventListener("mouseup", upHandler);
+            };
+            document.addEventListener("mousemove", moveHandler);
+            document.addEventListener("mouseup", upHandler);
+           });
+           
+           c.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            let dragging = true;
+            const svgEl = svg;
+            const touchMoveHandler = (ev) => {
+             if (!dragging || !ev.touches[0]) return;
+             const pt = svgEl.createSVGPoint();
+             pt.x = ev.touches[0].clientX;
+             pt.y = ev.touches[0].clientY;
+             const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+             edge.points[idx].x = svgP.x;
+             edge.points[idx].y = svgP.y;
+             forgeTheTopology();
+            };
+            const touchUpHandler = () => {
+             dragging = false;
+             document.removeEventListener("touchmove", touchMoveHandler);
+             document.removeEventListener("touchend", touchUpHandler);
+            };
+            document.addEventListener("touchmove", touchMoveHandler);
+            document.addEventListener("touchend", touchUpHandler);
+           }, { passive: false });
+           
+           svg.appendChild(c);
+          });
+         }
+         
+         return;
          }
          const p1 = positions[edge.from];
          const p2 = positions[edge.to];
          if (!p1 || !p2) return;
+         const edgeFaded = currentView.mode !== "rack" && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
          const pairTotal = edge._pairTotal || 1;
          const pairIndex = edge._pairIndex || 0;
          const midX = (p1.x + p2.x) / 2;
@@ -5051,6 +5914,10 @@
          path.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
          path.setAttribute("fill", "none");
          path.classList.add("edge");
+         if (edgeFaded) {
+          path.style.opacity = "0.25";
+          path.classList.add("layer-faded");
+         }
          if (edge.type === "backup") path.classList.add("backup");
          path.dataset.edgeId = edge.id;
          path.dataset.from = edge.from;
@@ -5172,6 +6039,10 @@
          g.classList.add("node-group");
          g.dataset.nodeId = id;
          g.setAttribute("transform", `translate(${pos.x},${pos.y})`);
+         if (currentView.mode !== "rack" && !isNodeVisible(id)) {
+          g.style.opacity = "0.25";
+          g.classList.add("layer-faded");
+         }
          let r = savedSizes[id] || 55;
          if (!savedSizes[id]) {
           if (window.innerWidth <= 380) r = 120;
@@ -5195,21 +6066,21 @@
          label.classList.add("node-label");
          label.setAttribute("x", titleOffsetX);
          label.setAttribute("y", -r * 0.28 + titleOffsetY);
-         const labelFontSize = styles.titleSize || r * 0.33;
-         label.style.fontSize = labelFontSize + "px";
+         const labelFontSize = styles.titleSize || PAGE_STATE.nodeTitleSize || r * 0.33;
+        label.style.fontSize = labelFontSize + "px";
          label.textContent = NODE_DATA[id].name;
-         if (styles.titleColor) label.style.fill = styles.titleColor;
-         if (styles.titleFont) label.style.fontFamily = styles.titleFont;
+label.style.fill = styles.titleColor || PAGE_STATE.nodeTitle || "#e2e8f0";
+        label.style.fontFamily = styles.titleFont || PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
          label.style.pointerEvents = "none";
          const sub = document.createElementNS("http://www.w3.org/2000/svg", "text", );
          sub.classList.add("node-sub");
          sub.setAttribute("x", subOffsetX);
          sub.setAttribute("y", r * 0.4 + subOffsetY);
-         const subFontSize = styles.subSize || r * 0.24;
-         sub.style.fontSize = subFontSize + "px";
+         const subFontSize = styles.subSize || PAGE_STATE.nodeSubSize || r * 0.24;
+        sub.style.fontSize = subFontSize + "px";
          sub.textContent = NODE_DATA[id].ip;
-         if (styles.subColor) sub.style.fill = styles.subColor;
-         if (styles.subFont) sub.style.fontFamily = styles.subFont;
+sub.style.fill = styles.subColor || PAGE_STATE.nodeSub || "#94a3b8";
+        sub.style.fontFamily = styles.subFont || PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
          sub.style.pointerEvents = "none";
          g.append(hitArea, shapeEl, label, sub);
          
@@ -5228,7 +6099,7 @@
            const groupIndicator = document.createElementNS(ns, "circle");
            groupIndicator.setAttribute("r", r + 4);
            groupIndicator.style.fill = "none";
-           groupIndicator.style.stroke = "#4fd1c5";
+         groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
            groupIndicator.style.strokeWidth = "3";
            groupIndicator.style.strokeDasharray = "5,5";
            groupIndicator.style.pointerEvents = "none";
@@ -5356,14 +6227,33 @@
           startY = svgP.y;
           
           let nodesToCollect = [];
-          if (selectedNodes.has(id)) {
+      
+      
+      if (selectedNodes.has(id)) {
       initialPositions = {};
+      const allSelectedRects = Array.from(selectedRects);
+      const allSelectedTexts = Array.from(selectedTexts);
+      const allSelectedEdges = Array.from(selectedEdges).map(eid => EDGE_DATA.list.find(e => e.id === eid)).filter(Boolean);
       selectedNodes.forEach(nodeId => {
       const nodePos = savedPositions[nodeId];
       if (nodePos) {
       initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
       }
       });
+      Array.from(selectedRects).forEach(rectId => {
+        const rect = RECT_DATA.list.find(r => r.id === rectId);
+        if (rect) { rect._dragStartX = rect.x; rect._dragStartY = rect.y; }
+      });
+      Array.from(selectedTexts).forEach(textId => {
+        const text = TEXT_DATA.list.find(t => t.id === textId);
+        if (text) { text._dragStartX = text.x; text._dragStartY = text.y; }
+      });
+      Array.from(selectedEdges).forEach(edgeId => {
+        const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+        if (edge && edge.points) { edge._dragStartPoints = edge.points.map(p => ({x: p.x, y: p.y})); }
+      });
+      
+      
       } else {
       initialPositions = { [id]: { x: pos.x, y: pos.y } };
       }
@@ -5435,12 +6325,37 @@
            }
            
            const nodeGroup = document.querySelector(`g[data-node-id="${nodeId}"]`);
-           if (nodeGroup) {
-            nodeGroup.setAttribute("transform", `translate(${newX},${newY})`);
+          if (nodeGroup) {
+           nodeGroup.setAttribute("transform", `translate(${newX},${newY})`);
+          }
+         });
+         
+         Array.from(selectedRects).forEach(rectId => {
+           const rect = RECT_DATA.list.find(r => r.id === rectId);
+           if (rect && rect._dragStartX !== undefined) {
+             rect.x = rect._dragStartX + dx;
+             rect.y = rect._dragStartY + dy;
            }
-          });
-          
-          updateMinimap();
+         });
+         Array.from(selectedTexts).forEach(textId => {
+           const text = TEXT_DATA.list.find(t => t.id === textId);
+           if (text && text._dragStartX !== undefined) {
+             text.x = text._dragStartX + dx;
+             text.y = text._dragStartY + dy;
+           }
+         });
+         Array.from(selectedEdges).forEach(edgeId => {
+           const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+           if (edge && edge._dragStartPoints) {
+             edge.points.forEach((p, i) => {
+               p.x = edge._dragStartPoints[i].x + dx;
+               p.y = edge._dragStartPoints[i].y + dy;
+             });
+           }
+         });
+         forgeTheTopology();
+         
+         updateMinimap();
           document.querySelectorAll(".edge").forEach((edgeEl) => {
            const fromId = edgeEl.dataset.from;
            const toId = edgeEl.dataset.to;
@@ -5696,6 +6611,7 @@
         
         if (RECT_DATA && RECT_DATA.list) {
          RECT_DATA.list.forEach((rect) => {
+          if (currentView.mode === "rack") return;
           if (rect.style === "outlined") {
            const g = document.createElementNS(ns, "g");
            g.classList.add("rect-group");
@@ -5708,9 +6624,48 @@
            rectEl.setAttribute("width", rect.width);
            rectEl.setAttribute("height", rect.height);
            rectEl.style.fill = "none";
-           rectEl.style.stroke = rect.color;
-           rectEl.style.strokeWidth = "3";
+           rectEl.style.stroke = rect.borderColor || rect.color;
+           rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 3) + "px";
+      if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
+           else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+           else { rectEl.style.strokeDasharray = "none"; }
            rectEl.style.cursor = "move";
+           
+           rectEl.addEventListener("click", (e) => {
+             if (rectDrawMode) return;
+             e.stopPropagation();
+             currentRectId = rect.id;
+             selectTheRect(rect.id);
+           });
+           
+           rectEl.addEventListener("contextmenu", (e) => {
+             e.preventDefault();
+             e.stopPropagation();
+             if (selectedRects.has(rect.id)) {
+               selectedRects.delete(rect.id);
+             } else {
+               selectedRects.add(rect.id);
+             }
+             updateAllSelections();
+           });
+           
+           let rectLastTap = 0;
+           rectEl.addEventListener("touchend", (e) => {
+             const now = Date.now();
+             if (now - rectLastTap < 300) {
+               e.preventDefault();
+               if (selectedRects.has(rect.id)) {
+                 selectedRects.delete(rect.id);
+               } else {
+                 selectedRects.add(rect.id);
+               }
+               updateAllSelections();
+               if (navigator.vibrate) navigator.vibrate(50);
+               rectLastTap = 0;
+             } else {
+               rectLastTap = now;
+             }
+           }, { passive: false });
            
            const deleteBtn = document.createElementNS(ns, "g");
            deleteBtn.classList.add("rect-delete-btn");
@@ -5761,27 +6716,29 @@
             rectEl.style.cursor = "grabbing";
            });
            
-           const moveHandler = (e) => {
-            if (!isDragging || rectDrawMode) return;
-            const svgEl = svg;
-            const pt1 = svgEl.createSVGPoint();
-            pt1.x = dragStartX;
-            pt1.y = dragStartY;
-            const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
-            
-            const pt2 = svgEl.createSVGPoint();
-            pt2.x = e.clientX;
-            pt2.y = e.clientY;
-            const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
-            
-            const dx = svgP2.x - svgP1.x;
-            const dy = svgP2.y - svgP1.y;
-            
-            rect.x = rectStartX + dx;
-            rect.y = rectStartY + dy;
-            
-            forgeTheTopology();
-           };
+      const moveHandler = (e) => {
+      if (!isDragging || rectDrawMode) return;
+      const svgEl = svg;
+      const pt1 = svgEl.createSVGPoint();
+      pt1.x = dragStartX;
+      pt1.y = dragStartY;
+      const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+      const pt2 = svgEl.createSVGPoint();
+      pt2.x = e.clientX;
+      pt2.y = e.clientY;
+      const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+      const dx = svgP2.x - svgP1.x;
+      const dy = svgP2.y - svgP1.y;
+      rect.x = rectStartX + dx;
+      rect.y = rectStartY + dy;
+      if (selectedRects.has(rect.id)) {
+      selectedNodes.forEach(nodeId => { if (initialPositions[nodeId]) { savedPositions[nodeId] = { x: initialPositions[nodeId].x + dx, y: initialPositions[nodeId].y + dy }; } });
+      selectedRects.forEach(rectId => { if (rectId === rect.id) return; const r = RECT_DATA.list.find(x => x.id === rectId); if (r && r._dragStartX !== undefined) { r.x = r._dragStartX + dx; r.y = r._dragStartY + dy; } });
+      selectedTexts.forEach(textId => { const t = TEXT_DATA.list.find(x => x.id === textId); if (t && t._dragStartX !== undefined) { t.x = t._dragStartX + dx; t.y = t._dragStartY + dy; } });
+      selectedEdges.forEach(edgeId => { const ed = EDGE_DATA.list.find(x => x.id === edgeId); if (ed && ed._dragStartPoints) { ed.points.forEach((p, i) => { p.x = ed._dragStartPoints[i].x + dx; p.y = ed._dragStartPoints[i].y + dy; }); } });
+      }
+      forgeTheTopology();
+      };
            
            const upHandler = () => {
             if (isDragging) {
@@ -5844,6 +6801,63 @@
             }
            }, { passive: false });
            
+           if (currentRectId === rect.id) {
+             const corners = [
+               { cx: rect.x, cy: rect.y, cursor: 'nwse-resize', dx: -1, dy: -1 },
+               { cx: rect.x + rect.width, cy: rect.y, cursor: 'nesw-resize', dx: 1, dy: -1 },
+               { cx: rect.x, cy: rect.y + rect.height, cursor: 'nesw-resize', dx: -1, dy: 1 },
+               { cx: rect.x + rect.width, cy: rect.y + rect.height, cursor: 'nwse-resize', dx: 1, dy: 1 }
+             ];
+             corners.forEach((corner) => {
+               const handle = document.createElementNS(ns, "circle");
+               handle.setAttribute("cx", corner.cx);
+               handle.setAttribute("cy", corner.cy);
+handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
+      handle.style.fill = PAGE_STATE.selectionHandle || "#f59e0b";
+               handle.style.stroke = "#fff";
+               handle.style.strokeWidth = "2";
+               handle.style.cursor = corner.cursor;
+               handle.addEventListener("mousedown", (e) => {
+                 e.preventDefault();
+                 e.stopPropagation();
+                 let dragging = true;
+                 const startX = e.clientX, startY = e.clientY;
+                 const origX = rect.x, origY = rect.y, origW = rect.width, origH = rect.height;
+                 const moveHandler = (ev) => {
+                   if (!dragging) return;
+                   const pt1 = svg.createSVGPoint(); pt1.x = startX; pt1.y = startY;
+                   const pt2 = svg.createSVGPoint(); pt2.x = ev.clientX; pt2.y = ev.clientY;
+                   const svgP1 = pt1.matrixTransform(svg.getScreenCTM().inverse());
+                   const svgP2 = pt2.matrixTransform(svg.getScreenCTM().inverse());
+                   const dx = svgP2.x - svgP1.x, dy = svgP2.y - svgP1.y;
+                   if (corner.dx < 0) { rect.x = origX + dx; rect.width = origW - dx; }
+                   else { rect.width = origW + dx; }
+                   if (corner.dy < 0) { rect.y = origY + dy; rect.height = origH - dy; }
+                   else { rect.height = origH + dy; }
+                   if (rect.width < 20) rect.width = 20;
+                   if (rect.height < 20) rect.height = 20;
+                   forgeTheTopology();
+                 };
+                 const upHandler = () => { dragging = false; document.removeEventListener("mousemove", moveHandler); document.removeEventListener("mouseup", upHandler); };
+                 document.addEventListener("mousemove", moveHandler);
+                 document.addEventListener("mouseup", upHandler);
+               });
+               g.appendChild(handle);
+             });
+           }
+           if (rect.groupId) {
+             const groupIndicator = document.createElementNS(ns, "rect");
+             groupIndicator.setAttribute("x", rect.x - 4);
+             groupIndicator.setAttribute("y", rect.y - 4);
+             groupIndicator.setAttribute("width", rect.width + 8);
+             groupIndicator.setAttribute("height", rect.height + 8);
+             groupIndicator.style.fill = "none";
+         groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
+             groupIndicator.style.strokeWidth = "3";
+             groupIndicator.style.strokeDasharray = "5,5";
+             groupIndicator.style.pointerEvents = "none";
+             g.insertBefore(groupIndicator, g.firstChild);
+           }
            g.appendChild(rectEl);
            g.appendChild(deleteBtn);
            svg.appendChild(g);
@@ -5957,40 +6971,83 @@
           let textStartX, textStartY;
           
           textEl.addEventListener("mousedown", (e) => {
-           if (textDrawMode) return;
-           e.preventDefault();
-           e.stopPropagation();
-           isDragging = true;
-           dragStartX = e.clientX;
-           dragStartY = e.clientY;
-           textStartX = textItem.x;
-           textStartY = textItem.y;
-           textEl.style.cursor = "grabbing";
-           
-           showTextPanel(textItem.id);
-          });
+      if (textDrawMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      textStartX = textItem.x;
+      textStartY = textItem.y;
+      textEl.style.cursor = "grabbing";
+      
+      showTextPanel(textItem.id);
+      
+      if (selectedTexts.has(textItem.id)) {
+      initialPositions = {};
+      selectedNodes.forEach(nodeId => {
+      const nodePos = savedPositions[nodeId];
+      if (nodePos) initialPositions[nodeId] = { x: nodePos.x, y: nodePos.y };
+      });
+      selectedRects.forEach(rectId => {
+      const r = RECT_DATA.list.find(x => x.id === rectId);
+      if (r) { r._dragStartX = r.x; r._dragStartY = r.y; }
+      });
+      selectedTexts.forEach(textId => {
+      const t = TEXT_DATA.list.find(x => x.id === textId);
+      if (t) { t._dragStartX = t.x; t._dragStartY = t.y; }
+      });
+      selectedEdges.forEach(edgeId => {
+      const ed = EDGE_DATA.list.find(x => x.id === edgeId);
+      if (ed && ed.points) { ed._dragStartPoints = ed.points.map(p => ({x: p.x, y: p.y})); }
+      });
+      }
+      });
           
           const moveHandler = (e) => {
-           if (!isDragging || textDrawMode) return;
-           const svgEl = svg;
-           const pt1 = svgEl.createSVGPoint();
-           pt1.x = dragStartX;
-           pt1.y = dragStartY;
-           const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
-           
-           const pt2 = svgEl.createSVGPoint();
-           pt2.x = e.clientX;
-           pt2.y = e.clientY;
-           const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
-           
-           const dx = svgP2.x - svgP1.x;
-           const dy = svgP2.y - svgP1.y;
-           
-           textItem.x = textStartX + dx;
-           textItem.y = textStartY + dy;
-           
-           forgeTheTopology();
-          };
+      if (!isDragging || textDrawMode) return;
+      const svgEl = svg;
+      const pt1 = svgEl.createSVGPoint();
+      pt1.x = dragStartX;
+      pt1.y = dragStartY;
+      const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+      
+      const pt2 = svgEl.createSVGPoint();
+      pt2.x = e.clientX;
+      pt2.y = e.clientY;
+      const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+      
+      const dx = svgP2.x - svgP1.x;
+      const dy = svgP2.y - svgP1.y;
+      
+      textItem.x = textStartX + dx;
+      textItem.y = textStartY + dy;
+      
+      if (selectedTexts.has(textItem.id)) {
+      selectedNodes.forEach(nodeId => {
+      if (initialPositions[nodeId]) {
+       const newX = initialPositions[nodeId].x + dx;
+       const newY = initialPositions[nodeId].y + dy;
+       savedPositions[nodeId] = { x: newX, y: newY };
+      }
+      });
+      selectedRects.forEach(rectId => {
+      const r = RECT_DATA.list.find(x => x.id === rectId);
+      if (r && r._dragStartX !== undefined) { r.x = r._dragStartX + dx; r.y = r._dragStartY + dy; }
+      });
+      selectedTexts.forEach(textId => {
+      if (textId === textItem.id) return;
+      const t = TEXT_DATA.list.find(x => x.id === textId);
+      if (t && t._dragStartX !== undefined) { t.x = t._dragStartX + dx; t.y = t._dragStartY + dy; }
+      });
+      selectedEdges.forEach(edgeId => {
+      const ed = EDGE_DATA.list.find(x => x.id === edgeId);
+      if (ed && ed._dragStartPoints) { ed.points.forEach((p, i) => { p.x = ed._dragStartPoints[i].x + dx; p.y = ed._dragStartPoints[i].y + dy; }); }
+      });
+      }
+      
+      forgeTheTopology();
+      };
           
           const upHandler = () => {
            if (isDragging) {
@@ -6054,6 +7111,49 @@
            }
           }, { passive: false });
           
+          textEl.addEventListener("contextmenu", (e) => {
+           e.preventDefault();
+           e.stopPropagation();
+           if (selectedTexts.has(textItem.id)) {
+            selectedTexts.delete(textItem.id);
+           } else {
+            selectedTexts.add(textItem.id);
+           }
+           updateAllSelections();
+          });
+          
+          let textLastTap = 0;
+          g.addEventListener("touchend", (e) => {
+           const now = Date.now();
+           if (now - textLastTap < 300) {
+            e.preventDefault();
+            if (selectedTexts.has(textItem.id)) {
+             selectedTexts.delete(textItem.id);
+            } else {
+             selectedTexts.add(textItem.id);
+            }
+            updateAllSelections();
+            if (navigator.vibrate) navigator.vibrate(50);
+            textLastTap = 0;
+           } else {
+            textLastTap = now;
+           }
+          }, { passive: false });
+          
+          if (textItem.groupId) {
+            const groupIndicator = document.createElementNS(ns, "rect");
+            groupIndicator.setAttribute("x", textItem.x - 54);
+            groupIndicator.setAttribute("y", textItem.y - 24);
+            groupIndicator.setAttribute("width", 108);
+            groupIndicator.setAttribute("height", 48);
+            groupIndicator.setAttribute("rx", "8");
+            groupIndicator.style.fill = "none";
+       groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
+            groupIndicator.style.strokeWidth = "3";
+            groupIndicator.style.strokeDasharray = "5,5";
+            groupIndicator.style.pointerEvents = "none";
+            g.insertBefore(groupIndicator, g.firstChild);
+          }
           g.appendChild(deleteBtn);
           svg.appendChild(g);
          });
@@ -6248,16 +7348,20 @@
         const subSizeInput = document.getElementById("sub-size");
         const shapeSelect = document.getElementById("shape-select");
         const scopeSelect = document.getElementById("style-scope");
-        circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || "#1e293b";
-        const circleBorderInput = document.getElementById("circle-border");
-        circleBorderInput.value = scopedStyles.circleBorder || resolvedStyles.circleBorder || "#475569";
-        titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || "#e2e8f0";
+circleColorInput.value = scopedStyles.circleColor || resolvedStyles.circleColor || PAGE_STATE.nodeFill || "#1e293b";
+       const circleBorderInput = document.getElementById("circle-border");
+       circleBorderInput.value = scopedStyles.circleBorder || resolvedStyles.circleBorder || PAGE_STATE.nodeStroke || "#475569";
+        titleColorInput.value = scopedStyles.titleColor || resolvedStyles.titleColor || PAGE_STATE.textMain || "#e2e8f0";
         titleFontSelect.value = scopedStyles.titleFont || resolvedStyles.titleFont || "system-ui, sans-serif";
         titleSizeInput.value = scopedStyles.titleSize || resolvedStyles.titleSize || 18;
-        subColorInput.value = scopedStyles.subColor || resolvedStyles.subColor || "#94a3b8";
+        subColorInput.value = scopedStyles.subColor || resolvedStyles.subColor || PAGE_STATE.textSoft || "#94a3b8";
         subFontSelect.value = scopedStyles.subFont || resolvedStyles.subFont || "system-ui, sans-serif";
         subSizeInput.value = scopedStyles.subSize || resolvedStyles.subSize || 13;
         shapeSelect.value = data.shape || "circle";
+        const layerSelect = document.getElementById("node-layer");
+        if (layerSelect) {
+         layerSelect.value = data.layer || "physical";
+        }
         scopeSelect.value = currentStyleScope || "all";
         document.getElementById("title-offset-y").value = scopedStyles.titleOffsetY || resolvedStyles.titleOffsetY || 0;
         document.getElementById("title-offset-x").value = scopedStyles.titleOffsetX || resolvedStyles.titleOffsetX || 0;
@@ -6533,8 +7637,12 @@
          });
          li.append(txt, del);
          list.appendChild(li);
-        });
+       });
+       
+       if (edge.type === "custom" && Array.isArray(edge.points)) {
+        forgeTheTopology();
        }
+      }
        window.addEventListener("resize", () => {
         forgeTheTopology();
         if (currentEdgeId) {
@@ -6620,7 +7728,7 @@
           
           if (e.changedTouches.length !== 1) return;
           
-		 const isNodeOrEdge = e.target.closest(".node-group") || e.target.closest(".edge-group");
+      const isNodeOrEdge = e.target.closest(".node-group") || e.target.closest(".edge-group");
          if (isNodeOrEdge) return;
           
           if (emptyTapMoved) {
@@ -6662,7 +7770,19 @@
          if (freeDrawMode || rectDrawMode) {
           return;
          }
-         const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+      const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point');
+      const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
+      const isRectElement = e.target.closest('.rect-group');
+      if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
+      currentEdgeId = null;
+      forgeTheTopology();
+      }
+      if (!isRectElement && currentRectId) {
+      currentRectId = null;
+      document.getElementById("rect-panel").style.display = "none";
+      forgeTheTopology();
+      }
          if (isEmptySpace || e.button === 2 || e.button === 1) {
           e.preventDefault();
           canvasState.isPanning = true;
@@ -6681,7 +7801,19 @@
           if (freeDrawMode || rectDrawMode) {
            return;
           }
-          const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+      const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
+      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point');
+      const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
+      const isRectElement = e.target.closest('.rect-group');
+      if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
+      currentEdgeId = null;
+      forgeTheTopology();
+      }
+      if (!isRectElement && currentRectId) {
+      currentRectId = null;
+      document.getElementById("rect-panel").style.display = "none";
+      forgeTheTopology();
+      }
           if (isEmptySpace && e.touches.length === 1) {
            e.preventDefault();
            emptyTapMoved = false;
@@ -6854,7 +7986,7 @@
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
          if (styles.circleColor) newShape.style.fill = styles.circleColor;
-		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
+      if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -6884,7 +8016,7 @@
          nodeGroup.insertBefore(newShape, nodeGroup.firstChild);
          const styles = resolveStylesForNode(currentNodeId);
          if (styles.circleColor) newShape.style.fill = styles.circleColor;
-		 if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
+      if (styles.circleBorder) newShape.style.stroke = styles.circleBorder;
          const label = nodeGroup.querySelector(".node-label");
          const sub = nodeGroup.querySelector(".node-sub");
          if (label) {
@@ -6912,7 +8044,7 @@
         const label = nodeGroup.querySelector(".node-label");
         const sub = nodeGroup.querySelector(".node-sub");
         if (property === "circleColor" && shapeEl) shapeEl.style.fill = value;
-		else if (property === "circleBorder" && shapeEl) shapeEl.style.stroke = value;
+      else if (property === "circleBorder" && shapeEl) shapeEl.style.stroke = value;
         else if (property === "titleColor" && label) label.style.fill = value;
         else if (property === "titleFont" && label) label.style.fontFamily = value;
         else if (property === "titleSize" && label) label.style.fontSize = value + "px";
@@ -6921,7 +8053,7 @@
         else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
        };
        document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value), );
-	   document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
+      document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
        document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value), );
        document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value), );
        document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)), );
@@ -7093,6 +8225,109 @@
          addEdgeNoteBtn.click();
         }
        });
+      function selectTheRect(id) {
+      currentRectId = id;
+      document.getElementById("node-panel").style.display = "none";
+      document.getElementById("edge-panel").style.display = "none";
+      document.getElementById("text-panel").style.display = "none";
+      document.getElementById("rect-panel").style.display = "block";
+      document.getElementById("topology-toolbar").style.display = "none";
+      
+      const rect = RECT_DATA.list.find(r => r.id === id);
+      if (!rect) return;
+      
+      document.getElementById("rect-title").textContent = "";
+      document.getElementById("rect-color").value = rect.color || "#f97316";
+      document.getElementById("rect-border-color").value = rect.borderColor || rect.color || "#f97316";
+      document.getElementById("rect-border-width").value = rect.borderWidth !== undefined ? rect.borderWidth : 2;
+      document.getElementById("rect-style-select").value = rect.style || "filled";
+      document.getElementById("rect-fill-row").style.display = (rect.style === "outlined") ? "none" : "flex";
+      
+      const list = document.getElementById("rect-notes");
+      list.innerHTML = "";
+      (rect.notes || []).forEach((note, i) => {
+      const li = document.createElement("li");
+      const txt = document.createElement("span");
+      txt.textContent = note;
+      txt.style.flex = "1";
+      const del = document.createElement("span");
+      del.className = "delete-note";
+      del.textContent = "✕";
+      del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      challengeTheImmortal("Delete this note?", () => {
+        rect.notes.splice(i, 1);
+        selectTheRect(id);
+      });
+      });
+      li.appendChild(txt);
+      li.appendChild(del);
+      list.appendChild(li);
+      });
+      
+      forgeTheTopology();
+      }
+      
+      document.getElementById("rect-color").addEventListener("input", () => {
+      if (!currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      rect.color = document.getElementById("rect-color").value;
+      forgeTheTopology();
+      });
+      
+      document.getElementById("rect-border-color").addEventListener("input", () => {
+      if (!currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      rect.borderColor = document.getElementById("rect-border-color").value;
+      forgeTheTopology();
+      });
+      
+      document.getElementById("rect-border-width").addEventListener("input", () => {
+      if (!currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      rect.borderWidth = parseInt(document.getElementById("rect-border-width").value) || 2;
+      forgeTheTopology();
+      });
+      
+      document.getElementById("rect-style-select").addEventListener("change", () => {
+      if (!currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      rect.style = document.getElementById("rect-style-select").value;
+      forgeTheTopology();
+      selectTheRect(currentRectId);
+      });
+      
+      document.getElementById("add-rect-note").addEventListener("click", () => {
+      const input = document.getElementById("new-rect-note");
+      const txt = input.value.trim();
+      if (!txt || !currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      if (!rect.notes) rect.notes = [];
+      rect.notes.push(txt);
+      input.value = "";
+      selectTheRect(currentRectId);
+      });
+      
+      document.getElementById("new-rect-note").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+      document.getElementById("add-rect-note").click();
+      }
+      });
+      
+      document.getElementById("delete-rect").addEventListener("click", () => {
+      if (!currentRectId) return;
+      challengeTheImmortal("Delete this box?", () => {
+      RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== currentRectId);
+      currentRectId = null;
+      document.getElementById("rect-panel").style.display = "none";
+      forgeTheTopology();
+      });
+      });
        document.getElementById("delete-edge").addEventListener("click", () => {
         if (!currentEdgeId) return;
         challengeTheImmortal("Are you sure you want to delete this line?",
@@ -7139,8 +8374,6 @@
         forgeTheTopology();
         claimTheImmortal(currentNodeId);
        });
-       let freeDrawMode = false;
-       let rectDrawMode = false;
        let currentTextId = null;
        let rectStartPoint = null;
        let rectPreviewEl = null;
@@ -7549,10 +8782,11 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-      pushUndo("draw rectangle"); 
+      pushUndo("draw zone"); 
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
+         const lineStyle = document.getElementById("draw-style").value || "solid";
          RECT_DATA.list.push({
           id: newId,
           x: x,
@@ -7561,6 +8795,7 @@
           height: height,
           color: color,
           style: rectStyle,
+          lineStyle: lineStyle,
           notes: []
          });
          
@@ -7655,10 +8890,11 @@
         const height = Math.abs(svgP.y - rectStartPoint.y);
         
         if (width > 10 && height > 10) {
-      pushUndo("draw rectangle");
+      pushUndo("draw zone");
          const color = drawColorInput.value || "#f97316";
          const newId = "rect-" + Date.now();
          
+         const lineStyle = document.getElementById("draw-style").value || "solid";
          RECT_DATA.list.push({
           id: newId,
           x: x,
@@ -7667,6 +8903,7 @@
           height: height,
           color: color,
           style: rectStyle,
+          lineStyle: lineStyle,
           notes: []
          });
          
@@ -7932,11 +9169,52 @@
         document.getElementById("topbar-bg-color").value = rgbaToHex(PAGE_STATE.topbarBg) || "#0b0e13";
         document.getElementById("topbar-border-color").value = rgbaToHex(PAGE_STATE.topbarBorder) || "#1f2533";	 
       document.getElementById("panel-color").value = rgbaToHex(PAGE_STATE.panel) || "#0b0e13";
-      document.getElementById("panel-alt-color").value = rgbaToHex(PAGE_STATE.panelAlt) || "#10141b";
+      document.getElementById("panel-alt-color").value = PAGE_STATE.panelAlt || "#10141b";
+       document.getElementById("sidebar-bg-color").value = PAGE_STATE.sidebarBg || "#10141b";
+       document.getElementById("btn-bg-color").value = PAGE_STATE.btnBg || "#0b0e13";
+       document.getElementById("btn-text-color").value = PAGE_STATE.btnText || "#e2e8f0";
+       document.getElementById("tag-fill-color").value = PAGE_STATE.tagFill || "#1e293b";
+       document.getElementById("tag-text-color").value = PAGE_STATE.tagText || "#e2e8f0";
+       document.getElementById("tag-border-color").value = PAGE_STATE.tagBorder || "#475569";
+       document.getElementById("input-bg-color").value = PAGE_STATE.inputBg || "#0b0e13";
+       document.getElementById("input-text-color").value = PAGE_STATE.inputText || "#e2e8f0";
+document.getElementById("input-border-color").value = PAGE_STATE.inputBorder || "#1f2937";
+       document.getElementById("input-font-family").value = PAGE_STATE.inputFont || "Inter, system-ui, sans-serif";
+       document.getElementById("input-font-size").value = PAGE_STATE.inputFontSize || 14;
+       document.getElementById("toolbar-bg-color").value = PAGE_STATE.toolbarBg || "#0f172a";
+       document.getElementById("toolbar-border-color").value = PAGE_STATE.toolbarBorder || "#1f2937";
+       document.getElementById("toolbar-text-color").value = PAGE_STATE.toolbarText || "#94a3b8";
+       document.getElementById("toolbar-btn-bg-color").value = PAGE_STATE.toolbarBtnBg || "#0b0e13";
+       document.getElementById("toolbar-btn-text-color").value = PAGE_STATE.toolbarBtnText || "#e2e8f0";
+       document.getElementById("minimap-dots-color").value = PAGE_STATE.minimapDots || "#94a3b8";
+       document.getElementById("canvas-hint-enabled").checked = PAGE_STATE.canvasHintEnabled !== false;
+       document.getElementById("canvas-hint-bg-color").value = PAGE_STATE.canvasHintBg || "#0f172a";
+       document.getElementById("canvas-hint-text-color").value = PAGE_STATE.canvasHintColor || "#94a3b8";
+       document.getElementById("canvas-hint-text").value = PAGE_STATE.canvasHintText || "";
       document.getElementById("accent-color").value = rgbaToHex(PAGE_STATE.accent) || "#4fd1c5";
       document.getElementById("danger-color").value = rgbaToHex(PAGE_STATE.danger) || "#f56565";
       document.getElementById("text-main-color").value = rgbaToHex(PAGE_STATE.textMain) || "#e2e8f0";
-      document.getElementById("text-soft-color").value = rgbaToHex(PAGE_STATE.textSoft) || "#94a3b8";
+      document.getElementById("text-soft-color").value = PAGE_STATE.textSoft || "#94a3b8";
+       document.getElementById("node-fill-color").value = PAGE_STATE.nodeFill || "#1e293b";
+       document.getElementById("node-stroke-color").value = PAGE_STATE.nodeStroke || "#475569";
+       document.getElementById("node-title-color").value = PAGE_STATE.nodeTitle || "#e2e8f0";
+       document.getElementById("node-sub-color").value = PAGE_STATE.nodeSub || "#94a3b8";
+       document.getElementById("node-title-size").value = PAGE_STATE.nodeTitleSize || 18;
+       document.getElementById("node-sub-size").value = PAGE_STATE.nodeSubSize || 13;
+       document.getElementById("node-font-family").value = PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
+       document.getElementById("default-edge-color").value = PAGE_STATE.defaultEdge || "#475569";
+       document.getElementById("selection-handle-color").value = PAGE_STATE.selectionHandle || "#f59e0b";
+       document.getElementById("selection-handle-size").value = PAGE_STATE.selectionHandleSize || 8;
+       document.getElementById("group-indicator-color").value = PAGE_STATE.groupIndicator || "#4fd1c5";
+       document.getElementById("canvas-gradient-top").value = PAGE_STATE.canvasGradientTop || "#1e2532";
+       document.getElementById("canvas-gradient-bottom").value = PAGE_STATE.canvasGradientBottom || "#050608";
+       document.getElementById("canvas-border-color").value = PAGE_STATE.canvasBorder || "#475569";
+       document.getElementById("canvas-grid-color").value = PAGE_STATE.canvasGrid || "#475569";
+       document.getElementById("canvas-grid-size").value = PAGE_STATE.canvasGridSize || 50;
+       document.getElementById("rack-frame-fill").value = PAGE_STATE.rackFrameFill || "#0f172a";
+       document.getElementById("rack-frame-stroke").value = PAGE_STATE.rackFrameStroke || "#4fd1c5";
+       document.getElementById("rack-line-color").value = PAGE_STATE.rackLineColor || "#475569";
+       document.getElementById("rack-text-color").value = PAGE_STATE.rackTextColor || "#4fd1c5";
       
         
         document.getElementById("auto-ping-enabled").checked = autoPingEnabled;
@@ -7970,9 +9248,97 @@
         wieldThePower();
        });
        document.getElementById("panel-alt-color").addEventListener("input", (e) => {
-        PAGE_STATE.panelAlt = e.target.value;
-        wieldThePower();
-       });
+       PAGE_STATE.panelAlt = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("sidebar-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.sidebarBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("btn-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.btnBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("btn-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.btnText = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("tag-fill-color").addEventListener("input", (e) => {
+       PAGE_STATE.tagFill = e.target.value;
+       wieldThePower();
+       forgeTheTopology();
+      });
+      document.getElementById("tag-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.tagText = e.target.value;
+       wieldThePower();
+       forgeTheTopology();
+      });
+document.getElementById("tag-border-color").addEventListener("input", (e) => {
+       PAGE_STATE.tagBorder = e.target.value;
+       wieldThePower();
+       forgeTheTopology();
+      });
+      document.getElementById("input-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.inputBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("input-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.inputText = e.target.value;
+       wieldThePower();
+      });
+document.getElementById("input-border-color").addEventListener("input", (e) => {
+       PAGE_STATE.inputBorder = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("input-font-family").addEventListener("change", (e) => {
+       PAGE_STATE.inputFont = e.target.value;
+       wieldThePower();
+      });
+document.getElementById("input-font-size").addEventListener("input", (e) => {
+       PAGE_STATE.inputFontSize = parseInt(e.target.value) || 14;
+       wieldThePower();
+      });
+      document.getElementById("toolbar-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.toolbarBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("toolbar-border-color").addEventListener("input", (e) => {
+       PAGE_STATE.toolbarBorder = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("toolbar-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.toolbarText = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("toolbar-btn-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.toolbarBtnBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("toolbar-btn-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.toolbarBtnText = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("minimap-dots-color").addEventListener("input", (e) => {
+       PAGE_STATE.minimapDots = e.target.value;
+       wieldThePower();
+       forgeTheTopology();
+      });
+      document.getElementById("canvas-hint-enabled").addEventListener("change", (e) => {
+       PAGE_STATE.canvasHintEnabled = e.target.checked;
+       wieldThePower();
+      });
+      document.getElementById("canvas-hint-bg-color").addEventListener("input", (e) => {
+       PAGE_STATE.canvasHintBg = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("canvas-hint-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.canvasHintColor = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("canvas-hint-text").addEventListener("input", (e) => {
+       PAGE_STATE.canvasHintText = e.target.value;
+       wieldThePower();
+      });
        document.getElementById("accent-color").addEventListener("input", (e) => {
         PAGE_STATE.accent = e.target.value;
         wieldThePower();
@@ -7986,11 +9352,91 @@
         wieldThePower();
        });
        document.getElementById("text-soft-color").addEventListener("input", (e) => {
-        PAGE_STATE.textSoft = e.target.value;
-        wieldThePower();
-       });
-       
-       (function initializeResizers() {
+       PAGE_STATE.textSoft = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("node-fill-color").addEventListener("input", (e) => {
+       PAGE_STATE.nodeFill = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("node-stroke-color").addEventListener("input", (e) => {
+       PAGE_STATE.nodeStroke = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("node-title-color").addEventListener("input", (e) => {
+       PAGE_STATE.nodeTitle = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("node-sub-color").addEventListener("input", (e) => {
+       PAGE_STATE.nodeSub = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("node-title-size").addEventListener("input", (e) => {
+       PAGE_STATE.nodeTitleSize = parseInt(e.target.value) || 18;
+       forgeTheTopology();
+      });
+      document.getElementById("node-sub-size").addEventListener("input", (e) => {
+       PAGE_STATE.nodeSubSize = parseInt(e.target.value) || 13;
+       forgeTheTopology();
+      });
+      document.getElementById("node-font-family").addEventListener("change", (e) => {
+       PAGE_STATE.nodeFont = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("default-edge-color").addEventListener("input", (e) => {
+       PAGE_STATE.defaultEdge = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("selection-handle-color").addEventListener("input", (e) => {
+       PAGE_STATE.selectionHandle = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("selection-handle-size").addEventListener("input", (e) => {
+       PAGE_STATE.selectionHandleSize = parseInt(e.target.value) || 8;
+       forgeTheTopology();
+      });
+      document.getElementById("group-indicator-color").addEventListener("input", (e) => {
+       PAGE_STATE.groupIndicator = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("canvas-gradient-top").addEventListener("input", (e) => {
+       PAGE_STATE.canvasGradientTop = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("canvas-gradient-bottom").addEventListener("input", (e) => {
+       PAGE_STATE.canvasGradientBottom = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("canvas-border-color").addEventListener("input", (e) => {
+       PAGE_STATE.canvasBorder = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("canvas-grid-color").addEventListener("input", (e) => {
+       PAGE_STATE.canvasGrid = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("canvas-grid-size").addEventListener("input", (e) => {
+       PAGE_STATE.canvasGridSize = parseInt(e.target.value) || 50;
+       forgeTheTopology();
+      });
+      document.getElementById("rack-frame-fill").addEventListener("input", (e) => {
+       PAGE_STATE.rackFrameFill = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("rack-frame-stroke").addEventListener("input", (e) => {
+       PAGE_STATE.rackFrameStroke = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("rack-line-color").addEventListener("input", (e) => {
+       PAGE_STATE.rackLineColor = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("rack-text-color").addEventListener("input", (e) => {
+       PAGE_STATE.rackTextColor = e.target.value;
+       forgeTheTopology();
+      });
+      
+      (function initializeResizers() {
          const headerResizer = document.getElementById('header-resizer');
          const sidebarResizer = document.getElementById('sidebar-resizer');
          const mobileFooterResizer = document.getElementById('mobile-footer-resizer');
@@ -8153,8 +9599,7 @@
           alert("Invalid data file. Missing required fields.");
           return;
          }
-         const confirmMsg = `This will replace all current data with the imported data.\n\nImporting:\n- ${Object.keys(data.nodeData).length} nodes\n- ${data.edgeData.list?.length || 0} connections\n\nContinue?`;
-         if (!confirm(confirmMsg)) {
+         const confirmMsg = `This will replace all current data with the imported data.\n\nImporting:\n- ${Object.keys(data.nodeData).length} nodes\n- ${data.edgeData.list?.length || 0} connections\n- ${data.documentTabs?.length || 1} tab(s)\n\nContinue?`;         if (!confirm(confirmMsg)) {
           e.target.value = "";
           return;
          }
@@ -8190,10 +9635,20 @@
           canvasState.panY = data.canvas.panY || 0;
          }
          if (data.page?.title) {
-          document.title = data.page.title;
-          document.querySelector(".editable-page-title", ).textContent = data.page.title;
-         }
-         forgeTheTopology();
+         document.title = data.page.title;
+         document.querySelector(".editable-page-title", ).textContent = data.page.title;
+        }
+        if (data.documentTabs) {
+         documentTabs = data.documentTabs;
+         currentTabIndex = data.currentTabIndex || 0;
+        }
+        if (data.savedTopologyView) {
+         savedTopologyView = data.savedTopologyView;
+        }
+        if (data.encryptedSections) {
+         encryptedSections = data.encryptedSections;
+        }
+        forgeTheTopology();
          forgeTheLegend();
          updateViewBox();
       
@@ -8229,11 +9684,19 @@
         saveInfoModal.classList.remove("active");
        });
        saveInfoModal.addEventListener("click", (e) => {
-        if (e.target === saveInfoModal) {
-         saveInfoModal.classList.remove("active");
-        }
-       });
-       async function deriveKey(password, salt) {
+       if (e.target === saveInfoModal) {
+        saveInfoModal.classList.remove("active");
+       }
+      });
+      document.querySelectorAll(".help-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".help-tab").forEach(t => { t.style.background = "var(--panel)"; t.style.color = "var(--text-main)"; });
+          tab.style.background = "var(--accent)"; tab.style.color = "var(--bg)";
+          document.querySelectorAll(".help-tab-content").forEach(c => c.style.display = "none");
+          document.getElementById("help-tab-" + tab.dataset.tab).style.display = "block";
+        });
+      });
+      async function deriveKey(password, salt) {
       const encoder = new TextEncoder();
       
       const keyMaterial = await crypto.subtle.importKey(
@@ -8351,6 +9814,9 @@
       }
       
        function assembleTheImmortalForm() {
+	   const canvasHintEl = document.getElementById("canvas-hint");
+       const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
+       if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
         const clone = document.documentElement.cloneNode(true);
         const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
@@ -8388,7 +9854,11 @@
           return;
          }
         }
-        const clone = document.documentElement.cloneNode(true);
+       const canvasHintEl = document.getElementById("canvas-hint");
+       const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
+       if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
+       
+       const clone = document.documentElement.cloneNode(true);
         const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
          if (encryptEnabled) {
@@ -8418,9 +9888,10 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
+        URL.revokeObjectURL(url); 
+		if (canvasHintEl) canvasHintEl.innerHTML = savedHintHTML;
         saveRollbackVersion("Manual save");
+		logAuditEvent("save", `File saved: ${safeTitle}.html`);
        }
        
       function captureState() {
@@ -8504,9 +9975,59 @@
       
       function clearSelection() {
        selectedNodes.clear();
-       updateNodeSelection();
-       clearSearchHighlight();
+       selectedEdges.clear();
+       selectedRects.clear();
+       selectedTexts.clear();
+       updateAllSelections();
       }
+      
+      function updateAllSelections() {
+      updateNodeSelection();
+      clearSearchHighlight();
+      document.querySelectorAll(".edge").forEach(el => {
+      const edgeId = el.dataset.edgeId;
+      if (selectedEdges.has(edgeId)) {
+      el.style.filter = "drop-shadow(0 0 8px #4fd1c5)";
+      } else {
+      el.style.filter = "";
+      }
+      });
+      
+      document.querySelectorAll(".rect-group").forEach(el => {
+      const rectId = el.dataset.rectId;
+      if (selectedRects.has(rectId)) {
+      el.style.filter = "drop-shadow(0 0 8px #4fd1c5)";
+      } else {
+      el.style.filter = "";
+      }
+      });
+      
+      document.querySelectorAll(".text-group").forEach(el => {
+      const textId = el.dataset.textId;
+      if (selectedTexts.has(textId)) {
+      el.style.filter = "drop-shadow(0 0 8px #4fd1c5)";
+      } else {
+      el.style.filter = "";
+      }
+      });
+      
+      const total = selectedNodes.size + selectedEdges.size + selectedRects.size + selectedTexts.size;
+      const bulkToolbar = document.getElementById("bulk-toolbar");
+      const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+      const bulkCount = document.getElementById("bulk-count");
+      const bulkCountMobile = document.getElementById("bulk-count-mobile");
+      
+      if (total > 0) {
+      if (bulkToolbar) bulkToolbar.style.display = "flex";
+      if (bulkToolbarMobile) bulkToolbarMobile.style.display = "flex";
+      if (bulkCount) bulkCount.textContent = total;
+      if (bulkCountMobile) bulkCountMobile.textContent = total;
+      } else {
+      if (bulkToolbar) bulkToolbar.style.display = "none";
+      if (bulkToolbarMobile) bulkToolbarMobile.style.display = "none";
+      }
+      }
+      
       
       function updateNodeSelection() {
        document.querySelectorAll(".node-group").forEach(node => {
@@ -8539,9 +10060,10 @@
       }
       
       function deleteSelected() {
-       if (selectedNodes.size === 0) return;
-       const count = selectedNodes.size;
-       challengeTheImmortal(`Delete ${count} selected node${count > 1 ? 's' : ''}?`, () => {
+       const total = selectedNodes.size + selectedEdges.size + selectedRects.size + selectedTexts.size;
+       if (total === 0) return;
+       const message = `Delete ${total} selected item(s)?`;
+       challengeTheImmortal(message, () => {
         pushUndo("delete selected");
         selectedNodes.forEach(nodeId => {
          delete NODE_DATA[nodeId];
@@ -8550,14 +10072,18 @@
          delete savedStyles[nodeId];
          EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== nodeId && e.to !== nodeId);
         });
-        selectedNodes.clear();
+        selectedEdges.forEach(edgeId => {
+         EDGE_DATA.list = EDGE_DATA.list.filter(e => e.id !== edgeId);
+        });
+        selectedRects.forEach(rectId => {
+         RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== rectId);
+        });
+        selectedTexts.forEach(textId => {
+         TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
+        });
+        clearSelection();
         saveEdgeData();
         forgeTheTopology();
-        if (currentNodeId && !NODE_DATA[currentNodeId]) {
-         currentNodeId = null;
-         document.getElementById("node-panel").style.display = "none";
-        }
-        updateNodeSelection();
        });
       }
       
@@ -8669,6 +10195,10 @@
        
        if (savedStyles[sourceId]) {
         savedStyles[newId] = JSON.parse(JSON.stringify(savedStyles[sourceId]));
+       }
+       
+      if (currentView.mode === "rack" && currentView.rackId) {
+        NODE_DATA[newId].assignedRack = currentView.rackId;
        }
        
        const sourcePos = savedPositions[sourceId];
@@ -8801,11 +10331,12 @@
       
       function cycleNodes(reverse = false) {
         const nodeIds = Object.keys(NODE_DATA).filter(id => {
-          if (currentView.mode === "rack" && currentView.rackId) {
-            return NODE_DATA[id].assignedRack === currentView.rackId;
+          if (currentView.mode === "rack") {
+           const node = NODE_DATA[id];
+           return node && node.assignedRack === currentView.rackId;
           }
-          return !NODE_DATA[id].assignedRack;
-        });
+          return isNodeVisible(id);
+         });
         
         if (nodeIds.length === 0) return;
         
@@ -8887,32 +10418,36 @@
       }
       
       function toggleGroupSelected() {
-        const nodesToGroup = Array.from(selectedNodes);
-        if (nodesToGroup.length < 2) {
-          return;
-        }
-        
-        pushUndo("toggle group");
-        
-        const groupIds = nodesToGroup.map(id => NODE_DATA[id]?.groupId).filter(g => g !== null && g !== undefined);
-        const uniqueGroups = [...new Set(groupIds)];
-        
-        if (uniqueGroups.length === 1 && groupIds.length === nodesToGroup.length) {
-          nodesToGroup.forEach(id => {
-            if (NODE_DATA[id]) {
-              NODE_DATA[id].groupId = null;
-            }
-          });
-        } else {
-          const newGroupId = "group-" + Date.now();
-          nodesToGroup.forEach(id => {
-            if (NODE_DATA[id]) {
-              NODE_DATA[id].groupId = newGroupId;
-            }
-          });
-        }
-        
-        forgeTheTopology();
+      const nodesToGroup = Array.from(selectedNodes);
+      const rectsToGroup = Array.from(selectedRects);
+      const textsToGroup = Array.from(selectedTexts);
+      const edgesToGroup = Array.from(selectedEdges);
+      const totalItems = nodesToGroup.length + rectsToGroup.length + textsToGroup.length + edgesToGroup.length;
+      if (totalItems < 2) return;
+      
+      pushUndo("toggle group");
+      
+      const allGroupIds = [];
+      nodesToGroup.forEach(id => { if (NODE_DATA[id]?.groupId) allGroupIds.push(NODE_DATA[id].groupId); });
+      rectsToGroup.forEach(id => { const r = RECT_DATA.list.find(x => x.id === id); if (r?.groupId) allGroupIds.push(r.groupId); });
+      textsToGroup.forEach(id => { const t = TEXT_DATA.list.find(x => x.id === id); if (t?.groupId) allGroupIds.push(t.groupId); });
+      edgesToGroup.forEach(id => { const e = EDGE_DATA.list.find(x => x.id === id); if (e?.groupId) allGroupIds.push(e.groupId); });
+      const uniqueGroups = [...new Set(allGroupIds)];
+      
+      if (uniqueGroups.length === 1 && allGroupIds.length === totalItems) {
+      nodesToGroup.forEach(id => { if (NODE_DATA[id]) NODE_DATA[id].groupId = null; });
+      rectsToGroup.forEach(id => { const r = RECT_DATA.list.find(x => x.id === id); if (r) r.groupId = null; });
+      textsToGroup.forEach(id => { const t = TEXT_DATA.list.find(x => x.id === id); if (t) t.groupId = null; });
+      edgesToGroup.forEach(id => { const e = EDGE_DATA.list.find(x => x.id === id); if (e) e.groupId = null; });
+      } else {
+      const newGroupId = "group-" + Date.now();
+      nodesToGroup.forEach(id => { if (NODE_DATA[id]) NODE_DATA[id].groupId = newGroupId; });
+      rectsToGroup.forEach(id => { const r = RECT_DATA.list.find(x => x.id === id); if (r) r.groupId = newGroupId; });
+      textsToGroup.forEach(id => { const t = TEXT_DATA.list.find(x => x.id === id); if (t) t.groupId = newGroupId; });
+      edgesToGroup.forEach(id => { const e = EDGE_DATA.list.find(x => x.id === id); if (e) e.groupId = newGroupId; });
+      }
+      
+      forgeTheTopology();
       }
       
       function handleKeyDown(event) {
@@ -10100,7 +11635,7 @@
         currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
         currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
         currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
-
+      
         currentTabIndex = index;
         const newTab = documentTabs[index];
         NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
@@ -10141,7 +11676,7 @@
           legend: {},
           rects: { list: [] },
           texts: { list: [] },
-		  pageState: null
+      pageState: null
         };
         
         documentTabs.push(newTab);

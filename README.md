@@ -13,8 +13,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9.3 : 12/5/25
+## Version 3.9.5 : 12/7/25
 
+* **NEW 3.9.4** The Styling Update! Added all available styling options to settings [changelog.md](changelog.md)
+* **NEW 3.9.4** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.3** Mobile fixes. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **NEW 3.9.2** Squashing bugs. See changes in the [changelog.md](changelog.md)
@@ -28,33 +30,25 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
 * **NEW 3.7** Layers upon layers!!
   * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
-* **NEW 3.7** Added Racks and individual rack canvasses!
-* **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
-* **NEW 3.7** The Rackening!!
-  * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
-* **NEW 3.7** Layers upon layers!!
-  * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
-* **NEW 3.7** Added Racks and individual rack canvasses!
-* **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
-  * See more changes in the [changelog.md](changelog.md)
+* **See more changes in the [changelog.md](changelog.md)**
   
 # Demos
 
 * **Core Edition**
-  * [the-one-file.html : Core Edition](https://therecanonlybe.one/the-one-file.html)
-  * [the-one-file-corporate-demo.html : Corporation Core Demo](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html : Homelab Core Demo](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
+  * [Core Edition](https://therecanonlybe.one/the-one-file.html)
+  * [Core: Corporation Demo](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
+  * [Core: Homelab Demo](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
 * **Networkening Edition**
-  * [the-one-file.html : Networkening Edition](https://therecanonlybe.one/theonefile-networkening.html)
-  * [theonefile-networkening-corporate-demo.html Corporate Networkening Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html Homelab Networkening Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
+  * [Networkening Edition](https://therecanonlybe.one/theonefile-networkening.html)
+  * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
+  * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
 
-* **Core Edition Password Protected (lambert)**
-  * [the-one-file-corporate-demo.html corporate password protected core](https://therecanonlybe.one/demos/password-protected/the-one-file-corporate-demo.html)
-  * [the-one-file-homelab-demo.html homlab password protected core](https://therecanonlybe.one/demos/password-protected/the-one-file-homelab-demo.html)
-* **Networkening Edition Password Protected (lambert)**
-  * [theonefile-networkening-corporate-demo.html corporate password protected networkening](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-corporate-demo.html)
-  * [theonefile-networkening-homelab-demo.html homelab password protected networkening](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-homelab-demo.html)  
+* **Core Edition : Password Protected (password is lambert)**
+  * [Core: Corporate Password Protected : ](https://therecanonlybe.one/demos/password-protected/the-one-file-corporate-demo.html)
+  * [Core: Homlab Password Protected](https://therecanonlybe.one/demos/password-protected/the-one-file-homelab-demo.html)
+* **Networkening Edition : Password Protected (password is lambert)**
+  * [networkening: Corporate Password Protected](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-corporate-demo.html)
+  * [networkening: Homelab Password Protected](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
 ## Online vs Offline
 
@@ -198,7 +192,6 @@ Instead of building another hosted application, I built a file.
 * **Bulk Lock**: Lock or unlock multiple nodes at once
 * **Bulk Group**: Create or dissolve node groups
 * **Desktop and mobile toolbars** optimized for each platform
-* Visual selection indicators and count display
 
 ### Network Monitoring *(theonefile-networkening.html only)*
 * **Live status indicators** on nodes (online/offline/checking)
@@ -259,7 +252,6 @@ Instead of building another hosted application, I built a file.
   * **NEW: Double tap empty space in rack view to quickly exit to topology view**
 * Responsive layout that adapts to screen orientation
 * Optimized for phones, tablets, and foldable devices
-* Haptic feedback (vibration) for important touch actions on supported devices
 * Smart gesture detection prevents accidental actions during panning
 
 ### Keyboard Shortcuts

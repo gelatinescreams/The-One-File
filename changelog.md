@@ -1,6 +1,26 @@
 ### CHANGE LOG
 *Thank you to Discord testers!!*
 
+## Version 3.9.5 : 12/7/25 The Styles Update!
+
+* **Added all available styling options to settings**
+* **Canvas Styling** Added seperated styling for the main canvas and rack view canvases
+  * Added additional syling options to free draw tools
+
+  
+## Version 3.9.4 : 12/6/25 Canvas bug fixes
+
+* **Help Tab** Added keyboard and mouse how:to in ?help
+* **Various bug fixes including**
+  * Added additional styling options for free draw tools
+  * Fixed a bug where cloned nodes inside racks would clone to main canvas
+  * Fixed a bug where free drawn rectangle zones would not allow outlined style
+  * Fixed a bug where free drawn lines were not draggable after creation
+  * Fixed a bug where free drawn lines were not editable after creation
+  * Fixed a bug where free drawn rectangle zones were not editable after creation
+  * Fixed a bug where free drawn rectangles zones had no custom styling inputs
+  * Fixed a bug where free drawn tools were not grouped correctly with nodes and racks
+  
 ## Version 3.9.3 : 12/5/25 Mobile bug fixes
 
 * **NEW 3.9.3** Mobile fixes. 
