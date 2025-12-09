@@ -1,13 +1,24 @@
 ### CHANGE LOG
 *Thank you to Discord testers!!*
 
+## Version 3.9.6 : 12/8/25 Rack canvas fixes
+
+* **Getting closer to 4.0 Stable!**
+* **Can now view and edit nodes that are inside a given rack just by selecting a rack and using the sidebar / mobile footer**
+* **Updated all keyboard shortcuts to work with new canvas draw tools**
+  * Fixed a bug where cloning racks with nodes inside would not clone the nodes
+  * Fixed a bug where deleting nodes and racks via the information panel was broken
+  * Fixed a bug where nodes were created at the bottom of canvas in rack view regardless of user view
+* **They will now generate in the center of users view**
+  * Fixed a bug where page titles were overriden by tab titles
+  * Fixed a bug where canvas information panel from previous tabs would stay selected after tab switch 
+
 ## Version 3.9.5 : 12/7/25 The Styles Update!
 
 * **Added all available styling options to settings**
 * **Canvas Styling** Added seperated styling for the main canvas and rack view canvases
   * Added additional syling options to free draw tools
 
-  
 ## Version 3.9.4 : 12/6/25 Canvas bug fixes
 
 * **Help Tab** Added keyboard and mouse how:to in ?help

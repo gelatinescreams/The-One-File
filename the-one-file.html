@@ -1,6 +1,5 @@
 <!DOCTYPE html> 
-<html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --sidebar-bg: #10141b; --btn-bg: #0b0e13; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 103px; --sidebar-width: 350px; --mobile-footer-height: 40vh; --draw-toolbar-height: 0px;">
-  <head>
+ <html lang="en" style="--panel: #0b0e13; --panel-alt: #10141b; --sidebar-bg: #10141b; --btn-bg: #0b0e13; --accent: #4fd1c5; --danger: #f56565; --text-main: #e2e8f0; --text-soft: #94a3b8; --topbar-bg: rgba(9, 12, 20, 0.9); --topbar-border: #1f2533; --topbar-height: 103px; --sidebar-width: 350px; --mobile-footer-height: 40vh; --draw-toolbar-height: 0px; --btn-text: #e2e8f0; --tag-fill: #1e293b; --tag-text: #e2e8f0; --tag-border: #475569; --input-bg: #0b0e13; --input-text: #e2e8f0; --input-border: #1f2937; --input-font: Inter, system-ui, sans-serif; --input-font-size: 14px; --toolbar-bg: #0f172a; --toolbar-border: #1f2937; --toolbar-text: #94a3b8; --toolbar-btn-bg: #0b0e13; --toolbar-btn-text: #e2e8f0; --minimap-dots: #94a3b8; --canvas-hint-bg: #0f172a; --canvas-hint-color: #94a3b8; --node-fill: #1e293b; --node-stroke: #475569; --node-title: #e2e8f0; --node-sub: #94a3b8; --node-title-size: 18px; --node-sub-size: 13px; --node-font: Inter, system-ui, sans-serif; --default-edge: #475569; --selection-handle: #f59e0b; --selection-handle-size: 8px; --group-indicator: #4fd1c5;"><head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -32,6 +31,9 @@
       --node-max: 70px;
       --topbar-bg: rgba(9, 12, 20, 0.9);
       --topbar-border: #1f2533;
+      }
+	  html, body, svg, .map-container {
+      touch-action: none;
       }
       * {
       box-sizing: border-box;
@@ -698,6 +700,15 @@
       .edge.active {
       opacity: 1;
       stroke-width: 7;
+      filter: drop-shadow(0 0 8px var(--accent, #4fd1c5));
+      }
+      .rect-group.active .rect-shape {
+      filter: drop-shadow(0 0 10px var(--accent, #4fd1c5));
+      animation: pulse 1.2s infinite ease-in-out;
+      }
+      .text-element.active {
+      filter: drop-shadow(0 0 10px var(--accent, #4fd1c5));
+      animation: pulse 1.2s infinite ease-in-out;
       }
       .free-preview {
       fill: none;
@@ -1392,7 +1403,7 @@
             <li><strong>Zoom:</strong> Scroll wheel or pinch gesture</li>
             <li><strong>Free Draw:</strong> Use draw toolbar for drawing lines, boxes/zones , and text</li>
           </ul>
-          <h4 style="color: var(--accent); margin-bottom: 8px;">Saving & Encryption</h4>
+          <h4 style="color: var(--accent); margin-bottom: 8px;">Saving &amp; Encryption</h4>
           <p style="margin-bottom: 8px;">Browsers cannot overwrite local files. Click <strong>Save File</strong> to download an updated HTML with all changes. Replace your old file to keep edits.</p>
           <p style="margin-bottom: 8px;"><strong>Encryption of data:</strong> Check "Encrypt" before saving to password protect your data. Beware! No recovery possible without password!!</p>
           <p><strong>Decryption of data:</strong> Export via JSON in top settings menu after successful password validation to decrypt your data. You can then reimport back into the same file and save!</p>
@@ -1400,7 +1411,7 @@
         <div id="help-tab-desktop" class="help-tab-content" style="display: none;">
           <h4 style="color: var(--accent); margin-bottom: 12px;">Navigation</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
-            <tr style="border-bottom: 1px solid var(--edge-main);">
+            <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
               <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Arrow Keys</code></td>
               <td style="padding: 8px;">Move selected 1px</td>
             </tr>
@@ -1420,10 +1431,10 @@
               <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Space + Drag</code></td>
               <td style="padding: 8px;">Pan canvas</td>
             </tr>
-          </table>
+          </tbody></table>
           <h4 style="color: var(--accent); margin-bottom: 12px;">Management</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
-            <tr style="border-bottom: 1px solid var(--edge-main);">
+            <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
               <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">L</code></td>
               <td style="padding: 8px;">Lock/unlock selected</td>
             </tr>
@@ -1459,14 +1470,14 @@
               <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;">Right Click</code></td>
               <td style="padding: 8px;">Multi select toggle</td>
             </tr>
-          </table>
+          </tbody></table>
         </div>
         <div id="help-tab-mobile" class="help-tab-content" style="display: none;">
           <h4 style="color: var(--accent); margin-bottom: 12px;">Basic Gestures</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
-            <tr style="border-bottom: 1px solid var(--edge-main);">
+            <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
               <td style="padding: 8px;"><strong>Tap node</strong></td>
-              <td style="padding: 8px;">Select & open properties</td>
+              <td style="padding: 8px;">Select &amp; open properties</td>
             </tr>
             <tr style="border-bottom: 1px solid var(--edge-main);">
               <td style="padding: 8px;"><strong>Tap empty</strong></td>
@@ -1488,10 +1499,10 @@
               <td style="padding: 8px;"><strong>Double-tap node</strong></td>
               <td style="padding: 8px;">Add/remove from selection</td>
             </tr>
-          </table>
+          </tbody></table>
           <h4 style="color: var(--accent); margin-bottom: 12px;">Rack View</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
-            <tr style="border-bottom: 1px solid var(--edge-main);">
+            <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
               <td style="padding: 8px;"><strong>Long-press rack</strong></td>
               <td style="padding: 8px;">Enter rack view</td>
             </tr>
@@ -1499,7 +1510,7 @@
               <td style="padding: 8px;"><strong>Double-tap empty</strong></td>
               <td style="padding: 8px;">Exit rack view</td>
             </tr>
-          </table>
+          </tbody></table>
         </div>
         <div class="modal-buttons" style="margin-top: 16px;">
           <button class="btn-cancel" id="save-info-close">Close</button>
@@ -1690,7 +1701,7 @@
           </div>
         </details>
         <details class="style-section">
-          <summary>Groups & Editing</summary>
+          <summary>Groups &amp; Editing</summary>
           <div class="style-content">
             <div class="style-row">
               <label>Resize handle Color</label>
@@ -1707,7 +1718,7 @@
           </div>
         </details>
         <details class="style-section">
-          <summary>Inputs & Dropdowns</summary>
+          <summary>Inputs &amp; Dropdowns</summary>
           <div class="style-content">
             <div class="style-row">
               <label>Background</label>
@@ -1742,7 +1753,7 @@
           <div class="style-content">
             <div class="style-row">
               <label>Enabled</label>
-              <input type="checkbox" id="canvas-hint-enabled" checked style="width:auto;">
+              <input type="checkbox" id="canvas-hint-enabled" checked="" style="width:auto;">
             </div>
             <div class="style-row">
               <label>Background</label>
@@ -1792,7 +1803,7 @@
             <input type="file" id="import-data-file" accept=".json" style="display:none">
           </div>
         </details>
-        <details class="style-section">
+        <details class="style-section" open="">
           <summary>Danger Zone</summary>
           <div class="style-content">
             <p style="margin-bottom:12px;font-size:13px;color:var(--text-soft);">Permanently delete everything on the canvas.</p>
@@ -2060,7 +2071,7 @@
     </header>
     <main>
       <section class="topology-panel">
-        <div class="draw-toolbar" id="draw-toolbar" style="display: grid !important;">
+        <div class="draw-toolbar" id="draw-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="draw-toolbar-close-btn" title="Hide draw toolbar">✕</button>
           <button id="draw-toggle" title="Draw custom line">✏️</button>
           <button id="rect-toggle" title="Draw zone">▭</button>
@@ -2161,22 +2172,9 @@
             <li>Your time is NOW!</li>
           </ul>
         </div>
-        <div class="legend-container" id="edge-legend" style="display: none;">
-          <div class="legend-title">Line Legend</div>
-          <button type="button" class="legend-close-btn">✕</button>
-        </div>
+        <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="0 0 4000 3000" style="">
-            <defs>
-              <marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                <path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path>
-              </marker>
-              <marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth">
-                <path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path>
-              </marker>
-            </defs>
-            <rect x="100" y="100" width="3800" height="2800" fill="none" stroke="rgba(71, 85, 105, 0.3)" stroke-width="2" stroke-dasharray="10 5" rx="8"></rect>
-          </svg>
+          <svg id="map" viewBox="0 0 4000 3000" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="#4755694D" stroke-width="20" stroke-dasharray="10 5" rx="8"></rect><g id="canvas-grid"><line x1="100" y1="100" x2="100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="150" y1="100" x2="150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="200" y1="100" x2="200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="250" y1="100" x2="250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="300" y1="100" x2="300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="350" y1="100" x2="350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="400" y1="100" x2="400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="450" y1="100" x2="450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="500" y1="100" x2="500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="550" y1="100" x2="550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="600" y1="100" x2="600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="650" y1="100" x2="650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="700" y1="100" x2="700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="750" y1="100" x2="750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="800" y1="100" x2="800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="850" y1="100" x2="850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="900" y1="100" x2="900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="950" y1="100" x2="950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1000" y1="100" x2="1000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1050" y1="100" x2="1050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1100" y1="100" x2="1100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1150" y1="100" x2="1150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1200" y1="100" x2="1200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1250" y1="100" x2="1250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1300" y1="100" x2="1300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1350" y1="100" x2="1350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1400" y1="100" x2="1400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1450" y1="100" x2="1450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1500" y1="100" x2="1500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1550" y1="100" x2="1550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1600" y1="100" x2="1600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1650" y1="100" x2="1650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1700" y1="100" x2="1700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1750" y1="100" x2="1750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1800" y1="100" x2="1800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1850" y1="100" x2="1850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1900" y1="100" x2="1900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1950" y1="100" x2="1950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2000" y1="100" x2="2000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2050" y1="100" x2="2050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2100" y1="100" x2="2100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2150" y1="100" x2="2150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2200" y1="100" x2="2200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2250" y1="100" x2="2250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2300" y1="100" x2="2300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2350" y1="100" x2="2350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2400" y1="100" x2="2400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2450" y1="100" x2="2450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2500" y1="100" x2="2500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2550" y1="100" x2="2550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2600" y1="100" x2="2600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2650" y1="100" x2="2650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2700" y1="100" x2="2700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2750" y1="100" x2="2750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2800" y1="100" x2="2800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2850" y1="100" x2="2850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2900" y1="100" x2="2900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2950" y1="100" x2="2950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3000" y1="100" x2="3000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3050" y1="100" x2="3050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3100" y1="100" x2="3100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3150" y1="100" x2="3150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3200" y1="100" x2="3200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3250" y1="100" x2="3250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3300" y1="100" x2="3300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3350" y1="100" x2="3350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3400" y1="100" x2="3400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3450" y1="100" x2="3450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3500" y1="100" x2="3500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3550" y1="100" x2="3550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3600" y1="100" x2="3600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3650" y1="100" x2="3650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3700" y1="100" x2="3700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3750" y1="100" x2="3750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3800" y1="100" x2="3800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3850" y1="100" x2="3850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3900" y1="100" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="100" x2="3900" y2="100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="150" x2="3900" y2="150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="200" x2="3900" y2="200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="250" x2="3900" y2="250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="300" x2="3900" y2="300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="350" x2="3900" y2="350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="400" x2="3900" y2="400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="450" x2="3900" y2="450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="500" x2="3900" y2="500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="550" x2="3900" y2="550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="600" x2="3900" y2="600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="650" x2="3900" y2="650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="700" x2="3900" y2="700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="750" x2="3900" y2="750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="800" x2="3900" y2="800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="850" x2="3900" y2="850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="900" x2="3900" y2="900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="950" x2="3900" y2="950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1000" x2="3900" y2="1000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1050" x2="3900" y2="1050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1100" x2="3900" y2="1100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1150" x2="3900" y2="1150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1200" x2="3900" y2="1200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1250" x2="3900" y2="1250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1300" x2="3900" y2="1300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1350" x2="3900" y2="1350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1400" x2="3900" y2="1400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1450" x2="3900" y2="1450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1500" x2="3900" y2="1500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1550" x2="3900" y2="1550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1600" x2="3900" y2="1600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1650" x2="3900" y2="1650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1700" x2="3900" y2="1700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1750" x2="3900" y2="1750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1800" x2="3900" y2="1800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1850" x2="3900" y2="1850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1900" x2="3900" y2="1900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1950" x2="3900" y2="1950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2000" x2="3900" y2="2000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2050" x2="3900" y2="2050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2100" x2="3900" y2="2100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2150" x2="3900" y2="2150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2200" x2="3900" y2="2200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2250" x2="3900" y2="2250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2300" x2="3900" y2="2300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2350" x2="3900" y2="2350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2400" x2="3900" y2="2400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2450" x2="3900" y2="2450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2500" x2="3900" y2="2500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2550" x2="3900" y2="2550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2600" x2="3900" y2="2600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2650" x2="3900" y2="2650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2700" x2="3900" y2="2700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2750" x2="3900" y2="2750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2800" x2="3900" y2="2800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2850" x2="3900" y2="2850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2900" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line></g></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
@@ -2198,7 +2196,7 @@
         <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
         <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
         <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
-      </section>
+      <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -2241,9 +2239,7 @@
           </div>
           <div class="details-info-row" id="assigned-rack-row">
             <span style="color: var(--text-soft); font-size: 14px;">Assigned Rack:</span>
-            <select id="node-assigned-rack" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
-              <option value="">None</option>
-            </select>
+            <select id="node-assigned-rack" style="margin-left: 8px; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option></select>
           </div>
           <div class="details-info-row" id="rack-capacity-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px;">Rack Capacity:</span>
@@ -2252,8 +2248,13 @@
               <option value="48">48U</option>
               <option value="24">24U</option>
               <option value="12">12U</option>
+			  <option value="6">6U</option>
             </select>
           </div>
+		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
+            <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
+          </details>
           <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>1Gbps Fiber</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>Bridge Mode</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
           <div class="size-controls">
             <label>Size:</label>
@@ -2538,21 +2539,102 @@
     </main>
     <script id="nodes-json" type="application/json">{}</script>
     <script id="topology-state" type="application/json">{
-      "nodeData": {},
-      "edgeData": {
+  "nodeData": {},
+  "edgeData": {
+    "list": []
+  },
+  "rectData": {
+    "list": []
+  },
+  "textData": {
+    "list": []
+  },
+  "edgeLegend": {},
+  "nodePositions": {},
+  "nodeSizes": {},
+  "nodeStyles": {},
+  "page": {
+    "title": "The One File",
+    "background": "",
+    "topbarBg": "rgba(9, 12, 20, 0.9)",
+    "topbarBorder": "#1f2533",
+    "panel": "#0b0e13",
+    "panelAlt": "#10141b",
+    "accent": "#4fd1c5",
+    "sidebarBg": "#10141b",
+    "btnBg": "#0b0e13",
+    "btnText": "#e2e8f0",
+    "tagFill": "#1e293b",
+    "tagText": "#e2e8f0",
+    "tagBorder": "#475569",
+    "inputBg": "#0b0e13",
+    "inputText": "#e2e8f0",
+    "inputBorder": "#1f2937",
+    "inputFont": "Inter, system-ui, sans-serif",
+    "inputFontSize": 14,
+    "toolbarBg": "#0f172a",
+    "toolbarBorder": "#1f2937",
+    "toolbarText": "#94a3b8",
+    "toolbarBtnBg": "#0b0e13",
+    "toolbarBtnText": "#e2e8f0",
+    "minimapDots": "#94a3b8",
+    "canvasHintEnabled": true,
+    "canvasHintText": "",
+    "canvasHintBg": "#0f172a",
+    "canvasHintColor": "#94a3b8",
+    "danger": "#f56565",
+    "textMain": "#e2e8f0",
+    "textSoft": "#94a3b8",
+    "topbarHeight": 103,
+    "sidebarWidth": 350,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false,
+    "nodeFill": "#1e293b",
+    "nodeStroke": "#475569",
+    "nodeTitle": "#e2e8f0",
+    "nodeSub": "#94a3b8",
+    "nodeTitleSize": 18,
+    "nodeSubSize": 13,
+    "nodeFont": "Inter, system-ui, sans-serif",
+    "defaultEdge": "#475569",
+    "selectionHandle": "#f59e0b",
+    "selectionHandleSize": 8,
+    "groupIndicator": "#4fd1c5",
+    "canvasGradientTop": "#1e2532",
+    "canvasGradientBottom": "#050608",
+    "canvasBorder": "#475569",
+    "canvasGrid": "#475569",
+    "canvasGridSize": 50,
+    "rackFrameFill": "#0f172a",
+    "rackFrameStroke": "#4fd1c5",
+    "rackLineColor": "#475569",
+    "rackTextColor": "#4fd1c5"
+  },
+  "canvas": {
+    "zoom": 1,
+    "panX": 0,
+    "panY": 0
+  },
+  "savedTopologyView": null,
+  "documentTabs": [
+    {
+      "id": "main",
+      "name": "Main Topology",
+      "nodes": {},
+      "edges": {
         "list": []
       },
-      "rectData": {
+      "positions": {},
+      "sizes": {},
+      "styles": {},
+      "legend": {},
+      "rects": {
         "list": []
       },
-      "textData": {
+      "texts": {
         "list": []
       },
-      "edgeLegend": {},
-      "nodePositions": {},
-      "nodeSizes": {},
-      "nodeStyles": {},
-      "page": {
+      "pageState": {
         "title": "The One File",
         "background": "",
         "topbarBg": "rgba(9, 12, 20, 0.9)",
@@ -2560,44 +2642,60 @@
         "panel": "#0b0e13",
         "panelAlt": "#10141b",
         "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
         "danger": "#f56565",
         "textMain": "#e2e8f0",
         "textSoft": "#94a3b8",
         "topbarHeight": 103,
         "sidebarWidth": 350,
         "mobileFooterHeight": 40,
-        "sidebarCollapsed": false
-      },
-      "canvas": {
-        "zoom": 1,
-        "panX": 0,
-        "panY": 0
-      },
-      "savedTopologyView": null,
-      "documentTabs": [
-        {
-          "id": "main",
-          "name": "Main Topology",
-          "nodes": {},
-          "edges": {
-            "list": []
-          },
-          "positions": {},
-          "sizes": {},
-          "styles": {},
-          "legend": {},
-          "rects": {
-            "list": []
-          },
-          "texts": {
-            "list": []
-          }
-        }
-      ],
-      "currentTabIndex": 0,
-      "encryptedSections": {}
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5"
       }
-    </script>
+    }
+  ],
+  "currentTabIndex": 0,
+  "encryptedSections": {}
+}</script>
     <script>
       const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
       let currentNodeId = "host";
@@ -2609,6 +2707,7 @@
        list: []
       };
       let currentRectId = null;
+      let currentTextId = null;
       let rectDrawMode = false;
       let RECT_DATA = {
        list: []
@@ -6416,8 +6515,11 @@
       }
       
       function claimTheImmortal(id) {
+	   if (!NODE_DATA[id]) return;
        currentNodeId = id;
        currentEdgeId = null;
+       currentRectId = null;
+       currentTextId = null;
        
        if (isMobileDevice()) {
         const currentHeight = PAGE_STATE.mobileFooterHeight || 40;
@@ -6440,6 +6542,8 @@
         const active = e.dataset.from === id || e.dataset.to === id;
         e.classList.toggle("active", active);
        });
+       document.querySelectorAll(".rect-group").forEach((r) => r.classList.remove("active"));
+       document.querySelectorAll(".text-element").forEach((t) => t.classList.remove("active"));
        document.getElementById("node-panel").style.display = "block";
        document.getElementById("edge-panel").style.display = "none";
        document.getElementById("text-panel").style.display = "none";
@@ -6475,7 +6579,27 @@
        if (assignedRackRow) assignedRackRow.style.display = isRack ? "none" : "flex";
        if (rackCapacityRow) rackCapacityRow.style.display = isRack ? "flex" : "none";
        if (uheightRow) uheightRow.style.display = isAssignedToRack ? "flex" : "none";
-       
+       const rackContentsSection = document.getElementById("rack-contents-section");
+       const rackContentsList = document.getElementById("rack-contents-list");
+       if (rackContentsSection && rackContentsList) {
+        if (isRack) {
+         const nodesInRack = Object.entries(NODE_DATA).filter(([nid, n]) => n.assignedRack === id);
+         if (nodesInRack.length > 0) {
+          rackContentsList.innerHTML = nodesInRack.map(([nid, n]) => {
+           const tags = (n.tags || []).map(t => `<span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">${t}</span>`).join('');
+           return `<div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('${nid}')">
+            <span style="color: var(--text-main);">${n.name}</span>${tags}
+           </div>`;
+          }).join('');
+          rackContentsSection.style.display = "block";
+         } else {
+          rackContentsList.innerHTML = '<div style="color: var(--text-soft); font-style: italic;">No nodes assigned</div>';
+          rackContentsSection.style.display = "block";
+         }
+        } else {
+         rackContentsSection.style.display = "none";
+        }
+       }
        document.getElementById("node-name").onclick = () => editNodeName(id);
        document.getElementById("node-ip").onclick = () => editNodeIp(id);
        document.getElementById("node-mac").onclick = () => editNodeMac(id);
@@ -6551,7 +6675,7 @@
        addTagBtn.style.cursor = "pointer";
        addTagBtn.style.opacity = "0.6";
        addTagBtn.style.borderStyle = "dashed";
-       addTagBtn.textContent = "+ Add";
+       addTagBtn.textContent = "+ Add Tag";
        addTagBtn.addEventListener("click", () => {
         showEditModal("Add Tag(s) : comma separated", "",
          (newTagStr) => {
@@ -6612,6 +6736,9 @@
       
       function selectTheConnection(id) {
        currentEdgeId = id;
+       currentNodeId = null;
+       currentRectId = null;
+       currentTextId = null;
        
        if (isMobileDevice()) {
         const currentHeight = PAGE_STATE.mobileFooterHeight || 40;
@@ -6629,8 +6756,11 @@
        document.getElementById("node-panel").style.display = "none";
        document.getElementById("edge-panel").style.display = "block";
        document.getElementById("text-panel").style.display = "none";
+       document.getElementById("rect-panel").style.display = "none";
        document.getElementById("topology-toolbar").style.display = "none";
        document.querySelectorAll(".node-group").forEach((n) => n.classList.remove("active"));
+       document.querySelectorAll(".rect-group").forEach((r) => r.classList.remove("active"));
+       document.querySelectorAll(".text-element").forEach((t) => t.classList.remove("active"));
        document.querySelectorAll(".edge").forEach((e) => {
         e.classList.toggle("active", e.dataset.edgeId === id);
        });
@@ -7244,13 +7374,21 @@
         addEdgeNoteBtn.click();
        }
       });
+	  
       function selectTheRect(id) {
       currentRectId = id;
+      currentNodeId = null;
+      currentEdgeId = null;
+      currentTextId = null;
       document.getElementById("node-panel").style.display = "none";
       document.getElementById("edge-panel").style.display = "none";
       document.getElementById("text-panel").style.display = "none";
       document.getElementById("rect-panel").style.display = "block";
       document.getElementById("topology-toolbar").style.display = "none";
+      document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+      document.querySelectorAll(".edge").forEach(e => e.classList.remove("active"));
+      document.querySelectorAll(".text-element").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".rect-group").forEach(r => r.classList.toggle("active", r.dataset.rectId === id));
       
       const rect = RECT_DATA.list.find(r => r.id === id);
       if (!rect) return;
@@ -7397,7 +7535,7 @@
       let freeDrawPoints = [];
       let freeDrawPolylineEl = null;
       let freeDrawPointEls = [];
-       let currentTextId = null;
+    
        let rectStartPoint = null;
        let rectPreviewEl = null;
        let rectStyle = "filled";
@@ -8028,14 +8166,22 @@
       
       function showTextPanel(textId) {
        currentTextId = textId;
+       currentNodeId = null;
+       currentEdgeId = null;
+       currentRectId = null;
        const textItem = TEXT_DATA.list.find(t => t.id === textId);
        if (!textItem) return;
        
        document.getElementById("node-panel").style.display = "none";
        document.getElementById("edge-panel").style.display = "none";
+       document.getElementById("rect-panel").style.display = "none";
        
        const textPanel = document.getElementById("text-panel");
        textPanel.style.display = "block";
+       document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+       document.querySelectorAll(".edge").forEach(e => e.classList.remove("active"));
+       document.querySelectorAll(".rect-group").forEach(r => r.classList.remove("active"));
+       document.querySelectorAll(".text-element").forEach(t => t.classList.toggle("active", t.dataset.textId === textId));
        
        document.getElementById("text-content").value = textItem.content;
        document.getElementById("text-font-size").value = textItem.fontSize;
@@ -9130,10 +9276,35 @@
       function deleteSelected() {
        const total = selectedNodes.size + selectedEdges.size + selectedRects.size + selectedTexts.size;
        if (total === 0) return;
-       const message = `Delete ${total} selected item(s)?`;
+       
+       let nodesInsideRacks = [];
+       selectedNodes.forEach(nodeId => {
+        if (NODE_DATA[nodeId]?.isRack) {
+         Object.entries(NODE_DATA).forEach(([id, n]) => {
+          if (n.assignedRack === nodeId) nodesInsideRacks.push(n.name || id);
+         });
+        }
+       });
+       
+       let message = `Delete ${total} selected item(s)?`;
+       if (nodesInsideRacks.length > 0) {
+        message += `\n\nThis will also delete ${nodesInsideRacks.length} node(s) inside rack(s):\n• ${nodesInsideRacks.join('\n• ')}`;
+       }
+       
        challengeTheImmortal(message, () => {
         pushUndo("delete selected");
         selectedNodes.forEach(nodeId => {
+         if (NODE_DATA[nodeId]?.isRack) {
+          Object.keys(NODE_DATA).forEach(id => {
+           if (NODE_DATA[id]?.assignedRack === nodeId) {
+            EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== id && e.to !== id);
+            delete NODE_DATA[id];
+            delete savedPositions[id];
+            delete savedSizes[id];
+            delete savedStyles[id];
+           }
+          });
+         }
          delete NODE_DATA[nodeId];
          delete savedPositions[nodeId];
          delete savedSizes[nodeId];
@@ -9253,7 +9424,43 @@
         assignedRack: source.assignedRack || "",
         rackCapacity: source.rackCapacity || "42",
         isRack: source.isRack || false
-       };
+       }; 
+	   
+       if (source.isRack) {
+        const childNodes = Object.entries(NODE_DATA).filter(([id, n]) => 
+         id !== newId && n.assignedRack === sourceId
+        );
+        childNodes.forEach(([childId, childNode]) => {
+         const childBaseName = childNode.name + " copy";
+         let childNewName = childBaseName;
+         let c = 1;
+         while (Object.values(NODE_DATA).some(n => n.name === childNewName)) {
+          childNewName = `${childBaseName} ${c}`;
+          c++;
+         }
+         const childBaseId = childNewName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+         let childNewId = childBaseId;
+         c = 1;
+         while (NODE_DATA[childNewId]) {
+          childNewId = `${childBaseId}-${c}`;
+          c++;
+         }
+         NODE_DATA[childNewId] = {
+          ...JSON.parse(JSON.stringify(childNode)),
+          name: childNewName,
+          assignedRack: newId
+         };
+         if (savedPositions[childId]) {
+          savedPositions[childNewId] = { ...savedPositions[childId] };
+         }
+         if (savedSizes[childId]) {
+          savedSizes[childNewId] = savedSizes[childId];
+         }
+         if (savedStyles[childId]) {
+          savedStyles[childNewId] = JSON.parse(JSON.stringify(savedStyles[childId]));
+         }
+        });
+       }
        
        if (currentView.mode === "rack" && currentView.rackId) {
         NODE_DATA[newId].assignedRack = currentView.rackId;
@@ -9401,36 +9608,40 @@
         const nodesToNudge = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
           : (currentNodeId ? [currentNodeId] : []);
+        const rectsToNudge = selectedRects.size > 0 
+          ? Array.from(selectedRects) 
+          : (currentRectId ? [currentRectId] : []);
+        const textsToNudge = selectedTexts.size > 0 
+          ? Array.from(selectedTexts) 
+          : (currentTextId ? [currentTextId] : []);
         
-        if (nodesToNudge.length === 0) return;
+        if (nodesToNudge.length === 0 && rectsToNudge.length === 0 && textsToNudge.length === 0) return;
         
         const unlockedNodes = nodesToNudge.filter(id => !NODE_DATA[id]?.locked);
+        const unlockedRects = rectsToNudge.filter(id => { const r = RECT_DATA.list.find(x => x.id === id); return r && !r.locked; });
+        const unlockedTexts = textsToNudge.filter(id => { const t = TEXT_DATA.list.find(x => x.id === id); return t && !t.locked; });
         
-        if (unlockedNodes.length === 0) {
-          return;
-        }
+        if (unlockedNodes.length === 0 && unlockedRects.length === 0 && unlockedTexts.length === 0) return;
         
-        pushUndo("nudge nodes");
+        pushUndo("nudge");
+        
+        const dx = direction === "ArrowLeft" ? -distance : direction === "ArrowRight" ? distance : 0;
+        const dy = direction === "ArrowUp" ? -distance : direction === "ArrowDown" ? distance : 0;
         
         unlockedNodes.forEach(id => {
-          if (!savedPositions[id]) {
-            savedPositions[id] = { x: 0, y: 0 };
-          }
-          
-          switch(direction) {
-            case "ArrowUp":
-              savedPositions[id].y -= distance;
-              break;
-            case "ArrowDown":
-              savedPositions[id].y += distance;
-              break;
-            case "ArrowLeft":
-              savedPositions[id].x -= distance;
-              break;
-            case "ArrowRight":
-              savedPositions[id].x += distance;
-              break;
-          }
+          if (!savedPositions[id]) savedPositions[id] = { x: 0, y: 0 };
+          savedPositions[id].x += dx;
+          savedPositions[id].y += dy;
+        });
+        
+        unlockedRects.forEach(id => {
+          const r = RECT_DATA.list.find(x => x.id === id);
+          if (r) { r.x += dx; r.y += dy; }
+        });
+        
+        unlockedTexts.forEach(id => {
+          const t = TEXT_DATA.list.find(x => x.id === id);
+          if (t) { t.x += dx; t.y += dy; }
         });
         
         forgeTheTopology();
@@ -9462,18 +9673,17 @@
       }
       
       function focusOnSelected() {
+        let minX = Infinity, minY = Infinity;
+        let maxX = -Infinity, maxY = -Infinity;
+        let hasItems = false;
+
         const nodesToFocus = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
           : (currentNodeId ? [currentNodeId] : []);
-        
-        if (nodesToFocus.length === 0) return;
-        
-        let minX = Infinity, minY = Infinity;
-        let maxX = -Infinity, maxY = -Infinity;
-        
         nodesToFocus.forEach(id => {
           const pos = savedPositions[id];
           if (pos) {
+            hasItems = true;
             const size = savedSizes[id] || 50;
             minX = Math.min(minX, pos.x - size/2);
             minY = Math.min(minY, pos.y - size/2);
@@ -9482,7 +9692,47 @@
           }
         });
         
-        if (!isFinite(minX)) return;
+        const rectsToFocus = selectedRects.size > 0 ? Array.from(selectedRects) : (currentRectId ? [currentRectId] : []);
+        rectsToFocus.forEach(id => {
+          const r = RECT_DATA.list.find(x => x.id === id);
+          if (r) {
+            hasItems = true;
+            minX = Math.min(minX, r.x);
+            minY = Math.min(minY, r.y);
+            maxX = Math.max(maxX, r.x + r.width);
+            maxY = Math.max(maxY, r.y + r.height);
+          }
+        });
+        
+        const textsToFocus = selectedTexts.size > 0 ? Array.from(selectedTexts) : (currentTextId ? [currentTextId] : []);
+        textsToFocus.forEach(id => {
+          const t = TEXT_DATA.list.find(x => x.id === id);
+          if (t) {
+            hasItems = true;
+            minX = Math.min(minX, t.x - 50);
+            minY = Math.min(minY, t.y - 20);
+            maxX = Math.max(maxX, t.x + 50);
+            maxY = Math.max(maxY, t.y + 20);
+          }
+        });
+        
+        const edgesToFocus = selectedEdges.size > 0 ? Array.from(selectedEdges) : (currentEdgeId ? [currentEdgeId] : []);
+        edgesToFocus.forEach(id => {
+          const e = EDGE_DATA.list.find(x => x.id === id);
+          if (e) {
+            const fromPos = savedPositions[e.from];
+            const toPos = savedPositions[e.to];
+            if (fromPos && toPos) {
+              hasItems = true;
+              minX = Math.min(minX, fromPos.x, toPos.x);
+              minY = Math.min(minY, fromPos.y, toPos.y);
+              maxX = Math.max(maxX, fromPos.x, toPos.x);
+              maxY = Math.max(maxY, fromPos.y, toPos.y);
+            }
+          }
+        });
+        
+        if (!hasItems || !isFinite(minX)) return;
         
         const padding = 100;
         const centerX = (minX + maxX) / 2;
@@ -9505,22 +9755,34 @@
         const nodesToToggle = selectedNodes.size > 0 
           ? Array.from(selectedNodes) 
           : (currentNodeId ? [currentNodeId] : []);
+        const rectsToToggle = selectedRects.size > 0 
+          ? Array.from(selectedRects) 
+          : (currentRectId ? [currentRectId] : []);
+        const textsToToggle = selectedTexts.size > 0 
+          ? Array.from(selectedTexts) 
+          : (currentTextId ? [currentTextId] : []);
         
-        if (nodesToToggle.length === 0) return;
+        if (nodesToToggle.length === 0 && rectsToToggle.length === 0 && textsToToggle.length === 0) return;
         
         pushUndo("toggle lock");
         
-        const hasUnlocked = nodesToToggle.some(id => !NODE_DATA[id]?.locked);
+        let hasUnlocked = nodesToToggle.some(id => !NODE_DATA[id]?.locked);
+        hasUnlocked = hasUnlocked || rectsToToggle.some(id => { const r = RECT_DATA.list.find(x => x.id === id); return r && !r.locked; });
+        hasUnlocked = hasUnlocked || textsToToggle.some(id => { const t = TEXT_DATA.list.find(x => x.id === id); return t && !t.locked; });
         
         nodesToToggle.forEach(id => {
-          if (NODE_DATA[id]) {
-            NODE_DATA[id].locked = hasUnlocked;
-          }
+          if (NODE_DATA[id]) NODE_DATA[id].locked = hasUnlocked;
+        });
+        rectsToToggle.forEach(id => {
+          const r = RECT_DATA.list.find(x => x.id === id);
+          if (r) r.locked = hasUnlocked;
+        });
+        textsToToggle.forEach(id => {
+          const t = TEXT_DATA.list.find(x => x.id === id);
+          if (t) t.locked = hasUnlocked;
         });
         
         forgeTheTopology();
-      
-        const lockState = hasUnlocked ? "locked" : "unlocked";
       }
       
       function toggleGroupSelected() {
@@ -9597,8 +9859,9 @@
         redo();
        }
        
-       if (event.ctrlKey && event.key === "c") {
+ if (event.ctrlKey && event.key === "c") {
         event.preventDefault();
+        clipboard = null;
         if (currentNodeId && NODE_DATA[currentNodeId]) {
          clipboard = {
           type: "node",
@@ -9606,55 +9869,73 @@
           size: savedSizes[currentNodeId],
           style: savedStyles[currentNodeId] ? JSON.parse(JSON.stringify(savedStyles[currentNodeId])) : null
          };
+        } else if (currentEdgeId) {
+         const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+         if (edge) clipboard = { type: "edge", data: JSON.parse(JSON.stringify(edge)) };
+        } else if (currentRectId) {
+         const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+         if (rect) clipboard = { type: "rect", data: JSON.parse(JSON.stringify(rect)) };
+        } else if (currentTextId) {
+         const text = TEXT_DATA.list.find(t => t.id === currentTextId);
+         if (text) clipboard = { type: "text", data: JSON.parse(JSON.stringify(text)) };
         }
        }
        
        if (event.ctrlKey && event.key === "v") {
         event.preventDefault();
-        if (clipboard && clipboard.type === "node") {
+        if (!clipboard) return;
+        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        const centerX = canvasState.panX + (viewWidth / 2);
+        const centerY = canvasState.panY + (viewHeight / 2);
+        
+        if (clipboard.type === "node") {
          const data = clipboard.data;
-         const baseName = data.name + " copy";
-         let newName = baseName;
+         let newName = data.name + " copy";
          let counter = 1;
          while (Object.values(NODE_DATA).some(n => n.name === newName)) {
-          newName = `${baseName} ${counter}`;
+          newName = data.name + " copy " + counter;
           counter++;
          }
-         
-         const baseId = newName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-         let newId = baseId;
+         let newId = newName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
          counter = 1;
          while (NODE_DATA[newId]) {
-          newId = `${baseId}-${counter}`;
+          newId = newName.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + counter;
           counter++;
          }
-         
          pushUndo("paste node");
-         NODE_DATA[newId] = {
-          ...data,
-          name: newName
-         };
-         
-      const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-      const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-      const centerX = canvasState.panX + (viewWidth / 2);
-      const centerY = canvasState.panY + (viewHeight / 2);
-      savedPositions[nodeId] = {
-      x: centerX,
-      y: centerY
-      };
-         
+         NODE_DATA[newId] = { ...data, name: newName };
+         savedPositions[newId] = { x: centerX, y: centerY };
          if (clipboard.size) savedSizes[newId] = clipboard.size;
-         if (clipboard.style) savedStyles[newId] = clipboard.style;
-         
+         if (clipboard.style) savedStyles[newId] = JSON.parse(JSON.stringify(clipboard.style));
          forgeTheTopology();
          claimTheImmortal(newId);
+        } else if (clipboard.type === "edge") {
+         pushUndo("paste edge");
+         const newEdge = { ...clipboard.data, id: "edge-" + Date.now() };
+         EDGE_DATA.list.push(newEdge);
+         saveEdgeData();
+         forgeTheTopology();
+         selectTheConnection(newEdge.id);
+        } else if (clipboard.type === "rect") {
+         pushUndo("paste rect");
+         const newRect = { ...clipboard.data, id: "rect-" + Date.now(), x: centerX - (clipboard.data.width || 100) / 2, y: centerY - (clipboard.data.height || 100) / 2 };
+         RECT_DATA.list.push(newRect);
+         forgeTheTopology();
+         selectTheRect(newRect.id);
+        } else if (clipboard.type === "text") {
+         pushUndo("paste text");
+         const newText = { ...clipboard.data, id: "text-" + Date.now(), x: centerX, y: centerY };
+         TEXT_DATA.list.push(newText);
+         forgeTheTopology();
+         showTextPanel(newText.id);
         }
        }
        
        if (event.key === "Delete") {
         event.preventDefault();
-        if (selectedNodes.size > 0) {
+        const totalSelected = selectedNodes.size + selectedEdges.size + selectedRects.size + selectedTexts.size;
+        if (totalSelected > 0) {
          deleteSelected();
         } else if (currentNodeId && NODE_DATA[currentNodeId]) {
          challengeTheImmortal(`Delete node "${NODE_DATA[currentNodeId].name}"?`, () => {
@@ -9678,12 +9959,34 @@
           forgeTheTopology();
           document.getElementById("edge-panel").style.display = "none";
          });
+        } else if (currentRectId) {
+         challengeTheImmortal("Delete this zone?", () => {
+          pushUndo("delete rect");
+          RECT_DATA.list = RECT_DATA.list.filter(r => r.id !== currentRectId);
+          currentRectId = null;
+          forgeTheTopology();
+          document.getElementById("rect-panel").style.display = "none";
+         });
+        } else if (currentTextId) {
+         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
+         if (textItem) {
+          challengeTheImmortal(`Delete text "${textItem.content.substring(0, 30)}..."?`, () => {
+           pushUndo("delete text");
+           TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== currentTextId);
+           currentTextId = null;
+           forgeTheTopology();
+           document.getElementById("text-panel").style.display = "none";
+          });
+         }
         }
        }
       
        if (event.ctrlKey && event.key === "a") {
         event.preventDefault();
         Object.keys(NODE_DATA).forEach(id => selectedNodes.add(id));
+        EDGE_DATA.list.forEach(e => selectedEdges.add(e.id));
+        RECT_DATA.list.forEach(r => selectedRects.add(r.id));
+        TEXT_DATA.list.forEach(t => selectedTexts.add(t.id));
         updateNodeSelection();
        }
        
@@ -9696,6 +9999,34 @@
         event.preventDefault();
         if (currentNodeId && NODE_DATA[currentNodeId]) {
          cloneNode(currentNodeId);
+        } else if (currentEdgeId) {
+         const edge = EDGE_DATA.list.find(e => e.id === currentEdgeId);
+         if (edge) {
+          pushUndo("clone edge");
+          const newEdge = { ...JSON.parse(JSON.stringify(edge)), id: "edge-" + Date.now() };
+          EDGE_DATA.list.push(newEdge);
+          saveEdgeData();
+          forgeTheTopology();
+          selectTheConnection(newEdge.id);
+         }
+        } else if (currentRectId) {
+         const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+         if (rect) {
+          pushUndo("clone rect");
+          const newRect = { ...JSON.parse(JSON.stringify(rect)), id: "rect-" + Date.now(), x: rect.x + 50, y: rect.y + 50 };
+          RECT_DATA.list.push(newRect);
+          forgeTheTopology();
+          selectTheRect(newRect.id);
+         }
+        } else if (currentTextId) {
+         const text = TEXT_DATA.list.find(t => t.id === currentTextId);
+         if (text) {
+          pushUndo("clone text");
+          const newText = { ...JSON.parse(JSON.stringify(text)), id: "text-" + Date.now(), x: text.x + 50, y: text.y + 50 };
+          TEXT_DATA.list.push(newText);
+          forgeTheTopology();
+          showTextPanel(newText.id);
+         }
         }
        }
       }
@@ -9852,10 +10183,16 @@
         RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
         TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
         PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
-               wieldThePower();
-        document.title = newTab.name;
-      document.getElementById("page-title").textContent = newTab.name;
+        wieldThePower();
+        document.title = PAGE_STATE.title || newTab.name;
+        document.getElementById("page-title").textContent = PAGE_STATE.title || newTab.name;
         forgeTheTopology();
+        currentNodeId = null;
+        currentEdgeId = null;
+        currentTextId = null;
+        document.getElementById("node-panel").style.display = "none";
+        document.getElementById("edge-panel").style.display = "none";
+        document.getElementById("text-panel").style.display = "none";
         displayTabs();
         
         logAuditEvent("tab", `Switched to tab: ${newTab.name}`);
@@ -10872,6 +11209,14 @@
        
        if (currentView.mode === "rack" && currentView.rackId) {
         NODE_DATA[nodeId].assignedRack = currentView.rackId;
+        NODE_DATA[nodeId].layer = "physical";
+        const rackCapacity = getRackCapacity(currentView.rackId);
+        const rackUHeight = getRackUHeight(currentView.rackId);
+        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+        const centerY = canvasState.panY + (viewHeight / 2);
+        let unit = rackCapacity - Math.round((centerY - RACK_START_Y) / rackUHeight);
+        unit = Math.max(1, Math.min(rackCapacity, unit));
+        NODE_DATA[nodeId].rackUnit = String(unit);
        }
        
       const viewWidth = CANVAS_WIDTH / canvasState.zoom;
@@ -10934,35 +11279,64 @@
       (function addDeleteNodeButton() {
        const nodePanel = document.getElementById("node-panel");
        if (!nodePanel) return;
-       if (document.getElementById("delete-node-btn")) return;
-       const deleteBtn = document.createElement("button");
-       deleteBtn.id = "delete-node-btn";
-       deleteBtn.textContent = "Delete Node";
-       deleteBtn.style.cssText = "margin-top:15px; padding:10px 16px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:clamp(14px,1.6vw,18px); font-weight:600; width:100%;";
+       let deleteBtn = document.getElementById("delete-node-btn");
+       if (!deleteBtn) {
+        deleteBtn = document.createElement("button");
+        deleteBtn.id = "delete-node-btn";
+        deleteBtn.textContent = "Delete Node";
+        deleteBtn.style.cssText = "margin-top:15px; padding:10px 16px; background:var(--danger); color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:clamp(14px,1.6vw,18px); font-weight:600; width:100%;";
+        nodePanel.appendChild(deleteBtn);
+       }
        deleteBtn.addEventListener("click", () => {
         if (!currentNodeId) return;
-        challengeTheImmortal(`Delete node "${NODE_DATA[currentNodeId]?.name || currentNodeId}" and all its connections?`,
-         () => {
-          EDGE_DATA.list = EDGE_DATA.list.filter(
-           (e) => e.from !== currentNodeId && e.to !== currentNodeId, );
-          delete NODE_DATA[currentNodeId];
-          delete savedPositions[currentNodeId];
-          delete savedSizes[currentNodeId];
-          delete savedStyles[currentNodeId];
-          currentNodeId = null;
-          currentEdgeId = null;
-          forgeTheTopology();
-          const remainingNodes = Object.keys(NODE_DATA);
-          if (remainingNodes.length > 0) {
-           claimTheImmortal(remainingNodes[0]);
-          } else {
-           document.getElementById("node-panel").style.display = "none";
-           document.getElementById("edge-panel").style.display = "none";
-           document.getElementById("topology-toolbar", ).style.display = "none";
-          }
-         }, );
+        const nodeData = NODE_DATA[currentNodeId];
+        let confirmMessage;
+        let nodesInsideRack = [];
+        
+        if (nodeData?.isRack) {
+         nodesInsideRack = Object.entries(NODE_DATA)
+          .filter(([id, n]) => n.assignedRack === currentNodeId)
+          .map(([id, n]) => n.name || id);
+         if (nodesInsideRack.length > 0) {
+          confirmMessage = `Delete rack "${nodeData.name}"?\n\nThis will also delete ${nodesInsideRack.length} node(s) inside:\n• ${nodesInsideRack.join('\n• ')}`;
+         } else {
+          confirmMessage = `Delete rack "${nodeData.name}"? (empty rack)`;
+         }
+        } else {
+         confirmMessage = `Delete node "${nodeData?.name || currentNodeId}" and all its connections?`;
+        }
+        
+        challengeTheImmortal(confirmMessage, () => {
+         pushUndo("delete node");
+         if (nodeData?.isRack) {
+          Object.keys(NODE_DATA).forEach(id => {
+           if (NODE_DATA[id]?.assignedRack === currentNodeId) {
+            EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== id && e.to !== id);
+            delete NODE_DATA[id];
+            delete savedPositions[id];
+            delete savedSizes[id];
+            delete savedStyles[id];
+           }
+          });
+         }
+         EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== currentNodeId && e.to !== currentNodeId);
+         delete NODE_DATA[currentNodeId];
+         delete savedPositions[currentNodeId];
+         delete savedSizes[currentNodeId];
+         delete savedStyles[currentNodeId];
+         currentNodeId = null;
+         currentEdgeId = null;
+         forgeTheTopology();
+         const remainingNodes = Object.keys(NODE_DATA);
+         if (remainingNodes.length > 0) {
+          claimTheImmortal(remainingNodes[0]);
+         } else {
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("topology-toolbar").style.display = "none";
+         }
+        });
        });
-       nodePanel.appendChild(deleteBtn);
       })();
       
       function screenshotCanvas() {
@@ -11095,5 +11469,5 @@
        }, 100);
       });
     </script>
-  </body>
-</html>
+  
+</body></html>

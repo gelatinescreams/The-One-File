@@ -13,8 +13,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9.5 : 12/7/25
+## Version 3.9.6 : 12/8/25
 
+* **Getting closer to 4.0 Stable!**
+* **NEW 3.9.6** Rack enhancements and fixes. See all changes in [changelog.md](changelog.md)
 * **NEW 3.9.5** The Styling Update! Added all available styling options to settings [changelog.md](changelog.md)
 * **NEW 3.9.4** Squashing bugs. See changes in the [changelog.md](changelog.md)
 * **NEW 3.9.3** Mobile fixes. See changes in the [changelog.md](changelog.md)
@@ -24,14 +26,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
 * **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
 * **NEW 3.9** Snapshots are now implemeted. Auto save and manual save are available.
-* **NEW 3.9** Action audits are now implemeted. This allows you to audit whether or not the file has been tampered with in an easy to read log.
-  * *Note: Both snapshots and audits are local browser only and do not transfer to another device. This feature is coming in 4.0*
-* **NEW 3.7** The Rackening!!
-  * Add any rack size from 6-48 and open it as its own canvas with U slot placement of nodes, new and existing, enabling unlimited hierarchical rack layouts.
-* **NEW 3.7** Layers upon layers!!
-  * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them.
 * **See more changes in the [changelog.md](changelog.md)**
-  
+
 # Demos
 
 * **Core Edition**
@@ -42,13 +38,6 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * [Networkening Edition](https://therecanonlybe.one/theonefile-networkening.html)
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
-
-* **Core Edition : Password Protected (password is lambert)**
-  * [Core: Corporate Password Protected : ](https://therecanonlybe.one/demos/password-protected/the-one-file-corporate-demo.html)
-  * [Core: Homlab Password Protected](https://therecanonlybe.one/demos/password-protected/the-one-file-homelab-demo.html)
-* **Networkening Edition : Password Protected (password is lambert)**
-  * [networkening: Corporate Password Protected](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-corporate-demo.html)
-  * [networkening: Homelab Password Protected](https://therecanonlybe.one/demos/password-protected/theonefile-networkening-homelab-demo.html)  
 
 ## Online vs Offline
 
