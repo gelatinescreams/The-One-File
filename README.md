@@ -1,6 +1,6 @@
 ![The One File](assets/theonefile.jpg)
 
-# The One File: Network Topology Maker
+##### The One File: Network Topology Maker
 
 In the end there can only be "The ONE File". A portable and completely self contained network topology builder. The canvas, the logic, the settings, your nodes, your connections, and your notes all live inside a single standalone HTML file. Any modern browser can open and edit it without any prior setup. (is the idea)
 
@@ -13,7 +13,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9.8 : 12/10/25
+##### Version 3.9.8 : 12/10/25
 
 * **Getting closer to 4.0 Stable!**
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
@@ -24,10 +24,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 * **New desktop mutli entity select option added.**
 * * Hold shift and click+drag on empty canvas to select multiple items at once
 * * Selection box colors can be customized in Settings
-* **Squashing more bugs** #19 #20 #21 + more : Special thanks to @mitchplze
+* **Squashing more bugs** [#19](https://github.com/gelatinescreams/The-One-File/issues/19) [#20](https://github.com/gelatinescreams/The-One-File/issues/20) [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to @mitchplze
 * **See more changes in the [changelog.md](changelog.md)**
 
-# Demos
+##### Demos
 
 * **Core Edition**
   * [Core Edition](https://therecanonlybe.one/the-one-file.html)
@@ -38,7 +38,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
 
-## Online vs Offline
+##### Online vs Offline
 
 | Feature | theonefile.html | theonefile-networkening.html |
 |---------|---------|--------|
@@ -65,14 +65,14 @@ A fully self contained topology builder that runs anywhere as a single standalon
 | **Auto Status Checking** |  | ✓ |
 | **Live Ping/Health Status** |  | ✓ |
 
-#### Download:
+##### Download:
 
 * [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/24088455/the-one-file-corporate-demo.html)
 * [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/24088456/the-one-file-homelab-demo.html)
 * [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/24088457/theonefile-networkening-corporate-demo.html)
 * [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/24088458/theonefile-networkening-homelab-demo.html)
 
-## Why It Exists
+##### Why It Exists
 
 I wanted a tool that is:
 
@@ -85,7 +85,7 @@ I wanted a tool that is:
 
 Instead of building another hosted application, I built a file.
 
-## What You Can Use It For
+##### What You Can Use It For
 * Homelab mapping  
 * Office network layouts  
 * Rack diagrams  
@@ -97,7 +97,7 @@ Instead of building another hosted application, I built a file.
 * Offline or air gapped environments  
 * Sharing a topology by sending a single file
 
-## Features
+##### Features
 * Zero coding knowledge required    
 * Zero config files
 * Draw anywhere: add text labels, boxes, and custom lines to annotate your topology
@@ -107,7 +107,7 @@ Instead of building another hosted application, I built a file.
 * Node grouping to move related components together
 * Touch optimized mobile interface with gesture support
 
-### Canvas and Navigation
+##### Canvas and Navigation
 * Large zoomable and pannable workspace  
 * Minimap with viewport tracking  
 * Works with touch and mobile  
@@ -124,7 +124,7 @@ Instead of building another hosted application, I built a file.
 * **Tab cycling** to quickly navigate through all nodes
 * **Focus key** to auto zoom to selected nodes
 
-### Nodes
+##### Nodes
 * Multiple shapes for common devices including servers, routers, switches, firewalls, and clouds  
 * *Icon shapes from MDI, Simple Icons, and selfh.st/icons available in the theonefile-networkening.html version*
 * Editable name, IP, role, tags, and notes
@@ -138,7 +138,7 @@ Instead of building another hosted application, I built a file.
 * **Group nodes** to move multiple related nodes as a single unit
 * Visual indicators for locked and grouped nodes
 
-### Racks
+##### Racks
 * Create rack nodes to represent physical server racks
 * Enter rack view by double clicking a rack node (or long press on mobile)
 * Inside rack view, see a vertical rack with U unit markings
@@ -149,13 +149,13 @@ Instead of building another hosted application, I built a file.
 * Quick navigation: double tap empty space on mobile to exit rack view
 * Automatic rack assignment when creating nodes while in rack view
 
-### Layer System
+##### Layer System
 * Choose between physical, logical, security and application layers for anything and easily toggle visibility between them
 * Toggle layer visibility to focus on specific aspects of your topology
 * Filter view to show only nodes and connections in selected layers
 * Simplifies complex topologies by letting you focus on one aspect at a time
 
-### Lock and Group System
+##### Lock and Group System
 * **Lock individual or multiple nodes** to prevent accidental movement
   * Visual lock indicator appears on locked nodes
   * Locked nodes cannot be moved by mouse, touch, or keyboard
@@ -171,7 +171,7 @@ Instead of building another hosted application, I built a file.
   * Group button in mobile multi select menu
   * Perfect for logical grouping (clusters, zones, related infrastructure)
 
-### Bulk Operations
+##### Bulk Operations
 * **Multi select nodes** for batch operations
 * **Bulk Align**: Align selected nodes left, right, top, or bottom
 * **Bulk Distribute**: Evenly space nodes horizontally or vertically
@@ -181,7 +181,7 @@ Instead of building another hosted application, I built a file.
 * **Bulk Group**: Create or dissolve node groups
 * **Desktop and mobile toolbars** optimized for each platform
 
-### Network Monitoring *(theonefile-networkening.html only)*
+##### Network Monitoring *(theonefile-networkening.html only)*
 * **Live status indicators** on nodes (online/offline/checking)
 * **Manual ping/status check** for individual nodes
 * **Auto Status Checking** with configurable intervals (5-3600 seconds)
@@ -190,7 +190,7 @@ Instead of building another hosted application, I built a file.
 * Per node ping enable/disable settings
 * Visual ping indicators with color coding
 
-### Connections
+##### Connections
 * Smart routed lines between nodes
 * Multiple links between the same devices  
 * Optional direction arrows  
@@ -198,13 +198,13 @@ Instead of building another hosted application, I built a file.
 * Port labels (e.g., eth0, gi0/1)
 * Notes for VLANs, protocols, policies, and bandwidth  
 
-### Legend (Bottom left)
+##### Legend (Bottom left)
 * Can be hidden on both desktop and mobile
 * Automatically built from line colors in use  
 * Editable labels  
 * note: only shows up after first line is generated.
 
-### Save System
+##### Save System
 * Exports a brand new updated HTML file  
 * All data is embedded in the file  
 * Optional AES 256 GCM encryption for sensitive information  
@@ -212,7 +212,7 @@ Instead of building another hosted application, I built a file.
 * No servers involved  
 * *Version theonefile-networkening.html uses 3 server calls from cdn.jsdelivr.net to load icons*
 
-### Security & Encryption
+##### Security & Encryption
 **Industry Standard Protection:**
 * **AES 256 GCM** encryption (authenticated encryption with 256 bit keys)
 * **PBKDF2** key derivation with:
@@ -229,7 +229,7 @@ Instead of building another hosted application, I built a file.
 * **3 attempt limit** on decryption to prevent brute force attempts
 * **Encrypted data format**: Salt + IV + ciphertext embedded directly in the HTML file
 
-### Mobile Experience
+##### Mobile Experience
 * **Completely rewritten mobile UI** in version 3.0
 * **Resizable mobile footer** with drag handle for custom panel sizing
 * **Touch optimized controls** throughout the interface
@@ -242,7 +242,7 @@ Instead of building another hosted application, I built a file.
 * Optimized for phones, tablets, and foldable devices
 * Smart gesture detection prevents accidental actions during panning
 
-### Keyboard Shortcuts
+##### Keyboard Shortcuts
 
 [keyboard-shortcuts.md](keyboard-shortcuts.md)
 
@@ -271,7 +271,7 @@ Instead of building another hosted application, I built a file.
 | `Scroll` | Zoom in/out |
 | `Shift + Click/Drag` | Multiple Select (marquee selection) |
 
-### Mobile Gestures & Touch Controls
+##### Mobile Gestures & Touch Controls
 
 [mobile-gestures.md](mobile-gestures.md)
 
@@ -286,13 +286,13 @@ Instead of building another hosted application, I built a file.
 | **Tap selected node** | Open properties panel | Any view |
 | **Drag footer handle** | Resize mobile panel | Mobile only |
 
-### Customization
+##### Customization
 * 100% control theme editor
 * Per breakpoint node styling for responsive designs
 * Custom color schemes and backgrounds
 * Adjustable panel sizes and layouts
 
-## Supported Browsers
+##### Supported Browsers
 
 * Chrome and Edge  
 * Firefox  
@@ -301,7 +301,7 @@ Instead of building another hosted application, I built a file.
 
 If the browser is reasonably modern, it should work.
 
-## Credits
+##### Credits
 
 Icon support for theonefile-networkening.html version powered by:
 * [selfh.st/icons](https://selfh.st/icons/) : Popular self hosted icons

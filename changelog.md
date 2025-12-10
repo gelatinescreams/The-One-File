@@ -1,19 +1,19 @@
-### CHANGE LOG
+#### CHANGE LOG
 
 * **Getting closer to 4.0 Stable!**
 
-## Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
+##### Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
 
-* **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom**
+* **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
 * * Click or tap any canvas item five times to inspect its details while in View Only Mode
 * **Upgraded and fixed the Audit log.** Moved it to the stored JSON. Audit log now transfers with the save!
 * * Added smart migration to merge old localStorage audit with new JSON storage
 * **Added new core shapes to both versions.**
-* **New desktop mutli entity select option added.** #21
+* **New desktop mutli entity select option added.** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to @mitchplze
 * * Hold shift and click+drag on empty canvas to select multiple items at once
 * * Selection box colors can be customized in Settings
 
-## Version 3.9.7 : 12/9/25 Squashing Bugs
+##### Version 3.9.7 : 12/9/25 Squashing Bugs
 
 * **Special thanks to @mitchplze for testing and reporting on some of these fixes**
 * **Bug Fixes**
@@ -21,16 +21,16 @@
 * * Fixed toolbars staying in desktop layout when resizing window to mobile size
 * * Fixed duplicate import button in Settings
 * * Removed unused code to reduce file size
-* * Zone line style (solid, dashed, dotted) can now be changed after creation. #20
-
+* * Zone line style (solid, dashed, dotted) can now be changed after creation. 
+* **Squashing more bugs** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to @mitchplze
 * **Networkening Edition Fixes:**
-* * Dropdown now shows "Custom Icon" when a web icon is selected. #19
-* * Switching to any core shape automatically clears the web icon #19
-* * Web icons keep their original colors until you change them #19
-* * Fixed web icon colors persisting when selecting a new icon. New icons now display their natural colors instead of inheriting previous custom colors. #19
-* * Fixed selfh.st icon search to only show icons that have SVG versions available. (for editability) #19
+* * Dropdown now shows "Custom Icon" when a web icon is selected. [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
+* * Switching to any core shape automatically clears the web icon [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
+* * Web icons keep their original colors until you change them [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
+* * Fixed web icon colors persisting when selecting a new icon. New icons now display their natural colors instead of inheriting previous custom colors. [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
+* * Fixed selfh.st icon search to only show icons that have SVG versions available. (for editability) [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
 
-## Version 3.9.6 : 12/8/25 Rack canvas fixes
+##### Version 3.9.6 : 12/8/25 Rack canvas fixes
 
 * **Can now view and edit nodes that are inside a given rack just by selecting a rack and using the sidebar / mobile footer**
 * **Updated all keyboard shortcuts to work with new canvas draw tools**
@@ -41,13 +41,13 @@
   * Fixed a bug where page titles were overriden by tab titles
   * Fixed a bug where canvas information panel from previous tabs would stay selected after tab switch 
 
-## Version 3.9.5 : 12/7/25 The Styles Update!
+##### Version 3.9.5 : 12/7/25 The Styles Update!
 
 * **Added all available styling options to settings**
 * **Canvas Styling** Added seperated styling for the main canvas and rack view canvases
   * Added additional syling options to free draw tools
 
-## Version 3.9.4 : 12/6/25 Canvas bug fixes
+##### Version 3.9.4 : 12/6/25 Canvas bug fixes
 
 * **Help Tab** Added keyboard and mouse how:to in ?help
 * **Various bug fixes including**
@@ -60,14 +60,14 @@
   * Fixed a bug where free drawn rectangles zones had no custom styling inputs
   * Fixed a bug where free drawn tools were not grouped correctly with nodes and racks
   
-## Version 3.9.3 : 12/5/25 Mobile bug fixes
+##### Version 3.9.3 : 12/5/25 Mobile bug fixes
 
 * **NEW 3.9.3** Mobile fixes. 
 * **Various bug fixes including**
   * Rewrote every mobile touch event
   * Cleaned mobile core
   
-## Version 3.9.2 : 12/5/25 Bug fixes
+##### Version 3.9.2 : 12/5/25 Bug fixes
 
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **Various bug fixes including**
@@ -80,7 +80,7 @@
   * Fixed various dragging and dropping bugs
   * Changed the icons to not animate on desktop (this was implemented in version .2, well before the style sidebar)
 
-## Version 3.9 : 12/4/25
+##### Version 3.9 : 12/4/25
 
 * **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
@@ -101,7 +101,7 @@
 * **NEW 3.7** Added Racks and individual rack canvasses!
 * **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
 
-## Version 3.7 - 12/3/25
+##### Version 3.7 - 12/3/25
 * **NEW 3.7 Advanced Keyboard Navigation**
   * **Arrow Keys** Move selected nodes 1 pixel in any direction for precise positioning
   * **Shift + Arrow Keys** Move selected nodes 10 pixels for faster adjustments
@@ -134,10 +134,10 @@
 * **A more detailed list of changes is included below**
   * [Change Log](changelog.md)
 
-## Version 3.5.1 - 12/2/25
+##### Version 3.5.1 - 12/2/25
 - **NEW 3.5.1** Small style fixes and mobile refactoring
 
-## Version 3.5 - 12/2/25
+##### Version 3.5 - 12/2/25
 - **NEW 3.5** *Another major release. Thank you to Discord testers!!*
 - **NEW 3.5 Add Text Labels Anywhere** Click the "T" button to place custom text annotations anywhere on your canvas with full styling control
 - **NEW 3.5 Draw Rectangles/Boxes** Create visual boundaries, zones, or highlighted areas with filled or outlined rectangles in any color
@@ -174,7 +174,7 @@
 - NEW 3.1 Real time ping/status indicators on nodes *(networkening version only)*
 - NEW 3.1 Visual online/offline/checking indicators *(networkening version only)*
 
-## Version 3.0 - 12/1/25
+##### Version 3.0 - 12/1/25
 - NEW 3.0 Total mobile rewrite for core the-one-file.html
 - NEW 3.0 Total css rewrite for core the-one-file.html
 - NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html
@@ -186,7 +186,7 @@
 - Use theonefile-networkening.html for this version
 
 
-## Version 2.8 - 11/29/25 The One File: The Networkening update!
+##### Version 2.8 - 11/29/25 The One File: The Networkening update!
 - Totally collapsible mobile interface
 - Mobile core added for future features
 - NEW 2.8 : Icon SEARCH with live preview
@@ -194,5 +194,5 @@
 - Use theonefile-networkening.html for this version
 - Icon support added (MDI, Simple Icons, Selfh.st)
 
-## Version 2.5 - 11/25/25 The One File: The Networkening update!
+##### Version 2.5 - 11/25/25 The One File: The Networkening update!
 - NEW 2.5 : Icon SEARCH with live preview
