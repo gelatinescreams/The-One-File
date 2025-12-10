@@ -1000,30 +1000,28 @@
       opacity: 0.7;
       }
       .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 999999;
-      justify-content: center;
-      align-items: center;
-      padding-top: var(--topbar-height, 52px);
-      }
-      .modal.active {
-      display: flex;
-      }
-      .modal-content {
-      background: var(--panel-alt);
-      padding: 25px;
-      border-radius: 8px;
-      border: 1px solid var(--edge-main);
-      min-width: 300px;
-      max-width: 90%;
-      max-height: calc(100vh - var(--topbar-height, 52px) - 40px);
-      overflow-y: auto;
-      }
+	  display: none;
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  z-index: 999999;
+	  justify-content: center;
+	  align-items: center;
+	  overflow: auto;
+	  }
+	  .modal.active {
+	  display: inline-grid;
+	  }
+	  .modal-content {
+	  background: var(--panel-alt);
+	  padding: 25px;
+	  border-radius: 8px;
+	  border: 1px solid var(--edge-main);
+	  min-width: 300px;
+	  max-width: 90%;
+	  }
       .modal-content h3 {
       margin: 0 0 15px 0;
       color: var(--text-main);
@@ -1361,6 +1359,39 @@
       width: 100%;
       }
       }
+	  body.view-only-mode:not(.view-only-inspect) #node-panel,
+      body.view-only-mode:not(.view-only-inspect) #edge-panel,
+      body.view-only-mode:not(.view-only-inspect) #text-panel,
+      body.view-only-mode:not(.view-only-inspect) #rect-panel {
+        display: none !important;
+      }
+      body.view-only-mode .node-group,
+      body.view-only-mode .edge,
+      body.view-only-mode .rect-group,
+      body.view-only-mode .text-element {
+        cursor: default !important;
+      }
+      body.view-only-mode #bulk-toolbar,
+      body.view-only-mode #bulk-toolbar-mobile,
+      body.view-only-mode #bulk-actions-modal {
+        display: none !important;
+      }
+      body.view-only-mode::after {
+        content: "VIEW ONLY • tap 5× to inspect";
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(245, 101, 101, 0.9);
+        color: white;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        z-index: 9999;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);" class="">
@@ -1520,6 +1551,16 @@
     <div class="modal" id="settings-modal">
       <div class="modal-content">
         <h2>Settings</h2>
+		<details class="style-section">
+          <summary>View Only Mode</summary>
+          <div class="style-content">
+            <div class="style-row">
+              <label>View Only (disable editing)</label>
+              <input type="checkbox" id="view-only-mode" style="width:auto;">
+            </div>
+            <p style="margin-top:4px;font-size:12px;color:var(--text-soft);">When enabled, all editing of the canvas is disabled. Pan and zoom still work.</p>
+          </div>
+        </details>
         <details class="style-section">
           <summary>General Theme</summary>
           <div class="style-content">
@@ -1716,6 +1757,33 @@
               <input type="color" id="group-indicator-color" value="#4fd1c5">
             </div>
           </div>
+		   <div class="style-content">
+            <div class="style-row">
+              <label>Multiselect Fill Color (Desktop)</label>
+              <input type="color" id="selection-fill-color" value="#4fd1c5">
+            </div>
+            <div class="style-row">
+              <label>Multiselect Fill Opacity (Desktop)</label>
+              <input type="range" id="selection-fill-opacity" min="0" max="1" step="0.05" value="0.1">
+              <span id="selection-fill-opacity-val" style="min-width:35px;text-align:right;">10%</span>
+            </div>
+            <div class="style-row">
+              <label>Multiselect Border Color (Desktop)</label>
+              <input type="color" id="selection-stroke-color" value="#4fd1c5">
+            </div>
+            <div class="style-row">
+              <label>Multiselect Border Width (Desktop)</label>
+              <input type="number" id="selection-stroke-width" min="1" max="10" value="2">
+            </div>
+            <div class="style-row">
+              <label>Multiselect Border Style (Desktop)</label>
+              <select id="selection-stroke-style">
+                <option value="5,5">Dashed</option>
+                <option value="2,4">Dotted</option>
+                <option value="none">Solid</option>
+              </select>
+            </div>
+          </div>
         </details>
         <details class="style-section">
           <summary>Inputs &amp; Dropdowns</summary>
@@ -1827,28 +1895,59 @@
         <input type="text" id="new-node-tags" placeholder="e.g. Docker, nginx, WG: vpn">
         <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Shape</label>
         <select id="new-node-shape">
-          <optgroup label="Basic Shapes">
-            <option value="circle">Circle</option>
-            <option value="square">Square</option>
-            <option value="rectangle">Rectangle</option>
-            <option value="triangle">Triangle</option>
-            <option value="hexagon">Hexagon</option>
-            <option value="diamond">Diamond</option>
-            <option value="star">Star</option>
-            <option value="stop-sign">Stop Sign</option>
-          </optgroup>
-          <optgroup label="Network Equipment">
-            <option value="server">Server</option>
-            <option value="pc">PC / Desktop</option>
-            <option value="laptop">Laptop</option>
-            <option value="phone">Phone / Mobile</option>
-            <option value="router">Router</option>
-            <option value="switch">Switch</option>
-            <option value="firewall">Firewall</option>
-            <option value="cloud">Cloud</option>
-            <option value="database">Database</option>
-            <option value="printer">Printer</option>
-          </optgroup>
+                  <optgroup label="Basic Shapes">
+				  <option value="circle">Circle</option>
+				  <option value="square">Square</option>
+				  <option value="rectangle">Rectangle</option>
+				  <option value="triangle">Triangle</option>
+				  <option value="hexagon">Hexagon</option>
+				  <option value="diamond">Diamond</option>
+				  <option value="star">Star</option>
+				  <option value="stop-sign">Stop Sign</option>
+				  <option value="octagon">Octagon</option>
+				  <option value="pentagon">Pentagon</option>
+				  <option value="cross">Cross</option>
+				  <option value="rounded-square">Rounded Square</option>
+				  <option value="pill">Pill</option>
+				  <option value="parallelogram">Parallelogram</option>
+				  <option value="trapezoid">Trapezoid</option>
+				</optgroup>
+			  <optgroup label="Computers &amp; Devices">
+			      <option value="server">Server</option>
+				  <option value="pc">PC / Desktop</option>
+				  <option value="laptop">Laptop</option>
+				  <option value="phone">Phone / Mobile</option>
+				  <option value="printer">Printer</option>
+				  <option value="pi">Raspberry Pi</option>
+				  <option value="sensor">Sensor / IoT</option>
+			  </optgroup>
+			  <optgroup label="Network Equipment">
+				  <option value="router">Router</option>
+				  <option value="switch">Switch</option>
+				  <option value="firewall">Firewall</option>
+				  <option value="access-point">Access Point</option>
+				  <option value="load-balancer">Load Balancer</option>
+				  <option value="gateway">Gateway</option>
+				  <option value="vpn">VPN / Tunnel</option>
+				  <option value="nas">NAS / Storage</option>
+			  </optgroup>
+			  <optgroup label="Cloud &amp; Services">
+			      <option value="cloud">Cloud</option>
+				  <option value="database">Database</option>
+				  <option value="docker">Docker</option>
+				  <option value="container">Container</option>
+				  <option value="vm">Virtual Machine</option>
+				  <option value="kubernetes">Kubernetes</option>
+				  <option value="api">API / Endpoint</option>
+				  <option value="queue">Queue / Message</option>
+				  <option value="lambda">Lambda / Function</option>
+				  <option value="bucket">Bucket / S3</option>
+			  </optgroup>
+			  <optgroup label="Security &amp; Monitoring">
+				  <option value="shield">Shield</option>
+				  <option value="camera">Camera / CCTV</option>
+				  <option value="monitor">Monitor / Dashboard</option>
+			  </optgroup>
         </select>
         <div class="modal-buttons">
           <button class="btn-cancel" id="add-node-cancel">Cancel</button>
@@ -1867,28 +1966,59 @@
         <input type="text" id="new-rack-tags" placeholder="e.g. Production, Data Center 1">
         <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Icon / Shape</label>
         <select id="new-rack-shape">
-          <optgroup label="Basic Shapes">
-            <option value="circle">Circle</option>
-            <option value="square">Square</option>
-            <option value="rectangle">Rectangle</option>
-            <option value="triangle">Triangle</option>
-            <option value="hexagon">Hexagon</option>
-            <option value="diamond">Diamond</option>
-            <option value="star">Star</option>
-            <option value="stop-sign">Stop Sign</option>
-          </optgroup>
-          <optgroup label="Network Equipment">
-            <option value="server" selected="">Server</option>
-            <option value="pc">PC / Desktop</option>
-            <option value="laptop">Laptop</option>
-            <option value="phone">Phone / Mobile</option>
-            <option value="router">Router</option>
-            <option value="switch">Switch</option>
-            <option value="firewall">Firewall</option>
-            <option value="cloud">Cloud</option>
-            <option value="database">Database</option>
-            <option value="printer">Printer</option>
-          </optgroup>
+                  <optgroup label="Basic Shapes">
+				  <option value="circle">Circle</option>
+				  <option value="square">Square</option>
+				  <option value="rectangle">Rectangle</option>
+				  <option value="triangle">Triangle</option>
+				  <option value="hexagon">Hexagon</option>
+				  <option value="diamond">Diamond</option>
+				  <option value="star">Star</option>
+				  <option value="stop-sign">Stop Sign</option>
+				  <option value="octagon">Octagon</option>
+				  <option value="pentagon">Pentagon</option>
+				  <option value="cross">Cross</option>
+				  <option value="rounded-square">Rounded Square</option>
+				  <option value="pill">Pill</option>
+				  <option value="parallelogram">Parallelogram</option>
+				  <option value="trapezoid">Trapezoid</option>
+				</optgroup>
+			  <optgroup label="Computers &amp; Devices">
+			      <option value="server">Server</option>
+				  <option value="pc">PC / Desktop</option>
+				  <option value="laptop">Laptop</option>
+				  <option value="phone">Phone / Mobile</option>
+				  <option value="printer">Printer</option>
+				  <option value="pi">Raspberry Pi</option>
+				  <option value="sensor">Sensor / IoT</option>
+			  </optgroup>
+			  <optgroup label="Network Equipment">
+				  <option value="router">Router</option>
+				  <option value="switch">Switch</option>
+				  <option value="firewall">Firewall</option>
+				  <option value="access-point">Access Point</option>
+				  <option value="load-balancer">Load Balancer</option>
+				  <option value="gateway">Gateway</option>
+				  <option value="vpn">VPN / Tunnel</option>
+				  <option value="nas">NAS / Storage</option>
+			  </optgroup>
+			  <optgroup label="Cloud &amp; Services">
+			      <option value="cloud">Cloud</option>
+				  <option value="database">Database</option>
+				  <option value="docker">Docker</option>
+				  <option value="container">Container</option>
+				  <option value="vm">Virtual Machine</option>
+				  <option value="kubernetes">Kubernetes</option>
+				  <option value="api">API / Endpoint</option>
+				  <option value="queue">Queue / Message</option>
+				  <option value="lambda">Lambda / Function</option>
+				  <option value="bucket">Bucket / S3</option>
+			  </optgroup>
+			  <optgroup label="Security &amp; Monitoring">
+				  <option value="shield">Shield</option>
+				  <option value="camera">Camera / CCTV</option>
+				  <option value="monitor">Monitor / Dashboard</option>
+			  </optgroup>
         </select>
         <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Rack Capacity</label>
         <select id="new-rack-capacity">
@@ -2094,7 +2224,7 @@
           </select>
           <button id="draw-undo" style="display: none" title="Undo last point">Undo</button>
         </div>
-        <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
+        <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
           <select id="add-line-select">
@@ -2137,7 +2267,7 @@
           <button id="bulk-clone" title="Clone selected">📋 Clone</button>
           <button id="bulk-delete" title="Delete selected" style="background: var(--danger); color: white;">Delete</button>
         </div>
-        <div class="bulk-toolbar-mobile" id="bulk-toolbar-mobile" style="display: none">
+        <div class="bulk-toolbar-mobile" id="bulk-toolbar-mobile" style="display: none;">
           <button type="button" id="bulk-mobile-btn" style="background: var(--accent);color: white;padding: 12px 20px;border-radius: 25px;font-weight: 600;font-size: 16px;box-shadow: 0 4px 12px rgba(0,0,0,0.3);border: none;cursor: pointer;display: flex;align-items: center;gap: 8px;">
           <span id="bulk-count-mobile">0</span>Selected</button>
         </div>
@@ -2162,12 +2292,13 @@
           </div>
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
-        <div class="canvas-hint" id="canvas-hint">
+        <div class="canvas-hint visible" id="canvas-hint">
           <ul>
             <li>Scroll to zoom</li>
             <li>Drag to pan</li>
             <li>Right click to clone and align</li>
             <li>Right click to select multiple</li>
+			<li>Hold Shift + drag mouse for marquee selection</li>
             <li>You have the power</li>
             <li>Your time is NOW!</li>
           </ul>
@@ -2195,8 +2326,7 @@
         <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
         <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
         <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
-        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
-      <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button><button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Legend</button><button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button><button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button><button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
+        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button></section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
           <svg class="resizer-icon" width="6" height="40" viewBox="0 0 6 40" xmlns="http://www.w3.org/2000/svg">
@@ -2279,28 +2409,59 @@
                 <label>Shape:</label>
                 <select id="shape-select">
                   <optgroup label="Basic Shapes">
-                    <option value="circle">Circle</option>
-                    <option value="square">Square</option>
-                    <option value="rectangle">Rectangle</option>
-                    <option value="triangle">Triangle</option>
-                    <option value="hexagon">Hexagon</option>
-                    <option value="diamond">Diamond</option>
-                    <option value="star">Star</option>
-                    <option value="stop-sign">Stop Sign</option>
-                  </optgroup>
-                  <optgroup label="Network Equipment">
-                    <option value="server">Server</option>
-                    <option value="pc">PC / Desktop</option>
-                    <option value="laptop">Laptop</option>
-                    <option value="phone">Phone / Mobile</option>
-                    <option value="router">Router</option>
-                    <option value="switch">Switch</option>
-                    <option value="firewall">Firewall</option>
-                    <option value="cloud">Cloud</option>
-                    <option value="database">Database</option>
-                    <option value="printer">Printer</option>
-                  </optgroup>
-                </select>
+				  <option value="circle">Circle</option>
+				  <option value="square">Square</option>
+				  <option value="rectangle">Rectangle</option>
+				  <option value="triangle">Triangle</option>
+				  <option value="hexagon">Hexagon</option>
+				  <option value="diamond">Diamond</option>
+				  <option value="star">Star</option>
+				  <option value="stop-sign">Stop Sign</option>
+				  <option value="octagon">Octagon</option>
+				  <option value="pentagon">Pentagon</option>
+				  <option value="cross">Cross</option>
+				  <option value="rounded-square">Rounded Square</option>
+				  <option value="pill">Pill</option>
+				  <option value="parallelogram">Parallelogram</option>
+				  <option value="trapezoid">Trapezoid</option>
+				</optgroup>
+			  <optgroup label="Computers &amp; Devices">
+			      <option value="server">Server</option>
+				  <option value="pc">PC / Desktop</option>
+				  <option value="laptop">Laptop</option>
+				  <option value="phone">Phone / Mobile</option>
+				  <option value="printer">Printer</option>
+				  <option value="pi">Raspberry Pi</option>
+				  <option value="sensor">Sensor / IoT</option>
+			  </optgroup>
+			  <optgroup label="Network Equipment">
+				  <option value="router">Router</option>
+				  <option value="switch">Switch</option>
+				  <option value="firewall">Firewall</option>
+				  <option value="access-point">Access Point</option>
+				  <option value="load-balancer">Load Balancer</option>
+				  <option value="gateway">Gateway</option>
+				  <option value="vpn">VPN / Tunnel</option>
+				  <option value="nas">NAS / Storage</option>
+			  </optgroup>
+			  <optgroup label="Cloud &amp; Services">
+			      <option value="cloud">Cloud</option>
+				  <option value="database">Database</option>
+				  <option value="docker">Docker</option>
+				  <option value="container">Container</option>
+				  <option value="vm">Virtual Machine</option>
+				  <option value="kubernetes">Kubernetes</option>
+				  <option value="api">API / Endpoint</option>
+				  <option value="queue">Queue / Message</option>
+				  <option value="lambda">Lambda / Function</option>
+				  <option value="bucket">Bucket / S3</option>
+			  </optgroup>
+			  <optgroup label="Security &amp; Monitoring">
+				  <option value="shield">Shield</option>
+				  <option value="camera">Camera / CCTV</option>
+				  <option value="monitor">Monitor / Dashboard</option>
+			  </optgroup>
+             </select>
               </div>
               <div class="style-row">
                 <label>Fill Color:</label>
@@ -2450,6 +2611,14 @@
             <select id="rect-style-select">
               <option value="filled">Filled</option>
               <option value="outlined">Outlined</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label>Line Style:</label>
+            <select id="rect-line-style">
+              <option value="solid">Solid</option>
+              <option value="dashed">Dashed</option>
+              <option value="dotted">Dotted</option>
             </select>
           </div>
           <div class="section-label">Zone Notes</div>
@@ -2608,7 +2777,8 @@
     "rackFrameFill": "#0f172a",
     "rackFrameStroke": "#4fd1c5",
     "rackLineColor": "#475569",
-    "rackTextColor": "#4fd1c5"
+    "rackTextColor": "#4fd1c5",
+    "viewOnly": false
   },
   "canvas": {
     "zoom": 1,
@@ -2689,7 +2859,8 @@
         "rackFrameFill": "#0f172a",
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
-        "rackTextColor": "#4fd1c5"
+        "rackTextColor": "#4fd1c5",
+        "viewOnly": false
       }
     }
   ],
@@ -2746,6 +2917,13 @@
       let isSelecting = false;
       let selectionStart = null;
       let selectionRect = null;
+      let selectionBoxStyle = {
+       fillColor: "#4fd1c5",
+       fillOpacity: 0.1,
+       strokeColor: "#4fd1c5",
+       strokeWidth: 2,
+       strokeDasharray: "5,5"
+      };
       let isDraggingSelection = false;
       let dragSelectionStart = null;
       
@@ -2810,6 +2988,12 @@
           const desktop = document.getElementById("bulk-toolbar");
           const mobile = document.getElementById("bulk-toolbar-mobile");
           if (!desktop || !mobile) return;
+          
+          if (typeof selectedNodes === 'undefined' || selectedNodes.size === 0) {
+           desktop.style.display = "none";
+           mobile.style.display = "none";
+           return;
+          }
       
           const isVisible = desktop.style.display !== "none" || mobile.style.display !== "none";
           
@@ -2853,6 +3037,7 @@
         "Drag to pan",
         "Right click to clone and align",
         "Right click to select multiple",
+	    "Hold Shift + drag mouse for marquee selection",
         "You have the power",
         "Your time is NOW!",
       ];
@@ -2923,6 +3108,8 @@
       
       function ensureLegendMiniButton() {
        if (legendMiniBtn) return legendMiniBtn;
+	   const existing = document.getElementById("edge-legend-mini");
+       if (existing) { legendMiniBtn = existing; return existing; }
        const panel = document.querySelector(".topology-panel");
        if (!panel) return null;
        const btn = document.createElement("button");
@@ -2946,6 +3133,8 @@
       
       function ensureMinimapMiniButton() {
        if (minimapMiniBtn) return minimapMiniBtn;
+	   const existing = document.getElementById("minimap-mini");
+       if (existing) { minimapMiniBtn = existing; return existing; }
        const panel = document.querySelector(".topology-panel");
        if (!panel) return null;
        const btn = document.createElement("button");
@@ -2971,6 +3160,8 @@
       
       function ensureDrawToolbarMiniButton() {
        if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
+	   const existing = document.getElementById("draw-toolbar-mini");
+       if (existing) { drawToolbarMiniBtn = existing; return existing; }
        const panel = document.querySelector(".topology-panel");
        if (!panel) return null;
        const btn = document.createElement("button");
@@ -2996,6 +3187,8 @@
       
       function ensureTopologyToolbarMiniButton() {
        if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
+	   const existing = document.getElementById("topology-toolbar-mini");
+       if (existing) { topologyToolbarMiniBtn = existing; return existing; }
        const panel = document.querySelector(".topology-panel");
        if (!panel) return null;
        const btn = document.createElement("button");
@@ -3066,6 +3259,11 @@
       function updateDrawToolbarVisibility() {
        const toolbar = document.getElementById("draw-toolbar");
        const mini = ensureDrawToolbarMiniButton();
+       if (isViewOnly()) {
+        if (toolbar) toolbar.style.setProperty('display', 'none', 'important');
+        if (mini) mini.style.display = "none";
+        return;
+       }
        if (!toolbar || !mini) return;
        if (drawToolbarCollapsed) {
         toolbar.style.setProperty('display', 'none', 'important');
@@ -3084,6 +3282,11 @@
       function updateTopologyToolbarVisibility() {
        const toolbar = document.getElementById("topology-toolbar");
        const mini = ensureTopologyToolbarMiniButton();
+       if (isViewOnly()) {
+        if (toolbar) toolbar.style.setProperty('display', 'none', 'important');
+        if (mini) mini.style.display = "none";
+        return;
+       }
        if (!toolbar || !mini) return;
        const hasSelectedNode = currentNodeId !== null;
        if (!hasSelectedNode) {
@@ -3159,8 +3362,97 @@
        rackFrameStroke: "#4fd1c5",
        rackLineColor: "#475569",
        rackTextColor: "#4fd1c5",
+	   viewOnly: false,
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
+	  function isViewOnly() {
+       return PAGE_STATE.viewOnly === true;
+      }
+	  let viewOnlyClickCount = 0;
+      let viewOnlyClickTimer = null;
+      let viewOnlyClickTarget = null;
+      
+      function handleViewOnlyClick(id, type) {
+       if (!isViewOnly()) return false;
+       
+       if (viewOnlyClickTarget !== id) {
+        viewOnlyClickCount = 0;
+        viewOnlyClickTarget = id;
+       }
+       
+       viewOnlyClickCount++;
+       
+       clearTimeout(viewOnlyClickTimer);
+       viewOnlyClickTimer = setTimeout(() => {
+        viewOnlyClickCount = 0;
+        viewOnlyClickTarget = null;
+       }, 2000);
+       
+       if (viewOnlyClickCount >= 5) {
+        viewOnlyClickCount = 0;
+        viewOnlyClickTarget = null;
+        
+        document.body.classList.add("view-only-inspect");
+        
+        if (type === 'node') {
+         currentNodeId = id;
+         const data = NODE_DATA[id];
+         if (data) {
+          document.querySelectorAll(".node-group").forEach((n) => {
+           n.classList.toggle("active", n.dataset.nodeId === id);
+          });
+          document.getElementById("node-panel").style.display = "block";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("node-name").textContent = data.name;
+          document.getElementById("node-ip").textContent = data.ip;
+          document.getElementById("node-role").textContent = data.role;
+          document.getElementById("node-mac").textContent = data.mac || "--";
+          document.getElementById("node-rack").textContent = data.rackUnit || "--";
+          document.getElementById("node-uheight").textContent = (data.uHeight || "1") + "U";
+          
+          const tagList = document.getElementById("node-tags");
+          if (tagList) {
+           tagList.innerHTML = "";
+           if (data.tags && data.tags.length > 0) {
+            data.tags.forEach((tag) => {
+             const li = document.createElement("li");
+             li.textContent = tag;
+             tagList.appendChild(li);
+            });
+           }
+          }
+          
+          const noteList = document.getElementById("node-notes");
+          if (noteList) {
+           noteList.innerHTML = "";
+           if (data.notes && data.notes.length > 0) {
+            data.notes.forEach((note) => {
+             const li = document.createElement("li");
+             li.textContent = note;
+             noteList.appendChild(li);
+            });
+           }
+          }
+         }
+        } else if (type === 'edge') {
+         currentEdgeId = id;
+         const edge = EDGE_DATA.list.find(e => e.id === id);
+         if (edge) {
+          document.querySelectorAll(".edge").forEach((e) => {
+           e.classList.toggle("active", e.dataset.edgeId === id);
+          });
+          document.getElementById("edge-panel").style.display = "block";
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-from").textContent = NODE_DATA[edge.from]?.name || edge.from;
+          document.getElementById("edge-to").textContent = NODE_DATA[edge.to]?.name || edge.to;
+          document.getElementById("edge-label").value = edge.label || "";
+         }
+        }
+        return true;
+       }
+       return false;
+      }
+	  
       const CANVAS_WIDTH = 4000;
       let CANVAS_HEIGHT = 3000;
       const BASE_CANVAS_HEIGHT = 3000;
@@ -3549,7 +3841,7 @@
        root.style.setProperty("--text-main", PAGE_STATE.textMain);
        root.style.setProperty("--text-soft", PAGE_STATE.textSoft);
        root.style.setProperty("--topbar-bg", PAGE_STATE.topbarBg);
-      root.style.setProperty("--topbar-border", PAGE_STATE.topbarBorder);
+       root.style.setProperty("--topbar-border", PAGE_STATE.topbarBorder);
        root.style.setProperty("--node-fill", PAGE_STATE.nodeFill || "#1e293b");
        root.style.setProperty("--node-stroke", PAGE_STATE.nodeStroke || "#475569");
        root.style.setProperty("--node-title", PAGE_STATE.nodeTitle || "#e2e8f0");
@@ -3601,6 +3893,30 @@
        if (sidebarToggleEl) {
         sidebarToggleEl.style.display = isMobile ? "none" : "flex";
        }
+       const viewOnlyMode = PAGE_STATE.viewOnly === true;
+       const addNodeBtn = document.getElementById("add-node-btn");
+       const addRackBtn = document.getElementById("add-rack-btn");
+       const drawToolbar = document.getElementById("draw-toolbar");
+       const topologyToolbar = document.getElementById("topology-toolbar");
+       const bulkToolbar = document.getElementById("bulk-toolbar");
+       
+       if (addNodeBtn) addNodeBtn.style.display = viewOnlyMode ? "none" : "";
+       if (addRackBtn) addRackBtn.style.display = viewOnlyMode ? "none" : "";
+       if (viewOnlyMode) {
+        if (drawToolbar) drawToolbar.style.setProperty('display', 'none', 'important');
+        if (topologyToolbar) topologyToolbar.style.setProperty('display', 'none', 'important');
+        if (bulkToolbar) bulkToolbar.style.display = "none";
+        const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+        if (bulkToolbarMobile) bulkToolbarMobile.style.display = "none";
+       }
+       const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+       if (bulkToolbarMobile) bulkToolbarMobile.style.display = viewOnlyMode ? "none" : "";
+       ["draw-toolbar-mini", "topology-toolbar-mini"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = viewOnlyMode ? "none" : "";
+       });
+       
+       document.body.classList.toggle("view-only-mode", viewOnlyMode);
       }
       (async function awakeTheImmortal() {
        let initialState = {};
@@ -3716,13 +4032,15 @@
        }
       })();
       
+      let resizeDebounceTimer = null;
       window.addEventListener("resize", () => {
-        MobileManager.applyAll();
+        clearTimeout(resizeDebounceTimer);
+        resizeDebounceTimer = setTimeout(() => {
+          MobileManager.applyAll();
+          if (typeof updateDrawToolbarVisibility === 'function') updateDrawToolbarVisibility();
+          if (typeof updateTopologyToolbarVisibility === 'function') updateTopologyToolbarVisibility();
+        }, 100);
       });
-      
-      function saveEdgeData() {}
-      
-      function saveEdgeLegend() {}
       
       function getBreakpointKey() {
        const w = window.innerWidth;
@@ -4147,6 +4465,525 @@
         g.appendChild(paper);
         return g;
        }
+       if (shape === "access-point" || shape === "wifi") {
+        const g = document.createElementNS(ns, "g");
+        const base = document.createElementNS(ns, "rect");
+        base.setAttribute("x", -size * 0.3);
+        base.setAttribute("y", size * 0.2);
+        base.setAttribute("width", size * 0.6);
+        base.setAttribute("height", size * 0.3);
+        base.setAttribute("rx", 3);
+        g.appendChild(base);
+        for (let i = 1; i <= 3; i++) {
+         const arc = document.createElementNS(ns, "path");
+         const r = size * 0.3 * i;
+         arc.setAttribute("d", `M ${-r * 0.7} ${size * 0.1 - r * 0.5} A ${r} ${r} 0 0 1 ${r * 0.7} ${size * 0.1 - r * 0.5}`);
+         arc.style.fill = "none";
+         arc.style.stroke = "currentColor";
+         arc.style.strokeWidth = "2";
+         arc.style.opacity = 1 - (i * 0.2);
+         g.appendChild(arc);
+        }
+        return g;
+       }
+       if (shape === "load-balancer") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size);
+        body.setAttribute("y", -size * 0.5);
+        body.setAttribute("width", size * 2);
+        body.setAttribute("height", size);
+        body.setAttribute("rx", 6);
+        g.appendChild(body);
+        const bar = document.createElementNS(ns, "line");
+        bar.setAttribute("x1", -size * 0.6);
+        bar.setAttribute("y1", 0);
+        bar.setAttribute("x2", size * 0.6);
+        bar.setAttribute("y2", 0);
+        bar.style.stroke = "#4ade80";
+        bar.style.strokeWidth = "3";
+        g.appendChild(bar);
+        [-1, 1].forEach(dir => {
+         const arrow = document.createElementNS(ns, "path");
+         arrow.setAttribute("d", `M ${dir * size * 0.3} ${-size * 0.2} L ${dir * size * 0.6} 0 L ${dir * size * 0.3} ${size * 0.2}`);
+         arrow.style.fill = "none";
+         arrow.style.stroke = "#4ade80";
+         arrow.style.strokeWidth = "2";
+         g.appendChild(arrow);
+        });
+        return g;
+       }
+       if (shape === "nas" || shape === "storage") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.8);
+        body.setAttribute("y", -size * 0.9);
+        body.setAttribute("width", size * 1.6);
+        body.setAttribute("height", size * 1.8);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        for (let i = 0; i < 4; i++) {
+         const bay = document.createElementNS(ns, "rect");
+         bay.setAttribute("x", -size * 0.6);
+         bay.setAttribute("y", -size * 0.7 + i * size * 0.4);
+         bay.setAttribute("width", size * 1.2);
+         bay.setAttribute("height", size * 0.3);
+         bay.setAttribute("rx", 2);
+         bay.style.fill = "#1e293b";
+         g.appendChild(bay);
+        }
+        return g;
+       }
+       if (shape === "gateway" || shape === "modem") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.5);
+        body.setAttribute("y", -size * 0.9);
+        body.setAttribute("width", size);
+        body.setAttribute("height", size * 1.8);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        for (let i = 0; i < 4; i++) {
+         const led = document.createElementNS(ns, "circle");
+         led.setAttribute("cx", 0);
+         led.setAttribute("cy", -size * 0.6 + i * size * 0.35);
+         led.setAttribute("r", size * 0.08);
+         led.style.fill = ["#4ade80", "#4ade80", "#facc15", "#60a5fa"][i];
+         g.appendChild(led);
+        }
+        return g;
+       }
+       if (shape === "vpn" || shape === "tunnel") {
+        const g = document.createElementNS(ns, "g");
+        const outer = document.createElementNS(ns, "ellipse");
+        outer.setAttribute("cx", 0);
+        outer.setAttribute("cy", 0);
+        outer.setAttribute("rx", size);
+        outer.setAttribute("ry", size * 0.6);
+        g.appendChild(outer);
+        const inner = document.createElementNS(ns, "ellipse");
+        inner.setAttribute("cx", 0);
+        inner.setAttribute("cy", 0);
+        inner.setAttribute("rx", size * 0.5);
+        inner.setAttribute("ry", size * 0.3);
+        inner.style.fill = "#1e293b";
+        g.appendChild(inner);
+        const lock = document.createElementNS(ns, "rect");
+        lock.setAttribute("x", -size * 0.15);
+        lock.setAttribute("y", -size * 0.1);
+        lock.setAttribute("width", size * 0.3);
+        lock.setAttribute("height", size * 0.25);
+        lock.setAttribute("rx", 2);
+        lock.style.fill = "#4ade80";
+        g.appendChild(lock);
+        return g;
+       }
+       if (shape === "container") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size);
+        body.setAttribute("y", -size * 0.5);
+        body.setAttribute("width", size * 2);
+        body.setAttribute("height", size);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        for (let i = 0; i < 3; i++) {
+         const block = document.createElementNS(ns, "rect");
+         block.setAttribute("x", -size * 0.8 + i * size * 0.55);
+         block.setAttribute("y", -size * 0.3);
+         block.setAttribute("width", size * 0.45);
+         block.setAttribute("height", size * 0.6);
+         block.setAttribute("rx", 2);
+         block.style.fill = "#1e293b";
+         g.appendChild(block);
+        }
+        return g;
+       }
+       if (shape === "vm" || shape === "virtual") {
+        const g = document.createElementNS(ns, "g");
+        const shadow = document.createElementNS(ns, "rect");
+        shadow.setAttribute("x", -size * 0.85 + 4);
+        shadow.setAttribute("y", -size * 0.65 + 4);
+        shadow.setAttribute("width", size * 1.7);
+        shadow.setAttribute("height", size * 1.3);
+        shadow.setAttribute("rx", 4);
+        shadow.style.opacity = "0.3";
+        g.appendChild(shadow);
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.85);
+        body.setAttribute("y", -size * 0.65);
+        body.setAttribute("width", size * 1.7);
+        body.setAttribute("height", size * 1.3);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size * 0.65);
+        screen.setAttribute("y", -size * 0.45);
+        screen.setAttribute("width", size * 1.3);
+        screen.setAttribute("height", size * 0.7);
+        screen.setAttribute("rx", 2);
+        screen.style.fill = "#1e293b";
+        g.appendChild(screen);
+        return g;
+       }
+       if (shape === "kubernetes" || shape === "k8s") {
+        const g = document.createElementNS(ns, "g");
+        const outer = document.createElementNS(ns, "circle");
+        outer.setAttribute("cx", 0);
+        outer.setAttribute("cy", 0);
+        outer.setAttribute("r", size);
+        g.appendChild(outer);
+        const inner = document.createElementNS(ns, "circle");
+        inner.setAttribute("cx", 0);
+        inner.setAttribute("cy", 0);
+        inner.setAttribute("r", size * 0.4);
+        inner.style.fill = "#1e293b";
+        g.appendChild(inner);
+        for (let i = 0; i < 7; i++) {
+         const angle = (Math.PI * 2 / 7) * i - Math.PI / 2;
+         const spoke = document.createElementNS(ns, "line");
+         spoke.setAttribute("x1", Math.cos(angle) * size * 0.4);
+         spoke.setAttribute("y1", Math.sin(angle) * size * 0.4);
+         spoke.setAttribute("x2", Math.cos(angle) * size * 0.85);
+         spoke.setAttribute("y2", Math.sin(angle) * size * 0.85);
+         spoke.style.stroke = "#326ce5";
+         spoke.style.strokeWidth = "3";
+         g.appendChild(spoke);
+        }
+        return g;
+       }
+       
+       if (shape === "shield" || shape === "security") {
+        const p = document.createElementNS(ns, "path");
+        const s = size;
+        p.setAttribute("d", `M 0 ${-s} L ${s * 0.85} ${-s * 0.5} L ${s * 0.85} ${s * 0.2} Q ${s * 0.7} ${s * 0.9} 0 ${s} Q ${-s * 0.7} ${s * 0.9} ${-s * 0.85} ${s * 0.2} L ${-s * 0.85} ${-s * 0.5} Z`);
+        return p;
+       }
+       if (shape === "camera" || shape === "cctv") {
+        const g = document.createElementNS(ns, "g");
+        const mount = document.createElementNS(ns, "rect");
+        mount.setAttribute("x", -size * 1.1);
+        mount.setAttribute("y", -size * 0.5);
+        mount.setAttribute("width", size * 0.25);
+        mount.setAttribute("height", size * 0.6);
+        mount.setAttribute("rx", 2);
+        g.appendChild(mount);
+        const arm = document.createElementNS(ns, "rect");
+        arm.setAttribute("x", -size * 0.9);
+        arm.setAttribute("y", -size * 0.15);
+        arm.setAttribute("width", size * 0.5);
+        arm.setAttribute("height", size * 0.15);
+        g.appendChild(arm);
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.45);
+        body.setAttribute("y", -size * 0.35);
+        body.setAttribute("width", size * 1.1);
+        body.setAttribute("height", size * 0.7);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        const lensHousing = document.createElementNS(ns, "circle");
+        lensHousing.setAttribute("cx", size * 0.85);
+        lensHousing.setAttribute("cy", 0);
+        lensHousing.setAttribute("r", size * 0.4);
+        g.appendChild(lensHousing);
+        const lensOuter = document.createElementNS(ns, "circle");
+        lensOuter.setAttribute("cx", size * 0.85);
+        lensOuter.setAttribute("cy", 0);
+        lensOuter.setAttribute("r", size * 0.28);
+        lensOuter.style.fill = "#1e293b";
+        g.appendChild(lensOuter);
+        const lensInner = document.createElementNS(ns, "circle");
+        lensInner.setAttribute("cx", size * 0.85);
+        lensInner.setAttribute("cy", 0);
+        lensInner.setAttribute("r", size * 0.15);
+        lensInner.style.fill = "#3b82f6";
+        g.appendChild(lensInner);
+        const reflection = document.createElementNS(ns, "circle");
+        reflection.setAttribute("cx", size * 0.8);
+        reflection.setAttribute("cy", -size * 0.05);
+        reflection.setAttribute("r", size * 0.05);
+        reflection.style.fill = "#93c5fd";
+        g.appendChild(reflection);
+        const led = document.createElementNS(ns, "circle");
+        led.setAttribute("cx", -size * 0.2);
+        led.setAttribute("cy", -size * 0.15);
+        led.setAttribute("r", size * 0.06);
+        led.style.fill = "#ef4444";
+        g.appendChild(led);
+        return g;
+       }
+       if (shape === "monitor" || shape === "dashboard") {
+        const g = document.createElementNS(ns, "g");
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size);
+        screen.setAttribute("y", -size * 0.7);
+        screen.setAttribute("width", size * 2);
+        screen.setAttribute("height", size * 1.2);
+        screen.setAttribute("rx", 4);
+        g.appendChild(screen);
+        const graph = document.createElementNS(ns, "polyline");
+        graph.setAttribute("points", `${-size * 0.8},${size * 0.2} ${-size * 0.3},${-size * 0.2} ${size * 0.2},${size * 0.1} ${size * 0.7},${-size * 0.3}`);
+        graph.style.fill = "none";
+        graph.style.stroke = "#4ade80";
+        graph.style.strokeWidth = "3";
+        g.appendChild(graph);
+        return g;
+       }
+       if (shape === "docker" || shape === "whale") {
+        const g = document.createElementNS(ns, "g");
+        const s = size;
+        const body = document.createElementNS(ns, "path");
+        body.setAttribute("d", `
+         M ${-s * 0.9} ${s * 0.2}
+         Q ${-s * 1.1} ${s * 0.5} ${-s * 0.7} ${s * 0.7}
+         Q ${-s * 0.3} ${s * 0.85} ${s * 0.3} ${s * 0.75}
+         Q ${s * 0.8} ${s * 0.6} ${s * 1.0} ${s * 0.3}
+         Q ${s * 1.1} ${s * 0.1} ${s * 1.0} ${-s * 0.1}
+         L ${s * 0.85} ${-s * 0.1}
+         Q ${s * 0.7} ${-s * 0.15} ${s * 0.4} ${-s * 0.2}
+         L ${-s * 0.5} ${-s * 0.2}
+         Q ${-s * 0.8} ${-s * 0.1} ${-s * 0.9} ${s * 0.2}
+         Z
+        `);
+        body.style.fill = "#0db7ed";
+        g.appendChild(body);
+        const tail = document.createElementNS(ns, "path");
+        tail.setAttribute("d", `
+         M ${-s * 0.85} ${s * 0.1}
+         Q ${-s * 1.2} ${-s * 0.2} ${-s * 1.0} ${-s * 0.55}
+         Q ${-s * 0.95} ${-s * 0.35} ${-s * 0.8} ${-s * 0.15}
+         Z
+        `);
+        tail.style.fill = "#0db7ed";
+        g.appendChild(tail);
+        const belly = document.createElementNS(ns, "path");
+        belly.setAttribute("d", `
+         M ${-s * 0.5} ${s * 0.65}
+         Q ${s * 0.1} ${s * 0.75} ${s * 0.6} ${s * 0.55}
+         Q ${s * 0.8} ${s * 0.45} ${s * 0.9} ${s * 0.25}
+         Q ${s * 0.7} ${s * 0.5} ${s * 0.3} ${s * 0.6}
+         Q ${-s * 0.1} ${s * 0.7} ${-s * 0.5} ${s * 0.65}
+         Z
+        `);
+        belly.style.fill = "#ffffff";
+        belly.style.opacity = "0.3";
+        g.appendChild(belly);
+        for (let row = 0; row < 2; row++) {
+         for (let col = 0; col < 3; col++) {
+          const container = document.createElementNS(ns, "rect");
+          container.setAttribute("x", -s * 0.45 + col * s * 0.35);
+          container.setAttribute("y", -s * 0.7 + row * s * 0.28);
+          container.setAttribute("width", s * 0.3);
+          container.setAttribute("height", s * 0.23);
+          container.setAttribute("rx", 2);
+          container.style.fill = "#0db7ed";
+          container.style.stroke = "#0a9ed8";
+          container.style.strokeWidth = "1.5";
+          g.appendChild(container);
+         }
+        }
+        const topContainer = document.createElementNS(ns, "rect");
+        topContainer.setAttribute("x", -s * 0.1);
+        topContainer.setAttribute("y", -s * 0.95);
+        topContainer.setAttribute("width", s * 0.3);
+        topContainer.setAttribute("height", s * 0.23);
+        topContainer.setAttribute("rx", 2);
+        topContainer.style.fill = "#0db7ed";
+        topContainer.style.stroke = "#0a9ed8";
+        topContainer.style.strokeWidth = "1.5";
+        g.appendChild(topContainer);
+        const eye = document.createElementNS(ns, "circle");
+        eye.setAttribute("cx", s * 0.65);
+        eye.setAttribute("cy", s * 0.25);
+        eye.setAttribute("r", s * 0.08);
+        eye.style.fill = "#0a5f7a";
+        g.appendChild(eye);
+        
+        return g;
+       }
+       if (shape === "rounded-square") {
+        const r = document.createElementNS(ns, "rect");
+        const s = size * 1.6;
+        r.setAttribute("x", -s / 2);
+        r.setAttribute("y", -s / 2);
+        r.setAttribute("width", s);
+        r.setAttribute("height", s);
+        r.setAttribute("rx", size * 0.4);
+        return r;
+       }
+       if (shape === "pill" || shape === "capsule") {
+        const r = document.createElementNS(ns, "rect");
+        r.setAttribute("x", -size * 1.2);
+        r.setAttribute("y", -size * 0.5);
+        r.setAttribute("width", size * 2.4);
+        r.setAttribute("height", size);
+        r.setAttribute("rx", size * 0.5);
+        return r;
+       }
+       if (shape === "octagon") {
+        const p = document.createElementNS(ns, "polygon");
+        const r = size;
+        const pts = [];
+        for (let i = 0; i < 8; i++) {
+         const a = (Math.PI / 4) * i - Math.PI / 8;
+         pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+        }
+        p.setAttribute("points", pts.map(pt => pt.join(",")).join(" "));
+        return p;
+       }
+       if (shape === "pentagon") {
+        const p = document.createElementNS(ns, "polygon");
+        const pts = [];
+        for (let i = 0; i < 5; i++) {
+         const a = (Math.PI * 2 / 5) * i - Math.PI / 2;
+         pts.push([Math.cos(a) * size, Math.sin(a) * size]);
+        }
+        p.setAttribute("points", pts.map(pt => pt.join(",")).join(" "));
+        return p;
+       }
+       if (shape === "cross" || shape === "plus") {
+        const p = document.createElementNS(ns, "polygon");
+        const s = size;
+        const t = size * 0.35;
+        p.setAttribute("points", `${-t},${-s} ${t},${-s} ${t},${-t} ${s},${-t} ${s},${t} ${t},${t} ${t},${s} ${-t},${s} ${-t},${t} ${-s},${t} ${-s},${-t} ${-t},${-t}`);
+        return p;
+       }
+       if (shape === "parallelogram") {
+        const p = document.createElementNS(ns, "polygon");
+        const s = size;
+        p.setAttribute("points", `${-s * 0.6},${-s * 0.6} ${s * 1.2},${-s * 0.6} ${s * 0.6},${s * 0.6} ${-s * 1.2},${s * 0.6}`);
+        return p;
+       }
+       if (shape === "trapezoid") {
+        const p = document.createElementNS(ns, "polygon");
+        const s = size;
+        p.setAttribute("points", `${-s * 0.6},${-s * 0.6} ${s * 0.6},${-s * 0.6} ${s},${s * 0.6} ${-s},${s * 0.6}`);
+        return p;
+       }
+       if (shape === "sensor" || shape === "iot") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "circle");
+        body.setAttribute("cx", 0);
+        body.setAttribute("cy", 0);
+        body.setAttribute("r", size * 0.7);
+        g.appendChild(body);
+        const ant = document.createElementNS(ns, "line");
+        ant.setAttribute("x1", 0);
+        ant.setAttribute("y1", -size * 0.7);
+        ant.setAttribute("x2", 0);
+        ant.setAttribute("y2", -size);
+        ant.style.stroke = "currentColor";
+        ant.style.strokeWidth = "2";
+        g.appendChild(ant);
+        const tip = document.createElementNS(ns, "circle");
+        tip.setAttribute("cx", 0);
+        tip.setAttribute("cy", -size);
+        tip.setAttribute("r", size * 0.1);
+        tip.style.fill = "#4ade80";
+        g.appendChild(tip);
+        return g;
+       }
+       if (shape === "pi" || shape === "sbc" || shape === "raspberry") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size);
+        body.setAttribute("y", -size * 0.65);
+        body.setAttribute("width", size * 2);
+        body.setAttribute("height", size * 1.3);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        for (let i = 0; i < 10; i++) {
+         const pin = document.createElementNS(ns, "rect");
+         pin.setAttribute("x", -size * 0.85 + i * size * 0.19);
+         pin.setAttribute("y", -size * 0.8);
+         pin.setAttribute("width", size * 0.08);
+         pin.setAttribute("height", size * 0.15);
+         pin.style.fill = "#facc15";
+         g.appendChild(pin);
+        }
+        const port = document.createElementNS(ns, "rect");
+        port.setAttribute("x", size * 0.6);
+        port.setAttribute("y", -size * 0.2);
+        port.setAttribute("width", size * 0.35);
+        port.setAttribute("height", size * 0.4);
+        port.style.fill = "#1e293b";
+        g.appendChild(port);
+        return g;
+       }
+       if (shape === "api" || shape === "endpoint") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.9);
+        body.setAttribute("y", -size * 0.7);
+        body.setAttribute("width", size * 1.8);
+        body.setAttribute("height", size * 1.4);
+        body.setAttribute("rx", 6);
+        g.appendChild(body);
+        const left = document.createElementNS(ns, "text");
+        left.setAttribute("x", -size * 0.5);
+        left.setAttribute("y", size * 0.15);
+        left.setAttribute("font-size", size * 0.9);
+        left.setAttribute("fill", "#4ade80");
+        left.setAttribute("font-family", "monospace");
+        left.textContent = "{";
+        g.appendChild(left);
+        const right = document.createElementNS(ns, "text");
+        right.setAttribute("x", size * 0.15);
+        right.setAttribute("y", size * 0.15);
+        right.setAttribute("font-size", size * 0.9);
+        right.setAttribute("fill", "#4ade80");
+        right.setAttribute("font-family", "monospace");
+        right.textContent = "}";
+        g.appendChild(right);
+        return g;
+       }
+       if (shape === "queue" || shape === "message") {
+        const g = document.createElementNS(ns, "g");
+        for (let i = 2; i >= 0; i--) {
+         const card = document.createElementNS(ns, "rect");
+         card.setAttribute("x", -size * 0.7 + i * 4);
+         card.setAttribute("y", -size * 0.5 + i * 4);
+         card.setAttribute("width", size * 1.4);
+         card.setAttribute("height", size * 0.8);
+         card.setAttribute("rx", 3);
+         card.style.opacity = 1 - i * 0.25;
+         g.appendChild(card);
+        }
+        return g;
+       }
+       if (shape === "lambda" || shape === "function") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.8);
+        body.setAttribute("y", -size * 0.8);
+        body.setAttribute("width", size * 1.6);
+        body.setAttribute("height", size * 1.6);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        const lambda = document.createElementNS(ns, "text");
+        lambda.setAttribute("x", 0);
+        lambda.setAttribute("y", size * 0.2);
+        lambda.setAttribute("font-size", size * 1.2);
+        lambda.setAttribute("fill", "#f59e0b");
+        lambda.setAttribute("text-anchor", "middle");
+        lambda.setAttribute("font-family", "serif");
+        lambda.textContent = "λ";
+        g.appendChild(lambda);
+        return g;
+       }
+       if (shape === "bucket" || shape === "s3") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "path");
+        body.setAttribute("d", `M ${-size * 0.8} ${-size * 0.7} L ${-size * 0.6} ${size * 0.8} Q ${-size * 0.5} ${size} 0 ${size} Q ${size * 0.5} ${size} ${size * 0.6} ${size * 0.8} L ${size * 0.8} ${-size * 0.7} Z`);
+        g.appendChild(body);
+        const rim = document.createElementNS(ns, "ellipse");
+        rim.setAttribute("cx", 0);
+        rim.setAttribute("cy", -size * 0.7);
+        rim.setAttribute("rx", size * 0.8);
+        rim.setAttribute("ry", size * 0.25);
+        g.appendChild(rim);
+        return g;
+       }   
        const c = document.createElementNS(ns, "circle");
        c.setAttribute("r", size);
        return c;
@@ -4273,7 +5110,7 @@
            if (newText !== null && newText.trim()) {
             label.textContent = newText.trim();
             EDGE_LEGEND[color] = newText.trim();
-            saveEdgeLegend();
+            
            }
           }
           labelTapStart = null;
@@ -4288,7 +5125,7 @@
           label.classList.remove("editing");
           const text = label.textContent.trim() || "you can edit me too";
           EDGE_LEGEND[color] = text;
-          saveEdgeLegend();
+          
          });
          label.addEventListener("keydown", (e) => {
           if (e.key === "Enter") {
@@ -4485,6 +5322,7 @@
            rectEl.style.cursor = "move";
            
           rectEl.addEventListener("click", (e) => {
+		  if (isViewOnly()) return;
              if (rectDrawMode) return;
              e.stopPropagation();
              currentRectId = rect.id;
@@ -4492,6 +5330,7 @@
            });
            
            rectEl.addEventListener("contextmenu", (e) => {
+		   if (isViewOnly()) return;
              e.preventDefault();
              e.stopPropagation();
              if (selectedRects.has(rect.id)) {
@@ -4564,6 +5403,7 @@
            let rectStartX, rectStartY;
            
          rectEl.addEventListener("mousedown", (e) => {
+		 if (isViewOnly()) return;
       if (rectDrawMode) return;
       e.preventDefault();
       e.stopPropagation();
@@ -5082,6 +5922,7 @@
            c.dataset.pointIndex = String(idx);
            
            c.addEventListener("mousedown", (e) => {
+		   if (isViewOnly()) return;
             e.preventDefault();
             e.stopPropagation();
             let dragging = true;
@@ -5361,6 +6202,7 @@
         g.addEventListener("contextmenu", (e) => {
          e.preventDefault();
          e.stopPropagation();
+         if (isViewOnly()) return;
          
          if (selectedNodes.has(id)) {
           selectedNodes.delete(id);
@@ -5396,6 +6238,7 @@
          if (tapLength < 300 && tapLength > 0 && lastTapNode === id) {
           e.preventDefault();
           e.stopPropagation();
+          if (isViewOnly()) return;
           
           if (selectedNodes.has(id)) {
            selectedNodes.delete(id);
@@ -5444,6 +6287,7 @@
         });
         
         g.addEventListener("mousedown", (e) => {
+		 if (isViewOnly()) return;
          if (e.button === 2) {
           return;
          }
@@ -5656,8 +6500,14 @@
         let touchStartX = 0;
         let touchStartY = 0;
         let touchMoved = false;
-       g.addEventListener("touchstart",
+        g.addEventListener("touchstart",
          (e) => {
+          if (isViewOnly()) {
+           touchStartTime = Date.now();
+           touchMoved = false;
+           e.stopPropagation();
+           return;
+          }
           if (NODE_DATA[id]?.locked) {
            return;
           }
@@ -5812,7 +6662,11 @@
       g.addEventListener("touchend", (e) => {
       const touchDuration = Date.now() - touchStartTime;
       if (!touchMoved && touchDuration < 400) {
-      claimTheImmortal(id);
+       if (isViewOnly()) {
+        handleViewOnlyClick(id, 'node');
+        return;
+       }
+       claimTheImmortal(id);
       }
       if (isDragging) {
       const draggedY = pos.y;
@@ -5837,6 +6691,10 @@
         g.style.cursor = "grab";
         g.addEventListener("click", (e) => {
          if (!isDragging) {
+          if (isViewOnly()) {
+           handleViewOnlyClick(id, 'node');
+           return;
+          }
           claimTheImmortal(id);
          }
         });
@@ -5886,6 +6744,7 @@
            });
            
            rectEl.addEventListener("contextmenu", (e) => {
+		   if (isViewOnly()) return;
              e.preventDefault();
              e.stopPropagation();
              if (selectedRects.has(rect.id)) {
@@ -5952,6 +6811,7 @@
            let rectStartX, rectStartY;
            
            rectEl.addEventListener("mousedown", (e) => {
+		   if (isViewOnly()) return;
       if (rectDrawMode) return;
       e.preventDefault();
       e.stopPropagation();
@@ -6042,6 +6902,7 @@
            let touchRectStartX, touchRectStartY;
            
            rectEl.addEventListener("touchstart", (e) => {
+		   if (isViewOnly()) return;
             if (rectDrawMode) return;
             e.preventDefault();
             e.stopPropagation();
@@ -6215,6 +7076,7 @@
           let textStartX, textStartY;
           
           textEl.addEventListener("mousedown", (e) => {
+		  if (isViewOnly()) return;
       if (textDrawMode) return;
       e.preventDefault();
       e.stopPropagation();
@@ -6307,6 +7169,7 @@
           let textTouchStartX = 0, textTouchStartY = 0;
           
           textEl.addEventListener("touchstart", (e) => {
+		   if (isViewOnly()) return;
            if (textDrawMode) return;
            if (e.touches.length !== 1) return;
            
@@ -6356,6 +7219,7 @@
           }, { passive: false });
           
           textEl.addEventListener("contextmenu", (e) => {
+		  if (isViewOnly()) return;
            e.preventDefault();
            e.stopPropagation();
            if (selectedTexts.has(textItem.id)) {
@@ -6515,6 +7379,7 @@
       }
       
       function claimTheImmortal(id) {
+	   if (isViewOnly()) return;
 	   if (!NODE_DATA[id]) return;
        currentNodeId = id;
        currentEdgeId = null;
@@ -6735,6 +7600,7 @@
       }
       
       function selectTheConnection(id) {
+	   if (isViewOnly()) return;
        currentEdgeId = id;
        currentNodeId = null;
        currentRectId = null;
@@ -6821,7 +7687,7 @@
          e.stopPropagation();
          challengeTheImmortal("Delete this line note?", () => {
           edge.notes.splice(i, 1);
-          saveEdgeData();
+          
           selectTheConnection(id);
          });
         });
@@ -6834,7 +7700,7 @@
          txt.classList.remove("editing");
          txt.contentEditable = false;
          edge.notes[i] = txt.textContent;
-         saveEdgeData();
+         
         });
         li.append(txt, del);
         list.appendChild(li);
@@ -6985,6 +7851,17 @@
       document.getElementById("rect-panel").style.display = "none";
       forgeTheTopology();
       }
+	  if (isViewOnly()) {
+         document.body.classList.remove("view-only-inspect");
+         document.getElementById("node-panel").style.display = "none";
+         document.getElementById("edge-panel").style.display = "none";
+        }
+        if (isEmptySpace && e.shiftKey && e.button === 0) {
+         if (isViewOnly()) return;
+         e.preventDefault();
+         startSelection(e);
+         return;
+        }
         if (isEmptySpace || e.button === 2 || e.button === 1) {
          e.preventDefault();
          canvasState.isPanning = true;
@@ -7033,6 +7910,10 @@
          passive: false
         }, );
        document.addEventListener("mousemove", (e) => {
+        if (isSelecting) {
+         updateSelection(e);
+         return;
+        }
         if (!canvasState.isPanning) return;
         const dx = e.clientX - canvasState.panStartX;
         const dy = e.clientY - canvasState.panStartY;
@@ -7066,6 +7947,9 @@
         updateViewBox();
        });
        document.addEventListener("mouseup", () => {
+        if (isSelecting) {
+         endSelection();
+        }
         if (canvasState.isPanning) {
          canvasState.isPanning = false;
          viewport.classList.remove("panning");
@@ -7324,7 +8208,7 @@
        const v = parseInt(document.getElementById("edge-width").value, 10);
        if (Number.isNaN(v) || v <= 0) return;
        edge.width = v;
-       saveEdgeData();
+       
        const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`, );
        if (el) el.style.strokeWidth = v;
       });
@@ -7334,7 +8218,7 @@
        if (!edge) return;
        const color = document.getElementById("edge-color").value;
        edge.color = color;
-       saveEdgeData();
+       
        const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`, );
        if (el) el.style.stroke = color;
        forgeTheLegend();
@@ -7344,7 +8228,7 @@
        const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
        if (!edge) return;
        edge.direction = document.getElementById("edge-direction").value;
-       saveEdgeData();
+       
        forgeTheTopology();
        selectTheConnection(currentEdgeId);
       });
@@ -7353,7 +8237,7 @@
        const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
        if (!edge) return;
        edge.lineStyle = document.getElementById("edge-line-style").value;
-       saveEdgeData();
+       
        forgeTheTopology();
        selectTheConnection(currentEdgeId);
       });
@@ -7365,7 +8249,7 @@
        const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
        if (!edge) return;
        edge.notes.push(txt);
-       saveEdgeData();
+       
        newEdgeNoteInput.value = "";
        selectTheConnection(currentEdgeId);
       });
@@ -7376,6 +8260,7 @@
       });
 	  
       function selectTheRect(id) {
+	  if (isViewOnly()) return;
       currentRectId = id;
       currentNodeId = null;
       currentEdgeId = null;
@@ -7398,6 +8283,7 @@
       document.getElementById("rect-border-color").value = rect.borderColor || rect.color || "#f97316";
       document.getElementById("rect-border-width").value = rect.borderWidth !== undefined ? rect.borderWidth : 2;
       document.getElementById("rect-style-select").value = rect.style || "filled";
+      document.getElementById("rect-line-style").value = rect.lineStyle || "solid";
       document.getElementById("rect-fill-row").style.display = (rect.style === "outlined") ? "none" : "flex";
       
       const list = document.getElementById("rect-notes");
@@ -7458,6 +8344,15 @@
       selectTheRect(currentRectId);
       });
       
+      document.getElementById("rect-line-style").addEventListener("change", () => {
+      if (!currentRectId) return;
+      pushUndo("change zone line style");
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      rect.lineStyle = document.getElementById("rect-line-style").value;
+      forgeTheTopology();
+      });
+      
       document.getElementById("add-rect-note").addEventListener("click", () => {
       const input = document.getElementById("new-rect-note");
       const txt = input.value.trim();
@@ -7491,7 +8386,7 @@
         () => {
          EDGE_DATA.list = EDGE_DATA.list.filter(
           (e) => e.id !== currentEdgeId, );
-         saveEdgeData();
+         
          currentEdgeId = null;
          forgeTheTopology();
          const availableNodes = Object.keys(NODE_DATA);
@@ -7528,7 +8423,7 @@
         lineStyle: "solid",
        };
        EDGE_DATA.list.push(newEdge);
-       saveEdgeData();
+       
        forgeTheTopology();
        claimTheImmortal(currentNodeId);
       });
@@ -7689,7 +8584,7 @@
          points: pointsCopy,
          notes: [],
         });
-        saveEdgeData();
+        
         freeDrawPoints = [];
         if (freeDrawPolylineEl) {
          freeDrawPolylineEl.remove();
@@ -8165,6 +9060,7 @@
       }, { passive: false });
       
       function showTextPanel(textId) {
+	  if (isViewOnly()) return;
        currentTextId = textId;
        currentNodeId = null;
        currentEdgeId = null;
@@ -8370,10 +9266,46 @@
        document.getElementById("rack-frame-stroke").value = PAGE_STATE.rackFrameStroke || "#4fd1c5";
        document.getElementById("rack-line-color").value = PAGE_STATE.rackLineColor || "#475569";
        document.getElementById("rack-text-color").value = PAGE_STATE.rackTextColor || "#4fd1c5";
+	   document.getElementById("view-only-mode").checked = PAGE_STATE.viewOnly === true;
        settingsModal.classList.add("active");
       });
       settingsClose.addEventListener("click", () => {
        settingsModal.classList.remove("active");
+      });
+	  document.getElementById("view-only-mode").addEventListener("change", (e) => {
+       PAGE_STATE.viewOnly = e.target.checked;
+       
+       if (e.target.checked) {
+        document.getElementById("node-panel").style.display = "none";
+        document.getElementById("edge-panel").style.display = "none";
+        document.getElementById("text-panel").style.display = "none";
+        document.getElementById("rect-panel").style.display = "none";
+        document.getElementById("topology-toolbar").style.setProperty('display', 'none', 'important');
+        document.getElementById("draw-toolbar").style.setProperty('display', 'none', 'important');      
+        currentNodeId = null;
+        currentEdgeId = null;
+        currentRectId = null;
+        currentTextId = null;
+        selectedNodes.clear();
+        selectedRects.clear();
+        selectedTexts.clear();
+        selectedEdges.clear();   
+        const bulkToolbar = document.getElementById("bulk-toolbar");
+        const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+        if (bulkToolbar) bulkToolbar.style.display = "none";
+        if (bulkToolbarMobile) bulkToolbarMobile.style.display = "none";
+        document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active", "selected"));
+        document.querySelectorAll(".edge").forEach(e => e.classList.remove("active"));
+        document.querySelectorAll(".rect-group").forEach(r => r.classList.remove("active"));
+        document.querySelectorAll(".text-element").forEach(t => t.classList.remove("active"));
+       }
+       
+       wieldThePower();
+       if (!e.target.checked) {
+        updateDrawToolbarVisibility();
+        updateTopologyToolbarVisibility();
+       }
+       forgeTheTopology();
       });
       settingsModal.addEventListener("click", (e) => {
        if (e.target === settingsModal) {
@@ -8426,6 +9358,22 @@
        PAGE_STATE.tagBorder = e.target.value;
        wieldThePower();
        forgeTheTopology();
+      });
+	  document.getElementById("selection-fill-color").addEventListener("input", function() {
+       selectionBoxStyle.fillColor = this.value;
+      });
+      document.getElementById("selection-fill-opacity").addEventListener("input", function() {
+       selectionBoxStyle.fillOpacity = parseFloat(this.value);
+       document.getElementById("selection-fill-opacity-val").textContent = Math.round(this.value * 100) + "%";
+      });
+      document.getElementById("selection-stroke-color").addEventListener("input", function() {
+       selectionBoxStyle.strokeColor = this.value;
+      });
+      document.getElementById("selection-stroke-width").addEventListener("input", function() {
+       selectionBoxStyle.strokeWidth = parseInt(this.value) || 2;
+      });
+      document.getElementById("selection-stroke-style").addEventListener("change", function() {
+       selectionBoxStyle.strokeDasharray = this.value;
       });
       document.getElementById("input-bg-color").addEventListener("input", (e) => {
        PAGE_STATE.inputBg = e.target.value;
@@ -8710,6 +9658,7 @@
        a.click();
        document.body.removeChild(a);
        URL.revokeObjectURL(url);
+       logAuditEvent("export", `Exported JSON: ${a.download}`);
       });
       document.getElementById("import-data-btn").addEventListener("click", () => {
        document.getElementById("import-data-file").click();
@@ -8762,8 +9711,17 @@
         if (data.encryptedSections) {
          encryptedSections = data.encryptedSections;
         }
+        if (data.auditLog && Array.isArray(data.auditLog)) {
+         auditLog = data.auditLog;
+         try {
+           localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
+         } catch (e) {
+           console.warn("Failed to sync audit log to localStorage:", e);
+         }
+        }
         forgeTheTopology();
         forgeTheLegend();
+		logAuditEvent("import", `Imported JSON: ${file.name} (${Object.keys(data.nodeData).length} nodes, ${data.edgeData.list?.length || 0} connections)`);
         updateViewBox();
         const nodeIds = Object.keys(NODE_DATA);
         if (nodeIds.length > 0) {
@@ -8908,6 +9866,7 @@
         documentTabs: documentTabs,
         currentTabIndex: currentTabIndex,
         encryptedSections: encryptedSections,
+        auditLog: auditLog,
        };
       }
       
@@ -8916,6 +9875,12 @@
        const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
        if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
        const clone = document.documentElement.cloneNode(true);
+       ["edge-legend-mini", "minimap-mini", "draw-toolbar-mini", "topology-toolbar-mini"].forEach(id => {
+        const all = clone.querySelectorAll("#" + id);
+        for (let i = 1; i < all.length; i++) {
+         all[i].remove();
+        }
+       });
        const nodeScript = clone.querySelector("#nodes-json");
        if (nodeScript) {
         nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
@@ -8956,9 +9921,15 @@
        }
        const canvasHintEl = document.getElementById("canvas-hint");
        const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
-       if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
-       
+       if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;    
        const clone = document.documentElement.cloneNode(true);
+       ["edge-legend-mini", "minimap-mini", "draw-toolbar-mini", "topology-toolbar-mini"].forEach(id => {
+        const all = clone.querySelectorAll("#" + id);
+        for (let i = 1; i < all.length; i++) {
+         all[i].remove();
+        }
+       });
+       
        const nodeScript = clone.querySelector("#nodes-json");
        if (nodeScript) {
         if (encryptEnabled) {
@@ -9017,16 +9988,47 @@
        
        if (action) {
         const actionTypeMap = {
-          "create node": "node",
-          "delete node": "node",
-          "edit": "node",
-          "create rack": "rack",
-          "add connection": "connection",
-          "delete connection": "connection",
-          "style change": "style",
-          "change layer": "layer",
-          "change assigned rack": "rack",
-        };
+  "create node": "node",
+  "delete node": "node",
+  "add node": "node",
+  "edit": "node",
+  "clone node": "node",
+  "paste node": "node",
+  "move nodes": "node",
+  "nudge": "node",
+  "align nodes": "node",
+  "distribute nodes": "node",
+  "snap to grid": "node",
+  "toggle group": "node",
+  "toggle lock": "node",
+  "create rack": "rack",
+  "add rack": "rack",
+  "edit rack": "rack",
+  "edit mac": "rack",
+  "edit U height": "rack",
+  "change rack capacity": "rack",
+  "change assigned rack": "rack",
+  "add connection": "connection",
+  "delete connection": "connection",
+  "delete edge": "connection",
+  "clone edge": "connection",
+  "paste edge": "connection",
+  "style change": "style",
+  "change layer": "layer",
+  "add text": "text",
+  "edit text": "text",
+  "delete text": "text",
+  "clone text": "text",
+  "paste text": "text",
+  "draw zone": "zone",
+  "delete zone": "zone",
+  "delete rect": "zone",
+  "clone rect": "zone",
+  "paste rect": "zone",
+  "change zone line style": "zone",
+  "delete selected": "bulk",
+  "clone selected": "bulk",
+};
         
         const type = actionTypeMap[action] || "node";
         logAuditEvent(type, action);
@@ -9040,10 +10042,12 @@
        const previousState = undoStack.pop();
        restoreState(previousState);
        updateUndoButtons();
+       logAuditEvent("undo", "Undo action performed");
       }
       
       function redo() {
        if (redoStack.length === 0) return;
+       logAuditEvent("redo", "Redo action performed");
        const currentState = captureState();
        undoStack.push(currentState);
        const nextState = redoStack.pop();
@@ -9175,17 +10179,9 @@
        if (fromPortInput && toPortInput) {
         edge.fromPort = fromPortInput.value || "";
         edge.toPort = toPortInput.value || "";
-        saveEdgeData();
+        
         forgeTheTopology();
        }
-      }
-      
-      function selectNode(nodeId, addToSelection = false) {
-       if (!addToSelection) {
-        clearSelection();
-       }
-       selectedNodes.add(nodeId);
-       updateNodeSelection();
       }
       
       function clearSelection() {
@@ -9244,6 +10240,16 @@
       }
       
       function updateNodeSelection() {
+       if (isViewOnly()) {
+        selectedNodes.clear();
+        selectedRects.clear();
+        selectedTexts.clear();
+        const bulkToolbar = document.getElementById("bulk-toolbar");
+        const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+        if (bulkToolbar) bulkToolbar.style.display = "none";
+        if (bulkToolbarMobile) bulkToolbarMobile.style.display = "none";
+        return;
+       }
        document.querySelectorAll(".node-group").forEach(node => {
         const nodeId = node.dataset.nodeId;
         if (selectedNodes.has(nodeId)) {
@@ -9321,7 +10327,7 @@
          TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== textId);
         });
         clearSelection();
-        saveEdgeData();
+        
         forgeTheTopology();
        });
       }
@@ -9342,12 +10348,13 @@
         clearSelection();
        }
        
-       if (!selectionRect) {
+       if (!selectionRect || !selectionRect.parentNode) {
         selectionRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        selectionRect.setAttribute("fill", "rgba(79, 209, 197, 0.1)");
-        selectionRect.setAttribute("stroke", "#4fd1c5");
-        selectionRect.setAttribute("stroke-width", "2");
-        selectionRect.setAttribute("stroke-dasharray", "5,5");
+        selectionRect.setAttribute("fill", selectionBoxStyle.fillColor);
+        selectionRect.setAttribute("fill-opacity", selectionBoxStyle.fillOpacity);
+        selectionRect.setAttribute("stroke", selectionBoxStyle.strokeColor);
+        selectionRect.setAttribute("stroke-width", selectionBoxStyle.strokeWidth);
+        selectionRect.setAttribute("stroke-dasharray", selectionBoxStyle.strokeDasharray);
         svg.appendChild(selectionRect);
        }
        selectionRect.style.display = "block";
@@ -9372,20 +10379,144 @@
        selectionRect.setAttribute("width", width);
        selectionRect.setAttribute("height", height);
        
+       const box = { x, y, width, height };
+       
        Object.entries(savedPositions).forEach(([nodeId, pos]) => {
-        if (pos.x >= x && pos.x <= x + width && pos.y >= y && pos.y <= y + height) {
+        const size = savedSizes[nodeId] || 50;
+        const halfSize = size / 2;
+        const nodeBox = { x: pos.x - halfSize, y: pos.y - halfSize, width: size, height: size };
+        if (boxesIntersect(box, nodeBox)) {
          selectedNodes.add(nodeId);
         } else if (!event.shiftKey) {
          selectedNodes.delete(nodeId);
         }
        });
-       updateNodeSelection();
+       
+      EDGE_DATA.list.forEach(edge => {
+        if (!edge.points || edge.points.length === 0) return;
+        for (let i = 0; i < edge.points.length - 1; i++) {
+         const p1 = edge.points[i];
+         const p2 = edge.points[i + 1];
+         if (lineIntersectsBox(p1.x, p1.y, p2.x, p2.y, box)) {
+          selectedEdges.add(edge.id);
+          return;
+         }
+        }
+        if (!event.shiftKey) {
+         selectedEdges.delete(edge.id);
+        }
+       });
+       
+       RECT_DATA.list.forEach(rect => {
+        const rectBox = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+        if (boxesIntersect(box, rectBox)) {
+         selectedRects.add(rect.id);
+        } else if (!event.shiftKey) {
+         selectedRects.delete(rect.id);
+        }
+       });
+       
+       TEXT_DATA.list.forEach(text => {
+        const fontSize = text.fontSize || 18;
+        const textBox = { x: text.x - 50, y: text.y - fontSize, width: 100, height: fontSize * 1.5 };
+        if (boxesIntersect(box, textBox)) {
+         selectedTexts.add(text.id);
+        } else if (!event.shiftKey) {
+         selectedTexts.delete(text.id);
+        }
+       });
+       
+       updateAllSelectionVisuals();
       }
       
       function endSelection() {
        isSelecting = false;
        if (selectionRect) {
         selectionRect.style.display = "none";
+       }
+      }
+      
+      function boxesIntersect(a, b) {
+       return !(a.x + a.width < b.x || b.x + b.width < a.x || a.y + a.height < b.y || b.y + b.height < a.y);
+      }
+      
+      function lineIntersectsBox(x1, y1, x2, y2, box) {
+       if (pointInBox(x1, y1, box) || pointInBox(x2, y2, box)) return true;
+       const lines = [
+        [box.x, box.y, box.x + box.width, box.y],
+        [box.x + box.width, box.y, box.x + box.width, box.y + box.height],
+        [box.x + box.width, box.y + box.height, box.x, box.y + box.height],
+        [box.x, box.y + box.height, box.x, box.y]
+       ];
+       for (const [bx1, by1, bx2, by2] of lines) {
+        if (linesIntersect(x1, y1, x2, y2, bx1, by1, bx2, by2)) return true;
+       }
+       return false;
+      }
+      
+      function pointInBox(x, y, box) {
+       return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height;
+      }
+      
+      function linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+       const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+       if (Math.abs(denom) < 0.0001) return false;
+       const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+       const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+       return ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1;
+      }
+      
+      function updateAllSelectionVisuals() {
+       document.querySelectorAll(".node-group").forEach(node => {
+        const nodeId = node.dataset.nodeId;
+        if (selectedNodes.has(nodeId)) {
+         node.classList.add("selected");
+        } else {
+         node.classList.remove("selected");
+        }
+       });
+       
+       document.querySelectorAll(".edge").forEach(edge => {
+        const edgeId = edge.dataset.edgeId;
+        if (selectedEdges.has(edgeId)) {
+         edge.style.filter = "drop-shadow(0 0 6px #4fd1c5)";
+        } else {
+         edge.style.filter = "";
+        }
+       });
+       
+       document.querySelectorAll(".rect-group rect").forEach(el => {
+        const rectId = el.closest(".rect-group")?.dataset?.rectId;
+        if (selectedRects.has(rectId)) {
+         el.style.filter = "drop-shadow(0 0 8px #4fd1c5)";
+        } else {
+         el.style.filter = "";
+        }
+       });
+       
+       document.querySelectorAll(".text-group, .text-element").forEach(el => {
+        const textId = el.dataset?.textId;
+        if (selectedTexts.has(textId)) {
+         el.style.filter = "drop-shadow(0 0 8px #4fd1c5)";
+        } else {
+         el.style.filter = "";
+        }
+       });
+       
+       const total = selectedNodes.size + selectedEdges.size + selectedRects.size + selectedTexts.size;
+       const bulkToolbar = document.getElementById("bulk-toolbar");
+       const bulkToolbarMobile = document.getElementById("bulk-toolbar-mobile");
+       const bulkCount = document.getElementById("bulk-count");
+       const bulkCountMobile = document.getElementById("bulk-count-mobile");
+       
+       if (total > 0) {
+        if (bulkToolbar) bulkToolbar.style.display = "flex";
+        if (bulkToolbarMobile) bulkToolbarMobile.style.display = "flex";
+        if (bulkCount) bulkCount.textContent = total;
+        if (bulkCountMobile) bulkCountMobile.textContent = total;
+       } else {
+        if (bulkToolbar) bulkToolbar.style.display = "none";
+        if (bulkToolbarMobile) bulkToolbarMobile.style.display = "none";
        }
       }
       
@@ -9914,7 +11045,7 @@
          pushUndo("paste edge");
          const newEdge = { ...clipboard.data, id: "edge-" + Date.now() };
          EDGE_DATA.list.push(newEdge);
-         saveEdgeData();
+         
          forgeTheTopology();
          selectTheConnection(newEdge.id);
         } else if (clipboard.type === "rect") {
@@ -9946,7 +11077,7 @@
           delete savedStyles[currentNodeId];
           EDGE_DATA.list = EDGE_DATA.list.filter(e => e.from !== currentNodeId && e.to !== currentNodeId);
           currentNodeId = null;
-          saveEdgeData();
+          
           forgeTheTopology();
           document.getElementById("node-panel").style.display = "none";
          });
@@ -9955,7 +11086,7 @@
           pushUndo("delete edge");
           EDGE_DATA.list = EDGE_DATA.list.filter(e => e.id !== currentEdgeId);
           currentEdgeId = null;
-          saveEdgeData();
+          
           forgeTheTopology();
           document.getElementById("edge-panel").style.display = "none";
          });
@@ -10005,7 +11136,7 @@
           pushUndo("clone edge");
           const newEdge = { ...JSON.parse(JSON.stringify(edge)), id: "edge-" + Date.now() };
           EDGE_DATA.list.push(newEdge);
-          saveEdgeData();
+          
           forgeTheTopology();
           selectTheConnection(newEdge.id);
          }
@@ -10305,12 +11436,42 @@
       }
       
       function loadAuditLog() {
+        let embeddedLog = [];
+        let localLog = [];
+        try {
+          const stateScript = document.getElementById("topology-state");
+          if (stateScript) {
+            const stateData = JSON.parse(stateScript.textContent);
+            if (stateData.auditLog && Array.isArray(stateData.auditLog)) {
+              embeddedLog = stateData.auditLog;
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to load embedded audit log:", e);
+        }
         try {
           const stored = localStorage.getItem(AUDIT_STORAGE_KEY);
-          auditLog = stored ? JSON.parse(stored) : [];
+          if (stored) {
+            localLog = JSON.parse(stored);
+          }
         } catch (e) {
-          console.warn("Failed to load audit log:", e);
-          auditLog = [];
+          console.warn("Failed to load localStorage audit log:", e);
+        }
+        const merged = [...embeddedLog, ...localLog];
+        const seen = new Set();
+        auditLog = merged.filter(entry => {
+          const key = entry.timestamp + entry.description;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }).sort((a, b) => b.timestamp - a.timestamp);
+        if (auditLog.length > MAX_AUDIT_ENTRIES) {
+          auditLog = auditLog.slice(0, MAX_AUDIT_ENTRIES);
+        }
+        try {
+          localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
+        } catch (e) {
+          console.warn("Failed to sync audit log:", e);
         }
       }
       
@@ -10508,59 +11669,6 @@
       let rafId = null;
       let lastRender = 0;
       const RENDER_THROTTLE = 16;
-      
-      function optimizedForgeTheTopology() {
-        if (rafId) return;
-        
-        rafId = requestAnimationFrame((timestamp) => {
-          if (timestamp - lastRender < RENDER_THROTTLE) {
-            rafId = requestAnimationFrame(optimizedForgeTheTopology);
-            return;
-          }
-          
-          lastRender = timestamp;
-          rafId = null;
-          
-          if (cullOffscreenNodes && Object.keys(NODE_DATA).length > 100) {
-            cullOffscreenElements();
-          }
-          
-          forgeTheTopology();
-          
-          if (Date.now() - lastMinimapUpdate > 500) {
-            updateMinimapOptimized();
-            lastMinimapUpdate = Date.now();
-          }
-        });
-      }
-      
-      function cullOffscreenElements() {
-        const viewX = canvasState.panX;
-        const viewY = canvasState.panY;
-        const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-        const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-        
-        Object.keys(NODE_DATA).forEach(id => {
-          const pos = savedPositions[id];
-          if (!pos) return;
-          
-          const nodeEl = document.querySelector(`[data-node-id="${id}"]`);
-          if (!nodeEl) return;
-          
-          const isVisible = (
-            pos.x + 100 >= viewX &&
-            pos.x - 100 <= viewX + viewWidth &&
-            pos.y + 100 >= viewY &&
-            pos.y - 100 <= viewY + viewHeight
-          );
-          
-          nodeEl.style.display = isVisible ? "" : "none";
-        });
-      }
-      
-      function updateMinimapOptimized() {
-        minimapNeedsUpdate = true;
-      }
       
       function setupDragToCreate() {
         const addNodeBtn = document.getElementById("add-node-btn");
@@ -11055,6 +12163,7 @@
       }
       
       addNodeBtn.addEventListener("click", () => {
+	  if (isViewOnly()) return;
        document.getElementById("new-node-name").value = "";
        document.getElementById("new-node-ip").value = "";
        document.getElementById("new-node-tags").value = "";
@@ -11070,6 +12179,7 @@
       
       if (addRackBtn && addRackModal) {
        addRackBtn.addEventListener("click", () => {
+	   if (isViewOnly()) return;
         document.getElementById("new-rack-name").value = "";
         document.getElementById("new-rack-ip").value = "";
         document.getElementById("new-rack-tags").value = "";
@@ -11266,6 +12376,7 @@
        savedPositions = {};
        savedSizes = {};
        savedStyles = {};
+       logAuditEvent("clear", "Cleared all data from canvas");
        clearAllModal.classList.remove("active");
        forgeTheTopology();
        document.getElementById("node-panel").style.display = "none";

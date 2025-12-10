@@ -8,6 +8,7 @@
 | `Tab` | Cycle to next node in current view |
 | `Shift + Tab` | Cycle to previous node in current view |
 | `F` | Focus camera on selected node(s) with auto zoom |
+| `Shift + Click/Drag` | Multiple Select (marquee selection) |
 
 ## Node Management
 | Shortcut | Action |

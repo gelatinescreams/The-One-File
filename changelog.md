@@ -1,9 +1,37 @@
 ### CHANGE LOG
-*Thank you to Discord testers!!*
+
+* **Getting closer to 4.0 Stable!**
+
+## Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
+
+* **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom**
+* * Click or tap any canvas item five times to inspect its details while in View Only Mode
+* **Upgraded and fixed the Audit log.** Moved it to the stored JSON. Audit log now transfers with the save!
+* * Added smart migration to merge old localStorage audit with new JSON storage
+* **Added new core shapes to both versions.**
+* **New desktop mutli entity select option added.** #21
+* * Hold shift and click+drag on empty canvas to select multiple items at once
+* * Selection box colors can be customized in Settings
+
+## Version 3.9.7 : 12/9/25 Squashing Bugs
+
+* **Special thanks to @mitchplze for testing and reporting on some of these fixes**
+* **Bug Fixes**
+* * Fixed duplicate buttons appearing in saved files after multiple saves
+* * Fixed toolbars staying in desktop layout when resizing window to mobile size
+* * Fixed duplicate import button in Settings
+* * Removed unused code to reduce file size
+* * Zone line style (solid, dashed, dotted) can now be changed after creation. #20
+
+* **Networkening Edition Fixes:**
+* * Dropdown now shows "Custom Icon" when a web icon is selected. #19
+* * Switching to any core shape automatically clears the web icon #19
+* * Web icons keep their original colors until you change them #19
+* * Fixed web icon colors persisting when selecting a new icon. New icons now display their natural colors instead of inheriting previous custom colors. #19
+* * Fixed selfh.st icon search to only show icons that have SVG versions available. (for editability) #19
 
 ## Version 3.9.6 : 12/8/25 Rack canvas fixes
 
-* **Getting closer to 4.0 Stable!**
 * **Can now view and edit nodes that are inside a given rack just by selecting a rack and using the sidebar / mobile footer**
 * **Updated all keyboard shortcuts to work with new canvas draw tools**
   * Fixed a bug where cloning racks with nodes inside would not clone the nodes

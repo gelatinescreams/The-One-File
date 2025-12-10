@@ -13,19 +13,18 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-## Version 3.9.6 : 12/8/25
+## Version 3.9.8 : 12/10/25
 
 * **Getting closer to 4.0 Stable!**
-* **NEW 3.9.6** Rack enhancements and fixes. See all changes in [changelog.md](changelog.md)
-* **NEW 3.9.5** The Styling Update! Added all available styling options to settings [changelog.md](changelog.md)
-* **NEW 3.9.4** Squashing bugs. See changes in the [changelog.md](changelog.md)
-* **NEW 3.9.3** Mobile fixes. See changes in the [changelog.md](changelog.md)
-* **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
-* **NEW 3.9.2** Squashing bugs. See changes in the [changelog.md](changelog.md)
-* **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
-  * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
-* **NEW 3.9** General topology notes are now implemented. You can also encrypt per note.
-* **NEW 3.9** Snapshots are now implemeted. Auto save and manual save are available.
+* **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
+* * Click or tap any canvas item five times to inspect its details while in View Only Mode
+* **Upgraded and fixed the Audit log.** Moved it to the stored JSON. Audit log now transfers with the save!
+* * Added smart migration to merge old localStorage audit with new JSON storage
+* **Added new core shapes to both versions.**
+* **New desktop mutli entity select option added.**
+* * Hold shift and click+drag on empty canvas to select multiple items at once
+* * Selection box colors can be customized in Settings
+* **Squashing more bugs** #19 #20 #21 + more : Special thanks to @mitchplze
 * **See more changes in the [changelog.md](changelog.md)**
 
 # Demos
@@ -271,6 +270,7 @@ Instead of building another hosted application, I built a file.
 | `Escape` | Clear selection |
 | `Delete` | Delete selected item(s) |
 | `Scroll` | Zoom in/out |
+| `Shift + Click/Drag` | Multiple Select (marquee selection) |
 
 ### Mobile Gestures & Touch Controls
 

@@ -4109,7 +4109,8 @@
     "rackFrameFill": "#0f172a",
     "rackFrameStroke": "#4fd1c5",
     "rackLineColor": "#475569",
-    "rackTextColor": "#4fd1c5"
+    "rackTextColor": "#4fd1c5",
+    "viewOnly": false
   },
   "canvas": {
     "zoom": 0.9828345045578523,
@@ -8235,7 +8236,8 @@
         "rackFrameFill": "#0f172a",
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
-        "rackTextColor": "#4fd1c5"
+        "rackTextColor": "#4fd1c5",
+        "viewOnly": false
       }
     },
     {
@@ -8928,10 +8930,104 @@
         "rackFrameFill": "#0f172a",
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
-        "rackTextColor": "#4fd1c5"
+        "rackTextColor": "#4fd1c5",
+        "viewOnly": false
       }
     }
   ],
   "currentTabIndex": 0,
-  "encryptedSections": {}
+  "encryptedSections": {},
+  "auditLog": [
+    {
+      "timestamp": 1765402929770,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402922300,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-10.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402914493,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402910921,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402904206,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402899387,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402888416,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402884873,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402878108,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402866440,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402865008,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402860428,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402858103,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    }
+  ]
 }
