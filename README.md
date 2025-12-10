@@ -13,7 +13,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version 3.9.8.1 : 12/10/25
+### Version 3.9.9 : 12/10/25
 
 * **Getting closer to 4.0 Stable!**
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom

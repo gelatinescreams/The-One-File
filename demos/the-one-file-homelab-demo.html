@@ -8421,28 +8421,28 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765404719559,
+      "timestamp": 1765408208744,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765404714266,
+      "timestamp": 1765408203626,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765404699121,
+      "timestamp": 1765408198170,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765404696637,
+      "timestamp": 1765408168075,
       "type": "import",
       "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
       "details": {},
@@ -8784,111 +8784,143 @@
       return bytes;
       }
       
-      function ensureLegendMiniButton() {
-       if (legendMiniBtn) return legendMiniBtn;
-	   const existing = document.getElementById("edge-legend-mini");
-       if (existing) { legendMiniBtn = existing; return existing; }
-       const panel = document.querySelector(".topology-panel");
-       if (!panel) return null;
-       const btn = document.createElement("button");
-       btn.type = "button";
-       btn.id = "edge-legend-mini";
-       btn.className = "legend-mini-btn";
-       btn.textContent = "Legend";
-       btn.style.bottom = "10px";
-       const handleClick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        legendCollapsed = false;
-        updateLegendVisibility();
-       };
-       btn.addEventListener("click", handleClick);
-       btn.addEventListener("touchend", handleClick);
-       panel.appendChild(btn);
-       legendMiniBtn = btn;
-       return btn;
-      }
-      
-      function ensureMinimapMiniButton() {
-       if (minimapMiniBtn) return minimapMiniBtn;
-	   const existing = document.getElementById("minimap-mini");
-       if (existing) { minimapMiniBtn = existing; return existing; }
-       const panel = document.querySelector(".topology-panel");
-       if (!panel) return null;
-       const btn = document.createElement("button");
-       btn.type = "button";
-       btn.id = "minimap-mini";
-       btn.className = "legend-mini-btn";
-       btn.textContent = "Map";
-       btn.style.right = "10px";
-       btn.style.left = "auto";
-       btn.style.bottom = "10px";
-       const handleClick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        minimapCollapsed = false;
-        updateMinimapVisibility();
-       };
-       btn.addEventListener("click", handleClick);
-       btn.addEventListener("touchend", handleClick);
-       panel.appendChild(btn);
-       minimapMiniBtn = btn;
-       return btn;
-      }
-      
-      function ensureDrawToolbarMiniButton() {
-       if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
-	   const existing = document.getElementById("draw-toolbar-mini");
-       if (existing) { drawToolbarMiniBtn = existing; return existing; }
-       const panel = document.querySelector(".topology-panel");
-       if (!panel) return null;
-       const btn = document.createElement("button");
-       btn.type = "button";
-       btn.id = "draw-toolbar-mini";
-       btn.className = "legend-mini-btn";
-       btn.textContent = "Draw";
-       btn.style.top = "10px";
-       btn.style.left = "10px";
-       btn.style.right = "auto";
-       const handleClick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        drawToolbarCollapsed = false;
-        updateDrawToolbarVisibility();
-       };
-       btn.addEventListener("click", handleClick);
-       btn.addEventListener("touchend", handleClick);
-       panel.appendChild(btn);
-       drawToolbarMiniBtn = btn;
-       return btn;
-      }
-      
-      function ensureTopologyToolbarMiniButton() {
-       if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
-	   const existing = document.getElementById("topology-toolbar-mini");
-       if (existing) { topologyToolbarMiniBtn = existing; return existing; }
-       const panel = document.querySelector(".topology-panel");
-       if (!panel) return null;
-       const btn = document.createElement("button");
-       btn.type = "button";
-       btn.id = "topology-toolbar-mini";
-       btn.className = "legend-mini-btn";
-       btn.textContent = "Add Line";
-       btn.style.top = "10px";
-       btn.style.left = "auto";
-       btn.style.right = "40px";
-       const handleClick = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        topologyToolbarCollapsed = false;
-        updateTopologyToolbarVisibility();
-       };
-       btn.addEventListener("click", handleClick);
-       btn.addEventListener("touchend", handleClick);
-       panel.appendChild(btn);
-       topologyToolbarMiniBtn = btn;
-       return btn;
-      }
+			  function ensureLegendMiniButton() {
+		   if (legendMiniBtn) return legendMiniBtn;
+		   const handleClick = (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			legendCollapsed = false;
+			updateLegendVisibility();
+		   };
+		   const preventTouch = (e) => { e.preventDefault(); };
+		   const existing = document.getElementById("edge-legend-mini");
+		   if (existing) {
+			existing.addEventListener("click", handleClick);
+			existing.addEventListener("touchstart", preventTouch, { passive: false });
+			existing.addEventListener("touchend", handleClick);
+			legendMiniBtn = existing;
+			return existing;
+		   }
+		   const panel = document.querySelector(".topology-panel");
+		   if (!panel) return null;
+		   const btn = document.createElement("button");
+		   btn.type = "button";
+		   btn.id = "edge-legend-mini";
+		   btn.className = "legend-mini-btn";
+		   btn.textContent = "Legend";
+		   btn.style.bottom = "10px";
+		   btn.addEventListener("click", handleClick);
+		   btn.addEventListener("touchstart", preventTouch, { passive: false });
+		   btn.addEventListener("touchend", handleClick);
+		   panel.appendChild(btn);
+		   legendMiniBtn = btn;
+		   return btn;
+		}
+			  
+			  function ensureMinimapMiniButton() {
+		   if (minimapMiniBtn) return minimapMiniBtn;
+		   const handleClick = (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			minimapCollapsed = false;
+			updateMinimapVisibility();
+		   };
+		   const preventTouch = (e) => { e.preventDefault(); };
+		   const existing = document.getElementById("minimap-mini");
+		   if (existing) {
+			existing.addEventListener("click", handleClick);
+			existing.addEventListener("touchstart", preventTouch, { passive: false });
+			existing.addEventListener("touchend", handleClick);
+			minimapMiniBtn = existing;
+			return existing;
+		   }
+		   const panel = document.querySelector(".topology-panel");
+		   if (!panel) return null;
+		   const btn = document.createElement("button");
+		   btn.type = "button";
+		   btn.id = "minimap-mini";
+		   btn.className = "legend-mini-btn";
+		   btn.textContent = "Map";
+		   btn.style.right = "10px";
+		   btn.style.left = "auto";
+		   btn.style.bottom = "10px";
+		   btn.addEventListener("click", handleClick);
+		   btn.addEventListener("touchstart", preventTouch, { passive: false });
+		   btn.addEventListener("touchend", handleClick);
+		   panel.appendChild(btn);
+		   minimapMiniBtn = btn;
+		   return btn;
+		}
+			  
+			  function ensureDrawToolbarMiniButton() {
+		   if (drawToolbarMiniBtn) return drawToolbarMiniBtn;
+		   const handleClick = (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			drawToolbarCollapsed = false;
+			updateDrawToolbarVisibility();
+		   };
+		   const preventTouch = (e) => { e.preventDefault(); };
+		   const existing = document.getElementById("draw-toolbar-mini");
+		   if (existing) {
+			existing.addEventListener("click", handleClick);
+			existing.addEventListener("touchstart", preventTouch, { passive: false });
+			existing.addEventListener("touchend", handleClick);
+			drawToolbarMiniBtn = existing;
+			return existing;
+		   }
+		   const panel = document.querySelector(".topology-panel");
+		   if (!panel) return null;
+		   const btn = document.createElement("button");
+		   btn.type = "button";
+		   btn.id = "draw-toolbar-mini";
+		   btn.className = "legend-mini-btn";
+		   btn.textContent = "Draw";
+		   btn.style.top = "10px";
+		   btn.style.left = "10px";
+		   btn.style.right = "auto";
+		   btn.addEventListener("click", handleClick);
+		   btn.addEventListener("touchstart", preventTouch, { passive: false });
+		   btn.addEventListener("touchend", handleClick);
+		   panel.appendChild(btn);
+		   drawToolbarMiniBtn = btn;
+		   return btn;
+		}
+			  
+			  function ensureTopologyToolbarMiniButton() {
+		   if (topologyToolbarMiniBtn) return topologyToolbarMiniBtn;
+		   const handleClick = (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			topologyToolbarCollapsed = false;
+			updateTopologyToolbarVisibility();
+		   };
+		   const preventTouch = (e) => { e.preventDefault(); };
+		   const existing = document.getElementById("topology-toolbar-mini");
+		   if (existing) {
+			existing.addEventListener("click", handleClick);
+			existing.addEventListener("touchstart", preventTouch, { passive: false });
+			existing.addEventListener("touchend", handleClick);
+			topologyToolbarMiniBtn = existing;
+			return existing;
+		   }
+		   const panel = document.querySelector(".topology-panel");
+		   if (!panel) return null;
+		   const btn = document.createElement("button");
+		   btn.type = "button";
+		   btn.id = "topology-toolbar-mini";
+		   btn.className = "legend-mini-btn";
+		   btn.textContent = "Add Line";
+		   btn.style.top = "10px";
+		   btn.style.left = "auto";
+		   btn.style.right = "40px";
+		   btn.addEventListener("click", handleClick);
+		   btn.addEventListener("touchstart", preventTouch, { passive: false });
+		   btn.addEventListener("touchend", handleClick);
+		   panel.appendChild(btn);
+		   topologyToolbarMiniBtn = btn;
+		   return btn;
+		}
       
       function updateToolbarStack() {
        if (!isMobileDevice()) return;

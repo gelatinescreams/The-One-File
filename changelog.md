@@ -3,6 +3,9 @@
 * **Getting closer to 4.0 Stable!**
 
 ##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
+* **Added back mobile core functions from updating the audit system
+
+##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
 * **fixed a bug where mutli select with shift on desktop counted all entities it crossed
 
 ##### Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
