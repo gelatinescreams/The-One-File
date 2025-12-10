@@ -8421,37 +8421,121 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765402847073,
+      "timestamp": 1765404719559,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765402835960,
+      "timestamp": 1765404714266,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765402833575,
-      "type": "import",
-      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765400447796,
+      "timestamp": 1765404699121,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765400442146,
+      "timestamp": 1765404696637,
       "type": "import",
       "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402929770,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402922300,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-10.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402914493,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402910921,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402904206,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402899387,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402888416,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402884873,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402878108,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402866440,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402865008,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402860428,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402858103,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
       "tab": "Corporate Site B"
     }
@@ -8506,6 +8590,10 @@
       let selectedTexts = new Set();
       let isSelecting = false;
       let selectionStart = null;
+      let preDragSelectedNodes = new Set();
+      let preDragSelectedEdges = new Set();
+      let preDragSelectedRects = new Set();
+      let preDragSelectedTexts = new Set();
       let selectionRect = null;
       let selectionBoxStyle = {
        fillColor: "#4fd1c5",
@@ -15938,6 +16026,11 @@
         clearSelection();
        }
        
+       preDragSelectedNodes = new Set(selectedNodes);
+       preDragSelectedEdges = new Set(selectedEdges);
+       preDragSelectedRects = new Set(selectedRects);
+       preDragSelectedTexts = new Set(selectedTexts);
+       
        if (!selectionRect || !selectionRect.parentNode) {
         selectionRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         selectionRect.setAttribute("fill", selectionBoxStyle.fillColor);
@@ -15977,7 +16070,7 @@
         const nodeBox = { x: pos.x - halfSize, y: pos.y - halfSize, width: size, height: size };
         if (boxesIntersect(box, nodeBox)) {
          selectedNodes.add(nodeId);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedNodes.has(nodeId)) {
          selectedNodes.delete(nodeId);
         }
        });
@@ -15992,7 +16085,7 @@
           return;
          }
         }
-        if (!event.shiftKey) {
+        if (!preDragSelectedEdges.has(edge.id)) {
          selectedEdges.delete(edge.id);
         }
        });
@@ -16001,7 +16094,7 @@
         const rectBox = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
         if (boxesIntersect(box, rectBox)) {
          selectedRects.add(rect.id);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedRects.has(rect.id)) {
          selectedRects.delete(rect.id);
         }
        });
@@ -16011,7 +16104,7 @@
         const textBox = { x: text.x - 50, y: text.y - fontSize, width: 100, height: fontSize * 1.5 };
         if (boxesIntersect(box, textBox)) {
          selectedTexts.add(text.id);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedTexts.has(text.id)) {
          selectedTexts.delete(text.id);
         }
        });

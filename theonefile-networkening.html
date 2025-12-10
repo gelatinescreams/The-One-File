@@ -3791,6 +3791,10 @@
       let selectedTexts = new Set();
       let isSelecting = false;
       let selectionStart = null;
+      let preDragSelectedNodes = new Set();
+      let preDragSelectedEdges = new Set();
+      let preDragSelectedRects = new Set();
+      let preDragSelectedTexts = new Set();
       let selectionRect = null;
       let isDraggingSelection = false;
       let dragSelectionStart = null;
@@ -11360,6 +11364,11 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         selectedRects.clear();
         selectedTexts.clear();
        }
+       
+       preDragSelectedNodes = new Set(selectedNodes);
+       preDragSelectedEdges = new Set(selectedEdges);
+       preDragSelectedRects = new Set(selectedRects);
+       preDragSelectedTexts = new Set(selectedTexts);
       }
       
       function updateSelection(event) {
@@ -11390,7 +11399,7 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const nodeBox = { x: pos.x - halfSize, y: pos.y - halfSize, width: size, height: size };
         if (boxesIntersect(box, nodeBox)) {
          selectedNodes.add(nodeId);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedNodes.has(nodeId)) {
          selectedNodes.delete(nodeId);
         }
        });
@@ -11405,7 +11414,7 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
           return;
          }
         }
-        if (!event.shiftKey) {
+        if (!preDragSelectedEdges.has(edge.id)) {
          selectedEdges.delete(edge.id);
         }
        });
@@ -11414,7 +11423,7 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const rectBox = { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
         if (boxesIntersect(box, rectBox)) {
          selectedRects.add(rect.id);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedRects.has(rect.id)) {
          selectedRects.delete(rect.id);
         }
        });
@@ -11424,7 +11433,7 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const textBox = { x: text.x - 50, y: text.y - fontSize, width: 100, height: fontSize * 1.5 };
         if (boxesIntersect(box, textBox)) {
          selectedTexts.add(text.id);
-        } else if (!event.shiftKey) {
+        } else if (!preDragSelectedTexts.has(text.id)) {
          selectedTexts.delete(text.id);
         }
        });

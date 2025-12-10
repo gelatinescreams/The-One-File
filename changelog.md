@@ -2,6 +2,9 @@
 
 * **Getting closer to 4.0 Stable!**
 
+##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
+* **fixed a bug where mutli select with shift on desktop counted all entities it crossed
+
 ##### Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
 
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
