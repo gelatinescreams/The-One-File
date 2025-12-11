@@ -1,7 +1,7 @@
 #### CHANGE LOG
 
 ##### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
-* **Upgraded and fixed the undo system
+* **Upgraded and fixed the undo system**
 * * Edit node name/IP now undoable
 * * Edit/delete/add tags now undoable
 * * Edit/delete notes now undoable
@@ -17,7 +17,7 @@
 * * Delete zone notes now undoable
 * * All 9 text properties (font-size, color, weight, style, align, decoration, bg-color, bg-enabled, opacity) now undoable
 
-* **Squashed Bugs
+* **Squashed Bugs**
 * * On mobile/tablet, users could still drag canvas elements (nodes, rectangles) even when View Only mode is enabled.
 * * Ctrl+A (Select All) now shows correct total count (was only counting nodes)
 * * (Shift multi select) Marquee select no longer accumulates between selections
