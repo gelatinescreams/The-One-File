@@ -13,9 +13,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version 3.9.9 : 12/10/25
+### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
 
-* **Getting closer to 4.0 Stable!**
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
 * * Click or tap any canvas item five times to inspect its details while in View Only Mode
 * **Upgraded and fixed the Audit log.** Moved it to the stored JSON. Audit log now transfers with the save!

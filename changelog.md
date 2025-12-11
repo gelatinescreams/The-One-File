@@ -1,8 +1,29 @@
 #### CHANGE LOG
 
-* **Getting closer to 4.0 Stable!**
+##### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
+* **Upgraded and fixed the undo system
+* * Edit node name/IP now undoable
+* * Edit/delete/add tags now undoable
+* * Edit/delete notes now undoable
+* * Resize node (slider + reset) now undoable
+* * Change shape now undoable
+* * Style changes (colors, fonts, borders) now undoable
+* * Edit width/color/direction/style now undoable
+* * Delete edge now undoable
+* * Edit/delete edge notes now undoable
+* * Drag custom edge points now undoable
+* * Edit color/border-color/border-width/style now undoable
+* * Delete zone now undoable
+* * Delete zone notes now undoable
+* * All 9 text properties (font-size, color, weight, style, align, decoration, bg-color, bg-enabled, opacity) now undoable
 
-##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
+* **Squashed Bugs
+* * On mobile/tablet, users could still drag canvas elements (nodes, rectangles) even when View Only mode is enabled.
+* * Ctrl+A (Select All) now shows correct total count (was only counting nodes)
+* * (Shift multi select) Marquee select no longer accumulates between selections
+* * Misc code refinement
+
+##### Version 3.9.9 : 12/10/25 Hotfix release for desktop multi select
 * **Added back mobile core functions from updating the audit system
 
 ##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
