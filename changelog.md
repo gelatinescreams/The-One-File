@@ -1,7 +1,14 @@
 #### CHANGE LOG
 
+### Version 3.9.9.2 : 12/11/25 Added Advanced Ports View
+* **Added New Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)** thanks to @mohacc2008-ctrl for the request
+* **Squashed Bugs**
+* * Fixed a bug where deleted tabs were not leaving the old canvas view
+* * Fixed a bug where foldables and some tablets showed desktop elements
+* * Started to refactor a few core elements for future updates
+
 ##### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
-* **Fixed Search [#24](https://github.com/gelatinescreams/The-One-File/issues/24) **
+* **Fixed Search [#24](https://github.com/gelatinescreams/The-One-File/issues/24)**
 * **Upgraded and fixed the undo system**
 * * Edit node name/IP now undoable
 * * Edit/delete/add tags now undoable

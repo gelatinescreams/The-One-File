@@ -1640,7 +1640,7 @@
               <div class="tab-stats">105 nodes • 65 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
+                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(0)" title="Delete tab">🗑️</button>
               </div>
             </div>
           
@@ -1649,7 +1649,7 @@
               <div class="tab-stats">11 nodes • 10 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(1)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
+                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(1)" title="Delete tab">🗑️</button>
               </div>
             </div>
           </div>
@@ -1697,6 +1697,25 @@
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="port-map-modal">
+      <div class="modal-content" style="max-width: 900px;">
+        <h3>Port Map</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">All connections with port assignments</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="text" id="port-map-search" placeholder="Search devices or ports..." style="flex: 1; min-width: 200px; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+          <select id="port-map-filter" style="padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+            <option value="all">All Connections</option>
+            <option value="with-ports">With Ports Only</option>
+            <option value="without-ports">Missing Ports</option>
+          </select>
+        </div>
+        <div id="port-map-table" style="max-height: 450px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-save" onclick="exportPortMap()">Export CSV</button>
+          <button class="btn-cancel" id="port-map-modal-close">Close</button>
         </div>
       </div>
     </div>
@@ -2528,6 +2547,7 @@
         <button id="tabs-btn" title="Manage document tabs" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Tabs</button>
         <button id="rollback-btn" title="View version history" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Snapshots</button>
         <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
+        <button id="port-map-btn" title="View all port connections" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Ports</button>
         <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
         <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
         <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
@@ -3064,7 +3084,7 @@
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Text</button>
         </div>
-     <details class="style-section">
+     <details class="style-section" open="">
           <summary>Page Layout</summary>
           <div class="style-content">
             <div style="padding: 12px; background: var(--panel-alt); border-radius: 6px; color: var(--text-soft); font-size: 13px; line-height: 1.6;">
@@ -9138,35 +9158,35 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765421311405,
+      "timestamp": 1765476591236,
       "type": "save",
       "description": "File saved: the-one-file.html",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765421308073,
+      "timestamp": 1765476587730,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765421303130,
+      "timestamp": 1765476582154,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765421290501,
+      "timestamp": 1765476574118,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765421286401,
+      "timestamp": 1765476557768,
       "type": "import",
       "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
@@ -9756,7 +9776,7 @@
           const coarse = matchMedia("(pointer: coarse)").matches;
           const width = window.innerWidth <= 900;
           const portrait = matchMedia("(orientation: portrait)").matches;
-          this.isMobile = coarse && (width || portrait);
+          this.isMobile = coarse;
           return this.isMobile;
         },
         applyInitialCollapse() {
@@ -12966,7 +12986,7 @@ poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
            longPressTriggered = false;
           }
          }
-        });
+        }, { passive: true });
          g.addEventListener("mousedown", (e) => {
           if (isViewOnly()) return;
           if (e.button === 2) {
@@ -17259,7 +17279,8 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         canvasState.zoom = targetZoom;
         canvasState.panX = centerX - (CANVAS_WIDTH / targetZoom) / 2;
         canvasState.panY = centerY - (CANVAS_HEIGHT / targetZoom) / 2;
-        forgeTheTopology();
+		// forgeTheTopology(); getting ready to implement new core canvas performance system
+        updateViewBox();
       }
       function toggleLockSelected() {
         const nodesToToggle = selectedNodes.size > 0
@@ -17940,6 +17961,67 @@ if (searchInput) {
            auditLogModal.classList.remove("active");
          });
        }
+	   const portMapBtn = document.getElementById("port-map-btn");
+      const portMapModal = document.getElementById("port-map-modal");
+      const portMapClose = document.getElementById("port-map-modal-close");
+      const portMapSearch = document.getElementById("port-map-search");
+      const portMapFilter = document.getElementById("port-map-filter");
+      function renderPortMap() {
+        const container = document.getElementById("port-map-table");
+        const search = (document.getElementById("port-map-search")?.value || "").toLowerCase();
+        const filter = document.getElementById("port-map-filter")?.value || "all";
+        let edges = EDGE_DATA.list || [];
+        if (filter === "with-ports") edges = edges.filter(e => e.fromPort || e.toPort);
+        if (filter === "without-ports") edges = edges.filter(e => !e.fromPort && !e.toPort);
+        if (search) {
+          edges = edges.filter(e => {
+            const fromName = (NODE_DATA[e.from]?.name || e.from || "").toLowerCase();
+            const toName = (NODE_DATA[e.to]?.name || e.to || "").toLowerCase();
+            return fromName.includes(search) || toName.includes(search) || (e.fromPort || "").toLowerCase().includes(search) || (e.toPort || "").toLowerCase().includes(search) || (e.notes || []).join(" ").toLowerCase().includes(search);
+          });
+        }
+        if (edges.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">No connections found</div>';
+          return;
+        }
+        let html = '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        html += '<thead><tr style="background: var(--panel-alt); position: sticky; top: 0;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">From Device</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">From Port</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">To Device</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">To Port</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">Notes</th></tr></thead><tbody>';
+        edges.forEach(e => {
+          const fromName = NODE_DATA[e.from]?.name || e.from;
+          const toName = NODE_DATA[e.to]?.name || e.to;
+          const notes = (e.notes || []).join(", ");
+          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.from}'); focusOnSelected()">${fromName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.fromPort || "-"}</td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.to}'); focusOnSelected()">${toName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.toPort || "-"}</td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${notes || "-"}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      }
+      window.exportPortMap = function() {
+        let csv = "From Device,From Port,To Device,To Port,Notes\n";
+        (EDGE_DATA.list || []).forEach(e => {
+          const fromName = (NODE_DATA[e.from]?.name || e.from || "").replace(/,/g, ";");
+          const toName = (NODE_DATA[e.to]?.name || e.to || "").replace(/,/g, ";");
+          const notes = (e.notes || []).join("; ").replace(/,/g, ";");
+          csv += `"${fromName}","${e.fromPort || ""}","${toName}","${e.toPort || ""}","${notes}"\n`;
+        });
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "port-map.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+      if (portMapBtn && portMapModal) {
+        portMapBtn.addEventListener("click", () => { renderPortMap(); portMapModal.classList.add("active"); });
+      }
+      if (portMapClose && portMapModal) {
+        portMapClose.addEventListener("click", () => { portMapModal.classList.remove("active"); });
+      }
+      if (portMapSearch) { portMapSearch.addEventListener("input", renderPortMap); }
+      if (portMapFilter) { portMapFilter.addEventListener("change", renderPortMap); }
+      if (portMapModal) {
+        portMapModal.addEventListener("click", (e) => { if (e.target === portMapModal) portMapModal.classList.remove("active"); });
+      }
        if (auditLogModal) {
          auditLogModal.addEventListener("click", (e) => {
            if (e.target === auditLogModal) {
@@ -18551,14 +18633,35 @@ if (searchInput) {
           return;
         }
         if (!confirm(`Delete tab "${documentTabs[index].name}"?`)) return;
+        const wasCurrentTab = (index === currentTabIndex);
         documentTabs.splice(index, 1);
         if (currentTabIndex >= documentTabs.length) {
           currentTabIndex = documentTabs.length - 1;
+        } else if (index < currentTabIndex) {
+          currentTabIndex--;
         }
-        if (currentTabIndex === index) {
-          switchTab(currentTabIndex);
+        if (wasCurrentTab) {
+          const newTab = documentTabs[currentTabIndex];
+          NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
+          EDGE_DATA = JSON.parse(JSON.stringify(newTab.edges));
+          savedPositions = JSON.parse(JSON.stringify(newTab.positions));
+          savedSizes = JSON.parse(JSON.stringify(newTab.sizes));
+          savedStyles = JSON.parse(JSON.stringify(newTab.styles));
+          EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
+          RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
+          TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+          PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
+          wieldThePower();
+          forgeTheTopology();
+          currentNodeId = null;
+          currentEdgeId = null;
+          currentTextId = null;
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("text-panel").style.display = "none";
         }
         displayTabs();
+        logAuditEvent("tab", `Deleted tab`);
       }
       function displayTabs() {
         const listEl = document.getElementById("tabs-list");
@@ -18573,7 +18676,7 @@ if (searchInput) {
               <div class="tab-stats">${nodeCount} nodes • ${edgeCount} connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(${index})" title="Rename tab">✏️</button>
-                ${documentTabs.length > 1 ? '<button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>' : ''}
+                ${documentTabs.length > 1 ? '<button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(' + index + ')" title="Delete tab">🗑️</button>' : ''}
               </div>
             </div>
           `;

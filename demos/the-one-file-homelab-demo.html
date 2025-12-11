@@ -2098,7 +2098,7 @@
               <div class="tab-stats">105 nodes • 64 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
+                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(0)" title="Delete tab">🗑️</button>
               </div>
             </div>
           
@@ -2107,7 +2107,7 @@
               <div class="tab-stats">11 nodes • 10 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(1)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>
+                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(1)" title="Delete tab">🗑️</button>
               </div>
             </div>
           </div>
@@ -2124,37 +2124,7 @@
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;">
-            <div class="version-item" onclick="restoreRollbackVersion(0)">
-              <div class="version-info">
-                <div class="timestamp">12/10/2025, 6:46:48 PM</div>
-                <div class="details">Auto-save • 105 nodes • 64 connections</div>
-              </div>
-              <div class="version-actions">
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteRollbackVersion(0)" title="Delete this version">🗑️</button>
-              </div>
-            </div>
-          
-            <div class="version-item" onclick="restoreRollbackVersion(1)">
-              <div class="version-info">
-                <div class="timestamp">12/10/2025, 5:47:50 PM</div>
-                <div class="details">Auto-save • 0 nodes • 0 connections</div>
-              </div>
-              <div class="version-actions">
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteRollbackVersion(1)" title="Delete this version">🗑️</button>
-              </div>
-            </div>
-          
-            <div class="version-item" onclick="restoreRollbackVersion(2)">
-              <div class="version-info">
-                <div class="timestamp">12/10/2025, 5:46:48 PM</div>
-                <div class="details">Auto-save • 0 nodes • 0 connections</div>
-              </div>
-              <div class="version-actions">
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteRollbackVersion(2)" title="Delete this version">🗑️</button>
-              </div>
-            </div>
-          </div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -2179,85 +2149,29 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;">
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 6:46:48 PM] Corporate Site B</div>
-              <div class="action">[SAVE] File saved: the-one-file-corporate.html</div>
-            </div>
-          
-            <div class="audit-entry import">
-              <div class="time">[12/10/2025, 6:46:46 PM] Corporate Site B</div>
-              <div class="action">[IMPORT] Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)</div>
-            </div>
-          
-            <div class="audit-entry tab">
-              <div class="time">[12/10/2025, 1:42:09 PM] Corporate Site B</div>
-              <div class="action">[TAB] Switched to tab: Corporate Site B</div>
-            </div>
-          
-            <div class="audit-entry export">
-              <div class="time">[12/10/2025, 1:42:02 PM] Homelab 2</div>
-              <div class="action">[EXPORT] Exported JSON: the-one-file-data-2025-12-10.json</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:54 PM] Homelab 2</div>
-              <div class="action">[SAVE] File saved: the-one-file.html</div>
-            </div>
-          
-            <div class="audit-entry tab">
-              <div class="time">[12/10/2025, 1:41:50 PM] Homelab 2</div>
-              <div class="action">[TAB] Switched to tab: Homelab 2</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:44 PM] Corporate Site B</div>
-              <div class="action">[SAVE] File saved: the-one-file-corporate.html</div>
-            </div>
-          
-            <div class="audit-entry import">
-              <div class="time">[12/10/2025, 1:41:39 PM] Corporate Site B</div>
-              <div class="action">[IMPORT] Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:28 PM] Corporate Site B</div>
-              <div class="action">[SAVE] File saved: the-one-file-corporate.html</div>
-            </div>
-          
-            <div class="audit-entry tab">
-              <div class="time">[12/10/2025, 1:41:24 PM] Corporate Site B</div>
-              <div class="action">[TAB] Switched to tab: Corporate Site B</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:18 PM] Homelab 2</div>
-              <div class="action">[SAVE] File saved: the-one-file.html</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:06 PM] Homelab 2</div>
-              <div class="action">[SAVE] File saved: the-one-file.html</div>
-            </div>
-          
-            <div class="audit-entry tab">
-              <div class="time">[12/10/2025, 1:41:05 PM] Homelab 2</div>
-              <div class="action">[TAB] Switched to tab: Homelab 2</div>
-            </div>
-          
-            <div class="audit-entry save">
-              <div class="time">[12/10/2025, 1:41:00 PM] Corporate Site B</div>
-              <div class="action">[SAVE] File saved: the-one-file-corporate.html</div>
-            </div>
-          
-            <div class="audit-entry import">
-              <div class="time">[12/10/2025, 1:40:58 PM] Corporate Site B</div>
-              <div class="action">[IMPORT] Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)</div>
-            </div>
-          </div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="port-map-modal">
+      <div class="modal-content" style="max-width: 900px;">
+        <h3>Port Map</h3>
+        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">All connections with port assignments</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <input type="text" id="port-map-search" placeholder="Search devices or ports..." style="flex: 1; min-width: 200px; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+          <select id="port-map-filter" style="padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
+            <option value="all">All Connections</option>
+            <option value="with-ports">With Ports Only</option>
+            <option value="without-ports">Missing Ports</option>
+          </select>
+        </div>
+        <div id="port-map-table" style="max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No connections found</div></div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-save" onclick="exportPortMap()">Export CSV</button>
+          <button class="btn-cancel" id="port-map-modal-close">Close</button>
         </div>
       </div>
     </div>
@@ -2309,13 +2223,14 @@
         <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)" draggable="true">+ Node</button>
         <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;" draggable="true">+ Rack</button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↶</button>
-        <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" disabled="">↷</button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 1;">↶</button>
+        <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 0.5;" disabled="">↷</button>
         <input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="padding: 6px 12px;background: var(--input-bg);color: var(--input-text);border: 1px solid var(--input-border);border-radius: 6px;font-family: var(--input-font);font-size: var(--input-font-size);width: 180px;">
         <button id="layers-btn" title="Toggle layer visibility" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Layers</button>
         <button id="tabs-btn" title="Manage document tabs" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Tabs</button>
         <button id="rollback-btn" title="View version history" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Snapshots</button>
         <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
+        <button id="port-map-btn" title="View all port connections" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Ports</button>
         <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
         <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
         <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
@@ -8535,42 +8450,35 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765421248641,
+      "timestamp": 1765476630816,
       "type": "save",
       "description": "File saved: the-one-file.html",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765421244948,
+      "timestamp": 1765476627316,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765421239576,
+      "timestamp": 1765476621165,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765421224541,
+      "timestamp": 1765476612712,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765421208731,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765421206896,
+      "timestamp": 1765476610218,
       "type": "import",
       "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
       "details": {},
@@ -8767,7 +8675,7 @@
           const coarse = matchMedia("(pointer: coarse)").matches;
           const width = window.innerWidth <= 900;
           const portrait = matchMedia("(orientation: portrait)").matches;
-          this.isMobile = coarse && (width || portrait);
+          this.isMobile = coarse;
           return this.isMobile;
         },
         applyInitialCollapse() {
@@ -11932,7 +11840,7 @@
            longPressTriggered = false;
           }
          }
-        });
+        }, { passive: true });
         g.addEventListener("mousedown", (e) => {
 		 if (isViewOnly()) return;
          if (e.button === 2) {
@@ -16181,7 +16089,8 @@
         canvasState.zoom = targetZoom;
         canvasState.panX = centerX - (CANVAS_WIDTH / targetZoom) / 2;
         canvasState.panY = centerY - (CANVAS_HEIGHT / targetZoom) / 2;
-        forgeTheTopology();
+		// forgeTheTopology(); getting ready to implement new core canvas performance system
+		updateViewBox();
       }
       function toggleLockSelected() {
         const nodesToToggle = selectedNodes.size > 0
@@ -16612,14 +16521,35 @@
           return;
         }
         if (!confirm(`Delete tab "${documentTabs[index].name}"?`)) return;
+        const wasCurrentTab = (index === currentTabIndex);
         documentTabs.splice(index, 1);
         if (currentTabIndex >= documentTabs.length) {
           currentTabIndex = documentTabs.length - 1;
+        } else if (index < currentTabIndex) {
+          currentTabIndex--;
         }
-        if (currentTabIndex === index) {
-          switchTab(currentTabIndex);
+        if (wasCurrentTab) {
+          const newTab = documentTabs[currentTabIndex];
+          NODE_DATA = JSON.parse(JSON.stringify(newTab.nodes));
+          EDGE_DATA = JSON.parse(JSON.stringify(newTab.edges));
+          savedPositions = JSON.parse(JSON.stringify(newTab.positions));
+          savedSizes = JSON.parse(JSON.stringify(newTab.sizes));
+          savedStyles = JSON.parse(JSON.stringify(newTab.styles));
+          EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
+          RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
+          TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+          PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
+          wieldThePower();
+          forgeTheTopology();
+          currentNodeId = null;
+          currentEdgeId = null;
+          currentTextId = null;
+          document.getElementById("node-panel").style.display = "none";
+          document.getElementById("edge-panel").style.display = "none";
+          document.getElementById("text-panel").style.display = "none";
         }
         displayTabs();
+        logAuditEvent("tab", `Deleted tab`);
       }
       function displayTabs() {
         const listEl = document.getElementById("tabs-list");
@@ -16634,7 +16564,7 @@
               <div class="tab-stats">${nodeCount} nodes • ${edgeCount} connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(${index})" title="Rename tab">✏️</button>
-                ${documentTabs.length > 1 ? '<button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(${index})" title="Delete tab">🗑️</button>' : ''}
+                ${documentTabs.length > 1 ? '<button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(' + index + ')" title="Delete tab">🗑️</button>' : ''}
               </div>
             </div>
           `;
@@ -17041,6 +16971,67 @@
         auditLogModalClose.addEventListener("click", () => {
           auditLogModal.classList.remove("active");
         });
+      }
+	  const portMapBtn = document.getElementById("port-map-btn");
+      const portMapModal = document.getElementById("port-map-modal");
+      const portMapClose = document.getElementById("port-map-modal-close");
+      const portMapSearch = document.getElementById("port-map-search");
+      const portMapFilter = document.getElementById("port-map-filter");
+      function renderPortMap() {
+        const container = document.getElementById("port-map-table");
+        const search = (document.getElementById("port-map-search")?.value || "").toLowerCase();
+        const filter = document.getElementById("port-map-filter")?.value || "all";
+        let edges = EDGE_DATA.list || [];
+        if (filter === "with-ports") edges = edges.filter(e => e.fromPort || e.toPort);
+        if (filter === "without-ports") edges = edges.filter(e => !e.fromPort && !e.toPort);
+        if (search) {
+          edges = edges.filter(e => {
+            const fromName = (NODE_DATA[e.from]?.name || e.from || "").toLowerCase();
+            const toName = (NODE_DATA[e.to]?.name || e.to || "").toLowerCase();
+            return fromName.includes(search) || toName.includes(search) || (e.fromPort || "").toLowerCase().includes(search) || (e.toPort || "").toLowerCase().includes(search) || (e.notes || []).join(" ").toLowerCase().includes(search);
+          });
+        }
+        if (edges.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">No connections found</div>';
+          return;
+        }
+        let html = '<table style="width: 100%; border-collapse: collapse; font-size: 13px;">';
+        html += '<thead><tr style="background: var(--panel-alt); position: sticky; top: 0;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">From Device</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">From Port</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">To Device</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">To Port</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid var(--edge-main);">Notes</th></tr></thead><tbody>';
+        edges.forEach(e => {
+          const fromName = NODE_DATA[e.from]?.name || e.from;
+          const toName = NODE_DATA[e.to]?.name || e.to;
+          const notes = (e.notes || []).join(", ");
+          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.from}'); focusOnSelected()">${fromName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.fromPort || "-"}</td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.to}'); focusOnSelected()">${toName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.toPort || "-"}</td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${notes || "-"}</td></tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      }
+      window.exportPortMap = function() {
+        let csv = "From Device,From Port,To Device,To Port,Notes\n";
+        (EDGE_DATA.list || []).forEach(e => {
+          const fromName = (NODE_DATA[e.from]?.name || e.from || "").replace(/,/g, ";");
+          const toName = (NODE_DATA[e.to]?.name || e.to || "").replace(/,/g, ";");
+          const notes = (e.notes || []).join("; ").replace(/,/g, ";");
+          csv += `"${fromName}","${e.fromPort || ""}","${toName}","${e.toPort || ""}","${notes}"\n`;
+        });
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "port-map.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+      if (portMapBtn && portMapModal) {
+        portMapBtn.addEventListener("click", () => { renderPortMap(); portMapModal.classList.add("active"); });
+      }
+      if (portMapClose && portMapModal) {
+        portMapClose.addEventListener("click", () => { portMapModal.classList.remove("active"); });
+      }
+      if (portMapSearch) { portMapSearch.addEventListener("input", renderPortMap); }
+      if (portMapFilter) { portMapFilter.addEventListener("change", renderPortMap); }
+      if (portMapModal) {
+        portMapModal.addEventListener("click", (e) => { if (e.target === portMapModal) portMapModal.classList.remove("active"); });
       }
       if (auditLogModal) {
         auditLogModal.addEventListener("click", (e) => {
