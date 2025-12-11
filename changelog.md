@@ -1,6 +1,7 @@
 #### CHANGE LOG
 
 ##### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
+* **Fixed Search [#24](https://github.com/gelatinescreams/The-One-File/issues/24) **
 * **Upgraded and fixed the undo system**
 * * Edit node name/IP now undoable
 * * Edit/delete/add tags now undoable
