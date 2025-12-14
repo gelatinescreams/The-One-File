@@ -3022,15 +3022,11 @@
             }
           }
         },
-        updateLayout() {
-          const main = document.querySelector("main");
-          if (!main) return;
-        },
         updateCanvasHint() {
       const hint = document.getElementById("canvas-hint");
       if (!hint) return;
       if (PAGE_STATE.canvasHintText !== undefined && PAGE_STATE.canvasHintText !== "") {
-        hint.innerHTML = PAGE_STATE.canvasHintText;
+        hint.textContent = PAGE_STATE.canvasHintText;
         return;
       }
       const items = this.isMobile
@@ -3090,8 +3086,7 @@
           this.detect();
           this.applyInitialCollapse();
           this.updateBulkToolbar();
-          this.updateLayout();
-          this.updateCanvasHint();
+		  this.updateCanvasHint();
           this.autoSelectStyleScope();
           this.updateToolbarStack();
           this.updateLayoutControls();
@@ -3099,6 +3094,12 @@
       };
       function isMobileDevice() {
         return MobileManager.isMobile;
+      }
+	  function escapeHtml(str) {
+       if (!str) return '';
+       return String(str).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+       }[c]));
       }
       function u8ToBase64(u8) {
       let binary = "";
@@ -3733,7 +3734,7 @@
        if (backBtn) backBtn.style.display = "inline-block";
        const hint = document.getElementById("canvas-hint");
        if (hint) {
-        hint.textContent = `Viewing: ${NODE_DATA[rackId].name} | Double click empty space to exit`;
+        hint.textContent = `Viewing: ${NODE_DATA[rackId]?.name || 'Rack'} | Double click empty space to exit`;
         hint.classList.add("visible");
        }
       const rackUHeight = getRackUHeight(rackId);
@@ -5464,6 +5465,7 @@
       handle.style.strokeWidth = "2";
       handle.style.cursor = corner.cursor;
       handle.addEventListener("mousedown", (e) => {
+	  if (isViewOnly()) return;
       e.preventDefault();
       e.stopPropagation();
 	  pushUndo("resize zone");
@@ -5733,6 +5735,7 @@
       let lineDragStartX, lineDragStartY;
       let linePointsStart = [];
       polyHit.addEventListener("mousedown", (e) => {
+	  if (isViewOnly()) return;
       if (freeDrawMode) return;
       e.preventDefault();
       e.stopPropagation();
@@ -5840,6 +5843,7 @@
             document.addEventListener("mouseup", upHandler);
            });
            c.addEventListener("touchstart", (e) => {
+		   if (isViewOnly()) return;
             e.preventDefault();
             e.stopPropagation();
             pushUndo("edit edge point");
@@ -7202,12 +7206,23 @@
         if (isRack) {
          const nodesInRack = Object.entries(NODE_DATA).filter(([nid, n]) => n.assignedRack === id);
          if (nodesInRack.length > 0) {
-          rackContentsList.innerHTML = nodesInRack.map(([nid, n]) => {
-           const tags = (n.tags || []).map(t => `<span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">${t}</span>`).join('');
-           return `<div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('${nid}')">
-            <span style="color: var(--text-main);">${n.name}</span>${tags}
-           </div>`;
-          }).join('');
+          rackContentsList.innerHTML = '';
+          nodesInRack.forEach(([nid, n]) => {
+           const div = document.createElement('div');
+           div.style.cssText = 'padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;';
+           div.onclick = () => claimTheImmortal(nid);
+           const nameSpan = document.createElement('span');
+           nameSpan.style.color = 'var(--text-main)';
+           nameSpan.textContent = n.name;
+           div.appendChild(nameSpan);
+           (n.tags || []).forEach(t => {
+            const tagSpan = document.createElement('span');
+            tagSpan.style.cssText = 'background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;';
+            tagSpan.textContent = t;
+            div.appendChild(tagSpan);
+           });
+           rackContentsList.appendChild(div);
+          });
           rackContentsSection.style.display = "block";
          } else {
           rackContentsList.innerHTML = '<div style="color: var(--text-soft); font-style: italic;">No nodes assigned</div>';
@@ -8859,7 +8874,7 @@
        if (!currentTextId) return;
        const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
        if (textItem) {
-        challengeTheImmortal(`Delete text "${textItem.content.substring(0, 30)}..."?`, () => {
+        challengeTheImmortal(`Delete text "${(textItem.content || '').substring(0, 30)}..."?`, () => {
          deleteText(currentTextId);
         });
        }
@@ -10600,7 +10615,7 @@
         } else if (currentTextId) {
          const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
          if (textItem) {
-          challengeTheImmortal(`Delete text "${textItem.content.substring(0, 30)}..."?`, () => {
+          challengeTheImmortal(`Delete text "${(textItem.content || '').substring(0, 30)}..."?`, () => {
            pushUndo("delete text");
            TEXT_DATA.list = TEXT_DATA.list.filter(t => t.id !== currentTextId);
            currentTextId = null;
@@ -10703,8 +10718,8 @@
           return `
             <div class="version-item" onclick="restoreRollbackVersion(${index})">
               <div class="version-info">
-                <div class="timestamp">${timeStr}</div>
-                <div class="details">${version.description} • ${nodeCount} nodes • ${edgeCount} connections</div>
+                <div class="timestamp">${escapeHtml(timeStr)}</div>
+                <div class="details">${escapeHtml(version.description)} • ${nodeCount} nodes • ${edgeCount} connections</div>
               </div>
               <div class="version-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); deleteRollbackVersion(${index})" title="Delete this version">🗑️</button>
@@ -10874,7 +10889,7 @@
           const isActive = index === currentTabIndex;
           return `
             <div class="tab-item ${isActive ? 'active' : ''}" onclick="switchTab(${index})">
-              <div class="tab-name">${tab.name}</div>
+              <div class="tab-name">${escapeHtml(tab.name)}</div>
               <div class="tab-stats">${nodeCount} nodes • ${edgeCount} connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(${index})" title="Rename tab">✏️</button>
@@ -10953,9 +10968,9 @@
           const date = new Date(event.timestamp);
           const timeStr = date.toLocaleString();
           return `
-            <div class="audit-entry ${event.type}">
-              <div class="time">[${timeStr}] ${event.tab}</div>
-              <div class="action">[${event.type.toUpperCase()}] ${event.description}</div>
+            <div class="audit-entry ${escapeHtml(event.type)}">
+              <div class="time">[${escapeHtml(timeStr)}] ${escapeHtml(event.tab)}</div>
+              <div class="action">[${escapeHtml(event.type.toUpperCase())}] ${escapeHtml(event.description)}</div>
             </div>
           `;
         }).join('');
@@ -11086,11 +11101,11 @@
           const status = section.encrypted ? "🔒 Encrypted" : "🔓 Plaintext";
           return `
             <div class="secret-item">
-              <div class="secret-name">${name}</div>
+              <div class="secret-name">${escapeHtml(name)}</div>
               <div class="secret-status">${status}</div>
               <div class="tab-actions">
-                <button class="btn-cancel" onclick="editSecret('${name}')" title="Edit note">✏️</button>
-                <button class="btn-cancel" onclick="deleteSecret('${name}')" title="Delete note">🗑️</button>
+                <button class="btn-cancel" onclick="editSecret('${escapeHtml(name)}')" title="Edit note">✏️</button>
+                <button class="btn-cancel" onclick="deleteSecret('${escapeHtml(name)}')" title="Delete note">🗑️</button>
               </div>
             </div>
           `;
@@ -11143,7 +11158,7 @@
           shape: "server",
           role: "",
           tags: [],
-          notes: "",
+          notes: [],
           layer: "physical",
           isRack: false
         };
@@ -11163,7 +11178,7 @@
           shape: "server",
           role: "rack",
           tags: [],
-          notes: "",
+          notes: [],
           layer: "physical",
           isRack: true,
           rackCapacity: 42
@@ -11315,7 +11330,7 @@
           const fromName = NODE_DATA[e.from]?.name || e.from;
           const toName = NODE_DATA[e.to]?.name || e.to;
           const notes = (e.notes || []).join(", ");
-          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.from}'); focusOnSelected()">${fromName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.fromPort || "-"}</td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${e.to}'); focusOnSelected()">${toName}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${e.id}'); focusOnSelected()">${e.toPort || "-"}</td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${notes || "-"}</td></tr>`;
+          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.from)}'); focusOnSelected()">${escapeHtml(fromName)}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()">${escapeHtml(e.fromPort) || "-"}</td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.to)}'); focusOnSelected()">${escapeHtml(toName)}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()">${escapeHtml(e.toPort) || "-"}</td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${escapeHtml(notes) || "-"}</td></tr>`;
         });
         html += '</tbody></table>';
         container.innerHTML = html;

@@ -1,11 +1,18 @@
 #### CHANGE LOG
+**We are very close to 4.0 Stable community. Thank you to all the testers. We are making this for all of us :)**
 
-### Version 3.9.9.3 : 12/11/25 Added Advanced Ports View
+### Version 3.9.9.4 : 12/14/25 Further fixes towards 4.0 Stable
+* Fixed an issue where entering rack view would freeze the canvas on mobile
+* Fixed an issue where node creation could be interrupted in rare cases
+* Fixed pedantic HTML sanitations for inputs
+* Added a function to sanitize inputs
+
+### Version 3.9.9.3 : 12/13/25 Added Advanced Ports View
 * Fixed [#27](https://github.com/gelatinescreams/The-One-File/issues/27)** thanks to [@lehnerpat](https://github.com/lehnerpat) for debugging
 * Fixed an issue where modals were not closing correctly in the background
 
 ### Version 3.9.9.2 : 12/11/25 Added Advanced Ports View
-* **Added New Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)** thanks to @mohacc2008-ctrl for the request
+* **Added New Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)** thanks to [@mohacc2008-ctrl](https://github.com/mohacc2008-ctrl) for the request
 * **Squashed Bugs**
 * * Fixed a bug where deleted tabs were not leaving the old canvas view
 * * Fixed a bug where foldables and some tablets showed desktop elements
@@ -48,7 +55,7 @@
 * **Upgraded and fixed the Audit log.** Moved it to the stored JSON. Audit log now transfers with the save!
 * * Added smart migration to merge old localStorage audit with new JSON storage
 * **Added new core shapes to both versions.**
-* **New desktop mutli entity select option added.** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to @mitchplze
+* **New desktop mutli entity select option added.** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to [@mitchplze](https://github.com/mitchplze)
 * * Hold shift and click+drag on empty canvas to select multiple items at once
 * * Selection box colors can be customized in Settings
 
@@ -61,7 +68,7 @@
 * * Fixed duplicate import button in Settings
 * * Removed unused code to reduce file size
 * * Zone line style (solid, dashed, dotted) can now be changed after creation. 
-* **Squashing more bugs** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to @mitchplze
+* **Squashing more bugs** [#21](https://github.com/gelatinescreams/The-One-File/issues/21)  + more : Special thanks to [@mitchplze](https://github.com/mitchplze)
 * **Networkening Edition Fixes:**
 * * Dropdown now shows "Custom Icon" when a web icon is selected. [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
 * * Switching to any core shape automatically clears the web icon [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
