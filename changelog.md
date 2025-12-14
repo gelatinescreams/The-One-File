@@ -1,5 +1,9 @@
 #### CHANGE LOG
 
+### Version 3.9.9.3 : 12/11/25 Added Advanced Ports View
+* Fixed [#27](https://github.com/gelatinescreams/The-One-File/issues/27)** thanks to [@lehnerpat](https://github.com/lehnerpat) for debugging
+* Fixed an issue where modals were not closing correctly in the background
+
 ### Version 3.9.9.2 : 12/11/25 Added Advanced Ports View
 * **Added New Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)** thanks to @mohacc2008-ctrl for the request
 * **Squashed Bugs**

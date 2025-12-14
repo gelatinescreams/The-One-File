@@ -1411,7 +1411,7 @@
   <body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);" class="">
     <div class="modal" id="edit-modal">
       <div class="modal-content">
-        <h3 id="modal-title">Edit Title</h3>
+        <h3 id="modal-title">Add Tag(s) : comma separated</h3>
         <input type="text" id="modal-input">
         <div class="modal-buttons">
           <button class="btn-cancel" id="modal-cancel">Cancel</button>
@@ -2095,7 +2095,7 @@
         <div id="tabs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
             <div class="tab-item " onclick="switchTab(0)">
               <div class="tab-name">Corporate Site B</div>
-              <div class="tab-stats">105 nodes • 64 connections</div>
+              <div class="tab-stats">106 nodes • 64 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
                 <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(0)" title="Delete tab">🗑️</button>
@@ -2220,7 +2220,7 @@
         </div>
       </div>
       <div id="topbar-menu">
-        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
+        <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; display: none;">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)" draggable="true">+ Node</button>
         <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;" draggable="true">+ Rack</button>
         <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 1;">↶</button>
@@ -2273,7 +2273,7 @@
         <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select"><option value="core-router-2">Core Router 2</option><option value="fw-external-1">External FW 1</option><option value="fw-external-2">External FW 2</option><option value="fw-internal">Internal FW</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="dc-rack-a1">DC Rack A1</option><option value="dc-rack-a2">DC Rack A2</option><option value="dc-rack-b1">DC Rack B1</option><option value="dc-rack-b2">DC Rack B2</option><option value="dmz-rack">DMZ Rack</option><option value="mgmt-rack">Management Rack</option><option value="wlc-primary">WLC Primary</option><option value="wlc-secondary">WLC Secondary</option><option value="mobile-zone-hq">HQ Mobile Zone</option><option value="mobile-zone-guest">Guest WiFi Zone</option><option value="mobile-zone-iot">IoT Device Zone</option><option value="branch-router-ny">NYC Branch Router</option><option value="branch-router-la">LA Branch Router</option><option value="branch-router-chi">Chicago Branch Router</option><option value="branch-router-lon">London Branch Router</option><option value="branch-router-tokyo">Tokyo Branch Router</option><option value="cloud-aws">AWS Cloud</option><option value="cloud-azure">Azure Cloud</option><option value="cloud-gcp">GCP Cloud</option><option value="isp-primary">ISP Primary</option><option value="isp-secondary">ISP Secondary</option><option value="proxy-server-1">Proxy Server 1</option><option value="proxy-server-2">Proxy Server 2</option><option value="vpn-concentrator">VPN Concentrator</option><option value="nac-server">NAC Server</option><option value="voip-cluster">VoIP Cluster</option><option value="video-conf">Video Conference</option><option value="security-cameras">Security Cameras</option><option value="dev-server-1">Dev Server 1</option><option value="dev-server-2">Dev Server 2</option><option value="test-environment">Test Environment</option><option value="erp-system">ERP System</option><option value="crm-system">CRM System</option><option value="endpoint-1000">Corporate Endpoints</option><option value="dist-switch-floor1">Floor 1 Switch</option><option value="dist-switch-floor2">Floor 2 Switch</option><option value="dist-switch-floor3">Floor 3 Switch</option><option value="dist-switch-floor4">Floor 4 Switch</option><option value="ap-floor1-zone1">AP Floor 1 Zone 1</option><option value="ap-floor2-zone1">AP Floor 2 Zone 1</option><option value="ap-floor3-zone1">AP Floor 3 Zone 1</option><option value="ap-floor4-zone1">AP Floor 4 Zone 1</option><option value="ups-dc-1">UPS DC-1</option><option value="ups-dc-2">UPS DC-2</option><option value="cooling-1">CRAC Unit 1</option><option value="cooling-2">CRAC Unit 2</option></select>
+          <select id="add-line-select"><option value="san-primary">SAN Primary</option><option value="fc-switch-1">FC Switch 1</option><option value="fc-switch-2">FC Switch 2</option><option value="tor-switch-b1">ToR Switch B1</option></select>
           <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">
           <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
@@ -2333,7 +2333,7 @@
         </div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(85, 226, 8); cursor: pointer;"></span><span class="legend-label" contenteditable="true">ISP LINE</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(76, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">MY Guest NETWORK</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(128, 255, 0); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(255, 0, 208); cursor: pointer;"></span><span class="legend-label" contenteditable="true">iPhone (always guest iPhone)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="-74.99705309342698 -7.395887697909075 4069.861183597212 3052.395887697909" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="#4755694D" stroke-width="20" stroke-dasharray="10 5" rx="8"></rect><g id="canvas-grid"><line x1="100" y1="100" x2="100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="150" y1="100" x2="150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="200" y1="100" x2="200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="250" y1="100" x2="250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="300" y1="100" x2="300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="350" y1="100" x2="350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="400" y1="100" x2="400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="450" y1="100" x2="450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="500" y1="100" x2="500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="550" y1="100" x2="550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="600" y1="100" x2="600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="650" y1="100" x2="650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="700" y1="100" x2="700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="750" y1="100" x2="750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="800" y1="100" x2="800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="850" y1="100" x2="850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="900" y1="100" x2="900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="950" y1="100" x2="950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1000" y1="100" x2="1000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1050" y1="100" x2="1050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1100" y1="100" x2="1100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1150" y1="100" x2="1150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1200" y1="100" x2="1200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1250" y1="100" x2="1250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1300" y1="100" x2="1300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1350" y1="100" x2="1350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1400" y1="100" x2="1400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1450" y1="100" x2="1450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1500" y1="100" x2="1500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1550" y1="100" x2="1550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1600" y1="100" x2="1600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1650" y1="100" x2="1650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1700" y1="100" x2="1700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1750" y1="100" x2="1750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1800" y1="100" x2="1800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1850" y1="100" x2="1850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1900" y1="100" x2="1900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1950" y1="100" x2="1950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2000" y1="100" x2="2000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2050" y1="100" x2="2050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2100" y1="100" x2="2100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2150" y1="100" x2="2150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2200" y1="100" x2="2200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2250" y1="100" x2="2250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2300" y1="100" x2="2300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2350" y1="100" x2="2350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2400" y1="100" x2="2400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2450" y1="100" x2="2450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2500" y1="100" x2="2500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2550" y1="100" x2="2550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2600" y1="100" x2="2600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2650" y1="100" x2="2650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2700" y1="100" x2="2700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2750" y1="100" x2="2750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2800" y1="100" x2="2800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2850" y1="100" x2="2850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2900" y1="100" x2="2900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2950" y1="100" x2="2950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3000" y1="100" x2="3000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3050" y1="100" x2="3050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3100" y1="100" x2="3100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3150" y1="100" x2="3150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3200" y1="100" x2="3200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3250" y1="100" x2="3250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3300" y1="100" x2="3300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3350" y1="100" x2="3350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3400" y1="100" x2="3400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3450" y1="100" x2="3450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3500" y1="100" x2="3500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3550" y1="100" x2="3550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3600" y1="100" x2="3600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3650" y1="100" x2="3650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3700" y1="100" x2="3700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3750" y1="100" x2="3750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3800" y1="100" x2="3800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3850" y1="100" x2="3850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3900" y1="100" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="100" x2="3900" y2="100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="150" x2="3900" y2="150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="200" x2="3900" y2="200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="250" x2="3900" y2="250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="300" x2="3900" y2="300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="350" x2="3900" y2="350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="400" x2="3900" y2="400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="450" x2="3900" y2="450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="500" x2="3900" y2="500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="550" x2="3900" y2="550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="600" x2="3900" y2="600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="650" x2="3900" y2="650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="700" x2="3900" y2="700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="750" x2="3900" y2="750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="800" x2="3900" y2="800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="850" x2="3900" y2="850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="900" x2="3900" y2="900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="950" x2="3900" y2="950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1000" x2="3900" y2="1000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1050" x2="3900" y2="1050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1100" x2="3900" y2="1100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1150" x2="3900" y2="1150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1200" x2="3900" y2="1200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1250" x2="3900" y2="1250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1300" x2="3900" y2="1300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1350" x2="3900" y2="1350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1400" x2="3900" y2="1400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1450" x2="3900" y2="1450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1500" x2="3900" y2="1500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1550" x2="3900" y2="1550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1600" x2="3900" y2="1600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1650" x2="3900" y2="1650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1700" x2="3900" y2="1700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1750" x2="3900" y2="1750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1800" x2="3900" y2="1800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1850" x2="3900" y2="1850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1900" x2="3900" y2="1900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1950" x2="3900" y2="1950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2000" x2="3900" y2="2000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2050" x2="3900" y2="2050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2100" x2="3900" y2="2100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2150" x2="3900" y2="2150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2200" x2="3900" y2="2200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2250" x2="3900" y2="2250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2300" x2="3900" y2="2300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2350" x2="3900" y2="2350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2400" x2="3900" y2="2400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2450" x2="3900" y2="2450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2500" x2="3900" y2="2500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2550" x2="3900" y2="2550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2600" x2="3900" y2="2600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2650" x2="3900" y2="2650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2700" x2="3900" y2="2700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2750" x2="3900" y2="2750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2800" x2="3900" y2="2800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2850" x2="3900" y2="2850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2900" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line></g><g class="rect-group" data-rect-id="rect-1765238219615"><rect class="rect-shape" x="2680.053955078125" y="251.44879150390625" width="814.10400390625" height="389.26678466796875" style="fill: rgb(236, 9, 153); fill-opacity: 0.3; stroke: rgb(236, 9, 153); stroke-width: 2px; stroke-dasharray: none; cursor: move;"></rect><g class="rect-delete-btn" style="cursor: pointer; display: none;"><circle cx="3484.157958984375" cy="261.44879150390625" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="3484.157958984375" y="261.44879150390625" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g><path d="M 2071.640165880771 218.24354238566275 Q 2069.3039587352528 345.82772790170964 2066.9677515897347 473.4119134177565" fill="none" class="edge" data-edge-id="internet-internet-copy-1765238145151" data-from="internet" data-to="internet-copy" style="stroke: rgb(85, 226, 8); stroke-width: 4;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2069.3039587352528 345.82772790170964 2066.9677515897347 473.4119134177565" fill="none" data-edge-id="internet-internet-copy-1765238145151" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1921.3019190702034 570.8918786277175 1775.6360865506722 668.3718438376784" fill="none" class="edge" data-edge-id="internet-copy-opnsense-copy-1765238187451" data-from="internet-copy" data-to="opnsense-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1921.3019190702034 570.8918786277175 1775.6360865506722 668.3718438376784" fill="none" data-edge-id="internet-copy-opnsense-copy-1765238187451" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2000.8787827715962 627.8447547749242 1934.7898139534577 782.2775961320921" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1765238242477" data-from="internet-copy" data-to="docker-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2000.8787827715962 627.8447547749242 1934.7898139534577 782.2775961320921" fill="none" data-edge-id="internet-copy-docker-copy-1765238242477" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1-1765238244637" data-from="internet-copy" data-to="docker-copy-1" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" data-edge-id="internet-copy-docker-copy-1-1765238244637" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2206.4130845294085 552.590055067893 2345.8584174690827 631.7681967180296" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-2-1765238246233" data-from="internet-copy" data-to="docker-copy-2" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2206.4130845294085 552.590055067893 2345.8584174690827 631.7681967180296" fill="none" data-edge-id="internet-copy-docker-copy-2-1765238246233" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2414.759822984287 262.92762699742593 2757.879480087803 307.6117116091891" fill="none" class="edge" data-edge-id="internet-opnsense-copy-1-1765238266117" data-from="internet" data-to="opnsense-copy-1" style="stroke: rgb(128, 255, 0); stroke-width: 4;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2414.759822984287 262.92762699742593 2757.879480087803 307.6117116091891" fill="none" data-edge-id="internet-opnsense-copy-1-1765238266117" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="opnsense-copy-1-dns-1765238347996" data-from="opnsense-copy-1" data-to="dns" style="stroke: rgb(251, 0, 255); stroke-width: 4;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" data-edge-id="opnsense-copy-1-dns-1765238347996" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3094.0802247167094 404.02690325957974 2987.696130478428 487.5842152712985" fill="none" class="edge" data-edge-id="dns-desktop-1765238386101" data-from="dns" data-to="desktop" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3094.0802247167094 404.02690325957974 2987.696130478428 487.5842152712985" fill="none" data-edge-id="dns-desktop-1765238386101" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="phone-dns-1765238391156" data-from="phone" data-to="dns" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" data-edge-id="phone-dns-1765238391156" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge" data-edge-id="custom-1765238841477" fill="none" marker-start="url(#arrow-backward)" marker-end="url(#arrow-forward)" points="2905.255615234375,805.3433837890625 3189.95556640625,1005.8710327148438 2788.900390625,1008.3466796875" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="2905.255615234375,805.3433837890625 3189.95556640625,1005.8710327148438 2788.900390625,1008.3466796875" data-edge-id="custom-1765238841477" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="internet" transform="translate(2071.640165880771,218.24354238566275)" style="cursor: grab;"><circle r="127.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><rect x="-85" y="-85" width="170" height="170" rx="4" class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"></rect><text class="node-label" x="0" y="-23.8" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Internet</text><text class="node-sub" x="0" y="34" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="internet-copy" transform="translate(2066.9677515897347,473.4119134177565)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy" transform="translate(1775.6360865506722,668.3718438376784)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy" transform="translate(1934.7898139534577,782.2775961320921)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker2</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-1" transform="translate(2158.1262397347077,767.7122274797483)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker3</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-2" transform="translate(2345.8584174690827,631.7681967180296)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker 4</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy-1" transform="translate(2757.879480087803,307.6117116091891)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE GUEST</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="phone" transform="translate(3312.857751572178,502.58220111114224)" style="cursor: grab;"><circle r="181.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-54.45" y="-121" width="108.9" height="242" rx="8"></rect><rect x="-45.980000000000004" y="-102.85" width="91.96000000000001" height="193.60000000000002" rx="4" style="fill: rgb(30, 41, 59);"></rect><rect x="-18.15" y="99.22" width="36.3" height="7.26" rx="2" style="fill: rgb(71, 85, 105);"></rect></g><text class="node-label" x="0" y="-33.88" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Phone</text><text class="node-sub" x="0" y="48.400000000000006" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="desktop" transform="translate(2987.696130478428,487.5842152712985)" style="cursor: grab;"><circle r="220.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-132.3" y="-117.60000000000001" width="264.6" height="176.4" rx="4"></rect><rect x="-110.25" y="-95.55" width="220.5" height="132.3" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-22.05" y="58.800000000000004" width="44.1" height="44.1"></rect><rect x="-73.5" y="102.89999999999999" width="147" height="22.05" rx="2"></rect></g><text class="node-label" x="0" y="-41.160000000000004" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Desktop</text><text class="node-sub" x="0" y="58.800000000000004" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="dns" transform="translate(3200.4643189549906,320.469591247861)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
+          <svg id="map" viewBox="1067.236760240865 -403.93815895549926 2864.859130912127 2148.644348184095" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="#4755694D" stroke-width="20" stroke-dasharray="10 5" rx="8"></rect><g id="canvas-grid"><line x1="100" y1="100" x2="100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="150" y1="100" x2="150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="200" y1="100" x2="200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="250" y1="100" x2="250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="300" y1="100" x2="300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="350" y1="100" x2="350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="400" y1="100" x2="400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="450" y1="100" x2="450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="500" y1="100" x2="500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="550" y1="100" x2="550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="600" y1="100" x2="600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="650" y1="100" x2="650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="700" y1="100" x2="700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="750" y1="100" x2="750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="800" y1="100" x2="800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="850" y1="100" x2="850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="900" y1="100" x2="900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="950" y1="100" x2="950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1000" y1="100" x2="1000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1050" y1="100" x2="1050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1100" y1="100" x2="1100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1150" y1="100" x2="1150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1200" y1="100" x2="1200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1250" y1="100" x2="1250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1300" y1="100" x2="1300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1350" y1="100" x2="1350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1400" y1="100" x2="1400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1450" y1="100" x2="1450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1500" y1="100" x2="1500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1550" y1="100" x2="1550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1600" y1="100" x2="1600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1650" y1="100" x2="1650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1700" y1="100" x2="1700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1750" y1="100" x2="1750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1800" y1="100" x2="1800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1850" y1="100" x2="1850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1900" y1="100" x2="1900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1950" y1="100" x2="1950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2000" y1="100" x2="2000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2050" y1="100" x2="2050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2100" y1="100" x2="2100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2150" y1="100" x2="2150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2200" y1="100" x2="2200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2250" y1="100" x2="2250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2300" y1="100" x2="2300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2350" y1="100" x2="2350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2400" y1="100" x2="2400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2450" y1="100" x2="2450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2500" y1="100" x2="2500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2550" y1="100" x2="2550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2600" y1="100" x2="2600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2650" y1="100" x2="2650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2700" y1="100" x2="2700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2750" y1="100" x2="2750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2800" y1="100" x2="2800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2850" y1="100" x2="2850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2900" y1="100" x2="2900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2950" y1="100" x2="2950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3000" y1="100" x2="3000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3050" y1="100" x2="3050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3100" y1="100" x2="3100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3150" y1="100" x2="3150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3200" y1="100" x2="3200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3250" y1="100" x2="3250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3300" y1="100" x2="3300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3350" y1="100" x2="3350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3400" y1="100" x2="3400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3450" y1="100" x2="3450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3500" y1="100" x2="3500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3550" y1="100" x2="3550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3600" y1="100" x2="3600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3650" y1="100" x2="3650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3700" y1="100" x2="3700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3750" y1="100" x2="3750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3800" y1="100" x2="3800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3850" y1="100" x2="3850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3900" y1="100" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="100" x2="3900" y2="100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="150" x2="3900" y2="150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="200" x2="3900" y2="200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="250" x2="3900" y2="250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="300" x2="3900" y2="300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="350" x2="3900" y2="350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="400" x2="3900" y2="400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="450" x2="3900" y2="450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="500" x2="3900" y2="500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="550" x2="3900" y2="550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="600" x2="3900" y2="600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="650" x2="3900" y2="650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="700" x2="3900" y2="700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="750" x2="3900" y2="750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="800" x2="3900" y2="800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="850" x2="3900" y2="850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="900" x2="3900" y2="900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="950" x2="3900" y2="950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1000" x2="3900" y2="1000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1050" x2="3900" y2="1050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1100" x2="3900" y2="1100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1150" x2="3900" y2="1150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1200" x2="3900" y2="1200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1250" x2="3900" y2="1250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1300" x2="3900" y2="1300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1350" x2="3900" y2="1350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1400" x2="3900" y2="1400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1450" x2="3900" y2="1450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1500" x2="3900" y2="1500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1550" x2="3900" y2="1550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1600" x2="3900" y2="1600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1650" x2="3900" y2="1650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1700" x2="3900" y2="1700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1750" x2="3900" y2="1750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1800" x2="3900" y2="1800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1850" x2="3900" y2="1850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1900" x2="3900" y2="1900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1950" x2="3900" y2="1950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2000" x2="3900" y2="2000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2050" x2="3900" y2="2050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2100" x2="3900" y2="2100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2150" x2="3900" y2="2150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2200" x2="3900" y2="2200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2250" x2="3900" y2="2250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2300" x2="3900" y2="2300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2350" x2="3900" y2="2350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2400" x2="3900" y2="2400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2450" x2="3900" y2="2450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2500" x2="3900" y2="2500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2550" x2="3900" y2="2550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2600" x2="3900" y2="2600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2650" x2="3900" y2="2650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2700" x2="3900" y2="2700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2750" x2="3900" y2="2750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2800" x2="3900" y2="2800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2850" x2="3900" y2="2850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2900" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line></g><g class="rect-group" data-rect-id="rect-1765238219615"><rect class="rect-shape" x="2680.053955078125" y="251.44879150390625" width="814.10400390625" height="389.26678466796875" style="fill: rgb(236, 9, 153); fill-opacity: 0.3; stroke: rgb(236, 9, 153); stroke-width: 2px; stroke-dasharray: none; cursor: move;"></rect><g class="rect-delete-btn" style="cursor: pointer; display: none;"><circle cx="3484.157958984375" cy="261.44879150390625" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="3484.157958984375" y="261.44879150390625" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g><path d="M 2071.640165880771 218.24354238566275 Q 2069.3039587352528 345.82772790170964 2066.9677515897347 473.4119134177565" fill="none" class="edge" data-edge-id="internet-internet-copy-1765238145151" data-from="internet" data-to="internet-copy" style="stroke: rgb(85, 226, 8); stroke-width: 4;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2069.3039587352528 345.82772790170964 2066.9677515897347 473.4119134177565" fill="none" data-edge-id="internet-internet-copy-1765238145151" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1921.3019190702034 570.8918786277175 1775.6360865506722 668.3718438376784" fill="none" class="edge" data-edge-id="internet-copy-opnsense-copy-1765238187451" data-from="internet-copy" data-to="opnsense-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1921.3019190702034 570.8918786277175 1775.6360865506722 668.3718438376784" fill="none" data-edge-id="internet-copy-opnsense-copy-1765238187451" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2000.8787827715962 627.8447547749242 1934.7898139534577 782.2775961320921" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1765238242477" data-from="internet-copy" data-to="docker-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2000.8787827715962 627.8447547749242 1934.7898139534577 782.2775961320921" fill="none" data-edge-id="internet-copy-docker-copy-1765238242477" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1-1765238244637" data-from="internet-copy" data-to="docker-copy-1" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" data-edge-id="internet-copy-docker-copy-1-1765238244637" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2206.4130845294085 552.590055067893 2345.8584174690827 631.7681967180296" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-2-1765238246233" data-from="internet-copy" data-to="docker-copy-2" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2206.4130845294085 552.590055067893 2345.8584174690827 631.7681967180296" fill="none" data-edge-id="internet-copy-docker-copy-2-1765238246233" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2414.759822984287 262.92762699742593 2757.879480087803 307.6117116091891" fill="none" class="edge" data-edge-id="internet-opnsense-copy-1-1765238266117" data-from="internet" data-to="opnsense-copy-1" style="stroke: rgb(128, 255, 0); stroke-width: 4;"></path><path d="M 2071.640165880771 218.24354238566275 Q 2414.759822984287 262.92762699742593 2757.879480087803 307.6117116091891" fill="none" data-edge-id="internet-opnsense-copy-1-1765238266117" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="opnsense-copy-1-dns-1765238347996" data-from="opnsense-copy-1" data-to="dns" style="stroke: rgb(251, 0, 255); stroke-width: 4;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" data-edge-id="opnsense-copy-1-dns-1765238347996" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3094.0802247167094 404.02690325957974 2987.696130478428 487.5842152712985" fill="none" class="edge" data-edge-id="dns-desktop-1765238386101" data-from="dns" data-to="desktop" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3094.0802247167094 404.02690325957974 2987.696130478428 487.5842152712985" fill="none" data-edge-id="dns-desktop-1765238386101" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="phone-dns-1765238391156" data-from="phone" data-to="dns" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" data-edge-id="phone-dns-1765238391156" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge" data-edge-id="custom-1765238841477" fill="none" marker-start="url(#arrow-backward)" marker-end="url(#arrow-forward)" points="2905.255615234375,805.3433837890625 3189.95556640625,1005.8710327148438 2788.900390625,1008.3466796875" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="2905.255615234375,805.3433837890625 3189.95556640625,1005.8710327148438 2788.900390625,1008.3466796875" data-edge-id="custom-1765238841477" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="internet" transform="translate(2071.640165880771,218.24354238566275)" style="cursor: grab;"><circle r="127.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><rect x="-85" y="-85" width="170" height="170" rx="4" class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"></rect><text class="node-label" x="0" y="-23.8" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Internet</text><text class="node-sub" x="0" y="34" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="internet-copy" transform="translate(2066.9677515897347,473.4119134177565)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy" transform="translate(1775.6360865506722,668.3718438376784)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy" transform="translate(1934.7898139534577,782.2775961320921)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker2</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-1" transform="translate(2158.1262397347077,767.7122274797483)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker3</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-2" transform="translate(2345.8584174690827,631.7681967180296)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker 4</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy-1" transform="translate(2757.879480087803,307.6117116091891)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-55" y="-44" width="110" height="88" rx="4"></rect><line x1="-46.75" y1="-27.5" x2="46.75" y2="-27.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="-2.75" x2="46.75" y2="-2.75" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-46.75" y1="22" x2="46.75" y2="22" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="-44" x2="-27.5" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="-44" x2="11" y2="-19.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="-19.25" x2="-8.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="-19.25" x2="30.25" y2="5.5" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-27.5" y1="5.5" x2="-27.5" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="11" y1="5.5" x2="11" y2="30.25" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="-8.25" y1="30.25" x2="-8.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line><line x1="30.25" y1="30.25" x2="30.25" y2="55" style="stroke: rgb(71, 85, 105); stroke-width: 2;"></line></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE GUEST</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="phone" transform="translate(3312.857751572178,502.58220111114224)" style="cursor: grab;"><circle r="181.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-54.45" y="-121" width="108.9" height="242" rx="8"></rect><rect x="-45.980000000000004" y="-102.85" width="91.96000000000001" height="193.60000000000002" rx="4" style="fill: rgb(30, 41, 59);"></rect><rect x="-18.15" y="99.22" width="36.3" height="7.26" rx="2" style="fill: rgb(71, 85, 105);"></rect></g><text class="node-label" x="0" y="-33.88" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Phone</text><text class="node-sub" x="0" y="48.400000000000006" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="desktop" transform="translate(2987.696130478428,487.5842152712985)" style="cursor: grab;"><circle r="220.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-132.3" y="-117.60000000000001" width="264.6" height="176.4" rx="4"></rect><rect x="-110.25" y="-95.55" width="220.5" height="132.3" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-22.05" y="58.800000000000004" width="44.1" height="44.1"></rect><rect x="-73.5" y="102.89999999999999" width="147" height="22.05" rx="2"></rect></g><text class="node-label" x="0" y="-41.160000000000004" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Desktop</text><text class="node-sub" x="0" y="58.800000000000004" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="dns" transform="translate(3200.4643189549906,320.469591247861)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
              M -44 11
              Q -60.50000000000001 11 -60.50000000000001 -5.5
              Q -60.50000000000001 -27.5 -38.5 -27.5
@@ -2351,12 +2351,12 @@
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <line x1="2071.640165880771" y1="218.24354238566275" x2="2066.9677515897347" y2="473.4119134177565" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1775.6360865506722" y2="668.3718438376784" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1934.7898139534577" y2="782.2775961320921" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2158.1262397347077" y2="767.7122274797483" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2345.8584174690827" y2="631.7681967180296" class="minimap-edge"></line><line x1="2071.640165880771" y1="218.24354238566275" x2="2757.879480087803" y2="307.6117116091891" class="minimap-edge"></line><line x1="2757.879480087803" y1="307.6117116091891" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><line x1="3200.4643189549906" y1="320.469591247861" x2="2987.696130478428" y2="487.5842152712985" class="minimap-edge"></line><line x1="3312.857751572178" y1="502.58220111114224" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><circle cx="2071.640165880771" cy="218.24354238566275" r="40" class="minimap-node"></circle><circle cx="2066.9677515897347" cy="473.4119134177565" r="40" class="minimap-node"></circle><circle cx="1775.6360865506722" cy="668.3718438376784" r="40" class="minimap-node"></circle><circle cx="1934.7898139534577" cy="782.2775961320921" r="40" class="minimap-node"></circle><circle cx="2158.1262397347077" cy="767.7122274797483" r="40" class="minimap-node"></circle><circle cx="2345.8584174690827" cy="631.7681967180296" r="40" class="minimap-node"></circle><circle cx="2757.879480087803" cy="307.6117116091891" r="40" class="minimap-node"></circle><circle cx="3312.857751572178" cy="502.58220111114224" r="40" class="minimap-node"></circle><circle cx="2987.696130478428" cy="487.5842152712985" r="40" class="minimap-node"></circle><circle cx="3200.4643189549906" cy="320.469591247861" r="40" class="minimap-node"></circle><circle cx="2600.8697010779656" cy="975.5665527522032" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="-74.99705309342698" y="-7.395887697909075" width="4069.861183597212" height="3052.395887697909"></rect>
+              <line x1="2071.640165880771" y1="218.24354238566275" x2="2066.9677515897347" y2="473.4119134177565" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1775.6360865506722" y2="668.3718438376784" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1934.7898139534577" y2="782.2775961320921" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2158.1262397347077" y2="767.7122274797483" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2345.8584174690827" y2="631.7681967180296" class="minimap-edge"></line><line x1="2071.640165880771" y1="218.24354238566275" x2="2757.879480087803" y2="307.6117116091891" class="minimap-edge"></line><line x1="2757.879480087803" y1="307.6117116091891" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><line x1="3200.4643189549906" y1="320.469591247861" x2="2987.696130478428" y2="487.5842152712985" class="minimap-edge"></line><line x1="3312.857751572178" y1="502.58220111114224" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><circle cx="2071.640165880771" cy="218.24354238566275" r="40" class="minimap-node"></circle><circle cx="2066.9677515897347" cy="473.4119134177565" r="40" class="minimap-node"></circle><circle cx="1775.6360865506722" cy="668.3718438376784" r="40" class="minimap-node"></circle><circle cx="1934.7898139534577" cy="782.2775961320921" r="40" class="minimap-node"></circle><circle cx="2158.1262397347077" cy="767.7122274797483" r="40" class="minimap-node"></circle><circle cx="2345.8584174690827" cy="631.7681967180296" r="40" class="minimap-node"></circle><circle cx="2757.879480087803" cy="307.6117116091891" r="40" class="minimap-node"></circle><circle cx="3312.857751572178" cy="502.58220111114224" r="40" class="minimap-node"></circle><circle cx="2987.696130478428" cy="487.5842152712985" r="40" class="minimap-node"></circle><circle cx="3200.4643189549906" cy="320.469591247861" r="40" class="minimap-node"></circle><circle cx="2600.8697010779656" cy="975.5665527522032" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="1067.236760240865" y="-403.93815895549926" width="2864.859130912127" height="2148.644348184095"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">98%</div>
+            <div class="zoom-level" id="zoom-level">140%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -2383,20 +2383,20 @@
           </svg>
         </div>
         <div id="node-panel" style="display: none;">
-          <div class="details-name editable-text" id="node-name">Core Router 1</div>
-          <div class="details-ip editable-text" id="node-ip">10.0.0.1</div>
-          <div class="details-role" id="node-role">Core Routing</div>
+          <div class="details-name editable-text" id="node-name">SAN Secondary</div>
+          <div class="details-ip editable-text" id="node-ip">10.10.2.11</div>
+          <div class="details-role" id="node-role">Secondary Storage</div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">MAC:</span>
-            <span class="editable-text" id="node-mac" style="margin-left: 8px; font-size: 14px;">00:1A:2B:3C:4D:01</span>
+            <span class="editable-text" id="node-mac" style="margin-left: 8px; font-size: 14px;">00:A0:98:AA:01:02</span>
           </div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">Rack Unit:</span>
-            <span class="editable-text" id="node-rack" style="margin-left: 8px; font-size: 14px;">--</span>
+            <span class="editable-text" id="node-rack" style="margin-left: 8px; font-size: 14px;">22</span>
           </div>
-          <div class="details-info-row" id="uheight-row" style="display: none;">
+          <div class="details-info-row" id="uheight-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px;">U Height:</span>
-            <span class="editable-text" id="node-uheight" style="margin-left: 8px; font-size: 14px;">2U</span>
+            <span class="editable-text" id="node-uheight" style="margin-left: 8px; font-size: 14px;">6U</span>
           </div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">Layer:</span>
@@ -2423,9 +2423,19 @@
           </div>
 		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
-            <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
+            <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('san-primary')">
+            <span style="color: var(--text-main);">SAN Primary</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">storage</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">san</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">netapp</span>
+           </div><div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('san-secondary')">
+            <span style="color: var(--text-main);">SAN Secondary</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">storage</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">san</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">netapp</span>
+           </div><div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('fc-switch-1')">
+            <span style="color: var(--text-main);">FC Switch 1</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">storage</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">fc</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">fabric-a</span>
+           </div><div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('fc-switch-2')">
+            <span style="color: var(--text-main);">FC Switch 2</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">storage</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">fc</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">fabric-b</span>
+           </div><div style="padding: 6px 0; border-bottom: 1px solid var(--edge-main); cursor: pointer;" onclick="claimTheImmortal('tor-switch-b1')">
+            <span style="color: var(--text-main);">ToR Switch B1</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">tor</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">access</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">rack-b1</span>
+           </div></div>
           </details>
-          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>core</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>tier-1</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>redundant</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add Tag</span></div>
+          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>storage</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>san</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>netapp</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add Tag</span></div>
           <div class="size-controls">
             <label>Size:</label>
             <input type="range" id="size-slider" min="20" max="200" value="55">
@@ -2579,7 +2589,7 @@
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Primary core router</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">BGP peering enabled</span><span class="delete-note">✕</span></li></ul>
+          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">NetApp AFF A400</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">500TB Raw</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">FC 32Gb</span><span class="delete-note">✕</span></li></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -3624,14 +3634,14 @@
     "viewOnly": false
   },
   "canvas": {
-    "zoom": 0.9828345045578523,
-    "panX": -74.99705309342698,
-    "panY": -7.395887697909075
+    "zoom": 1.3962292096108968,
+    "panX": 1067.236760240865,
+    "panY": -403.93815895549926
   },
   "savedTopologyView": {
-    "zoom": 0.9325110211947125,
-    "panX": -563.7108933103631,
-    "panY": -561.6887674556383
+    "zoom": 1.3081527255665018,
+    "panX": 633.0290511413132,
+    "panY": 386.6547545758158
   },
   "documentTabs": [
     {
@@ -3694,14 +3704,15 @@
           "tags": [
             "security",
             "perimeter",
-            "ha-pair"
+            "ha-pair",
+            "tagged"
           ],
           "notes": [
             "Palo Alto PA-5250",
             "Active node"
           ],
-          "mac": "00:1A:2B:3C:4D:10",
-          "rackUnit": "",
+          "mac": "c1",
+          "rackUnit": "cd",
           "uHeight": "2",
           "layer": "security",
           "assignedRack": "",
@@ -4237,7 +4248,7 @@
             "FC 32Gb"
           ],
           "mac": "00:A0:98:AA:01:02",
-          "rackUnit": 28,
+          "rackUnit": 22,
           "uHeight": "6",
           "layer": "physical",
           "assignedRack": "dc-rack-b1",
@@ -6167,6 +6178,23 @@
           "isRack": false,
           "locked": false,
           "groupId": null
+        },
+        "racedd": {
+          "shape": "shield",
+          "name": "racedd",
+          "ip": "",
+          "role": "Rack",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "physical",
+          "assignedRack": "",
+          "rackCapacity": "42",
+          "isRack": true,
+          "locked": false,
+          "groupId": null
         }
       },
       "edges": {
@@ -7287,8 +7315,8 @@
           "y": 2845
         },
         "san-secondary": {
-          "x": 2155.0394237844876,
-          "y": 2845
+          "x": 1975.7230224609375,
+          "y": 1614.1529541015625
         },
         "fc-switch-1": {
           "x": 2115.2377370375634,
@@ -7609,9 +7637,15 @@
         "cooling-2": {
           "x": 1603.293611085831,
           "y": 981.0621185302734
+        },
+        "racedd": {
+          "x": 2750.0758634107624,
+          "y": 1072.3856645591525
         }
       },
-      "sizes": {},
+      "sizes": {
+        "fw-external-1": 33
+      },
       "styles": {
         "dc-rack-b2": {
           "all": {
@@ -8450,51 +8484,282 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765476630816,
+      "timestamp": 1765673533260,
       "type": "save",
       "description": "File saved: the-one-file.html",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765476627316,
+      "timestamp": 1765673529278,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765476621165,
+      "timestamp": 1765673524281,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765476612712,
+      "timestamp": 1765673518749,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765476610218,
-      "type": "import",
-      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "timestamp": 1765673038983,
+      "type": "rack",
+      "description": "add rack",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765402929770,
+      "timestamp": 1765673030855,
+      "type": "node",
+      "description": "add tags",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028771,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028672,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028667,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028650,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028636,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028628,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028620,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028612,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028606,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028598,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028591,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028582,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028576,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028568,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028560,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028554,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028404,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028389,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028344,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028328,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028320,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028314,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028306,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028299,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028290,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028285,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028276,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673028148,
+      "type": "node",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673026468,
+      "type": "rack",
+      "description": "edit mac",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673024234,
+      "type": "rack",
+      "description": "edit rack",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673017536,
       "type": "tab",
       "description": "Switched to tab: Corporate Site B",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765402922300,
-      "type": "export",
-      "description": "Exported JSON: the-one-file-data-2025-12-10.json",
+      "timestamp": 1765673017076,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765673016734,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765673013772,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-homelab-demo.json (11 nodes, 10 connections)",
       "details": {},
       "tab": "Homelab 2"
     },
@@ -12732,33 +12997,32 @@
        modal.classList.add("active");
        input.focus();
        input.select();
+       const cleanup = () => {
+        modal.classList.remove("active");
+        saveBtn.removeEventListener("click", handleSave);
+        cancelBtn.removeEventListener("click", handleCancel);
+        input.removeEventListener("keypress", handleEnter);
+        modal.removeEventListener("click", bgHandler);
+       };
        const handleSave = () => {
         if (input.value.trim()) {
          onSave(input.value.trim());
         }
-        modal.classList.remove("active");
-        saveBtn.removeEventListener("click", handleSave);
-        cancelBtn.removeEventListener("click", handleCancel);
-        input.removeEventListener("keypress", handleEnter);
+        cleanup();
        };
        const handleCancel = () => {
-        modal.classList.remove("active");
-        saveBtn.removeEventListener("click", handleSave);
-        cancelBtn.removeEventListener("click", handleCancel);
-        input.removeEventListener("keypress", handleEnter);
+        cleanup();
        };
        const handleEnter = (e) => {
         if (e.key === "Enter") handleSave();
        };
+       const bgHandler = (e) => {
+        if (e.target === modal) handleCancel();
+       };
        saveBtn.addEventListener("click", handleSave);
        cancelBtn.addEventListener("click", handleCancel);
        input.addEventListener("keypress", handleEnter);
-       modal.addEventListener("click", function bgHandler(e) {
-        if (e.target === modal) {
-         handleCancel();
-         modal.removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function challengeTheImmortal(message, onConfirm) {
        const modal = document.getElementById("confirm-modal");
@@ -12767,25 +13031,25 @@
        const cancelBtn = document.getElementById("confirm-cancel");
        messageEl.textContent = message;
        modal.classList.add("active");
+	   const cleanup = () => {
+        modal.classList.remove("active");
+        deleteBtn.removeEventListener("click", handleConfirm);
+        cancelBtn.removeEventListener("click", handleCancel);
+        modal.removeEventListener("click", bgHandler);
+       };
        const handleConfirm = () => {
         onConfirm();
-        modal.classList.remove("active");
-        deleteBtn.removeEventListener("click", handleConfirm);
-        cancelBtn.removeEventListener("click", handleCancel);
+        cleanup();
        };
        const handleCancel = () => {
-        modal.classList.remove("active");
-        deleteBtn.removeEventListener("click", handleConfirm);
-        cancelBtn.removeEventListener("click", handleCancel);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) handleCancel();
        };
        deleteBtn.addEventListener("click", handleConfirm);
        cancelBtn.addEventListener("click", handleCancel);
-       modal.addEventListener("click", function bgHandler(e) {
-        if (e.target === modal) {
-         handleCancel();
-         modal.removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       const pageTitleEl = document.getElementById("page-title");
       if (pageTitleEl) {
@@ -15393,61 +15657,65 @@
        if (!node) return;
        document.getElementById("modal-title").textContent = "Edit Rack Unit";
        document.getElementById("modal-input").value = node.rackUnit || "";
-       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("edit-modal").style.display = "";
+       document.getElementById("edit-modal").classList.add("active");
        document.getElementById("modal-input").focus();
+	   const modal = document.getElementById("edit-modal");
+       const cleanup = () => {
+        modal.classList.remove("active");
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        modal.removeEventListener("click", bgHandler);
+       };
        const saveHandler = () => {
         pushUndo("edit rack");
         const value = document.getElementById("modal-input").value.trim();
         node.rackUnit = value;
-        document.getElementById("edit-modal").style.display = "none";
+        cleanup();
         claimTheImmortal(id);
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
        };
        const cancelHandler = () => {
-        document.getElementById("edit-modal").style.display = "none";
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) cancelHandler();
        };
        document.getElementById("modal-save").addEventListener("click", saveHandler);
        document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
-       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
-        if (e.target === document.getElementById("edit-modal")) {
-         cancelHandler();
-         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function editNodeUHeight(id) {
        const node = NODE_DATA[id];
        if (!node) return;
        document.getElementById("modal-title").textContent = "Edit U Height";
        document.getElementById("modal-input").value = node.uHeight || "1";
-       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("edit-modal").style.display = "";
+       document.getElementById("edit-modal").classList.add("active");
        document.getElementById("modal-input").focus();
+	   const modal = document.getElementById("edit-modal");
+       const cleanup = () => {
+        modal.classList.remove("active");
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        modal.removeEventListener("click", bgHandler);
+       };
        const saveHandler = () => {
         pushUndo("edit U height");
         const value = document.getElementById("modal-input").value.trim();
         node.uHeight = value;
-        document.getElementById("edit-modal").style.display = "none";
+        cleanup();
         claimTheImmortal(id);
         forgeTheTopology();
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
        };
        const cancelHandler = () => {
-        document.getElementById("edit-modal").style.display = "none";
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) cancelHandler();
        };
        document.getElementById("modal-save").addEventListener("click", saveHandler);
        document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
-       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
-        if (e.target === document.getElementById("edit-modal")) {
-         cancelHandler();
-         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function updateEdgePortLabels(edgeId) {
        const edge = EDGE_DATA.list.find(e => e.id === edgeId);

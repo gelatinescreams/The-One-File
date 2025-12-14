@@ -2570,7 +2570,7 @@
           </select>
           <button id="draw-undo" style="display: none" title="Undo last point">Undo</button>
         </div>
-        <div class="topology-toolbar" id="topology-toolbar" style="display: none;">
+        <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
           <select id="add-line-select">
@@ -3261,7 +3261,15 @@
   ],
   "currentTabIndex": 0,
   "encryptedSections": {},
-  "auditLog": []
+  "auditLog": [
+    {
+      "timestamp": 1765673857380,
+      "type": "save",
+      "description": "File saved: the-one-file-the-networkening.html",
+      "details": {},
+      "tab": "Main Topology"
+    }
+  ]
 }</script>
     <script>
 	Object.keys(localStorage).forEach(key => {
@@ -7889,33 +7897,32 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         modal.classList.add("active");
         input.focus();
         input.select();
+        const cleanup = () => {
+         modal.classList.remove("active");
+         saveBtn.removeEventListener("click", handleSave);
+         cancelBtn.removeEventListener("click", handleCancel);
+         input.removeEventListener("keypress", handleEnter);
+         modal.removeEventListener("click", bgHandler);
+        };
         const handleSave = () => {
          if (input.value.trim()) {
           onSave(input.value.trim());
          }
-         modal.classList.remove("active");
-         saveBtn.removeEventListener("click", handleSave);
-         cancelBtn.removeEventListener("click", handleCancel);
-         input.removeEventListener("keypress", handleEnter);
+         cleanup();
         };
         const handleCancel = () => {
-         modal.classList.remove("active");
-         saveBtn.removeEventListener("click", handleSave);
-         cancelBtn.removeEventListener("click", handleCancel);
-         input.removeEventListener("keypress", handleEnter);
+         cleanup();
         };
         const handleEnter = (e) => {
          if (e.key === "Enter") handleSave();
         };
+        const bgHandler = (e) => {
+         if (e.target === modal) handleCancel();
+        };
         saveBtn.addEventListener("click", handleSave);
         cancelBtn.addEventListener("click", handleCancel);
         input.addEventListener("keypress", handleEnter);
-        modal.addEventListener("click", function bgHandler(e) {
-         if (e.target === modal) {
-          handleCancel();
-          modal.removeEventListener("click", bgHandler);
-         }
-        });
+        modal.addEventListener("click", bgHandler);
        }
        function challengeTheImmortal(message, onConfirm) {
         const modal = document.getElementById("confirm-modal");
@@ -7924,25 +7931,25 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const cancelBtn = document.getElementById("confirm-cancel");
         messageEl.textContent = message;
         modal.classList.add("active");
+	    const cleanup = () => {
+         modal.classList.remove("active");
+         deleteBtn.removeEventListener("click", handleConfirm);
+         cancelBtn.removeEventListener("click", handleCancel);
+         modal.removeEventListener("click", bgHandler);
+        };
         const handleConfirm = () => {
          onConfirm();
-         modal.classList.remove("active");
-         deleteBtn.removeEventListener("click", handleConfirm);
-         cancelBtn.removeEventListener("click", handleCancel);
+         cleanup();
         };
         const handleCancel = () => {
-         modal.classList.remove("active");
-         deleteBtn.removeEventListener("click", handleConfirm);
-         cancelBtn.removeEventListener("click", handleCancel);
+         cleanup();
+        };
+        const bgHandler = (e) => {
+         if (e.target === modal) handleCancel();
         };
         deleteBtn.addEventListener("click", handleConfirm);
         cancelBtn.addEventListener("click", handleCancel);
-        modal.addEventListener("click", function bgHandler(e) {
-         if (e.target === modal) {
-          handleCancel();
-          modal.removeEventListener("click", bgHandler);
-         }
-        });
+        modal.addEventListener("click", bgHandler);
        }
        const pageTitleEl = document.getElementById("page-title");
        if (pageTitleEl) {
@@ -11615,91 +11622,97 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        if (!node) return;
        document.getElementById("modal-title").textContent = "Edit MAC Address";
        document.getElementById("modal-input").value = node.mac || "";
-       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("edit-modal").style.display = "";
+	   document.getElementById("edit-modal").classList.add("active");
        document.getElementById("modal-input").focus();
+       const modal = document.getElementById("edit-modal");
+       const cleanup = () => {
+        modal.classList.remove("active");
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        modal.removeEventListener("click", bgHandler);
+       };
        const saveHandler = () => {
         pushUndo("edit mac");
         const value = document.getElementById("modal-input").value.trim();
         node.mac = value;
-        document.getElementById("edit-modal").style.display = "none";
+        cleanup();
         claimTheImmortal(id);
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
        };
        const cancelHandler = () => {
-        document.getElementById("edit-modal").style.display = "none";
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) cancelHandler();
        };
        document.getElementById("modal-save").addEventListener("click", saveHandler);
        document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
-       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
-        if (e.target === document.getElementById("edit-modal")) {
-         cancelHandler();
-         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function editNodeRack(id) {
        const node = NODE_DATA[id];
        if (!node) return;
        document.getElementById("modal-title").textContent = "Edit Rack Unit";
        document.getElementById("modal-input").value = node.rackUnit || "";
-       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("edit-modal").style.display = "";
+       document.getElementById("edit-modal").classList.add("active");
        document.getElementById("modal-input").focus();
+	   const modal = document.getElementById("edit-modal");
+       const cleanup = () => {
+        modal.classList.remove("active");
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        modal.removeEventListener("click", bgHandler);
+       };
        const saveHandler = () => {
         pushUndo("edit rack");
         const value = document.getElementById("modal-input").value.trim();
         node.rackUnit = value;
-        document.getElementById("edit-modal").style.display = "none";
+        cleanup();
         claimTheImmortal(id);
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
        };
        const cancelHandler = () => {
-        document.getElementById("edit-modal").style.display = "none";
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) cancelHandler();
        };
        document.getElementById("modal-save").addEventListener("click", saveHandler);
        document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
-       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
-        if (e.target === document.getElementById("edit-modal")) {
-         cancelHandler();
-         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function editNodeUHeight(id) {
        const node = NODE_DATA[id];
        if (!node) return;
        document.getElementById("modal-title").textContent = "Edit U Height";
        document.getElementById("modal-input").value = node.uHeight || "1";
-       document.getElementById("edit-modal").style.display = "flex";
+       document.getElementById("edit-modal").style.display = "";
+       document.getElementById("edit-modal").classList.add("active");
        document.getElementById("modal-input").focus();
+	   const modal = document.getElementById("edit-modal");
+       const cleanup = () => {
+        modal.classList.remove("active");
+        document.getElementById("modal-save").removeEventListener("click", saveHandler);
+        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        modal.removeEventListener("click", bgHandler);
+       };
        const saveHandler = () => {
         pushUndo("edit U height");
         const value = document.getElementById("modal-input").value.trim();
         node.uHeight = value;
-        document.getElementById("edit-modal").style.display = "none";
+        cleanup();
         claimTheImmortal(id);
         forgeTheTopology();
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
        };
        const cancelHandler = () => {
-        document.getElementById("edit-modal").style.display = "none";
-        document.getElementById("modal-save").removeEventListener("click", saveHandler);
-        document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
+        cleanup();
+       };
+       const bgHandler = (e) => {
+        if (e.target === modal) cancelHandler();
        };
        document.getElementById("modal-save").addEventListener("click", saveHandler);
        document.getElementById("modal-cancel").addEventListener("click", cancelHandler);
-       document.getElementById("edit-modal").addEventListener("click", function bgHandler(e) {
-        if (e.target === document.getElementById("edit-modal")) {
-         cancelHandler();
-         document.getElementById("edit-modal").removeEventListener("click", bgHandler);
-        }
-       });
+       modal.addEventListener("click", bgHandler);
       }
       function updateEdgePortLabels(edgeId) {
        const edge = EDGE_DATA.list.find(e => e.id === edgeId);

@@ -13,7 +13,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version 3.9.9.2 : 12/11/25 Added Advanced Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)
+### Version 3.9.9.3 : 12/13/25 Added Advanced Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)
 
 * **Added Dedicated Ports Tab** Easily view and navigate the canvas using the new ports tab. Also includes csv export option
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
