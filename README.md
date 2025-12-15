@@ -13,19 +13,10 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-Port Management Improvements
-
-Connections section in node/rack panel - See all ports connected to a device at a glance
-Click to edit unassigned ports - Click - to quickly assign missing ports from panel or port map
-Click to navigate - Click assigned ports or ↗ icon to jump to that connection on canvas
-Edge color indicators - Colored dots in port map show connection type
-Duplicate port warning - Alert when assigning a port already in use on that device
-Live panel refresh - Port changes in modal update the side panel instantly
-
 ### Version 3.9.9.5 : 12/13/25 The ports enhancements update
 
 * **Very close to 4.0 Stable** Thank you to all the testers
-* **New: 3.9.9.5** The ports enhancemnets update [changelog.md](changelog.md) for more information
+* **New: 3.9.9.5** The ports enhancements update [changelog.md](changelog.md) for more information
 * **Added Dedicated Ports Tab** Easily view and navigate the canvas using the new ports tab. Also includes csv export option
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
 * * Click or tap any canvas item five times to inspect its details while in View Only Mode
