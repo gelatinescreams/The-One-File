@@ -1,5 +1,13 @@
 #### CHANGE LOG
-**We are very close to 4.0 Stable community. Thank you to all the testers. We are making this for all of us :)**
+**We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
+
+### Version 3.9.9.5 : 12/14/25 The ports enhancements update
+- **Port connections section in node/rack panel** : See all ports connected to a device at a glance
+- **Click to edit unassigned ports** : Assign ports directly from the devices
+- **Port JumpTO** : Click ↗ to jump to that connection on canvas and highlight it
+- **Edge color indicators** : Added color codes to the dedicated port view for easy reference
+- **Duplicate port warning** : Added a vert simply alert when assigning a port already in use on that device
+- **Squashed port bugs** : Squashed some small related ports bugs
 
 ### Version 3.9.9.4 : 12/14/25 Further fixes towards 4.0 Stable
 * Fixed an issue where entering rack view would freeze the canvas on mobile

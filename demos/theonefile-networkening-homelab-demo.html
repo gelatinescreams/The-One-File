@@ -1710,7 +1710,7 @@
             <option value="without-ports">Missing Ports</option>
           </select>
         </div>
-        <div id="port-map-table" style="max-height: 450px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <div id="port-map-table" style="max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No connections found</div></div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-save" onclick="exportPortMap()">Export CSV</button>
           <button class="btn-cancel" id="port-map-modal-close">Close</button>
@@ -2729,6 +2729,10 @@
 		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
             <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
+          </details>
+          <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px; display: block;">
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">9</span>)</summary>
+            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Primary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 2</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 1</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">NYC Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">LA Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Chicago Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">London Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Tokyo Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">AWS Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
           </details>
           <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>core</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>tier-1</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>redundant</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add Tag</span></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -9156,30 +9160,86 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765750209887,
+      "timestamp": 1765766624736,
       "type": "save",
       "description": "File saved: the-one-file.html",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765750206707,
+      "timestamp": 1765766621038,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765750201534,
+      "timestamp": 1765766616410,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765750193860,
+      "timestamp": 1765766611144,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765766608995,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402888416,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402884873,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402878108,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402866440,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402865008,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402860428,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402858103,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
       "tab": "Corporate Site B"
     }
@@ -14001,7 +14061,53 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          rackContentsSection.style.display = "none";
          }
         }
-        document.getElementById("node-name").onclick = () => editNodeName(id);
+       const connectionsSection = document.getElementById("node-connections-section");
+       const connectionsList = document.getElementById("node-connections-list");
+       const connectionsCount = document.getElementById("node-connections-count");
+       if (connectionsSection && connectionsList) {
+        const connectedEdges = (EDGE_DATA.list || []).filter(e => e.from === id || e.to === id);
+        connectionsCount.textContent = connectedEdges.length;
+        if (connectedEdges.length > 0) {
+         connectionsList.innerHTML = '';
+         connectedEdges.forEach(e => {
+          const isFrom = e.from === id;
+          const localPort = isFrom ? e.fromPort : e.toPort;
+          const remoteNodeId = isFrom ? e.to : e.from;
+          const remotePort = isFrom ? e.toPort : e.fromPort;
+          const remoteName = NODE_DATA[remoteNodeId]?.name || remoteNodeId;
+          const div = document.createElement('div');
+          div.style.cssText = 'padding: 6px 0; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;';
+          const localSpan = document.createElement('span');
+          localSpan.style.cssText = localPort ? 'color: var(--accent); font-family: monospace; cursor: pointer;' : 'color: var(--text-soft); cursor: pointer;';
+          localSpan.textContent = localPort || '-';
+          localSpan.title = localPort ? 'Click to view connection' : 'Click to set port';
+          localSpan.onclick = () => { if (localPort) { selectTheConnection(e.id); } else { const label = `Port on ${NODE_DATA[id]?.name || id}:`; const newVal = prompt(label, ''); if (newVal !== null && newVal !== '') { const isDupe = (EDGE_DATA.list || []).some(x => x.id !== e.id && ((x.from === id && x.fromPort === newVal) || (x.to === id && x.toPort === newVal))); if (isDupe && !confirm(`Warning: Port "${newVal}" is already used on ${NODE_DATA[id]?.name || id}. Use anyway?`)) return; if (isFrom) e.fromPort = newVal; else e.toPort = newVal; claimTheImmortal(id); } } };
+          const arrow = document.createElement('span');
+          arrow.style.cssText = 'color: var(--text-soft); margin: 0 8px;';
+          arrow.textContent = '↔';
+          const remoteSpan = document.createElement('span');
+          remoteSpan.style.cssText = 'color: var(--text-main); cursor: pointer;';
+          remoteSpan.textContent = remoteName;
+          remoteSpan.title = 'Click to view connection';
+          remoteSpan.onclick = () => { claimTheImmortal(remoteNodeId); focusOnSelected(); };
+          const remotePortSpan = document.createElement('span');
+          remotePortSpan.style.cssText = remotePort ? 'color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;' : 'color: var(--text-soft); margin-left: 6px; cursor: pointer;';
+          remotePortSpan.textContent = '(' + (remotePort || '-') + ')';
+          remotePortSpan.title = remotePort ? 'Click to view connection' : 'Click to set port';
+          remotePortSpan.onclick = () => { if (remotePort) { selectTheConnection(e.id); } else { const label = `Port on ${remoteName}:`; const newVal = prompt(label, ''); if (newVal !== null && newVal !== '') { const isDupe = (EDGE_DATA.list || []).some(x => x.id !== e.id && ((x.from === remoteNodeId && x.fromPort === newVal) || (x.to === remoteNodeId && x.toPort === newVal))); if (isDupe && !confirm(`Warning: Port "${newVal}" is already used on ${remoteName}. Use anyway?`)) return; if (isFrom) e.toPort = newVal; else e.fromPort = newVal; claimTheImmortal(id); } } };
+          div.appendChild(localSpan);
+          div.appendChild(arrow);
+          div.appendChild(remoteSpan);
+          div.appendChild(remotePortSpan);
+          connectionsList.appendChild(div);
+         });
+         connectionsSection.style.display = "block";
+        } else {
+         connectionsList.innerHTML = '<div style="color: var(--text-soft); font-style: italic;">No connections</div>';
+         connectionsSection.style.display = "block";
+        }
+       }
+       document.getElementById("node-name").onclick = () => editNodeName(id);
         document.getElementById("node-ip").onclick = () => editNodeIp(id);
         document.getElementById("node-mac").onclick = () => editNodeMac(id);
         document.getElementById("node-rack").onclick = () => editNodeRack(id);
@@ -17959,11 +18065,50 @@ if (searchInput) {
           const fromName = NODE_DATA[e.from]?.name || e.from;
           const toName = NODE_DATA[e.to]?.name || e.to;
           const notes = (e.notes || []).join(", ");
-          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.from)}'); focusOnSelected()">${escapeHtml(fromName)}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()">${escapeHtml(e.fromPort) || "-"}</td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.to)}'); focusOnSelected()">${escapeHtml(toName)}</td><td style="padding: 10px; font-family: monospace; color: var(--accent); cursor: pointer;" onclick="document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()">${escapeHtml(e.toPort) || "-"}</td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${escapeHtml(notes) || "-"}</td></tr>`;
+          const edgeColor = e.color || EDGE_LEGEND[e.type]?.color || 'var(--edge-main)';
+          const fromPortDisplay = e.fromPort ? escapeHtml(e.fromPort) : "-";
+          const toPortDisplay = e.toPort ? escapeHtml(e.toPort) : "-";
+          const goToEdge = `document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()`;
+          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${edgeColor}; margin-right: 8px;"></span><span style="cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.from)}'); focusOnSelected()">${escapeHtml(fromName)}</span></td><td style="padding: 10px; font-family: monospace;"><span style="color: ${e.fromPort ? 'var(--accent)' : 'var(--text-soft)'}; cursor: pointer;" onclick="editPortFromMap('${escapeHtml(e.id)}', 'from')">${fromPortDisplay}</span> <span style="cursor: pointer; opacity: 0.6; font-size: 11px;" onclick="${goToEdge}" title="Go to connection">↗</span></td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.to)}'); focusOnSelected()">${escapeHtml(toName)}</td><td style="padding: 10px; font-family: monospace;"><span style="color: ${e.toPort ? 'var(--accent)' : 'var(--text-soft)'}; cursor: pointer;" onclick="editPortFromMap('${escapeHtml(e.id)}', 'to')">${toPortDisplay}</span> <span style="cursor: pointer; opacity: 0.6; font-size: 11px;" onclick="${goToEdge}" title="Go to connection">↗</span></td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${escapeHtml(notes) || "-"}</td></tr>`;
         });
         html += '</tbody></table>';
         container.innerHTML = html;
       }
+      window.editPortFromMap = function(edgeId, which) {
+        const edge = EDGE_DATA.list.find(e => e.id === edgeId);
+        if (!edge) return;
+        const fromName = NODE_DATA[edge.from]?.name || edge.from;
+        const toName = NODE_DATA[edge.to]?.name || edge.to;
+        const nodeId = which === 'from' ? edge.from : edge.to;
+        const nodeName = which === 'from' ? fromName : toName;
+        const label = `Port on ${nodeName}:`;
+        const currentVal = which === 'from' ? (edge.fromPort || '') : (edge.toPort || '');
+        const newVal = prompt(label, currentVal);
+        if (newVal !== null && newVal !== '') {
+          const isDuplicate = (EDGE_DATA.list || []).some(e => {
+            if (e.id === edgeId) return false;
+            if (e.from === nodeId && e.fromPort === newVal) return true;
+            if (e.to === nodeId && e.toPort === newVal) return true;
+            return false;
+          });
+          if (isDuplicate && !confirm(`Warning: Port "${newVal}" is already used on ${nodeName}. Use anyway?`)) {
+            return;
+          }
+          if (which === 'from') edge.fromPort = newVal;
+          else edge.toPort = newVal;
+          renderPortMap();
+          if (currentNodeId && (edge.from === currentNodeId || edge.to === currentNodeId)) {
+            claimTheImmortal(currentNodeId);
+          }
+        } else if (newVal === '') {
+          if (which === 'from') edge.fromPort = '';
+          else edge.toPort = '';
+          renderPortMap();
+          if (currentNodeId && (edge.from === currentNodeId || edge.to === currentNodeId)) {
+            claimTheImmortal(currentNodeId);
+          }
+        }
+      };
       window.exportPortMap = function() {
         let csv = "From Device,From Port,To Device,To Port,Notes\n";
         (EDGE_DATA.list || []).forEach(e => {
