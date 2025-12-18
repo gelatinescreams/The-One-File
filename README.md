@@ -11,7 +11,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 * **theonefile-networkening.html**
   Adds online features like live status/ping per node and icons from awesome libraries such as MDI, Simple Icons and selfh.st/icons. It functions as a bolt on layer while keeping the core workflow unchanged. Still one file!
 
-![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
+![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
 #### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
   * We are very close to 4.0 Stable, community! Thank you to all the testers!!
