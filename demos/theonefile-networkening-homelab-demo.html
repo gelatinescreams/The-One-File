@@ -611,6 +611,18 @@
       width: 100%;
       height: 100%;
       }
+	.minimap-container,
+	.node-panel,
+	.edge-panel,
+	#canvas-viewport {
+	  contain: layout paint;
+	}	
+	.low-zoom .node-group .node-circle,
+	.low-zoom .node-group.active .node-circle,
+	.low-zoom .node-group.selected .node-circle {
+	  filter: none !important;
+	  animation: none !important;
+	}	
       .minimap-viewport {
       fill: rgba(79, 209, 197, 0.2);
       stroke: var(--accent);
@@ -1666,7 +1678,7 @@
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"></div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -1691,7 +1703,7 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"></div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
@@ -2085,12 +2097,23 @@
             </div>
           </div>
         </details>
-        <details class="style-section">
+        <details class="style-section" open="">
           <summary>Connections</summary>
           <div class="style-content">
             <div class="style-row">
               <label>Default Color</label>
               <input type="color" id="default-edge-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>Default Routing</label>
+              <select id="default-edge-routing">
+                <option value="orthogonal">Orthogonal (90°)</option>
+                <option value="curved">Curved</option>
+                <option value="straight">Straight</option>
+              </select>
+            </div>
+            <div class="style-row">
+              <button id="apply-routing-all" style="width:100%;padding:8px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;">Apply Routing to All Connections</button>
             </div>
           </div>
         </details>
@@ -2588,12 +2611,18 @@
         <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select"><option value="core-router-2">Core Router 2</option><option value="fw-external-1">External FW 1</option><option value="fw-external-2">External FW 2</option><option value="fw-internal">Internal FW</option><option value="core-switch-1">Core Switch 1</option><option value="core-switch-2">Core Switch 2</option><option value="dc-rack-a1">DC Rack A1</option><option value="dc-rack-a2">DC Rack A2</option><option value="dc-rack-b1">DC Rack B1</option><option value="dc-rack-b2">DC Rack B2</option><option value="dmz-rack">DMZ Rack</option><option value="mgmt-rack">Management Rack</option><option value="wlc-primary">WLC Primary</option><option value="wlc-secondary">WLC Secondary</option><option value="mobile-zone-hq">HQ Mobile Zone</option><option value="mobile-zone-guest">Guest WiFi Zone</option><option value="mobile-zone-iot">IoT Device Zone</option><option value="branch-router-ny">NYC Branch Router</option><option value="branch-router-la">LA Branch Router</option><option value="branch-router-chi">Chicago Branch Router</option><option value="branch-router-lon">London Branch Router</option><option value="branch-router-tokyo">Tokyo Branch Router</option><option value="cloud-aws">AWS Cloud</option><option value="cloud-azure">Azure Cloud</option><option value="cloud-gcp">GCP Cloud</option><option value="isp-primary">ISP Primary</option><option value="isp-secondary">ISP Secondary</option><option value="proxy-server-1">Proxy Server 1</option><option value="proxy-server-2">Proxy Server 2</option><option value="vpn-concentrator">VPN Concentrator</option><option value="nac-server">NAC Server</option><option value="voip-cluster">VoIP Cluster</option><option value="video-conf">Video Conference</option><option value="security-cameras">Security Cameras</option><option value="dev-server-1">Dev Server 1</option><option value="dev-server-2">Dev Server 2</option><option value="test-environment">Test Environment</option><option value="erp-system">ERP System</option><option value="crm-system">CRM System</option><option value="endpoint-1000">Corporate Endpoints</option><option value="dist-switch-floor1">Floor 1 Switch</option><option value="dist-switch-floor2">Floor 2 Switch</option><option value="dist-switch-floor3">Floor 3 Switch</option><option value="dist-switch-floor4">Floor 4 Switch</option><option value="ap-floor1-zone1">AP Floor 1 Zone 1</option><option value="ap-floor2-zone1">AP Floor 2 Zone 1</option><option value="ap-floor3-zone1">AP Floor 3 Zone 1</option><option value="ap-floor4-zone1">AP Floor 4 Zone 1</option><option value="ups-dc-1">UPS DC-1</option><option value="ups-dc-2">UPS DC-2</option><option value="cooling-1">CRAC Unit 1</option><option value="cooling-2">CRAC Unit 2</option></select>
-<input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">          <select id="add-line-direction" title="Line direction">
+          <select id="add-line-select"></select>
+	      <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">     
+		 <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
             <option value="forward">→ Forward</option>
             <option value="backward">← Backward</option>
             <option value="both">↔ Both</option>
+          </select>
+          <select id="add-line-routing" title="Line routing">
+            <option value="orthogonal">Orthogonal</option>
+            <option value="curved">Curved</option>
+            <option value="straight">Straight</option>
           </select>
           <button id="add-line-btn">Add</button>
         </div>
@@ -2637,30 +2666,18 @@
         <div class="canvas-hint" id="canvas-hint"></div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(85, 226, 8); cursor: pointer;"></span><span class="legend-label" contenteditable="true">ISP LINE</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(76, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">MY Guest NETWORK</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(128, 255, 0); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(255, 0, 208); cursor: pointer;"></span><span class="legend-label" contenteditable="true">iPhone (always guest iPhone)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="1254.5197896196048 -147.55422459755366 2648.185035176588 1986.138776382441" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="#4755694D" stroke-width="20" stroke-dasharray="10 5" rx="8"></rect><g id="canvas-grid"><line x1="100" y1="100" x2="100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="150" y1="100" x2="150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="200" y1="100" x2="200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="250" y1="100" x2="250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="300" y1="100" x2="300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="350" y1="100" x2="350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="400" y1="100" x2="400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="450" y1="100" x2="450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="500" y1="100" x2="500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="550" y1="100" x2="550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="600" y1="100" x2="600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="650" y1="100" x2="650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="700" y1="100" x2="700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="750" y1="100" x2="750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="800" y1="100" x2="800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="850" y1="100" x2="850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="900" y1="100" x2="900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="950" y1="100" x2="950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1000" y1="100" x2="1000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1050" y1="100" x2="1050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1100" y1="100" x2="1100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1150" y1="100" x2="1150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1200" y1="100" x2="1200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1250" y1="100" x2="1250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1300" y1="100" x2="1300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1350" y1="100" x2="1350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1400" y1="100" x2="1400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1450" y1="100" x2="1450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1500" y1="100" x2="1500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1550" y1="100" x2="1550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1600" y1="100" x2="1600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1650" y1="100" x2="1650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1700" y1="100" x2="1700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1750" y1="100" x2="1750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1800" y1="100" x2="1800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1850" y1="100" x2="1850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1900" y1="100" x2="1900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1950" y1="100" x2="1950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2000" y1="100" x2="2000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2050" y1="100" x2="2050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2100" y1="100" x2="2100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2150" y1="100" x2="2150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2200" y1="100" x2="2200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2250" y1="100" x2="2250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2300" y1="100" x2="2300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2350" y1="100" x2="2350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2400" y1="100" x2="2400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2450" y1="100" x2="2450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2500" y1="100" x2="2500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2550" y1="100" x2="2550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2600" y1="100" x2="2600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2650" y1="100" x2="2650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2700" y1="100" x2="2700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2750" y1="100" x2="2750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2800" y1="100" x2="2800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2850" y1="100" x2="2850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2900" y1="100" x2="2900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2950" y1="100" x2="2950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3000" y1="100" x2="3000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3050" y1="100" x2="3050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3100" y1="100" x2="3100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3150" y1="100" x2="3150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3200" y1="100" x2="3200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3250" y1="100" x2="3250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3300" y1="100" x2="3300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3350" y1="100" x2="3350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3400" y1="100" x2="3400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3450" y1="100" x2="3450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3500" y1="100" x2="3500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3550" y1="100" x2="3550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3600" y1="100" x2="3600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3650" y1="100" x2="3650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3700" y1="100" x2="3700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3750" y1="100" x2="3750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3800" y1="100" x2="3800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3850" y1="100" x2="3850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3900" y1="100" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="100" x2="3900" y2="100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="150" x2="3900" y2="150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="200" x2="3900" y2="200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="250" x2="3900" y2="250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="300" x2="3900" y2="300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="350" x2="3900" y2="350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="400" x2="3900" y2="400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="450" x2="3900" y2="450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="500" x2="3900" y2="500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="550" x2="3900" y2="550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="600" x2="3900" y2="600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="650" x2="3900" y2="650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="700" x2="3900" y2="700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="750" x2="3900" y2="750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="800" x2="3900" y2="800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="850" x2="3900" y2="850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="900" x2="3900" y2="900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="950" x2="3900" y2="950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1000" x2="3900" y2="1000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1050" x2="3900" y2="1050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1100" x2="3900" y2="1100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1150" x2="3900" y2="1150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1200" x2="3900" y2="1200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1250" x2="3900" y2="1250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1300" x2="3900" y2="1300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1350" x2="3900" y2="1350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1400" x2="3900" y2="1400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1450" x2="3900" y2="1450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1500" x2="3900" y2="1500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1550" x2="3900" y2="1550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1600" x2="3900" y2="1600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1650" x2="3900" y2="1650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1700" x2="3900" y2="1700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1750" x2="3900" y2="1750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1800" x2="3900" y2="1800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1850" x2="3900" y2="1850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1900" x2="3900" y2="1900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1950" x2="3900" y2="1950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2000" x2="3900" y2="2000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2050" x2="3900" y2="2050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2100" x2="3900" y2="2100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2150" x2="3900" y2="2150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2200" x2="3900" y2="2200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2250" x2="3900" y2="2250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2300" x2="3900" y2="2300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2350" x2="3900" y2="2350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2400" x2="3900" y2="2400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2450" x2="3900" y2="2450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2500" x2="3900" y2="2500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2550" x2="3900" y2="2550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2600" x2="3900" y2="2600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2650" x2="3900" y2="2650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2700" x2="3900" y2="2700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2750" x2="3900" y2="2750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2800" x2="3900" y2="2800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2850" x2="3900" y2="2850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2900" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line></g><g class="rect-group" data-rect-id="rect-1765238219615"><rect class="rect-shape" x="2680.053955078125" y="251.44879150390625" width="814.10400390625" height="389.26678466796875" style="fill: rgb(236, 9, 153); fill-opacity: 0.3; stroke: rgb(236, 9, 153); stroke-width: 2px; stroke-dasharray: none; cursor: move;"></rect><g class="rect-delete-btn" style="cursor: pointer; display: none;"><circle cx="3484.157958984375" cy="261.44879150390625" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="3484.157958984375" y="261.44879150390625" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g><path d="M 2103.968290880771 268 Q 2085.4680212352528 370.70595670887826 2066.9677515897347 473.4119134177565" fill="none" class="edge" data-edge-id="internet-internet-copy-1765238145151" data-from="internet" data-to="internet-copy" style="stroke: rgb(85, 226, 8); stroke-width: 4;"></path><path d="M 2103.968290880771 268 Q 2085.4680212352528 370.70595670887826 2066.9677515897347 473.4119134177565" fill="none" data-edge-id="internet-internet-copy-1765238145151" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1920.4039088162972 569.9938683738112 1773.8400660428597 666.5758233298659" fill="none" class="edge" data-edge-id="internet-copy-opnsense-copy-1765238187451" data-from="internet-copy" data-to="opnsense-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1920.4039088162972 569.9938683738112 1773.8400660428597 666.5758233298659" fill="none" data-edge-id="internet-copy-opnsense-copy-1765238187451" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1999.08282329894 627.8447547749242 1931.1978950081452 782.2775961320921" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1765238242477" data-from="internet-copy" data-to="docker-copy" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 1999.08282329894 627.8447547749242 1931.1978950081452 782.2775961320921" fill="none" data-edge-id="internet-copy-docker-copy-1765238242477" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-1-1765238244637" data-from="internet-copy" data-to="docker-copy-1" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2112.546995662221 620.5620704487524 2158.1262397347077 767.7122274797483" fill="none" data-edge-id="internet-copy-docker-copy-1-1765238244637" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2204.617064021596 552.590055067893 2342.2663764534577 631.7681967180296" fill="none" class="edge" data-edge-id="internet-copy-docker-copy-2-1765238246233" data-from="internet-copy" data-to="docker-copy-2" style="stroke: rgb(76, 0, 255); stroke-width: 4;"></path><path d="M 2066.9677515897347 473.4119134177565 Q 2204.617064021596 552.590055067893 2342.2663764534577 631.7681967180296" fill="none" data-edge-id="internet-copy-docker-copy-2-1765238246233" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2103.968290880771 268 Q 2430.923885484287 287.80585580459456 2757.879480087803 307.6117116091891" fill="none" class="edge" data-edge-id="internet-opnsense-copy-1-1765238266117" data-from="internet" data-to="opnsense-copy-1" style="stroke: rgb(128, 255, 0); stroke-width: 4;"></path><path d="M 2103.968290880771 268 Q 2430.923885484287 287.80585580459456 2757.879480087803 307.6117116091891" fill="none" data-edge-id="internet-opnsense-copy-1-1765238266117" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="opnsense-copy-1-dns-1765238347996" data-from="opnsense-copy-1" data-to="dns" style="stroke: rgb(251, 0, 255); stroke-width: 4;"></path><path d="M 2757.879480087803 307.6117116091891 Q 2979.171899521397 314.04065142852505 3200.4643189549906 320.469591247861" fill="none" data-edge-id="opnsense-copy-1-dns-1765238347996" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3086.0821778417094 400.59916888457974 2971.700036728428 480.7287465212985" fill="none" class="edge" data-edge-id="dns-desktop-1765238386101" data-from="dns" data-to="desktop" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3200.4643189549906 320.469591247861 Q 3086.0821778417094 400.59916888457974 2971.700036728428 480.7287465212985" fill="none" data-edge-id="dns-desktop-1765238386101" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" class="edge" data-edge-id="phone-dns-1765238391156" data-from="phone" data-to="dns" style="stroke: rgb(255, 0, 208); stroke-width: 4;"></path><path d="M 3312.857751572178 502.58220111114224 Q 3256.6610352635844 411.5258961795016 3200.4643189549906 320.469591247861" fill="none" data-edge-id="phone-dns-1765238391156" style="stroke: transparent; stroke-width: 20; cursor: pointer;"></path><polyline class="edge" data-edge-id="custom-1765239449323" fill="none" marker-end="url(#arrow-forward)" points="2936.464111328125,786.07958984375 3184.112060546875,887.6153564453125 2763.110107421875,981.7216796875" style="stroke: rgb(249, 115, 22); stroke-width: 4; stroke-dasharray: none;"></polyline><polyline points="2936.464111328125,786.07958984375 3184.112060546875,887.6153564453125 2763.110107421875,981.7216796875" data-edge-id="custom-1765239449323" style="fill: none; stroke: transparent; stroke-width: 20; cursor: pointer;"></polyline><g class="node-group" data-node-id="internet" transform="translate(2103.968290880771,268)" style="cursor: grab;"><circle r="252" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="201.6" height="201.6" x="-100.8" y="-100.8" style="fill: rgb(255, 255, 255); stroke: rgb(255, 255, 255);"><path d="M144.3 214.1c0 6.3.7 11.4 1.9 15.2 1.4 3.7 3.1 7.8 5.4 12.3.9 1.4 1.2 2.7 1.2 3.9 0 1.7-1 3.4-3.2 5.1l-10.7 7.2c-1.5 1-3.1 1.5-4.4 1.5-1.7 0-3.4-.9-5.1-2.4-2.4-2.6-4.4-5.3-6.1-8-1.7-2.9-3.4-6.1-5.3-10-13.3 15.7-30 23.5-50.1 23.5-14.3 0-25.7-4.1-34.1-12.3-8.3-8.2-12.6-19.1-12.6-32.7 0-14.5 5.1-26.2 15.5-35.1S60.8 169 78.4 169c5.8 0 11.7.5 18.1 1.4s12.8 2.2 19.6 3.7v-12.4c0-12.9-2.7-22-8-27.2-5.4-5.3-14.6-7.8-27.8-7.8-6 0-12.1.7-18.4 2.2s-12.4 3.4-18.4 5.8c-2.7 1.2-4.8 1.9-6 2.2s-2 .5-2.7.5c-2.4 0-3.6-1.7-3.6-5.3v-8.3c0-2.7.3-4.8 1.2-6s2.4-2.4 4.8-3.6c6-3.1 13.1-5.6 21.5-7.7 8.3-2.2 17.2-3.2 26.6-3.2 20.3 0 35.1 4.6 44.6 13.8 9.4 9.2 14.1 23.2 14.1 41.9v55.2zM75.2 240c5.6 0 11.4-1 17.5-3.1 6.1-2 11.6-5.8 16.2-10.9 2.7-3.2 4.8-6.8 5.8-10.9s1.7-9 1.7-14.8v-7.2c-4.9-1.2-10.2-2.2-15.7-2.9-5.4-.7-10.7-1-16-1-11.4 0-19.8 2.2-25.4 6.8S51 207.1 51 215.6c0 8 2 14 6.3 18.1 4.1 4.2 10 6.3 17.9 6.3m136.7 18.4c-3.1 0-5.1-.5-6.5-1.7-1.4-1-2.6-3.4-3.6-6.6l-40-131.6c-1-3.4-1.5-5.6-1.5-6.8 0-2.7 1.4-4.3 4.1-4.3h16.7c3.2 0 5.4.5 6.6 1.7 1.4 1 2.4 3.4 3.4 6.6l28.6 112.7 26.6-112.7c.9-3.4 1.9-5.6 3.2-6.6 1.4-1 3.7-1.7 6.8-1.7H270c3.2 0 5.4.5 6.8 1.7 1.4 1 2.6 3.4 3.2 6.6l26.9 114.1 29.5-114.1c1-3.4 2.2-5.6 3.4-6.6 1.4-1 3.6-1.7 6.6-1.7h15.8c2.7 0 4.3 1.4 4.3 4.3 0 .9-.2 1.7-.3 2.7-.2 1-.5 2.4-1.2 4.3l-41 131.6q-1.5 5.1-3.6 6.6c-1.4 1-3.6 1.7-6.5 1.7h-14.6c-3.2 0-5.4-.5-6.8-1.7s-2.6-3.4-3.2-6.8l-26.4-109.8L236.7 250c-.9 3.4-1.9 5.6-3.2 6.8-1.4 1.2-3.7 1.7-6.8 1.7zm218.8 4.6c-8.9 0-17.7-1-26.2-3.1-8.5-2-15.2-4.3-19.6-6.8-2.7-1.5-4.6-3.2-5.3-4.8s-1-3.2-1-4.8v-8.7c0-3.6 1.4-5.3 3.9-5.3 1 0 2 .2 3.1.5 1 .3 2.6 1 4.3 1.7 5.8 2.6 12.1 4.6 18.7 6 6.8 1.4 13.5 2 20.3 2 10.7 0 19.1-1.9 24.9-5.6s8.9-9.2 8.9-16.2c0-4.8-1.5-8.7-4.6-11.9s-8.9-6.1-17.2-8.9l-24.7-7.7c-12.4-3.9-21.6-9.7-27.2-17.4-5.6-7.5-8.5-15.8-8.5-24.7 0-7.2 1.5-13.5 4.6-18.9s7.2-10.2 12.3-14c5.1-3.9 10.9-6.8 17.7-8.9 6.8-2 14-2.9 21.5-2.9 3.7 0 7.7.2 11.4.7 3.9.5 7.5 1.2 11.1 1.9 3.4.9 6.6 1.7 9.7 2.7s5.4 2 7.2 3.1c2.4 1.4 4.1 2.7 5.1 4.3 1 1.4 1.5 3.2 1.5 5.6v8c0 3.6-1.4 5.4-3.9 5.4-1.4 0-3.6-.7-6.5-2q-14.55-6.6-32.7-6.6c-9.7 0-17.4 1.5-22.6 4.8s-8 8.2-8 15.2c0 4.8 1.7 8.9 5.1 12.1s9.7 6.5 18.7 9.4l24.2 7.7c12.3 3.9 21.1 9.4 26.4 16.3s7.8 15 7.8 23.8c0 7.3-1.5 14-4.4 19.8-3.1 5.8-7.2 10.9-12.4 15-5.3 4.3-11.6 7.3-18.9 9.5-8 2.5-16 3.7-24.7 3.7" style="fill: rgb(255, 255, 255); stroke: rgb(255, 255, 255);"></path><path d="M462.9 345.7c-56 41.4-137.4 63.3-207.4 63.3-98.1 0-186.5-36.3-253.2-96.6-5.3-4.8-.5-11.2 5.8-7.5 72.2 41.9 161.3 67.3 253.4 67.3 62.2 0 130.4-12.9 193.3-39.5 9.3-4.2 17.3 6.2 8.1 13m23.3-26.5c-7.2-9.2-47.3-4.4-65.6-2.2-5.4.7-6.3-4.1-1.4-7.7 32-22.5 84.6-16 90.8-8.5 6.1 7.7-1.7 60.3-31.7 85.5-4.6 3.9-9 1.9-7-3.2 6.9-16.9 22.1-54.9 14.9-63.9" style="fill-rule: evenodd; clip-rule: evenodd; fill: rgb(255, 255, 255); stroke: rgb(255, 255, 255);"></path></svg></g><text class="node-label" x="0" y="-47.040000000000006" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Internet</text><text class="node-sub" x="0" y="67.2" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="internet-copy" transform="translate(2066.9677515897347,473.4119134177565)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="66" height="66" x="-33" y="-33"><path d="M512 160.2V400H400V112H112V0h240.4zM112 112H0v240.4L160.2 512H400V400H112z" style="fill:#de3c07"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy" transform="translate(1773.8400660428597,666.5758233298659)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="66" height="66" x="-33" y="-33"><path d="M462.2 512H49.8C22.3 512 0 489.7 0 462.2V49.8C0 22.3 22.3 0 49.8 0h412.4C489.7 0 512 22.3 512 49.8v412.4c0 27.5-22.3 49.8-49.8 49.8" style="fill:#2e2f33"></path><path d="M108.2 63.9h140.9c97.2 0 154.6 30.4 154.6 129.5v3.4c0 99.4-57.2 129.5-154.5 129.5h-30.7V447H108.2zm134.5 177.8c30.1 0 46-11.2 46-44.6v-3.9c0-33.2-15.8-44.6-46-44.6h-24.2v93.1zM313 358h90.3v90.1H313z" style="fill:#f7f6f3"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy" transform="translate(1931.1978950081452,782.2775961320921)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="66" height="66" x="-33" y="-33"><path d="M438.6 0H73.4C33.1 0 .3 32.8.3 73.1v365.7c0 40.3 32.8 73.1 73.1 73.1h365.3c40.3 0 73.1-32.8 73.1-73.1V73.1C511.7 32.8 478.9 0 438.6 0" style="fill-rule:evenodd;clip-rule:evenodd;fill:#8b3bd0"></path><path d="M356.8 53.6v261.3c0 39.3-13.9 72.8-41.8 100.7s-61.4 41.8-100.7 41.8l-23.8-95h23.8c13 0 24.1-4.6 33.2-13.8 9.5-9.5 14.3-20.7 14.3-33.7V148.6H157.3v-95z" style="fill:#fff"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker2</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-1" transform="translate(2158.1262397347077,767.7122274797483)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="66" height="66" x="-33" y="-33"><path d="M0 0h512v512H0z" style="fill:#111827"></path><path d="M170.7 85.3 369.8 256 170.7 426.7z" style="fill:#f59e0b"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker3</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="docker-copy-2" transform="translate(2342.2663764534577,631.7681967180296)" style="cursor: grab;"><circle r="123" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="98.39999999999999" height="98.39999999999999" x="-49.199999999999996" y="-49.199999999999996"><path d="M501.4 212.3c-11.5-8-38-11-58.6-7-2.4-20-13.5-37.5-32.7-53l-11-8-7.7 11.5c-9.6 15-14.4 36-13 56 .5 7 2.9 19.5 10.1 30.5-6.7 4-20.7 9-38.9 9H2.3l-1 4c-3.4 20-3.4 82.5 36 130.5 29.8 36.5 74 55 132.1 55 125.9 0 219.1-60.5 262.8-170 17.3.5 54.3 0 73-37.5.5-1 1.4-3 4.8-10.5l1.9-4zM280 71.3h-52.8v50H280zm0 60h-52.8v50H280zm-62.5 0h-52.8v50h52.8zm-62.4 0h-52.8v50h52.8zm-62.5 60H39.8v50h52.8zm62.5 0h-52.8v50h52.8zm62.4 0h-52.8v50h52.8zm62.5 0h-52.8v50H280zm62.4 0h-52.8v50h52.8z" style="fill:#2396ed"></path></svg></g><text class="node-label" x="0" y="-22.96" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Docker 4</text><text class="node-sub" x="0" y="32.800000000000004" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="opnsense-copy-1" transform="translate(2757.879480087803,307.6117116091891)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 512 512" width="66" height="66" x="-33" y="-33"><path d="M503.1 465.4v2.1c-6 25.5-28.4 44.5-55 44.5H7.3v-46.6h38.3v7.3h403c1.1 0 2 0 2.9-.1 1.8-.1 3.6-.6 5.2-1.3 2.9-1.3 5.3-3.3 7-5.9zM63.9 0c-26.5 0-49 19-55 44.5V47H48c2.7-4.3 7.3-7.2 12.6-7.6 1-.1 2-.1 3.2-.1h402.6V47h38.3V0z" style="fill:#898b8d"></path><path d="M466.1 157.7V197H319.5v-39.3zM45.9 315.4v39.3h146.6v-39.3zm0-157.7V197h146.6v-39.3zm273.6 157.7v39.3h146.6v-39.3z" style="fill:#58595b"></path><path d="M83.8 78.6H428v39.3H83.8zm0 315.9H428v39.3H83.8z" style="fill:#403f41"></path><linearGradient id="opnsense-v1_svg__a" x1="-1460.617" x2="-1375.11" y1="1248.095" y2="1248.095" gradientTransform="matrix(.1853 .356 .6722 -.353 -90.66 993.802)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#737373"></stop><stop offset="1" style="stop-color:#333"></stop></linearGradient><path d="m466.5 78.6 38.2-20.5.1-39.5-38.3 20.7" style="fill:url(#opnsense-v1_svg__a)"></path><linearGradient id="opnsense-v1_svg__b" x1="4.634" x2="50.301" y1="462.6" y2="462.6" gradientTransform="matrix(1 0 0 -1 0 514)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#737373"></stop><stop offset="1" style="stop-color:#333"></stop></linearGradient><path d="M45.6 64.5v-8.9c0-5.3 2.6-10 6.5-13l-34-18.5c-6.7 9.5-10.8 21.3-10.9 34l38.3 20.6v-14c.1-.1.1-.2.1-.2" style="fill:url(#opnsense-v1_svg__b)"></path><linearGradient id="opnsense-v1_svg__c" x1="-1587.887" x2="-1498.137" y1="-2208.165" y2="-2208.165" gradientTransform="matrix(-.1853 -.356 -.6722 .353 -1743.836 694.098)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#737373"></stop><stop offset="1" style="stop-color:#333"></stop></linearGradient><path d="M45.6 472.7v-38.9L7.3 454.5v39.7l39.9-21.5z" style="fill:url(#opnsense-v1_svg__c)"></path><linearGradient id="opnsense-v1_svg__d" x1="460.439" x2="504.436" y1="53" y2="53" gradientTransform="matrix(1 0 0 -1 0 514)" gradientUnits="userSpaceOnUse"><stop offset="0" style="stop-color:#737373"></stop><stop offset="1" style="stop-color:#333"></stop></linearGradient><path d="M466.5 456.4c0 5.5-2.7 10.3-6.9 13.2l34.2 18.4c6.8-9.5 10.8-21.2 10.9-33.8L466.5 434v12.8" style="fill:url(#opnsense-v1_svg__d)"></path><linearGradient id="opnsense-v1_svg__e" x1="2521.902" x2="2684.464" y1="-2476.233" y2="-2476.233" gradientTransform="matrix(-1.508 -1.0166 -3.1265 -1.519 -3697.438 -937.952)" gradientUnits="userSpaceOnUse"><stop offset=".107" style="stop-color:#58595b"></stop><stop offset="1" style="stop-color:#000"></stop></linearGradient><path d="M192.5 197v-.4l-72.4-38.9H45.9v.2l72.5 39.1z" style="fill:url(#opnsense-v1_svg__e)"></path><linearGradient id="opnsense-v1_svg__f" x1="-1594.953" x2="-1432.391" y1="278.458" y2="278.458" gradientTransform="matrix(1.508 -1.0166 3.1265 -1.519 1804.196 -937.952)" gradientUnits="userSpaceOnUse"><stop offset=".107" style="stop-color:#58595b"></stop><stop offset="1" style="stop-color:#000"></stop></linearGradient><path d="M466.1 157.7h-74l-72.6 39.1v.2h74.2l72.4-38.9z" style="fill:url(#opnsense-v1_svg__f)"></path><linearGradient id="opnsense-v1_svg__g" x1="-4327.142" x2="-4164.581" y1="1572.387" y2="1572.387" gradientTransform="matrix(1.508 1.0166 3.1265 1.519 1863.938 2252.352)" gradientUnits="userSpaceOnUse"><stop offset=".107" style="stop-color:#58595b"></stop><stop offset="1" style="stop-color:#000"></stop></linearGradient><path d="M466.1 354.7v-.4l-72.4-38.9h-74.2v.2l72.6 39.1z" style="fill:url(#opnsense-v1_svg__g)"></path><linearGradient id="opnsense-v1_svg__h" x1="-413.668" x2="-246.99" y1="-1046.618" y2="-1046.618" gradientTransform="matrix(-1.508 1.0166 -3.1265 1.519 -3638.692 2252.352)" gradientUnits="userSpaceOnUse"><stop offset=".107" style="stop-color:#58595b"></stop><stop offset="1" style="stop-color:#000"></stop></linearGradient><path d="M192.5 315.4h-74.1l-72.5 39.1v.2h74.2l72.4-38.9z" style="fill:url(#opnsense-v1_svg__h)"></path><linearGradient id="opnsense-v1_svg__i" x1="74.725" x2="261.062" y1="132.65" y2="132.65" gradientTransform="matrix(.9914 0 0 -1 -66.782 260.2)" gradientUnits="userSpaceOnUse"><stop offset=".237" style="stop-color:#a6a8ab"></stop><stop offset="1" style="stop-color:#404040"></stop></linearGradient><path d="M192.8 157.7V197L7.3 97.4V58.1z" style="fill:url(#opnsense-v1_svg__i)"></path><linearGradient id="opnsense-v1_svg__j" x1="-2461.056" x2="-2274.718" y1="132.65" y2="132.65" gradientTransform="matrix(-.9914 0 0 -1 -1935.19 260.2)" gradientUnits="userSpaceOnUse"><stop offset=".237" style="stop-color:#a6a8ab"></stop><stop offset="1" style="stop-color:#404040"></stop></linearGradient><path d="M319.2 157.7V197l185.5-99.6V58.1z" style="fill:url(#opnsense-v1_svg__j)"></path><linearGradient id="opnsense-v1_svg__k" x1="-2291.845" x2="-2105.508" y1="-739.55" y2="-739.55" gradientTransform="matrix(-.9914 0 0 1 -1767.435 1124.6)" gradientUnits="userSpaceOnUse"><stop offset=".237" style="stop-color:#a6a8ab"></stop><stop offset="1" style="stop-color:#404040"></stop></linearGradient><path d="M319.2 355.2v-39.8L504.7 415v39.7z" style="fill:url(#opnsense-v1_svg__k)"></path><linearGradient id="opnsense-v1_svg__l" x1="-94.103" x2="91.934" y1="-739.55" y2="-739.55" gradientTransform="matrix(.9914 0 0 1 100.993 1124.6)" gradientUnits="userSpaceOnUse"><stop offset=".237" style="stop-color:#a6a8ab"></stop><stop offset="1" style="stop-color:#404040"></stop></linearGradient><path d="M192.8 355.2v-39.8L7.3 415v39.7z" style="fill:url(#opnsense-v1_svg__l)"></path><path d="m319.2 276.1 108.9 58.5v-39.7l-35.3-18.8h111.9v-39.8H392.8l35.3-18.8v-39.3l-108.9 58.1zM83.8 334.6l109-58.5v-39.8l-109-58.1v39.3l35.7 18.8H7.3v39.8h111.9l-35.3 18.8v39.7z" style="fill:#e24525"></path></svg></g><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">OPNSENSE GUEST</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="phone" transform="translate(3312.857751572178,502.58220111114224)" style="cursor: grab;"><circle r="181.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-54.45" y="-121" width="108.9" height="242" rx="8"></rect><rect x="-45.980000000000004" y="-102.85" width="91.96000000000001" height="193.60000000000002" rx="4" style="fill: rgb(30, 41, 59);"></rect><rect x="-18.15" y="99.22" width="36.3" height="7.26" rx="2" style="fill: rgb(71, 85, 105);"></rect></g><text class="node-label" x="0" y="-33.88" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Phone</text><text class="node-sub" x="0" y="48.400000000000006" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="desktop" transform="translate(2971.700036728428,480.7287465212985)" style="cursor: grab;"><circle r="220.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"><rect x="-132.3" y="-117.60000000000001" width="264.6" height="176.4" rx="4"></rect><rect x="-110.25" y="-95.55" width="220.5" height="132.3" rx="2" style="fill: rgb(30, 41, 59);"></rect><rect x="-22.05" y="58.800000000000004" width="44.1" height="44.1"></rect><rect x="-73.5" y="102.89999999999999" width="147" height="22.05" rx="2"></rect></g><text class="node-label" x="0" y="-41.160000000000004" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Desktop</text><text class="node-sub" x="0" y="58.800000000000004" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="dns" transform="translate(3200.4643189549906,320.469591247861)" style="cursor: grab;"><circle r="82.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><path d="
-             M -44 11
-             Q -60.50000000000001 11 -60.50000000000001 -5.5
-             Q -60.50000000000001 -27.5 -38.5 -27.5
-             Q -38.5 -49.5 -11 -49.5
-             Q 5.5 -60.50000000000001 27.5 -44
-             Q 55 -44 60.50000000000001 -16.5
-             Q 71.5 -5.5 60.50000000000001 11
-             Q 60.50000000000001 27.5 38.5 27.5
-             L -27.5 27.5
-             Q -49.5 27.5 -49.5 11
-             Z
-            " class="node-circle" style="fill: rgb(30, 41, 59); stroke: rgb(71, 85, 105);"></path><text class="node-label" x="0" y="-15.400000000000002" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">DNS</text><text class="node-sub" x="0" y="22" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;">0.0.0.0</text></g><g class="node-group" data-node-id="racked" transform="translate(2645.5845448279656,970.7820678889219)" style="cursor: grab;"><circle r="205.5" class="node-hit-area" style="fill: transparent; stroke: none; cursor: grab;"></circle><g class="node-circle"><svg xmlns="http://www.w3.org/2000/svg" id="mdi-server-security" viewBox="0 0 24 24" width="164.4" height="164.4" x="-82.2" y="-82.2" style="fill: rgb(1, 8, 19); stroke: rgb(255, 255, 255);"><path d="M3,1H19A1,1 0 0,1 20,2V6A1,1 0 0,1 19,7H3A1,1 0 0,1 2,6V2A1,1 0 0,1 3,1M3,9H19A1,1 0 0,1 20,10V10.67L17.5,9.56L11,12.44V15H3A1,1 0 0,1 2,14V10A1,1 0 0,1 3,9M3,17H11C11.06,19.25 12,21.4 13.46,23H3A1,1 0 0,1 2,22V18A1,1 0 0,1 3,17M8,5H9V3H8V5M8,13H9V11H8V13M8,21H9V19H8V21M4,3V5H6V3H4M4,11V13H6V11H4M4,19V21H6V19H4M17.5,12L22,14V17C22,19.78 20.08,22.37 17.5,23C14.92,22.37 13,19.78 13,17V14L17.5,12M17.5,13.94L15,15.06V17.72C15,19.26 16.07,20.7 17.5,21.06V13.94Z" style="fill: rgb(1, 8, 19); stroke: rgb(255, 255, 255);"></path></svg></g><text class="node-label" x="0" y="-38.36000000000001" style="font-size: 18px; fill: rgb(226, 232, 240); font-family: Inter, system-ui, sans-serif; pointer-events: none;">Racked</text><text class="node-sub" x="0" y="54.800000000000004" style="font-size: 13px; fill: rgb(148, 163, 184); font-family: Inter, system-ui, sans-serif; pointer-events: none;"></text></g><g class="text-group" data-text-id="text-1765238422602"><text class="text-element" x="2466.35986328125" y="741.6801147460938" dominant-baseline="middle" style="fill: rgb(226, 232, 240); font-size: 40px; font-weight: normal; font-style: normal; text-anchor: start; text-decoration: none; opacity: 1; cursor: move; user-select: none;"><tspan x="2466.35986328125" dy="0">Double click on desktop</tspan><tspan x="2466.35986328125" dy="48">or long press on mobile</tspan><tspan x="2466.35986328125" dy="48">to enter rack canvas view</tspan></text><g class="text-delete-btn" style="cursor: pointer; display: none;"><circle cx="2486.35986328125" cy="701.6801147460938" r="12" style="fill: rgb(245, 101, 101); stroke: white; stroke-width: 2;"></circle><text x="2486.35986328125" y="701.6801147460938" text-anchor="middle" dominant-baseline="middle" style="fill: white; font-size: 16px; font-weight: bold; pointer-events: none;">×</text></g></g></svg>
+          <svg id="map" viewBox="1070.1654680146785 -170.2288153174373 3002.171020164141 2251.628265123106" style=""></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <line x1="2103.968290880771" y1="268" x2="2066.9677515897347" y2="473.4119134177565" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1773.8400660428597" y2="666.5758233298659" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="1931.1978950081452" y2="782.2775961320921" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2158.1262397347077" y2="767.7122274797483" class="minimap-edge"></line><line x1="2066.9677515897347" y1="473.4119134177565" x2="2342.2663764534577" y2="631.7681967180296" class="minimap-edge"></line><line x1="2103.968290880771" y1="268" x2="2757.879480087803" y2="307.6117116091891" class="minimap-edge"></line><line x1="2757.879480087803" y1="307.6117116091891" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><line x1="3200.4643189549906" y1="320.469591247861" x2="2971.700036728428" y2="480.7287465212985" class="minimap-edge"></line><line x1="3312.857751572178" y1="502.58220111114224" x2="3200.4643189549906" y2="320.469591247861" class="minimap-edge"></line><circle cx="2103.968290880771" cy="268" r="40" class="minimap-node"></circle><circle cx="2066.9677515897347" cy="473.4119134177565" r="40" class="minimap-node"></circle><circle cx="1773.8400660428597" cy="666.5758233298659" r="40" class="minimap-node"></circle><circle cx="1931.1978950081452" cy="782.2775961320921" r="40" class="minimap-node"></circle><circle cx="2158.1262397347077" cy="767.7122274797483" r="40" class="minimap-node"></circle><circle cx="2342.2663764534577" cy="631.7681967180296" r="40" class="minimap-node"></circle><circle cx="2757.879480087803" cy="307.6117116091891" r="40" class="minimap-node"></circle><circle cx="3312.857751572178" cy="502.58220111114224" r="40" class="minimap-node"></circle><circle cx="2971.700036728428" cy="480.7287465212985" r="40" class="minimap-node"></circle><circle cx="3200.4643189549906" cy="320.469591247861" r="40" class="minimap-node"></circle><circle cx="2645.5845448279656" cy="970.7820678889219" r="40" class="minimap-node"></circle><rect class="minimap-viewport" id="minimap-viewport" x="1254.5197896196048" y="-147.55422459755366" width="2648.185035176588" height="1986.138776382441"></rect>
+              <rect class="minimap-viewport" id="minimap-viewport" x="1070.1654680146785" y="-170.2288153174373" width="3002.171020164141" height="2251.628265123106"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">151%</div>
+            <div class="zoom-level" id="zoom-level">133%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -2734,7 +2751,7 @@
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">9</span>)</summary>
             <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Primary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 2</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 1</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">NYC Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">LA Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Chicago Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">London Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Tokyo Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">AWS Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
           </details>
-          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>core</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>tier-1</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>redundant</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add Tag</span></div>
+          <div class="badge-row" id="node-tags"></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-tag-input" placeholder="Add tag..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-tag-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2938,7 +2955,7 @@
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes"><li><span style="flex: 1 1 0%;">Primary core router</span><span class="delete-note">✕</span></li><li><span style="flex: 1 1 0%;">BGP peering enabled</span><span class="delete-note">✕</span></li></ul>
+          <ul class="list" id="node-notes"></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2961,6 +2978,14 @@
               <option value="solid">Solid</option>
               <option value="dashed">Dashed</option>
               <option value="dotted">Dotted</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label>Routing:</label>
+            <select id="edge-routing">
+              <option value="orthogonal">Orthogonal (90°)</option>
+              <option value="curved">Curved</option>
+              <option value="straight">Straight</option>
             </select>
           </div>
           <div class="style-row">
@@ -4106,9 +4131,9 @@
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.510468470619263,
-    "panX": 1254.5197896196048,
-    "panY": -147.55422459755366
+    "zoom": 1.3323691332485461,
+    "panX": 1070.1654680146785,
+    "panY": -170.2288153174373
   },
   "savedTopologyView": {
     "zoom": 0.9325110211947125,
@@ -6691,7 +6716,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "isp2-router2",
@@ -6708,7 +6734,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-router2",
@@ -6725,7 +6752,8 @@
             "toPort": "Gi1/0/24",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-fw1",
@@ -6740,7 +6768,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-fw2",
@@ -6755,7 +6784,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-fw2",
@@ -6772,7 +6802,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-coresw1",
@@ -6787,7 +6818,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-coresw2",
@@ -6802,7 +6834,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-coresw2",
@@ -6819,7 +6852,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-fwint",
@@ -6834,7 +6868,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-fwint",
@@ -6849,7 +6884,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka1",
@@ -6864,7 +6900,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka1",
@@ -6879,7 +6916,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka2",
@@ -6894,7 +6932,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka2",
@@ -6909,7 +6948,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb1",
@@ -6924,7 +6964,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb1",
@@ -6939,7 +6980,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb2",
@@ -6954,7 +6996,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb2",
@@ -6969,7 +7012,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-dmz",
@@ -6986,7 +7030,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-dmz",
@@ -7003,7 +7048,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-mgmt",
@@ -7020,7 +7066,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-wlc1",
@@ -7035,7 +7082,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-wlc2",
@@ -7050,7 +7098,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-wlc2",
@@ -7067,7 +7116,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-hq",
@@ -7082,7 +7132,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-guest",
@@ -7097,7 +7148,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-iot",
@@ -7112,7 +7164,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-ny",
@@ -7129,7 +7182,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-la",
@@ -7146,7 +7200,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-chi",
@@ -7163,7 +7218,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-lon",
@@ -7180,7 +7236,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-tokyo",
@@ -7197,7 +7254,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-aws",
@@ -7214,7 +7272,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-azure",
@@ -7231,7 +7290,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-gcp",
@@ -7248,7 +7308,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor1",
@@ -7263,7 +7324,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor2",
@@ -7278,7 +7340,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor3",
@@ -7293,7 +7356,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor4",
@@ -7308,7 +7372,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-endpoints",
@@ -7323,7 +7388,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-ap1",
@@ -7338,7 +7404,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor2-ap2",
@@ -7353,7 +7420,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor3-ap3",
@@ -7368,7 +7436,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor4-ap4",
@@ -7383,7 +7452,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy1",
@@ -7398,7 +7468,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy2",
@@ -7413,7 +7484,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-vpn",
@@ -7428,7 +7500,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-nac",
@@ -7443,7 +7516,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-voip",
@@ -7458,7 +7532,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-video",
@@ -7473,7 +7548,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-cameras",
@@ -7488,7 +7564,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev1",
@@ -7503,7 +7580,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev2",
@@ -7518,7 +7596,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-test",
@@ -7533,7 +7612,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-erp",
@@ -7548,7 +7628,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-crm",
@@ -7565,7 +7646,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-racka1",
@@ -7582,7 +7664,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-racka2",
@@ -7599,7 +7682,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-rackb1",
@@ -7616,7 +7700,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-rackb2",
@@ -7633,7 +7718,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling1-racka1",
@@ -7650,7 +7736,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling2-rackb1",
@@ -7667,7 +7754,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765237881452",
@@ -7690,7 +7778,8 @@
                 "y": 1732.2144775390625
               }
             ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765239355462",
@@ -7713,7 +7802,8 @@
                 "y": 244.28573608398438
               }
             ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           }
         ]
       },
@@ -7727,8 +7817,8 @@
           "y": 329.99503430389154
         },
         "fw-external-1": {
-          "x": 3221.7385182723783,
-          "y": 1016.1364499992887
+          "x": 3180.0930104598783,
+          "y": 910.63480205007
         },
         "fw-external-2": {
           "x": 1915.5213706410505,
@@ -8372,7 +8462,8 @@
         "rackTextColor": "#4fd1c5",
         "viewOnly": false,
         "autoPingEnabled": false,
-        "autoPingInterval": 30
+        "autoPingInterval": 30,
+        "defaultEdgeRouting": "orthogonal"
       }
     },
     {
@@ -9160,35 +9251,42 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1765766624736,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1765766621038,
+      "timestamp": 1766023200804,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1765766616410,
+      "timestamp": 1766023193102,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765766611144,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
+      "timestamp": 1766023189251,
+      "type": "node",
+      "description": "move nodes",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1765766608995,
+      "timestamp": 1766023188450,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766023185856,
+      "type": "edit",
+      "description": "apply routing to all",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766023177977,
       "type": "import",
       "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
@@ -9747,6 +9845,16 @@
       let undoStack = [];
       let redoStack = [];
       const MAX_UNDO_STACK = 50;
+      let forgeDebounceTimer = null;
+      let forgeImmediate = false;
+      let currentSearchQuery = "";
+      let currentSearchResults = [];
+      const AUTOSAVE_DB_NAME = "TheOneFileNetworkeningAutosave";
+      const AUTOSAVE_STORE_NAME = "drafts";
+      const AUTOSAVE_KEY = "currentDraft";
+      const AUTOSAVE_INTERVAL = 30000;
+      let autosaveTimer = null;
+      let lastAutosaveTime = 0;
       let selectedNodes = new Set();
       let selectedEdges = new Set();
       let selectedRects = new Set();
@@ -10105,6 +10213,152 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }
+      function openAutosaveDB() {
+       return new Promise((resolve, reject) => {
+        const request = indexedDB.open(AUTOSAVE_DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (e) => {
+         const db = e.target.result;
+         if (!db.objectStoreNames.contains(AUTOSAVE_STORE_NAME)) {
+          db.createObjectStore(AUTOSAVE_STORE_NAME, { keyPath: "id" });
+         }
+        };
+       });
+      }
+      async function saveToIndexedDB() {
+       try {
+        const db = await openAutosaveDB();
+        const currentTab = documentTabs[currentTabIndex];
+        currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+        currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+        currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+        currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+        currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+        currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+        currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+        currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+        currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+        const state = {
+         id: AUTOSAVE_KEY,
+         timestamp: Date.now(),
+         pageTitle: document.getElementById("page-title")?.textContent || "The One File",
+         nodeData: NODE_DATA,
+         edgeData: EDGE_DATA,
+         rectData: RECT_DATA,
+         textData: TEXT_DATA,
+         edgeLegend: EDGE_LEGEND,
+         nodePositions: savedPositions,
+         nodeSizes: savedSizes,
+         nodeStyles: savedStyles,
+         page: PAGE_STATE,
+         canvas: {
+          zoom: canvasState.zoom,
+          panX: canvasState.panX,
+          panY: canvasState.panY,
+         },
+         savedTopologyView: savedTopologyView,
+         documentTabs: documentTabs,
+         currentTabIndex: currentTabIndex,
+         encryptedSections: encryptedSections,
+         auditLog: auditLog,
+        };
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readwrite");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        store.put(state);
+        await new Promise((resolve, reject) => {
+         tx.oncomplete = resolve;
+         tx.onerror = () => reject(tx.error);
+        });
+        lastAutosaveTime = Date.now();
+        console.log("Auto-saved to IndexedDB at", new Date().toLocaleTimeString());
+       } catch (e) {
+        console.warn("Auto-save failed:", e);
+       }
+      }
+      async function loadFromIndexedDB() {
+       try {
+        const db = await openAutosaveDB();
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readonly");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        const request = store.get(AUTOSAVE_KEY);
+        return new Promise((resolve, reject) => {
+         request.onsuccess = () => resolve(request.result);
+         request.onerror = () => reject(request.error);
+        });
+       } catch (e) {
+        console.warn("Load from IndexedDB failed:", e);
+        return null;
+       }
+      }
+      async function clearAutosave() {
+       try {
+        const db = await openAutosaveDB();
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readwrite");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        store.delete(AUTOSAVE_KEY);
+       } catch (e) {
+        console.warn("Clear autosave failed:", e);
+       }
+      }
+      function startAutosave() {
+       if (autosaveTimer) clearInterval(autosaveTimer);
+       autosaveTimer = setInterval(() => {
+        if (Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0 || documentTabs.length > 1) {
+         saveToIndexedDB();
+        }
+       }, AUTOSAVE_INTERVAL);
+      }
+      async function checkForAutosaveRecovery() {
+       try {
+        const saved = await loadFromIndexedDB();
+        if (saved && saved.timestamp) {
+         const age = Date.now() - saved.timestamp;
+         const hasCurrentData = Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0;
+         const savedNodeCount = saved.nodeData ? Object.keys(saved.nodeData).length : 0;
+         const savedTabCount = saved.documentTabs ? saved.documentTabs.length : 1;
+         if (age < 300000 && (savedNodeCount > 0 || savedTabCount > 1)) {
+          const savedDate = new Date(saved.timestamp).toLocaleString();
+          const tabInfo = savedTabCount > 1 ? ` across ${savedTabCount} tabs` : "";
+          if (!hasCurrentData || confirm(`Recover unsaved work from ${savedDate}?\n(${savedNodeCount} nodes${tabInfo})\n\nClick OK to recover, Cancel to start fresh.`)) {
+           if (!hasCurrentData || confirm("This will replace current data. Continue?")) {
+            NODE_DATA = saved.nodeData || {};
+            EDGE_DATA = saved.edgeData || { list: [] };
+            RECT_DATA = saved.rectData || { list: [] };
+            TEXT_DATA = saved.textData || { list: [] };
+            EDGE_LEGEND = saved.edgeLegend || {};
+            savedPositions = saved.nodePositions || {};
+            savedSizes = saved.nodeSizes || {};
+            savedStyles = saved.nodeStyles || {};
+            if (saved.page) PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, saved.page);
+            if (saved.canvas) {
+             canvasState.zoom = saved.canvas.zoom || 1;
+             canvasState.panX = saved.canvas.panX || 0;
+             canvasState.panY = saved.canvas.panY || 0;
+            }
+            if (saved.savedTopologyView) savedTopologyView = saved.savedTopologyView;
+            if (saved.documentTabs) documentTabs = saved.documentTabs;
+            if (saved.currentTabIndex !== undefined) currentTabIndex = saved.currentTabIndex;
+            if (saved.encryptedSections) encryptedSections = saved.encryptedSections;
+            if (saved.auditLog) auditLog = saved.auditLog;
+            if (saved.pageTitle) {
+             const titleEl = document.getElementById("page-title");
+             if (titleEl) titleEl.textContent = saved.pageTitle;
+            }
+            wieldThePower();
+            forgeTheTopology();
+            updateViewBox();
+            console.log("Recovered from autosave:", savedNodeCount, "nodes,", savedTabCount, "tabs");
+            return true;
+           }
+          }
+         }
+        }
+       } catch (e) {
+        console.warn("Autosave recovery check failed:", e);
+       }
+       return false;
+      }
       function updateTopologyToolbarVisibility() {
        const toolbar = document.getElementById("topology-toolbar");
        const mini = ensureTopologyToolbarMiniButton();
@@ -10303,75 +10557,80 @@
         height: viewHeight,
        };
       }
-      function updateViewBox() {
-       const svg = document.getElementById("map");
-       const vb = getViewBox();
-       svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`, );
-       const zoomLevel = document.getElementById("zoom-level");
-       if (zoomLevel) {
-        zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
-       }
-       updateMinimap();
-      }
-      function updateMinimap() {
-       const minimapViewport = document.getElementById("minimap-viewport");
-       const minimapSvg = document.getElementById("minimap");
-       if (!minimapViewport || !minimapSvg) return;
-       const vb = getViewBox();
-       minimapViewport.setAttribute("x", vb.x);
-       minimapViewport.setAttribute("y", vb.y);
-       minimapViewport.setAttribute("width", vb.width);
-       minimapViewport.setAttribute("height", vb.height);
-       const minimapNodes = minimapSvg.querySelectorAll(".minimap-node");
-       minimapNodes.forEach((n) => n.remove());
-       const minimapEdges = minimapSvg.querySelectorAll(".minimap-edge");
-       minimapEdges.forEach((e) => e.remove());
-       EDGE_DATA.list.forEach((edge) => {
-        if (edge.type === "custom") return;
-        const fromNode = NODE_DATA[edge.from];
-        const toNode = NODE_DATA[edge.to];
-        if (!fromNode || !toNode) return;
-        if (currentView.mode === "rack") {
-         if (fromNode.assignedRack !== currentView.rackId ||
-             toNode.assignedRack !== currentView.rackId) {
-          return;
-         }
-        } else {
-         if (fromNode.assignedRack || toNode.assignedRack) {
-          return;
-         }
-        }
-        const p1 = savedPositions[edge.from];
-        const p2 = savedPositions[edge.to];
-        if (!p1 || !p2) return;
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line", );
-        line.setAttribute("x1", p1.x);
-        line.setAttribute("y1", p1.y);
-        line.setAttribute("x2", p2.x);
-        line.setAttribute("y2", p2.y);
-        line.classList.add("minimap-edge");
-        minimapSvg.insertBefore(line, minimapViewport);
-       });
-       Object.entries(savedPositions).forEach(([id, pos]) => {
-        const node = NODE_DATA[id];
-        if (!node) return;
-        if (currentView.mode === "rack") {
-         if (node.assignedRack !== currentView.rackId) {
-          return;
-         }
-        } else {
-         if (node.assignedRack) {
-          return;
-         }
-        }
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle", );
-        circle.setAttribute("cx", pos.x);
-        circle.setAttribute("cy", pos.y);
-        circle.setAttribute("r", 40);
-        circle.classList.add("minimap-node");
-        minimapSvg.insertBefore(circle, minimapViewport);
-       });
-      }
+	  
+	function updateViewBox() {
+	  const svg = document.getElementById("map");
+	  const vb = getViewBox();
+	  svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
+	  const zoomLevel = document.getElementById("zoom-level");
+	  if (zoomLevel) {
+		zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
+	  }
+	  if (canvasState.zoom < 0.5) {
+		svg.classList.add("low-zoom");
+	  } else {
+		svg.classList.remove("low-zoom");
+	  }
+	  updateMinimap();
+	  populateRackDropdown();
+	}
+	  
+	let lastMinimapRender = 0;
+	const MINIMAP_THROTTLE = 100;
+
+	function updateMinimap() {
+	  const now = performance.now();
+	  if (now - lastMinimapRender < MINIMAP_THROTTLE) return;
+	  lastMinimapRender = now;
+	  
+	  const minimapViewport = document.getElementById("minimap-viewport");
+	  const minimapSvg = document.getElementById("minimap");
+	  if (!minimapViewport || !minimapSvg) return;
+	  const vb = getViewBox();
+	  minimapViewport.setAttribute("x", vb.x);
+	  minimapViewport.setAttribute("y", vb.y);
+	  minimapViewport.setAttribute("width", vb.width);
+	  minimapViewport.setAttribute("height", vb.height);
+	  minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+	  const frag = document.createDocumentFragment();
+	  EDGE_DATA.list.forEach((edge) => {
+	  if (edge.type === "custom") return;
+	  const fromNode = NODE_DATA[edge.from];
+	  const toNode = NODE_DATA[edge.to];
+	  if (!fromNode || !toNode) return;
+	  if (currentView.mode === "rack") {
+		if (fromNode.assignedRack !== currentView.rackId || toNode.assignedRack !== currentView.rackId) return;
+	  } else {
+		if (fromNode.assignedRack || toNode.assignedRack) return;
+	  }
+	  const p1 = savedPositions[edge.from];
+	  const p2 = savedPositions[edge.to];
+	  if (!p1 || !p2) return;
+	  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+	   line.setAttribute("x1", p1.x);
+	   line.setAttribute("y1", p1.y);
+	   line.setAttribute("x2", p2.x);
+	   line.setAttribute("y2", p2.y);
+	   line.classList.add("minimap-edge");
+	   frag.appendChild(line);
+	  });
+	  Object.entries(savedPositions).forEach(([id, pos]) => {
+	  const node = NODE_DATA[id];
+	  if (!node) return;
+	  if (currentView.mode === "rack") {
+		if (node.assignedRack !== currentView.rackId) return;
+	  } else {
+		if (node.assignedRack) return;
+	  }
+	  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	   circle.setAttribute("cx", pos.x);
+	   circle.setAttribute("cy", pos.y);
+	   circle.setAttribute("r", 40);
+	   circle.classList.add("minimap-node");
+	  frag.appendChild(circle);
+	   });
+	   minimapSvg.insertBefore(frag, minimapViewport);	
+	  }
       function zoomTo(newZoom, centerX, centerY) {
        const oldZoom = canvasState.zoom;
        newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom), );
@@ -10441,6 +10700,41 @@
        canvasState.zoom = 1;
        canvasState.panX = 0;
        canvasState.panY = 0;
+       updateViewBox();
+      }
+      function focusOnNodes(nodeIds) {
+       if (!nodeIds || nodeIds.length === 0) return;
+       const positions = nodeIds.map(id => savedPositions[id]).filter(Boolean);
+       if (positions.length === 0) return;
+       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+       positions.forEach(pos => {
+        minX = Math.min(minX, pos.x);
+        minY = Math.min(minY, pos.y);
+        maxX = Math.max(maxX, pos.x);
+        maxY = Math.max(maxY, pos.y);
+       });
+       const padding = 150;
+       const contentWidth = Math.max(maxX - minX + padding * 2, 300);
+       const contentHeight = Math.max(maxY - minY + padding * 2, 300);
+       const centerX = (minX + maxX) / 2;
+       const centerY = (minY + maxY) / 2;
+       const viewport = document.getElementById("canvas-viewport");
+       const vpRect = viewport.getBoundingClientRect();
+       const aspectRatio = vpRect.width / vpRect.height;
+       const contentAspect = contentWidth / contentHeight;
+       let newZoom;
+       if (contentAspect > aspectRatio) {
+        newZoom = (vpRect.width / contentWidth) * (CANVAS_WIDTH / vpRect.width);
+       } else {
+        newZoom = (vpRect.height / contentHeight) * (CANVAS_HEIGHT / vpRect.height);
+       }
+       newZoom = Math.max(canvasState.minZoom, Math.min(1.5, newZoom));
+       const viewWidth = CANVAS_WIDTH / newZoom;
+       const viewHeight = CANVAS_HEIGHT / newZoom;
+       canvasState.zoom = newZoom;
+       canvasState.panX = centerX - viewWidth / 2;
+       canvasState.panY = centerY - viewHeight / 2;
+       constrainPan();
        updateViewBox();
       }
       window.addEventListener("DOMContentLoaded", () => {
@@ -10813,6 +11107,10 @@
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("topology-toolbar").style.display = "none";
        }
+       if (Object.keys(NODE_DATA).length === 0 && EDGE_DATA.list.length === 0) {
+        checkForAutosaveRecovery();
+       }
+       startAutosave();
       })();
       let resizeDebounceTimer = null;
       window.addEventListener("resize", () => {
@@ -11996,34 +12294,34 @@
         boundary.setAttribute("stroke-dasharray", "10 5");
         boundary.setAttribute("rx", "8");
         svg.appendChild(boundary);
-       if (currentView.mode !== "rack") {
-        const gridGroup = document.createElementNS(ns, "g");
-        gridGroup.id = "canvas-grid";
-        const gridSize = PAGE_STATE.canvasGridSize || 50;
-        const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
-        const majorGridColor = (PAGE_STATE.canvasGrid || "#475569") + "66";
-        for (let x = CANVAS_PADDING; x <= CANVAS_WIDTH - CANVAS_PADDING; x += gridSize) {
-         const line = document.createElementNS(ns, "line");
-         line.setAttribute("x1", x);
-         line.setAttribute("y1", CANVAS_PADDING);
-         line.setAttribute("x2", x);
-         line.setAttribute("y2", CANVAS_HEIGHT - CANVAS_PADDING);
-         line.setAttribute("stroke", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
-         line.setAttribute("stroke-width", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
-         gridGroup.appendChild(line);
-        }
-        for (let y = CANVAS_PADDING; y <= CANVAS_HEIGHT - CANVAS_PADDING; y += gridSize) {
-         const line = document.createElementNS(ns, "line");
-         line.setAttribute("x1", CANVAS_PADDING);
-         line.setAttribute("y1", y);
-         line.setAttribute("x2", CANVAS_WIDTH - CANVAS_PADDING);
-         line.setAttribute("y2", y);
-         line.setAttribute("stroke", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
-         line.setAttribute("stroke-width", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
-         gridGroup.appendChild(line);
-        }
-        svg.appendChild(gridGroup);
-       }
+		if (currentView.mode !== "rack") {
+		 const gridGroup = document.createElementNS(ns, "g");
+		 gridGroup.id = "canvas-grid";
+		 const gridSize = PAGE_STATE.canvasGridSize || 50;
+		 const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
+		 const majorGridColor = (PAGE_STATE.canvasGrid || "#475569") + "66";
+		 for (let x = CANVAS_PADDING; x <= CANVAS_WIDTH - CANVAS_PADDING; x += gridSize) {
+		  const line = document.createElementNS(ns, "line");
+		  line.setAttribute("x1", x);
+		  line.setAttribute("y1", CANVAS_PADDING);
+		  line.setAttribute("x2", x);
+		  line.setAttribute("y2", CANVAS_HEIGHT - CANVAS_PADDING);
+		  line.setAttribute("stroke", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+		  line.setAttribute("stroke-width", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+		  gridGroup.appendChild(line);
+		 }
+		 for (let y = CANVAS_PADDING; y <= CANVAS_HEIGHT - CANVAS_PADDING; y += gridSize) {
+		  const line = document.createElementNS(ns, "line");
+		  line.setAttribute("x1", CANVAS_PADDING);
+		  line.setAttribute("y1", y);
+		  line.setAttribute("x2", CANVAS_WIDTH - CANVAS_PADDING);
+		  line.setAttribute("y2", y);
+		  line.setAttribute("stroke", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+		  line.setAttribute("stroke-width", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+		  gridGroup.appendChild(line);
+		 }
+		 svg.appendChild(gridGroup);
+		}
        if (currentView.mode === "rack" && currentView.rackId) {
          const rackCapacity = getRackCapacity(currentView.rackId);
       const rackUHeight = getRackUHeight(currentView.rackId);
@@ -12409,9 +12707,63 @@
          edge._pairIndex = edgePairIndex[key];
          edge._pairTotal = edgePairCount[key];
          edgePairIndex[key]++;
-        });
-        EDGE_DATA.list.forEach((edge) => {
-         if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
+       });
+       
+       const orthoGaps = (function() {
+         const segments = [];
+         const GAP_SIZE = 12;
+         EDGE_DATA.list.forEach((edge, edgeIndex) => {
+           if ((edge.routing || PAGE_STATE.defaultEdgeRouting || "curved") !== "orthogonal") return;
+           if (edge.type === "custom") return;
+           const p1 = positions[edge.from];
+           const p2 = positions[edge.to];
+           if (!p1 || !p2) return;
+           const dx = p2.x - p1.x;
+           const dy = p2.y - p1.y;
+           const pairIndex = edge._pairIndex || 0;
+           const pairTotal = edge._pairTotal || 1;
+           const offset = (pairIndex - (pairTotal - 1) / 2) * 40;
+           if (Math.abs(dx) > Math.abs(dy)) {
+             const midX = p1.x + dx / 2 + offset;
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: p1.y, x2: midX, y2: p1.y, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: midX, y1: p1.y, x2: midX, y2: p2.y, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: midX, y1: p2.y, x2: p2.x, y2: p2.y, idx: edgeIndex });
+           } else {
+             const midY = p1.y + dy / 2 + offset;
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: p1.y, x2: p1.x, y2: midY, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: midY, x2: p2.x, y2: midY, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: p2.x, y1: midY, x2: p2.x, y2: p2.y, idx: edgeIndex });
+           }
+         });
+         const gaps = {};
+         for (let i = 0; i < segments.length; i++) {
+           for (let j = i + 1; j < segments.length; j++) {
+             const s1 = segments[i];
+             const s2 = segments[j];
+             if (s1.edgeId === s2.edgeId) continue;
+             const s1Horiz = Math.abs(s1.y1 - s1.y2) < 1;
+             const s2Horiz = Math.abs(s2.y1 - s2.y2) < 1;
+             if (s1Horiz === s2Horiz) continue;
+             const horiz = s1Horiz ? s1 : s2;
+             const vert = s1Horiz ? s2 : s1;
+             const hY = horiz.y1;
+             const vX = vert.x1;
+             const hMinX = Math.min(horiz.x1, horiz.x2);
+             const hMaxX = Math.max(horiz.x1, horiz.x2);
+             const vMinY = Math.min(vert.y1, vert.y2);
+             const vMaxY = Math.max(vert.y1, vert.y2);
+             if (vX > hMinX && vX < hMaxX && hY > vMinY && hY < vMaxY) {
+               const gapEdge = s1.idx > s2.idx ? s1.edgeId : s2.edgeId;
+               if (!gaps[gapEdge]) gaps[gapEdge] = [];
+               gaps[gapEdge].push({ x: vX, y: hY });
+             }
+           }
+         }
+         return gaps;
+       })();
+
+       EDGE_DATA.list.forEach((edge) => {
+        if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
           const customEdgeFaded = currentView.mode !== "rack" && edge.from && edge.to && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
           const poly = document.createElementNS(ns, "polyline");
           poly.classList.add("edge");
@@ -12420,7 +12772,7 @@
            poly.classList.add("layer-faded");
           }
           poly.dataset.edgeId = edge.id;
-poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
+          poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
           poly.style.strokeWidth = edge.width || 4;
           poly.setAttribute("fill", "none");
           const lineStyle = edge.lineStyle || "solid";
@@ -12709,21 +13061,102 @@ poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
          const edgeFaded = currentView.mode !== "rack" && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
          const pairTotal = edge._pairTotal || 1;
          const pairIndex = edge._pairIndex || 0;
-         const midX = (p1.x + p2.x) / 2;
-         const midY = (p1.y + p2.y) / 2;
+         const routing = edge.routing || "curved";
+         let pathD;
+         if (routing === "straight") {
+          pathD = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
+         } else if (routing === "orthogonal") {
          const dx = p2.x - p1.x;
          const dy = p2.y - p1.y;
-         const len = Math.sqrt(dx * dx + dy * dy) || 1;
-         const perpX = -dy / len;
-         const perpY = dx / len;
-         let offsetAmount = 0;
-         if (pairTotal > 1) {
-          offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+         const offset = (pairIndex - (pairTotal - 1) / 2) * 40;
+         const GAP = 10;
+         const edgeGaps = orthoGaps[edge.id] || [];
+         
+         if (Math.abs(dx) > Math.abs(dy)) {
+          const midX = p1.x + dx / 2 + offset;
+          const segs = [
+           { x1: p1.x, y1: p1.y, x2: midX, y2: p1.y },
+           { x1: midX, y1: p1.y, x2: midX, y2: p2.y },
+           { x1: midX, y1: p2.y, x2: p2.x, y2: p2.y }
+          ];
+          pathD = `M ${p1.x} ${p1.y}`;
+          segs.forEach(seg => {
+           const isHoriz = Math.abs(seg.y1 - seg.y2) < 1;
+           const segGaps = edgeGaps.filter(g => {
+            if (isHoriz) {
+             const minX = Math.min(seg.x1, seg.x2), maxX = Math.max(seg.x1, seg.x2);
+             return Math.abs(g.y - seg.y1) < 1 && g.x > minX + GAP && g.x < maxX - GAP;
+            } else {
+             const minY = Math.min(seg.y1, seg.y2), maxY = Math.max(seg.y1, seg.y2);
+             return Math.abs(g.x - seg.x1) < 1 && g.y > minY + GAP && g.y < maxY - GAP;
+            }
+           }).sort((a, b) => isHoriz ? (seg.x2 > seg.x1 ? a.x - b.x : b.x - a.x) : (seg.y2 > seg.y1 ? a.y - b.y : b.y - a.y));
+           let cx = seg.x1, cy = seg.y1;
+           segGaps.forEach(g => {
+            if (isHoriz) {
+             const gx = g.x;
+             pathD += ` L ${gx - GAP} ${cy} M ${gx + GAP} ${cy}`;
+             cx = gx + GAP;
+            } else {
+             const gy = g.y;
+             pathD += ` L ${cx} ${gy - GAP} M ${cx} ${gy + GAP}`;
+             cy = gy + GAP;
+            }
+           });
+           pathD += ` L ${seg.x2} ${seg.y2}`;
+          });
+         } else {
+          const midY = p1.y + dy / 2 + offset;
+          const segs = [
+           { x1: p1.x, y1: p1.y, x2: p1.x, y2: midY },
+           { x1: p1.x, y1: midY, x2: p2.x, y2: midY },
+           { x1: p2.x, y1: midY, x2: p2.x, y2: p2.y }
+          ];
+          pathD = `M ${p1.x} ${p1.y}`;
+          segs.forEach(seg => {
+           const isHoriz = Math.abs(seg.y1 - seg.y2) < 1;
+           const segGaps = edgeGaps.filter(g => {
+            if (isHoriz) {
+             const minX = Math.min(seg.x1, seg.x2), maxX = Math.max(seg.x1, seg.x2);
+             return Math.abs(g.y - seg.y1) < 1 && g.x > minX + GAP && g.x < maxX - GAP;
+            } else {
+             const minY = Math.min(seg.y1, seg.y2), maxY = Math.max(seg.y1, seg.y2);
+             return Math.abs(g.x - seg.x1) < 1 && g.y > minY + GAP && g.y < maxY - GAP;
+            }
+           }).sort((a, b) => isHoriz ? (seg.x2 > seg.x1 ? a.x - b.x : b.x - a.x) : (seg.y2 > seg.y1 ? a.y - b.y : b.y - a.y));
+           let cx = seg.x1, cy = seg.y1;
+           segGaps.forEach(g => {
+            if (isHoriz) {
+             const gx = g.x;
+             pathD += ` L ${gx - GAP} ${cy} M ${gx + GAP} ${cy}`;
+             cx = gx + GAP;
+            } else {
+             const gy = g.y;
+             pathD += ` L ${cx} ${gy - GAP} M ${cx} ${gy + GAP}`;
+             cy = gy + GAP;
+            }
+           });
+           pathD += ` L ${seg.x2} ${seg.y2}`;
+          });
          }
-         const ctrlX = midX + perpX * offsetAmount;
-         const ctrlY = midY + perpY * offsetAmount;
+        } else {
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          const perpX = -dy / len;
+          const perpY = dx / len;
+          let offsetAmount = 0;
+          if (pairTotal > 1) {
+           offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+          }
+          const ctrlX = midX + perpX * offsetAmount;
+          const ctrlY = midY + perpY * offsetAmount;
+          pathD = `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`;
+         }
          const path = document.createElementNS(ns, "path");
-         path.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+         path.setAttribute("d", pathD);
          path.setAttribute("fill", "none");
          path.classList.add("edge");
          if (edgeFaded) {
@@ -12737,7 +13170,7 @@ poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
          path.style.stroke = edge.color;
          path.style.strokeWidth = edge.width;
          const pathHit = document.createElementNS(ns, "path");
-         pathHit.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+         pathHit.setAttribute("d", pathD);
          pathHit.setAttribute("fill", "none");
          pathHit.style.stroke = "transparent";
          pathHit.style.strokeWidth = "20";
@@ -13870,6 +14303,26 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         });
         forgeTheLegend();
         updateMinimap();
+        if (currentSearchQuery && currentSearchResults.length > 0) {
+         highlightSearchResults(currentSearchResults, true);
+        }
+       }
+       const _forgeTheTopologyImpl = forgeTheTopology;
+       forgeTheTopology = function(immediate = false) {
+        if (immediate || forgeImmediate) {
+         forgeImmediate = false;
+         clearTimeout(forgeDebounceTimer);
+         _forgeTheTopologyImpl();
+         return;
+        }
+        clearTimeout(forgeDebounceTimer);
+        forgeDebounceTimer = setTimeout(() => {
+         _forgeTheTopologyImpl();
+        }, 16);
+       };
+       function forgeTheTopologyImmediate() {
+        forgeImmediate = true;
+        forgeTheTopology();
        }
        function showEditModal(title, currentValue, onSave) {
         const modal = document.getElementById("edit-modal");
@@ -14386,10 +14839,12 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const colorInput = document.getElementById("edge-color");
         const directionSelect = document.getElementById("edge-direction");
         const lineStyleSelect = document.getElementById("edge-line-style");
+        const routingSelect = document.getElementById("edge-routing");
         widthInput.value = edge.width;
         colorInput.value = edge.color;
         directionSelect.value = edge.direction || "none";
         lineStyleSelect.value = edge.lineStyle || "solid";
+        routingSelect.value = edge.routing || "curved";
         const fromPortInput = document.getElementById("edge-from-port");
         const toPortInput = document.getElementById("edge-to-port");
         const portFieldsFrom = document.getElementById("edge-port-fields");
@@ -14483,8 +14938,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          x: 0.5,
          y: 0.5
         };
+        let threeFingerTapStart = 0;
         viewport.addEventListener("touchstart",
          (e) => {
+          if (e.touches.length === 3) {
+           e.preventDefault();
+           threeFingerTapStart = Date.now();
+          }
           if (e.touches.length === 2) {
            e.preventDefault();
            const touch1 = e.touches[0];
@@ -14500,6 +14960,17 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          }, {
           passive: false
          }, );
+        viewport.addEventListener("touchend", (e) => {
+         if (e.touches.length === 0 && threeFingerTapStart > 0) {
+          const duration = Date.now() - threeFingerTapStart;
+          if (duration < 500) {
+           e.preventDefault();
+           undo();
+           if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+          }
+          threeFingerTapStart = 0;
+         }
+        }, { passive: false });
         viewport.addEventListener("touchmove",
          (e) => {
           if (e.touches.length === 2) {
@@ -14630,43 +15101,64 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          }, {
           passive: false
          }, );
-        document.addEventListener("mousemove", (e) => {
-         if (isSelecting) {
-          updateSelection(e);
-          return;
-         }
-         if (!canvasState.isPanning) return;
-         const dx = e.clientX - canvasState.panStartX;
-         const dy = e.clientY - canvasState.panStartY;
-         const rect = viewport.getBoundingClientRect();
-         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-         const canvasDx = (dx / rect.width) * viewWidth;
-         const canvasDy = (dy / rect.height) * viewHeight;
-         canvasState.panX = panStartViewX - canvasDx;
-         canvasState.panY = panStartViewY - canvasDy;
-         constrainPan();
-         updateViewBox();
-        });
+        let panRAFPending = false;
+       let lastPanEvent = null;
+       document.addEventListener("mousemove", (e) => {
+        if (isSelecting) {
+         updateSelection(e);
+         return;
+        }
+        if (!canvasState.isPanning) return;
+        lastPanEvent = e;
+        if (!panRAFPending) {
+         panRAFPending = true;
+         requestAnimationFrame(() => {
+          if (lastPanEvent && canvasState.isPanning) {
+           const dx = lastPanEvent.clientX - canvasState.panStartX;
+           const dy = lastPanEvent.clientY - canvasState.panStartY;
+           const rect = viewport.getBoundingClientRect();
+           const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+           const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+           const canvasDx = (dx / rect.width) * viewWidth;
+           const canvasDy = (dy / rect.height) * viewHeight;
+           canvasState.panX = panStartViewX - canvasDx;
+           canvasState.panY = panStartViewY - canvasDy;
+           constrainPan();
+           updateViewBox();
+          }
+          panRAFPending = false;
+         });
+        }
+       });
        document.addEventListener("touchmove", (e) => {
         if (!canvasState.isPanning || !e.touches[0]) return;
-        const moveDx = Math.abs(e.touches[0].clientX - emptyTapStartX);
-        const moveDy = Math.abs(e.touches[0].clientY - emptyTapStartY);
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const moveDx = Math.abs(touchX - emptyTapStartX);
+        const moveDy = Math.abs(touchY - emptyTapStartY);
         if (moveDx > 15 || moveDy > 15) {
          emptyTapMoved = true;
         }
-        const dx = e.touches[0].clientX - canvasState.panStartX;
-         const dy = e.touches[0].clientY - canvasState.panStartY;
-         const rect = viewport.getBoundingClientRect();
-         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-         const canvasDx = (dx / rect.width) * viewWidth;
-         const canvasDy = (dy / rect.height) * viewHeight;
-         canvasState.panX = panStartViewX - canvasDx;
-         canvasState.panY = panStartViewY - canvasDy;
-         constrainPan();
-         updateViewBox();
-        });
+        if (!panRAFPending) {
+         panRAFPending = true;
+         requestAnimationFrame(() => {
+          if (canvasState.isPanning) {
+           const dx = touchX - canvasState.panStartX;
+           const dy = touchY - canvasState.panStartY;
+           const rect = viewport.getBoundingClientRect();
+           const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+           const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+           const canvasDx = (dx / rect.width) * viewWidth;
+           const canvasDy = (dy / rect.height) * viewHeight;
+           canvasState.panX = panStartViewX - canvasDx;
+           canvasState.panY = panStartViewY - canvasDy;
+           constrainPan();
+           updateViewBox();
+          }
+          panRAFPending = false;
+         });
+        }
+       });
         document.addEventListener("mouseup", () => {
          if (isSelecting) {
           endSelection();
@@ -15025,6 +15517,15 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         forgeTheTopology();
         selectTheConnection(currentEdgeId);
        });
+       document.getElementById("edge-routing").addEventListener("change", () => {
+        if (!currentEdgeId) return;
+        const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
+        if (!edge) return;
+        pushUndo("edit edge routing");
+        edge.routing = document.getElementById("edge-routing").value;
+        forgeTheTopology();
+        selectTheConnection(currentEdgeId);
+       });
        const addEdgeNoteBtn = document.getElementById("add-edge-note");
        const newEdgeNoteInput = document.getElementById("new-edge-note");
        addEdgeNoteBtn.addEventListener("click", () => {
@@ -15182,10 +15683,12 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const select = document.getElementById("add-line-select");
         const directionSelect = document.getElementById("add-line-direction");
         const colorInput = document.getElementById("add-line-color");
+        const routingSelect = document.getElementById("add-line-routing");
         const targetId = select.value;
         if (!targetId || targetId === currentNodeId) return;
         const direction = directionSelect.value || "none";
         const lineColor = colorInput.value || "#475569";
+        const routing = routingSelect.value || PAGE_STATE.defaultEdgeRouting || "orthogonal";
         const newId = `${currentNodeId}-${targetId}-${Date.now()}`;
         const newEdge = {
          id: newId,
@@ -15194,12 +15697,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          width: 4,
          color: lineColor,
          direction: direction,
+         routing: routing,
          type: "main",
          notes: [],
          fromPort: "",
          toPort: "",
         };
-		pushUndo("add edge");
+        pushUndo("add edge");
         EDGE_DATA.list.push(newEdge);
         forgeTheTopology();
         claimTheImmortal(currentNodeId);
@@ -15961,6 +16465,8 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        document.getElementById("node-sub-size").value = PAGE_STATE.nodeSubSize || 13;
        document.getElementById("node-font-family").value = PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
        document.getElementById("default-edge-color").value = PAGE_STATE.defaultEdge || "#475569";
+       document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
+       document.getElementById("add-line-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
        document.getElementById("selection-handle-color").value = PAGE_STATE.selectionHandle || "#f59e0b";
        document.getElementById("selection-handle-size").value = PAGE_STATE.selectionHandleSize || 8;
        document.getElementById("group-indicator-color").value = PAGE_STATE.groupIndicator || "#4fd1c5";
@@ -16190,6 +16696,20 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
       });
       document.getElementById("default-edge-color").addEventListener("input", (e) => {
        PAGE_STATE.defaultEdge = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("default-edge-routing").addEventListener("change", (e) => {
+       PAGE_STATE.defaultEdgeRouting = e.target.value;
+       document.getElementById("add-line-routing").value = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("apply-routing-all").addEventListener("click", () => {
+       const routing = document.getElementById("default-edge-routing").value;
+       if (!confirm(`Apply "${routing}" routing to all ${EDGE_DATA.list.length} connections?`)) return;
+       pushUndo("apply routing to all");
+       EDGE_DATA.list.forEach(edge => {
+        edge.routing = routing;
+       });
        forgeTheTopology();
       });
       document.getElementById("selection-handle-color").addEventListener("input", (e) => {
@@ -16437,6 +16957,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
            console.warn("Failed to sync audit log to localStorage:", e);
          }
         }
+        Object.values(NODE_DATA).forEach(node => {
+          if (!node.tags) node.tags = [];
+          if (!node.notes) node.notes = [];
+        });
+        EDGE_DATA.list.forEach(edge => {
+          if (!edge.notes) edge.notes = [];
+        });
         forgeTheTopology();
         forgeTheLegend();
         logAuditEvent("import", `Imported JSON: ${file.name} (${Object.keys(data.nodeData).length} nodes, ${data.edgeData.list?.length || 0} connections)`);
@@ -16584,13 +17111,23 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
 	   const canvasHintEl = document.getElementById("canvas-hint");
        const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
        if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
-        const clone = document.documentElement.cloneNode(true);
+       const clone = document.documentElement.cloneNode(true);
        ["edge-legend-mini", "minimap-mini", "draw-toolbar-mini", "topology-toolbar-mini"].forEach(id => {
         const all = clone.querySelectorAll("#" + id);
         for (let i = 1; i < all.length; i++) {
          all[i].remove();
         }
        });
+       const addLineSelect = clone.querySelector("#add-line-select");
+       if (addLineSelect) addLineSelect.innerHTML = "";
+       const minimapSvg = clone.querySelector("#minimap");
+       if (minimapSvg) {
+        minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+       }
+       const canvasGrid = clone.querySelector("#canvas-grid");
+       if (canvasGrid) canvasGrid.innerHTML = "";
+       const mainSvg = clone.querySelector("#map");
+       if (mainSvg) mainSvg.innerHTML = "";
        const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
          nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
@@ -16637,6 +17174,30 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          all[i].remove();
         }
        });
+       const selectsToClear = ["#add-line-select", "#new-edge-from", "#new-edge-to", "#assigned-rack-select"];
+       selectsToClear.forEach(sel => {
+        const el = clone.querySelector(sel);
+        if (el) el.innerHTML = "";
+       });
+       const minimapSvg = clone.querySelector("#minimap");
+       if (minimapSvg) minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+       const mainSvg = clone.querySelector("#map");
+       if (mainSvg) mainSvg.innerHTML = "";
+       const edgeLegendContent = clone.querySelector("#edge-legend-content");
+       if (edgeLegendContent) edgeLegendContent.innerHTML = "";
+       const nodeTags = clone.querySelector("#node-tags");
+       if (nodeTags) nodeTags.innerHTML = "";
+       const nodeNotes = clone.querySelector("#node-notes");
+       if (nodeNotes) nodeNotes.innerHTML = "";
+       const edgeNotes = clone.querySelector("#edge-notes");
+       if (edgeNotes) edgeNotes.innerHTML = "";
+       const tabBar = clone.querySelector("#tab-bar");
+       if (tabBar) tabBar.innerHTML = "";
+       const rollbackList = clone.querySelector("#rollback-list");
+       if (rollbackList) rollbackList.innerHTML = "";
+       const auditList = clone.querySelector("#audit-log-list");
+       if (auditList) auditList.innerHTML = "";
+       clone.querySelectorAll(".ping-indicator").forEach(el => el.remove());
        const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
          if (encryptEnabled) {
@@ -16672,20 +17233,30 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
 		logAuditEvent("save", `File saved: ${safeTitle}.html`);
        }
       function captureState() {
-      return {
-        nodes: JSON.parse(JSON.stringify(NODE_DATA)),
-        edges: JSON.parse(JSON.stringify(EDGE_DATA)),
-        positions: JSON.parse(JSON.stringify(savedPositions)),
-        sizes: JSON.parse(JSON.stringify(savedSizes)),
-        styles: JSON.parse(JSON.stringify(savedStyles)),
-        legend: JSON.parse(JSON.stringify(EDGE_LEGEND)),
-        rects: JSON.parse(JSON.stringify(RECT_DATA)),
-        texts: JSON.parse(JSON.stringify(TEXT_DATA))
-        };
-      }
-      function pushUndo(action = "") {
-       const state = captureState();
-       undoStack.push(state);
+		 const clone = typeof structuredClone === 'function' 
+		   ? (o) => structuredClone(o)
+		   : (o) => JSON.parse(JSON.stringify(o));
+		 return {
+		  nodes: clone(NODE_DATA),
+		  edges: clone(EDGE_DATA),
+		  positions: clone(savedPositions),
+		  sizes: clone(savedSizes),
+		  styles: clone(savedStyles),
+		  legend: clone(EDGE_LEGEND),
+		  rects: clone(RECT_DATA),
+		  texts: clone(TEXT_DATA)
+		 };
+		}
+      let lastUndoPush = 0;
+	   let pendingUndoState = null;
+	   function pushUndo(action = "") {
+	   const now = Date.now();
+	   if (now - lastUndoPush < 100 && undoStack.length > 0) {
+	    return;
+	   }
+	   lastUndoPush = now;
+	   const state = captureState();
+	   undoStack.push(state);
        if (undoStack.length > MAX_UNDO_STACK) {
         undoStack.shift();
        }
@@ -17348,7 +17919,6 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         canvasState.zoom = targetZoom;
         canvasState.panX = centerX - (CANVAS_WIDTH / targetZoom) / 2;
         canvasState.panY = centerY - (CANVAS_HEIGHT / targetZoom) / 2;
-		// forgeTheTopology(); getting ready to implement new core canvas performance system
         updateViewBox();
       }
       function toggleLockSelected() {
@@ -17603,31 +18173,38 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         clearSelection();
        }
       }
-      function searchNodes(query) {
-   if (!query) {
-    clearSearchHighlight();
-    return [];
-   }
-   query = query.toLowerCase();
-   const results = [];
-   Object.entries(NODE_DATA).forEach(([id, data]) => {
-    try {
-     const nameMatch = data.name && data.name.toLowerCase().includes(query);
-     const ipMatch = data.ip && data.ip.toLowerCase().includes(query);
-     const roleMatch = data.role && data.role.toLowerCase().includes(query);
-     const tagsMatch = data.tags && Array.isArray(data.tags) && data.tags.some(tag => tag && tag.toLowerCase().includes(query));
-     const macMatch = data.mac && data.mac.toLowerCase().includes(query);
-     const rackUnitMatch = data.rackUnit && String(data.rackUnit).toLowerCase().includes(query);
-     if (nameMatch || ipMatch || roleMatch || tagsMatch || macMatch || rackUnitMatch) {
-      results.push(id);
-     }
-    } catch (e) {
-     console.warn("Search error for node:", id, e);
-    }
-   });
-   highlightSearchResults(results);
-   return results;
-}
+		function searchNodes(query) {
+		   if (!query) {
+			currentSearchQuery = "";
+			currentSearchResults = [];
+			clearSearchHighlight();
+			return [];
+		   }
+		   currentSearchQuery = query;
+		   query = query.toLowerCase();
+		   const results = [];
+		   Object.entries(NODE_DATA).forEach(([id, data]) => {
+			try {
+			 const nameMatch = data.name && data.name.toLowerCase().includes(query);
+			 const ipMatch = data.ip && data.ip.toLowerCase().includes(query);
+			 const roleMatch = data.role && data.role.toLowerCase().includes(query);
+			 const tagsMatch = data.tags && Array.isArray(data.tags) && data.tags.some(tag => tag && tag.toLowerCase().includes(query));
+			 const macMatch = data.mac && data.mac.toLowerCase().includes(query);
+			 const rackUnitMatch = data.rackUnit && String(data.rackUnit).toLowerCase().includes(query);
+			 if (nameMatch || ipMatch || roleMatch || tagsMatch || macMatch || rackUnitMatch) {
+			  results.push(id);
+			 }
+			} catch (e) {
+			 console.warn("Search error for node:", id, e);
+			}
+		   });
+		   currentSearchResults = results;
+		   highlightSearchResults(results, true);
+		   if (results.length > 0) {
+			focusOnNodes(results);
+		   }
+		   return results;
+		}
 		function highlightSearchResults(nodeIds, hasQuery = true) {
 		   document.querySelectorAll(".node-group").forEach(node => {
 			const nodeId = node.dataset.nodeId;
@@ -17922,11 +18499,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        });
       }
       const searchInput = document.getElementById("search-nodes");
-if (searchInput) {
- searchInput.addEventListener("input", (e) => {
-  searchNodes(e.target.value);
- });
-}
+      let searchTimeout = null;
+      if (searchInput) {
+       searchInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => { searchNodes(e.target.value); }, 150);
+		 });
+		}
        document.getElementById("save-file-btn").addEventListener("click", becomeImmortal);
        document.getElementById("check-all-ping-btn").addEventListener("click", checkAllNodesStatus);
        const addNodeBtn = document.getElementById("add-node-btn");
@@ -19024,27 +19603,55 @@ if (searchInput) {
         }
        });
        clearAllConfirm.addEventListener("click", () => {
-        pushUndo("clear all");
         NODE_DATA = {};
-        EDGE_DATA = {
-         list: []
-        };
+        EDGE_DATA = { list: [] };
         EDGE_LEGEND = {};
         RECT_DATA = { list: [] };
         TEXT_DATA = { list: [] };
         savedPositions = {};
         savedSizes = {};
         savedStyles = {};
-		logAuditEvent("clear", "Cleared all data from canvas");
+        undoStack = [];
+        redoStack = [];
+        updateUndoButtons();
+        auditLog = [];
+        localStorage.removeItem(AUDIT_STORAGE_KEY);
+        rollbackVersions = [];
+        currentRollbackIndex = -1;
+        localStorage.removeItem(ROLLBACK_STORAGE_KEY);
+        clipboard = null;
+        selectedNodes.clear();
+        selectedEdges.clear();
+        selectedRects.clear();
+        selectedTexts.clear();
+        documentTabs = [{
+          id: "main",
+          name: "Main Topology",
+          nodes: {},
+          edges: { list: [] },
+          positions: {},
+          sizes: {},
+          styles: {},
+          legend: {},
+          rects: { list: [] },
+          texts: { list: [] },
+          pageState: null
+        }];
+        currentTabIndex = 0;
+        displayTabs();
+        clearAutosave();
+        try {
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith("theonefile")) {
+              localStorage.removeItem(key);
+            }
+          });
+        } catch(e) {}
+        const addLineSelect = document.getElementById("add-line-select");
+        if (addLineSelect) addLineSelect.innerHTML = "";
+        const edgeLegendContent = document.getElementById("edge-legend-content");
+        if (edgeLegendContent) edgeLegendContent.innerHTML = "";
         clearAllModal.classList.remove("active");
-      autoPingEnabled = false;
-      autoPingInterval = 30;
-      PAGE_STATE.autoPingEnabled = false;
-      PAGE_STATE.autoPingInterval = autoPingInterval;
-      stopAutoPing();
-      document.getElementById("auto-ping-enabled").checked = false;
-      document.getElementById("auto-ping-settings").style.display = "none";
-      document.getElementById("auto-ping-interval").value = autoPingInterval;
         forgeTheTopology();
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("edge-panel").style.display = "none";
@@ -19053,7 +19660,10 @@ if (searchInput) {
         currentNodeId = null;
         currentEdgeId = null;
         currentTextId = null;
-       });
+        if (typeof displayRollbackVersions === "function") displayRollbackVersions();
+        if (typeof displayAuditLog === "function") displayAuditLog();
+        if (typeof forgeTheLegend === "function") forgeTheLegend();
+      });
        (function addDeleteNodeButton() {
        const nodePanel = document.getElementById("node-panel");
        if (!nodePanel) return;

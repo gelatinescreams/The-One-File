@@ -4114,8 +4114,8 @@
   },
   "canvas": {
     "zoom": 0.9828345045578523,
-    "panX": -74.99705309342698,
-    "panY": -7.395887697909075
+    "panX": 162.25942846156744,
+    "panY": -131.59941950312611
   },
   "savedTopologyView": {
     "zoom": 0.9325110211947125,
@@ -8938,6 +8938,69 @@
   "currentTabIndex": 0,
   "encryptedSections": {},
   "auditLog": [
+    {
+      "timestamp": 1766022128543,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022121954,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-18.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022111697,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022108613,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022105579,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022100565,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022093656,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022075148,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022066503,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
     {
       "timestamp": 1765402929770,
       "type": "tab",

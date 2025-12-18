@@ -1,6 +1,27 @@
 #### CHANGE LOG
 **We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
 
+### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
+* **Orthogonal routing update** [changelog.md](changelog.md)
+  * New orthogonal routing option draws clean 90 degree angle connections
+  * Three routing styles available: Orthogonal, Curved, and Straight
+  * Change between all of them in the settings at any time OR mix and match them   
+* **Auto Recovery**
+  * If your browser crashes or you accidentally close the tab, your work is saved in your local browser
+  * If you want to clear this cache, use the Clear All option in settings
+* **Enhanced Search** : Search now zooms in and out of the canvas automatically to group found items
+* **Mobile Undo** : Add three finder tap anywhere on the canvas for undo on mobile devices
+* **Performance Under The Hood**
+  * Multiple rapid changes are now batched into single redraws
+  * Minimap updates are throttled during pan and zoom
+  * Drop shadows and pulse animations automatically disabled when zoomed out below 50 percent
+  * Mouse and touch pan handlers optimized to prevent layout thrashing
+  * CSS containment added to panels and viewport for faster rendering
+  * Undo performance updates
+  * Minimap performance updates
+  * Custom Orthogonal gap function : edges show gaps where they cross other orthogonal edges
+  * Refactored update/import function
+  
 ### Version 3.9.9.5 : 12/14/25 The ports enhancements update
 * **Port connections section in node/rack panel** : See all ports connected to a device at a glance
 * **Click to edit unassigned ports** : Assign ports directly from the devices

@@ -611,6 +611,18 @@
       width: 100%;
       height: 100%;
       }
+	.minimap-container,
+	.node-panel,
+	.edge-panel,
+	#canvas-viewport {
+	  contain: layout paint;
+	}	
+	.low-zoom .node-group .node-circle,
+	.low-zoom .node-group.active .node-circle,
+	.low-zoom .node-group.selected .node-circle {
+	  filter: none !important;
+	  animation: none !important;
+	}	
       .minimap-viewport {
       fill: rgba(79, 209, 197, 0.2);
       stroke: var(--accent);
@@ -1635,7 +1647,15 @@
       <div class="modal-content" style="max-width: 600px;">
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
         <div id="tabs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
-        </div>
+            <div class="tab-item active" onclick="switchTab(0)">
+              <div class="tab-name">Main Topology</div>
+              <div class="tab-stats">0 nodes • 0 connections</div>
+              <div class="tab-actions">
+                <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
+                
+              </div>
+            </div>
+          </div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <input type="text" id="new-tab-name" placeholder="New tab name..." style="flex: 1; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
           <button class="btn-save" onclick="createNewTab()">+ Add Tab</button>
@@ -1649,7 +1669,7 @@
       <div class="modal-content" style="max-width: 700px;">
         <h3>Version History</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Limit: Snapshots</p>
-        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No version history yet. Versions are saved automatically when you save the file.</div></div>
+        <div id="rollback-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 450px; overflow-y: auto; margin-bottom: 15px;"></div>
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button class="btn-cancel" onclick="clearRollbackHistory()">Clear History</button>
           <button class="btn-save" onclick="createManualSnapshot()">Create Snapshot</button>
@@ -1674,7 +1694,7 @@
           </select>
           <button class="btn-save" onclick="exportAuditLog()">Export</button>
         </div>
-        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);">No audit entries yet</div></div>
+        <div id="audit-log-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 450px; overflow-y: auto; margin-bottom: 15px; font-family: monospace; font-size: 12px;"></div>
         <div style="display: flex; gap: 8px;">
           <button class="btn-cancel" onclick="clearAuditLog()">Clear Log</button>
           <button class="btn-cancel" id="audit-log-modal-close">Close</button>
@@ -2074,6 +2094,17 @@
             <div class="style-row">
               <label>Default Color</label>
               <input type="color" id="default-edge-color" value="#475569">
+            </div>
+            <div class="style-row">
+              <label>Default Routing</label>
+              <select id="default-edge-routing">
+                <option value="orthogonal">Orthogonal (90°)</option>
+                <option value="curved">Curved</option>
+                <option value="straight">Straight</option>
+              </select>
+            </div>
+            <div class="style-row">
+              <button id="apply-routing-all" style="width:100%;padding:8px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;">Apply Routing to All Connections</button>
             </div>
           </div>
         </details>
@@ -2520,7 +2551,7 @@
         <button id="back-to-topology-btn" title="Exit rack view and return to topology" style="padding: 6px 12px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;display: none;">← Back to Topology</button>
         <button id="add-node-btn" class="save-btn" title="Add new node" style="background: var(--accent)">+ Node</button>
         <button id="add-rack-btn" class="save-btn" title="Add new rack" style="background: var(--accent); margin-left: 8px;">+ Rack</button>
-        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 1;">↶</button>
+        <button id="undo-btn" title="Undo (Ctrl+Z)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 0.5;" disabled="">↶</button>
         <button id="redo-btn" title="Redo (Ctrl+Y)" style="padding: 6px 12px; background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--edge-main); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; opacity: 0.5;" disabled="">↷</button>
 <input type="text" id="search-nodes" placeholder="Search nodes..." title="Search by name, IP, MAC, role, or tag" style="padding: 6px 12px;background: var(--input-bg);color: var(--input-text);border: 1px solid var(--input-border);border-radius: 6px;font-family: var(--input-font);font-size: var(--input-font-size);width: 180px;">
         <button id="check-all-ping-btn" title="Check status of all enabled nodes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600">Check Pings</button>
@@ -2571,30 +2602,18 @@
         <div class="topology-toolbar" id="topology-toolbar" style="display: flex !important;">
           <button type="button" class="toolbar-close-btn" id="topology-toolbar-close-btn" title="Hide add line toolbar">✕</button>
           <label for="add-line-select">Add line to:</label>
-          <select id="add-line-select">
-            <option value="opnsense">OPNsense</option>
-            <option value="main-switch">Main Switch</option>
-            <option value="proxmox">Proxmox</option>
-            <option value="truenas">TrueNAS</option>
-            <option value="docker-host">Docker Host</option>
-            <option value="pi-hole">Pi-hole</option>
-            <option value="plex">Plex</option>
-            <option value="jellyfin">Jellyfin</option>
-            <option value="nextcloud">Nextcloud</option>
-            <option value="bitwarden">Vaultwarden</option>
-            <option value="homeassistant">Home Assistant</option>
-            <option value="portainer">Portainer</option>
-            <option value="traefik">Traefik</option>
-            <option value="grafana">Grafana</option>
-            <option value="prometheus">Prometheus</option>
-            <option value="unifi-controller">UniFi Controller</option>
-            <option value="wireguard">WireGuard</option>
-          </select>
-<input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">          <select id="add-line-direction" title="Line direction">
+          <select id="add-line-select"></select>
+	      <input type="color" id="add-line-color" value="#475569" title="Line color" style="width: 30px;height: 24px;border: 1px solid var(--toolbar-border);border-radius: 4px;cursor: pointer;background: transparent;padding: 0;">     
+		 <select id="add-line-direction" title="Line direction">
             <option value="none">No arrows</option>
             <option value="forward">→ Forward</option>
             <option value="backward">← Backward</option>
             <option value="both">↔ Both</option>
+          </select>
+          <select id="add-line-routing" title="Line routing">
+            <option value="orthogonal">Orthogonal</option>
+            <option value="curved">Curved</option>
+            <option value="straight">Straight</option>
           </select>
           <button id="add-line-btn">Add</button>
         </div>
@@ -2635,10 +2654,10 @@
           </div>
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
-        <div class="canvas-hint" id="canvas-hint"></div>
+        <div class="canvas-hint visible" id="canvas-hint"></div>
         <div class="legend-container" id="edge-legend" style="display: none;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="0 0 4000 3000" style=""><defs><marker id="arrow-forward" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="context-stroke"></path></marker><marker id="arrow-backward" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" fill="context-stroke"></path></marker></defs><rect x="100" y="100" width="3800" height="2800" fill="none" stroke="#4755694D" stroke-width="20" stroke-dasharray="10 5" rx="8"></rect><g id="canvas-grid"><line x1="100" y1="100" x2="100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="150" y1="100" x2="150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="200" y1="100" x2="200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="250" y1="100" x2="250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="300" y1="100" x2="300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="350" y1="100" x2="350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="400" y1="100" x2="400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="450" y1="100" x2="450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="500" y1="100" x2="500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="550" y1="100" x2="550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="600" y1="100" x2="600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="650" y1="100" x2="650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="700" y1="100" x2="700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="750" y1="100" x2="750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="800" y1="100" x2="800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="850" y1="100" x2="850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="900" y1="100" x2="900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="950" y1="100" x2="950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1000" y1="100" x2="1000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1050" y1="100" x2="1050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1100" y1="100" x2="1100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1150" y1="100" x2="1150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1200" y1="100" x2="1200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1250" y1="100" x2="1250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1300" y1="100" x2="1300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1350" y1="100" x2="1350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1400" y1="100" x2="1400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1450" y1="100" x2="1450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1500" y1="100" x2="1500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1550" y1="100" x2="1550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1600" y1="100" x2="1600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1650" y1="100" x2="1650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1700" y1="100" x2="1700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1750" y1="100" x2="1750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1800" y1="100" x2="1800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1850" y1="100" x2="1850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="1900" y1="100" x2="1900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="1950" y1="100" x2="1950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2000" y1="100" x2="2000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2050" y1="100" x2="2050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2100" y1="100" x2="2100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2150" y1="100" x2="2150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2200" y1="100" x2="2200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2250" y1="100" x2="2250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2300" y1="100" x2="2300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2350" y1="100" x2="2350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2400" y1="100" x2="2400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2450" y1="100" x2="2450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2500" y1="100" x2="2500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2550" y1="100" x2="2550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2600" y1="100" x2="2600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2650" y1="100" x2="2650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2700" y1="100" x2="2700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2750" y1="100" x2="2750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2800" y1="100" x2="2800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2850" y1="100" x2="2850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="2900" y1="100" x2="2900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="2950" y1="100" x2="2950" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3000" y1="100" x2="3000" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3050" y1="100" x2="3050" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3100" y1="100" x2="3100" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3150" y1="100" x2="3150" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3200" y1="100" x2="3200" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3250" y1="100" x2="3250" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3300" y1="100" x2="3300" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3350" y1="100" x2="3350" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3400" y1="100" x2="3400" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3450" y1="100" x2="3450" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3500" y1="100" x2="3500" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3550" y1="100" x2="3550" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3600" y1="100" x2="3600" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3650" y1="100" x2="3650" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3700" y1="100" x2="3700" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3750" y1="100" x2="3750" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3800" y1="100" x2="3800" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="3850" y1="100" x2="3850" y2="2900" stroke="#47556966" stroke-width="2"></line><line x1="3900" y1="100" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="100" x2="3900" y2="100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="150" x2="3900" y2="150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="200" x2="3900" y2="200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="250" x2="3900" y2="250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="300" x2="3900" y2="300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="350" x2="3900" y2="350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="400" x2="3900" y2="400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="450" x2="3900" y2="450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="500" x2="3900" y2="500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="550" x2="3900" y2="550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="600" x2="3900" y2="600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="650" x2="3900" y2="650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="700" x2="3900" y2="700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="750" x2="3900" y2="750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="800" x2="3900" y2="800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="850" x2="3900" y2="850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="900" x2="3900" y2="900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="950" x2="3900" y2="950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1000" x2="3900" y2="1000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1050" x2="3900" y2="1050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1100" x2="3900" y2="1100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1150" x2="3900" y2="1150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1200" x2="3900" y2="1200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1250" x2="3900" y2="1250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1300" x2="3900" y2="1300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1350" x2="3900" y2="1350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1400" x2="3900" y2="1400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1450" x2="3900" y2="1450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1500" x2="3900" y2="1500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1550" x2="3900" y2="1550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1600" x2="3900" y2="1600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1650" x2="3900" y2="1650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1700" x2="3900" y2="1700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1750" x2="3900" y2="1750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1800" x2="3900" y2="1800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1850" x2="3900" y2="1850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="1900" x2="3900" y2="1900" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="1950" x2="3900" y2="1950" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2000" x2="3900" y2="2000" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2050" x2="3900" y2="2050" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2100" x2="3900" y2="2100" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2150" x2="3900" y2="2150" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2200" x2="3900" y2="2200" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2250" x2="3900" y2="2250" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2300" x2="3900" y2="2300" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2350" x2="3900" y2="2350" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2400" x2="3900" y2="2400" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2450" x2="3900" y2="2450" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2500" x2="3900" y2="2500" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2550" x2="3900" y2="2550" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2600" x2="3900" y2="2600" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2650" x2="3900" y2="2650" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2700" x2="3900" y2="2700" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2750" x2="3900" y2="2750" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2800" x2="3900" y2="2800" stroke="#47556933" stroke-width="1"></line><line x1="100" y1="2850" x2="3900" y2="2850" stroke="#47556966" stroke-width="2"></line><line x1="100" y1="2900" x2="3900" y2="2900" stroke="#47556933" stroke-width="1"></line></g></svg>
+          <svg id="map" viewBox="0 0 4000 3000" style=""></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
@@ -2693,9 +2712,7 @@
           </div>
           <div class="details-info-row" id="assigned-rack-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Assigned Rack:</span>
-            <select id="node-assigned-rack" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;">
-              <option value="">None</option>
-            </select>
+            <select id="node-assigned-rack" style="flex: 1; padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; font-size: 14px;"><option value="">None</option></select>
           </div>
           <div class="details-info-row" id="rack-capacity-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Rack Capacity:</span>
@@ -2725,7 +2742,7 @@
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">0</span>)</summary>
             <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
-          <div class="badge-row" id="node-tags"><span class="badge" style="cursor: pointer; position: relative;"><span>1Gbps Fiber</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; position: relative;"><span>Bridge Mode</span><span style="opacity: 0.6; margin-left: 4px; font-size: 10px;"> ✕</span></span><span class="badge" style="cursor: pointer; opacity: 0.6; border-style: dashed;">+ Add</span></div>
+          <div class="badge-row" id="node-tags"></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-tag-input" placeholder="Add tag..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-tag-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2929,10 +2946,7 @@
             </div>
           </details>
           <div class="section-label">Notes</div>
-          <ul class="list" id="node-notes">
-            <li><span style="flex: 1 1 0%;">ISP: AT&amp;T Fiber</span><span class="delete-note">✕</span></li>
-            <li><span style="flex: 1 1 0%;">set to google for ping sake</span><span class="delete-note">✕</span></li>
-          </ul>
+          <ul class="list" id="node-notes"></ul>
           <div style="margin-top: 10px; display: flex; gap: 8px">
             <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
             <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;">Add</button>
@@ -2955,6 +2969,14 @@
               <option value="solid">Solid</option>
               <option value="dashed">Dashed</option>
               <option value="dotted">Dotted</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label>Routing:</label>
+            <select id="edge-routing">
+              <option value="orthogonal">Orthogonal (90°)</option>
+              <option value="curved">Curved</option>
+              <option value="straight">Straight</option>
             </select>
           </div>
           <div class="style-row">
@@ -3767,6 +3789,16 @@
       let undoStack = [];
       let redoStack = [];
       const MAX_UNDO_STACK = 50;
+      let forgeDebounceTimer = null;
+      let forgeImmediate = false;
+      let currentSearchQuery = "";
+      let currentSearchResults = [];
+      const AUTOSAVE_DB_NAME = "TheOneFileNetworkeningAutosave";
+      const AUTOSAVE_STORE_NAME = "drafts";
+      const AUTOSAVE_KEY = "currentDraft";
+      const AUTOSAVE_INTERVAL = 30000;
+      let autosaveTimer = null;
+      let lastAutosaveTime = 0;
       let selectedNodes = new Set();
       let selectedEdges = new Set();
       let selectedRects = new Set();
@@ -4125,6 +4157,152 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return bytes;
       }
+      function openAutosaveDB() {
+       return new Promise((resolve, reject) => {
+        const request = indexedDB.open(AUTOSAVE_DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (e) => {
+         const db = e.target.result;
+         if (!db.objectStoreNames.contains(AUTOSAVE_STORE_NAME)) {
+          db.createObjectStore(AUTOSAVE_STORE_NAME, { keyPath: "id" });
+         }
+        };
+       });
+      }
+      async function saveToIndexedDB() {
+       try {
+        const db = await openAutosaveDB();
+        const currentTab = documentTabs[currentTabIndex];
+        currentTab.nodes = JSON.parse(JSON.stringify(NODE_DATA));
+        currentTab.edges = JSON.parse(JSON.stringify(EDGE_DATA));
+        currentTab.positions = JSON.parse(JSON.stringify(savedPositions));
+        currentTab.sizes = JSON.parse(JSON.stringify(savedSizes));
+        currentTab.styles = JSON.parse(JSON.stringify(savedStyles));
+        currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
+        currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
+        currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+        currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
+        const state = {
+         id: AUTOSAVE_KEY,
+         timestamp: Date.now(),
+         pageTitle: document.getElementById("page-title")?.textContent || "The One File",
+         nodeData: NODE_DATA,
+         edgeData: EDGE_DATA,
+         rectData: RECT_DATA,
+         textData: TEXT_DATA,
+         edgeLegend: EDGE_LEGEND,
+         nodePositions: savedPositions,
+         nodeSizes: savedSizes,
+         nodeStyles: savedStyles,
+         page: PAGE_STATE,
+         canvas: {
+          zoom: canvasState.zoom,
+          panX: canvasState.panX,
+          panY: canvasState.panY,
+         },
+         savedTopologyView: savedTopologyView,
+         documentTabs: documentTabs,
+         currentTabIndex: currentTabIndex,
+         encryptedSections: encryptedSections,
+         auditLog: auditLog,
+        };
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readwrite");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        store.put(state);
+        await new Promise((resolve, reject) => {
+         tx.oncomplete = resolve;
+         tx.onerror = () => reject(tx.error);
+        });
+        lastAutosaveTime = Date.now();
+        console.log("Auto-saved to IndexedDB at", new Date().toLocaleTimeString());
+       } catch (e) {
+        console.warn("Auto-save failed:", e);
+       }
+      }
+      async function loadFromIndexedDB() {
+       try {
+        const db = await openAutosaveDB();
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readonly");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        const request = store.get(AUTOSAVE_KEY);
+        return new Promise((resolve, reject) => {
+         request.onsuccess = () => resolve(request.result);
+         request.onerror = () => reject(request.error);
+        });
+       } catch (e) {
+        console.warn("Load from IndexedDB failed:", e);
+        return null;
+       }
+      }
+      async function clearAutosave() {
+       try {
+        const db = await openAutosaveDB();
+        const tx = db.transaction(AUTOSAVE_STORE_NAME, "readwrite");
+        const store = tx.objectStore(AUTOSAVE_STORE_NAME);
+        store.delete(AUTOSAVE_KEY);
+       } catch (e) {
+        console.warn("Clear autosave failed:", e);
+       }
+      }
+      function startAutosave() {
+       if (autosaveTimer) clearInterval(autosaveTimer);
+       autosaveTimer = setInterval(() => {
+        if (Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0 || documentTabs.length > 1) {
+         saveToIndexedDB();
+        }
+       }, AUTOSAVE_INTERVAL);
+      }
+      async function checkForAutosaveRecovery() {
+       try {
+        const saved = await loadFromIndexedDB();
+        if (saved && saved.timestamp) {
+         const age = Date.now() - saved.timestamp;
+         const hasCurrentData = Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0;
+         const savedNodeCount = saved.nodeData ? Object.keys(saved.nodeData).length : 0;
+         const savedTabCount = saved.documentTabs ? saved.documentTabs.length : 1;
+         if (age < 300000 && (savedNodeCount > 0 || savedTabCount > 1)) {
+          const savedDate = new Date(saved.timestamp).toLocaleString();
+          const tabInfo = savedTabCount > 1 ? ` across ${savedTabCount} tabs` : "";
+          if (!hasCurrentData || confirm(`Recover unsaved work from ${savedDate}?\n(${savedNodeCount} nodes${tabInfo})\n\nClick OK to recover, Cancel to start fresh.`)) {
+           if (!hasCurrentData || confirm("This will replace current data. Continue?")) {
+            NODE_DATA = saved.nodeData || {};
+            EDGE_DATA = saved.edgeData || { list: [] };
+            RECT_DATA = saved.rectData || { list: [] };
+            TEXT_DATA = saved.textData || { list: [] };
+            EDGE_LEGEND = saved.edgeLegend || {};
+            savedPositions = saved.nodePositions || {};
+            savedSizes = saved.nodeSizes || {};
+            savedStyles = saved.nodeStyles || {};
+            if (saved.page) PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, saved.page);
+            if (saved.canvas) {
+             canvasState.zoom = saved.canvas.zoom || 1;
+             canvasState.panX = saved.canvas.panX || 0;
+             canvasState.panY = saved.canvas.panY || 0;
+            }
+            if (saved.savedTopologyView) savedTopologyView = saved.savedTopologyView;
+            if (saved.documentTabs) documentTabs = saved.documentTabs;
+            if (saved.currentTabIndex !== undefined) currentTabIndex = saved.currentTabIndex;
+            if (saved.encryptedSections) encryptedSections = saved.encryptedSections;
+            if (saved.auditLog) auditLog = saved.auditLog;
+            if (saved.pageTitle) {
+             const titleEl = document.getElementById("page-title");
+             if (titleEl) titleEl.textContent = saved.pageTitle;
+            }
+            wieldThePower();
+            forgeTheTopology();
+            updateViewBox();
+            console.log("Recovered from autosave:", savedNodeCount, "nodes,", savedTabCount, "tabs");
+            return true;
+           }
+          }
+         }
+        }
+       } catch (e) {
+        console.warn("Autosave recovery check failed:", e);
+       }
+       return false;
+      }
       function updateTopologyToolbarVisibility() {
        const toolbar = document.getElementById("topology-toolbar");
        const mini = ensureTopologyToolbarMiniButton();
@@ -4323,75 +4501,80 @@
         height: viewHeight,
        };
       }
-      function updateViewBox() {
-       const svg = document.getElementById("map");
-       const vb = getViewBox();
-       svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`, );
-       const zoomLevel = document.getElementById("zoom-level");
-       if (zoomLevel) {
-        zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
-       }
-       updateMinimap();
-      }
-      function updateMinimap() {
-       const minimapViewport = document.getElementById("minimap-viewport");
-       const minimapSvg = document.getElementById("minimap");
-       if (!minimapViewport || !minimapSvg) return;
-       const vb = getViewBox();
-       minimapViewport.setAttribute("x", vb.x);
-       minimapViewport.setAttribute("y", vb.y);
-       minimapViewport.setAttribute("width", vb.width);
-       minimapViewport.setAttribute("height", vb.height);
-       const minimapNodes = minimapSvg.querySelectorAll(".minimap-node");
-       minimapNodes.forEach((n) => n.remove());
-       const minimapEdges = minimapSvg.querySelectorAll(".minimap-edge");
-       minimapEdges.forEach((e) => e.remove());
-       EDGE_DATA.list.forEach((edge) => {
-        if (edge.type === "custom") return;
-        const fromNode = NODE_DATA[edge.from];
-        const toNode = NODE_DATA[edge.to];
-        if (!fromNode || !toNode) return;
-        if (currentView.mode === "rack") {
-         if (fromNode.assignedRack !== currentView.rackId ||
-             toNode.assignedRack !== currentView.rackId) {
-          return;
-         }
-        } else {
-         if (fromNode.assignedRack || toNode.assignedRack) {
-          return;
-         }
-        }
-        const p1 = savedPositions[edge.from];
-        const p2 = savedPositions[edge.to];
-        if (!p1 || !p2) return;
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line", );
-        line.setAttribute("x1", p1.x);
-        line.setAttribute("y1", p1.y);
-        line.setAttribute("x2", p2.x);
-        line.setAttribute("y2", p2.y);
-        line.classList.add("minimap-edge");
-        minimapSvg.insertBefore(line, minimapViewport);
-       });
-       Object.entries(savedPositions).forEach(([id, pos]) => {
-        const node = NODE_DATA[id];
-        if (!node) return;
-        if (currentView.mode === "rack") {
-         if (node.assignedRack !== currentView.rackId) {
-          return;
-         }
-        } else {
-         if (node.assignedRack) {
-          return;
-         }
-        }
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle", );
-        circle.setAttribute("cx", pos.x);
-        circle.setAttribute("cy", pos.y);
-        circle.setAttribute("r", 40);
-        circle.classList.add("minimap-node");
-        minimapSvg.insertBefore(circle, minimapViewport);
-       });
-      }
+	  
+	function updateViewBox() {
+	  const svg = document.getElementById("map");
+	  const vb = getViewBox();
+	  svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
+	  const zoomLevel = document.getElementById("zoom-level");
+	  if (zoomLevel) {
+		zoomLevel.textContent = Math.round(canvasState.zoom * 100) + "%";
+	  }
+	  if (canvasState.zoom < 0.5) {
+		svg.classList.add("low-zoom");
+	  } else {
+		svg.classList.remove("low-zoom");
+	  }
+	  updateMinimap();
+	  populateRackDropdown();
+	}
+	  
+	let lastMinimapRender = 0;
+	const MINIMAP_THROTTLE = 100;
+
+	function updateMinimap() {
+	  const now = performance.now();
+	  if (now - lastMinimapRender < MINIMAP_THROTTLE) return;
+	  lastMinimapRender = now;
+	  
+	  const minimapViewport = document.getElementById("minimap-viewport");
+	  const minimapSvg = document.getElementById("minimap");
+	  if (!minimapViewport || !minimapSvg) return;
+	  const vb = getViewBox();
+	  minimapViewport.setAttribute("x", vb.x);
+	  minimapViewport.setAttribute("y", vb.y);
+	  minimapViewport.setAttribute("width", vb.width);
+	  minimapViewport.setAttribute("height", vb.height);
+	  minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+	  const frag = document.createDocumentFragment();
+	  EDGE_DATA.list.forEach((edge) => {
+	  if (edge.type === "custom") return;
+	  const fromNode = NODE_DATA[edge.from];
+	  const toNode = NODE_DATA[edge.to];
+	  if (!fromNode || !toNode) return;
+	  if (currentView.mode === "rack") {
+		if (fromNode.assignedRack !== currentView.rackId || toNode.assignedRack !== currentView.rackId) return;
+	  } else {
+		if (fromNode.assignedRack || toNode.assignedRack) return;
+	  }
+	  const p1 = savedPositions[edge.from];
+	  const p2 = savedPositions[edge.to];
+	  if (!p1 || !p2) return;
+	  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+	   line.setAttribute("x1", p1.x);
+	   line.setAttribute("y1", p1.y);
+	   line.setAttribute("x2", p2.x);
+	   line.setAttribute("y2", p2.y);
+	   line.classList.add("minimap-edge");
+	   frag.appendChild(line);
+	  });
+	  Object.entries(savedPositions).forEach(([id, pos]) => {
+	  const node = NODE_DATA[id];
+	  if (!node) return;
+	  if (currentView.mode === "rack") {
+		if (node.assignedRack !== currentView.rackId) return;
+	  } else {
+		if (node.assignedRack) return;
+	  }
+	  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	   circle.setAttribute("cx", pos.x);
+	   circle.setAttribute("cy", pos.y);
+	   circle.setAttribute("r", 40);
+	   circle.classList.add("minimap-node");
+	  frag.appendChild(circle);
+	   });
+	   minimapSvg.insertBefore(frag, minimapViewport);	
+	  }
       function zoomTo(newZoom, centerX, centerY) {
        const oldZoom = canvasState.zoom;
        newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom), );
@@ -4461,6 +4644,41 @@
        canvasState.zoom = 1;
        canvasState.panX = 0;
        canvasState.panY = 0;
+       updateViewBox();
+      }
+      function focusOnNodes(nodeIds) {
+       if (!nodeIds || nodeIds.length === 0) return;
+       const positions = nodeIds.map(id => savedPositions[id]).filter(Boolean);
+       if (positions.length === 0) return;
+       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+       positions.forEach(pos => {
+        minX = Math.min(minX, pos.x);
+        minY = Math.min(minY, pos.y);
+        maxX = Math.max(maxX, pos.x);
+        maxY = Math.max(maxY, pos.y);
+       });
+       const padding = 150;
+       const contentWidth = Math.max(maxX - minX + padding * 2, 300);
+       const contentHeight = Math.max(maxY - minY + padding * 2, 300);
+       const centerX = (minX + maxX) / 2;
+       const centerY = (minY + maxY) / 2;
+       const viewport = document.getElementById("canvas-viewport");
+       const vpRect = viewport.getBoundingClientRect();
+       const aspectRatio = vpRect.width / vpRect.height;
+       const contentAspect = contentWidth / contentHeight;
+       let newZoom;
+       if (contentAspect > aspectRatio) {
+        newZoom = (vpRect.width / contentWidth) * (CANVAS_WIDTH / vpRect.width);
+       } else {
+        newZoom = (vpRect.height / contentHeight) * (CANVAS_HEIGHT / vpRect.height);
+       }
+       newZoom = Math.max(canvasState.minZoom, Math.min(1.5, newZoom));
+       const viewWidth = CANVAS_WIDTH / newZoom;
+       const viewHeight = CANVAS_HEIGHT / newZoom;
+       canvasState.zoom = newZoom;
+       canvasState.panX = centerX - viewWidth / 2;
+       canvasState.panY = centerY - viewHeight / 2;
+       constrainPan();
        updateViewBox();
       }
       window.addEventListener("DOMContentLoaded", () => {
@@ -4833,6 +5051,10 @@
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("topology-toolbar").style.display = "none";
        }
+       if (Object.keys(NODE_DATA).length === 0 && EDGE_DATA.list.length === 0) {
+        checkForAutosaveRecovery();
+       }
+       startAutosave();
       })();
       let resizeDebounceTimer = null;
       window.addEventListener("resize", () => {
@@ -6016,34 +6238,34 @@
         boundary.setAttribute("stroke-dasharray", "10 5");
         boundary.setAttribute("rx", "8");
         svg.appendChild(boundary);
-       if (currentView.mode !== "rack") {
-        const gridGroup = document.createElementNS(ns, "g");
-        gridGroup.id = "canvas-grid";
-        const gridSize = PAGE_STATE.canvasGridSize || 50;
-        const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
-        const majorGridColor = (PAGE_STATE.canvasGrid || "#475569") + "66";
-        for (let x = CANVAS_PADDING; x <= CANVAS_WIDTH - CANVAS_PADDING; x += gridSize) {
-         const line = document.createElementNS(ns, "line");
-         line.setAttribute("x1", x);
-         line.setAttribute("y1", CANVAS_PADDING);
-         line.setAttribute("x2", x);
-         line.setAttribute("y2", CANVAS_HEIGHT - CANVAS_PADDING);
-         line.setAttribute("stroke", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
-         line.setAttribute("stroke-width", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
-         gridGroup.appendChild(line);
-        }
-        for (let y = CANVAS_PADDING; y <= CANVAS_HEIGHT - CANVAS_PADDING; y += gridSize) {
-         const line = document.createElementNS(ns, "line");
-         line.setAttribute("x1", CANVAS_PADDING);
-         line.setAttribute("y1", y);
-         line.setAttribute("x2", CANVAS_WIDTH - CANVAS_PADDING);
-         line.setAttribute("y2", y);
-         line.setAttribute("stroke", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
-         line.setAttribute("stroke-width", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
-         gridGroup.appendChild(line);
-        }
-        svg.appendChild(gridGroup);
-       }
+		if (currentView.mode !== "rack") {
+		 const gridGroup = document.createElementNS(ns, "g");
+		 gridGroup.id = "canvas-grid";
+		 const gridSize = PAGE_STATE.canvasGridSize || 50;
+		 const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
+		 const majorGridColor = (PAGE_STATE.canvasGrid || "#475569") + "66";
+		 for (let x = CANVAS_PADDING; x <= CANVAS_WIDTH - CANVAS_PADDING; x += gridSize) {
+		  const line = document.createElementNS(ns, "line");
+		  line.setAttribute("x1", x);
+		  line.setAttribute("y1", CANVAS_PADDING);
+		  line.setAttribute("x2", x);
+		  line.setAttribute("y2", CANVAS_HEIGHT - CANVAS_PADDING);
+		  line.setAttribute("stroke", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+		  line.setAttribute("stroke-width", (x - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+		  gridGroup.appendChild(line);
+		 }
+		 for (let y = CANVAS_PADDING; y <= CANVAS_HEIGHT - CANVAS_PADDING; y += gridSize) {
+		  const line = document.createElementNS(ns, "line");
+		  line.setAttribute("x1", CANVAS_PADDING);
+		  line.setAttribute("y1", y);
+		  line.setAttribute("x2", CANVAS_WIDTH - CANVAS_PADDING);
+		  line.setAttribute("y2", y);
+		  line.setAttribute("stroke", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? majorGridColor : gridColor);
+		  line.setAttribute("stroke-width", (y - CANVAS_PADDING) % (gridSize * 5) === 0 ? "2" : "1");
+		  gridGroup.appendChild(line);
+		 }
+		 svg.appendChild(gridGroup);
+		}
        if (currentView.mode === "rack" && currentView.rackId) {
          const rackCapacity = getRackCapacity(currentView.rackId);
       const rackUHeight = getRackUHeight(currentView.rackId);
@@ -6429,9 +6651,63 @@
          edge._pairIndex = edgePairIndex[key];
          edge._pairTotal = edgePairCount[key];
          edgePairIndex[key]++;
-        });
-        EDGE_DATA.list.forEach((edge) => {
-         if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
+       });
+       
+       const orthoGaps = (function() {
+         const segments = [];
+         const GAP_SIZE = 12;
+         EDGE_DATA.list.forEach((edge, edgeIndex) => {
+           if ((edge.routing || PAGE_STATE.defaultEdgeRouting || "curved") !== "orthogonal") return;
+           if (edge.type === "custom") return;
+           const p1 = positions[edge.from];
+           const p2 = positions[edge.to];
+           if (!p1 || !p2) return;
+           const dx = p2.x - p1.x;
+           const dy = p2.y - p1.y;
+           const pairIndex = edge._pairIndex || 0;
+           const pairTotal = edge._pairTotal || 1;
+           const offset = (pairIndex - (pairTotal - 1) / 2) * 40;
+           if (Math.abs(dx) > Math.abs(dy)) {
+             const midX = p1.x + dx / 2 + offset;
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: p1.y, x2: midX, y2: p1.y, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: midX, y1: p1.y, x2: midX, y2: p2.y, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: midX, y1: p2.y, x2: p2.x, y2: p2.y, idx: edgeIndex });
+           } else {
+             const midY = p1.y + dy / 2 + offset;
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: p1.y, x2: p1.x, y2: midY, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: p1.x, y1: midY, x2: p2.x, y2: midY, idx: edgeIndex });
+             segments.push({ edgeId: edge.id, x1: p2.x, y1: midY, x2: p2.x, y2: p2.y, idx: edgeIndex });
+           }
+         });
+         const gaps = {};
+         for (let i = 0; i < segments.length; i++) {
+           for (let j = i + 1; j < segments.length; j++) {
+             const s1 = segments[i];
+             const s2 = segments[j];
+             if (s1.edgeId === s2.edgeId) continue;
+             const s1Horiz = Math.abs(s1.y1 - s1.y2) < 1;
+             const s2Horiz = Math.abs(s2.y1 - s2.y2) < 1;
+             if (s1Horiz === s2Horiz) continue;
+             const horiz = s1Horiz ? s1 : s2;
+             const vert = s1Horiz ? s2 : s1;
+             const hY = horiz.y1;
+             const vX = vert.x1;
+             const hMinX = Math.min(horiz.x1, horiz.x2);
+             const hMaxX = Math.max(horiz.x1, horiz.x2);
+             const vMinY = Math.min(vert.y1, vert.y2);
+             const vMaxY = Math.max(vert.y1, vert.y2);
+             if (vX > hMinX && vX < hMaxX && hY > vMinY && hY < vMaxY) {
+               const gapEdge = s1.idx > s2.idx ? s1.edgeId : s2.edgeId;
+               if (!gaps[gapEdge]) gaps[gapEdge] = [];
+               gaps[gapEdge].push({ x: vX, y: hY });
+             }
+           }
+         }
+         return gaps;
+       })();
+
+       EDGE_DATA.list.forEach((edge) => {
+        if (edge.type === "custom" && Array.isArray(edge.points) && edge.points.length >= 2) {
           const customEdgeFaded = currentView.mode !== "rack" && edge.from && edge.to && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
           const poly = document.createElementNS(ns, "polyline");
           poly.classList.add("edge");
@@ -6440,7 +6716,7 @@
            poly.classList.add("layer-faded");
           }
           poly.dataset.edgeId = edge.id;
-poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
+          poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
           poly.style.strokeWidth = edge.width || 4;
           poly.setAttribute("fill", "none");
           const lineStyle = edge.lineStyle || "solid";
@@ -6729,21 +7005,102 @@ poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
          const edgeFaded = currentView.mode !== "rack" && (!isNodeVisible(edge.from) || !isNodeVisible(edge.to));
          const pairTotal = edge._pairTotal || 1;
          const pairIndex = edge._pairIndex || 0;
-         const midX = (p1.x + p2.x) / 2;
-         const midY = (p1.y + p2.y) / 2;
+         const routing = edge.routing || "curved";
+         let pathD;
+         if (routing === "straight") {
+          pathD = `M ${p1.x} ${p1.y} L ${p2.x} ${p2.y}`;
+         } else if (routing === "orthogonal") {
          const dx = p2.x - p1.x;
          const dy = p2.y - p1.y;
-         const len = Math.sqrt(dx * dx + dy * dy) || 1;
-         const perpX = -dy / len;
-         const perpY = dx / len;
-         let offsetAmount = 0;
-         if (pairTotal > 1) {
-          offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+         const offset = (pairIndex - (pairTotal - 1) / 2) * 40;
+         const GAP = 10;
+         const edgeGaps = orthoGaps[edge.id] || [];
+         
+         if (Math.abs(dx) > Math.abs(dy)) {
+          const midX = p1.x + dx / 2 + offset;
+          const segs = [
+           { x1: p1.x, y1: p1.y, x2: midX, y2: p1.y },
+           { x1: midX, y1: p1.y, x2: midX, y2: p2.y },
+           { x1: midX, y1: p2.y, x2: p2.x, y2: p2.y }
+          ];
+          pathD = `M ${p1.x} ${p1.y}`;
+          segs.forEach(seg => {
+           const isHoriz = Math.abs(seg.y1 - seg.y2) < 1;
+           const segGaps = edgeGaps.filter(g => {
+            if (isHoriz) {
+             const minX = Math.min(seg.x1, seg.x2), maxX = Math.max(seg.x1, seg.x2);
+             return Math.abs(g.y - seg.y1) < 1 && g.x > minX + GAP && g.x < maxX - GAP;
+            } else {
+             const minY = Math.min(seg.y1, seg.y2), maxY = Math.max(seg.y1, seg.y2);
+             return Math.abs(g.x - seg.x1) < 1 && g.y > minY + GAP && g.y < maxY - GAP;
+            }
+           }).sort((a, b) => isHoriz ? (seg.x2 > seg.x1 ? a.x - b.x : b.x - a.x) : (seg.y2 > seg.y1 ? a.y - b.y : b.y - a.y));
+           let cx = seg.x1, cy = seg.y1;
+           segGaps.forEach(g => {
+            if (isHoriz) {
+             const gx = g.x;
+             pathD += ` L ${gx - GAP} ${cy} M ${gx + GAP} ${cy}`;
+             cx = gx + GAP;
+            } else {
+             const gy = g.y;
+             pathD += ` L ${cx} ${gy - GAP} M ${cx} ${gy + GAP}`;
+             cy = gy + GAP;
+            }
+           });
+           pathD += ` L ${seg.x2} ${seg.y2}`;
+          });
+         } else {
+          const midY = p1.y + dy / 2 + offset;
+          const segs = [
+           { x1: p1.x, y1: p1.y, x2: p1.x, y2: midY },
+           { x1: p1.x, y1: midY, x2: p2.x, y2: midY },
+           { x1: p2.x, y1: midY, x2: p2.x, y2: p2.y }
+          ];
+          pathD = `M ${p1.x} ${p1.y}`;
+          segs.forEach(seg => {
+           const isHoriz = Math.abs(seg.y1 - seg.y2) < 1;
+           const segGaps = edgeGaps.filter(g => {
+            if (isHoriz) {
+             const minX = Math.min(seg.x1, seg.x2), maxX = Math.max(seg.x1, seg.x2);
+             return Math.abs(g.y - seg.y1) < 1 && g.x > minX + GAP && g.x < maxX - GAP;
+            } else {
+             const minY = Math.min(seg.y1, seg.y2), maxY = Math.max(seg.y1, seg.y2);
+             return Math.abs(g.x - seg.x1) < 1 && g.y > minY + GAP && g.y < maxY - GAP;
+            }
+           }).sort((a, b) => isHoriz ? (seg.x2 > seg.x1 ? a.x - b.x : b.x - a.x) : (seg.y2 > seg.y1 ? a.y - b.y : b.y - a.y));
+           let cx = seg.x1, cy = seg.y1;
+           segGaps.forEach(g => {
+            if (isHoriz) {
+             const gx = g.x;
+             pathD += ` L ${gx - GAP} ${cy} M ${gx + GAP} ${cy}`;
+             cx = gx + GAP;
+            } else {
+             const gy = g.y;
+             pathD += ` L ${cx} ${gy - GAP} M ${cx} ${gy + GAP}`;
+             cy = gy + GAP;
+            }
+           });
+           pathD += ` L ${seg.x2} ${seg.y2}`;
+          });
          }
-         const ctrlX = midX + perpX * offsetAmount;
-         const ctrlY = midY + perpY * offsetAmount;
+        } else {
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          const perpX = -dy / len;
+          const perpY = dx / len;
+          let offsetAmount = 0;
+          if (pairTotal > 1) {
+           offsetAmount = (pairIndex - (pairTotal - 1) / 2) * 40;
+          }
+          const ctrlX = midX + perpX * offsetAmount;
+          const ctrlY = midY + perpY * offsetAmount;
+          pathD = `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`;
+         }
          const path = document.createElementNS(ns, "path");
-         path.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+         path.setAttribute("d", pathD);
          path.setAttribute("fill", "none");
          path.classList.add("edge");
          if (edgeFaded) {
@@ -6757,7 +7114,7 @@ poly.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
          path.style.stroke = edge.color;
          path.style.strokeWidth = edge.width;
          const pathHit = document.createElementNS(ns, "path");
-         pathHit.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+         pathHit.setAttribute("d", pathD);
          pathHit.setAttribute("fill", "none");
          pathHit.style.stroke = "transparent";
          pathHit.style.strokeWidth = "20";
@@ -7890,6 +8247,26 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         });
         forgeTheLegend();
         updateMinimap();
+        if (currentSearchQuery && currentSearchResults.length > 0) {
+         highlightSearchResults(currentSearchResults, true);
+        }
+       }
+       const _forgeTheTopologyImpl = forgeTheTopology;
+       forgeTheTopology = function(immediate = false) {
+        if (immediate || forgeImmediate) {
+         forgeImmediate = false;
+         clearTimeout(forgeDebounceTimer);
+         _forgeTheTopologyImpl();
+         return;
+        }
+        clearTimeout(forgeDebounceTimer);
+        forgeDebounceTimer = setTimeout(() => {
+         _forgeTheTopologyImpl();
+        }, 16);
+       };
+       function forgeTheTopologyImmediate() {
+        forgeImmediate = true;
+        forgeTheTopology();
        }
        function showEditModal(title, currentValue, onSave) {
         const modal = document.getElementById("edit-modal");
@@ -8406,10 +8783,12 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const colorInput = document.getElementById("edge-color");
         const directionSelect = document.getElementById("edge-direction");
         const lineStyleSelect = document.getElementById("edge-line-style");
+        const routingSelect = document.getElementById("edge-routing");
         widthInput.value = edge.width;
         colorInput.value = edge.color;
         directionSelect.value = edge.direction || "none";
         lineStyleSelect.value = edge.lineStyle || "solid";
+        routingSelect.value = edge.routing || "curved";
         const fromPortInput = document.getElementById("edge-from-port");
         const toPortInput = document.getElementById("edge-to-port");
         const portFieldsFrom = document.getElementById("edge-port-fields");
@@ -8503,8 +8882,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          x: 0.5,
          y: 0.5
         };
+        let threeFingerTapStart = 0;
         viewport.addEventListener("touchstart",
          (e) => {
+          if (e.touches.length === 3) {
+           e.preventDefault();
+           threeFingerTapStart = Date.now();
+          }
           if (e.touches.length === 2) {
            e.preventDefault();
            const touch1 = e.touches[0];
@@ -8520,6 +8904,17 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          }, {
           passive: false
          }, );
+        viewport.addEventListener("touchend", (e) => {
+         if (e.touches.length === 0 && threeFingerTapStart > 0) {
+          const duration = Date.now() - threeFingerTapStart;
+          if (duration < 500) {
+           e.preventDefault();
+           undo();
+           if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+          }
+          threeFingerTapStart = 0;
+         }
+        }, { passive: false });
         viewport.addEventListener("touchmove",
          (e) => {
           if (e.touches.length === 2) {
@@ -8650,43 +9045,64 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          }, {
           passive: false
          }, );
-        document.addEventListener("mousemove", (e) => {
-         if (isSelecting) {
-          updateSelection(e);
-          return;
-         }
-         if (!canvasState.isPanning) return;
-         const dx = e.clientX - canvasState.panStartX;
-         const dy = e.clientY - canvasState.panStartY;
-         const rect = viewport.getBoundingClientRect();
-         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-         const canvasDx = (dx / rect.width) * viewWidth;
-         const canvasDy = (dy / rect.height) * viewHeight;
-         canvasState.panX = panStartViewX - canvasDx;
-         canvasState.panY = panStartViewY - canvasDy;
-         constrainPan();
-         updateViewBox();
-        });
+        let panRAFPending = false;
+       let lastPanEvent = null;
+       document.addEventListener("mousemove", (e) => {
+        if (isSelecting) {
+         updateSelection(e);
+         return;
+        }
+        if (!canvasState.isPanning) return;
+        lastPanEvent = e;
+        if (!panRAFPending) {
+         panRAFPending = true;
+         requestAnimationFrame(() => {
+          if (lastPanEvent && canvasState.isPanning) {
+           const dx = lastPanEvent.clientX - canvasState.panStartX;
+           const dy = lastPanEvent.clientY - canvasState.panStartY;
+           const rect = viewport.getBoundingClientRect();
+           const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+           const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+           const canvasDx = (dx / rect.width) * viewWidth;
+           const canvasDy = (dy / rect.height) * viewHeight;
+           canvasState.panX = panStartViewX - canvasDx;
+           canvasState.panY = panStartViewY - canvasDy;
+           constrainPan();
+           updateViewBox();
+          }
+          panRAFPending = false;
+         });
+        }
+       });
        document.addEventListener("touchmove", (e) => {
         if (!canvasState.isPanning || !e.touches[0]) return;
-        const moveDx = Math.abs(e.touches[0].clientX - emptyTapStartX);
-        const moveDy = Math.abs(e.touches[0].clientY - emptyTapStartY);
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const moveDx = Math.abs(touchX - emptyTapStartX);
+        const moveDy = Math.abs(touchY - emptyTapStartY);
         if (moveDx > 15 || moveDy > 15) {
          emptyTapMoved = true;
         }
-        const dx = e.touches[0].clientX - canvasState.panStartX;
-         const dy = e.touches[0].clientY - canvasState.panStartY;
-         const rect = viewport.getBoundingClientRect();
-         const viewWidth = CANVAS_WIDTH / canvasState.zoom;
-         const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
-         const canvasDx = (dx / rect.width) * viewWidth;
-         const canvasDy = (dy / rect.height) * viewHeight;
-         canvasState.panX = panStartViewX - canvasDx;
-         canvasState.panY = panStartViewY - canvasDy;
-         constrainPan();
-         updateViewBox();
-        });
+        if (!panRAFPending) {
+         panRAFPending = true;
+         requestAnimationFrame(() => {
+          if (canvasState.isPanning) {
+           const dx = touchX - canvasState.panStartX;
+           const dy = touchY - canvasState.panStartY;
+           const rect = viewport.getBoundingClientRect();
+           const viewWidth = CANVAS_WIDTH / canvasState.zoom;
+           const viewHeight = CANVAS_HEIGHT / canvasState.zoom;
+           const canvasDx = (dx / rect.width) * viewWidth;
+           const canvasDy = (dy / rect.height) * viewHeight;
+           canvasState.panX = panStartViewX - canvasDx;
+           canvasState.panY = panStartViewY - canvasDy;
+           constrainPan();
+           updateViewBox();
+          }
+          panRAFPending = false;
+         });
+        }
+       });
         document.addEventListener("mouseup", () => {
          if (isSelecting) {
           endSelection();
@@ -9045,6 +9461,15 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         forgeTheTopology();
         selectTheConnection(currentEdgeId);
        });
+       document.getElementById("edge-routing").addEventListener("change", () => {
+        if (!currentEdgeId) return;
+        const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
+        if (!edge) return;
+        pushUndo("edit edge routing");
+        edge.routing = document.getElementById("edge-routing").value;
+        forgeTheTopology();
+        selectTheConnection(currentEdgeId);
+       });
        const addEdgeNoteBtn = document.getElementById("add-edge-note");
        const newEdgeNoteInput = document.getElementById("new-edge-note");
        addEdgeNoteBtn.addEventListener("click", () => {
@@ -9202,10 +9627,12 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         const select = document.getElementById("add-line-select");
         const directionSelect = document.getElementById("add-line-direction");
         const colorInput = document.getElementById("add-line-color");
+        const routingSelect = document.getElementById("add-line-routing");
         const targetId = select.value;
         if (!targetId || targetId === currentNodeId) return;
         const direction = directionSelect.value || "none";
         const lineColor = colorInput.value || "#475569";
+        const routing = routingSelect.value || PAGE_STATE.defaultEdgeRouting || "orthogonal";
         const newId = `${currentNodeId}-${targetId}-${Date.now()}`;
         const newEdge = {
          id: newId,
@@ -9214,12 +9641,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          width: 4,
          color: lineColor,
          direction: direction,
+         routing: routing,
          type: "main",
          notes: [],
          fromPort: "",
          toPort: "",
         };
-		pushUndo("add edge");
+        pushUndo("add edge");
         EDGE_DATA.list.push(newEdge);
         forgeTheTopology();
         claimTheImmortal(currentNodeId);
@@ -9981,6 +10409,8 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        document.getElementById("node-sub-size").value = PAGE_STATE.nodeSubSize || 13;
        document.getElementById("node-font-family").value = PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
        document.getElementById("default-edge-color").value = PAGE_STATE.defaultEdge || "#475569";
+       document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
+       document.getElementById("add-line-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
        document.getElementById("selection-handle-color").value = PAGE_STATE.selectionHandle || "#f59e0b";
        document.getElementById("selection-handle-size").value = PAGE_STATE.selectionHandleSize || 8;
        document.getElementById("group-indicator-color").value = PAGE_STATE.groupIndicator || "#4fd1c5";
@@ -10210,6 +10640,20 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
       });
       document.getElementById("default-edge-color").addEventListener("input", (e) => {
        PAGE_STATE.defaultEdge = e.target.value;
+       forgeTheTopology();
+      });
+      document.getElementById("default-edge-routing").addEventListener("change", (e) => {
+       PAGE_STATE.defaultEdgeRouting = e.target.value;
+       document.getElementById("add-line-routing").value = e.target.value;
+       wieldThePower();
+      });
+      document.getElementById("apply-routing-all").addEventListener("click", () => {
+       const routing = document.getElementById("default-edge-routing").value;
+       if (!confirm(`Apply "${routing}" routing to all ${EDGE_DATA.list.length} connections?`)) return;
+       pushUndo("apply routing to all");
+       EDGE_DATA.list.forEach(edge => {
+        edge.routing = routing;
+       });
        forgeTheTopology();
       });
       document.getElementById("selection-handle-color").addEventListener("input", (e) => {
@@ -10457,6 +10901,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
            console.warn("Failed to sync audit log to localStorage:", e);
          }
         }
+        Object.values(NODE_DATA).forEach(node => {
+          if (!node.tags) node.tags = [];
+          if (!node.notes) node.notes = [];
+        });
+        EDGE_DATA.list.forEach(edge => {
+          if (!edge.notes) edge.notes = [];
+        });
         forgeTheTopology();
         forgeTheLegend();
         logAuditEvent("import", `Imported JSON: ${file.name} (${Object.keys(data.nodeData).length} nodes, ${data.edgeData.list?.length || 0} connections)`);
@@ -10604,13 +11055,23 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
 	   const canvasHintEl = document.getElementById("canvas-hint");
        const savedHintHTML = canvasHintEl ? canvasHintEl.innerHTML : "";
        if (canvasHintEl) canvasHintEl.innerHTML = DEFAULT_CANVAS_HINT;
-        const clone = document.documentElement.cloneNode(true);
+       const clone = document.documentElement.cloneNode(true);
        ["edge-legend-mini", "minimap-mini", "draw-toolbar-mini", "topology-toolbar-mini"].forEach(id => {
         const all = clone.querySelectorAll("#" + id);
         for (let i = 1; i < all.length; i++) {
          all[i].remove();
         }
        });
+       const addLineSelect = clone.querySelector("#add-line-select");
+       if (addLineSelect) addLineSelect.innerHTML = "";
+       const minimapSvg = clone.querySelector("#minimap");
+       if (minimapSvg) {
+        minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+       }
+       const canvasGrid = clone.querySelector("#canvas-grid");
+       if (canvasGrid) canvasGrid.innerHTML = "";
+       const mainSvg = clone.querySelector("#map");
+       if (mainSvg) mainSvg.innerHTML = "";
        const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
          nodeScript.textContent = JSON.stringify(NODE_DATA, null, 2);
@@ -10657,6 +11118,30 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          all[i].remove();
         }
        });
+       const selectsToClear = ["#add-line-select", "#new-edge-from", "#new-edge-to", "#assigned-rack-select"];
+       selectsToClear.forEach(sel => {
+        const el = clone.querySelector(sel);
+        if (el) el.innerHTML = "";
+       });
+       const minimapSvg = clone.querySelector("#minimap");
+       if (minimapSvg) minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
+       const mainSvg = clone.querySelector("#map");
+       if (mainSvg) mainSvg.innerHTML = "";
+       const edgeLegendContent = clone.querySelector("#edge-legend-content");
+       if (edgeLegendContent) edgeLegendContent.innerHTML = "";
+       const nodeTags = clone.querySelector("#node-tags");
+       if (nodeTags) nodeTags.innerHTML = "";
+       const nodeNotes = clone.querySelector("#node-notes");
+       if (nodeNotes) nodeNotes.innerHTML = "";
+       const edgeNotes = clone.querySelector("#edge-notes");
+       if (edgeNotes) edgeNotes.innerHTML = "";
+       const tabBar = clone.querySelector("#tab-bar");
+       if (tabBar) tabBar.innerHTML = "";
+       const rollbackList = clone.querySelector("#rollback-list");
+       if (rollbackList) rollbackList.innerHTML = "";
+       const auditList = clone.querySelector("#audit-log-list");
+       if (auditList) auditList.innerHTML = "";
+       clone.querySelectorAll(".ping-indicator").forEach(el => el.remove());
        const nodeScript = clone.querySelector("#nodes-json");
         if (nodeScript) {
          if (encryptEnabled) {
@@ -10692,20 +11177,30 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
 		logAuditEvent("save", `File saved: ${safeTitle}.html`);
        }
       function captureState() {
-      return {
-        nodes: JSON.parse(JSON.stringify(NODE_DATA)),
-        edges: JSON.parse(JSON.stringify(EDGE_DATA)),
-        positions: JSON.parse(JSON.stringify(savedPositions)),
-        sizes: JSON.parse(JSON.stringify(savedSizes)),
-        styles: JSON.parse(JSON.stringify(savedStyles)),
-        legend: JSON.parse(JSON.stringify(EDGE_LEGEND)),
-        rects: JSON.parse(JSON.stringify(RECT_DATA)),
-        texts: JSON.parse(JSON.stringify(TEXT_DATA))
-        };
-      }
-      function pushUndo(action = "") {
-       const state = captureState();
-       undoStack.push(state);
+		 const clone = typeof structuredClone === 'function' 
+		   ? (o) => structuredClone(o)
+		   : (o) => JSON.parse(JSON.stringify(o));
+		 return {
+		  nodes: clone(NODE_DATA),
+		  edges: clone(EDGE_DATA),
+		  positions: clone(savedPositions),
+		  sizes: clone(savedSizes),
+		  styles: clone(savedStyles),
+		  legend: clone(EDGE_LEGEND),
+		  rects: clone(RECT_DATA),
+		  texts: clone(TEXT_DATA)
+		 };
+		}
+      let lastUndoPush = 0;
+	   let pendingUndoState = null;
+	   function pushUndo(action = "") {
+	   const now = Date.now();
+	   if (now - lastUndoPush < 100 && undoStack.length > 0) {
+	    return;
+	   }
+	   lastUndoPush = now;
+	   const state = captureState();
+	   undoStack.push(state);
        if (undoStack.length > MAX_UNDO_STACK) {
         undoStack.shift();
        }
@@ -11368,7 +11863,6 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         canvasState.zoom = targetZoom;
         canvasState.panX = centerX - (CANVAS_WIDTH / targetZoom) / 2;
         canvasState.panY = centerY - (CANVAS_HEIGHT / targetZoom) / 2;
-		// forgeTheTopology(); getting ready to implement new core canvas performance system
         updateViewBox();
       }
       function toggleLockSelected() {
@@ -11623,31 +12117,38 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
         clearSelection();
        }
       }
-      function searchNodes(query) {
-   if (!query) {
-    clearSearchHighlight();
-    return [];
-   }
-   query = query.toLowerCase();
-   const results = [];
-   Object.entries(NODE_DATA).forEach(([id, data]) => {
-    try {
-     const nameMatch = data.name && data.name.toLowerCase().includes(query);
-     const ipMatch = data.ip && data.ip.toLowerCase().includes(query);
-     const roleMatch = data.role && data.role.toLowerCase().includes(query);
-     const tagsMatch = data.tags && Array.isArray(data.tags) && data.tags.some(tag => tag && tag.toLowerCase().includes(query));
-     const macMatch = data.mac && data.mac.toLowerCase().includes(query);
-     const rackUnitMatch = data.rackUnit && String(data.rackUnit).toLowerCase().includes(query);
-     if (nameMatch || ipMatch || roleMatch || tagsMatch || macMatch || rackUnitMatch) {
-      results.push(id);
-     }
-    } catch (e) {
-     console.warn("Search error for node:", id, e);
-    }
-   });
-   highlightSearchResults(results);
-   return results;
-}
+		function searchNodes(query) {
+		   if (!query) {
+			currentSearchQuery = "";
+			currentSearchResults = [];
+			clearSearchHighlight();
+			return [];
+		   }
+		   currentSearchQuery = query;
+		   query = query.toLowerCase();
+		   const results = [];
+		   Object.entries(NODE_DATA).forEach(([id, data]) => {
+			try {
+			 const nameMatch = data.name && data.name.toLowerCase().includes(query);
+			 const ipMatch = data.ip && data.ip.toLowerCase().includes(query);
+			 const roleMatch = data.role && data.role.toLowerCase().includes(query);
+			 const tagsMatch = data.tags && Array.isArray(data.tags) && data.tags.some(tag => tag && tag.toLowerCase().includes(query));
+			 const macMatch = data.mac && data.mac.toLowerCase().includes(query);
+			 const rackUnitMatch = data.rackUnit && String(data.rackUnit).toLowerCase().includes(query);
+			 if (nameMatch || ipMatch || roleMatch || tagsMatch || macMatch || rackUnitMatch) {
+			  results.push(id);
+			 }
+			} catch (e) {
+			 console.warn("Search error for node:", id, e);
+			}
+		   });
+		   currentSearchResults = results;
+		   highlightSearchResults(results, true);
+		   if (results.length > 0) {
+			focusOnNodes(results);
+		   }
+		   return results;
+		}
 		function highlightSearchResults(nodeIds, hasQuery = true) {
 		   document.querySelectorAll(".node-group").forEach(node => {
 			const nodeId = node.dataset.nodeId;
@@ -11942,11 +12443,13 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        });
       }
       const searchInput = document.getElementById("search-nodes");
-if (searchInput) {
- searchInput.addEventListener("input", (e) => {
-  searchNodes(e.target.value);
- });
-}
+      let searchTimeout = null;
+      if (searchInput) {
+       searchInput.addEventListener("input", (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => { searchNodes(e.target.value); }, 150);
+		 });
+		}
        document.getElementById("save-file-btn").addEventListener("click", becomeImmortal);
        document.getElementById("check-all-ping-btn").addEventListener("click", checkAllNodesStatus);
        const addNodeBtn = document.getElementById("add-node-btn");
@@ -13044,27 +13547,55 @@ if (searchInput) {
         }
        });
        clearAllConfirm.addEventListener("click", () => {
-        pushUndo("clear all");
         NODE_DATA = {};
-        EDGE_DATA = {
-         list: []
-        };
+        EDGE_DATA = { list: [] };
         EDGE_LEGEND = {};
         RECT_DATA = { list: [] };
         TEXT_DATA = { list: [] };
         savedPositions = {};
         savedSizes = {};
         savedStyles = {};
-		logAuditEvent("clear", "Cleared all data from canvas");
+        undoStack = [];
+        redoStack = [];
+        updateUndoButtons();
+        auditLog = [];
+        localStorage.removeItem(AUDIT_STORAGE_KEY);
+        rollbackVersions = [];
+        currentRollbackIndex = -1;
+        localStorage.removeItem(ROLLBACK_STORAGE_KEY);
+        clipboard = null;
+        selectedNodes.clear();
+        selectedEdges.clear();
+        selectedRects.clear();
+        selectedTexts.clear();
+        documentTabs = [{
+          id: "main",
+          name: "Main Topology",
+          nodes: {},
+          edges: { list: [] },
+          positions: {},
+          sizes: {},
+          styles: {},
+          legend: {},
+          rects: { list: [] },
+          texts: { list: [] },
+          pageState: null
+        }];
+        currentTabIndex = 0;
+        displayTabs();
+        clearAutosave();
+        try {
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith("theonefile")) {
+              localStorage.removeItem(key);
+            }
+          });
+        } catch(e) {}
+        const addLineSelect = document.getElementById("add-line-select");
+        if (addLineSelect) addLineSelect.innerHTML = "";
+        const edgeLegendContent = document.getElementById("edge-legend-content");
+        if (edgeLegendContent) edgeLegendContent.innerHTML = "";
         clearAllModal.classList.remove("active");
-      autoPingEnabled = false;
-      autoPingInterval = 30;
-      PAGE_STATE.autoPingEnabled = false;
-      PAGE_STATE.autoPingInterval = autoPingInterval;
-      stopAutoPing();
-      document.getElementById("auto-ping-enabled").checked = false;
-      document.getElementById("auto-ping-settings").style.display = "none";
-      document.getElementById("auto-ping-interval").value = autoPingInterval;
         forgeTheTopology();
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("edge-panel").style.display = "none";
@@ -13073,7 +13604,10 @@ if (searchInput) {
         currentNodeId = null;
         currentEdgeId = null;
         currentTextId = null;
-       });
+        if (typeof displayRollbackVersions === "function") displayRollbackVersions();
+        if (typeof displayAuditLog === "function") displayAuditLog();
+        if (typeof forgeTheLegend === "function") forgeTheLegend();
+      });
        (function addDeleteNodeButton() {
        const nodePanel = document.getElementById("node-panel");
        if (!nodePanel) return;
