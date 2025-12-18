@@ -14,7 +14,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
 #### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
-  * We are very close to 4.0 Stable, community! Thank you to all the testers
+  * We are very close to 4.0 Stable, community! Thank you to all the testers!!
 * **Orthogonal routing update** [changelog.md](changelog.md)
   * New orthogonal routing option draws clean 90 degree angle connections
   * Three routing styles available: Orthogonal, Curved, and Straight
@@ -34,7 +34,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Minimap performance updates
   * Custom Orthogonal gap function : edges show gaps where they cross other orthogonal edges
   * Refactored update/import function
-  
+* **Big performance update**  
 * **See more changes in the [changelog.md](changelog.md)**
 
 ### Demos

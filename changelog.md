@@ -2,6 +2,7 @@
 **We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
 
 ### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
+* **Big performance update**
 * **Orthogonal routing update** [changelog.md](changelog.md)
   * New orthogonal routing option draws clean 90 degree angle connections
   * Three routing styles available: Orthogonal, Curved, and Straight
@@ -21,6 +22,7 @@
   * Minimap performance updates
   * Custom Orthogonal gap function : edges show gaps where they cross other orthogonal edges
   * Refactored update/import function
+  * Refactored background grid for performance
   
 ### Version 3.9.9.5 : 12/14/25 The ports enhancements update
 * **Port connections section in node/rack panel** : See all ports connected to a device at a glance
