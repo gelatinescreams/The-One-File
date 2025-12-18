@@ -15,7 +15,7 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 #### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
   * We are very close to 4.0 Stable, community! Thank you to all the testers!!
-* **Orthogonal routing update** [changelog.md](changelog.md)
+* **Orthogonal routing update** [DEMO](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html) [changelog.md](changelog.md)
   * New orthogonal routing option draws clean 90 degree angle connections
   * Three routing styles available: Orthogonal, Curved, and Straight
   * Change between all of them in the settings at any time OR mix and match them   
