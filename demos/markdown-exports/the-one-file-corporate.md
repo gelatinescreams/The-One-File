@@ -1,3 +1,4 @@
+<!--THEONEFILE_CONFIG
 {
   "nodeData": {
     "core-router-1": {
@@ -4150,7 +4151,7 @@
     "danger": "#f56565",
     "textMain": "#e2e8f0",
     "textSoft": "#94a3b8",
-    "topbarHeight": 103,
+    "topbarHeight": 113,
     "sidebarWidth": 350,
     "mobileFooterHeight": 40,
     "sidebarCollapsed": false,
@@ -8342,7 +8343,7 @@
         "danger": "#f56565",
         "textMain": "#e2e8f0",
         "textSoft": "#94a3b8",
-        "topbarHeight": 103,
+        "topbarHeight": 113,
         "sidebarWidth": 350,
         "mobileFooterHeight": 40,
         "sidebarCollapsed": false,
@@ -9070,6 +9071,48 @@
   "encryptedSections": {},
   "auditLog": [
     {
+      "timestamp": 1766190386262,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190382903,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190372732,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190356740,
+      "type": "export",
+      "description": "Exported JSON: the-one-file.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190353695,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190348545,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
       "timestamp": 1766190340714,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
@@ -9274,3 +9317,3038 @@
     }
   ]
 }
+THEONEFILE_CONFIG-->
+
+# The One File Corporate
+
+> Exported from The One File on 2025-12-20T00:27:39.487Z
+
+## Legend
+
+- #10b981: Trusted Lan
+- #f59e0b: Secure Lan
+- #ef4444: DMZ
+- #475569: Main ISP
+- #3b82f6: Alternate ISP
+- #8b5cf6: you can edit me too
+- #06b6d4: you can edit me too
+- #a855f7: you can edit me too
+- #f97316: you can edit me too
+- #0ea5e9: you can edit me too
+- #22c55e: you can edit me too
+- #94a3b8: you can edit me too
+- #fbbf24: you can edit me too
+- #38bdf8: you can edit me too
+- #c800ff: you can edit me too
+
+## Nodes
+
+### core-router-1
+- **Name:** Core Router 1
+- **IP:** 10.0.0.1
+- **Role:** Core Routing
+- **Shape:** router
+- **Tags:** core; tier-1; redundant
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:4D:01
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3720, 246
+- **Size:** 50
+- **Notes:**
+  - Primary core router
+  - BGP peering enabled
+
+### core-router-2
+- **Name:** Core Router 2
+- **IP:** 10.0.0.2
+- **Role:** Core Routing
+- **Shape:** router
+- **Tags:** core; tier-1; redundant
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:4D:02
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2370, 216
+- **Size:** 50
+- **Notes:**
+  - Secondary core router
+  - HSRP standby
+
+### fw-external-1
+- **Name:** External FW 1
+- **IP:** 10.0.1.1
+- **Role:** Perimeter Security
+- **Shape:** firewall
+- **Tags:** security; perimeter; ha-pair
+- **Layer:** security
+- **MAC:** 00:1A:2B:3C:4D:10
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3222, 1016
+- **Size:** 50
+- **Notes:**
+  - Palo Alto PA-5250
+  - Active node
+
+### fw-external-2
+- **Name:** External FW 2
+- **IP:** 10.0.1.2
+- **Role:** Perimeter Security
+- **Shape:** firewall
+- **Tags:** security; perimeter; ha-pair
+- **Layer:** security
+- **MAC:** 00:1A:2B:3C:4D:11
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1916, 224
+- **Size:** 50
+- **Notes:**
+  - Palo Alto PA-5250
+  - Passive node
+
+### fw-internal
+- **Name:** Internal FW
+- **IP:** 10.0.2.1
+- **Role:** Internal Segmentation
+- **Shape:** firewall
+- **Tags:** security; internal
+- **Layer:** security
+- **MAC:** 00:1A:2B:3C:4D:12
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1747, 478
+- **Size:** 50
+- **Notes:**
+  - East-West traffic inspection
+
+### core-switch-1
+- **Name:** Core Switch 1
+- **IP:** 10.0.10.1
+- **Role:** Core Switching
+- **Shape:** switch
+- **Tags:** core; layer3; redundant
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:4D:20
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 767, 887
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 9000
+  - VPC Domain 1
+
+### core-switch-2
+- **Name:** Core Switch 2
+- **IP:** 10.0.10.2
+- **Role:** Core Switching
+- **Shape:** switch
+- **Tags:** core; layer3; redundant
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:4D:21
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1118, 193
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 9000
+  - VPC Domain 1
+
+### dc-rack-a1
+- **Name:** DC Rack A1
+- **IP:** 10.10.0.0/24
+- **Role:** Data Center Rack
+- **Shape:** server
+- **Tags:** datacenter; row-a; production
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 527, 1064
+- **Size:** 50
+- **Notes:**
+  - Row A, Position 1
+  - Primary compute
+- **Styles:** `{"all":{"circleColor":"#ff0000"}}`
+
+### dc-rack-a2
+- **Name:** DC Rack A2
+- **IP:** 10.10.1.0/24
+- **Role:** Data Center Rack
+- **Shape:** server
+- **Tags:** datacenter; row-a; production
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 284, 199
+- **Size:** 50
+- **Notes:**
+  - Row A, Position 2
+  - Primary compute
+
+### dc-rack-b1
+- **Name:** DC Rack B1
+- **IP:** 10.10.2.0/24
+- **Role:** Data Center Rack
+- **Shape:** server
+- **Tags:** datacenter; row-b; storage
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3210, 1676
+- **Size:** 50
+- **Notes:**
+  - Row B, Position 1
+  - Storage systems
+- **Styles:** `{"all":{"circleColor":"#ff0000","titleSize":59}}`
+
+### dc-rack-b2
+- **Name:** DC Rack B2
+- **IP:** 10.10.3.0/24
+- **Role:** Data Center Rack
+- **Shape:** server
+- **Tags:** datacenter; row-b; storage
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 269, 952
+- **Size:** 50
+- **Notes:**
+  - Row B, Position 2
+  - Storage systems
+- **Styles:** `{"all":{"circleColor":"#ff0000"}}`
+
+### dmz-rack
+- **Name:** DMZ Rack
+- **IP:** 172.16.0.0/24
+- **Role:** DMZ Infrastructure
+- **Shape:** server
+- **Tags:** dmz; security; public-facing
+- **Layer:** security
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 24
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2223, 603
+- **Size:** 50
+- **Notes:**
+  - Isolated DMZ zone
+  - Public-facing services
+
+### mgmt-rack
+- **Name:** Management Rack
+- **IP:** 192.168.100.0/24
+- **Role:** Management Infrastructure
+- **Shape:** server
+- **Tags:** management; oob; noc
+- **Layer:** logical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 24
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1601, 1281
+- **Size:** 50
+- **Notes:**
+  - Out-of-band management
+  - NOC equipment
+
+### esxi-host-01
+- **Name:** ESXi Host 01
+- **IP:** 10.10.0.11
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-a
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:01:01
+- **Rack Unit:** 38
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2162, 2608
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 512GB RAM
+  - vSphere 8.0
+
+### esxi-host-02
+- **Name:** ESXi Host 02
+- **IP:** 10.10.0.12
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-a
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:01:02
+- **Rack Unit:** 35
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2206, 2690
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 512GB RAM
+  - vSphere 8.0
+
+### esxi-host-03
+- **Name:** ESXi Host 03
+- **IP:** 10.10.0.13
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-a
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:01:03
+- **Rack Unit:** 32
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2155, 2771
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 512GB RAM
+  - vSphere 8.0
+
+### esxi-host-04
+- **Name:** ESXi Host 04
+- **IP:** 10.10.0.14
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-a
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:01:04
+- **Rack Unit:** 29
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2196, 2845
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 512GB RAM
+  - vSphere 8.0
+
+### tor-switch-a1
+- **Name:** ToR Switch A1
+- **IP:** 10.10.0.1
+- **Role:** Top of Rack
+- **Shape:** switch
+- **Tags:** tor; access; rack-a1
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:5D:01
+- **Rack Unit:** 42
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2147, 2845
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 93180YC-FX
+  - 48x25G ports
+
+### esxi-host-05
+- **Name:** ESXi Host 05
+- **IP:** 10.10.1.11
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-b
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:02:01
+- **Rack Unit:** 38
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2186, 2845
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 768GB RAM
+  - vSphere 8.0
+
+### esxi-host-06
+- **Name:** ESXi Host 06
+- **IP:** 10.10.1.12
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-b
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:02:02
+- **Rack Unit:** 35
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2139, 2845
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 768GB RAM
+  - vSphere 8.0
+
+### esxi-host-07
+- **Name:** ESXi Host 07
+- **IP:** 10.10.1.13
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-b
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:02:03
+- **Rack Unit:** 32
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2176, 2845
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 768GB RAM
+  - vSphere 8.0
+
+### esxi-host-08
+- **Name:** ESXi Host 08
+- **IP:** 10.10.1.14
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** vmware; compute; cluster-b
+- **Layer:** physical
+- **MAC:** 00:50:56:AA:02:04
+- **Rack Unit:** 29
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2131, 2845
+- **Size:** 50
+- **Notes:**
+  - Dell PowerEdge R750
+  - 768GB RAM
+  - vSphere 8.0
+
+### tor-switch-a2
+- **Name:** ToR Switch A2
+- **IP:** 10.10.1.1
+- **Role:** Top of Rack
+- **Shape:** switch
+- **Tags:** tor; access; rack-a2
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:5D:02
+- **Rack Unit:** 42
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2165, 2845
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 93180YC-FX
+  - 48x25G ports
+
+### san-primary
+- **Name:** SAN Primary
+- **IP:** 10.10.2.10
+- **Role:** Primary Storage
+- **Shape:** database
+- **Tags:** storage; san; netapp
+- **Layer:** physical
+- **MAC:** 00:A0:98:AA:01:01
+- **Rack Unit:** 36
+- **U Height:** 6
+- **Assigned Rack:** dc-rack-b1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2123, 2845
+- **Size:** 50
+- **Notes:**
+  - NetApp AFF A400
+  - 500TB Raw
+  - FC 32Gb
+
+### san-secondary
+- **Name:** SAN Secondary
+- **IP:** 10.10.2.11
+- **Role:** Secondary Storage
+- **Shape:** database
+- **Tags:** storage; san; netapp
+- **Layer:** physical
+- **MAC:** 00:A0:98:AA:01:02
+- **Rack Unit:** 28
+- **U Height:** 6
+- **Assigned Rack:** dc-rack-b1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2155, 2845
+- **Size:** 50
+- **Notes:**
+  - NetApp AFF A400
+  - 500TB Raw
+  - FC 32Gb
+
+### fc-switch-1
+- **Name:** FC Switch 1
+- **IP:** 10.10.2.1
+- **Role:** Fibre Channel
+- **Shape:** switch
+- **Tags:** storage; fc; fabric-a
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FC:01:01
+- **Rack Unit:** 42
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-b1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2115, 2845
+- **Size:** 50
+- **Notes:**
+  - Brocade G620
+  - Fabric A
+
+### fc-switch-2
+- **Name:** FC Switch 2
+- **IP:** 10.10.2.2
+- **Role:** Fibre Channel
+- **Shape:** switch
+- **Tags:** storage; fc; fabric-b
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FC:01:02
+- **Rack Unit:** 41
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-b1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2145, 2845
+- **Size:** 50
+- **Notes:**
+  - Brocade G620
+  - Fabric B
+
+### backup-server-1
+- **Name:** Backup Server 1
+- **IP:** 10.10.3.10
+- **Role:** Backup Infrastructure
+- **Shape:** server
+- **Tags:** backup; veeam; protection
+- **Layer:** physical
+- **MAC:** 00:50:56:BB:01:01
+- **Rack Unit:** 36
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-b2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2107, 2845
+- **Size:** 50
+- **Notes:**
+  - Veeam Backup Server
+  - Dell R740xd
+  - 200TB
+
+### backup-server-2
+- **Name:** Backup Server 2
+- **IP:** 10.10.3.11
+- **Role:** Backup Infrastructure
+- **Shape:** server
+- **Tags:** backup; veeam; protection
+- **Layer:** physical
+- **MAC:** 00:50:56:BB:01:02
+- **Rack Unit:** 33
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-b2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2134, 2845
+- **Size:** 50
+- **Notes:**
+  - Veeam Backup Server
+  - Dell R740xd
+  - 200TB
+
+### tape-library
+- **Name:** Tape Library
+- **IP:** 10.10.3.20
+- **Role:** Archival Storage
+- **Shape:** database
+- **Tags:** backup; tape; lto9
+- **Layer:** physical
+- **MAC:** 00:50:56:BB:02:01
+- **Rack Unit:** 20
+- **U Height:** 10
+- **Assigned Rack:** dc-rack-b2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2099, 2845
+- **Size:** 50
+- **Notes:**
+  - IBM TS4500
+  - LTO-9
+  - Long-term archive
+
+### tor-switch-b1
+- **Name:** ToR Switch B1
+- **IP:** 10.10.2.3
+- **Role:** Top of Rack
+- **Shape:** switch
+- **Tags:** tor; access; rack-b1
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:5D:03
+- **Rack Unit:** 40
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-b1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2123, 2845
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 93180YC-FX
+
+### tor-switch-b2
+- **Name:** ToR Switch B2
+- **IP:** 10.10.3.1
+- **Role:** Top of Rack
+- **Shape:** switch
+- **Tags:** tor; access; rack-b2
+- **Layer:** physical
+- **MAC:** 00:1A:2B:3C:5D:04
+- **Rack Unit:** 42
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-b2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2091, 2845
+- **Size:** 50
+- **Notes:**
+  - Cisco Nexus 93180YC-FX
+
+### web-server-1
+- **Name:** Web Server 1
+- **IP:** 172.16.0.11
+- **Role:** Web Frontend
+- **Shape:** server
+- **Tags:** dmz; web; nginx
+- **Layer:** security
+- **MAC:** 00:50:56:CC:01:01
+- **Rack Unit:** 20
+- **U Height:** 1
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2113, 2845
+- **Size:** 50
+- **Notes:**
+  - NGINX reverse proxy
+  - Public facing
+
+### web-server-2
+- **Name:** Web Server 2
+- **IP:** 172.16.0.12
+- **Role:** Web Frontend
+- **Shape:** server
+- **Tags:** dmz; web; nginx
+- **Layer:** security
+- **MAC:** 00:50:56:CC:01:02
+- **Rack Unit:** 18
+- **U Height:** 1
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2082, 2845
+- **Size:** 50
+- **Notes:**
+  - NGINX reverse proxy
+  - Public facing
+
+### waf-1
+- **Name:** WAF Appliance
+- **IP:** 172.16.0.5
+- **Role:** Web Application Firewall
+- **Shape:** firewall
+- **Tags:** dmz; security; waf
+- **Layer:** security
+- **MAC:** 00:50:56:CC:02:01
+- **Rack Unit:** 22
+- **U Height:** 2
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2102, 2845
+- **Size:** 50
+- **Notes:**
+  - F5 BIG-IP ASM
+  - OWASP protection
+
+### load-balancer-dmz
+- **Name:** DMZ Load Balancer
+- **IP:** 172.16.0.3
+- **Role:** Load Balancing
+- **Shape:** switch
+- **Tags:** dmz; lb; f5
+- **Layer:** security
+- **MAC:** 00:50:56:CC:03:01
+- **Rack Unit:** 16
+- **U Height:** 2
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2074, 2845
+- **Size:** 50
+- **Notes:**
+  - F5 BIG-IP LTM
+  - VIP: 172.16.0.100
+
+### mail-gateway
+- **Name:** Mail Gateway
+- **IP:** 172.16.0.25
+- **Role:** Email Security
+- **Shape:** server
+- **Tags:** dmz; email; security
+- **Layer:** security
+- **MAC:** 00:50:56:CC:04:01
+- **Rack Unit:** 14
+- **U Height:** 1
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2091, 2845
+- **Size:** 50
+- **Notes:**
+  - Proofpoint Email Gateway
+  - Spam/malware filtering
+
+### dns-external-1
+- **Name:** External DNS 1
+- **IP:** 172.16.0.53
+- **Role:** External DNS
+- **Shape:** circle
+- **Tags:** dmz; dns; public
+- **Layer:** security
+- **MAC:** 00:50:56:CC:05:01
+- **Rack Unit:** 12
+- **U Height:** 1
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2066, 2845
+- **Size:** 50
+- **Notes:**
+  - BIND DNS
+  - Authoritative for corp.com
+
+### dns-external-2
+- **Name:** External DNS 2
+- **IP:** 172.16.0.54
+- **Role:** External DNS
+- **Shape:** circle
+- **Tags:** dmz; dns; public
+- **Layer:** security
+- **MAC:** 00:50:56:CC:05:02
+- **Rack Unit:** 10
+- **U Height:** 1
+- **Assigned Rack:** dmz-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2080, 2845
+- **Size:** 50
+- **Notes:**
+  - BIND DNS
+  - Secondary for corp.com
+
+### vcenter
+- **Name:** vCenter Server
+- **IP:** 192.168.100.10
+- **Role:** Virtualization Management
+- **Shape:** server
+- **Tags:** management; vmware; vcsa
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:01:01
+- **Rack Unit:** 20
+- **U Height:** 2
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2057, 2845
+- **Size:** 50
+- **Notes:**
+  - vCenter Server Appliance 8.0
+  - Single SSO domain
+
+### nsx-manager
+- **Name:** NSX Manager
+- **IP:** 192.168.100.15
+- **Role:** Network Virtualization
+- **Shape:** server
+- **Tags:** management; vmware; nsx
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:02:01
+- **Rack Unit:** 17
+- **U Height:** 2
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2069, 2845
+- **Size:** 50
+- **Notes:**
+  - NSX-T 4.1 Manager Cluster
+
+### siem-server
+- **Name:** SIEM Server
+- **IP:** 192.168.100.50
+- **Role:** Security Monitoring
+- **Shape:** server
+- **Tags:** management; security; splunk
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:03:01
+- **Rack Unit:** 14
+- **U Height:** 2
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2049, 2845
+- **Size:** 50
+- **Notes:**
+  - Splunk Enterprise
+  - Security monitoring
+
+### nms-server
+- **Name:** Network Monitoring
+- **IP:** 192.168.100.60
+- **Role:** Network Management
+- **Shape:** server
+- **Tags:** management; monitoring; prtg
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:04:01
+- **Rack Unit:** 11
+- **U Height:** 1
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2058, 2845
+- **Size:** 50
+- **Notes:**
+  - PRTG Network Monitor
+  - 5000 sensors
+
+### jump-server
+- **Name:** Jump Server
+- **IP:** 192.168.100.100
+- **Role:** Bastion Host
+- **Shape:** server
+- **Tags:** management; security; bastion
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:05:01
+- **Rack Unit:** 9
+- **U Height:** 1
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2040, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Server 2022
+  - MFA enabled
+
+### ipam-server
+- **Name:** IPAM/DDI
+- **IP:** 192.168.100.70
+- **Role:** IP Management
+- **Shape:** server
+- **Tags:** management; dns; dhcp
+- **Layer:** logical
+- **MAC:** 00:50:56:DD:06:01
+- **Rack Unit:** 7
+- **U Height:** 2
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2047, 2845
+- **Size:** 50
+- **Notes:**
+  - Infoblox DDI
+  - DNS/DHCP/IPAM
+
+### wlc-primary
+- **Name:** WLC Primary
+- **IP:** 10.20.0.1
+- **Role:** Wireless Controller
+- **Shape:** wifi
+- **Tags:** wireless; cisco; 9800
+- **Layer:** physical
+- **MAC:** 00:1A:2B:WL:01:01
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1576, 2306
+- **Size:** 50
+- **Notes:**
+  - Cisco C9800-40
+  - Primary controller
+
+### wlc-secondary
+- **Name:** WLC Secondary
+- **IP:** 10.20.0.2
+- **Role:** Wireless Controller
+- **Shape:** wifi
+- **Tags:** wireless; cisco; 9800
+- **Layer:** physical
+- **MAC:** 00:1A:2B:WL:01:02
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1468, 1564
+- **Size:** 50
+- **Notes:**
+  - Cisco C9800-40
+  - HA Secondary
+
+### mobile-zone-hq
+- **Name:** HQ Mobile Zone
+- **IP:** 10.20.10.0/24
+- **Role:** Mobile Device Zone
+- **Shape:** phone
+- **Tags:** wireless; byod; mobile
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2355, 2806
+- **Size:** 50
+- **Notes:**
+  - Corporate BYOD
+  - MDM enrolled devices
+
+### mobile-zone-guest
+- **Name:** Guest WiFi Zone
+- **IP:** 10.30.0.0/24
+- **Role:** Guest Network
+- **Shape:** phone
+- **Tags:** wireless; guest; isolated
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2308, 2611
+- **Size:** 50
+- **Notes:**
+  - Captive portal
+  - Internet only
+
+### mobile-zone-iot
+- **Name:** IoT Device Zone
+- **IP:** 10.40.0.0/24
+- **Role:** IoT Network
+- **Shape:** phone
+- **Tags:** wireless; iot; building
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2229, 2299
+- **Size:** 50
+- **Notes:**
+  - Building automation
+  - Smart devices
+
+### branch-router-ny
+- **Name:** NYC Branch Router
+- **IP:** 10.100.0.1
+- **Role:** Branch Gateway
+- **Shape:** router
+- **Tags:** branch; nyc; sd-wan
+- **Layer:** physical
+- **MAC:** 00:1A:2B:BR:01:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3147, 634
+- **Size:** 50
+- **Notes:**
+  - Cisco Viptela vEdge
+  - SD-WAN enabled
+
+### branch-router-la
+- **Name:** LA Branch Router
+- **IP:** 10.101.0.1
+- **Role:** Branch Gateway
+- **Shape:** router
+- **Tags:** branch; la; sd-wan
+- **Layer:** physical
+- **MAC:** 00:1A:2B:BR:02:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3084, 507
+- **Size:** 50
+- **Notes:**
+  - Cisco Viptela vEdge
+  - SD-WAN enabled
+
+### branch-router-chi
+- **Name:** Chicago Branch Router
+- **IP:** 10.102.0.1
+- **Role:** Branch Gateway
+- **Shape:** router
+- **Tags:** branch; chicago; sd-wan
+- **Layer:** physical
+- **MAC:** 00:1A:2B:BR:03:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3355, 393
+- **Size:** 50
+- **Notes:**
+  - Cisco Viptela vEdge
+  - SD-WAN enabled
+
+### branch-router-lon
+- **Name:** London Branch Router
+- **IP:** 10.200.0.1
+- **Role:** Branch Gateway
+- **Shape:** router
+- **Tags:** branch; london; sd-wan
+- **Layer:** physical
+- **MAC:** 00:1A:2B:BR:04:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3114, 260
+- **Size:** 50
+- **Notes:**
+  - Cisco Viptela vEdge
+  - EMEA region
+
+### branch-router-tokyo
+- **Name:** Tokyo Branch Router
+- **IP:** 10.201.0.1
+- **Role:** Branch Gateway
+- **Shape:** router
+- **Tags:** branch; tokyo; sd-wan
+- **Layer:** physical
+- **MAC:** 00:1A:2B:BR:05:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3699, 471
+- **Size:** 50
+- **Notes:**
+  - Cisco Viptela vEdge
+  - APAC region
+
+### cloud-aws
+- **Name:** AWS Cloud
+- **IP:** vpc-0a1b2c3d
+- **Role:** Public Cloud
+- **Shape:** cloud
+- **Tags:** cloud; aws; hybrid
+- **Layer:** logical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3439, 549
+- **Size:** 50
+- **Notes:**
+  - AWS US-East-1
+  - VPC peering to HQ
+
+### cloud-azure
+- **Name:** Azure Cloud
+- **IP:** vnet-corp-prod
+- **Role:** Public Cloud
+- **Shape:** cloud
+- **Tags:** cloud; azure; hybrid
+- **Layer:** logical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2593, 2724
+- **Size:** 50
+- **Notes:**
+  - Azure East US 2
+  - ExpressRoute
+
+### cloud-gcp
+- **Name:** GCP Cloud
+- **IP:** vpc-gcp-corp
+- **Role:** Public Cloud
+- **Shape:** cloud
+- **Tags:** cloud; gcp; dev
+- **Layer:** logical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2827, 2731
+- **Size:** 50
+- **Notes:**
+  - GCP us-central1
+  - Dev/Test workloads
+
+### isp-primary
+- **Name:** ISP Primary
+- **IP:** 203.0.113.1
+- **Role:** Internet Uplink
+- **Shape:** globe
+- **Tags:** wan; internet; primary
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3712, 618
+- **Size:** 50
+- **Notes:**
+  - AT&T MPLS
+  - 1 Gbps dedicated
+
+### isp-secondary
+- **Name:** ISP Secondary
+- **IP:** 198.51.100.1
+- **Role:** Internet Uplink
+- **Shape:** globe
+- **Tags:** wan; internet; backup
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2574, 404
+- **Size:** 50
+- **Notes:**
+  - Verizon Business
+  - 500 Mbps backup
+
+### dc-internal-1
+- **Name:** DC1 Int DNS
+- **IP:** 10.10.0.53
+- **Role:** Internal DNS/AD
+- **Shape:** circle
+- **Tags:** dns; ad; dc1
+- **Layer:** physical
+- **MAC:** 00:50:56:AD:01:01
+- **Rack Unit:** 26
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1958, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Server 2022
+  - Primary DC
+
+### dc-internal-2
+- **Name:** DC2 Int DNS
+- **IP:** 10.10.1.53
+- **Role:** Internal DNS/AD
+- **Shape:** circle
+- **Tags:** dns; ad; dc2
+- **Layer:** physical
+- **MAC:** 00:50:56:AD:01:02
+- **Rack Unit:** 26
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1964, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Server 2022
+  - Secondary DC
+
+### app-server-1
+- **Name:** App Server 01
+- **IP:** 10.10.0.101
+- **Role:** Application
+- **Shape:** server
+- **Tags:** app; iis; web
+- **Layer:** physical
+- **MAC:** 00:50:56:AP:01:01
+- **Rack Unit:** 24
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1947, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Server 2022
+  - IIS Application
+
+### app-server-2
+- **Name:** App Server 02
+- **IP:** 10.10.0.102
+- **Role:** Application
+- **Shape:** server
+- **Tags:** app; iis; web
+- **Layer:** physical
+- **MAC:** 00:50:56:AP:01:02
+- **Rack Unit:** 22
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1955, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Server 2022
+  - IIS Application
+
+### db-server-1
+- **Name:** SQL Server 01
+- **IP:** 10.10.0.201
+- **Role:** Database
+- **Shape:** database
+- **Tags:** db; sql; primary
+- **Layer:** physical
+- **MAC:** 00:50:56:DB:01:01
+- **Rack Unit:** 20
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1936, 2845
+- **Size:** 50
+- **Notes:**
+  - SQL Server 2022 Enterprise
+  - AlwaysOn Primary
+
+### db-server-2
+- **Name:** SQL Server 02
+- **IP:** 10.10.1.201
+- **Role:** Database
+- **Shape:** database
+- **Tags:** db; sql; secondary
+- **Layer:** physical
+- **MAC:** 00:50:56:DB:01:02
+- **Rack Unit:** 24
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1947, 2845
+- **Size:** 50
+- **Notes:**
+  - SQL Server 2022 Enterprise
+  - AlwaysOn Secondary
+
+### k8s-master-1
+- **Name:** K8s Master 1
+- **IP:** 10.10.1.50
+- **Role:** Container Orchestration
+- **Shape:** hexagon
+- **Tags:** kubernetes; master; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:01:01
+- **Rack Unit:** 21
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1925, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Control Plane
+  - etcd member
+
+### k8s-master-2
+- **Name:** K8s Master 2
+- **IP:** 10.10.1.51
+- **Role:** Container Orchestration
+- **Shape:** hexagon
+- **Tags:** kubernetes; master; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:01:02
+- **Rack Unit:** 19
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1938, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Control Plane
+  - etcd member
+
+### k8s-master-3
+- **Name:** K8s Master 3
+- **IP:** 10.10.1.52
+- **Role:** Container Orchestration
+- **Shape:** hexagon
+- **Tags:** kubernetes; master; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:01:03
+- **Rack Unit:** 17
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1914, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Control Plane
+  - etcd member
+
+### k8s-worker-1
+- **Name:** K8s Worker 1
+- **IP:** 10.10.1.60
+- **Role:** Container Workload
+- **Shape:** server
+- **Tags:** kubernetes; worker; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:02:01
+- **Rack Unit:** 15
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1930, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Worker Node
+  - 64GB RAM
+
+### k8s-worker-2
+- **Name:** K8s Worker 2
+- **IP:** 10.10.1.61
+- **Role:** Container Workload
+- **Shape:** server
+- **Tags:** kubernetes; worker; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:02:02
+- **Rack Unit:** 13
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1904, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Worker Node
+  - 64GB RAM
+
+### k8s-worker-3
+- **Name:** K8s Worker 3
+- **IP:** 10.10.1.62
+- **Role:** Container Workload
+- **Shape:** server
+- **Tags:** kubernetes; worker; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:02:03
+- **Rack Unit:** 11
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1922, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Worker Node
+  - 64GB RAM
+
+### k8s-worker-4
+- **Name:** K8s Worker 4
+- **IP:** 10.10.1.63
+- **Role:** Container Workload
+- **Shape:** server
+- **Tags:** kubernetes; worker; container
+- **Layer:** physical
+- **MAC:** 00:50:56:K8:02:04
+- **Rack Unit:** 9
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1893, 2845
+- **Size:** 50
+- **Notes:**
+  - K8s Worker Node
+  - 64GB RAM
+
+### proxy-server-1
+- **Name:** Proxy Server 1
+- **IP:** 10.5.0.10
+- **Role:** Web Proxy
+- **Shape:** server
+- **Tags:** proxy; squid; filtering
+- **Layer:** security
+- **MAC:** 00:50:56:PX:01:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1806, 654
+- **Size:** 50
+- **Notes:**
+  - Squid Proxy
+  - Content filtering
+
+### proxy-server-2
+- **Name:** Proxy Server 2
+- **IP:** 10.5.0.11
+- **Role:** Web Proxy
+- **Shape:** server
+- **Tags:** proxy; squid; filtering
+- **Layer:** security
+- **MAC:** 00:50:56:PX:01:02
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2937, 2629
+- **Size:** 50
+- **Notes:**
+  - Squid Proxy
+  - HA pair
+
+### vpn-concentrator
+- **Name:** VPN Concentrator
+- **IP:** 10.0.5.1
+- **Role:** Remote Access VPN
+- **Shape:** firewall
+- **Tags:** vpn; remote; security
+- **Layer:** security
+- **MAC:** 00:1A:2B:VP:01:01
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3642, 947
+- **Size:** 50
+- **Notes:**
+  - Cisco ASA 5555-X
+  - AnyConnect SSL VPN
+
+### nac-server
+- **Name:** NAC Server
+- **IP:** 10.5.5.10
+- **Role:** Network Access Control
+- **Shape:** server
+- **Tags:** nac; ise; 802.1x
+- **Layer:** security
+- **MAC:** 00:50:56:NA:01:01
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1153, 1172
+- **Size:** 50
+- **Notes:**
+  - Cisco ISE 3.1
+  - RADIUS/TACACS+
+
+### print-server
+- **Name:** Print Server
+- **IP:** 10.10.0.150
+- **Role:** Print Services
+- **Shape:** server
+- **Tags:** print; windows; services
+- **Layer:** physical
+- **MAC:** 00:50:56:PR:01:01
+- **Rack Unit:** 18
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1897, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows Print Server
+  - 50+ printers
+
+### file-server
+- **Name:** File Server
+- **IP:** 10.10.0.160
+- **Role:** File Services
+- **Shape:** database
+- **Tags:** file; smb; dfs
+- **Layer:** physical
+- **MAC:** 00:50:56:FS:01:01
+- **Rack Unit:** 16
+- **U Height:** 2
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1861, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows File Server
+  - DFS namespace
+
+### ca-server
+- **Name:** Certificate Authority
+- **IP:** 192.168.100.80
+- **Role:** PKI Infrastructure
+- **Shape:** server
+- **Tags:** pki; ca; security
+- **Layer:** logical
+- **MAC:** 00:50:56:CA:01:01
+- **Rack Unit:** 5
+- **U Height:** 1
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1889, 2845
+- **Size:** 50
+- **Notes:**
+  - Windows CA
+  - Enterprise Root CA
+
+### sccm-server
+- **Name:** SCCM Server
+- **IP:** 192.168.100.90
+- **Role:** Endpoint Management
+- **Shape:** server
+- **Tags:** sccm; patching; software
+- **Layer:** logical
+- **MAC:** 00:50:56:SC:01:01
+- **Rack Unit:** 3
+- **U Height:** 2
+- **Assigned Rack:** mgmt-rack
+- **Rack Capacity:** 24
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1850, 2845
+- **Size:** 50
+- **Notes:**
+  - MECM Primary Site
+  - Software deployment
+
+### voip-cluster
+- **Name:** VoIP Cluster
+- **IP:** 10.50.0.0/24
+- **Role:** Voice Services
+- **Shape:** phone
+- **Tags:** voip; cisco; ucm
+- **Layer:** application
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1777, 1617
+- **Size:** 50
+- **Notes:**
+  - Cisco UCM Cluster
+  - 3000 endpoints
+
+### video-conf
+- **Name:** Video Conference
+- **IP:** 10.51.0.0/24
+- **Role:** Video Services
+- **Shape:** laptop
+- **Tags:** video; webex; teams
+- **Layer:** application
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1994, 2245
+- **Size:** 50
+- **Notes:**
+  - Webex/Teams integration
+  - Meeting rooms
+
+### security-cameras
+- **Name:** Security Cameras
+- **IP:** 10.60.0.0/24
+- **Role:** Physical Security
+- **Shape:** camera
+- **Tags:** cctv; surveillance; security
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1674, 2046
+- **Size:** 50
+- **Notes:**
+  - 150+ IP cameras
+  - 30-day retention
+
+### nvr-cluster
+- **Name:** NVR Cluster
+- **IP:** 10.60.0.10
+- **Role:** Video Recording
+- **Shape:** server
+- **Tags:** nvr; surveillance; storage
+- **Layer:** physical
+- **MAC:** 00:50:56:NV:01:01
+- **Rack Unit:** 15
+- **U Height:** 4
+- **Assigned Rack:** dc-rack-b2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1829, 2845
+- **Size:** 50
+- **Notes:**
+  - Milestone XProtect
+  - 500TB storage
+
+### dev-server-1
+- **Name:** Dev Server 1
+- **IP:** 10.80.0.10
+- **Role:** Development
+- **Shape:** server
+- **Tags:** dev; gitlab; ci-cd
+- **Layer:** application
+- **MAC:** 00:50:56:DV:01:01
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2360, 1480
+- **Size:** 50
+- **Notes:**
+  - GitLab Server
+  - CI/CD pipelines
+
+### dev-server-2
+- **Name:** Dev Server 2
+- **IP:** 10.80.0.11
+- **Role:** Development
+- **Shape:** server
+- **Tags:** dev; jenkins; ci-cd
+- **Layer:** application
+- **MAC:** 00:50:56:DV:01:02
+- **Rack Unit:** 
+- **U Height:** 2
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1935, 1236
+- **Size:** 50
+- **Notes:**
+  - Jenkins Server
+  - Build automation
+
+### test-environment
+- **Name:** Test Environment
+- **IP:** 10.81.0.0/24
+- **Role:** QA/Testing
+- **Shape:** hexagon
+- **Tags:** test; qa; staging
+- **Layer:** application
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2206, 867
+- **Size:** 50
+- **Notes:**
+  - Staging environment
+  - Pre-prod validation
+
+### erp-system
+- **Name:** ERP System
+- **IP:** 10.90.0.10
+- **Role:** Business Application
+- **Shape:** database
+- **Tags:** erp; sap; business
+- **Layer:** application
+- **MAC:** 00:50:56:ER:01:01
+- **Rack Unit:** 
+- **U Height:** 4
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 865, 1502
+- **Size:** 50
+- **Notes:**
+  - SAP S/4HANA
+  - Financial/HR systems
+
+### crm-system
+- **Name:** CRM System
+- **IP:** 10.91.0.10
+- **Role:** Business Application
+- **Shape:** database
+- **Tags:** crm; salesforce; business
+- **Layer:** application
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3515, 1138
+- **Size:** 50
+- **Notes:**
+  - Salesforce integration
+  - Sales/Marketing
+
+### endpoint-1000
+- **Name:** Corporate Endpoints
+- **IP:** 10.70.0.0/22
+- **Role:** User Workstations
+- **Shape:** laptop
+- **Tags:** endpoints; workstations; users
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 992, 2284
+- **Size:** 50
+- **Notes:**
+  - ~1000 corporate laptops
+  - Windows 11
+
+### dist-switch-floor1
+- **Name:** Floor 1 Switch
+- **IP:** 10.1.1.1
+- **Role:** Distribution
+- **Shape:** switch
+- **Tags:** distribution; floor-1; access
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FL:01:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 654, 2020
+- **Size:** 50
+- **Notes:**
+  - Cisco C9300-48P
+  - PoE+ enabled
+
+### dist-switch-floor2
+- **Name:** Floor 2 Switch
+- **IP:** 10.1.2.1
+- **Role:** Distribution
+- **Shape:** switch
+- **Tags:** distribution; floor-2; access
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FL:02:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 854, 1843
+- **Size:** 50
+- **Notes:**
+  - Cisco C9300-48P
+  - PoE+ enabled
+
+### dist-switch-floor3
+- **Name:** Floor 3 Switch
+- **IP:** 10.1.3.1
+- **Role:** Distribution
+- **Shape:** switch
+- **Tags:** distribution; floor-3; access
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FL:03:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1899, 1457
+- **Size:** 50
+- **Notes:**
+  - Cisco C9300-48P
+  - PoE+ enabled
+
+### dist-switch-floor4
+- **Name:** Floor 4 Switch
+- **IP:** 10.1.4.1
+- **Role:** Distribution
+- **Shape:** switch
+- **Tags:** distribution; floor-4; access
+- **Layer:** physical
+- **MAC:** 00:1A:2B:FL:04:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 655, 348
+- **Size:** 50
+- **Notes:**
+  - Cisco C9300-48P
+  - PoE+ enabled
+
+### ap-floor1-zone1
+- **Name:** AP Floor 1 Zone 1
+- **IP:** 10.20.1.10
+- **Role:** Wireless Access
+- **Shape:** wifi
+- **Tags:** wifi; ap; floor-1
+- **Layer:** physical
+- **MAC:** 00:1A:2B:AP:01:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1140, 2070
+- **Size:** 50
+- **Notes:**
+  - Cisco 9120AX
+  - Wi-Fi 6
+
+### ap-floor2-zone1
+- **Name:** AP Floor 2 Zone 1
+- **IP:** 10.20.2.10
+- **Role:** Wireless Access
+- **Shape:** wifi
+- **Tags:** wifi; ap; floor-2
+- **Layer:** physical
+- **MAC:** 00:1A:2B:AP:02:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 688, 2384
+- **Size:** 50
+- **Notes:**
+  - Cisco 9120AX
+  - Wi-Fi 6
+
+### ap-floor3-zone1
+- **Name:** AP Floor 3 Zone 1
+- **IP:** 10.20.3.10
+- **Role:** Wireless Access
+- **Shape:** wifi
+- **Tags:** wifi; ap; floor-3
+- **Layer:** physical
+- **MAC:** 00:1A:2B:AP:03:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2145, 1890
+- **Size:** 50
+- **Notes:**
+  - Cisco 9120AX
+  - Wi-Fi 6
+
+### ap-floor4-zone1
+- **Name:** AP Floor 4 Zone 1
+- **IP:** 10.20.4.10
+- **Role:** Wireless Access
+- **Shape:** wifi
+- **Tags:** wifi; ap; floor-4
+- **Layer:** physical
+- **MAC:** 00:1A:2B:AP:04:01
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 434, 692
+- **Size:** 50
+- **Notes:**
+  - Cisco 9120AX
+  - Wi-Fi 6
+
+### ups-dc-1
+- **Name:** UPS DC-1
+- **IP:** 192.168.200.10
+- **Role:** Power Management
+- **Shape:** rectangle
+- **Tags:** power; ups; datacenter
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 588, 1349
+- **Size:** 50
+- **Notes:**
+  - APC Symmetra
+  - 80kVA
+  - 30 min runtime
+
+### ups-dc-2
+- **Name:** UPS DC-2
+- **IP:** 192.168.200.11
+- **Role:** Power Management
+- **Shape:** rectangle
+- **Tags:** power; ups; datacenter
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 200, 529
+- **Size:** 50
+- **Notes:**
+  - APC Symmetra
+  - 80kVA
+  - Redundant
+
+### pdu-rack-a1
+- **Name:** PDU Rack A1
+- **IP:** 192.168.200.21
+- **Role:** Power Distribution
+- **Shape:** rectangle
+- **Tags:** power; pdu; rack-a1
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 1
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a1
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1805, 2845
+- **Size:** 50
+- **Notes:**
+  - APC Switched PDU
+  - Per-outlet metering
+
+### pdu-rack-a2
+- **Name:** PDU Rack A2
+- **IP:** 192.168.200.22
+- **Role:** Power Distribution
+- **Shape:** rectangle
+- **Tags:** power; pdu; rack-a2
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 1
+- **U Height:** 1
+- **Assigned Rack:** dc-rack-a2
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1742, 2845
+- **Size:** 50
+- **Notes:**
+  - APC Switched PDU
+  - Per-outlet metering
+
+### cooling-1
+- **Name:** CRAC Unit 1
+- **IP:** 192.168.200.30
+- **Role:** Cooling
+- **Shape:** rectangle
+- **Tags:** cooling; hvac; datacenter
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 327, 1305
+- **Size:** 50
+- **Notes:**
+  - Liebert CRV
+  - Row-based cooling
+
+### cooling-2
+- **Name:** CRAC Unit 2
+- **IP:** 192.168.200.31
+- **Role:** Cooling
+- **Shape:** rectangle
+- **Tags:** cooling; hvac; datacenter
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1603, 981
+- **Size:** 50
+- **Notes:**
+  - Liebert CRV
+  - N+1 redundancy
+
+## Connections
+
+- isp-primary (Gi0/0) --> core-router-1 (Gi1/0/1)
+  - **ID:** isp1-router1
+  - **Label:** 
+  - **Color:** #10b981
+  - **Width:** 6
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Primary WAN link
+
+- isp-secondary (Gi0/0) --> core-router-2 (Gi1/0/1)
+  - **ID:** isp2-router2
+  - **Label:** 
+  - **Color:** #10b981
+  - **Width:** 6
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Backup WAN link
+
+- core-router-1 (Gi1/0/24) --> core-router-2 (Gi1/0/24)
+  - **ID:** router1-router2
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - HSRP Peering
+
+- core-router-1 --> fw-external-1
+  - **ID:** router1-fw1
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-router-2 --> fw-external-2
+  - **ID:** router2-fw2
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-external-1 --> fw-external-2
+  - **ID:** fw1-fw2
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - HA heartbeat
+
+- fw-external-1 --> core-switch-1
+  - **ID:** fw1-coresw1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-external-2 --> core-switch-2
+  - **ID:** fw2-coresw2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> core-switch-2
+  - **ID:** coresw1-coresw2
+  - **Label:** 
+  - **Color:** #3b82f6
+  - **Width:** 5
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - VPC peer-link
+
+- core-switch-1 --> fw-internal
+  - **ID:** coresw1-fwint
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> fw-internal
+  - **ID:** coresw2-fwint
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> dc-rack-a1
+  - **ID:** coresw1-racka1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dc-rack-a1
+  - **ID:** coresw2-racka1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> dc-rack-a2
+  - **ID:** coresw1-racka2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dc-rack-a2
+  - **ID:** coresw2-racka2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> dc-rack-b1
+  - **ID:** coresw1-rackb1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dc-rack-b1
+  - **ID:** coresw2-rackb1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> dc-rack-b2
+  - **ID:** coresw1-rackb2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dc-rack-b2
+  - **ID:** coresw2-rackb2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-external-1 --> dmz-rack
+  - **ID:** fw1-dmz
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - DMZ segment
+
+- fw-external-2 --> dmz-rack
+  - **ID:** fw2-dmz
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - DMZ segment
+
+- core-switch-1 --> mgmt-rack
+  - **ID:** coresw1-mgmt
+  - **Label:** 
+  - **Color:** #8b5cf6
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - OOB management
+
+- core-switch-1 --> wlc-primary
+  - **ID:** coresw1-wlc1
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> wlc-secondary
+  - **ID:** coresw2-wlc2
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- wlc-primary --> wlc-secondary
+  - **ID:** wlc1-wlc2
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - HA pair
+
+- wlc-primary --> mobile-zone-hq
+  - **ID:** wlc1-mobile-hq
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- wlc-primary --> mobile-zone-guest
+  - **ID:** wlc1-mobile-guest
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- wlc-primary --> mobile-zone-iot
+  - **ID:** wlc1-mobile-iot
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-router-1 --> branch-router-ny
+  - **ID:** router1-branch-ny
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - SD-WAN tunnel
+
+- core-router-1 --> branch-router-la
+  - **ID:** router1-branch-la
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - SD-WAN tunnel
+
+- core-router-1 --> branch-router-chi
+  - **ID:** router1-branch-chi
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - SD-WAN tunnel
+
+- core-router-1 --> branch-router-lon
+  - **ID:** router1-branch-lon
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - SD-WAN tunnel
+
+- core-router-1 --> branch-router-tokyo
+  - **ID:** router1-branch-tokyo
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - SD-WAN tunnel
+
+- core-router-1 --> cloud-aws
+  - **ID:** router1-aws
+  - **Label:** 
+  - **Color:** #f97316
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - Direct Connect
+
+- core-router-2 --> cloud-azure
+  - **ID:** router2-azure
+  - **Label:** 
+  - **Color:** #0ea5e9
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - ExpressRoute
+
+- fw-internal --> cloud-gcp
+  - **ID:** fwint-gcp
+  - **Label:** 
+  - **Color:** #22c55e
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - VPN tunnel
+
+- core-switch-1 --> dist-switch-floor1
+  - **ID:** coresw1-floor1
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> dist-switch-floor2
+  - **ID:** coresw1-floor2
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dist-switch-floor3
+  - **ID:** coresw2-floor3
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> dist-switch-floor4
+  - **ID:** coresw2-floor4
+  - **Label:** 
+  - **Color:** #475569
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dist-switch-floor1 --> endpoint-1000
+  - **ID:** floor1-endpoints
+  - **Label:** 
+  - **Color:** #94a3b8
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dist-switch-floor1 --> ap-floor1-zone1
+  - **ID:** floor1-ap1
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dist-switch-floor2 --> ap-floor2-zone1
+  - **ID:** floor2-ap2
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dist-switch-floor3 --> ap-floor3-zone1
+  - **ID:** floor3-ap3
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dist-switch-floor4 --> ap-floor4-zone1
+  - **ID:** floor4-ap4
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-internal --> proxy-server-1
+  - **ID:** fwint-proxy1
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-internal --> proxy-server-2
+  - **ID:** fwint-proxy2
+  - **Label:** 
+  - **Color:** #ef4444
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-external-1 --> vpn-concentrator
+  - **ID:** fwext1-vpn
+  - **Label:** 
+  - **Color:** #8b5cf6
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> nac-server
+  - **ID:** coresw1-nac
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> voip-cluster
+  - **ID:** coresw1-voip
+  - **Label:** 
+  - **Color:** #22c55e
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-2 --> video-conf
+  - **ID:** coresw2-video
+  - **Label:** 
+  - **Color:** #22c55e
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> security-cameras
+  - **ID:** coresw1-cameras
+  - **Label:** 
+  - **Color:** #94a3b8
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-internal --> dev-server-1
+  - **ID:** fwint-dev1
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-internal --> dev-server-2
+  - **ID:** fwint-dev2
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-internal --> test-environment
+  - **ID:** fwint-test
+  - **Label:** 
+  - **Color:** #a855f7
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core-switch-1 --> erp-system
+  - **ID:** coresw1-erp
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 3
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw-external-1 --> crm-system
+  - **ID:** fwext1-crm
+  - **Label:** 
+  - **Color:** #f59e0b
+  - **Width:** 2
+  - **Direction:** both
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Notes:**
+    - Salesforce cloud
+
+- ups-dc-1 --> dc-rack-a1
+  - **ID:** ups1-racka1
+  - **Label:** 
+  - **Color:** #fbbf24
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Power feed A
+
+- ups-dc-2 --> dc-rack-a2
+  - **ID:** ups2-racka2
+  - **Label:** 
+  - **Color:** #fbbf24
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Power feed B
+
+- ups-dc-1 --> dc-rack-b1
+  - **ID:** ups1-rackb1
+  - **Label:** 
+  - **Color:** #fbbf24
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Power feed A
+
+- ups-dc-2 --> dc-rack-b2
+  - **ID:** ups2-rackb2
+  - **Label:** 
+  - **Color:** #fbbf24
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Notes:**
+    - Power feed B
+
+- cooling-1 --> dc-rack-a1
+  - **ID:** cooling1-racka1
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+  - **Notes:**
+    - Cooling zone
+
+- cooling-2 --> dc-rack-b1
+  - **ID:** cooling2-rackb1
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 2
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+  - **Notes:**
+    - Cooling zone
+
+- undefined --> undefined
+  - **ID:** custom-1765237881452
+  - **Label:** 
+  - **Color:** #c800ff
+  - **Width:** 4
+  - **Direction:** forward
+  - **Routing:** orthogonal
+  - **Type:** custom
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Points:** 3492,1527 3501,1831 3304,1732
+
+## Zones
+
+### rect-1765237540610
+- **Position:** 2879, 160
+- **Size:** 992 x 539
+- **Color:** #f97316
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+
+### rect-1765237681216
+- **Position:** 448, 1672
+- **Size:** 916 x 924
+- **Color:** #c800ff
+- **Style:** outlined
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+
+## Text Labels
+
+### text-1765237828167
+- **Content:** Double click on desktop<br>or long press on mobile<br>to enter rack canvas view
+- **Position:** 3411, 1390
+- **Font Size:** 46
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** italic
+- **Text Align:** middle
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+

@@ -687,7 +687,8 @@
     "rackFrameStroke": "#4fd1c5",
     "rackLineColor": "#475569",
     "rackTextColor": "#4fd1c5",
-    "viewOnly": false
+    "viewOnly": false,
+    "defaultEdgeRouting": "curved"
   },
   "canvas": {
     "zoom": 0.9828345045578523,
@@ -3252,7 +3253,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "isp2-router2",
@@ -3269,7 +3271,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-router2",
@@ -3286,7 +3289,8 @@
             "toPort": "Gi1/0/24",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-fw1",
@@ -3301,7 +3305,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-fw2",
@@ -3316,7 +3321,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-fw2",
@@ -3333,7 +3339,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-coresw1",
@@ -3348,7 +3355,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-coresw2",
@@ -3363,7 +3371,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-coresw2",
@@ -3380,7 +3389,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-fwint",
@@ -3395,7 +3405,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-fwint",
@@ -3410,7 +3421,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka1",
@@ -3425,7 +3437,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka1",
@@ -3440,7 +3453,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka2",
@@ -3455,7 +3469,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka2",
@@ -3470,7 +3485,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb1",
@@ -3485,7 +3501,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb1",
@@ -3500,7 +3517,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb2",
@@ -3515,7 +3533,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb2",
@@ -3530,7 +3549,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-dmz",
@@ -3547,7 +3567,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-dmz",
@@ -3564,7 +3585,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-mgmt",
@@ -3581,7 +3603,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-wlc1",
@@ -3596,7 +3619,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-wlc2",
@@ -3611,7 +3635,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-wlc2",
@@ -3628,7 +3653,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-hq",
@@ -3643,7 +3669,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-guest",
@@ -3658,7 +3685,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-iot",
@@ -3673,7 +3701,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-ny",
@@ -3690,7 +3719,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-la",
@@ -3707,7 +3737,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-chi",
@@ -3724,7 +3755,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-lon",
@@ -3741,7 +3773,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-tokyo",
@@ -3758,7 +3791,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-aws",
@@ -3775,7 +3809,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-azure",
@@ -3792,7 +3827,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-gcp",
@@ -3809,7 +3845,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor1",
@@ -3824,7 +3861,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor2",
@@ -3839,7 +3877,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor3",
@@ -3854,7 +3893,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor4",
@@ -3869,7 +3909,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-endpoints",
@@ -3884,7 +3925,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-ap1",
@@ -3899,7 +3941,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor2-ap2",
@@ -3914,7 +3957,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor3-ap3",
@@ -3929,7 +3973,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor4-ap4",
@@ -3944,7 +3989,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy1",
@@ -3959,7 +4005,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy2",
@@ -3974,7 +4021,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-vpn",
@@ -3989,7 +4037,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-nac",
@@ -4004,7 +4053,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-voip",
@@ -4019,7 +4069,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-video",
@@ -4034,7 +4085,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-cameras",
@@ -4049,7 +4101,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev1",
@@ -4064,7 +4117,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev2",
@@ -4079,7 +4133,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-test",
@@ -4094,7 +4149,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-erp",
@@ -4109,7 +4165,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-crm",
@@ -4126,7 +4183,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-racka1",
@@ -4143,7 +4201,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-racka2",
@@ -4160,7 +4219,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-rackb1",
@@ -4177,7 +4237,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-rackb2",
@@ -4194,7 +4255,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling1-racka1",
@@ -4211,7 +4273,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling2-rackb1",
@@ -4228,7 +4291,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765237881452",
@@ -4251,7 +4315,8 @@
                 "y": 1732.2144775390625
               }
             ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           }
         ]
       },
@@ -4814,7 +4879,8 @@
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
-        "viewOnly": false
+        "viewOnly": false,
+        "defaultEdgeRouting": "orthogonal"
       }
     },
     {
@@ -5508,13 +5574,91 @@
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
-        "viewOnly": false
+        "viewOnly": false,
+        "defaultEdgeRouting": "curved"
       }
     }
   ],
   "currentTabIndex": 1,
   "encryptedSections": {},
   "auditLog": [
+    {
+      "timestamp": 1766190353695,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190348545,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190340714,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190337770,
+      "type": "node",
+      "description": "apply routing to all",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190327814,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190321554,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190320188,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190293090,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190290259,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022128543,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022121954,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-18.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
     {
       "timestamp": 1766022111697,
       "type": "save",

@@ -1,6 +1,21 @@
 #### CHANGE LOG
 **We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
 
+### Version 3.9.9.7 : 12/19/25 Import/export, saving and updates for editors
+* **Improved the import/export system**  [read more: import-export-save.md](import-export-save.md)
+* **Added markdown export and import**  Ala, Git versioning!
+  * Edit and create in your favorite markdown editor
+  * This also allows git versioning!
+* **Added csv export and import**  
+  * Edit and create in your favorite csv editor
+* **Added print option**  
+  * Removes the background and makes the entire canvas print friendly
+* **New import/Export mobile menu**  
+* **Bug Fixes**  
+  * Fixed minimap rendering nodes twice (performance)
+  * Fixed event listener memory leak in edge drag handlers
+  * Fixed Mac keyboard shortcuts (SORRY APPLE)
+
 ### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
 * **Big performance update**
 * **Orthogonal routing update** [changelog.md](changelog.md)

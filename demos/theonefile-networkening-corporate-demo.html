@@ -1622,6 +1622,160 @@
         z-index: 9999;
         pointer-events: none;
       }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-btn {
+  padding: 6px 12px;
+  background: var(--btn-bg, var(--panel));
+  color: var(--btn-text, var(--text-main));
+  border: 1px solid var(--edge-main);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dropdown-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: var(--panel);
+  border: 1px solid var(--edge-main);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 100000;
+  margin-top: 4px;
+  overflow: hidden;
+}
+header {
+  z-index: 99999;
+  position: relative;
+}
+.dropdown-menu.open {
+  display: block;
+}
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+.dropdown-menu button:hover {
+  background: var(--panel-alt);
+  color: var(--accent);
+}
+.dropdown-divider {
+  height: 1px;
+  background: var(--edge-main);
+  margin: 4px 0;
+}
+#mobile-export-btn,
+#mobile-import-btn {
+  display: none;
+}
+@media (max-width: 900px) {
+  .save-row .dropdown {
+    display: none !important;
+  }
+  #mobile-export-btn,
+  #mobile-import-btn {
+    display: inline-block;
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0.5cm;
+  }
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: visible !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #canvas-viewport,
+  #canvas-viewport *,
+  #map,
+  #map * {
+    visibility: visible;
+  }
+  #canvas-viewport {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    overflow: visible !important;
+  }
+  #map {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: white !important;
+    background-image: none !important;
+  }
+  #canvas-grid {
+    display: none !important;
+  }
+  main, .topology-panel {
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  #map circle[class*="node"],
+  #map .node-shape,
+  #map .node-group circle,
+  #map .node-group rect,
+  #map .node-group path,
+  #map .node-group polygon {
+    fill: white !important;
+    stroke: #000 !important;
+    stroke-width: 2px !important;
+  }
+
+  #map text {
+    fill: #000 !important;
+    stroke: none !important;
+  }
+  #map .edge,
+  #map polyline,
+  #map line:not([class*="grid"]) {
+    stroke: #333 !important;
+  }
+  #map .rect-group rect {
+    stroke: #333 !important;
+  }
+  header, .sidebar, .mobile-footer, .minimap-zoom-wrapper,
+  .draw-toolbar, .topology-toolbar, .legend-container,
+  .bulk-toolbar, #bulk-toolbar-mobile, .dropdown-menu,
+  #canvas-hint, .node-panel, .edge-panel, .text-panel, .rect-panel {
+    display: none !important;
+  }
+}
     </style>
   </head>
   <body style="background: radial-gradient(circle at center top, rgb(30, 37, 50) 0px, rgb(5, 6, 8) 70%);" class="">
@@ -1751,6 +1905,33 @@
         </div>
       </div>
     </div>
+    <div class="modal" id="mobile-export-modal">
+      <div class="modal-content" style="max-width: 320px;">
+        <h3 style="margin: 0 0 20px 0;">Export</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button onclick="screenshotCanvas(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">PNG Image</button>
+          <button onclick="exportCanvasSVG(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">SVG Vector</button>
+          <button onclick="exportJSONFile(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">JSON</button>
+          <button onclick="exportMarkdown(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">Markdown</button>
+          <button onclick="exportCSV(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">CSV</button>
+          <button onclick="printTopology(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">Print...</button>
+		  <button onclick="showFormatHelp(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">Import Help</button>
+        </div>
+        <button onclick="document.getElementById('mobile-export-modal').classList.remove('active');" style="margin-top: 20px; padding: 12px; background: var(--danger); border: none; border-radius: 8px; color: white; font-size: 16px; cursor: pointer; width: 100%;">Cancel</button>
+      </div>
+    </div>
+    <div class="modal" id="mobile-import-modal">
+      <div class="modal-content" style="max-width: 320px;">
+        <h3 style="margin: 0 0 20px 0;">Import</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button onclick="document.getElementById('import-json-file').click(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">JSON</button>
+          <button onclick="document.getElementById('import-markdown-file').click(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">Markdown</button>
+          <button onclick="document.getElementById('import-csv-file').click(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">CSV</button>
+          <button onclick="showFormatHelp(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;">Export Help</button>
+        </div>
+        <button onclick="document.getElementById('mobile-import-modal').classList.remove('active');" style="margin-top: 20px; padding: 12px; background: var(--danger); border: none; border-radius: 8px; color: white; font-size: 16px; cursor: pointer; width: 100%;">Cancel</button>
+      </div>
+    </div>
     <div class="modal" id="edit-modal">
       <div class="modal-content">
         <h3 id="modal-title">Edit Name</h3>
@@ -1778,6 +1959,7 @@
           <button class="help-tab active" data-tab="general" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--accent); color: var(--bg); border-radius: 6px; cursor: pointer; font-weight: 600;">General</button>
           <button class="help-tab" data-tab="desktop" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--panel); color: var(--text-main); border-radius: 6px; cursor: pointer; font-weight: 600;">Desktop</button>
           <button class="help-tab" data-tab="mobile" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--panel); color: var(--text-main); border-radius: 6px; cursor: pointer; font-weight: 600;">Mobile</button>
+		  <button class="help-tab" data-tab="formats" style="padding: 8px 16px; border: 1px solid var(--edge-main); background: var(--panel); color: var(--text-main); border-radius: 6px; cursor: pointer; font-weight: 600;">Import/Export</button>
         </div>
         <div id="help-tab-general" class="help-tab-content" style="display: block;">
           <ul style="margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
@@ -1883,21 +2065,69 @@
               <td style="padding: 8px;">Zoom in/out</td>
             </tr>
             <tr style="border-bottom: 1px solid var(--edge-main);">
-              <td style="padding: 8px;"><strong>Double-tap node</strong></td>
+              <td style="padding: 8px;"><strong>Double tap node</strong></td>
               <td style="padding: 8px;">Add/remove from selection</td>
             </tr>
           </tbody></table>
           <h4 style="color: var(--accent); margin-bottom: 12px;">Rack View</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
             <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
-              <td style="padding: 8px;"><strong>Long-press rack</strong></td>
+              <td style="padding: 8px;"><strong>Long press rack</strong></td>
               <td style="padding: 8px;">Enter rack view</td>
             </tr>
             <tr style="border-bottom: 1px solid var(--edge-main);">
-              <td style="padding: 8px;"><strong>Double-tap empty</strong></td>
+              <td style="padding: 8px;"><strong>Double tap empty</strong></td>
               <td style="padding: 8px;">Exit rack view</td>
             </tr>
           </tbody></table>
+        </div>
+		<div id="help-tab-formats" class="help-tab-content" style="display: none;">
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Export Help</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>HTML</strong></td>
+                <td style="padding: 8px;">Complete self contained file and the default save method. When in doubt, choose this. Use the Save HTML button for this</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>JSON</strong></td>
+                <td style="padding: 8px;">Full backup. Editable in your favorite text editor</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>Markdown</strong></td>
+                <td style="padding: 8px;">Full backup. Editable in your favorite text editor</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>CSV</strong></td>
+                <td style="padding: 8px;">Full backup in header, nodes in spreadsheet rows</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>PNG</strong></td>
+                <td style="padding: 8px;">Standard image of current canvas tab</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>SVG</strong></td>
+                <td style="padding: 8px;">Vector image, scalable and editable image of current canvas tab</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4 style="color: var(--accent); margin-bottom: 12px;">Import Help</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>JSON</strong></td>
+                <td style="padding: 8px;">Replaces all data</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>Markdown</strong></td>
+                <td style="padding: 8px;">Replaces all data</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong>CSV</strong></td>
+                <td style="padding: 8px;">Choose full restore or add nodes only. Allows quickly creating nodes with a spreadsheet and importing into an existing save.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <div class="modal-buttons" style="margin-top: 16px;">
           <button class="btn-cancel" id="save-info-close">Close</button>
@@ -2230,14 +2460,6 @@
             </div>
           </div>
         </details>
-        <details class="style-section" open="">
-          <summary>Import / Export / Upgrade JSON</summary>
-          <div class="style-content">
-            <button id="export-data-btn" style="width:100%;margin-bottom:10px;padding:10px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Export JSON</button>
-            <button id="import-data-btn" style="width:100%;padding:10px;background:var(--panel);color:var(--text-main);border:1px solid var(--edge-main);border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;">Import JSON</button>
-            <input type="file" id="import-data-file" accept=".json" style="display:none">
-          </div>
-        </details>
          <details class="style-section">
           <summary>Auto Status Checking</summary>
           <div class="style-content">
@@ -2539,11 +2761,38 @@
       <div class="title-block">
         <h1 id="page-title" class="editable-page-title">The One File Corporate</h1>
         <div class="save-row">
-          <button id="save-file-btn" class="save-btn" type="button">Save File</button>
+          <button id="save-file-btn" class="save-btn" type="button">Save HTML</button>
           <label style="display: flex;align-items: center;gap: 4px;font-size: 12px;color: var(--text-soft);cursor: pointer;user-select: none;">
-          <input type="checkbox" id="encrypt-toggle" style="cursor: pointer">
-          <span title="Encrypt data with password">Encrypt</span>
+            <input type="checkbox" id="encrypt-toggle" style="cursor: pointer">
+            <span title="Encrypt data with password">🔒</span>
           </label>
+          <div class="dropdown" id="export-dropdown">
+            <button class="dropdown-btn" type="button">Export ▾</button>
+            <div class="dropdown-menu">
+              <button type="button" onclick="screenshotCanvas()">PNG Image</button>
+              <button type="button" onclick="exportCanvasSVG()">SVG Vector</button>
+              <div class="dropdown-divider"></div>
+              <button type="button" onclick="exportJSONFile()">JSON</button>
+              <button type="button" onclick="exportMarkdown()">Markdown</button>
+              <button type="button" onclick="exportCSV()">CSV</button>
+              <div class="dropdown-divider"></div>
+              <button type="button" onclick="printTopology()">Print...</button>
+			  <div class="dropdown-divider"></div>
+			  <button type="button" onclick="showFormatHelp()">Export Help</button>
+            </div>
+          </div>
+          <div class="dropdown" id="import-dropdown">
+            <button class="dropdown-btn" type="button">Import ▾</button>
+            <div class="dropdown-menu">
+              <button type="button" onclick="document.getElementById('import-data-file').click()">JSON</button>
+              <button type="button" onclick="document.getElementById('import-markdown-file').click()">Markdown</button>
+              <button type="button" onclick="document.getElementById('import-csv-file').click()">CSV</button>
+              <div class="dropdown-divider"></div>
+              <button type="button" onclick="showFormatHelp()">Import Help</button>
+            </div>
+          </div>
+          <input type="file" id="import-markdown-file" accept=".md,.markdown,.txt" style="display:none">
+          <input type="file" id="import-csv-file" accept=".csv,.txt" style="display:none">
           <span id="save-help-btn" class="help-icon" title="Why save?">?</span>
         </div>
       </div>
@@ -2561,8 +2810,8 @@
         <button id="audit-log-btn" title="View audit log" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Audit</button>
         <button id="port-map-btn" title="View all port connections" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Ports</button>
         <button id="secrets-btn" title="Manage encrypted notes" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Notes</button>
-        <button onclick="screenshotCanvas()" title="Export canvas as PNG image" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">PNG</button>
-        <button onclick="exportCanvasSVG()" title="Export canvas as SVG vector" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">SVG</button>
+		<button id="mobile-export-btn" title="Export topology" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Export</button>
+        <button id="mobile-import-btn" title="Import topology" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;">Import</button>
         <button id="settings-btn" title="Page settings">⚙️</button>
       </div>
       <button id="mobile-menu-toggle" class="mobile-menu-btn">☰</button>
@@ -2657,18 +2906,18 @@
         <div class="canvas-hint" id="canvas-hint"></div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Trusted Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Secure Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">DMZ</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(71, 85, 105); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Main ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Alternate ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(168, 85, 247); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(14, 165, 233); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(34, 197, 94); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(148, 163, 184); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 191, 36); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(56, 189, 248); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(200, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="1070.1654680146785 -170.2288153174373 3002.171020164141 2251.628265123106" style=""></svg>
+          <svg id="map" viewBox="-74.99705309342698 -7.395887697909075 4069.861183597212 3052.395887697909" style=""></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <rect class="minimap-viewport" id="minimap-viewport" x="1070.1654680146785" y="-170.2288153174373" width="3002.171020164141" height="2251.628265123106"></rect>
+              <rect class="minimap-viewport" id="minimap-viewport" x="-74.99705309342698" y="-7.395887697909075" width="4069.861183597212" height="3052.395887697909"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">133%</div>
+            <div class="zoom-level" id="zoom-level">98%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -2695,12 +2944,12 @@
             <circle cx="26" cy="3" r="2"></circle>
           </svg>
         </div>
-        <div id="node-panel" style="display: block;">
-          <div class="details-name editable-text" id="node-name">Core Router 1</div>
-          <div class="details-ip editable-text" id="node-ip">10.0.0.1</div>
+        <div id="node-panel" style="display: none;">
+          <div class="details-name editable-text" id="node-name">OPNSENSE</div>
+          <div class="details-ip editable-text" id="node-ip">192.168.100.1</div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">MAC:</span>
-            <span class="editable-text" id="node-mac" style="flex: 1; cursor: pointer; color: var(--text-main);">00:1A:2B:3C:4D:01</span>
+            <span class="editable-text" id="node-mac" style="flex: 1; cursor: pointer; color: var(--text-main);">--</span>
           </div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Rack Unit:</span>
@@ -2708,7 +2957,7 @@
           </div>
           <div class="details-info-row" id="uheight-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">U Height:</span>
-            <span class="editable-text" id="node-uheight" style="flex: 1; cursor: pointer; color: var(--text-main);">2U</span>
+            <span class="editable-text" id="node-uheight" style="flex: 1; cursor: pointer; color: var(--text-main);">1U</span>
           </div>
           <div class="details-info-row" id="assigned-rack-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Assigned Rack:</span>
@@ -2733,14 +2982,14 @@
               <option value="application">Application</option>
             </select>
           </div>
-          <div class="details-role" id="node-role">Core Routing</div>
+          <div class="details-role" id="node-role">WAN</div>
 		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
             <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
-          <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px; display: block;">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">9</span>)</summary>
-            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Primary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 2</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 1</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">NYC Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">LA Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Chicago Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">London Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Tokyo Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">AWS Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
+          <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">0</span>)</summary>
+            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
           <div class="badge-row" id="node-tags"></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -2752,7 +3001,7 @@
           <div class="size-controls">
             <label>Size:</label>
             <input type="range" id="size-slider" min="20" max="200" value="55">
-            <span id="size-value">55</span>
+            <span id="size-value">127</span>
             <button id="reset-size">Reset</button>
           </div>
           <details class="style-section">
@@ -2770,7 +3019,7 @@
               </div>
               <div class="style-row">
                 <label>Shape:</label>
-                <select id="shape-select"><option value="custom-icon">Custom Icon</option>
+                <select id="shape-select">
                   <optgroup label="Basic Shapes">
             <option value="circle">Circle</option>
             <option value="square">Square</option>
@@ -2919,7 +3168,7 @@
               <input type="checkbox" id="node-pingable" style="cursor: pointer;">
               <span style="font-size: 14px;">Enable status check for this node</span>
               </label>
-              <div id="node-ping-options" style="display: none;">
+              <div id="node-ping-options" style="display: block;">
                 <div class="style-row">
                   <label>Protocol:</label>
                   <select id="node-ping-protocol">
@@ -9424,8 +9673,8 @@
       "y": 329.99503430389154
     },
     "fw-external-1": {
-      "x": 3180.0930104598783,
-      "y": 910.63480205007
+      "x": 3221.7385182723783,
+      "y": 1016.1364499992887
     },
     "fw-external-2": {
       "x": 1915.5213706410505,
@@ -10002,16 +10251,16 @@
     "rackLineColor": "#475569",
     "rackTextColor": "#4fd1c5",
     "viewOnly": false,
+    "defaultEdgeRouting": "orthogonal",
     "autoPingEnabled": false,
-    "autoPingInterval": 30,
-    "defaultEdgeRouting": "orthogonal"
+    "autoPingInterval": 30
   },
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.3323691332485461,
-    "panX": 1070.1654680146785,
-    "panY": -170.2288153174373
+    "zoom": 0.9828345045578523,
+    "panX": -74.99705309342698,
+    "panY": -7.395887697909075
   },
   "savedTopologyView": {
     "zoom": 0.9325110211947125,
@@ -13695,8 +13944,8 @@
           "y": 329.99503430389154
         },
         "fw-external-1": {
-          "x": 3180.0930104598783,
-          "y": 910.63480205007
+          "x": 3221.7385182723783,
+          "y": 1016.1364499992887
         },
         "fw-external-2": {
           "x": 1915.5213706410505,
@@ -14339,9 +14588,9 @@
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
         "viewOnly": false,
+        "defaultEdgeRouting": "orthogonal",
         "autoPingEnabled": false,
-        "autoPingInterval": 30,
-        "defaultEdgeRouting": "orthogonal"
+        "autoPingInterval": 30
       }
     },
     {
@@ -15121,7 +15370,8 @@
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
-        "viewOnly": false
+        "viewOnly": false,
+        "defaultEdgeRouting": "curved"
       }
     }
   ],
@@ -15129,28 +15379,112 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1766023189251,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766023188450,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766023185856,
+      "timestamp": 1766190865539,
       "type": "edit",
       "description": "apply routing to all",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766023177977,
+      "timestamp": 1766190855067,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190792123,
+      "type": "export",
+      "description": "Exported CSV: the-one-file-corporate-nodes.csv",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190784999,
+      "type": "export",
+      "description": "Exported Markdown: the-one-file-corporate.md",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190782807,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190744604,
+      "type": "export",
+      "description": "Exported Markdown: the-one-file.md",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190740495,
+      "type": "export",
+      "description": "Exported JSON: the-one-file.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190738042,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190727569,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190721141,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190717499,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190710946,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190705273,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190703463,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190695709,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190688417,
       "type": "import",
       "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
@@ -16307,6 +16641,7 @@
        rackLineColor: "#475569",
        rackTextColor: "#4fd1c5",
 	   viewOnly: false,
+	   defaultEdgeRouting: "curved",
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
 	  function isViewOnly() {
@@ -18846,7 +19181,11 @@
       }
       forgeTheTopology();
       };
-      const lineUpHandler = () => { lineDragging = false; };
+      const lineUpHandler = () => {
+        lineDragging = false;
+        document.removeEventListener("mousemove", lineMoveHandler);
+        document.removeEventListener("mouseup", lineUpHandler);
+      };
       document.addEventListener("mousemove", lineMoveHandler);
       document.addEventListener("mouseup", lineUpHandler);
       svg.appendChild(poly);
@@ -22735,27 +23074,6 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
          }
         }
        });
-       document.getElementById("export-data-btn").addEventListener("click", () => {
-        const data = captureTheQuickening();
-        const jsonStr = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonStr], {
-         type: "application/json"
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        const safeTitle = (PAGE_STATE.title || "network-topology").toLowerCase().replace(/[^a-z0-9\-]+/g, "-");
-        const timestamp = new Date().toISOString().split("T")[0];
-        a.download = `${safeTitle}-data-${timestamp}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-		logAuditEvent("export", `Exported JSON: ${a.download}`);
-       });
-       document.getElementById("import-data-btn").addEventListener("click", () => {
-        document.getElementById("import-data-file").click();
-       });
        document.getElementById("import-data-file").addEventListener("change", async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -23842,6 +24160,7 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
       forgeTheTopology();
       }
       function handleKeyDown(event) {
+       if (event.metaKey && !event.ctrlKey) event.ctrlKey = true;
        if (event.target.tagName === "INPUT" || event.target.tagName === "TEXTAREA" || event.target.isContentEditable) {
         return;
        }
@@ -25715,5 +26034,677 @@ handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
        updateTopologyToolbarVisibility();
        }, 100);
       });
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.dropdown').forEach(dropdown => {
+    const btn = dropdown.querySelector('.dropdown-btn');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.dropdown-menu.open').forEach(m => {
+        if (m !== menu) m.classList.remove('open');
+      });
+      menu.classList.toggle('open');
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+    }
+  });
+  document.querySelectorAll('.dropdown-menu button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.dropdown-menu.open').forEach(m => m.classList.remove('open'));
+      }, 100);
+    });
+  });
+  });
+function showFormatHelp() {
+  document.getElementById('save-info-modal').classList.add('active');
+  document.querySelectorAll('.help-tab').forEach(t => {
+    t.style.background = 'var(--panel)';
+    t.style.color = 'var(--text-main)';
+  });
+  document.querySelectorAll('.help-tab-content').forEach(c => c.style.display = 'none');
+  const formatsTab = document.querySelector('.help-tab[data-tab="formats"]');
+  if (formatsTab) {
+    formatsTab.style.background = 'var(--accent)';
+    formatsTab.style.color = 'var(--bg)';
+  }
+  document.getElementById('help-tab-formats').style.display = 'block';
+}
+function printTopology() {
+  const svg = document.getElementById('map');
+  if (!svg) { window.print(); return; }
+  const originalViewBox = svg.getAttribute('viewBox');
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  let hasContent = false;
+  Object.entries(savedPositions).forEach(([id, pos]) => {
+    const node = NODE_DATA[id];
+    if (!node) return;
+    if (currentView.mode !== 'rack' && node.assignedRack) return;
+    const size = savedSizes[id] || 50;
+    hasContent = true;
+    minX = Math.min(minX, pos.x - size);
+    minY = Math.min(minY, pos.y - size);
+    maxX = Math.max(maxX, pos.x + size);
+    maxY = Math.max(maxY, pos.y + size);
+  });
+  RECT_DATA.list.forEach(rect => {
+    hasContent = true;
+    minX = Math.min(minX, rect.x);
+    minY = Math.min(minY, rect.y);
+    maxX = Math.max(maxX, rect.x + rect.width);
+    maxY = Math.max(maxY, rect.y + rect.height);
+  });
+  TEXT_DATA.list.forEach(text => {
+    hasContent = true;
+    minX = Math.min(minX, text.x - 100);
+    minY = Math.min(minY, text.y - 50);
+    maxX = Math.max(maxX, text.x + 300);
+    maxY = Math.max(maxY, text.y + 50);
+  });
+  EDGE_DATA.list.forEach(edge => {
+    if (edge.points && edge.points.length > 0) {
+      edge.points.forEach(p => {
+        hasContent = true;
+        minX = Math.min(minX, p.x - 10);
+        minY = Math.min(minY, p.y - 10);
+        maxX = Math.max(maxX, p.x + 10);
+        maxY = Math.max(maxY, p.y + 10);
+      });
+    }
+  });
+  if (!hasContent) { window.print(); return; }
+  const padding = 100;
+  minX -= padding; minY -= padding; maxX += padding; maxY += padding;
+  const width = maxX - minX;
+  const height = maxY - minY;
+  const grid = document.getElementById('canvas-grid');
+  const gridDisplay = grid ? grid.style.display : '';
+  if (grid) grid.style.display = 'none';
+  svg.setAttribute('viewBox', `${minX} ${minY} ${width} ${height}`);
+  const originalWidth = svg.style.width;
+  const originalHeight = svg.style.height;
+  svg.style.width = '100%';
+  svg.style.height = '100%';
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      svg.setAttribute('viewBox', originalViewBox);
+      svg.style.width = originalWidth;
+      svg.style.height = originalHeight;
+      if (grid) grid.style.display = gridDisplay;
+    }, 500);
+  }, 100);
+}
+function exportJSONFile() {
+  const data = captureTheQuickening();
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const safeTitle = (PAGE_STATE.title || "network-topology").toLowerCase().replace(/[^a-z0-9\-]+/g, "-");
+  a.download = `${safeTitle}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  logAuditEvent("export", `Exported JSON: ${a.download}`);
+}
+function exportCSV() {
+  const safeTitle = (PAGE_STATE.title || 'topology').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const timestamp = new Date().toISOString();
+  const config = captureTheQuickening();
+  let csv = `#THEONEFILE_CONFIG:${JSON.stringify(config)}\n`;
+  csv += `#\n# ${PAGE_STATE.title || 'Network Topology'} - Node List\n`;
+  csv += `# Exported from The One File on ${timestamp}\n`;
+  const headers = ['name','ip','role','shape','tags','layer','mac','rackUnit','uHeight','assignedRack','rackCapacity','isRack','locked','groupId','x','y','size','notes','styles'];
+  csv += headers.join(',') + '\n';
+  Object.entries(NODE_DATA).forEach(([id, node]) => {
+    const pos = savedPositions[id] || { x: 0, y: 0 };
+    const size = savedSizes[id] || 50;
+    const styles = savedStyles[id] ? JSON.stringify(savedStyles[id]) : '';
+    const row = [
+      csvEscape(node.name || ''), csvEscape(node.ip || ''), csvEscape(node.role || ''),
+      node.shape || 'circle', csvEscape((node.tags || []).join(';')), node.layer || 'physical',
+      csvEscape(node.mac || ''), csvEscape(node.rackUnit || ''), node.uHeight || '1',
+      node.assignedRack || '', node.rackCapacity || '', node.isRack ? 'true' : 'false',
+      node.locked ? 'true' : 'false', node.groupId || '', Math.round(pos.x), Math.round(pos.y),
+      size, csvEscape((node.notes || []).join('|')), csvEscape(styles)
+    ];
+    csv += row.join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeTitle}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  logAuditEvent('export', `Exported CSV: ${a.download}`);
+}
+function csvEscape(val) {
+  if (val === null || val === undefined) return '';
+  const str = String(val);
+  if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  return str;
+}
+document.getElementById('import-csv-file')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  try {
+    const text = await file.text();
+    const lines = text.split(/\r?\n/);
+    let config = null;
+    let dataLines = [];
+    let headers = null;
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+      if (trimmed.startsWith('#THEONEFILE_CONFIG:')) {
+        try { config = JSON.parse(trimmed.substring(19)); } catch (err) { console.warn('Failed to parse CSV config:', err); }
+        continue;
+      }
+      if (trimmed.startsWith('#')) continue;
+      if (!headers) { headers = parseCSVLine(trimmed).map(h => h.toLowerCase().trim()); continue; }
+      dataLines.push(trimmed);
+    }
+    if (!headers || dataLines.length === 0) { alert('CSV file has no data rows'); return; }
+    const nameIdx = headers.indexOf('name');
+    if (nameIdx === -1) { alert('CSV must have a "name" column'); return; }
+    const nodes = dataLines.map(line => {
+      const values = parseCSVLine(line);
+      const node = {};
+      headers.forEach((h, idx) => { node[h] = values[idx] || ''; });
+      return node;
+    });
+    const hasFullBackup = config && config.documentTabs;
+    const hasConfig = config && (config.pageState || config.page);
+    
+    let importMode = 'add';
+    
+    if (hasFullBackup) {
+      const choice = confirm(
+        `This CSV contains a full backup.\n\n` +
+        `• ${nodes.length} nodes in CSV data\n` +
+        `• ${config.documentTabs?.length || 1} tab(s) in backup\n` +
+        `• ${config.edgeData?.list?.length || 0} connections in backup\n\n` +
+        `Click OK for FULL RESTORE (replace all data)\n` +
+        `Click Cancel to just ADD the ${nodes.length} nodes`
+      );
+      if (choice) {
+        importMode = 'full';
+      }
+    } else {
+      let confirmMsg = `Import ${nodes.length} nodes from CSV?\n\n`;
+      confirmMsg += hasConfig ? 'This will ADD nodes and RESTORE settings/theme.\n' : 'This will ADD nodes to your existing topology.\n';
+      confirmMsg += '\nNote: CSV does not include connections, zones, or text labels.';
+      if (!confirm(confirmMsg)) return;
+    }
+    
+    pushUndo('import csv');
+    
+    if (importMode === 'full' && hasFullBackup) {
+      NODE_DATA = config.nodeData || {};
+      EDGE_DATA = config.edgeData || { list: [] };
+      EDGE_LEGEND = config.edgeLegend || {};
+      RECT_DATA = config.rectData || { list: [] };
+      TEXT_DATA = config.textData || { list: [] };
+      savedPositions = config.nodePositions || {};
+      savedSizes = config.nodeSizes || {};
+      savedStyles = config.nodeStyles || {};
+      if (config.page) {
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, config.page);
+        wieldThePower();
+      }
+      if (config.canvas) {
+        canvasState.zoom = config.canvas.zoom || 1;
+        canvasState.panX = config.canvas.panX || 0;
+        canvasState.panY = config.canvas.panY || 0;
+      }
+      if (config.page?.title) {
+        document.title = config.page.title;
+        document.querySelector(".editable-page-title").textContent = config.page.title;
+      }
+      if (config.documentTabs) {
+        documentTabs = config.documentTabs;
+        currentTabIndex = config.currentTabIndex || 0;
+      }
+      if (config.savedTopologyView) {
+        savedTopologyView = config.savedTopologyView;
+      }
+      if (config.encryptedSections) {
+        encryptedSections = config.encryptedSections;
+      }
+      if (config.auditLog && Array.isArray(config.auditLog)) {
+        auditLog = config.auditLog;
+        try {
+          localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
+        } catch (e) {
+          console.warn("Failed to sync audit log to localStorage:", e);
+        }
+      }
+      Object.values(NODE_DATA).forEach(node => {
+        if (!node.tags) node.tags = [];
+        if (!node.notes) node.notes = [];
+      });
+      EDGE_DATA.list.forEach(edge => {
+        if (!edge.notes) edge.notes = [];
+      });
+      forgeTheTopology();
+      forgeTheLegend();
+      updateViewBox();
+      logAuditEvent('import', `Imported CSV (full restore): ${file.name}`);
+      alert(`Full restore complete from CSV backup`);
+      return;
+    }
+    if (hasConfig) {
+      Object.assign(PAGE_STATE, config.pageState);
+      if (config.canvasView) {
+        canvasState.zoom = config.canvasView.zoom || 1;
+        canvasState.panX = config.canvasView.panX || 0;
+        canvasState.panY = config.canvasView.panY || 0;
+      }
+      if (config.legend) Object.assign(EDGE_LEGEND, config.legend);
+      wieldThePower();
+    }
+    let gridX = 200, gridY = 200;
+    const spacing = 150;
+    const perRow = Math.ceil(Math.sqrt(nodes.length));
+    let gridIndex = 0;
+    nodes.forEach((n) => {
+      let baseId = (n.name || 'node').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      if (!baseId) baseId = 'node';
+      let nodeId = baseId;
+      let counter = 1;
+      while (NODE_DATA[nodeId]) { nodeId = `${baseId}-${counter}`; counter++; }
+      NODE_DATA[nodeId] = {
+        name: n.name || 'Unnamed', ip: n.ip || '', role: n.role || '', shape: n.shape || 'circle',
+        tags: n.tags ? n.tags.split(';').map(t => t.trim()).filter(t => t) : [],
+        notes: n.notes ? n.notes.split('|').map(t => t.trim()).filter(t => t) : [],
+        layer: n.layer || 'physical', mac: n.mac || '', rackUnit: n.rackunit || '',
+        uHeight: n.uheight || '1', assignedRack: n.assignedrack || '', rackCapacity: n.rackcapacity || '',
+        isRack: n.israck === 'true', locked: n.locked === 'true', groupId: n.groupid || null
+      };
+      const hasPosition = n.x && n.y && !isNaN(parseFloat(n.x)) && !isNaN(parseFloat(n.y));
+      if (hasPosition) {
+        savedPositions[nodeId] = { x: parseFloat(n.x), y: parseFloat(n.y) };
+      } else {
+        const row = Math.floor(gridIndex / perRow);
+        const col = gridIndex % perRow;
+        savedPositions[nodeId] = { x: gridX + col * spacing, y: gridY + row * spacing };
+        gridIndex++;
+      }
+      if (n.size && !isNaN(parseFloat(n.size))) savedSizes[nodeId] = parseFloat(n.size);
+      if (n.styles) { try { savedStyles[nodeId] = JSON.parse(n.styles); } catch (err) {} }
+    });
+    forgeTheTopology();
+    updateViewBox();
+    logAuditEvent('import', `Imported CSV: ${file.name} (${nodes.length} nodes)`);
+    alert(`Successfully imported ${nodes.length} nodes`);
+  } catch (err) {
+    console.error('CSV import error:', err);
+    alert('Failed to import CSV: ' + err.message);
+  }
+});
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') { current += '"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if (char === ',' && !inQuotes) { result.push(current); current = ''; }
+    else { current += char; }
+  }
+  result.push(current);
+  return result;
+}
+
+function exportMarkdown() {
+  const safeTitle = (PAGE_STATE.title || 'topology').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const timestamp = new Date().toISOString();
+  const title = PAGE_STATE.title || 'Network Topology';
+  const fullData = captureTheQuickening();
+  const config = fullData;
+  let md = `<!--THEONEFILE_CONFIG\n${JSON.stringify(config, null, 2)}\nTHEONEFILE_CONFIG-->\n\n`;
+  md += `# ${title}\n\n> Exported from The One File on ${timestamp}\n\n`;
+  md += `## Legend\n\n`;
+  if (Object.keys(EDGE_LEGEND).length > 0) {
+    Object.entries(EDGE_LEGEND).forEach(([color, label]) => { md += `- ${color}: ${label}\n`; });
+  } else { md += `_No legend entries_\n`; }
+  md += '\n## Nodes\n\n';
+  Object.entries(NODE_DATA).forEach(([id, node]) => {
+    const pos = savedPositions[id] || { x: 0, y: 0 };
+    const size = savedSizes[id] || 50;
+    const styles = savedStyles[id] || null;
+    md += `### ${id}\n`;
+    md += `- **Name:** ${node.name || ''}\n- **IP:** ${node.ip || ''}\n- **Role:** ${node.role || ''}\n`;
+    md += `- **Shape:** ${node.shape || 'circle'}\n- **Tags:** ${(node.tags || []).join('; ') || '_none_'}\n`;
+    md += `- **Layer:** ${node.layer || 'physical'}\n- **MAC:** ${node.mac || ''}\n`;
+    md += `- **Rack Unit:** ${node.rackUnit || ''}\n- **U Height:** ${node.uHeight || '1'}\n`;
+    md += `- **Assigned Rack:** ${node.assignedRack || ''}\n- **Rack Capacity:** ${node.rackCapacity || ''}\n`;
+    md += `- **Is Rack:** ${node.isRack ? 'true' : 'false'}\n- **Locked:** ${node.locked ? 'true' : 'false'}\n`;
+    md += `- **Group ID:** ${node.groupId || ''}\n- **Position:** ${Math.round(pos.x)}, ${Math.round(pos.y)}\n- **Size:** ${size}\n`;
+    if (node.notes && node.notes.length > 0) { md += `- **Notes:**\n`; node.notes.forEach(note => { md += `  - ${note.replace(/\n/g, '<br>')}\n`; }); }
+    if (styles) { md += `- **Styles:** \`${JSON.stringify(styles)}\`\n`; }
+    md += '\n';
+  });
+  md += `## Connections\n\n`;
+  if (EDGE_DATA.list && EDGE_DATA.list.length > 0) {
+    EDGE_DATA.list.forEach(edge => {
+      const fromPort = edge.fromPort ? ` (${edge.fromPort})` : '';
+      const toPort = edge.toPort ? ` (${edge.toPort})` : '';
+      md += `- ${edge.from}${fromPort} --> ${edge.to}${toPort}\n`;
+      md += `  - **ID:** ${edge.id}\n  - **Label:** ${(edge.label || '').replace(/\n/g, '<br>')}\n  - **Color:** ${edge.color || ''}\n`;
+      md += `  - **Width:** ${edge.width || 4}\n  - **Direction:** ${edge.direction || 'none'}\n`;
+      md += `  - **Routing:** ${edge.routing || 'curved'}\n  - **Type:** ${edge.type || 'main'}\n`;
+      md += `  - **Line Style:** ${edge.lineStyle || 'solid'}\n  - **Group ID:** ${edge.groupId || ''}\n`;
+      if (edge.points && edge.points.length > 0) { md += `  - **Points:** ${edge.points.map(p => `${Math.round(p.x)},${Math.round(p.y)}`).join(' ')}\n`; }
+      if (edge.notes && edge.notes.length > 0) { md += `  - **Notes:**\n`; edge.notes.forEach(note => { md += `    - ${note.replace(/\n/g, '<br>')}\n`; }); }
+      md += '\n';
+    });
+  } else { md += `_No connections_\n\n`; }
+  md += `## Zones\n\n`;
+  if (RECT_DATA.list && RECT_DATA.list.length > 0) {
+    RECT_DATA.list.forEach(rect => {
+      md += `### ${rect.id}\n`;
+      md += `- **Position:** ${Math.round(rect.x)}, ${Math.round(rect.y)}\n- **Size:** ${Math.round(rect.width)} x ${Math.round(rect.height)}\n`;
+      md += `- **Color:** ${rect.color || ''}\n- **Style:** ${rect.style || 'filled'}\n- **Line Style:** ${rect.lineStyle || 'solid'}\n`;
+      md += `- **Border Color:** ${rect.borderColor || ''}\n- **Border Width:** ${rect.borderWidth !== undefined ? rect.borderWidth : 2}\n`;
+      if (rect.notes && rect.notes.length > 0) { md += `- **Notes:**\n`; rect.notes.forEach(note => { md += `  - ${note.replace(/\n/g, '<br>')}\n`; }); }
+      md += '\n';
+    });
+  } else { md += `_No zones_\n\n`; }
+  md += `## Text Labels\n\n`;
+  if (TEXT_DATA.list && TEXT_DATA.list.length > 0) {
+    TEXT_DATA.list.forEach(text => {
+      md += `### ${text.id}\n`;
+      md += `- **Content:** ${(text.content || '').replace(/\n/g, '<br>')}\n- **Position:** ${Math.round(text.x)}, ${Math.round(text.y)}\n`;
+      md += `- **Font Size:** ${text.fontSize || 18}\n- **Color:** ${text.color || '#e2e8f0'}\n`;
+      md += `- **Font Weight:** ${text.fontWeight || 'normal'}\n- **Font Style:** ${text.fontStyle || 'normal'}\n`;
+      md += `- **Text Align:** ${text.textAlign || 'start'}\n- **Text Decoration:** ${text.textDecoration || 'none'}\n`;
+      md += `- **Background Color:** ${text.bgColor || '#000000'}\n- **Background Enabled:** ${text.bgEnabled ? 'true' : 'false'}\n`;
+      md += `- **Opacity:** ${text.opacity !== undefined ? text.opacity : 1}\n\n`;
+    });
+  } else { md += `_No text labels_\n\n`; }
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeTitle}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  logAuditEvent('export', `Exported Markdown: ${a.download}`);
+}
+
+document.getElementById('import-markdown-file')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  try {
+    const text = await file.text();
+    let config = null;
+    const configMatch = text.match(/<!--THEONEFILE_CONFIG\s*([\s\S]*?)\s*THEONEFILE_CONFIG-->/);
+    if (configMatch) { try { config = JSON.parse(configMatch[1].trim()); } catch (err) { console.warn('Failed to parse Markdown config:', err); } }
+    const nodes = {}, positions = {}, sizes = {}, styles = {}, edges = [], rects = [], texts = [], legend = {};
+    const sections = text.split(/^## /m);
+    sections.forEach(section => {
+      const lines = section.trim().split('\n');
+      const sectionTitle = lines[0]?.trim().toLowerCase();
+      if (sectionTitle === 'legend') {
+        lines.slice(1).forEach(line => {
+          const match = line.match(/^- (#[a-fA-F0-9]{3,8}):\s*(.+)$/);
+          if (match) legend[match[1]] = match[2].trim();
+        });
+      } else if (sectionTitle === 'nodes') {
+        let currentNodeId = null, currentNode = null, inNotes = false;
+        lines.slice(1).forEach(line => {
+          const nodeMatch = line.match(/^### (.+)$/);
+          if (nodeMatch) {
+            if (currentNodeId && currentNode) nodes[currentNodeId] = currentNode;
+            currentNodeId = nodeMatch[1].trim();
+            currentNode = { tags: [], notes: [] };
+            inNotes = false;
+            return;
+          }
+          if (!currentNode) return;
+          if (inNotes && line.match(/^\s+-\s+(.+)$/)) {
+            const noteMatch = line.match(/^\s+-\s+(.+)$/);
+            if (noteMatch) currentNode.notes.push(noteMatch[1].trim().replace(/<br>/g, '\n'));
+            return;
+          }
+          inNotes = false;
+          const propMatch = line.match(/^- \*\*(.+?):\*\*\s*(.*)$/);
+          if (propMatch) {
+            const key = propMatch[1].trim().toLowerCase(), val = propMatch[2].trim();
+            switch (key) {
+              case 'name': currentNode.name = val; break;
+              case 'ip': currentNode.ip = val; break;
+              case 'role': currentNode.role = val; break;
+              case 'shape': currentNode.shape = val; break;
+              case 'tags': currentNode.tags = val === '_none_' ? [] : val.split(';').map(t => t.trim()).filter(t => t); break;
+              case 'layer': currentNode.layer = val; break;
+              case 'mac': currentNode.mac = val; break;
+              case 'rack unit': currentNode.rackUnit = val; break;
+              case 'u height': currentNode.uHeight = val; break;
+              case 'assigned rack': currentNode.assignedRack = val; break;
+              case 'rack capacity': currentNode.rackCapacity = val; break;
+              case 'is rack': currentNode.isRack = val === 'true'; break;
+              case 'locked': currentNode.locked = val === 'true'; break;
+              case 'group id': currentNode.groupId = val || null; break;
+              case 'position':
+                const posMatch = val.match(/(-?\d+),\s*(-?\d+)/);
+                if (posMatch) positions[currentNodeId] = { x: parseFloat(posMatch[1]), y: parseFloat(posMatch[2]) };
+                break;
+              case 'size': sizes[currentNodeId] = parseFloat(val) || 50; break;
+              case 'notes': inNotes = true; break;
+              case 'styles':
+                const stylesMatch = val.match(/`(.+)`/);
+                if (stylesMatch) { try { styles[currentNodeId] = JSON.parse(stylesMatch[1]); } catch (err) {} }
+                break;
+            }
+          }
+        });
+        if (currentNodeId && currentNode) nodes[currentNodeId] = currentNode;
+      } else if (sectionTitle === 'connections') {
+        let currentEdge = null, inNotes = false;
+        lines.slice(1).forEach(line => {
+          const connMatch = line.match(/^- (.+?)\s*(?:\(([^)]*)\))?\s*-->\s*(.+?)\s*(?:\(([^)]*)\))?$/);
+          if (connMatch) {
+            if (currentEdge) edges.push(currentEdge);
+            currentEdge = { from: connMatch[1].trim(), to: connMatch[3].trim(), fromPort: connMatch[2] || '', toPort: connMatch[4] || '', notes: [] };
+            inNotes = false;
+            return;
+          }
+          if (!currentEdge) return;
+          if (inNotes && line.match(/^\s+-\s+(.+)$/)) {
+            const noteMatch = line.match(/^\s+-\s+(.+)$/);
+            if (noteMatch) currentEdge.notes.push(noteMatch[1].trim().replace(/<br>/g, '\n'));
+            return;
+          }
+          inNotes = false;
+          const propMatch = line.match(/^\s+- \*\*(.+?):\*\*\s*(.*)$/);
+          if (propMatch) {
+            const key = propMatch[1].trim().toLowerCase(), val = propMatch[2].trim();
+            switch (key) {
+              case 'id': currentEdge.id = val; break;
+              case 'label': currentEdge.label = val.replace(/<br>/g, '\n'); break;
+              case 'color': currentEdge.color = val; break;
+              case 'width': currentEdge.width = parseFloat(val) || 4; break;
+              case 'direction': currentEdge.direction = val; break;
+              case 'routing': currentEdge.routing = val; break;
+              case 'type': currentEdge.type = val; break;
+              case 'line style': currentEdge.lineStyle = val; break;
+              case 'group id': currentEdge.groupId = val || null; break;
+              case 'points':
+                currentEdge.points = val.split(' ').map(p => { const [x, y] = p.split(',').map(Number); return { x, y }; }).filter(p => !isNaN(p.x) && !isNaN(p.y));
+                break;
+              case 'notes': inNotes = true; break;
+            }
+          }
+        });
+        if (currentEdge) edges.push(currentEdge);
+      } else if (sectionTitle === 'zones') {
+        let currentRect = null, inNotes = false;
+        lines.slice(1).forEach(line => {
+          const rectMatch = line.match(/^### (.+)$/);
+          if (rectMatch) {
+            if (currentRect) rects.push(currentRect);
+            currentRect = { id: rectMatch[1].trim(), notes: [] };
+            inNotes = false;
+            return;
+          }
+          if (!currentRect) return;
+          if (inNotes && line.match(/^\s+-\s+(.+)$/)) {
+            const noteMatch = line.match(/^\s+-\s+(.+)$/);
+            if (noteMatch) currentRect.notes.push(noteMatch[1].trim().replace(/<br>/g, '\n'));
+            return;
+          }
+          inNotes = false;
+          const propMatch = line.match(/^- \*\*(.+?):\*\*\s*(.*)$/);
+          if (propMatch) {
+            const key = propMatch[1].trim().toLowerCase(), val = propMatch[2].trim();
+            switch (key) {
+              case 'position': const posMatch = val.match(/(-?\d+),\s*(-?\d+)/); if (posMatch) { currentRect.x = parseFloat(posMatch[1]); currentRect.y = parseFloat(posMatch[2]); } break;
+              case 'size': const sizeMatch = val.match(/(\d+)\s*x\s*(\d+)/); if (sizeMatch) { currentRect.width = parseFloat(sizeMatch[1]); currentRect.height = parseFloat(sizeMatch[2]); } break;
+              case 'color': currentRect.color = val; break;
+              case 'style': currentRect.style = val; break;
+              case 'line style': currentRect.lineStyle = val; break;
+              case 'border color': currentRect.borderColor = val; break;
+              case 'border width': currentRect.borderWidth = parseFloat(val) || 2; break;
+              case 'notes': inNotes = true; break;
+            }
+          }
+        });
+        if (currentRect) rects.push(currentRect);
+      } else if (sectionTitle === 'text labels') {
+        let currentText = null;
+        lines.slice(1).forEach(line => {
+          const textMatch = line.match(/^### (.+)$/);
+          if (textMatch) {
+            if (currentText) texts.push(currentText);
+            currentText = { id: textMatch[1].trim() };
+            return;
+          }
+          if (!currentText) return;
+          const propMatch = line.match(/^- \*\*(.+?):\*\*\s*(.*)$/);
+          if (propMatch) {
+            const key = propMatch[1].trim().toLowerCase(), val = propMatch[2].trim();
+            switch (key) {
+              case 'content': currentText.content = val.replace(/<br>/g, '\n'); break;
+              case 'position': const posMatch = val.match(/(-?\d+),\s*(-?\d+)/); if (posMatch) { currentText.x = parseFloat(posMatch[1]); currentText.y = parseFloat(posMatch[2]); } break;
+              case 'font size': currentText.fontSize = parseFloat(val) || 18; break;
+              case 'color': currentText.color = val; break;
+              case 'font weight': currentText.fontWeight = val; break;
+              case 'font style': currentText.fontStyle = val; break;
+              case 'text align': currentText.textAlign = val; break;
+              case 'text decoration': currentText.textDecoration = val; break;
+              case 'background color': currentText.bgColor = val; break;
+              case 'background enabled': currentText.bgEnabled = val === 'true'; break;
+              case 'opacity': currentText.opacity = parseFloat(val) || 1; break;
+            }
+          }
+        });
+        if (currentText) texts.push(currentText);
+      }
+    });
+    const nodeCount = Object.keys(nodes).length, edgeCount = edges.length, rectCount = rects.length, textCount = texts.length;
+    if (nodeCount === 0 && edgeCount === 0 && rectCount === 0 && textCount === 0) {
+      alert('No valid topology data found in Markdown file.\n\nMake sure the file was exported from The One File.');
+      return;
+    }
+    let confirmMsg = `Import Markdown topology?\n\n- ${nodeCount} nodes\n- ${edgeCount} connections\n- ${rectCount} zones\n- ${textCount} text labels\n\nThis will REPLACE all current data.`;
+    if (!confirm(confirmMsg)) return;
+    pushUndo('import markdown');
+    if (config && config.documentTabs) {
+      if (config.page) { Object.assign(PAGE_STATE, config.page); wieldThePower(); }
+      if (config.canvas) {
+        canvasState.zoom = config.canvas.zoom || 1;
+        canvasState.panX = config.canvas.panX || 0;
+        canvasState.panY = config.canvas.panY || 0;
+      }
+      if (config.documentTabs) {
+        documentTabs = config.documentTabs;
+        currentTabIndex = config.currentTabIndex || 0;
+      }
+      if (config.savedTopologyView) {
+        savedTopologyView = config.savedTopologyView;
+      }
+      if (config.encryptedSections) {
+        encryptedSections = config.encryptedSections;
+      }
+      if (config.auditLog && Array.isArray(config.auditLog)) {
+        auditLog = config.auditLog;
+        try {
+          localStorage.setItem(AUDIT_STORAGE_KEY, JSON.stringify(auditLog));
+        } catch (e) {
+          console.warn("Failed to sync audit log to localStorage:", e);
+        }
+      }
+    } else if (config && config.pageState) {
+      Object.assign(PAGE_STATE, config.pageState);
+      wieldThePower();
+      if (config.canvasView) {
+        canvasState.zoom = config.canvasView.zoom || 1;
+        canvasState.panX = config.canvasView.panX || 0;
+        canvasState.panY = config.canvasView.panY || 0;
+      }
+    }
+    Object.keys(NODE_DATA).forEach(k => delete NODE_DATA[k]);
+    Object.keys(savedPositions).forEach(k => delete savedPositions[k]);
+    Object.keys(savedSizes).forEach(k => delete savedSizes[k]);
+    Object.keys(savedStyles).forEach(k => delete savedStyles[k]);
+    EDGE_DATA.list = [];
+    RECT_DATA.list = [];
+    TEXT_DATA.list = [];
+    Object.keys(EDGE_LEGEND).forEach(k => delete EDGE_LEGEND[k]);
+    Object.assign(EDGE_LEGEND, legend);
+    Object.entries(nodes).forEach(([id, node]) => {
+      NODE_DATA[id] = { name: node.name || '', ip: node.ip || '', role: node.role || '', shape: node.shape || 'circle', tags: node.tags || [], notes: node.notes || [], mac: node.mac || '', rackUnit: node.rackUnit || '', uHeight: node.uHeight || '1', layer: node.layer || 'physical', assignedRack: node.assignedRack || '', rackCapacity: node.rackCapacity || '', isRack: node.isRack || false, locked: node.locked || false, groupId: node.groupId || null };
+      savedPositions[id] = positions[id] || { x: 500, y: 300 };
+      if (sizes[id]) savedSizes[id] = sizes[id];
+      if (styles[id]) savedStyles[id] = styles[id];
+    });
+    edges.forEach(edge => {
+      EDGE_DATA.list.push({ id: edge.id || `edge-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, from: edge.from, to: edge.to, fromPort: edge.fromPort || '', toPort: edge.toPort || '', label: edge.label || '', color: edge.color || '', width: edge.width || 4, direction: edge.direction || 'none', routing: edge.routing || 'curved', type: edge.type || 'main', lineStyle: edge.lineStyle || 'solid', groupId: edge.groupId || null, points: edge.points || [], notes: edge.notes || [] });
+    });
+    rects.forEach(rect => {
+      RECT_DATA.list.push({ id: rect.id, x: rect.x || 0, y: rect.y || 0, width: rect.width || 100, height: rect.height || 100, color: rect.color || '#f97316', style: rect.style || 'filled', lineStyle: rect.lineStyle || 'solid', borderColor: rect.borderColor || '', borderWidth: rect.borderWidth !== undefined ? rect.borderWidth : 2, notes: rect.notes || [] });
+    });
+    texts.forEach(text => {
+      TEXT_DATA.list.push({ id: text.id, x: text.x || 0, y: text.y || 0, content: text.content || '', fontSize: text.fontSize || 18, color: text.color || '#e2e8f0', fontWeight: text.fontWeight || 'normal', fontStyle: text.fontStyle || 'normal', textAlign: text.textAlign || 'start', textDecoration: text.textDecoration || 'none', bgColor: text.bgColor || '#000000', bgEnabled: text.bgEnabled || false, opacity: text.opacity !== undefined ? text.opacity : 1 });
+    });
+    forgeTheTopology();
+    if (typeof forgeTheLegend === 'function') forgeTheLegend();
+    updateViewBox();
+    logAuditEvent('import', `Imported Markdown: ${file.name} (${nodeCount} nodes, ${edgeCount} connections)`);
+    alert(`Successfully imported:\n- ${nodeCount} nodes\n- ${edgeCount} connections\n- ${rectCount} zones\n- ${textCount} text labels`);
+  } catch (err) {
+    console.error('Markdown import error:', err);
+    alert('Failed to import Markdown: ' + err.message);
+  }
+});
+
+document.getElementById('mobile-export-btn')?.addEventListener('click', () => {
+  document.getElementById('mobile-export-modal').classList.add('active');
+  document.getElementById('topbar-menu').classList.remove('open');
+});
+document.getElementById('mobile-import-btn')?.addEventListener('click', () => {
+  document.getElementById('mobile-import-modal').classList.add('active');
+  document.getElementById('topbar-menu').classList.remove('open');
+});
+document.getElementById('mobile-export-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'mobile-export-modal') e.target.classList.remove('active');
+});
+document.getElementById('mobile-import-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'mobile-import-modal') e.target.classList.remove('active');
+});	  
     </script>
 </body></html>

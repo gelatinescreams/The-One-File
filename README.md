@@ -1,7 +1,5 @@
 ![The One File](assets/theonefile.jpg)
 
-##### The One File: Network Topology Maker
-
 In the end there can only be "The ONE File". A portable and completely self contained network topology builder. Everything to view and edit lives inside a single standalone HTML file. Any modern browser can open and edit it without any prior setup. (is the idea)
 
 *Two editions are available. Both built from the same core design.*
@@ -13,28 +11,21 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-#### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
-  * We are very close to 4.0 Stable, community! Thank you to all the testers!!
-* **Orthogonal routing update** [DEMO](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html) [changelog.md](changelog.md)
-  * New orthogonal routing option draws clean 90 degree angle connections
-  * Three routing styles available: Orthogonal, Curved, and Straight
-  * Change between all of them in the settings at any time OR mix and match them   
-* **Auto Recovery**
-  * If your browser crashes or you accidentally close the tab, your work is saved in your local browser
-  * If you want to clear this cache, use the Clear All option in settings
-* **Enhanced Search** : Search now zooms in and out of the canvas automatically to group found items
-* **Mobile Undo** : Add three finder tap anywhere on the canvas for undo on mobile devices
-* **Performance Under The Hood**
-  * Multiple rapid changes are now batched into single redraws
-  * Minimap updates are throttled during pan and zoom
-  * Drop shadows and pulse animations automatically disabled when zoomed out below 50 percent
-  * Mouse and touch pan handlers optimized to prevent layout thrashing
-  * CSS containment added to panels and viewport for faster rendering
-  * Undo performance updates
-  * Minimap performance updates
-  * Custom Orthogonal gap function : edges show gaps where they cross other orthogonal edges
-  * Refactored update/import function
-* **Big performance update**  
+### Version 3.9.9.7 : 12/19/25 Import/export, saving and updates for editors
+* **Improved the import/export system**  [read more: import-export-save.md](import-export-save.md)
+* **Added markdown export and import**  Ala, Git versioning!
+  * Edit and create in your favorite markdown editor
+  * This also allows git versioning!
+* **Added csv export and import**  
+  * Edit and create in your favorite csv editor
+* **Added print option**  
+  * Removes the background and makes the entire canvas print friendly
+* **New import/Export mobile menu**  
+* **Bug Fixes**  
+  * Fixed minimap rendering nodes twice (performance)
+  * Fixed event listener memory leak in edge drag handlers
+  * Fixed Mac keyboard shortcuts (SORRY APPLE)
+* **3.9.9.6: Orthogonal routing update** [DEMO](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html) [changelog.md](changelog.md)
 * **See more changes in the [changelog.md](changelog.md)**
 
 ### Demos

@@ -1,3 +1,4 @@
+<!--THEONEFILE_CONFIG
 {
   "nodeData": {
     "internet": {
@@ -90,23 +91,7 @@
       "name": "Docker 4",
       "ip": "0.0.0.0",
       "role": "",
-      "tags": [
-        {
-          "type": "icon",
-          "library": "selfhst",
-          "name": "docker"
-        },
-        {
-          "type": "icon",
-          "library": "selfhst",
-          "name": "authentik"
-        },
-        {
-          "type": "icon",
-          "library": "selfhst",
-          "name": "immich"
-        }
-      ],
+      "tags": [],
       "notes": [],
       "mac": "",
       "rackUnit": "",
@@ -342,24 +327,24 @@
         "_pairTotal": 1
       },
       {
-        "id": "custom-1765239449323",
+        "id": "custom-1765238841477",
         "type": "custom",
         "color": "#f97316",
         "width": 4,
         "lineStyle": "solid",
-        "direction": "forward",
+        "direction": "both",
         "points": [
           {
-            "x": 2936.464111328125,
-            "y": 786.07958984375
+            "x": 2905.255615234375,
+            "y": 805.3433837890625
           },
           {
-            "x": 3184.112060546875,
-            "y": 887.6153564453125
+            "x": 3189.95556640625,
+            "y": 1005.8710327148438
           },
           {
-            "x": 2763.110107421875,
-            "y": 981.7216796875
+            "x": 2788.900390625,
+            "y": 1008.3466796875
           }
         ],
         "notes": []
@@ -385,10 +370,10 @@
     "list": [
       {
         "id": "text-1765238422602",
-        "x": 2466.35986328125,
-        "y": 741.6801147460938,
+        "x": 2402.130859375,
+        "y": 736.7828979492188,
         "content": "Double click on desktop\nor long press on mobile\nto enter rack canvas view",
-        "fontSize": 40,
+        "fontSize": 48,
         "color": "#e2e8f0",
         "fontWeight": "normal",
         "fontStyle": "normal",
@@ -595,19 +580,19 @@
   },
   "nodePositions": {
     "internet": {
-      "x": 2103.968290880771,
-      "y": 268
+      "x": 2071.640165880771,
+      "y": 218.24354238566275
     },
     "internet-copy": {
       "x": 2066.9677515897347,
       "y": 473.4119134177565
     },
     "opnsense-copy": {
-      "x": 1773.8400660428597,
-      "y": 666.5758233298659
+      "x": 1775.6360865506722,
+      "y": 668.3718438376784
     },
     "docker-copy": {
-      "x": 1931.1978950081452,
+      "x": 1934.7898139534577,
       "y": 782.2775961320921
     },
     "docker-copy-1": {
@@ -615,7 +600,7 @@
       "y": 767.7122274797483
     },
     "docker-copy-2": {
-      "x": 2342.2663764534577,
+      "x": 2345.8584174690827,
       "y": 631.7681967180296
     },
     "opnsense-copy-1": {
@@ -627,115 +612,26 @@
       "y": 502.58220111114224
     },
     "desktop": {
-      "x": 2971.700036728428,
-      "y": 480.7287465212985
+      "x": 2987.696130478428,
+      "y": 487.5842152712985
     },
     "dns": {
       "x": 3200.4643189549906,
       "y": 320.469591247861
     },
     "racked": {
-      "x": 2645.5845448279656,
-      "y": 970.7820678889219
+      "x": 2600.8697010779656,
+      "y": 975.5665527522032
     }
   },
   "nodeSizes": {
     "core-router-1": 36,
-    "internet": 168,
+    "internet": 85,
     "phone": 121,
     "desktop": 147,
-    "racked": 137,
-    "docker-copy-2": 82
+    "racked": 137
   },
-  "nodeStyles": {
-    "internet": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "amazon-web-services"
-        },
-        "circleColor": "#ffffff",
-        "circleBorder": "#ffffff"
-      }
-    },
-    "opnsense-copy-1": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "opnsense-v1"
-        }
-      }
-    },
-    "internet-copy": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "opnsense"
-        }
-      }
-    },
-    "docker-copy-2": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "docker"
-        }
-      }
-    },
-    "docker-copy-1": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "authportal"
-        }
-      }
-    },
-    "docker-copy": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "jotty"
-        }
-      }
-    },
-    "opnsense-copy": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "portainer"
-        }
-      }
-    },
-    "racked": {
-      "all": {
-        "icon": {
-          "library": "mdi",
-          "name": "server-security"
-        },
-        "circleColor": "#010813",
-        "circleBorder": "#ffffff"
-      }
-    }
-  },
-  "iconCache": {
-    "selfhst-borg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M331 102.2H204.5V0h197.9L505 102.2v104.2l-51.3 51.3L505 309v100.7L402.4 512H204.5V409.8H331V300.6H204.5v-89.1H331zM6.9 0h170.5v512H6.9z\" style=\"fill:#0d0\"/></svg>",
-    "selfhst-actual-budget": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M378.5 512h-245C59.8 512 0 452.2 0 378.5v-245C0 59.8 59.8 0 133.5 0h245C452.2 0 512 59.8 512 133.5v245c0 73.7-59.8 133.5-133.5 133.5\" style=\"fill:#805ad5\"/><path d=\"m407.7 384.1-33.2-68.2 26.9-10.4c1.7-.6 2.6-2.6 1.9-4.3l-7.8-20.2c-.6-1.7-2.6-2.6-4.3-1.9L362 290.3 268.8 99.2c-.6-1.2-1.7-1.9-3-1.9h-6.3c-1.3 0-2.4.7-3 1.9l-95 201.6-55.2 20.3c-1.8.6-2.6 2.6-2 4.3l7.4 20.3c.6 1.8 2.6 2.6 4.3 2l28.4-10.4-32.2 68.3c-.3.8-.4 1.7 0 2.5l1.6 4.3v.1c.6 1.7 2.6 2.6 4.3 1.9l229.8-88.3 34.3 70.4c.8 1.7 2.8 2.4 4.5 1.6l19.5-9.5c1.6-.8 2.3-2.8 1.5-4.5M263 151.8l46.1 94.9L199.4 287zM161.5 367.4l20.7-44 139.4-51.1 13.7 28.3z\" style=\"fill:#fff\"/></svg>",
-    "selfhst-anonaddy": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><linearGradient id=\"anonaddy_svg__a\" x1=\"44.378\" x2=\"447.022\" y1=\"386.378\" y2=\"789.022\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M320 224H192c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h128c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32m-32 128h-64v-64h64z\" style=\"fill:url(#anonaddy_svg__a)\"/><linearGradient id=\"anonaddy_svg__b\" x1=\"44.337\" x2=\"446.981\" y1=\"386.418\" y2=\"789.062\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M384 384c0 5.5-.8 10.9-2.1 16 39.4-21.8 66.1-63.8 66.1-112v-32c0-47.4-25.8-88.6-64-110.7-18.8-10.9-40.7-17.3-64-17.3H192c-23.3 0-45.2 6.4-64 17.3-38.2 22.1-64 63.3-64 110.7v128c0 70.7 57.3 128 128 128h128c0-35.3-28.7-64-64-64h-64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64h128c35.3 0 64 28.7 64 64z\" style=\"fill:url(#anonaddy_svg__b)\"/><path d=\"M384 288c0 23.7-12.9 44.3-32 55.4V384c0 17.7-14.3 32-32 32 22.5 0 43.5-5.8 61.9-16 1.3-5.1 2.1-10.5 2.1-16zM128 145.3c18.8-10.9 40.7-17.3 64-17.3 0-11.7 3.2-22.6 8.7-32H192c-21.4 0-42.7 4.4-62.4 12.8-1 6.3-1.6 12.7-1.6 19.2zM311.3 96c5.5 9.4 8.7 20.3 8.7 32 23.3 0 45.2 6.4 64 17.3V128c0-6.5-.6-12.9-1.6-19.2-19.7-8.4-41-12.8-62.4-12.8z\" style=\"fill:#2d7aae\"/><linearGradient id=\"anonaddy_svg__c\" x1=\"158.782\" x2=\"561.426\" y1=\"271.974\" y2=\"674.618\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M200.7 96c11.1-19.1 31.7-32 55.3-32s44.3 12.9 55.3 32h8.7c21.4 0 42.7 4.4 62.4 12.8C373.1 47.3 320 0 256 0S138.9 47.3 129.6 108.8c19.7-8.4 41-12.8 62.4-12.8z\" style=\"fill:url(#anonaddy_svg__c)\"/></svg>",
-    "selfhst-adguard-home": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M505.8 58.8C428.2 18.4 334.1 0 256 0h-.3v511.8c-21.5-12.7-41.1-26-59.1-39.6 18 13.7 37.8 27 59.4 39.8C506.8 363.4 505.8 146 505.8 58.8\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#68bc71\"/><path d=\"M255.7 511.8C5.2 363.3 6.2 146 6.2 58.8 83.7 18.4 177.7 0 255.7 0z\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#67b279\"/><path d=\"m246.9 341.6 151-203.6c-11.1-8.9-20.8-2.6-26.1 2.2h-.2l-125.9 131-47.4-57.1c-22.6-26.2-53.4-6.2-60.6-.9z\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#fff\"/></svg>",
-    "selfhst-ansible": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256\" style=\"fill:#c32214\"/><path d=\"m260.3 156.4 66.2 163.5-100.1-78.8zM378 357.6 276.1 112.3c-2.9-7.1-8.7-10.8-15.8-10.8s-13.3 3.7-16.2 10.8l-111.8 269h38.3l44.3-110.9L347 377.1c5.3 4.3 9.1 6.2 14.1 6.2 10 0 18.7-7.5 18.7-18.3-.1-1.7-.7-4.4-1.8-7.4\" style=\"fill:#fff\"/></svg>",
-    "selfhst-wikidocs": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M488.8 72.1h-90.7c-8.4 0-15.1 6.7-15.1 15.1v206.4c0 8.4-6.7 15.1-15.1 15.1h-45.3c-8.4 0-15.1-6.7-15.1-15.1V87.2c0-8.4-6.7-15.1-15.1-15.1h-72.5c-8.4 0-15.1 6.7-15.1 15.1v206.4c0 8.4-6.7 15.1-15.1 15.1h-45.3c-8.4 0-15.1-6.7-15.1-15.1V87.2c0-8.4-6.7-15.1-15.1-15.1H23.4c-8.4 0-15.1 6.7-15.1 15.1v257.2c0 50.1 38.6 91.2 87.5 95.3v.3h392.9c8.4 0 15.1-6.7 15.1-15.1V87.2c0-8.4-6.7-15.1-15-15.1\" style=\"fill:#4caf50\"/><path d=\"M488.6 448.2H95.7c-1.1 0-2.1-.2-3.1-.6-24.9-2.7-48-14.2-65.1-32.8C9.8 395.6 0 370.5 0 344.3V87.2c0-12.9 10.5-23.4 23.4-23.4h90.9c12.9 0 23.4 10.5 23.4 23.4v206.4c0 3.8 3 6.8 6.8 6.8h45.3c3.8 0 6.8-3 6.8-6.8V87.2c0-12.9 10.5-23.4 23.4-23.4h72.5c12.9 0 23.4 10.5 23.4 23.4v206.4c0 3.8 3 6.8 6.8 6.8H368c3.8 0 6.8-3 6.8-6.8V87.2c0-12.9 10.5-23.4 23.4-23.4h90.7c6.3 0 12.2 2.5 16.6 6.9s6.7 10.3 6.6 16.6v337.6c-.1 12.8-10.6 23.3-23.5 23.3M98.1 431.7h390.6c3.8 0 6.8-3 6.8-6.8V87.2c0-1.9-.6-3.6-1.9-4.8-1.3-1.3-3-2-4.8-2h-90.7c-3.8 0-6.8 3-6.8 6.8v206.4c0 12.9-10.5 23.4-23.4 23.4h-45.3c-12.9 0-23.4-10.5-23.4-23.4V87.2c0-3.8-3-6.8-6.8-6.8h-72.5c-3.8 0-6.8 3-6.8 6.8v206.4c0 12.9-10.5 23.4-23.4 23.4h-45.3c-12.9 0-23.4-10.5-23.4-23.4V87.2c0-3.8-3-6.8-6.8-6.8H23.4c-3.8 0-6.8 3-6.8 6.8v257.2c0 45.1 35.1 83.3 79.9 87.1.5-.1 1 0 1.6.2\" style=\"fill:#fff\"/></svg>",
-    "selfhst-alist": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M260.5 30.8c5.4-.6 11 .6 15.5 3.7 6.8 4.4 11.6 11.1 15.7 17.9 18.4 30.9 37 61.7 55.4 92.6 24.5 41.3 49.1 82.7 73.6 124q25.35 42.9 51 85.8c11.2 19.1 22.8 37.9 33.5 57.3 4.6 8.1 7.2 17.5 6.8 26.8-.3 7.2-1.6 14.7-5.4 20.9-5.3 8.8-14.3 15.1-23.9 18.3-5.2 1.9-10.6 3.1-16.1 3.1H286.3c-5.2-.1-10.4-.7-15.3-2.6-3.5-1.5-7-3.4-9.8-6.1-4.7-4.7-7.8-11.3-7-18.1.4-4.7 1.6-9.4 3.5-13.7 1.9-4.4 4.5-8.5 6.8-12.7 10.1-17.9 20.6-35.6 31.5-53 3.5-5.5 6.6-11.4 11.4-15.8 5.2-4.7 11.6-8.4 18.7-8.9 5.7-.2 11.3 1.7 16.1 4.8 5.4 3.1 9.6 8.4 11 14.5 2 7.7-.2 15.8-3.4 22.9-3.7 8-8.9 15.3-11.7 23.7-.5 1.9-1.2 4.3.2 6 1.4 1.4 3.5 1.9 5.3 2.4 5.5 1.2 11.1.9 16.6.9h61.3c4-.1 8.1.1 12.1-.1 2.9-.3 6.1-.8 8.4-2.9 1.5-1.3 1.7-3.6 1.1-5.4-1.2-4-3.4-7.7-5.5-11.3C383.2 312.9 329 219.7 274 126.9c-1.8-3-3.3-6.2-5.9-8.6-1.3-1.2-3.2-1.9-4.9-1.4-1.5.5-2.5 1.8-3.5 3-2.4 3.1-4.6 6.4-6.6 9.8-9.5 15.4-18.6 31.1-27.9 46.6-53.6 90.1-107.1 180.3-160.7 270.4-3.3 6.1-6.9 12.1-10.7 17.9-3.4 5-7.5 9.6-12.8 12.6-6.2 3.6-13.9 5-20.9 3-5.1-1.6-10-4.1-13.7-8.1-4.6-4.6-6.7-11.3-6.4-17.7.2-6.7 2.5-13.3 5.9-19.1C38.4 380.1 71.1 325 104 269.9c16.9-28.5 33.7-57.1 50.7-85.6 17.2-28.8 34.4-57.7 51.5-86.5 9.5-16.3 19.2-32.5 29.2-48.5 3.1-5.1 7.1-9.6 11.9-13.1 4-2.7 8.4-5 13.2-5.4\" style=\"fill:#70c6be\"/><path d=\"M257.8 244.3c8.1-1.3 16.7.6 23.4 5.4 5.1 3.9 8.6 9.8 9.7 16.2.7 4.9.2 9.9-1.6 14.5-1.4 4-3.3 7.7-5.5 11.3-31.2 52.5-62.5 105-93.7 157.5-4 6.6-7.6 13.4-12.2 19.6-3.3 4.1-7.5 7.7-12.4 9.9-10.2 5.4-23.5 2.1-31.3-6.1-3.9-3.9-6.2-9.4-6.5-14.9-.4-5.7.8-11.5 3.4-16.7 2.3-5 5-9.7 7.8-14.4 13.7-23.1 27.3-46.3 41-69.4 18.7-31.8 37.8-63.4 56.6-95.1 2-3.6 4.5-6.9 7.3-9.9 3.8-4 8.6-7.1 14-7.9\" style=\"fill:#1ba0d8\"/></svg>",
-    "simple-amazonwebservices": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Amazon Web Services</title><path d=\"M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.183 0 .08-.048.16-.152.24l-.503.335a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.239-.112a2.47 2.47 0 0 1-.287-.375 6.18 6.18 0 0 1-.248-.471c-.622.734-1.405 1.101-2.347 1.101-.67 0-1.205-.191-1.596-.574-.391-.384-.59-.894-.59-1.533 0-.678.239-1.23.726-1.644.487-.415 1.133-.623 1.955-.623.272 0 .551.024.846.064.296.04.6.104.918.176v-.583c0-.607-.127-1.03-.375-1.277-.255-.248-.686-.367-1.3-.367-.28 0-.568.031-.863.103-.295.072-.583.16-.862.272a2.287 2.287 0 0 1-.28.104.488.488 0 0 1-.127.023c-.112 0-.168-.08-.168-.247v-.391c0-.128.016-.224.056-.28a.597.597 0 0 1 .224-.167c.279-.144.614-.264 1.005-.36a4.84 4.84 0 0 1 1.246-.151c.95 0 1.644.216 2.091.647.439.43.662 1.085.662 1.963v2.586zm-3.24 1.214c.263 0 .534-.048.822-.144.287-.096.543-.271.758-.51.128-.152.224-.32.272-.512.047-.191.08-.423.08-.694v-.335a6.66 6.66 0 0 0-.735-.136 6.02 6.02 0 0 0-.75-.048c-.535 0-.926.104-1.19.32-.263.215-.39.518-.39.917 0 .375.095.655.295.846.191.2.47.296.838.296zm6.41.862c-.144 0-.24-.024-.304-.08-.064-.048-.12-.16-.168-.311L7.586 5.55a1.398 1.398 0 0 1-.072-.32c0-.128.064-.2.191-.2h.783c.151 0 .255.025.31.08.065.048.113.16.16.312l1.342 5.284 1.245-5.284c.04-.16.088-.264.151-.312a.549.549 0 0 1 .32-.08h.638c.152 0 .256.025.32.08.063.048.12.16.151.312l1.261 5.348 1.381-5.348c.048-.16.104-.264.16-.312a.52.52 0 0 1 .311-.08h.743c.127 0 .2.065.2.2 0 .04-.009.08-.017.128a1.137 1.137 0 0 1-.056.2l-1.923 6.17c-.048.16-.104.263-.168.311a.51.51 0 0 1-.303.08h-.687c-.151 0-.255-.024-.32-.08-.063-.056-.119-.16-.15-.32l-1.238-5.148-1.23 5.14c-.04.16-.087.264-.15.32-.065.056-.177.08-.32.08zm10.256.215c-.415 0-.83-.048-1.229-.143-.399-.096-.71-.2-.918-.32-.128-.071-.215-.151-.247-.223a.563.563 0 0 1-.048-.224v-.407c0-.167.064-.247.183-.247.048 0 .096.008.144.024.048.016.12.048.2.08.271.12.566.215.878.279.319.064.63.096.95.096.502 0 .894-.088 1.165-.264a.86.86 0 0 0 .415-.758.777.777 0 0 0-.215-.559c-.144-.151-.416-.287-.807-.415l-1.157-.36c-.583-.183-1.014-.454-1.277-.813a1.902 1.902 0 0 1-.4-1.158c0-.335.073-.63.216-.886.144-.255.335-.479.575-.654.24-.184.51-.32.83-.415.32-.096.655-.136 1.006-.136.175 0 .359.008.535.032.183.024.35.056.518.088.16.04.312.08.455.127.144.048.256.096.336.144a.69.69 0 0 1 .24.2.43.43 0 0 1 .071.263v.375c0 .168-.064.256-.184.256a.83.83 0 0 1-.303-.096 3.652 3.652 0 0 0-1.532-.311c-.455 0-.815.071-1.062.223-.248.152-.375.383-.375.71 0 .224.08.416.24.567.159.152.454.304.877.44l1.134.358c.574.184.99.44 1.237.767.247.327.367.702.367 1.117 0 .343-.072.655-.207.926-.144.272-.336.511-.583.703-.248.2-.543.343-.886.447-.36.111-.734.167-1.142.167zM21.698 16.207c-2.626 1.94-6.442 2.969-9.722 2.969-4.598 0-8.74-1.7-11.87-4.526-.247-.223-.024-.527.272-.351 3.384 1.963 7.559 3.153 11.877 3.153 2.914 0 6.114-.607 9.06-1.852.439-.2.814.287.383.607zM22.792 14.961c-.336-.43-2.22-.207-3.074-.103-.255.032-.295-.192-.063-.36 1.5-1.053 3.967-.75 4.254-.399.287.36-.08 2.826-1.485 4.007-.215.184-.423.088-.327-.151.32-.79 1.03-2.57.695-2.994z\"/></svg>",
-    "simple-apple": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Apple</title><path d=\"M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701\"/></svg>",
-    "selfhst-amazon-web-services": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M144.3 214.1c0 6.3.7 11.4 1.9 15.2 1.4 3.7 3.1 7.8 5.4 12.3.9 1.4 1.2 2.7 1.2 3.9 0 1.7-1 3.4-3.2 5.1l-10.7 7.2c-1.5 1-3.1 1.5-4.4 1.5-1.7 0-3.4-.9-5.1-2.4-2.4-2.6-4.4-5.3-6.1-8-1.7-2.9-3.4-6.1-5.3-10-13.3 15.7-30 23.5-50.1 23.5-14.3 0-25.7-4.1-34.1-12.3-8.3-8.2-12.6-19.1-12.6-32.7 0-14.5 5.1-26.2 15.5-35.1S60.8 169 78.4 169c5.8 0 11.7.5 18.1 1.4s12.8 2.2 19.6 3.7v-12.4c0-12.9-2.7-22-8-27.2-5.4-5.3-14.6-7.8-27.8-7.8-6 0-12.1.7-18.4 2.2s-12.4 3.4-18.4 5.8c-2.7 1.2-4.8 1.9-6 2.2s-2 .5-2.7.5c-2.4 0-3.6-1.7-3.6-5.3v-8.3c0-2.7.3-4.8 1.2-6s2.4-2.4 4.8-3.6c6-3.1 13.1-5.6 21.5-7.7 8.3-2.2 17.2-3.2 26.6-3.2 20.3 0 35.1 4.6 44.6 13.8 9.4 9.2 14.1 23.2 14.1 41.9v55.2zM75.2 240c5.6 0 11.4-1 17.5-3.1 6.1-2 11.6-5.8 16.2-10.9 2.7-3.2 4.8-6.8 5.8-10.9s1.7-9 1.7-14.8v-7.2c-4.9-1.2-10.2-2.2-15.7-2.9-5.4-.7-10.7-1-16-1-11.4 0-19.8 2.2-25.4 6.8S51 207.1 51 215.6c0 8 2 14 6.3 18.1 4.1 4.2 10 6.3 17.9 6.3m136.7 18.4c-3.1 0-5.1-.5-6.5-1.7-1.4-1-2.6-3.4-3.6-6.6l-40-131.6c-1-3.4-1.5-5.6-1.5-6.8 0-2.7 1.4-4.3 4.1-4.3h16.7c3.2 0 5.4.5 6.6 1.7 1.4 1 2.4 3.4 3.4 6.6l28.6 112.7 26.6-112.7c.9-3.4 1.9-5.6 3.2-6.6 1.4-1 3.7-1.7 6.8-1.7H270c3.2 0 5.4.5 6.8 1.7 1.4 1 2.6 3.4 3.2 6.6l26.9 114.1 29.5-114.1c1-3.4 2.2-5.6 3.4-6.6 1.4-1 3.6-1.7 6.6-1.7h15.8c2.7 0 4.3 1.4 4.3 4.3 0 .9-.2 1.7-.3 2.7-.2 1-.5 2.4-1.2 4.3l-41 131.6q-1.5 5.1-3.6 6.6c-1.4 1-3.6 1.7-6.5 1.7h-14.6c-3.2 0-5.4-.5-6.8-1.7s-2.6-3.4-3.2-6.8l-26.4-109.8L236.7 250c-.9 3.4-1.9 5.6-3.2 6.8-1.4 1.2-3.7 1.7-6.8 1.7zm218.8 4.6c-8.9 0-17.7-1-26.2-3.1-8.5-2-15.2-4.3-19.6-6.8-2.7-1.5-4.6-3.2-5.3-4.8s-1-3.2-1-4.8v-8.7c0-3.6 1.4-5.3 3.9-5.3 1 0 2 .2 3.1.5 1 .3 2.6 1 4.3 1.7 5.8 2.6 12.1 4.6 18.7 6 6.8 1.4 13.5 2 20.3 2 10.7 0 19.1-1.9 24.9-5.6s8.9-9.2 8.9-16.2c0-4.8-1.5-8.7-4.6-11.9s-8.9-6.1-17.2-8.9l-24.7-7.7c-12.4-3.9-21.6-9.7-27.2-17.4-5.6-7.5-8.5-15.8-8.5-24.7 0-7.2 1.5-13.5 4.6-18.9s7.2-10.2 12.3-14c5.1-3.9 10.9-6.8 17.7-8.9 6.8-2 14-2.9 21.5-2.9 3.7 0 7.7.2 11.4.7 3.9.5 7.5 1.2 11.1 1.9 3.4.9 6.6 1.7 9.7 2.7s5.4 2 7.2 3.1c2.4 1.4 4.1 2.7 5.1 4.3 1 1.4 1.5 3.2 1.5 5.6v8c0 3.6-1.4 5.4-3.9 5.4-1.4 0-3.6-.7-6.5-2q-14.55-6.6-32.7-6.6c-9.7 0-17.4 1.5-22.6 4.8s-8 8.2-8 15.2c0 4.8 1.7 8.9 5.1 12.1s9.7 6.5 18.7 9.4l24.2 7.7c12.3 3.9 21.1 9.4 26.4 16.3s7.8 15 7.8 23.8c0 7.3-1.5 14-4.4 19.8-3.1 5.8-7.2 10.9-12.4 15-5.3 4.3-11.6 7.3-18.9 9.5-8 2.5-16 3.7-24.7 3.7\"/><path d=\"M462.9 345.7c-56 41.4-137.4 63.3-207.4 63.3-98.1 0-186.5-36.3-253.2-96.6-5.3-4.8-.5-11.2 5.8-7.5 72.2 41.9 161.3 67.3 253.4 67.3 62.2 0 130.4-12.9 193.3-39.5 9.3-4.2 17.3 6.2 8.1 13m23.3-26.5c-7.2-9.2-47.3-4.4-65.6-2.2-5.4.7-6.3-4.1-1.4-7.7 32-22.5 84.6-16 90.8-8.5 6.1 7.7-1.7 60.3-31.7 85.5-4.6 3.9-9 1.9-7-3.2 6.9-16.9 22.1-54.9 14.9-63.9\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#f90\"/></svg>",
-    "selfhst-opnsense": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 160.2V400H400V112H112V0h240.4zM112 112H0v240.4L160.2 512H400V400H112z\" style=\"fill:#de3c07\"/></svg>",
-    "selfhst-portainer": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M462.2 512H49.8C22.3 512 0 489.7 0 462.2V49.8C0 22.3 22.3 0 49.8 0h412.4C489.7 0 512 22.3 512 49.8v412.4c0 27.5-22.3 49.8-49.8 49.8\" style=\"fill:#2e2f33\"/><path d=\"M108.2 63.9h140.9c97.2 0 154.6 30.4 154.6 129.5v3.4c0 99.4-57.2 129.5-154.5 129.5h-30.7V447H108.2zm134.5 177.8c30.1 0 46-11.2 46-44.6v-3.9c0-33.2-15.8-44.6-46-44.6h-24.2v93.1zM313 358h90.3v90.1H313z\" style=\"fill:#f7f6f3\"/></svg>",
-    "selfhst-jotty": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M438.6 0H73.4C33.1 0 .3 32.8.3 73.1v365.7c0 40.3 32.8 73.1 73.1 73.1h365.3c40.3 0 73.1-32.8 73.1-73.1V73.1C511.7 32.8 478.9 0 438.6 0\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#8b3bd0\"/><path d=\"M356.8 53.6v261.3c0 39.3-13.9 72.8-41.8 100.7s-61.4 41.8-100.7 41.8l-23.8-95h23.8c13 0 24.1-4.6 33.2-13.8 9.5-9.5 14.3-20.7 14.3-33.7V148.6H157.3v-95z\" style=\"fill:#fff\"/></svg>",
-    "selfhst-authportal": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M0 0h512v512H0z\" style=\"fill:#111827\"/><path d=\"M170.7 85.3 369.8 256 170.7 426.7z\" style=\"fill:#f59e0b\"/></svg>",
-    "selfhst-docker": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M501.4 212.3c-11.5-8-38-11-58.6-7-2.4-20-13.5-37.5-32.7-53l-11-8-7.7 11.5c-9.6 15-14.4 36-13 56 .5 7 2.9 19.5 10.1 30.5-6.7 4-20.7 9-38.9 9H2.3l-1 4c-3.4 20-3.4 82.5 36 130.5 29.8 36.5 74 55 132.1 55 125.9 0 219.1-60.5 262.8-170 17.3.5 54.3 0 73-37.5.5-1 1.4-3 4.8-10.5l1.9-4zM280 71.3h-52.8v50H280zm0 60h-52.8v50H280zm-62.5 0h-52.8v50h52.8zm-62.4 0h-52.8v50h52.8zm-62.5 60H39.8v50h52.8zm62.5 0h-52.8v50h52.8zm62.4 0h-52.8v50h52.8zm62.5 0h-52.8v50H280zm62.4 0h-52.8v50h52.8z\" style=\"fill:#2396ed\"/></svg>",
-    "selfhst-opnsense-v1": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M503.1 465.4v2.1c-6 25.5-28.4 44.5-55 44.5H7.3v-46.6h38.3v7.3h403c1.1 0 2 0 2.9-.1 1.8-.1 3.6-.6 5.2-1.3 2.9-1.3 5.3-3.3 7-5.9zM63.9 0c-26.5 0-49 19-55 44.5V47H48c2.7-4.3 7.3-7.2 12.6-7.6 1-.1 2-.1 3.2-.1h402.6V47h38.3V0z\" style=\"fill:#898b8d\"/><path d=\"M466.1 157.7V197H319.5v-39.3zM45.9 315.4v39.3h146.6v-39.3zm0-157.7V197h146.6v-39.3zm273.6 157.7v39.3h146.6v-39.3z\" style=\"fill:#58595b\"/><path d=\"M83.8 78.6H428v39.3H83.8zm0 315.9H428v39.3H83.8z\" style=\"fill:#403f41\"/><linearGradient id=\"opnsense-v1_svg__a\" x1=\"-1460.617\" x2=\"-1375.11\" y1=\"1248.095\" y2=\"1248.095\" gradientTransform=\"matrix(.1853 .356 .6722 -.353 -90.66 993.802)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"m466.5 78.6 38.2-20.5.1-39.5-38.3 20.7\" style=\"fill:url(#opnsense-v1_svg__a)\"/><linearGradient id=\"opnsense-v1_svg__b\" x1=\"4.634\" x2=\"50.301\" y1=\"462.6\" y2=\"462.6\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 64.5v-8.9c0-5.3 2.6-10 6.5-13l-34-18.5c-6.7 9.5-10.8 21.3-10.9 34l38.3 20.6v-14c.1-.1.1-.2.1-.2\" style=\"fill:url(#opnsense-v1_svg__b)\"/><linearGradient id=\"opnsense-v1_svg__c\" x1=\"-1587.887\" x2=\"-1498.137\" y1=\"-2208.165\" y2=\"-2208.165\" gradientTransform=\"matrix(-.1853 -.356 -.6722 .353 -1743.836 694.098)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 472.7v-38.9L7.3 454.5v39.7l39.9-21.5z\" style=\"fill:url(#opnsense-v1_svg__c)\"/><linearGradient id=\"opnsense-v1_svg__d\" x1=\"460.439\" x2=\"504.436\" y1=\"53\" y2=\"53\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M466.5 456.4c0 5.5-2.7 10.3-6.9 13.2l34.2 18.4c6.8-9.5 10.8-21.2 10.9-33.8L466.5 434v12.8\" style=\"fill:url(#opnsense-v1_svg__d)\"/><linearGradient id=\"opnsense-v1_svg__e\" x1=\"2521.902\" x2=\"2684.464\" y1=\"-2476.233\" y2=\"-2476.233\" gradientTransform=\"matrix(-1.508 -1.0166 -3.1265 -1.519 -3697.438 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 197v-.4l-72.4-38.9H45.9v.2l72.5 39.1z\" style=\"fill:url(#opnsense-v1_svg__e)\"/><linearGradient id=\"opnsense-v1_svg__f\" x1=\"-1594.953\" x2=\"-1432.391\" y1=\"278.458\" y2=\"278.458\" gradientTransform=\"matrix(1.508 -1.0166 3.1265 -1.519 1804.196 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 157.7h-74l-72.6 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__f)\"/><linearGradient id=\"opnsense-v1_svg__g\" x1=\"-4327.142\" x2=\"-4164.581\" y1=\"1572.387\" y2=\"1572.387\" gradientTransform=\"matrix(1.508 1.0166 3.1265 1.519 1863.938 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 354.7v-.4l-72.4-38.9h-74.2v.2l72.6 39.1z\" style=\"fill:url(#opnsense-v1_svg__g)\"/><linearGradient id=\"opnsense-v1_svg__h\" x1=\"-413.668\" x2=\"-246.99\" y1=\"-1046.618\" y2=\"-1046.618\" gradientTransform=\"matrix(-1.508 1.0166 -3.1265 1.519 -3638.692 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 315.4h-74.1l-72.5 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__h)\"/><linearGradient id=\"opnsense-v1_svg__i\" x1=\"74.725\" x2=\"261.062\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(.9914 0 0 -1 -66.782 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 157.7V197L7.3 97.4V58.1z\" style=\"fill:url(#opnsense-v1_svg__i)\"/><linearGradient id=\"opnsense-v1_svg__j\" x1=\"-2461.056\" x2=\"-2274.718\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(-.9914 0 0 -1 -1935.19 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 157.7V197l185.5-99.6V58.1z\" style=\"fill:url(#opnsense-v1_svg__j)\"/><linearGradient id=\"opnsense-v1_svg__k\" x1=\"-2291.845\" x2=\"-2105.508\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(-.9914 0 0 1 -1767.435 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 355.2v-39.8L504.7 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__k)\"/><linearGradient id=\"opnsense-v1_svg__l\" x1=\"-94.103\" x2=\"91.934\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(.9914 0 0 1 100.993 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 355.2v-39.8L7.3 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__l)\"/><path d=\"m319.2 276.1 108.9 58.5v-39.7l-35.3-18.8h111.9v-39.8H392.8l35.3-18.8v-39.3l-108.9 58.1zM83.8 334.6l109-58.5v-39.8l-109-58.1v39.3l35.7 18.8H7.3v39.8h111.9l-35.3 18.8v39.7z\" style=\"fill:#e24525\"/></svg>",
-    "mdi-server-security": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server-security\" viewBox=\"0 0 24 24\"><path d=\"M3,1H19A1,1 0 0,1 20,2V6A1,1 0 0,1 19,7H3A1,1 0 0,1 2,6V2A1,1 0 0,1 3,1M3,9H19A1,1 0 0,1 20,10V10.67L17.5,9.56L11,12.44V15H3A1,1 0 0,1 2,14V10A1,1 0 0,1 3,9M3,17H11C11.06,19.25 12,21.4 13.46,23H3A1,1 0 0,1 2,22V18A1,1 0 0,1 3,17M8,5H9V3H8V5M8,13H9V11H8V13M8,21H9V19H8V21M4,3V5H6V3H4M4,11V13H6V11H4M4,19V21H6V19H4M17.5,12L22,14V17C22,19.78 20.08,22.37 17.5,23C14.92,22.37 13,19.78 13,17V14L17.5,12M17.5,13.94L15,15.06V17.72C15,19.26 16.07,20.7 17.5,21.06V13.94Z\" /></svg>"
-  },
+  "nodeStyles": {},
   "page": {
     "title": "The One File",
     "background": "",
@@ -795,12 +691,10 @@
     "viewOnly": false,
     "defaultEdgeRouting": "curved"
   },
-  "autoPingEnabled": false,
-  "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.510468470619263,
-    "panX": 1254.5197896196048,
-    "panY": -147.55422459755366
+    "zoom": 0.9828345045578523,
+    "panX": 162.25942846156744,
+    "panY": -131.59941950312611
   },
   "savedTopologyView": {
     "zoom": 0.9325110211947125,
@@ -858,15 +752,7 @@
           "rackCapacity": "42",
           "isRack": false,
           "locked": false,
-          "groupId": null,
-          "ping": {
-            "enabled": true,
-            "protocol": "custom",
-            "customUrl": "https://google.com",
-            "timeout": 3000,
-            "status": "online",
-            "lastCheck": "2025-12-09T00:15:04.343Z"
-          }
+          "groupId": null
         },
         "fw-external-1": {
           "shape": "firewall",
@@ -1090,17 +976,7 @@
           "tags": [
             "dmz",
             "security",
-            "public-facing",
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "booklogr"
-            },
-            {
-              "type": "icon",
-              "library": "simple",
-              "name": "gmail"
-            }
+            "public-facing"
           ],
           "notes": [
             "Isolated DMZ zone",
@@ -2886,12 +2762,7 @@
           "tags": [
             "dev",
             "gitlab",
-            "ci-cd",
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "dokku"
-            }
+            "ci-cd"
           ],
           "notes": [
             "GitLab Server",
@@ -3383,7 +3254,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "isp2-router2",
@@ -3400,7 +3272,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-router2",
@@ -3417,7 +3290,8 @@
             "toPort": "Gi1/0/24",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-fw1",
@@ -3432,7 +3306,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-fw2",
@@ -3447,7 +3322,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-fw2",
@@ -3464,7 +3340,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-coresw1",
@@ -3479,7 +3356,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-coresw2",
@@ -3494,7 +3372,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-coresw2",
@@ -3511,7 +3390,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-fwint",
@@ -3526,7 +3406,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-fwint",
@@ -3541,7 +3422,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka1",
@@ -3556,7 +3438,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka1",
@@ -3571,7 +3454,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka2",
@@ -3586,7 +3470,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka2",
@@ -3601,7 +3486,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb1",
@@ -3616,7 +3502,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb1",
@@ -3631,7 +3518,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb2",
@@ -3646,7 +3534,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb2",
@@ -3661,7 +3550,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-dmz",
@@ -3678,7 +3568,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-dmz",
@@ -3695,7 +3586,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-mgmt",
@@ -3712,7 +3604,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-wlc1",
@@ -3727,7 +3620,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-wlc2",
@@ -3742,7 +3636,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-wlc2",
@@ -3759,7 +3654,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-hq",
@@ -3774,7 +3670,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-guest",
@@ -3789,7 +3686,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-iot",
@@ -3804,7 +3702,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-ny",
@@ -3821,7 +3720,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-la",
@@ -3838,7 +3738,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-chi",
@@ -3855,7 +3756,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-lon",
@@ -3872,7 +3774,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-tokyo",
@@ -3889,7 +3792,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-aws",
@@ -3906,7 +3810,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-azure",
@@ -3923,7 +3828,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-gcp",
@@ -3940,7 +3846,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor1",
@@ -3955,7 +3862,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor2",
@@ -3970,7 +3878,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor3",
@@ -3985,7 +3894,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor4",
@@ -4000,7 +3910,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-endpoints",
@@ -4015,7 +3926,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-ap1",
@@ -4030,7 +3942,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor2-ap2",
@@ -4045,7 +3958,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor3-ap3",
@@ -4060,7 +3974,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor4-ap4",
@@ -4075,7 +3990,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy1",
@@ -4090,7 +4006,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy2",
@@ -4105,7 +4022,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-vpn",
@@ -4120,7 +4038,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-nac",
@@ -4135,7 +4054,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-voip",
@@ -4150,7 +4070,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-video",
@@ -4165,7 +4086,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-cameras",
@@ -4180,7 +4102,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev1",
@@ -4195,7 +4118,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev2",
@@ -4210,7 +4134,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-test",
@@ -4225,7 +4150,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-erp",
@@ -4240,7 +4166,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-crm",
@@ -4257,7 +4184,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-racka1",
@@ -4274,7 +4202,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-racka2",
@@ -4291,7 +4220,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-rackb1",
@@ -4308,7 +4238,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-rackb2",
@@ -4325,7 +4256,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling1-racka1",
@@ -4342,7 +4274,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling2-rackb1",
@@ -4359,7 +4292,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765237881452",
@@ -4382,30 +4316,8 @@
                 "y": 1732.2144775390625
               }
             ],
-            "notes": []
-          },
-          {
-            "id": "custom-1765239355462",
-            "type": "custom",
-            "color": "#f97316",
-            "width": 4,
-            "lineStyle": "solid",
-            "direction": "forward",
-            "points": [
-              {
-                "x": 2467.182861328125,
-                "y": 156.12173461914062
-              },
-              {
-                "x": 2146.36376953125,
-                "y": 146.32574462890625
-              },
-              {
-                "x": 2305.548828125,
-                "y": 244.28573608398438
-              }
-            ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           }
         ]
       },
@@ -4415,8 +4327,8 @@
           "y": 245.9932403564453
         },
         "core-router-2": {
-          "x": 2499.883407638303,
-          "y": 329.99503430389154
+          "x": 2369.521102950803,
+          "y": 215.57717236541498
         },
         "fw-external-1": {
           "x": 3221.7385182723783,
@@ -4455,8 +4367,8 @@
           "y": 951.7132426303456
         },
         "dmz-rack": {
-          "x": 2176.4105289561007,
-          "y": 610.8312056412005
+          "x": 2222.5242984873507,
+          "y": 603.145536695888
         },
         "mgmt-rack": {
           "x": 1601.2987201807314,
@@ -4611,7 +4523,7 @@
           "y": 2299.110107421875
         },
         "branch-router-ny": {
-          "x": 3151.903101363964,
+          "x": 3146.779566207714,
           "y": 633.6580810546875
         },
         "branch-router-la": {
@@ -4631,8 +4543,8 @@
           "y": 471.4241027832031
         },
         "cloud-aws": {
-          "x": 3436.528122523513,
-          "y": 545.9614868164062
+          "x": 3439.090134242263,
+          "y": 548.5233154296875
         },
         "cloud-azure": {
           "x": 2592.566210818907,
@@ -4644,11 +4556,11 @@
         },
         "isp-primary": {
           "x": 3712.192068081962,
-          "y": 615.64990234375
+          "y": 618.2117919921875
         },
         "isp-secondary": {
-          "x": 2702.3789772348055,
-          "y": 467.890869140625
+          "x": 2574.2854713754305,
+          "y": 403.8440856933594
         },
         "dc-internal-1": {
           "x": 1958.4243458877936,
@@ -4751,16 +4663,16 @@
           "y": 2845
         },
         "dev-server-1": {
-          "x": 2800.5894350649614,
-          "y": 1175.623291015625
+          "x": 2359.9473452212114,
+          "y": 1480.4859619140625
         },
         "dev-server-2": {
-          "x": 1945.0822182484326,
-          "y": 1164.5184783935547
+          "x": 1934.8346596546826,
+          "y": 1236.2509002685547
         },
         "test-environment": {
-          "x": 2566.9100352578575,
-          "y": 885.2827758789062
+          "x": 2205.6861583047325,
+          "y": 867.3496704101562
         },
         "erp-system": {
           "x": 864.9509620587212,
@@ -4831,12 +4743,7 @@
           "y": 981.0621185302734
         }
       },
-      "sizes": {
-        "isp-secondary": 139,
-        "test-environment": 148,
-        "dev-server-1": 128,
-        "core-router-2": 120
-      },
+      "sizes": {},
       "styles": {
         "dc-rack-b2": {
           "all": {
@@ -4852,80 +4759,6 @@
           "all": {
             "circleColor": "#ff0000",
             "titleSize": 59
-          }
-        },
-        "isp-secondary": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "alist"
-            }
-          }
-        },
-        "core-router-2": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "actual-budget"
-            },
-            "pingOffsetX": -15,
-            "pingOffsetY": -38
-          }
-        },
-        "fw-external-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "anonaddy"
-            }
-          }
-        },
-        "cloud-aws": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "ansible"
-            }
-          }
-        },
-        "isp-primary": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "wikidocs"
-            }
-          }
-        },
-        "branch-router-tokyo": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "adguard-home"
-            }
-          }
-        },
-        "core-router-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "borg"
-            }
-          }
-        },
-        "test-environment": {
-          "all": {
-            "icon": {
-              "library": "simple",
-              "name": "apple"
-            }
-          }
-        },
-        "dev-server-1": {
-          "all": {
-            "icon": {
-              "library": "simple",
-              "name": "amazonwebservices"
-            }
           }
         }
       },
@@ -4988,21 +4821,6 @@
             "bgColor": "#000000",
             "bgEnabled": false,
             "opacity": 1
-          },
-          {
-            "id": "text-1765239331126",
-            "x": 2454.5615234375,
-            "y": 160.73322105407715,
-            "content": "Google is live!",
-            "fontSize": 56,
-            "color": "#e2e8f0",
-            "fontWeight": "bold",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1
           }
         ]
       },
@@ -5038,7 +4856,7 @@
         "danger": "#f56565",
         "textMain": "#e2e8f0",
         "textSoft": "#94a3b8",
-        "topbarHeight": 103,
+        "topbarHeight": 113,
         "sidebarWidth": 350,
         "mobileFooterHeight": 40,
         "sidebarCollapsed": false,
@@ -5063,9 +4881,7 @@
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
         "viewOnly": false,
-        "defaultEdgeRouting": "curved",
-        "autoPingEnabled": false,
-        "autoPingInterval": 30
+        "defaultEdgeRouting": "orthogonal"
       }
     },
     {
@@ -5162,23 +4978,7 @@
           "name": "Docker 4",
           "ip": "0.0.0.0",
           "role": "",
-          "tags": [
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "docker"
-            },
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "authentik"
-            },
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "immich"
-            }
-          ],
+          "tags": [],
           "notes": [],
           "mac": "",
           "rackUnit": "",
@@ -5414,24 +5214,24 @@
             "_pairTotal": 1
           },
           {
-            "id": "custom-1765239449323",
+            "id": "custom-1765238841477",
             "type": "custom",
             "color": "#f97316",
             "width": 4,
             "lineStyle": "solid",
-            "direction": "forward",
+            "direction": "both",
             "points": [
               {
-                "x": 2936.464111328125,
-                "y": 786.07958984375
+                "x": 2905.255615234375,
+                "y": 805.3433837890625
               },
               {
-                "x": 3184.112060546875,
-                "y": 887.6153564453125
+                "x": 3189.95556640625,
+                "y": 1005.8710327148438
               },
               {
-                "x": 2763.110107421875,
-                "y": 981.7216796875
+                "x": 2788.900390625,
+                "y": 1008.3466796875
               }
             ],
             "notes": []
@@ -5440,19 +5240,19 @@
       },
       "positions": {
         "internet": {
-          "x": 2103.968290880771,
-          "y": 268
+          "x": 2071.640165880771,
+          "y": 218.24354238566275
         },
         "internet-copy": {
           "x": 2066.9677515897347,
           "y": 473.4119134177565
         },
         "opnsense-copy": {
-          "x": 1773.8400660428597,
-          "y": 666.5758233298659
+          "x": 1775.6360865506722,
+          "y": 668.3718438376784
         },
         "docker-copy": {
-          "x": 1931.1978950081452,
+          "x": 1934.7898139534577,
           "y": 782.2775961320921
         },
         "docker-copy-1": {
@@ -5460,7 +5260,7 @@
           "y": 767.7122274797483
         },
         "docker-copy-2": {
-          "x": 2342.2663764534577,
+          "x": 2345.8584174690827,
           "y": 631.7681967180296
         },
         "opnsense-copy-1": {
@@ -5472,96 +5272,26 @@
           "y": 502.58220111114224
         },
         "desktop": {
-          "x": 2971.700036728428,
-          "y": 480.7287465212985
+          "x": 2987.696130478428,
+          "y": 487.5842152712985
         },
         "dns": {
           "x": 3200.4643189549906,
           "y": 320.469591247861
         },
         "racked": {
-          "x": 2645.5845448279656,
-          "y": 970.7820678889219
+          "x": 2600.8697010779656,
+          "y": 975.5665527522032
         }
       },
       "sizes": {
         "core-router-1": 36,
-        "internet": 168,
+        "internet": 85,
         "phone": 121,
         "desktop": 147,
-        "racked": 137,
-        "docker-copy-2": 82
+        "racked": 137
       },
-      "styles": {
-        "internet": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "amazon-web-services"
-            },
-            "circleColor": "#ffffff",
-            "circleBorder": "#ffffff"
-          }
-        },
-        "opnsense-copy-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "opnsense-v1"
-            }
-          }
-        },
-        "internet-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "opnsense"
-            }
-          }
-        },
-        "docker-copy-2": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "docker"
-            }
-          }
-        },
-        "docker-copy-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "authportal"
-            }
-          }
-        },
-        "docker-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "jotty"
-            }
-          }
-        },
-        "opnsense-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "portainer"
-            }
-          }
-        },
-        "racked": {
-          "all": {
-            "icon": {
-              "library": "mdi",
-              "name": "server-security"
-            },
-            "circleColor": "#010813",
-            "circleBorder": "#ffffff"
-          }
-        }
-      },
+      "styles": {},
       "legend": {
         "#475569": "you can edit me too",
         "#65758b": "you can edit me too",
@@ -5774,10 +5504,10 @@
         "list": [
           {
             "id": "text-1765238422602",
-            "x": 2466.35986328125,
-            "y": 741.6801147460938,
+            "x": 2402.130859375,
+            "y": 736.7828979492188,
             "content": "Double click on desktop\nor long press on mobile\nto enter rack canvas view",
-            "fontSize": 40,
+            "fontSize": 48,
             "color": "#e2e8f0",
             "fontWeight": "normal",
             "fontStyle": "normal",
@@ -5854,65 +5584,212 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1766190738042,
+      "timestamp": 1766190469264,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190727569,
+      "timestamp": 1766190459489,
       "type": "export",
-      "description": "Exported JSON: the-one-file-corporate.json",
+      "description": "Exported Markdown: the-one-file-corporate.md",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766190721141,
+      "timestamp": 1766190386262,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766190717499,
+      "timestamp": 1766190382903,
       "type": "tab",
       "description": "Switched to tab: Corporate Site B",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766190710946,
+      "timestamp": 1766190372732,
       "type": "save",
       "description": "File saved: the-one-file.html",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190705273,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
+      "timestamp": 1766190356740,
+      "type": "export",
+      "description": "Exported JSON: the-one-file.json",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190703463,
+      "timestamp": 1766190353695,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190695709,
+      "timestamp": 1766190348545,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190340714,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766190688417,
+      "timestamp": 1766190337770,
+      "type": "node",
+      "description": "apply routing to all",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190327814,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190321554,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190320188,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766190293090,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766190290259,
       "type": "import",
-      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022128543,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022121954,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-18.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022111697,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022108613,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022105579,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766022100565,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022093656,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022075148,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766022066503,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402929770,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402922300,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-data-2025-12-10.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402914493,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402910921,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1765402904206,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1765402899387,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate-demo.json (105 nodes, 64 connections)",
       "details": {},
       "tab": "Corporate Site B"
     },
@@ -5967,3 +5844,542 @@
     }
   ]
 }
+THEONEFILE_CONFIG-->
+
+# The One File
+
+> Exported from The One File on 2025-12-20T00:27:54.124Z
+
+## Legend
+
+- #475569: you can edit me too
+- #65758b: you can edit me too
+- #63748c: you can edit me too
+- #5e6f87: you can edit me too
+- #586a84: you can edit me too
+- #4f627d: you can edit me too
+- #455873: you can edit me too
+- #3d506c: you can edit me too
+- #354964: you can edit me too
+- #2e415c: you can edit me too
+- #293c56: you can edit me too
+- #273a53: you can edit me too
+- #253750: you can edit me too
+- #23354d: you can edit me too
+- #203046: you can edit me too
+- #1e2d43: you can edit me too
+- #1a283d: you can edit me too
+- #172435: you can edit me too
+- #141f2e: you can edit me too
+- #111a27: you can edit me too
+- #0f1824: you can edit me too
+- #0d1521: you can edit me too
+- #0c131d: you can edit me too
+- #0c1d1c: you can edit me too
+- #0c1c1d: you can edit me too
+- #0c191d: you can edit me too
+- #0c141d: you can edit me too
+- #0c0d1d: you can edit me too
+- #130c1d: you can edit me too
+- #1b0c1d: you can edit me too
+- #1d0c17: you can edit me too
+- #1d0c10: you can edit me too
+- #1d0c0c: you can edit me too
+- #3b1b1b: you can edit me too
+- #3c1a1a: you can edit me too
+- #3f1c1c: you can edit me too
+- #401c1c: you can edit me too
+- #451c1c: you can edit me too
+- #461b1b: you can edit me too
+- #4c1a1a: you can edit me too
+- #521919: you can edit me too
+- #571919: you can edit me too
+- #5d1818: you can edit me too
+- #631717: you can edit me too
+- #651515: you can edit me too
+- #6a1616: you can edit me too
+- #6f1515: you can edit me too
+- #711414: you can edit me too
+- #761414: you can edit me too
+- #771313: you can edit me too
+- #7c1313: you can edit me too
+- #811313: you can edit me too
+- #821212: you can edit me too
+- #871212: you can edit me too
+- #881111: you can edit me too
+- #8d1111: you can edit me too
+- #8e1010: you can edit me too
+- #8f0f0f: you can edit me too
+- #900e0e: you can edit me too
+- #8e0b0b: you can edit me too
+- #8c0d0d: you can edit me too
+- #880c0c: you can edit me too
+- #830c0c: you can edit me too
+- #7e0c0c: you can edit me too
+- #790c0c: you can edit me too
+- #730c0c: you can edit me too
+- #6f0b0b: you can edit me too
+- #0b6f64: you can edit me too
+- #0b6f5f: you can edit me too
+- #0b6f56: you can edit me too
+- #0b6f49: you can edit me too
+- #0b6f31: you can edit me too
+- #0b6f1f: you can edit me too
+- #0b6f0d: you can edit me too
+- #176f0b: you can edit me too
+- #266f0b: you can edit me too
+- #296f0b: you can edit me too
+- #2e6f0b: you can edit me too
+- #1a2d10: you can edit me too
+- #1c3111: you can edit me too
+- #213814: you can edit me too
+- #233c15: you can edit me too
+- #254017: you can edit me too
+- #294918: you can edit me too
+- #2b4d1a: you can edit me too
+- #2d511a: you can edit me too
+- #315a1b: you can edit me too
+- #35631c: you can edit me too
+- #37681d: you can edit me too
+- #3b721d: you can edit me too
+- #3f7b1e: you can edit me too
+- #42851e: you can edit me too
+- #46901d: you can edit me too
+- #499a1d: you can edit me too
+- #4b9f1d: you can edit me too
+- #4ca61c: you can edit me too
+- #50b01c: you can edit me too
+- #51b71a: you can edit me too
+- #50b918: you can edit me too
+- #51c115: you can edit me too
+- #53c615: you can edit me too
+- #53c814: you can edit me too
+- #52c913: you can edit me too
+- #54d011: you can edit me too
+- #53d110: you can edit me too
+- #55d510: you can edit me too
+- #55d70f: you can edit me too
+- #54d80e: you can edit me too
+- #54da0b: you can edit me too
+- #56df0c: you can edit me too
+- #53db0a: you can edit me too
+- #55e00b: you can edit me too
+- #55e109: you can edit me too
+- #55e208: ISP LINE
+- #4c00ff: MY Guest NETWORK
+- #80ff00: you can edit me too
+- #3b4234: you can edit me too
+- #3a3442: you can edit me too
+- #3b3442: you can edit me too
+- #3c3442: you can edit me too
+- #3d3442: you can edit me too
+- #3e3442: you can edit me too
+- #3f3442: you can edit me too
+- #403442: you can edit me too
+- #413442: you can edit me too
+- #653d66: you can edit me too
+- #683f69: you can edit me too
+- #6c416c: you can edit me too
+- #6f4370: you can edit me too
+- #704270: you can edit me too
+- #734474: you can edit me too
+- #784479: you can edit me too
+- #7d447e: you can edit me too
+- #7e437f: you can edit me too
+- #834384: you can edit me too
+- #844285: you can edit me too
+- #89418b: you can edit me too
+- #8e428f: you can edit me too
+- #904091: you can edit me too
+- #923e93: you can edit me too
+- #973e98: you can edit me too
+- #943c96: you can edit me too
+- #993c9a: you can edit me too
+- #963a98: you can edit me too
+- #973899: you can edit me too
+- #99369b: you can edit me too
+- #9a359c: you can edit me too
+- #9b349d: you can edit me too
+- #9d329f: you can edit me too
+- #9e31a0: you can edit me too
+- #a02fa2: you can edit me too
+- #9d2d9f: you can edit me too
+- #9f2ba1: you can edit me too
+- #a129a3: you can edit me too
+- #a327a5: you can edit me too
+- #a525a7: you can edit me too
+- #a723a9: you can edit me too
+- #a921ab: you can edit me too
+- #ab1fad: you can edit me too
+- #ad1daf: you can edit me too
+- #ae1cb0: you can edit me too
+- #b019b3: you can edit me too
+- #b118b4: you can edit me too
+- #b316b6: you can edit me too
+- #b816bb: you can edit me too
+- #b514b8: you can edit me too
+- #ba14bd: you can edit me too
+- #b712ba: you can edit me too
+- #bb13be: you can edit me too
+- #b811bb: you can edit me too
+- #be10c1: you can edit me too
+- #bb0ebe: you can edit me too
+- #bd0cc0: you can edit me too
+- #be0bc1: you can edit me too
+- #c108c4: you can edit me too
+- #be06c1: you can edit me too
+- #c103c4: you can edit me too
+- #c301c6: you can edit me too
+- #c400c7: you can edit me too
+- #c900cc: you can edit me too
+- #ce00d1: you can edit me too
+- #d300d6: you can edit me too
+- #d800db: you can edit me too
+- #dd00e0: you can edit me too
+- #e200e6: you can edit me too
+- #ec00f0: you can edit me too
+- #f100f5: you can edit me too
+- #f600fa: you can edit me too
+- #fb00ff: you can edit me too
+- #ff00d0: iPhone (always guest iPhone)
+- #f97316: you can edit me too
+
+## Nodes
+
+### internet
+- **Name:** Internet
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** square
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2072, 218
+- **Size:** 85
+
+### internet-copy
+- **Name:** OPNSENSE
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2067, 473
+- **Size:** 50
+
+### opnsense-copy
+- **Name:** Docker
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1776, 668
+- **Size:** 50
+
+### docker-copy
+- **Name:** Docker2
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1935, 782
+- **Size:** 50
+
+### docker-copy-1
+- **Name:** Docker3
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2158, 768
+- **Size:** 50
+
+### docker-copy-2
+- **Name:** Docker 4
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2346, 632
+- **Size:** 50
+
+### opnsense-copy-1
+- **Name:** OPNSENSE GUEST
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2758, 308
+- **Size:** 50
+
+### phone
+- **Name:** Phone
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** phone
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3313, 503
+- **Size:** 121
+
+### desktop
+- **Name:** Desktop
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** pc
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2988, 488
+- **Size:** 147
+
+### dns
+- **Name:** DNS
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** cloud
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3200, 320
+- **Size:** 50
+
+### racked
+- **Name:** Racked
+- **IP:** 
+- **Role:** Rack
+- **Shape:** server
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2601, 976
+- **Size:** 137
+
+## Connections
+
+- internet --> internet-copy
+  - **ID:** internet-internet-copy-1765238145151
+  - **Label:** 
+  - **Color:** #55e208
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> opnsense-copy
+  - **ID:** internet-copy-opnsense-copy-1765238187451
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy
+  - **ID:** internet-copy-docker-copy-1765238242477
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy-1
+  - **ID:** internet-copy-docker-copy-1-1765238244637
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy-2
+  - **ID:** internet-copy-docker-copy-2-1765238246233
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet --> opnsense-copy-1
+  - **ID:** internet-opnsense-copy-1-1765238266117
+  - **Label:** 
+  - **Color:** #80ff00
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- opnsense-copy-1 --> dns
+  - **ID:** opnsense-copy-1-dns-1765238347996
+  - **Label:** 
+  - **Color:** #fb00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dns --> desktop
+  - **ID:** dns-desktop-1765238386101
+  - **Label:** 
+  - **Color:** #ff00d0
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- phone --> dns
+  - **ID:** phone-dns-1765238391156
+  - **Label:** 
+  - **Color:** #ff00d0
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- undefined --> undefined
+  - **ID:** custom-1765238841477
+  - **Label:** 
+  - **Color:** #f97316
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** custom
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Points:** 2905,805 3190,1006 2789,1008
+
+## Zones
+
+### rect-1765238219615
+- **Position:** 2680, 251
+- **Size:** 814 x 389
+- **Color:** #ec0999
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+
+## Text Labels
+
+### text-1765238422602
+- **Content:** Double click on desktop<br>or long press on mobile<br>to enter rack canvas view
+- **Position:** 2402, 737
+- **Font Size:** 48
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+

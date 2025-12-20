@@ -1,3 +1,4 @@
+<!--THEONEFILE_CONFIG
 {
   "nodeData": {
     "internet": {
@@ -5854,6 +5855,13 @@
   "encryptedSections": {},
   "auditLog": [
     {
+      "timestamp": 1766190740495,
+      "type": "export",
+      "description": "Exported JSON: the-one-file.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
       "timestamp": 1766190738042,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
@@ -5967,3 +5975,550 @@
     }
   ]
 }
+THEONEFILE_CONFIG-->
+
+# The One File
+
+> Exported from The One File on 2025-12-20T00:32:24.602Z
+
+## Legend
+
+- #475569: you can edit me too
+- #65758b: you can edit me too
+- #63748c: you can edit me too
+- #5e6f87: you can edit me too
+- #586a84: you can edit me too
+- #4f627d: you can edit me too
+- #455873: you can edit me too
+- #3d506c: you can edit me too
+- #354964: you can edit me too
+- #2e415c: you can edit me too
+- #293c56: you can edit me too
+- #273a53: you can edit me too
+- #253750: you can edit me too
+- #23354d: you can edit me too
+- #203046: you can edit me too
+- #1e2d43: you can edit me too
+- #1a283d: you can edit me too
+- #172435: you can edit me too
+- #141f2e: you can edit me too
+- #111a27: you can edit me too
+- #0f1824: you can edit me too
+- #0d1521: you can edit me too
+- #0c131d: you can edit me too
+- #0c1d1c: you can edit me too
+- #0c1c1d: you can edit me too
+- #0c191d: you can edit me too
+- #0c141d: you can edit me too
+- #0c0d1d: you can edit me too
+- #130c1d: you can edit me too
+- #1b0c1d: you can edit me too
+- #1d0c17: you can edit me too
+- #1d0c10: you can edit me too
+- #1d0c0c: you can edit me too
+- #3b1b1b: you can edit me too
+- #3c1a1a: you can edit me too
+- #3f1c1c: you can edit me too
+- #401c1c: you can edit me too
+- #451c1c: you can edit me too
+- #461b1b: you can edit me too
+- #4c1a1a: you can edit me too
+- #521919: you can edit me too
+- #571919: you can edit me too
+- #5d1818: you can edit me too
+- #631717: you can edit me too
+- #651515: you can edit me too
+- #6a1616: you can edit me too
+- #6f1515: you can edit me too
+- #711414: you can edit me too
+- #761414: you can edit me too
+- #771313: you can edit me too
+- #7c1313: you can edit me too
+- #811313: you can edit me too
+- #821212: you can edit me too
+- #871212: you can edit me too
+- #881111: you can edit me too
+- #8d1111: you can edit me too
+- #8e1010: you can edit me too
+- #8f0f0f: you can edit me too
+- #900e0e: you can edit me too
+- #8e0b0b: you can edit me too
+- #8c0d0d: you can edit me too
+- #880c0c: you can edit me too
+- #830c0c: you can edit me too
+- #7e0c0c: you can edit me too
+- #790c0c: you can edit me too
+- #730c0c: you can edit me too
+- #6f0b0b: you can edit me too
+- #0b6f64: you can edit me too
+- #0b6f5f: you can edit me too
+- #0b6f56: you can edit me too
+- #0b6f49: you can edit me too
+- #0b6f31: you can edit me too
+- #0b6f1f: you can edit me too
+- #0b6f0d: you can edit me too
+- #176f0b: you can edit me too
+- #266f0b: you can edit me too
+- #296f0b: you can edit me too
+- #2e6f0b: you can edit me too
+- #1a2d10: you can edit me too
+- #1c3111: you can edit me too
+- #213814: you can edit me too
+- #233c15: you can edit me too
+- #254017: you can edit me too
+- #294918: you can edit me too
+- #2b4d1a: you can edit me too
+- #2d511a: you can edit me too
+- #315a1b: you can edit me too
+- #35631c: you can edit me too
+- #37681d: you can edit me too
+- #3b721d: you can edit me too
+- #3f7b1e: you can edit me too
+- #42851e: you can edit me too
+- #46901d: you can edit me too
+- #499a1d: you can edit me too
+- #4b9f1d: you can edit me too
+- #4ca61c: you can edit me too
+- #50b01c: you can edit me too
+- #51b71a: you can edit me too
+- #50b918: you can edit me too
+- #51c115: you can edit me too
+- #53c615: you can edit me too
+- #53c814: you can edit me too
+- #52c913: you can edit me too
+- #54d011: you can edit me too
+- #53d110: you can edit me too
+- #55d510: you can edit me too
+- #55d70f: you can edit me too
+- #54d80e: you can edit me too
+- #54da0b: you can edit me too
+- #56df0c: you can edit me too
+- #53db0a: you can edit me too
+- #55e00b: you can edit me too
+- #55e109: you can edit me too
+- #55e208: ISP LINE
+- #4c00ff: MY Guest NETWORK
+- #80ff00: you can edit me too
+- #3b4234: you can edit me too
+- #3a3442: you can edit me too
+- #3b3442: you can edit me too
+- #3c3442: you can edit me too
+- #3d3442: you can edit me too
+- #3e3442: you can edit me too
+- #3f3442: you can edit me too
+- #403442: you can edit me too
+- #413442: you can edit me too
+- #653d66: you can edit me too
+- #683f69: you can edit me too
+- #6c416c: you can edit me too
+- #6f4370: you can edit me too
+- #704270: you can edit me too
+- #734474: you can edit me too
+- #784479: you can edit me too
+- #7d447e: you can edit me too
+- #7e437f: you can edit me too
+- #834384: you can edit me too
+- #844285: you can edit me too
+- #89418b: you can edit me too
+- #8e428f: you can edit me too
+- #904091: you can edit me too
+- #923e93: you can edit me too
+- #973e98: you can edit me too
+- #943c96: you can edit me too
+- #993c9a: you can edit me too
+- #963a98: you can edit me too
+- #973899: you can edit me too
+- #99369b: you can edit me too
+- #9a359c: you can edit me too
+- #9b349d: you can edit me too
+- #9d329f: you can edit me too
+- #9e31a0: you can edit me too
+- #a02fa2: you can edit me too
+- #9d2d9f: you can edit me too
+- #9f2ba1: you can edit me too
+- #a129a3: you can edit me too
+- #a327a5: you can edit me too
+- #a525a7: you can edit me too
+- #a723a9: you can edit me too
+- #a921ab: you can edit me too
+- #ab1fad: you can edit me too
+- #ad1daf: you can edit me too
+- #ae1cb0: you can edit me too
+- #b019b3: you can edit me too
+- #b118b4: you can edit me too
+- #b316b6: you can edit me too
+- #b816bb: you can edit me too
+- #b514b8: you can edit me too
+- #ba14bd: you can edit me too
+- #b712ba: you can edit me too
+- #bb13be: you can edit me too
+- #b811bb: you can edit me too
+- #be10c1: you can edit me too
+- #bb0ebe: you can edit me too
+- #bd0cc0: you can edit me too
+- #be0bc1: you can edit me too
+- #c108c4: you can edit me too
+- #be06c1: you can edit me too
+- #c103c4: you can edit me too
+- #c301c6: you can edit me too
+- #c400c7: you can edit me too
+- #c900cc: you can edit me too
+- #ce00d1: you can edit me too
+- #d300d6: you can edit me too
+- #d800db: you can edit me too
+- #dd00e0: you can edit me too
+- #e200e6: you can edit me too
+- #ec00f0: you can edit me too
+- #f100f5: you can edit me too
+- #f600fa: you can edit me too
+- #fb00ff: you can edit me too
+- #ff00d0: iPhone (always guest iPhone)
+- #f97316: you can edit me too
+
+## Nodes
+
+### internet
+- **Name:** Internet
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** square
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2104, 268
+- **Size:** 168
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"amazon-web-services"},"circleColor":"#ffffff","circleBorder":"#ffffff"}}`
+
+### internet-copy
+- **Name:** OPNSENSE
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2067, 473
+- **Size:** 50
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"opnsense"}}}`
+
+### opnsense-copy
+- **Name:** Docker
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1774, 667
+- **Size:** 50
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"portainer"}}}`
+
+### docker-copy
+- **Name:** Docker2
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1931, 782
+- **Size:** 50
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"jotty"}}}`
+
+### docker-copy-1
+- **Name:** Docker3
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2158, 768
+- **Size:** 50
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"authportal"}}}`
+
+### docker-copy-2
+- **Name:** Docker 4
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** [object Object]; [object Object]; [object Object]
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2342, 632
+- **Size:** 82
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"docker"}}}`
+
+### opnsense-copy-1
+- **Name:** OPNSENSE GUEST
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** firewall
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2758, 308
+- **Size:** 50
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"opnsense-v1"}}}`
+
+### phone
+- **Name:** Phone
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** phone
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3313, 503
+- **Size:** 121
+
+### desktop
+- **Name:** Desktop
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** pc
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2972, 481
+- **Size:** 147
+
+### dns
+- **Name:** DNS
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** cloud
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 3200, 320
+- **Size:** 50
+
+### racked
+- **Name:** Racked
+- **IP:** 
+- **Role:** Rack
+- **Shape:** server
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 42
+- **Is Rack:** true
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 2646, 971
+- **Size:** 137
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"server-security"},"circleColor":"#010813","circleBorder":"#ffffff"}}`
+
+## Connections
+
+- internet --> internet-copy
+  - **ID:** internet-internet-copy-1765238145151
+  - **Label:** 
+  - **Color:** #55e208
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> opnsense-copy
+  - **ID:** internet-copy-opnsense-copy-1765238187451
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy
+  - **ID:** internet-copy-docker-copy-1765238242477
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy-1
+  - **ID:** internet-copy-docker-copy-1-1765238244637
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet-copy --> docker-copy-2
+  - **ID:** internet-copy-docker-copy-2-1765238246233
+  - **Label:** 
+  - **Color:** #4c00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- internet --> opnsense-copy-1
+  - **ID:** internet-opnsense-copy-1-1765238266117
+  - **Label:** 
+  - **Color:** #80ff00
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- opnsense-copy-1 --> dns
+  - **ID:** opnsense-copy-1-dns-1765238347996
+  - **Label:** 
+  - **Color:** #fb00ff
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dns --> desktop
+  - **ID:** dns-desktop-1765238386101
+  - **Label:** 
+  - **Color:** #ff00d0
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- phone --> dns
+  - **ID:** phone-dns-1765238391156
+  - **Label:** 
+  - **Color:** #ff00d0
+  - **Width:** 4
+  - **Direction:** both
+  - **Routing:** curved
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- undefined --> undefined
+  - **ID:** custom-1765239449323
+  - **Label:** 
+  - **Color:** #f97316
+  - **Width:** 4
+  - **Direction:** forward
+  - **Routing:** curved
+  - **Type:** custom
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Points:** 2936,786 3184,888 2763,982
+
+## Zones
+
+### rect-1765238219615
+- **Position:** 2680, 251
+- **Size:** 814 x 389
+- **Color:** #ec0999
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+
+## Text Labels
+
+### text-1765238422602
+- **Content:** Double click on desktop<br>or long press on mobile<br>to enter rack canvas view
+- **Position:** 2466, 742
+- **Font Size:** 40
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
