@@ -23,8 +23,8 @@ A fully self contained topology builder that runs anywhere as a single standalon
   * Cone can be animated and animation carry over to minimap
 * **Added 13 new device icons in a new "Smart Home" dropdown category:**
   * Thermostat, Video Doorbell, Smart Lock, Smart Bulb, Smart Plug, Smart Speaker, Smart TV, Smart Hub, Smoke Detector, Motion Sensor, Garage Door, Sprinkler, Robot Vacuum
-* **Bug fixes Core + Networkening Editions** [changelog.md](changelog.md)**
-* **Bug fixes Networkening Editions** [changelog.md](changelog.md)**
+* **Bug fixes Core + Networkening Editions [changelog.md](changelog.md)**
+* **Bug fixes Networkening Editions [changelog.md](changelog.md)**
 * **See more changes in the [changelog.md](changelog.md)**
 * **I am working on new demos with all the included features**
 
