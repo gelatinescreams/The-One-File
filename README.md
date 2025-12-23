@@ -11,22 +11,22 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version 3.9.9.7 : 12/19/25 Import/export, saving and updates for editors
-* **Improved the import/export system**  [read more: import-export-save.md](import-export-save.md)
-* **Added markdown export and import**  Ala, Git versioning!
-  * Edit and create in your favorite markdown editor
-  * This also allows git versioning!
-* **Added csv export and import**  
-  * Edit and create in your favorite csv editor
-* **Added print option**  
-  * Removes the background and makes the entire canvas print friendly
-* **New import/Export mobile menu**  
-* **Bug Fixes**  
-  * Fixed minimap rendering nodes twice (performance)
-  * Fixed event listener memory leak in edge drag handlers
-  * Fixed Mac keyboard shortcuts (SORRY APPLE)
-* **3.9.9.6: Orthogonal routing update** [DEMO](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html) [changelog.md](changelog.md)
+### Version 3.9.9.8 : 12/22/25 Animations, walls, settings, themes and tidying up for 4.0
+
+* **Theme System Overhaul**
+  * Added 8 preset themes organized by category
+  * Save your own custom themes for easy tab theming
+* **Animated Connections with Flow**
+  * Show which way data is flowing for all, some, or any number of custom connections
+  * Includes options for all the flow settings
+* **CCTV/Camera nodes now have FOV Cone options for both stationary and PTZ cameras**
+  * Cone can be animated and animation carry over to minimap
+* **Added 13 new device icons in a new "Smart Home" dropdown category:**
+  * Thermostat, Video Doorbell, Smart Lock, Smart Bulb, Smart Plug, Smart Speaker, Smart TV, Smart Hub, Smoke Detector, Motion Sensor, Garage Door, Sprinkler, Robot Vacuum
+* **Bug fixes Core + Networkening Editions** [changelog.md](changelog.md)**
+* **Bug fixes Networkening Editions** [changelog.md](changelog.md)**
 * **See more changes in the [changelog.md](changelog.md)**
+* **I am working on new demos with all the included features**
 
 ### Demos
 

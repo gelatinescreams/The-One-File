@@ -1,7 +1,35 @@
 #### CHANGE LOG
 **We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
 
-### Version 3.9.9.7 : 12/19/25 Import/export, saving and updates for editors
+### Version 3.9.9.8 /\ 12/22/25 Animations, walls, settings, themes and tidying up for 4.0
+* **Theme System Overhaul**
+  * Added 8 preset themes organized by category
+  * Save your own custom themes for easy tab theming
+* **Animated Connections with Flow**
+  * Show which way data is flowing for all, some, or any amount of custom connections
+  * Includes options for all the flow settings
+* **CCTV/Camera nodes now have FOV Cone options for both stationary and PTZ cameras**
+  * Cone can be animated and animation carry over to minimap
+* **Added 13 new device icons in a new "Smart Home" dropdown category:**
+  * Thermostat, Video Doorbell, Smart Lock, Smart Bulb, Smart Plug, Smart Speaker, Smart TV, Smart Hub, Smoke Detector, Motion Sensor, Garage Door, Sprinkler, Robot Vacuum
+* **Bug fixes for Core + Networkening Editions**
+  * Removed unused code
+  * Fixed rotate actions and added -360 degrees on canvas assets
+  * Added defensive checks to prevent potential very edge case crashes
+  * Replaced port map links with buttons for better UI on both desktop and mobile
+  * Camera FOV cones render on the minimap with synchronized animation
+  * Line (✏️), Rectangle (▭), and Text (T) tool buttons now pulse with glow animation when active to add visual feedback so users know to click "Done" to exit drawing mode
+  * Resize Handles now scale with border width(s)
+  * Fixed a memory leak where pressing Escape to close the Rack Unit or U Height editor could cause erratic behavior after repeated use
+  * Port Map Export: Fixed CSV export producing malformed files when device names contained quotes or special characters
+  * Undo now works after importing JSON files
+  * Markdown import now validates connections and invalid links are skipped instead of creating broken edges
+  * Welcome message no longer disappears after saving and refreshing
+* **Bug fixes for Networkening Edition**
+  * Removed localStorage icon caching
+  * Old exported cached icons are automatically cleaned up on first load
+
+### Version 3.9.9.7 /\ 12/19/25 Import/export, saving and updates for editors
 * **Improved the import/export system**  [read more: import-export-save.md](import-export-save.md)
 * **Added markdown export and import**  Ala, Git versioning!
   * Edit and create in your favorite markdown editor
@@ -16,7 +44,7 @@
   * Fixed event listener memory leak in edge drag handlers
   * Fixed Mac keyboard shortcuts (SORRY APPLE)
 
-### Version 3.9.9.6 : 12/17/25 Stretching version numbers AND lines too!
+### Version 3.9.9.6 /\ 12/17/25 Stretching version numbers AND lines too!
 * **Big performance update**
 * **Orthogonal routing update** [changelog.md](changelog.md)
   * New orthogonal routing option draws clean 90 degree angle connections
@@ -39,7 +67,7 @@
   * Refactored update/import function
   * Refactored background grid for performance
   
-### Version 3.9.9.5 : 12/14/25 The ports enhancements update
+### Version 3.9.9.5 /\ 12/14/25 The ports enhancements update
 * **Port connections section in node/rack panel** : See all ports connected to a device at a glance
 * **Click to edit unassigned ports** : Assign ports directly from the devices
 * **Port JumpTO** : Click ↗ to jump to that connection on canvas and highlight it
@@ -47,24 +75,24 @@
 * **Duplicate port warning** : Added a vert simply alert when assigning a port already in use on that device
 * **Squashed port bugs** : Squashed some small related ports bugs
 
-### Version 3.9.9.4 : 12/14/25 Further fixes towards 4.0 Stable
+### Version 3.9.9.4 /\ 12/14/25 Further fixes towards 4.0 Stable
 * Fixed an issue where entering rack view would freeze the canvas on mobile
 * Fixed an issue where node creation could be interrupted in rare cases
 * Fixed pedantic HTML sanitations for inputs
 * Added a function to sanitize inputs
 
-### Version 3.9.9.3 : 12/13/25 Added Advanced Ports View
+### Version 3.9.9.3 /\ 12/13/25 Added Advanced Ports View
 * Fixed [#27](https://github.com/gelatinescreams/The-One-File/issues/27)** thanks to [@lehnerpat](https://github.com/lehnerpat) for debugging
 * Fixed an issue where modals were not closing correctly in the background
 
-### Version 3.9.9.2 : 12/11/25 Added Advanced Ports View
+### Version 3.9.9.2 /\ 12/11/25 Added Advanced Ports View
 * **Added New Ports View [#25](https://github.com/gelatinescreams/The-One-File/issues/25)** thanks to [@mohacc2008-ctrl](https://github.com/mohacc2008-ctrl) for the request
 * **Squashed Bugs**
 * * Fixed a bug where deleted tabs were not leaving the old canvas view
 * * Fixed a bug where foldables and some tablets showed desktop elements
 * * Started to refactor a few core elements for future updates
 
-##### Version 3.9.9.1 : 12/10/25 Getting close to 4.0 Stable!
+##### Version 3.9.9.1 /\ 12/10/25 Getting close to 4.0 Stable!
 * **Fixed Search [#24](https://github.com/gelatinescreams/The-One-File/issues/24)**
 * **Upgraded and fixed the undo system**
 * * Edit node name/IP now undoable
@@ -77,10 +105,10 @@
 * * Delete edge now undoable
 * * Edit/delete edge notes now undoable
 * * Drag custom edge points now undoable
-* * Edit color/border-color/border-width/style now undoable
+* * Edit color/border color/border width/style now undoable
 * * Delete zone now undoable
 * * Delete zone notes now undoable
-* * All 9 text properties (font-size, color, weight, style, align, decoration, bg-color, bg-enabled, opacity) now undoable
+* * All 9 text properties (font size, color, weight, style, align, decoration, bg color, bg enabled, opacity) now undoable
 
 * **Squashed Bugs**
 * * On mobile/tablet, users could still drag canvas elements (nodes, rectangles) even when View Only mode is enabled.
@@ -88,13 +116,13 @@
 * * (Shift multi select) Marquee select no longer accumulates between selections
 * * Misc code refinement
 
-##### Version 3.9.9 : 12/10/25 Hotfix release for desktop multi select
+##### Version 3.9.9 /\ 12/10/25 Hotfix release for desktop multi select
 * **Added back mobile core functions from updating the audit system
 
-##### Version 3.9.8.1 : 12/10/25 Hotfix release for desktop multi select
+##### Version 3.9.8.1 /\ 12/10/25 Hotfix release for desktop multi select
 * **fixed a bug where mutli select with shift on desktop counted all entities it crossed
 
-##### Version 3.9.8 : 12/10/25 View only mode + multi select for desktop
+##### Version 3.9.8 /\ 12/10/25 View only mode + multi select for desktop
 
 * **Added View Only Mode in Settings** Disables all editing while keeping pan and zoom
 * * Click or tap any canvas item five times to inspect its details while in View Only Mode
@@ -105,7 +133,7 @@
 * * Hold shift and click+drag on empty canvas to select multiple items at once
 * * Selection box colors can be customized in Settings
 
-##### Version 3.9.7 : 12/9/25 Squashing Bugs
+##### Version 3.9.7 /\ 12/9/25 Squashing Bugs
 
 * **Special thanks to @mitchplze for testing and reporting on some of these fixes**
 * **Bug Fixes**
@@ -122,7 +150,7 @@
 * * Fixed web icon colors persisting when selecting a new icon. New icons now display their natural colors instead of inheriting previous custom colors. [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
 * * Fixed selfh.st icon search to only show icons that have SVG versions available. (for editability) [#19](https://github.com/gelatinescreams/The-One-File/issues/19)
 
-##### Version 3.9.6 : 12/8/25 Rack canvas fixes
+##### Version 3.9.6 /\ 12/8/25 Rack canvas fixes
 
 * **Can now view and edit nodes that are inside a given rack just by selecting a rack and using the sidebar / mobile footer**
 * **Updated all keyboard shortcuts to work with new canvas draw tools**
@@ -133,13 +161,13 @@
   * Fixed a bug where page titles were overriden by tab titles
   * Fixed a bug where canvas information panel from previous tabs would stay selected after tab switch 
 
-##### Version 3.9.5 : 12/7/25 The Styles Update!
+##### Version 3.9.5 /\ 12/7/25 The Styles Update!
 
 * **Added all available styling options to settings**
 * **Canvas Styling** Added seperated styling for the main canvas and rack view canvases
   * Added additional syling options to free draw tools
 
-##### Version 3.9.4 : 12/6/25 Canvas bug fixes
+##### Version 3.9.4 /\ 12/6/25 Canvas bug fixes
 
 * **Help Tab** Added keyboard and mouse how:to in ?help
 * **Various bug fixes including**
@@ -152,14 +180,14 @@
   * Fixed a bug where free drawn rectangles zones had no custom styling inputs
   * Fixed a bug where free drawn tools were not grouped correctly with nodes and racks
   
-##### Version 3.9.3 : 12/5/25 Mobile bug fixes
+##### Version 3.9.3 /\ 12/5/25 Mobile bug fixes
 
 * **NEW 3.9.3** Mobile fixes. 
 * **Various bug fixes including**
   * Rewrote every mobile touch event
   * Cleaned mobile core
   
-##### Version 3.9.2 : 12/5/25 Bug fixes
+##### Version 3.9.2 /\ 12/5/25 Bug fixes
 
 * **NEW 3.9.2** Styles per tab! You can now set different styles for each topology tab.
 * **Various bug fixes including**
@@ -172,7 +200,7 @@
   * Fixed various dragging and dropping bugs
   * Changed the icons to not animate on desktop (this was implemented in version .2, well before the style sidebar)
 
-##### Version 3.9 : 12/4/25
+##### Version 3.9 /\ 12/4/25
 
 * **NEW 3.9** Tabs, snapshots, action audits and notes! (encrypted also)
   * Tabs are now implemented. This allows unlimited locations of topologies, still one file!
@@ -193,7 +221,7 @@
 * **NEW 3.7** Added Racks and individual rack canvasses!
 * **NEW 3.7** *Major workflow enhancement release with full keyboard control and mobile optimization*
 
-##### Version 3.7 - 12/3/25
+##### Version 3.7 /\ 12/3/25
 * **NEW 3.7 Advanced Keyboard Navigation**
   * **Arrow Keys** Move selected nodes 1 pixel in any direction for precise positioning
   * **Shift + Arrow Keys** Move selected nodes 10 pixels for faster adjustments
@@ -226,10 +254,10 @@
 * **A more detailed list of changes is included below**
   * [Change Log](changelog.md)
 
-##### Version 3.5.1 - 12/2/25
+##### Version 3.5.1 /\ 12/2/25
 - **NEW 3.5.1** Small style fixes and mobile refactoring
 
-##### Version 3.5 - 12/2/25
+##### Version 3.5 /\ 12/2/25
 - **NEW 3.5** *Another major release. Thank you to Discord testers!!*
 - **NEW 3.5 Add Text Labels Anywhere** Click the "T" button to place custom text annotations anywhere on your canvas with full styling control
 - **NEW 3.5 Draw Rectangles/Boxes** Create visual boundaries, zones, or highlighted areas with filled or outlined rectangles in any color
@@ -266,7 +294,7 @@
 - NEW 3.1 Real time ping/status indicators on nodes *(networkening version only)*
 - NEW 3.1 Visual online/offline/checking indicators *(networkening version only)*
 
-##### Version 3.0 - 12/1/25
+##### Version 3.0 /\ 12/1/25
 - NEW 3.0 Total mobile rewrite for core the-one-file.html
 - NEW 3.0 Total css rewrite for core the-one-file.html
 - NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html
@@ -278,13 +306,13 @@
 - Use theonefile-networkening.html for this version
 
 
-##### Version 2.8 - 11/29/25 The One File: The Networkening update!
+##### Version 2.8 /\ 11/29/25 The One File: The Networkening update!
 - Totally collapsible mobile interface
 - Mobile core added for future features
 - NEW 2.8 : Icon SEARCH with live preview
-- Seperate online features version to include icons - OPTIONAL
+- Seperate online features version to include web incons (OPTIONAL)
 - Use theonefile-networkening.html for this version
 - Icon support added (MDI, Simple Icons, Selfh.st)
 
-##### Version 2.5 - 11/25/25 The One File: The Networkening update!
+##### Version 2.5 /\ 11/25/25 The One File: The Networkening update!
 - NEW 2.5 : Icon SEARCH with live preview

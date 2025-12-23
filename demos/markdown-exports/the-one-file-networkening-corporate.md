@@ -2553,6 +2553,60 @@
       "isRack": false,
       "locked": false,
       "groupId": null
+    },
+    "camera-a": {
+      "shape": "camera",
+      "name": "camera A",
+      "ip": "0.0.0.0",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "locked": false,
+      "groupId": null,
+      "fovEnabled": true,
+      "fovRotation": 104,
+      "fovDistance": 500,
+      "fovSweep": 60,
+      "fovSpeed": 10,
+      "fovAnimate": true
+    },
+    "camera-a-copy": {
+      "shape": "camera",
+      "name": "camera B",
+      "ip": "0.0.0.0",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "locked": false,
+      "groupId": null,
+      "fovEnabled": true,
+      "fovRotation": 162,
+      "fovDistance": 500,
+      "fovSweep": 60,
+      "fovSpeed": 10,
+      "fovAnimate": false
     }
   },
   "edgeData": {
@@ -2572,7 +2626,8 @@
         "toPort": "Gi1/0/1",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "isp2-router2",
@@ -2589,7 +2644,8 @@
         "toPort": "Gi1/0/1",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-router2",
@@ -2606,7 +2662,8 @@
         "toPort": "Gi1/0/24",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-fw1",
@@ -2621,7 +2678,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router2-fw2",
@@ -2636,7 +2694,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fw1-fw2",
@@ -2653,7 +2712,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fw1-coresw1",
@@ -2668,7 +2728,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fw2-coresw2",
@@ -2683,7 +2744,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-coresw2",
@@ -2700,7 +2762,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-fwint",
@@ -2715,7 +2778,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-fwint",
@@ -2730,7 +2794,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-racka1",
@@ -2745,7 +2810,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-racka1",
@@ -2760,7 +2826,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-racka2",
@@ -2775,7 +2842,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-racka2",
@@ -2790,7 +2858,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-rackb1",
@@ -2805,7 +2874,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-rackb1",
@@ -2820,7 +2890,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-rackb2",
@@ -2835,7 +2906,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-rackb2",
@@ -2850,7 +2922,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fw1-dmz",
@@ -2867,7 +2940,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fw2-dmz",
@@ -2884,7 +2958,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-mgmt",
@@ -2901,7 +2976,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-wlc1",
@@ -2916,7 +2992,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-wlc2",
@@ -2931,7 +3008,9 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal",
+        "animate": true
       },
       {
         "id": "wlc1-wlc2",
@@ -2948,7 +3027,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "wlc1-mobile-hq",
@@ -2963,7 +3043,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "wlc1-mobile-guest",
@@ -2978,7 +3059,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "wlc1-mobile-iot",
@@ -2993,7 +3075,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-branch-ny",
@@ -3010,7 +3093,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-branch-la",
@@ -3027,7 +3111,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-branch-chi",
@@ -3044,7 +3129,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-branch-lon",
@@ -3061,7 +3147,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-branch-tokyo",
@@ -3078,7 +3165,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router1-aws",
@@ -3095,7 +3183,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "router2-azure",
@@ -3112,7 +3201,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwint-gcp",
@@ -3129,7 +3219,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-floor1",
@@ -3144,7 +3235,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-floor2",
@@ -3159,7 +3251,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-floor3",
@@ -3174,7 +3267,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-floor4",
@@ -3189,7 +3283,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "floor1-endpoints",
@@ -3204,7 +3299,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "floor1-ap1",
@@ -3219,7 +3315,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "floor2-ap2",
@@ -3234,7 +3331,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "floor3-ap3",
@@ -3249,7 +3347,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "floor4-ap4",
@@ -3264,7 +3363,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwint-proxy1",
@@ -3279,7 +3379,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwint-proxy2",
@@ -3294,7 +3395,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwext1-vpn",
@@ -3309,7 +3411,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-nac",
@@ -3324,7 +3427,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-voip",
@@ -3339,7 +3443,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw2-video",
@@ -3354,7 +3459,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-cameras",
@@ -3369,7 +3475,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwint-dev1",
@@ -3384,7 +3491,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwint-dev2",
@@ -3399,7 +3507,10 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal",
+        "animate": true,
+        "animationSpeed": "1.5"
       },
       {
         "id": "fwint-test",
@@ -3414,7 +3525,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "coresw1-erp",
@@ -3429,7 +3541,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "fwext1-crm",
@@ -3446,7 +3559,8 @@
         "toPort": "",
         "lineStyle": "dashed",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "ups1-racka1",
@@ -3463,7 +3577,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "ups2-racka2",
@@ -3480,7 +3595,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "ups1-rackb1",
@@ -3497,7 +3613,10 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal",
+        "animate": true,
+        "animationSpeed": "4"
       },
       {
         "id": "ups2-rackb2",
@@ -3514,7 +3633,8 @@
         "toPort": "",
         "lineStyle": "solid",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "cooling1-racka1",
@@ -3531,7 +3651,8 @@
         "toPort": "",
         "lineStyle": "dotted",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "cooling2-rackb1",
@@ -3548,7 +3669,8 @@
         "toPort": "",
         "lineStyle": "dotted",
         "_pairIndex": 0,
-        "_pairTotal": 1
+        "_pairTotal": 1,
+        "routing": "orthogonal"
       },
       {
         "id": "custom-1765237881452",
@@ -3571,7 +3693,8 @@
             "y": 1732.2144775390625
           }
         ],
-        "notes": []
+        "notes": [],
+        "routing": "orthogonal"
       },
       {
         "id": "custom-1765239355462",
@@ -3594,7 +3717,8 @@
             "y": 244.28573608398438
           }
         ],
-        "notes": []
+        "notes": [],
+        "routing": "orthogonal"
       }
     ]
   },
@@ -3621,6 +3745,30 @@
         "style": "outlined",
         "lineStyle": "solid",
         "notes": []
+      },
+      {
+        "id": "rect-1766437913740",
+        "x": 904.5889892578125,
+        "y": 115.40318298339844,
+        "width": 110.93878173828125,
+        "height": 919.6242218017578,
+        "color": "#5215f9",
+        "style": "filled",
+        "lineStyle": "wall",
+        "notes": [],
+        "borderWidth": 13
+      },
+      {
+        "id": "rect-1766437935414",
+        "x": 130.93685150146484,
+        "y": 1072.3624877929688,
+        "width": 872.9131851196289,
+        "height": 99.260986328125,
+        "color": "#5215f9",
+        "style": "filled",
+        "lineStyle": "wall",
+        "notes": [],
+        "borderWidth": 13
       }
     ]
   },
@@ -3655,6 +3803,87 @@
         "bgColor": "#000000",
         "bgEnabled": false,
         "opacity": 1
+      },
+      {
+        "id": "text-1766446595277",
+        "x": 654.3878479003906,
+        "y": 1367.7945556640625,
+        "content": "SITE A",
+        "fontSize": 101,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-1766446610211",
+        "x": 180.63662719726562,
+        "y": 1128.822998046875,
+        "content": "SITE A",
+        "fontSize": 101,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-1766453024797",
+        "x": 968.6458740234375,
+        "y": 1028.6621398925781,
+        "content": "SITE A",
+        "fontSize": 101,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1,
+        "rotation": -89,
+        "_dragStartX": 972.46826171875,
+        "_dragStartY": 1009.5499572753906
+      },
+      {
+        "id": "text-1766453070975",
+        "x": 613.1589965820312,
+        "y": 1139.512939453125,
+        "content": "SITE A",
+        "fontSize": 101,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-1766453072857",
+        "x": 968.64599609375,
+        "y": 474.40818786621094,
+        "content": "SITE A",
+        "fontSize": 101,
+        "color": "#e2e8f0",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1,
+        "rotation": 269,
+        "_dragStartX": 1480.85302734375,
+        "_dragStartY": 822.2503356933594
       }
     ]
   },
@@ -3697,28 +3926,28 @@
       "y": 477.5300527221864
     },
     "core-switch-1": {
-      "x": 766.6909650929942,
-      "y": 886.9286044043477
+      "x": 449.39860669455675,
+      "y": 384.4578707617695
     },
     "core-switch-2": {
-      "x": 1117.6501957527485,
-      "y": 192.60411230209093
+      "x": 761.1664921394672,
+      "y": 180.89283910873155
     },
     "dc-rack-a1": {
-      "x": 527.2319059976107,
-      "y": 1064.1709551070026
+      "x": 783.7017241128451,
+      "y": 647.4086870405963
     },
     "dc-rack-a2": {
-      "x": 284.2645846419273,
-      "y": 199.327180682807
+      "x": 209.25701628255229,
+      "y": 228.01593190351014
     },
     "dc-rack-b1": {
-      "x": 3210.0403422634854,
-      "y": 1676.0346361105321
+      "x": 3184.3186625759854,
+      "y": 1627.4495531027196
     },
     "dc-rack-b2": {
-      "x": 268.9195483475687,
-      "y": 951.7132426303456
+      "x": 245.37065918741246,
+      "y": 499.6191264194081
     },
     "dmz-rack": {
       "x": 2176.4105289561007,
@@ -4029,8 +4258,8 @@
       "y": 885.2827758789062
     },
     "erp-system": {
-      "x": 864.9509620587212,
-      "y": 1501.5821533203125
+      "x": 789.9880103985649,
+      "y": 473.7113342285156
     },
     "crm-system": {
       "x": 3514.6003232048542,
@@ -4053,8 +4282,8 @@
       "y": 1456.5068359375
     },
     "dist-switch-floor4": {
-      "x": 655.2108161412484,
-      "y": 348.4529113769531
+      "x": 488.5289313756234,
+      "y": 181.47256469726562
     },
     "ap-floor1-zone1": {
       "x": 1140.16846970184,
@@ -4069,16 +4298,16 @@
       "y": 1890.2816162109375
     },
     "ap-floor4-zone1": {
-      "x": 433.53909074558646,
-      "y": 692.0150146484375
+      "x": 517.646146409649,
+      "y": 565.59716796875
     },
     "ups-dc-1": {
-      "x": 588.0889513590637,
-      "y": 1348.8856201171875
+      "x": 771.1406786539856,
+      "y": 295.9266662597656
     },
     "ups-dc-2": {
-      "x": 199.70106178535775,
-      "y": 528.8150024414062
+      "x": 216.2410855890687,
+      "y": 330.3345947265625
     },
     "pdu-rack-a1": {
       "x": 1804.774444371901,
@@ -4089,19 +4318,29 @@
       "y": 2845
     },
     "cooling-1": {
-      "x": 326.61422338047237,
-      "y": 1304.6719970703125
+      "x": 245.7080801919958,
+      "y": 626.1914672851562
     },
     "cooling-2": {
       "x": 1603.293611085831,
       "y": 981.0621185302734
+    },
+    "camera-a": {
+      "x": 166.57075412676295,
+      "y": 145
+    },
+    "camera-a-copy": {
+      "x": 1040.653076171875,
+      "y": 738.42822265625
     }
   },
   "nodeSizes": {
     "isp-secondary": 139,
     "test-environment": 148,
     "dev-server-1": 128,
-    "core-router-2": 120
+    "core-router-2": 120,
+    "camera-a": 45,
+    "camera-a-copy": 45
   },
   "nodeStyles": {
     "dc-rack-b2": {
@@ -4266,21 +4505,27 @@
     "canvasBorder": "#475569",
     "canvasGrid": "#475569",
     "canvasGridSize": 50,
+    "canvasGridEnabled": true,
     "rackFrameFill": "#0f172a",
     "rackFrameStroke": "#4fd1c5",
     "rackLineColor": "#475569",
     "rackTextColor": "#4fd1c5",
+    "rackGridEnabled": true,
     "viewOnly": false,
-    "defaultEdgeRouting": "curved",
+    "defaultEdgeRouting": "orthogonal",
+    "animateConnections": false,
+    "animationStyle": "arrows",
+    "animationDirection": "all",
+    "animationSpeed": 4,
     "autoPingEnabled": false,
     "autoPingInterval": 30
   },
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 1.510468470619263,
-    "panX": 1254.5197896196048,
-    "panY": -147.55422459755366
+    "zoom": 0.9921985961590549,
+    "panX": -5.584863670202822,
+    "panY": -99.90831573327841
   },
   "savedTopologyView": {
     "zoom": 0.9325110211947125,
@@ -6844,6 +7089,60 @@
           "isRack": false,
           "locked": false,
           "groupId": null
+        },
+        "camera-a": {
+          "shape": "camera",
+          "name": "camera A",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "locked": false,
+          "groupId": null,
+          "fovEnabled": true,
+          "fovRotation": 104,
+          "fovDistance": 500,
+          "fovSweep": 60,
+          "fovSpeed": 10,
+          "fovAnimate": true
+        },
+        "camera-a-copy": {
+          "shape": "camera",
+          "name": "camera B",
+          "ip": "0.0.0.0",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "locked": false,
+          "groupId": null,
+          "fovEnabled": true,
+          "fovRotation": 162,
+          "fovDistance": 500,
+          "fovSweep": 60,
+          "fovSpeed": 10,
+          "fovAnimate": false
         }
       },
       "edges": {
@@ -6863,7 +7162,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "isp2-router2",
@@ -6880,7 +7180,8 @@
             "toPort": "Gi1/0/1",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-router2",
@@ -6897,7 +7198,8 @@
             "toPort": "Gi1/0/24",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-fw1",
@@ -6912,7 +7214,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-fw2",
@@ -6927,7 +7230,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-fw2",
@@ -6944,7 +7248,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-coresw1",
@@ -6959,7 +7264,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-coresw2",
@@ -6974,7 +7280,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-coresw2",
@@ -6991,7 +7298,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-fwint",
@@ -7006,7 +7314,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-fwint",
@@ -7021,7 +7330,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka1",
@@ -7036,7 +7346,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka1",
@@ -7051,7 +7362,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-racka2",
@@ -7066,7 +7378,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-racka2",
@@ -7081,7 +7394,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb1",
@@ -7096,7 +7410,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb1",
@@ -7111,7 +7426,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-rackb2",
@@ -7126,7 +7442,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-rackb2",
@@ -7141,7 +7458,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw1-dmz",
@@ -7158,7 +7476,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fw2-dmz",
@@ -7175,7 +7494,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-mgmt",
@@ -7192,7 +7512,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-wlc1",
@@ -7207,7 +7528,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-wlc2",
@@ -7222,7 +7544,9 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal",
+            "animate": true
           },
           {
             "id": "wlc1-wlc2",
@@ -7239,7 +7563,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-hq",
@@ -7254,7 +7579,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-guest",
@@ -7269,7 +7595,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "wlc1-mobile-iot",
@@ -7284,7 +7611,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-ny",
@@ -7301,7 +7629,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-la",
@@ -7318,7 +7647,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-chi",
@@ -7335,7 +7665,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-lon",
@@ -7352,7 +7683,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-branch-tokyo",
@@ -7369,7 +7701,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router1-aws",
@@ -7386,7 +7719,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "router2-azure",
@@ -7403,7 +7737,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-gcp",
@@ -7420,7 +7755,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor1",
@@ -7435,7 +7771,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-floor2",
@@ -7450,7 +7787,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor3",
@@ -7465,7 +7803,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-floor4",
@@ -7480,7 +7819,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-endpoints",
@@ -7495,7 +7835,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor1-ap1",
@@ -7510,7 +7851,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor2-ap2",
@@ -7525,7 +7867,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor3-ap3",
@@ -7540,7 +7883,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "floor4-ap4",
@@ -7555,7 +7899,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy1",
@@ -7570,7 +7915,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-proxy2",
@@ -7585,7 +7931,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-vpn",
@@ -7600,7 +7947,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-nac",
@@ -7615,7 +7963,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-voip",
@@ -7630,7 +7979,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw2-video",
@@ -7645,7 +7995,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-cameras",
@@ -7660,7 +8011,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev1",
@@ -7675,7 +8027,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwint-dev2",
@@ -7690,7 +8043,10 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal",
+            "animate": true,
+            "animationSpeed": "1.5"
           },
           {
             "id": "fwint-test",
@@ -7705,7 +8061,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "coresw1-erp",
@@ -7720,7 +8077,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "fwext1-crm",
@@ -7737,7 +8095,8 @@
             "toPort": "",
             "lineStyle": "dashed",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-racka1",
@@ -7754,7 +8113,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups2-racka2",
@@ -7771,7 +8131,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "ups1-rackb1",
@@ -7788,7 +8149,10 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal",
+            "animate": true,
+            "animationSpeed": "4"
           },
           {
             "id": "ups2-rackb2",
@@ -7805,7 +8169,8 @@
             "toPort": "",
             "lineStyle": "solid",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling1-racka1",
@@ -7822,7 +8187,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "cooling2-rackb1",
@@ -7839,7 +8205,8 @@
             "toPort": "",
             "lineStyle": "dotted",
             "_pairIndex": 0,
-            "_pairTotal": 1
+            "_pairTotal": 1,
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765237881452",
@@ -7862,7 +8229,8 @@
                 "y": 1732.2144775390625
               }
             ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           },
           {
             "id": "custom-1765239355462",
@@ -7885,7 +8253,8 @@
                 "y": 244.28573608398438
               }
             ],
-            "notes": []
+            "notes": [],
+            "routing": "orthogonal"
           }
         ]
       },
@@ -7911,28 +8280,28 @@
           "y": 477.5300527221864
         },
         "core-switch-1": {
-          "x": 766.6909650929942,
-          "y": 886.9286044043477
+          "x": 449.39860669455675,
+          "y": 384.4578707617695
         },
         "core-switch-2": {
-          "x": 1117.6501957527485,
-          "y": 192.60411230209093
+          "x": 761.1664921394672,
+          "y": 180.89283910873155
         },
         "dc-rack-a1": {
-          "x": 527.2319059976107,
-          "y": 1064.1709551070026
+          "x": 783.7017241128451,
+          "y": 647.4086870405963
         },
         "dc-rack-a2": {
-          "x": 284.2645846419273,
-          "y": 199.327180682807
+          "x": 209.25701628255229,
+          "y": 228.01593190351014
         },
         "dc-rack-b1": {
-          "x": 3210.0403422634854,
-          "y": 1676.0346361105321
+          "x": 3184.3186625759854,
+          "y": 1627.4495531027196
         },
         "dc-rack-b2": {
-          "x": 268.9195483475687,
-          "y": 951.7132426303456
+          "x": 245.37065918741246,
+          "y": 499.6191264194081
         },
         "dmz-rack": {
           "x": 2176.4105289561007,
@@ -8243,8 +8612,8 @@
           "y": 885.2827758789062
         },
         "erp-system": {
-          "x": 864.9509620587212,
-          "y": 1501.5821533203125
+          "x": 789.9880103985649,
+          "y": 473.7113342285156
         },
         "crm-system": {
           "x": 3514.6003232048542,
@@ -8267,8 +8636,8 @@
           "y": 1456.5068359375
         },
         "dist-switch-floor4": {
-          "x": 655.2108161412484,
-          "y": 348.4529113769531
+          "x": 488.5289313756234,
+          "y": 181.47256469726562
         },
         "ap-floor1-zone1": {
           "x": 1140.16846970184,
@@ -8283,16 +8652,16 @@
           "y": 1890.2816162109375
         },
         "ap-floor4-zone1": {
-          "x": 433.53909074558646,
-          "y": 692.0150146484375
+          "x": 517.646146409649,
+          "y": 565.59716796875
         },
         "ups-dc-1": {
-          "x": 588.0889513590637,
-          "y": 1348.8856201171875
+          "x": 771.1406786539856,
+          "y": 295.9266662597656
         },
         "ups-dc-2": {
-          "x": 199.70106178535775,
-          "y": 528.8150024414062
+          "x": 216.2410855890687,
+          "y": 330.3345947265625
         },
         "pdu-rack-a1": {
           "x": 1804.774444371901,
@@ -8303,19 +8672,29 @@
           "y": 2845
         },
         "cooling-1": {
-          "x": 326.61422338047237,
-          "y": 1304.6719970703125
+          "x": 245.7080801919958,
+          "y": 626.1914672851562
         },
         "cooling-2": {
           "x": 1603.293611085831,
           "y": 981.0621185302734
+        },
+        "camera-a": {
+          "x": 166.57075412676295,
+          "y": 145
+        },
+        "camera-a-copy": {
+          "x": 1040.653076171875,
+          "y": 738.42822265625
         }
       },
       "sizes": {
         "isp-secondary": 139,
         "test-environment": 148,
         "dev-server-1": 128,
-        "core-router-2": 120
+        "core-router-2": 120,
+        "camera-a": 45,
+        "camera-a-copy": 45
       },
       "styles": {
         "dc-rack-b2": {
@@ -8449,6 +8828,30 @@
             "style": "outlined",
             "lineStyle": "solid",
             "notes": []
+          },
+          {
+            "id": "rect-1766437913740",
+            "x": 904.5889892578125,
+            "y": 115.40318298339844,
+            "width": 110.93878173828125,
+            "height": 919.6242218017578,
+            "color": "#5215f9",
+            "style": "filled",
+            "lineStyle": "wall",
+            "notes": [],
+            "borderWidth": 13
+          },
+          {
+            "id": "rect-1766437935414",
+            "x": 130.93685150146484,
+            "y": 1072.3624877929688,
+            "width": 872.9131851196289,
+            "height": 99.260986328125,
+            "color": "#5215f9",
+            "style": "filled",
+            "lineStyle": "wall",
+            "notes": [],
+            "borderWidth": 13
           }
         ]
       },
@@ -8483,6 +8886,87 @@
             "bgColor": "#000000",
             "bgEnabled": false,
             "opacity": 1
+          },
+          {
+            "id": "text-1766446595277",
+            "x": 654.3878479003906,
+            "y": 1367.7945556640625,
+            "content": "SITE A",
+            "fontSize": 101,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-1766446610211",
+            "x": 180.63662719726562,
+            "y": 1128.822998046875,
+            "content": "SITE A",
+            "fontSize": 101,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-1766453024797",
+            "x": 968.6458740234375,
+            "y": 1028.6621398925781,
+            "content": "SITE A",
+            "fontSize": 101,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1,
+            "rotation": -89,
+            "_dragStartX": 972.46826171875,
+            "_dragStartY": 1009.5499572753906
+          },
+          {
+            "id": "text-1766453070975",
+            "x": 613.1589965820312,
+            "y": 1139.512939453125,
+            "content": "SITE A",
+            "fontSize": 101,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-1766453072857",
+            "x": 968.64599609375,
+            "y": 474.40818786621094,
+            "content": "SITE A",
+            "fontSize": 101,
+            "color": "#e2e8f0",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1,
+            "rotation": 269,
+            "_dragStartX": 1480.85302734375,
+            "_dragStartY": 822.2503356933594
           }
         ]
       },
@@ -8538,12 +9022,18 @@
         "canvasBorder": "#475569",
         "canvasGrid": "#475569",
         "canvasGridSize": 50,
+        "canvasGridEnabled": true,
         "rackFrameFill": "#0f172a",
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
         "viewOnly": false,
-        "defaultEdgeRouting": "curved",
+        "defaultEdgeRouting": "orthogonal",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 4,
         "autoPingEnabled": false,
         "autoPingInterval": 30
       }
@@ -9321,12 +9811,18 @@
         "canvasBorder": "#475569",
         "canvasGrid": "#475569",
         "canvasGridSize": 50,
+        "canvasGridEnabled": true,
         "rackFrameFill": "#0f172a",
         "rackFrameStroke": "#4fd1c5",
         "rackLineColor": "#475569",
         "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
         "viewOnly": false,
-        "defaultEdgeRouting": "curved"
+        "defaultEdgeRouting": "curved",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5
       }
     }
   ],
@@ -9334,37 +9830,2095 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1766190782807,
+      "timestamp": 1766459540242,
+      "type": "export",
+      "description": "Exported CSV: the-one-file-corporate.csv",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459536815,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459534490,
       "type": "tab",
       "description": "Switched to tab: Corporate Site B",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1766190744604,
+      "timestamp": 1766459525616,
+      "type": "export",
+      "description": "Exported CSV: the-one-file.csv",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459518367,
       "type": "export",
       "description": "Exported Markdown: the-one-file.md",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190740495,
+      "timestamp": 1766459511746,
       "type": "export",
       "description": "Exported JSON: the-one-file.json",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190738042,
+      "timestamp": 1766459504374,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459500911,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459497380,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1766190727569,
+      "timestamp": 1766459491436,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459483682,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459477676,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766457578277,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766457564726,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766457564253,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766457560309,
+      "type": "import",
+      "description": "Imported JSON: the-one-file-corporate.json (107 nodes, 65 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455847368,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455844534,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455844054,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455843762,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455843560,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455843371,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455843162,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842852,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842747,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842601,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842449,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842348,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455842098,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455841678,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455841236,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455841053,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455840901,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455840650,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455839427,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455839234,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455839061,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455837247,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455837081,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455836893,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455836377,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455836198,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455835455,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455834630,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455831880,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455831676,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455831451,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455830817,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455830687,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455830176,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455830048,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455829944,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455829816,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378795,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378693,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378459,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378316,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378180,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455378069,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377956,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377677,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377558,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377448,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377318,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766455377209,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453090534,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453090317,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453090213,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453090112,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453090009,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453089903,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088895,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088793,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088689,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088584,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088480,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453088250,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453087236,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453086725,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453086485,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453086373,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453086142,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453086043,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453072857,
+      "type": "text",
+      "description": "paste text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453070975,
+      "type": "text",
+      "description": "paste text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453054439,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453053127,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453052450,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453052106,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453051948,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453051806,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453051334,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453050207,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453042725,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453042179,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453041797,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453041570,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453039703,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453039291,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453039168,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453039065,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453038481,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453038365,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453038237,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453038105,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453038001,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037850,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037745,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037495,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037378,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037182,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453037078,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453036972,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453036860,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453036147,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035945,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035825,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035720,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035443,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035337,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035233,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035127,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453035026,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453034917,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453031063,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453030955,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453030833,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453030732,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453030225,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453030104,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453029968,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453029796,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453029474,
+      "type": "edit",
+      "description": "rotate text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766453024797,
+      "type": "text",
+      "description": "paste text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766451118553,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450929324,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450817210,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450257424,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450255024,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450254395,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450253241,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450251598,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450250392,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450248756,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450244072,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450242166,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450240998,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450236492,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450233672,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450232384,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450231012,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450230254,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450229302,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766450228132,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446610211,
+      "type": "text",
+      "description": "paste text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604849,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604702,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604550,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604404,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604305,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604204,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446604099,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603952,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603849,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603702,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603599,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603452,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603348,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603202,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446603099,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602953,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602850,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602702,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602600,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602453,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602349,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602204,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602101,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446602000,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601848,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601702,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601601,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601452,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601301,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601154,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446601049,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446600948,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446600802,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446600550,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446598595,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446598461,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446598171,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446598017,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446597219,
+      "type": "text",
+      "description": "edit text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766446595278,
+      "type": "text",
+      "description": "add text",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445633355,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445632515,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445631735,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445630757,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445627846,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445625085,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445618645,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445617784,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608998,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608720,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608540,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608376,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608204,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445608038,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445607852,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445607678,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445607506,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445607319,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445607154,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445604410,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445604244,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445604066,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603900,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603743,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603563,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603406,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603226,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445603052,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445602880,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445602641,
+      "type": "edit",
+      "description": "edit zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445576567,
+      "type": "edit",
+      "description": "edit edge animation speed",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445570290,
+      "type": "edit",
+      "description": "edit edge animation speed",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445567192,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445566766,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445565520,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445398115,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445390895,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445385694,
+      "type": "edit",
+      "description": "toggle fov animation",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445383241,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445382911,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445381695,
+      "type": "edit",
+      "description": "edit node name",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445375383,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445374665,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445373273,
+      "type": "node",
+      "description": "paste node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766445372205,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438157980,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438157430,
+      "type": "edit",
+      "description": "edit edge animation speed",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438152691,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438151948,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438151286,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438146174,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438145649,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438144555,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438143655,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438142504,
+      "type": "edit",
+      "description": "edit edge animation speed",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438130077,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438129561,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438128772,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438128398,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438122820,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438122062,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438119836,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438119588,
+      "type": "edit",
+      "description": "edit edge animate",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438095045,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438093965,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438062827,
+      "type": "edit",
+      "description": "toggle fov animation",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438047679,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438044161,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438041852,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039668,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039562,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039421,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039260,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039150,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438039039,
+      "type": "edit",
+      "description": "resize node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438028508,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438021410,
+      "type": "edit",
+      "description": "toggle fov",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438019234,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438017562,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766438014356,
+      "type": "node",
+      "description": "add node",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437981696,
+      "type": "edit",
+      "description": "apply routing to all",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437966551,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437964879,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437963627,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437961813,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437961193,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437957989,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437956467,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437953437,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437952239,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437950807,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437944990,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437943699,
+      "type": "node",
+      "description": "move nodes",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437935414,
+      "type": "zone",
+      "description": "draw zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437919019,
+      "type": "zone",
+      "description": "delete zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437917758,
+      "type": "zone",
+      "description": "draw zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437913740,
+      "type": "zone",
+      "description": "draw zone",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766437882832,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766263279163,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766263270414,
       "type": "export",
-      "description": "Exported JSON: the-one-file-corporate.json",
+      "description": "Exported JSON: the-one-file.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766263260682,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766263259518,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766263249401,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766263246362,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
       "details": {},
       "tab": "Corporate Site B"
     },
@@ -9466,13 +12020,14 @@
       "details": {},
       "tab": "Corporate Site B"
     }
-  ]
+  ],
+  "savedStyleSets": []
 }
 THEONEFILE_CONFIG-->
 
 # The One File Corporate
 
-> Exported from The One File on 2025-12-20T00:33:04.997Z
+> Exported from The One File on 2025-12-23T03:12:24.252Z
 
 ## Legend
 
@@ -9616,7 +12171,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 767, 887
+- **Position:** 449, 384
 - **Size:** 50
 - **Notes:**
   - Cisco Nexus 9000
@@ -9637,7 +12192,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 1118, 193
+- **Position:** 761, 181
 - **Size:** 50
 - **Notes:**
   - Cisco Nexus 9000
@@ -9658,7 +12213,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** true
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 527, 1064
+- **Position:** 784, 647
 - **Size:** 50
 - **Notes:**
   - Row A, Position 1
@@ -9680,7 +12235,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** true
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 284, 199
+- **Position:** 209, 228
 - **Size:** 50
 - **Notes:**
   - Row A, Position 2
@@ -9701,7 +12256,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** true
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 3210, 1676
+- **Position:** 3184, 1627
 - **Size:** 50
 - **Notes:**
   - Row B, Position 1
@@ -9723,7 +12278,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** true
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 269, 952
+- **Position:** 245, 500
 - **Size:** 50
 - **Notes:**
   - Row B, Position 2
@@ -11378,7 +13933,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 865, 1502
+- **Position:** 790, 474
 - **Size:** 50
 - **Notes:**
   - SAP S/4HANA
@@ -11504,7 +14059,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 655, 348
+- **Position:** 489, 181
 - **Size:** 50
 - **Notes:**
   - Cisco C9300-48P
@@ -11588,7 +14143,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 434, 692
+- **Position:** 518, 566
 - **Size:** 50
 - **Notes:**
   - Cisco 9120AX
@@ -11609,7 +14164,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 588, 1349
+- **Position:** 771, 296
 - **Size:** 50
 - **Notes:**
   - APC Symmetra
@@ -11631,7 +14186,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 200, 529
+- **Position:** 216, 330
 - **Size:** 50
 - **Notes:**
   - APC Symmetra
@@ -11695,7 +14250,7 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 327, 1305
+- **Position:** 246, 626
 - **Size:** 50
 - **Notes:**
   - Liebert CRV
@@ -11722,6 +14277,42 @@ THEONEFILE_CONFIG-->
   - Liebert CRV
   - N+1 redundancy
 
+### camera-a
+- **Name:** camera A
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** camera
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 167, 145
+- **Size:** 45
+
+### camera-a-copy
+- **Name:** camera B
+- **IP:** 0.0.0.0
+- **Role:** 
+- **Shape:** camera
+- **Tags:** _none_
+- **Layer:** physical
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Position:** 1041, 738
+- **Size:** 45
+
 ## Connections
 
 - isp-primary (Gi0/0) --> core-router-1 (Gi1/0/1)
@@ -11730,7 +14321,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #10b981
   - **Width:** 6
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11743,7 +14334,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #10b981
   - **Width:** 6
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11756,7 +14347,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11769,7 +14360,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11780,7 +14371,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11791,7 +14382,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -11804,7 +14395,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11815,7 +14406,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11826,7 +14417,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #3b82f6
   - **Width:** 5
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11839,7 +14430,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11850,7 +14441,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11861,7 +14452,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11872,7 +14463,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11883,7 +14474,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11894,7 +14485,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11905,7 +14496,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11916,7 +14507,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11927,7 +14518,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11938,7 +14529,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 4
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11949,7 +14540,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11962,7 +14553,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11975,7 +14566,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #8b5cf6
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11988,7 +14579,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -11999,7 +14590,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12010,7 +14601,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12023,7 +14614,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12034,7 +14625,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12045,7 +14636,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12056,7 +14647,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12069,7 +14660,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12082,7 +14673,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12095,7 +14686,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12108,7 +14699,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12121,7 +14712,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f97316
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12134,7 +14725,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #0ea5e9
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12147,7 +14738,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #22c55e
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12160,7 +14751,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12171,7 +14762,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12182,7 +14773,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12193,7 +14784,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #475569
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12204,7 +14795,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #94a3b8
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12215,7 +14806,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12226,7 +14817,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12237,7 +14828,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12248,7 +14839,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #06b6d4
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12259,7 +14850,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12270,7 +14861,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #ef4444
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12281,7 +14872,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #8b5cf6
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12292,7 +14883,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12303,7 +14894,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #22c55e
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12314,7 +14905,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #22c55e
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12325,7 +14916,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #94a3b8
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12336,7 +14927,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12347,7 +14938,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12358,7 +14949,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #a855f7
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12369,7 +14960,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 3
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12380,7 +14971,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f59e0b
   - **Width:** 2
   - **Direction:** both
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
@@ -12393,7 +14984,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #fbbf24
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12406,7 +14997,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #fbbf24
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12419,7 +15010,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #fbbf24
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12432,7 +15023,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #fbbf24
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
@@ -12445,7 +15036,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #38bdf8
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dotted
   - **Group ID:** 
@@ -12458,7 +15049,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #38bdf8
   - **Width:** 2
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** main
   - **Line Style:** dotted
   - **Group ID:** 
@@ -12471,7 +15062,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #c800ff
   - **Width:** 4
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** custom
   - **Line Style:** solid
   - **Group ID:** 
@@ -12483,7 +15074,7 @@ THEONEFILE_CONFIG-->
   - **Color:** #f97316
   - **Width:** 4
   - **Direction:** forward
-  - **Routing:** curved
+  - **Routing:** orthogonal
   - **Type:** custom
   - **Line Style:** solid
   - **Group ID:** 
@@ -12509,6 +15100,24 @@ THEONEFILE_CONFIG-->
 - **Border Color:** 
 - **Border Width:** 2
 
+### rect-1766437913740
+- **Position:** 905, 115
+- **Size:** 111 x 920
+- **Color:** #5215f9
+- **Style:** filled
+- **Line Style:** wall
+- **Border Color:** 
+- **Border Width:** 13
+
+### rect-1766437935414
+- **Position:** 131, 1072
+- **Size:** 873 x 99
+- **Color:** #5215f9
+- **Style:** filled
+- **Line Style:** wall
+- **Border Color:** 
+- **Border Width:** 13
+
 ## Text Labels
 
 ### text-1765237828167
@@ -12530,6 +15139,71 @@ THEONEFILE_CONFIG-->
 - **Font Size:** 56
 - **Color:** #e2e8f0
 - **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
+### text-1766446595277
+- **Content:** SITE A
+- **Position:** 654, 1368
+- **Font Size:** 101
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
+### text-1766446610211
+- **Content:** SITE A
+- **Position:** 181, 1129
+- **Font Size:** 101
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
+### text-1766453024797
+- **Content:** SITE A
+- **Position:** 969, 1029
+- **Font Size:** 101
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
+### text-1766453070975
+- **Content:** SITE A
+- **Position:** 613, 1140
+- **Font Size:** 101
+- **Color:** #e2e8f0
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+
+### text-1766453072857
+- **Content:** SITE A
+- **Position:** 969, 474
+- **Font Size:** 101
+- **Color:** #e2e8f0
+- **Font Weight:** normal
 - **Font Style:** normal
 - **Text Align:** start
 - **Text Decoration:** none

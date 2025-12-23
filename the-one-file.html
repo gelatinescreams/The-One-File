@@ -11,7 +11,7 @@
       * THE ONE FILE
       * "There can be only one". A all in one file topology maker for enterprise or homelab
       *
-      * This is your last backup when all others fail. A completely self-contained
+      * This is your last backup when all others fail. A completely self contained
       * network topology visualization tool that works as a single HTML file.
       * Open it anywhere, anytime and the idea lives forever.
       * ====================================================================================
@@ -531,26 +531,7 @@
       .canvas-viewport svg {
       width: 100%;
       height: 100%;
-      display: block;
-      background: linear-gradient(rgba(71, 85, 105, 0.1) 1px,
-      transparent 1px),
-      linear-gradient(90deg,
-      rgba(71, 85, 105, 0.1) 1px,
-      transparent 1px),
-      linear-gradient(rgba(71, 85, 105, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg,
-      rgba(71, 85, 105, 0.05) 1px,
-      transparent 1px);
-      background-size:
-      100px 100px,
-      100px 100px,
-      20px 20px,
-      20px 20px;
-      background-position:
-      -1px -1px,
-      -1px -1px,
-      -1px -1px,
-      -1px -1px;
+      display: block; 
       }
       .zoom-toolbar {
       display: flex;
@@ -727,6 +708,22 @@
       stroke-dasharray: 4 4;
       pointer-events: none;
       }
+@keyframes edge-flow-arrow {
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+@keyframes edge-flow-arrow-reverse {
+  0% { offset-distance: 100%; }
+  100% { offset-distance: 0%; }
+}
+.edge-arrow-forward {
+  offset-rotate: auto;
+  animation: edge-flow-arrow 1.5s linear infinite;
+}
+.edge-arrow-backward {
+  offset-rotate: auto 180deg;
+  animation: edge-flow-arrow-reverse 1.5s linear infinite;
+}
       .free-point {
       fill: #e5e7eb;
       stroke: #0f172a;
@@ -784,6 +781,21 @@
       100% {
       filter: drop-shadow(0 0 4px #4fd1c5);
       }
+      }
+      @keyframes done-pulse {
+        0%, 100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(79, 209, 197, 0.7);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 8px rgba(79, 209, 197, 0);
+        }
+      }
+      .done-btn-active {
+        animation: done-pulse 1.5s ease-in-out infinite;
+        background: var(--accent) !important;
+        color: var(--bg) !important;
       }
       .node-label {
       fill: var(--text-main);
@@ -977,15 +989,32 @@
       .style-section[open] summary::after {
       transform: rotate(180deg);
       }
-      .style-content {
-      margin-top: 10px;
-      }
-      .style-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin: 8px 0;
-      }
+.style-content {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  align-items: center;
+  justify-items: end;
+}
+.style-content label {
+  justify-self: start;
+}
+.style-row {
+  display: contents;
+}
+#edge-panel .style-row,
+#rect-panel .style-row,
+#text-panel .style-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+#edge-panel .style-row label,
+#rect-panel .style-row label,
+#text-panel .style-row label {
+  min-width: 80px;
+}
       .style-row label {
       font-size: clamp(13px, 1.5vw, 17px);
       color: var(--text-soft);
@@ -1794,8 +1823,38 @@ header {
           <summary>General Theme</summary>
           <div class="style-content">
 		    <div class="style-row">
+              <label>Theme Preset</label>
+              <div style="display:flex;gap:6px;flex:1;">
+                <select id="theme-preset" style="flex:1;padding:4px 8px;background:var(--input-bg);color:var(--input-text);border:1px solid var(--input-border);border-radius:4px;">
+                 <option value="defaulted">Default</option>
+                 <option value="">Custom</option>
+                  <optgroup label="Corporate">
+                    <option value="slate">Slate</option>
+                    <option value="graphite">Graphite</option>
+                    <option value="frost">Frost (Light)</option>
+                  </optgroup>
+                  <optgroup label="Homelab">
+                    <option value="synthwave">Synthwave</option>
+                    <option value="terminal">Terminal</option>
+                  </optgroup>
+                  <optgroup label="Dev">
+                    <option value="dracula">Dracula</option>
+                    <option value="cobalt">Cobalt</option>
+                    <option value="solarized">Solarized</option>
+                  </optgroup>
+                  <optgroup id="my-themes-group" label="My Themes"></optgroup>
+                </select>
+                <button onclick="saveCurrentTheme()" style="padding:4px 8px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap;">Save</button>
+                <button id="delete-theme-btn" onclick="deleteCurrentTheme()" style="padding:4px 8px;background:var(--danger);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;display:none;">Del</button>
+              </div>
+            </div>
+            <div class="style-row">
               <label>Main Background</label>
               <input type="color" id="panel-color" value="#0b0e13">
+            </div>
+            <div class="style-row">
+              <label>Sidebar / Mobile Footer</label>
+              <input type="color" id="sidebar-bg-color" value="#10141b">
             </div>
             <div class="style-row">
               <label>Modal Window (popup) Background</label>
@@ -1858,6 +1917,10 @@ header {
               <input type="number" id="canvas-grid-size" value="50" min="20" max="200" style="width:60px;">
             </div>
 			<div class="style-row">
+  <label>Show Grid</label>
+  <input type="checkbox" id="canvas-grid-enabled" checked>
+</div>
+			<div class="style-row">
               <label>Background Top</label>
               <input type="color" id="canvas-gradient-top" value="#1e2532">
             </div>
@@ -1887,6 +1950,10 @@ header {
               <label>Grid Lines</label>
               <input type="color" id="rack-line-color" value="#475569">
             </div>
+			<div class="style-row">
+  <label>Show Grid</label>
+  <input type="checkbox" id="rack-grid-enabled" checked>
+</div>
             <div class="style-row">
               <label>U Labels</label>
               <input type="color" id="rack-text-color" value="#4fd1c5">
@@ -1977,6 +2044,36 @@ header {
               </select>
             </div>
             <div class="style-row">
+              <label>Animate Connections</label>
+              <input type="checkbox" id="animate-connections-toggle">
+            </div>
+            <div class="style-row">
+              <label>Animation Style</label>
+              <select id="animation-style-select">
+                <option value="arrows">Flowing Arrows</option>
+                <option value="dots">Dot Arrows</option>
+              </select>
+            </div>
+            <div class="style-row">
+              <label>Animate Directions</label>
+              <select id="animation-direction-select">
+                <option value="all">All Directions</option>
+                <option value="forward">Forward Only</option>
+                <option value="backward">Backward Only</option>
+                <option value="both">Bidirectional Only</option>
+              </select>
+            </div>
+            <div class="style-row">
+              <label>Animation Speed</label>
+              <select id="animation-speed-select">
+                <option value="0.5">Very Fast</option>
+                <option value="1">Fast</option>
+                <option value="1.5">Normal</option>
+                <option value="2.5">Slow</option>
+                <option value="4">Very Slow</option>
+              </select>
+            </div>
+            <div class="style-row" style="grid-column: 1 / -1;">
               <button id="apply-routing-all" style="width:100%;padding:8px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;">Apply Routing to All Connections</button>
             </div>
           </div>
@@ -2004,8 +2101,10 @@ header {
             </div>
             <div class="style-row">
               <label>Multiselect Fill Opacity (Desktop)</label>
-              <input type="range" id="selection-fill-opacity" min="0" max="1" step="0.05" value="0.1">
-              <span id="selection-fill-opacity-val" style="min-width:35px;text-align:right;">10%</span>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="range" id="selection-fill-opacity" min="0" max="1" step="0.05" value="0.1">
+                <span id="selection-fill-opacity-val" style="min-width:35px;text-align:right;">10%</span>
+              </div>
             </div>
             <div class="style-row">
               <label>Multiselect Border Color (Desktop)</label>
@@ -2074,15 +2173,6 @@ header {
             <div class="style-row" style="flex-direction:column;align-items:stretch;">
               <label>Custom Text (HTML)</label>
               <textarea id="canvas-hint-text" rows="4" style="width:100%;margin-top:4px;padding:6px;background:var(--panel);color:var(--text-main);border:1px solid var(--topbar-border);border-radius:4px;font-size:12px;resize:vertical;" placeholder="Leave empty for default"></textarea>
-            </div>
-          </div>
-        </details>
-        <details class="style-section">
-          <summary>Sidebar / Mobile Footer</summary>
-          <div class="style-content">
-            <div class="style-row">
-              <label>Background</label>
-              <input type="color" id="sidebar-bg-color" value="#10141b">
             </div>
           </div>
         </details>
@@ -2180,7 +2270,22 @@ header {
 				  <option value="camera">Camera / CCTV</option>
 				  <option value="monitor">Monitor / Dashboard</option>
 			  </optgroup>
-        </select>
+			  <optgroup label="Smart Home">
+				  <option value="thermostat">Thermostat</option>
+				  <option value="doorbell">Video Doorbell</option>
+				  <option value="smart-lock">Smart Lock</option>
+				  <option value="smart-bulb">Smart Bulb</option>
+				  <option value="smart-plug">Smart Plug</option>
+				  <option value="smart-speaker">Smart Speaker</option>
+				  <option value="smart-tv">Smart TV</option>
+				  <option value="hub">Smart Hub</option>
+				  <option value="smoke-detector">Smoke Detector</option>
+				  <option value="motion-sensor">Motion Sensor</option>
+				  <option value="garage">Garage Door</option>
+				  <option value="sprinkler">Sprinkler</option>
+				  <option value="vacuum">Robot Vacuum</option>
+			  </optgroup>
+             </select>
         <div class="modal-buttons">
           <button class="btn-cancel" id="add-node-cancel">Cancel</button>
           <button class="btn-save" id="add-node-save">Add Node</button>
@@ -2251,7 +2356,22 @@ header {
 				  <option value="camera">Camera / CCTV</option>
 				  <option value="monitor">Monitor / Dashboard</option>
 			  </optgroup>
-        </select>
+			  <optgroup label="Smart Home">
+				  <option value="thermostat">Thermostat</option>
+				  <option value="doorbell">Video Doorbell</option>
+				  <option value="smart-lock">Smart Lock</option>
+				  <option value="smart-bulb">Smart Bulb</option>
+				  <option value="smart-plug">Smart Plug</option>
+				  <option value="smart-speaker">Smart Speaker</option>
+				  <option value="smart-tv">Smart TV</option>
+				  <option value="hub">Smart Hub</option>
+				  <option value="smoke-detector">Smoke Detector</option>
+				  <option value="motion-sensor">Motion Sensor</option>
+				  <option value="garage">Garage Door</option>
+				  <option value="sprinkler">Sprinkler</option>
+				  <option value="vacuum">Robot Vacuum</option>
+			  </optgroup>
+             </select>
         <label style="display: block;margin-bottom: 4px;color: var(--text-soft);font-size: 13px;">Rack Capacity</label>
         <select id="new-rack-capacity">
           <option value="42" selected="">42U (Standard Full Rack)</option>
@@ -2523,10 +2643,11 @@ header {
           </select>
           <input type="color" id="draw-color" value="#f97316" title="Line color">
           <select id="draw-style" title="Line style">
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </select>
+  <option value="solid">Solid</option>
+  <option value="dashed">Dashed</option>
+  <option value="dotted">Dotted</option>
+  <option value="wall">Wall</option>
+</select>
           <select id="draw-arrow" title="Arrow direction">
             <option value="none">No arrows</option>
             <option value="forward">→ Right</option>
@@ -2683,6 +2804,52 @@ header {
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
             <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
+		  </details>
+          <details id="fov-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Field of View</summary>
+            <div style="padding: 10px 0;">
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Show FOV:</label>
+                <input type="checkbox" id="fov-enabled" style="width: 18px; height: 18px; cursor: pointer;">
+              </div>
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Angle:</label>
+                <input type="range" id="fov-angle" min="10" max="360" value="90" style="flex: 1;">
+                <span id="fov-angle-value" style="min-width: 40px; text-align: right; color: var(--text-main);">90°</span>
+              </div>
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Distance:</label>
+                <input type="range" id="fov-distance" min="50" max="500" value="150" style="flex: 1;">
+                <span id="fov-distance-value" style="min-width: 40px; text-align: right; color: var(--text-main);">150</span>
+              </div>
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Rotation:</label>
+                <input type="range" id="fov-rotation" min="0" max="360" value="0" style="flex: 1;">
+                <span id="fov-rotation-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0°</span>
+              </div>
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Color:</label>
+                <input type="color" id="fov-color" value="#f59e0b" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer;">
+              </div>
+              <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Animate:</label>
+                  <input type="checkbox" id="fov-animate" style="width: 18px; height: 18px; cursor: pointer;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Sweep:</label>
+                  <input type="range" id="fov-sweep" min="30" max="360" value="120" style="flex: 1;">
+                  <span id="fov-sweep-value" style="min-width: 40px; text-align: right; color: var(--text-main);">120°</span>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Speed:</label>
+                  <input type="range" id="fov-speed" min="1" max="60" value="4" style="flex: 1;">
+                  <span id="fov-speed-value" style="min-width: 40px; text-align: right; color: var(--text-main);">4s</span>
+                </div>
+              </div>
+            </div>
+          </details>
+          <details id="node-connections-section"...
           <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">0</span>)</summary>
             <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
@@ -2693,6 +2860,13 @@ header {
             <input type="range" id="size-slider" min="20" max="200" value="55">
             <span id="size-value">55</span>
             <button id="reset-size">Reset</button>
+          </div>
+          <div class="size-controls">
+            <label>Rotation:</label>
+            <input type="range" id="rotation-slider" min="-360" max="360" value="0">
+            <input type="number" id="rotation-value" value="0" style="width: 60px; padding: 4px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); text-align: center;">
+            <span style="color: var(--text-soft);">°</span>
+            <button id="reset-rotation">Reset</button>
           </div>
           <details class="style-section">
             <summary>Styling</summary>
@@ -2762,6 +2936,21 @@ header {
 				  <option value="shield">Shield</option>
 				  <option value="camera">Camera / CCTV</option>
 				  <option value="monitor">Monitor / Dashboard</option>
+			  </optgroup>
+			  <optgroup label="Smart Home">
+				  <option value="thermostat">Thermostat</option>
+				  <option value="doorbell">Video Doorbell</option>
+				  <option value="smart-lock">Smart Lock</option>
+				  <option value="smart-bulb">Smart Bulb</option>
+				  <option value="smart-plug">Smart Plug</option>
+				  <option value="smart-speaker">Smart Speaker</option>
+				  <option value="smart-tv">Smart TV</option>
+				  <option value="hub">Smart Hub</option>
+				  <option value="smoke-detector">Smoke Detector</option>
+				  <option value="motion-sensor">Motion Sensor</option>
+				  <option value="garage">Garage Door</option>
+				  <option value="sprinkler">Sprinkler</option>
+				  <option value="vacuum">Robot Vacuum</option>
 			  </optgroup>
              </select>
               </div>
@@ -2861,10 +3050,11 @@ header {
           <div class="style-row">
             <label>Line Style:</label>
             <select id="edge-line-style">
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
-            </select>
+  <option value="solid">Solid</option>
+  <option value="dashed">Dashed</option>
+  <option value="dotted">Dotted</option>
+  <option value="wall">Wall</option>
+</select>
           </div>
           <div class="style-row">
             <label>Routing:</label>
@@ -2881,6 +3071,29 @@ header {
               <option value="forward">→ Forward</option>
               <option value="backward">← Backward</option>
               <option value="both">↔ Bidirectional</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label>Animate:</label>
+            <input type="checkbox" id="edge-animate">
+          </div>
+          <div class="style-row">
+            <label>Style:</label>
+            <select id="edge-animation-style">
+              <option value="">Default</option>
+              <option value="arrows">Flowing Arrows</option>
+              <option value="dots">Dot Arrows</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label>Speed:</label>
+            <select id="edge-animation-speed">
+              <option value="">Default</option>
+              <option value="0.5">Very Fast</option>
+              <option value="1">Fast</option>
+              <option value="1.5">Normal</option>
+              <option value="2.5">Slow</option>
+              <option value="4">Very Slow</option>
             </select>
           </div>
           <div class="style-row" id="edge-from-port-row" style="display: none;">
@@ -2923,10 +3136,17 @@ header {
           <div class="style-row">
             <label>Line Style:</label>
             <select id="rect-line-style">
-              <option value="solid">Solid</option>
-              <option value="dashed">Dashed</option>
-              <option value="dotted">Dotted</option>
-            </select>
+  <option value="solid">Solid</option>
+  <option value="dashed">Dashed</option>
+  <option value="dotted">Dotted</option>
+  <option value="wall">Wall</option>
+</select>
+          </div>
+          <div class="style-row">
+            <label>Rotation:</label>
+            <input type="range" id="rect-rotation" min="-360" max="360" value="0" style="flex: 1;">
+            <input type="number" id="rect-rotation-value" value="0" style="width: 60px; padding: 4px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); text-align: center;">
+            <span style="color: var(--text-soft);">°</span>
           </div>
           <div class="section-label">Zone Notes</div>
           <ul class="list" id="rect-notes"></ul>
@@ -2994,6 +3214,12 @@ header {
             <label>Opacity:</label>
             <input type="range" id="text-opacity" min="0" max="1" step="0.1" value="1" style="flex: 1">
             <span id="text-opacity-val" style="min-width: 35px; text-align: right">100%</span>
+          </div>
+          <div class="style-row">
+            <label>Rotation:</label>
+            <input type="range" id="text-rotation" min="-360" max="360" value="0" style="flex: 1">
+            <input type="number" id="text-rotation-val" value="0" style="width: 60px; padding: 4px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); text-align: center;">
+            <span style="color: var(--text-soft);">°</span>
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;"> Delete Text </button>
         </div>
@@ -3180,7 +3406,7 @@ header {
   "auditLog": []
 }</script>
     <script>
-      const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent, );
+      const BASE_NODE_DATA = JSON.parse(document.getElementById("nodes-json").textContent);
       let currentNodeId = "host";
       let textDrawMode = false;
       let currentEdgeId = null;
@@ -3258,6 +3484,7 @@ header {
       const AUDIT_STORAGE_KEY = "theonefile_audit_log";
       let auditLog = [];
       const MAX_AUDIT_ENTRIES = 1000;
+      let savedStyleSets = [];
       let documentTabs = [{
         id: "main",
         name: "Main Topology",
@@ -3462,6 +3689,8 @@ header {
          currentTabIndex: currentTabIndex,
          encryptedSections: encryptedSections,
          auditLog: auditLog,
+		 savedStyleSets: savedStyleSets,
+		 selectedTheme: document.getElementById("theme-preset")?.value || "defaulted",
         };
         const tx = db.transaction(AUTOSAVE_STORE_NAME, "readwrite");
         const store = tx.objectStore(AUTOSAVE_STORE_NAME);
@@ -3537,6 +3766,12 @@ header {
              canvasState.panY = saved.canvas.panY || 0;
             }
             if (saved.savedTopologyView) savedTopologyView = saved.savedTopologyView;
+            if (saved.savedStyleSets) savedStyleSets = saved.savedStyleSets;
+            if (saved.selectedTheme) {
+              rebuildThemeDropdown();
+              document.getElementById("theme-preset").value = saved.selectedTheme;
+              updateDeleteButton();
+            }
             if (saved.documentTabs) documentTabs = saved.documentTabs;
             if (saved.currentTabIndex !== undefined) currentTabIndex = saved.currentTabIndex;
             if (saved.encryptedSections) encryptedSections = saved.encryptedSections;
@@ -3835,14 +4070,21 @@ header {
        canvasBorder: "#475569",
        canvasGrid: "#475569",
        canvasGridSize: 50,
-       rackFrameFill: "#0f172a",
+canvasGridEnabled: true,
+rackFrameFill: "#0f172a",
+rackGridEnabled: true,
        rackFrameStroke: "#4fd1c5",
        rackLineColor: "#475569",
        rackTextColor: "#4fd1c5",
 	   viewOnly: false,
 	   defaultEdgeRouting: "curved",
+	   animateConnections: false,
+	   animationStyle: "arrows",
+	   animationDirection: "all",
+	   animationSpeed: 1.5,
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
+	  const FOV_ANIMATION_START = Date.now();
 	  function isViewOnly() {
        return PAGE_STATE.viewOnly === true;
       }
@@ -3876,6 +4118,22 @@ header {
           document.getElementById("edge-panel").style.display = "none";
           document.getElementById("node-name").textContent = data.name;
           document.getElementById("node-ip").textContent = data.ip;
+const fovSection = document.getElementById("fov-section");
+if (fovSection) {
+  if (data.shape === "camera" || data.shape === "cctv") {
+    fovSection.style.display = "block";
+    document.getElementById("fov-enabled").checked = data.fovEnabled || false;
+    document.getElementById("fov-angle").value = data.fovAngle || 90;
+    document.getElementById("fov-angle-value").textContent = (data.fovAngle || 90) + "°";
+    document.getElementById("fov-distance").value = data.fovDistance || 150;
+    document.getElementById("fov-distance-value").textContent = data.fovDistance || 150;
+    document.getElementById("fov-rotation").value = data.fovRotation || 0;
+    document.getElementById("fov-rotation-value").textContent = (data.fovRotation || 0) + "°";
+    document.getElementById("fov-color").value = data.fovColor || "#f59e0b";
+  } else {
+    fovSection.style.display = "none";
+  }
+}
           document.getElementById("node-role").textContent = data.role;
           document.getElementById("node-mac").textContent = data.mac || "--";
           document.getElementById("node-rack").textContent = data.rackUnit || "--";
@@ -4021,6 +4279,63 @@ Object.entries(savedPositions).forEach(([id, pos]) => {
   } else {
     if (node.assignedRack) return;
   }
+  
+  if ((node.shape === "camera" || node.shape === "cctv") && node.fovEnabled) {
+    const fovAngle = node.fovAngle || 90;
+    const fovDistance = (node.fovDistance || 150) * 0.8; 
+    const fovRotation = node.fovRotation || 0;
+    const fovColor = node.fovColor || "#f59e0b";
+    const fovAnimate = node.fovAnimate || false;
+    const fovSweep = node.fovSweep || 120;
+    const fovSpeed = node.fovSpeed || 4;
+    
+    if (fovAngle < 360) {
+      const angleRad = (fovAngle * Math.PI) / 180;
+      const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
+      
+      const startAngle = rotationRad - angleRad / 2;
+      const endAngle = rotationRad + angleRad / 2;
+      
+      const x1 = pos.x + Math.cos(startAngle) * fovDistance;
+      const y1 = pos.y + Math.sin(startAngle) * fovDistance;
+      const x2 = pos.x + Math.cos(endAngle) * fovDistance;
+      const y2 = pos.y + Math.sin(endAngle) * fovDistance;
+      
+      const largeArc = fovAngle > 180 ? 1 : 0;
+      
+      const fovGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      fovGroup.classList.add("minimap-node");
+      
+      const fovPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      fovPath.setAttribute("d", `M ${pos.x},${pos.y} L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+      fovPath.style.fill = fovColor + "44";
+      fovPath.style.stroke = fovColor;
+      fovPath.style.strokeWidth = "2";
+      fovGroup.appendChild(fovPath);
+      
+      if (fovAnimate) {
+        const animationName = `minimap-fov-sweep-${id}`;
+        const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+        styleEl.textContent = `
+          @keyframes ${animationName} {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(${fovSweep}deg); }
+          }
+        `;
+        fovGroup.appendChild(styleEl);
+        
+        const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
+        const animationOffset = elapsedSeconds % fovSpeed;
+        
+        fovGroup.style.transformOrigin = `${pos.x}px ${pos.y}px`;
+        fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+        fovGroup.style.animationDelay = `-${animationOffset}s`;
+      }
+      
+      frag.appendChild(fovGroup);
+    }
+  }
+  
   const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
   circle.setAttribute("cx", pos.x);
   circle.setAttribute("cy", pos.y);
@@ -4034,7 +4349,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
 
       function zoomTo(newZoom, centerX, centerY) {
        const oldZoom = canvasState.zoom;
-       newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom), );
+       newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom));
        if (centerX !== undefined && centerY !== undefined) {
         const oldWidth = CANVAS_WIDTH / oldZoom;
         const oldHeight = CANVAS_HEIGHT / oldZoom;
@@ -4057,8 +4372,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const maxPanY = CANVAS_HEIGHT - viewHeight * minVisiblePortion;
        const minPanX = -viewWidth * (1 - minVisiblePortion);
        const minPanY = -viewHeight * (1 - minVisiblePortion);
-       canvasState.panX = Math.max(minPanX, Math.min(maxPanX, canvasState.panX), );
-       canvasState.panY = Math.max(minPanY, Math.min(maxPanY, canvasState.panY), );
+       canvasState.panX = Math.max(minPanX, Math.min(maxPanX, canvasState.panX));
+       canvasState.panY = Math.max(minPanY, Math.min(maxPanY, canvasState.panY));
       }
       function fitToContent() {
        const positions = Object.values(savedPositions);
@@ -4301,7 +4616,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        if (canvasHint) {
         canvasHint.style.display = PAGE_STATE.canvasHintEnabled === false ? "none" : "";
         if (PAGE_STATE.canvasHintText !== undefined && PAGE_STATE.canvasHintText !== "") {
-         canvasHint.innerHTML = PAGE_STATE.canvasHintText;
+         canvasHint.textContent = PAGE_STATE.canvasHintText;
         } else {
          canvasHint.innerHTML = DEFAULT_CANVAS_HINT;
         }
@@ -4328,7 +4643,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const mobileFooterHeight = PAGE_STATE.mobileFooterHeight || 40;
        root.style.setProperty("--topbar-height", topbarHeight + "px");
        root.style.setProperty("--sidebar-width", sidebarWidth + "px");
-       root.style.setProperty("--mobile-footer-height", mobileFooterHeight + "vh", );
+       root.style.setProperty("--mobile-footer-height", mobileFooterHeight + "vh");
        const mainEl = document.querySelector("main");
        const detailsPanel = document.getElementById("details-panel");
        const sidebarToggle = document.getElementById("sidebar-toggle");
@@ -4397,9 +4712,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
           let attempts = 0;
           const maxAttempts = 3;
           while (!decrypted && attempts < maxAttempts) {
-           const password = prompt("This file is encrypted. Enter password to decrypt:\n(Attempt " + (attempts + 1) + " of " + maxAttempts + ")", );
+           const password = prompt("This file is encrypted. Enter password to decrypt:\n(Attempt " + (attempts + 1) + " of " + maxAttempts + ")");
            if (!password) {
-            alert("Decryption cancelled. The file will not be loaded.", );
+            alert("Decryption cancelled. The file will not be loaded.");
             decryptionCancelled = true;
             break;
            }
@@ -4411,7 +4726,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
             if (attempts < maxAttempts) {
              alert("Incorrect password. Please try again.");
             } else {
-             alert("Maximum attempts reached. The file will not be loaded.", );
+             alert("Maximum attempts reached. The file will not be loaded.");
              decryptionCancelled = true;
             }
            }
@@ -4450,7 +4765,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         savedStyles = initialState.nodeStyles || {};
        }
        if (initialState.page) {
-        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, initialState.page, );
+        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, initialState.page);
        }
        if (initialState.canvas) {
         canvasState.zoom = initialState.canvas.zoom || 1;
@@ -4485,7 +4800,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        MobileManager.applyAll();
        const initialNodes = Object.keys(NODE_DATA);
        if (initialNodes.length > 0) {
-        claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0], );
+        claimTheImmortal(initialNodes.includes("host") ? "host" : initialNodes[0]);
        } else {
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("topology-toolbar").style.display = "none";
@@ -4530,7 +4845,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        if (!savedStyles[id]) savedStyles[id] = {};
        const entry = savedStyles[id];
        const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
-       const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(entry, p), );
+       const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(entry, p));
        if (isFlat) {
         const all = entry.all || {};
         flatProps.forEach((p) => {
@@ -4579,7 +4894,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         const p = document.createElementNS(ns, "polygon");
         const h = size * 1.8;
         const w = size * 2;
-        p.setAttribute("points", `0,${-h} ${w / 2},${h / 2} ${-w / 2},${h / 2}`, );
+        p.setAttribute("points", `0,${-h} ${w / 2},${h / 2} ${-w / 2},${h / 2}`);
         return p;
        }
        if (shape === "hexagon") {
@@ -4820,9 +5135,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
           const x = -size * 0.5 + col * size * 0.7 + offset;
           if (x > -size * 0.85 && x < size * 0.85) {
            line.setAttribute("x1", x);
-           line.setAttribute("y1", -size * 0.8 + row * size * 0.45, );
+           line.setAttribute("y1", -size * 0.8 + row * size * 0.45);
            line.setAttribute("x2", x);
-           line.setAttribute("y2", -size * 0.8 + row * size * 0.45 + size * 0.45, );
+           line.setAttribute("y2", -size * 0.8 + row * size * 0.45 + size * 0.45);
            line.style.stroke = "#475569";
            line.style.strokeWidth = "2";
            g.appendChild(line);
@@ -4846,7 +5161,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
              L ${-s * 0.5} ${s * 0.5}
              Q ${-s * 0.9} ${s * 0.5} ${-s * 0.9} ${s * 0.2}
              Z
-            `, );
+            `);
         return p;
        }
        if (shape === "database") {
@@ -5439,6 +5754,334 @@ minimapSvg.insertBefore(frag, minimapViewport);
         g.appendChild(rim);
         return g;
        }
+
+       if (shape === "thermostat") {
+        const g = document.createElementNS(ns, "g");
+        const outer = document.createElementNS(ns, "circle");
+        outer.setAttribute("r", size);
+        g.appendChild(outer);
+        const inner = document.createElementNS(ns, "circle");
+        inner.setAttribute("r", size * 0.75);
+        inner.style.fill = "#1e293b";
+        g.appendChild(inner);
+        const temp = document.createElementNS(ns, "text");
+        temp.setAttribute("x", 0);
+        temp.setAttribute("y", size * 0.15);
+        temp.setAttribute("font-size", size * 0.5);
+        temp.setAttribute("fill", "#4ade80");
+        temp.setAttribute("text-anchor", "middle");
+        temp.setAttribute("font-family", "monospace");
+        temp.textContent = "72°";
+        g.appendChild(temp);
+        return g;
+       }
+       if (shape === "doorbell") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.5);
+        body.setAttribute("y", -size);
+        body.setAttribute("width", size);
+        body.setAttribute("height", size * 2);
+        body.setAttribute("rx", size * 0.25);
+        g.appendChild(body);
+        const lens = document.createElementNS(ns, "circle");
+        lens.setAttribute("cx", 0);
+        lens.setAttribute("cy", -size * 0.35);
+        lens.setAttribute("r", size * 0.3);
+        lens.style.fill = "#1e293b";
+        g.appendChild(lens);
+        const lensDot = document.createElementNS(ns, "circle");
+        lensDot.setAttribute("cx", 0);
+        lensDot.setAttribute("cy", -size * 0.35);
+        lensDot.setAttribute("r", size * 0.12);
+        lensDot.style.fill = "#3b82f6";
+        g.appendChild(lensDot);
+        const btn = document.createElementNS(ns, "circle");
+        btn.setAttribute("cx", 0);
+        btn.setAttribute("cy", size * 0.5);
+        btn.setAttribute("r", size * 0.2);
+        btn.style.fill = "#f59e0b";
+        g.appendChild(btn);
+        return g;
+       }
+       if (shape === "smart-lock") {
+        const g = document.createElementNS(ns, "g");
+        const shackle = document.createElementNS(ns, "path");
+        shackle.setAttribute("d", `M ${-size * 0.4} ${-size * 0.1} L ${-size * 0.4} ${-size * 0.6} A ${size * 0.4} ${size * 0.4} 0 1 1 ${size * 0.4} ${-size * 0.6} L ${size * 0.4} ${-size * 0.1}`);
+        shackle.style.fill = "none";
+        shackle.style.strokeWidth = size * 0.2;
+        g.appendChild(shackle);
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.6);
+        body.setAttribute("y", -size * 0.15);
+        body.setAttribute("width", size * 1.2);
+        body.setAttribute("height", size * 1);
+        body.setAttribute("rx", 4);
+        g.appendChild(body);
+        const keyhole = document.createElementNS(ns, "circle");
+        keyhole.setAttribute("cx", 0);
+        keyhole.setAttribute("cy", size * 0.3);
+        keyhole.setAttribute("r", size * 0.15);
+        keyhole.style.fill = "#4ade80";
+        g.appendChild(keyhole);
+        return g;
+       }
+       if (shape === "smart-bulb") {
+        const g = document.createElementNS(ns, "g");
+        const bulb = document.createElementNS(ns, "path");
+        bulb.setAttribute("d", `M ${-size * 0.5} ${size * 0.2} Q ${-size * 0.8} ${-size * 0.3} ${-size * 0.5} ${-size * 0.7} Q 0 ${-size * 1.1} ${size * 0.5} ${-size * 0.7} Q ${size * 0.8} ${-size * 0.3} ${size * 0.5} ${size * 0.2} Z`);
+        g.appendChild(bulb);
+        const base1 = document.createElementNS(ns, "rect");
+        base1.setAttribute("x", -size * 0.35);
+        base1.setAttribute("y", size * 0.2);
+        base1.setAttribute("width", size * 0.7);
+        base1.setAttribute("height", size * 0.15);
+        base1.style.fill = "#94a3b8";
+        g.appendChild(base1);
+        const base2 = document.createElementNS(ns, "rect");
+        base2.setAttribute("x", -size * 0.3);
+        base2.setAttribute("y", size * 0.35);
+        base2.setAttribute("width", size * 0.6);
+        base2.setAttribute("height", size * 0.15);
+        base2.style.fill = "#64748b";
+        g.appendChild(base2);
+        const base3 = document.createElementNS(ns, "rect");
+        base3.setAttribute("x", -size * 0.25);
+        base3.setAttribute("y", size * 0.5);
+        base3.setAttribute("width", size * 0.5);
+        base3.setAttribute("height", size * 0.2);
+        base3.setAttribute("rx", 2);
+        base3.style.fill = "#475569";
+        g.appendChild(base3);
+        return g;
+       }
+       if (shape === "smart-plug") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.7);
+        body.setAttribute("y", -size * 0.6);
+        body.setAttribute("width", size * 1.4);
+        body.setAttribute("height", size * 1.2);
+        body.setAttribute("rx", 6);
+        g.appendChild(body);
+        const hole1 = document.createElementNS(ns, "rect");
+        hole1.setAttribute("x", -size * 0.35);
+        hole1.setAttribute("y", -size * 0.3);
+        hole1.setAttribute("width", size * 0.15);
+        hole1.setAttribute("height", size * 0.4);
+        hole1.setAttribute("rx", 2);
+        hole1.style.fill = "#1e293b";
+        g.appendChild(hole1);
+        const hole2 = document.createElementNS(ns, "rect");
+        hole2.setAttribute("x", size * 0.2);
+        hole2.setAttribute("y", -size * 0.3);
+        hole2.setAttribute("width", size * 0.15);
+        hole2.setAttribute("height", size * 0.4);
+        hole2.setAttribute("rx", 2);
+        hole2.style.fill = "#1e293b";
+        g.appendChild(hole2);
+        const led = document.createElementNS(ns, "circle");
+        led.setAttribute("cx", 0);
+        led.setAttribute("cy", size * 0.35);
+        led.setAttribute("r", size * 0.1);
+        led.style.fill = "#4ade80";
+        g.appendChild(led);
+        return g;
+       }
+       if (shape === "smart-speaker") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.6);
+        body.setAttribute("y", -size);
+        body.setAttribute("width", size * 1.2);
+        body.setAttribute("height", size * 2);
+        body.setAttribute("rx", size * 0.3);
+        g.appendChild(body);
+        const mesh = document.createElementNS(ns, "rect");
+        mesh.setAttribute("x", -size * 0.5);
+        mesh.setAttribute("y", -size * 0.3);
+        mesh.setAttribute("width", size);
+        mesh.setAttribute("height", size * 1.1);
+        mesh.setAttribute("rx", 4);
+        mesh.style.fill = "#1e293b";
+        g.appendChild(mesh);
+        const ring = document.createElementNS(ns, "circle");
+        ring.setAttribute("cx", 0);
+        ring.setAttribute("cy", -size * 0.65);
+        ring.setAttribute("r", size * 0.2);
+        ring.style.fill = "#3b82f6";
+        g.appendChild(ring);
+        return g;
+       }
+       if (shape === "smart-tv") {
+        const g = document.createElementNS(ns, "g");
+        const frame = document.createElementNS(ns, "rect");
+        frame.setAttribute("x", -size * 1.4);
+        frame.setAttribute("y", -size * 0.85);
+        frame.setAttribute("width", size * 2.8);
+        frame.setAttribute("height", size * 1.6);
+        frame.setAttribute("rx", 4);
+        g.appendChild(frame);
+        const screen = document.createElementNS(ns, "rect");
+        screen.setAttribute("x", -size * 1.3);
+        screen.setAttribute("y", -size * 0.75);
+        screen.setAttribute("width", size * 2.6);
+        screen.setAttribute("height", size * 1.4);
+        screen.setAttribute("rx", 2);
+        screen.style.fill = "#1e293b";
+        g.appendChild(screen);
+        const stand = document.createElementNS(ns, "rect");
+        stand.setAttribute("x", -size * 0.8);
+        stand.setAttribute("y", size * 0.75);
+        stand.setAttribute("width", size * 1.6);
+        stand.setAttribute("height", size * 0.12);
+        stand.setAttribute("rx", 2);
+        g.appendChild(stand);
+        return g;
+       }
+       if (shape === "hub") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "rect");
+        body.setAttribute("x", -size * 0.9);
+        body.setAttribute("y", -size * 0.5);
+        body.setAttribute("width", size * 1.8);
+        body.setAttribute("height", size);
+        body.setAttribute("rx", 8);
+        g.appendChild(body);
+        for (let i = 0; i < 4; i++) {
+         const led = document.createElementNS(ns, "circle");
+         led.setAttribute("cx", -size * 0.5 + i * size * 0.35);
+         led.setAttribute("cy", 0);
+         led.setAttribute("r", size * 0.08);
+         led.style.fill = ["#4ade80", "#3b82f6", "#f59e0b", "#ef4444"][i];
+         g.appendChild(led);
+        }
+        return g;
+       }
+       if (shape === "smoke-detector") {
+        const g = document.createElementNS(ns, "g");
+        const outer = document.createElementNS(ns, "circle");
+        outer.setAttribute("r", size);
+        g.appendChild(outer);
+        const inner = document.createElementNS(ns, "circle");
+        inner.setAttribute("r", size * 0.6);
+        inner.style.fill = "#1e293b";
+        g.appendChild(inner);
+        for (let i = 0; i < 6; i++) {
+         const slot = document.createElementNS(ns, "rect");
+         const angle = (i * 60 - 90) * Math.PI / 180;
+         slot.setAttribute("x", Math.cos(angle) * size * 0.35 - size * 0.08);
+         slot.setAttribute("y", Math.sin(angle) * size * 0.35 - size * 0.03);
+         slot.setAttribute("width", size * 0.16);
+         slot.setAttribute("height", size * 0.06);
+         slot.setAttribute("rx", 1);
+         slot.style.fill = "#475569";
+         slot.setAttribute("transform", `rotate(${i * 60}, ${Math.cos(angle) * size * 0.35}, ${Math.sin(angle) * size * 0.35})`);
+         g.appendChild(slot);
+        }
+        const led = document.createElementNS(ns, "circle");
+        led.setAttribute("cx", 0);
+        led.setAttribute("cy", 0);
+        led.setAttribute("r", size * 0.1);
+        led.style.fill = "#ef4444";
+        g.appendChild(led);
+        return g;
+       }
+       if (shape === "motion-sensor") {
+        const g = document.createElementNS(ns, "g");
+        const dome = document.createElementNS(ns, "path");
+        dome.setAttribute("d", `M ${-size * 0.8} ${size * 0.3} Q ${-size * 0.8} ${-size * 0.8} 0 ${-size * 0.8} Q ${size * 0.8} ${-size * 0.8} ${size * 0.8} ${size * 0.3} Z`);
+        g.appendChild(dome);
+        const base = document.createElementNS(ns, "rect");
+        base.setAttribute("x", -size * 0.8);
+        base.setAttribute("y", size * 0.3);
+        base.setAttribute("width", size * 1.6);
+        base.setAttribute("height", size * 0.35);
+        base.setAttribute("rx", 3);
+        g.appendChild(base);
+        const lens = document.createElementNS(ns, "ellipse");
+        lens.setAttribute("cx", 0);
+        lens.setAttribute("cy", -size * 0.15);
+        lens.setAttribute("rx", size * 0.35);
+        lens.setAttribute("ry", size * 0.25);
+        lens.style.fill = "#1e293b";
+        g.appendChild(lens);
+        const led = document.createElementNS(ns, "circle");
+        led.setAttribute("cx", 0);
+        led.setAttribute("cy", size * 0.45);
+        led.setAttribute("r", size * 0.08);
+        led.style.fill = "#4ade80";
+        g.appendChild(led);
+        return g;
+       }
+       if (shape === "garage") {
+        const g = document.createElementNS(ns, "g");
+        const frame = document.createElementNS(ns, "rect");
+        frame.setAttribute("x", -size);
+        frame.setAttribute("y", -size * 0.9);
+        frame.setAttribute("width", size * 2);
+        frame.setAttribute("height", size * 1.8);
+        frame.setAttribute("rx", 4);
+        g.appendChild(frame);
+        for (let i = 0; i < 4; i++) {
+         const panel = document.createElementNS(ns, "rect");
+         panel.setAttribute("x", -size * 0.9);
+         panel.setAttribute("y", -size * 0.8 + i * size * 0.42);
+         panel.setAttribute("width", size * 1.8);
+         panel.setAttribute("height", size * 0.35);
+         panel.setAttribute("rx", 2);
+         panel.style.fill = "#1e293b";
+         g.appendChild(panel);
+        }
+        return g;
+       }
+       if (shape === "sprinkler") {
+        const g = document.createElementNS(ns, "g");
+        const head = document.createElementNS(ns, "circle");
+        head.setAttribute("r", size * 0.5);
+        g.appendChild(head);
+        const nozzle = document.createElementNS(ns, "rect");
+        nozzle.setAttribute("x", -size * 0.15);
+        nozzle.setAttribute("y", size * 0.3);
+        nozzle.setAttribute("width", size * 0.3);
+        nozzle.setAttribute("height", size * 0.5);
+        g.appendChild(nozzle);
+        for (let i = 0; i < 5; i++) {
+         const spray = document.createElementNS(ns, "line");
+         const angle = (-60 + i * 30) * Math.PI / 180;
+         spray.setAttribute("x1", 0);
+         spray.setAttribute("y1", -size * 0.3);
+         spray.setAttribute("x2", Math.cos(angle) * size * 0.8);
+         spray.setAttribute("y2", Math.sin(angle) * size * 0.8 - size * 0.3);
+         spray.style.stroke = "#3b82f6";
+         spray.style.strokeWidth = "2";
+         spray.style.strokeDasharray = "3,3";
+         g.appendChild(spray);
+        }
+        return g;
+       }
+       if (shape === "vacuum") {
+        const g = document.createElementNS(ns, "g");
+        const body = document.createElementNS(ns, "circle");
+        body.setAttribute("r", size);
+        g.appendChild(body);
+        const top = document.createElementNS(ns, "circle");
+        top.setAttribute("r", size * 0.7);
+        top.style.fill = "#1e293b";
+        g.appendChild(top);
+        const bumper = document.createElementNS(ns, "path");
+        bumper.setAttribute("d", `M ${-size * 0.7} ${-size * 0.4} A ${size * 0.8} ${size * 0.8} 0 0 1 ${size * 0.7} ${-size * 0.4}`);
+        bumper.style.fill = "none";
+        bumper.style.strokeWidth = size * 0.15;
+        g.appendChild(bumper);
+        const btn = document.createElementNS(ns, "circle");
+        btn.setAttribute("cx", 0);
+        btn.setAttribute("cy", size * 0.1);
+        btn.setAttribute("r", size * 0.2);
+        btn.style.fill = "#4ade80";
+        g.appendChild(btn);
+        return g;
+       }
        const c = document.createElementNS(ns, "circle");
        c.setAttribute("r", size);
        return c;
@@ -5601,6 +6244,77 @@ minimapSvg.insertBefore(frag, minimapViewport);
          btn.style.display = rectDrawMode ? 'block' : 'none';
         });
        }
+	   function updateFovCone(nodeId) {
+  const node = NODE_DATA[nodeId];
+  if (!node) return;
+  
+  const nodeGroup = document.querySelector(`g[data-node-id="${nodeId}"]`);
+  if (!nodeGroup) return;
+  const existingFov = nodeGroup.querySelector(".fov-group");
+  if (existingFov) existingFov.remove();
+  if ((node.shape !== "camera" && node.shape !== "cctv") || !node.fovEnabled) return;
+  
+  const ns = "http://www.w3.org/2000/svg";
+  const fovAngle = node.fovAngle || 90;
+  const fovDistance = node.fovDistance || 150;
+  const fovRotation = node.fovRotation || 0;
+  const fovColor = node.fovColor || "#f59e0b";
+  const fovAnimate = node.fovAnimate || false;
+  const fovSweep = node.fovSweep || 120;
+  const fovSpeed = node.fovSpeed || 4;
+  
+  const fovGroup = document.createElementNS(ns, "g");
+  fovGroup.classList.add("fov-group");
+  
+  const fovPath = document.createElementNS(ns, "path");
+  
+  if (fovAngle >= 360) {
+    fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
+  } else {
+    const angleRad = (fovAngle * Math.PI) / 180;
+    const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
+    
+    const startAngle = rotationRad - angleRad / 2;
+    const endAngle = rotationRad + angleRad / 2;
+    
+    const x1 = Math.cos(startAngle) * fovDistance;
+    const y1 = Math.sin(startAngle) * fovDistance;
+    const x2 = Math.cos(endAngle) * fovDistance;
+    const y2 = Math.sin(endAngle) * fovDistance;
+    
+    const largeArc = fovAngle > 180 ? 1 : 0;
+    
+    fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+  }
+  
+  fovPath.style.fill = fovColor + "33";
+  fovPath.style.stroke = fovColor;
+  fovPath.style.strokeWidth = "2";
+  fovPath.style.pointerEvents = "none";
+  fovPath.classList.add("fov-cone");
+  
+  fovGroup.appendChild(fovPath);
+  
+  if (fovAnimate && fovAngle < 360) {
+    const animationName = `fov-sweep-${nodeId}`;
+    
+    const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+    styleEl.textContent = `
+      @keyframes ${animationName} {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(${fovSweep}deg); }
+      }
+    `;
+    fovGroup.appendChild(styleEl);
+    const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
+    const animationOffset = elapsedSeconds % fovSpeed;
+    
+    fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+    fovGroup.style.animationDelay = `-${animationOffset}s`;
+    fovGroup.style.transformOrigin = "0 0";
+  }
+  nodeGroup.insertBefore(fovGroup, nodeGroup.firstChild);
+}
       function forgeTheTopology() {
        if (!NODE_DATA || !EDGE_DATA) {
         console.warn("forgeTheTopology called before data initialized");
@@ -5610,6 +6324,14 @@ minimapSvg.insertBefore(frag, minimapViewport);
        svg.innerHTML = "";
        const ns = "http://www.w3.org/2000/svg";
        const defs = document.createElementNS(ns, "defs");
+       const flowArrowBig = document.createElementNS(ns, "path");
+       flowArrowBig.id = "flow-arrow-big";
+       flowArrowBig.setAttribute("d", "M-6,-4 L6,0 L-6,4 L-3,0 Z");
+       defs.appendChild(flowArrowBig);
+       const flowArrowSmall = document.createElementNS(ns, "path");
+       flowArrowSmall.id = "flow-arrow-small";
+       flowArrowSmall.setAttribute("d", "M-4,-3 L4,0 L-4,3 Z");
+       defs.appendChild(flowArrowSmall);
        const markerForward = document.createElementNS(ns, "marker");
        markerForward.id = "arrow-forward";
        markerForward.setAttribute("markerWidth", "10");
@@ -5635,8 +6357,24 @@ minimapSvg.insertBefore(frag, minimapViewport);
        pathBackward.setAttribute("d", "M9,0 L9,6 L0,3 z");
        pathBackward.setAttribute("fill", "context-stroke");
        markerBackward.appendChild(pathBackward);
-       defs.appendChild(markerBackward);
-       svg.appendChild(defs);
+defs.appendChild(markerBackward);
+const wallPattern = document.createElementNS(ns, "pattern");
+wallPattern.id = "wall-hatch";
+wallPattern.setAttribute("patternUnits", "userSpaceOnUse");
+wallPattern.setAttribute("width", "8");
+wallPattern.setAttribute("height", "8");
+wallPattern.setAttribute("patternTransform", "rotate(45)");
+const wallLine = document.createElementNS(ns, "line");
+wallLine.setAttribute("x1", "0");
+wallLine.setAttribute("y1", "0");
+wallLine.setAttribute("x2", "0");
+wallLine.setAttribute("y2", "8");
+wallLine.setAttribute("stroke", "#666");
+wallLine.setAttribute("stroke-width", "2");
+wallPattern.appendChild(wallLine);
+defs.appendChild(wallPattern);
+
+svg.appendChild(defs);
        const boundary = document.createElementNS(ns, "rect");
        boundary.setAttribute("x", CANVAS_PADDING);
        boundary.setAttribute("y", CANVAS_PADDING);
@@ -5648,8 +6386,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
        boundary.setAttribute("stroke-dasharray", "10 5");
        boundary.setAttribute("rx", "8");
        svg.appendChild(boundary);
-       if (currentView.mode !== "rack") {
- const gridGroup = document.createElementNS(ns, "g");
+       if (currentView.mode !== "rack" && PAGE_STATE.canvasGridEnabled !== false) {
+const gridGroup = document.createElementNS(ns, "g");
  gridGroup.id = "canvas-grid";
  const gridSize = PAGE_STATE.canvasGridSize || 50;
  const gridColor = (PAGE_STATE.canvasGrid || "#475569") + "33";
@@ -5692,8 +6430,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
         rackFrame.setAttribute("rx", "4");
         rackGroup.appendChild(rackFrame);
         for (let u = 0; u <= rackCapacity; u++) {
-         const y = RACK_START_Y + u * rackUHeight;
-         const line = document.createElementNS(ns, "line");
+ const y = RACK_START_Y + u * rackUHeight;
+ if (PAGE_STATE.rackGridEnabled !== false) {
+ const line = document.createElementNS(ns, "line");
          line.setAttribute("x1", RACK_START_X - RACK_WIDTH / 2);
          line.setAttribute("y1", y);
          line.setAttribute("x2", RACK_START_X + RACK_WIDTH / 2);
@@ -5702,7 +6441,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
          line.setAttribute("stroke-width", u % 5 === 0 ? "2" : "1");
          line.setAttribute("stroke-dasharray", u % 5 === 0 ? "none" : "5,5");
          rackGroup.appendChild(line);
-         if (u < rackCapacity) {
+ }
+ if (u < rackCapacity) {
           const uNumber = rackCapacity - u;
           const text = document.createElementNS(ns, "text");
           text.setAttribute("x", RACK_START_X - RACK_WIDTH / 2 - 30);
@@ -5735,6 +6475,12 @@ minimapSvg.insertBefore(frag, minimapViewport);
            const g = document.createElementNS(ns, "g");
            g.classList.add("rect-group");
            g.dataset.rectId = rect.id;
+           const rectCenterX = rect.x + rect.width / 2;
+           const rectCenterY = rect.y + rect.height / 2;
+           const rectRotation = rect.rotation || 0;
+           if (rectRotation !== 0) {
+             g.setAttribute("transform", `rotate(${rectRotation}, ${rectCenterX}, ${rectCenterY})`);
+           }
            const rectEl = document.createElementNS(ns, "rect");
            rectEl.classList.add("rect-shape");
            rectEl.setAttribute("x", rect.x);
@@ -5746,7 +6492,40 @@ minimapSvg.insertBefore(frag, minimapViewport);
            rectEl.style.stroke = rect.borderColor || rect.color;
            rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
            if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
-           else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+else if (rect.lineStyle === "wall") {
+  rectEl.style.fill = rect.color;
+  rectEl.style.fillOpacity = "0.5";
+  rectEl.style.stroke = rect.borderColor || rect.color;
+  rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
+  const hatchGroup = document.createElementNS(ns, "g");
+  hatchGroup.classList.add("wall-hatch-lines");
+  hatchGroup.style.pointerEvents = "none";
+  const spacing = 12;
+  const hatchColor = rect.borderColor || rect.color;
+  for (let i = -rect.height; i < rect.width + rect.height; i += spacing) {
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", rect.x + i);
+    line.setAttribute("y1", rect.y);
+    line.setAttribute("x2", rect.x + i - rect.height);
+    line.setAttribute("y2", rect.y + rect.height);
+    line.style.stroke = hatchColor;
+    line.style.strokeWidth = "2";
+    hatchGroup.appendChild(line);
+  }
+  const clipId = "clip-" + rect.id;
+  const clipPath = document.createElementNS(ns, "clipPath");
+  clipPath.id = clipId;
+  const clipRect = document.createElementNS(ns, "rect");
+  clipRect.setAttribute("x", rect.x);
+  clipRect.setAttribute("y", rect.y);
+  clipRect.setAttribute("width", rect.width);
+  clipRect.setAttribute("height", rect.height);
+  clipPath.appendChild(clipRect);
+  defs.appendChild(clipPath);
+  hatchGroup.setAttribute("clip-path", "url(#" + clipId + ")");
+  g.appendChild(hatchGroup);
+}
            else { rectEl.style.strokeDasharray = "none"; }
            rectEl.style.cursor = "move";
           rectEl.addEventListener("click", (e) => {
@@ -5953,7 +6732,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
       const handle = document.createElementNS(ns, "circle");
       handle.setAttribute("cx", corner.cx);
       handle.setAttribute("cy", corner.cy);
-      handle.setAttribute("r", PAGE_STATE.selectionHandleSize || 8);
+      const borderW = rect.borderWidth !== undefined ? rect.borderWidth : 2;
+      const handleSize = Math.max(PAGE_STATE.selectionHandleSize || 8, borderW + 4);
+      handle.setAttribute("r", handleSize);
       handle.style.fill = PAGE_STATE.selectionHandle || "#f59e0b";
       handle.style.stroke = "#fff";
       handle.style.strokeWidth = "2";
@@ -6052,8 +6833,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
        Object.keys(positions).forEach((id) => {
         let pos = savedPositions[id] || positions[id];
         const nodeSize = savedSizes[id] || 55;
-        pos.x = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, pos.x), );
-        pos.y = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, pos.y), );
+        pos.x = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, pos.x));
+        pos.y = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, pos.y));
         positions[id] = {
          x: pos.x,
          y: pos.y
@@ -6141,13 +6922,17 @@ minimapSvg.insertBefore(frag, minimapViewport);
          poly.style.strokeWidth = edge.width || 4;
          poly.setAttribute("fill", "none");
          const lineStyle = edge.lineStyle || "solid";
-         if (lineStyle === "dashed") {
-          poly.style.strokeDasharray = "10,5";
-         } else if (lineStyle === "dotted") {
-          poly.style.strokeDasharray = "2,4";
-         } else {
-          poly.style.strokeDasharray = "none";
-         }
+if (lineStyle === "dashed") {
+ poly.style.strokeDasharray = "10,5";
+} else if (lineStyle === "dotted") {
+ poly.style.strokeDasharray = "2,4";
+} else if (lineStyle === "wall") {
+ poly.style.stroke = "url(#wall-hatch)";
+ poly.style.strokeWidth = (edge.width || 4) * 3;
+ poly.style.strokeDasharray = "none";
+} else {
+ poly.style.strokeDasharray = "none";
+}
          const direction = edge.direction || "none";
          if (direction === "forward") {
           poly.setAttribute("marker-end", "url(#arrow-forward)");
@@ -6159,6 +6944,41 @@ minimapSvg.insertBefore(frag, minimapViewport);
          }
          const ptsStr = edge.points.map((p) => `${p.x},${p.y}`).join(" ");
          poly.setAttribute("points", ptsStr);
+         const animDir = PAGE_STATE.animationDirection || "all";
+         const shouldAnimate = (PAGE_STATE.animateConnections && edge.animate !== false || edge.animate === true) && direction !== "none" && edge.points.length >= 2 && (animDir === "all" || animDir === direction);
+         if (shouldAnimate) {
+          poly.style.opacity = "0.25";
+          const polyPathD = "M " + edge.points.map(p => `${p.x} ${p.y}`).join(" L ");
+          const edgeStyle = edge.animationStyle || PAGE_STATE.animationStyle || "arrows";
+          const arrowId = edgeStyle === "dots" ? "#flow-arrow-small" : "#flow-arrow-big";
+          const arrowColor = edge.color || PAGE_STATE.defaultEdge || "#475569";
+          const arrowCount = 3;
+          const animDuration = edge.animationSpeed ? parseFloat(edge.animationSpeed) : (PAGE_STATE.animationSpeed || 1.5);
+          if (direction === "forward" || direction === "both") {
+           for (let i = 0; i < arrowCount; i++) {
+            const arrow = document.createElementNS(ns, "use");
+            arrow.setAttribute("href", arrowId);
+            arrow.style.fill = arrowColor;
+            arrow.style.offsetPath = `path('${polyPathD}')`;
+            arrow.style.animationDuration = animDuration + "s";
+            arrow.style.animationDelay = (i * (animDuration / arrowCount)) + "s";
+            arrow.classList.add("edge-arrow-forward");
+            svg.appendChild(arrow);
+           }
+          }
+          if (direction === "backward" || direction === "both") {
+           for (let i = 0; i < arrowCount; i++) {
+            const arrow = document.createElementNS(ns, "use");
+            arrow.setAttribute("href", arrowId);
+            arrow.style.fill = arrowColor;
+            arrow.style.offsetPath = `path('${polyPathD}')`;
+            arrow.style.animationDuration = animDuration + "s";
+            arrow.style.animationDelay = ((i * (animDuration / arrowCount)) + (direction === "both" ? animDuration / (arrowCount * 2) : 0)) + "s";
+            arrow.classList.add("edge-arrow-backward");
+            svg.appendChild(arrow);
+           }
+          }
+         }
          const polyHit = document.createElementNS(ns, "polyline");
          polyHit.setAttribute("points", ptsStr);
          polyHit.style.fill = "none";
@@ -6533,6 +7353,52 @@ minimapSvg.insertBefore(frag, minimapViewport);
         path.dataset.to = edge.to;
         path.style.stroke = edge.color;
         path.style.strokeWidth = edge.width;
+        const edgeDirection = edge.direction || "none";
+        const edgeLineStyle = edge.lineStyle || "solid";
+        if (edgeLineStyle === "dashed") { path.style.strokeDasharray = "10,5"; }
+        else if (edgeLineStyle === "dotted") { path.style.strokeDasharray = "2,4"; }
+        if (edgeDirection === "forward") {
+         path.setAttribute("marker-end", "url(#arrow-forward)");
+        } else if (edgeDirection === "backward") {
+         path.setAttribute("marker-start", "url(#arrow-backward)");
+        } else if (edgeDirection === "both") {
+         path.setAttribute("marker-start", "url(#arrow-backward)");
+         path.setAttribute("marker-end", "url(#arrow-forward)");
+        }
+        const animDir = PAGE_STATE.animationDirection || "all";
+        const shouldAnimate = (PAGE_STATE.animateConnections && edge.animate !== false || edge.animate === true) && edgeDirection !== "none" && (animDir === "all" || animDir === edgeDirection);
+        if (shouldAnimate) {
+         path.style.opacity = "0.25";
+         const edgeStyle = edge.animationStyle || PAGE_STATE.animationStyle || "arrows";
+         const arrowId = edgeStyle === "dots" ? "#flow-arrow-small" : "#flow-arrow-big";
+         const arrowColor = edge.color || PAGE_STATE.defaultEdge || "#475569";
+         const arrowCount = 3;
+         const animDuration = edge.animationSpeed ? parseFloat(edge.animationSpeed) : (PAGE_STATE.animationSpeed || 1.5);
+         if (edgeDirection === "forward" || edgeDirection === "both") {
+          for (let i = 0; i < arrowCount; i++) {
+           const arrow = document.createElementNS(ns, "use");
+           arrow.setAttribute("href", arrowId);
+           arrow.style.fill = arrowColor;
+           arrow.style.offsetPath = `path('${pathD}')`;
+           arrow.style.animationDuration = animDuration + "s";
+           arrow.style.animationDelay = (i * (animDuration / arrowCount)) + "s";
+           arrow.classList.add("edge-arrow-forward");
+           svg.appendChild(arrow);
+          }
+         }
+         if (edgeDirection === "backward" || edgeDirection === "both") {
+          for (let i = 0; i < arrowCount; i++) {
+           const arrow = document.createElementNS(ns, "use");
+           arrow.setAttribute("href", arrowId);
+           arrow.style.fill = arrowColor;
+           arrow.style.offsetPath = `path('${pathD}')`;
+           arrow.style.animationDuration = animDuration + "s";
+           arrow.style.animationDelay = ((i * (animDuration / arrowCount)) + (edgeDirection === "both" ? animDuration / (arrowCount * 2) : 0)) + "s";
+           arrow.classList.add("edge-arrow-backward");
+           svg.appendChild(arrow);
+          }
+         }
+        }
         const pathHit = document.createElementNS(ns, "path");
         pathHit.setAttribute("d", pathD);
         pathHit.setAttribute("fill", "none");
@@ -6643,10 +7509,11 @@ minimapSvg.insertBefore(frag, minimapViewport);
         } else {
          if (node.assignedRack) return;
         }
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g", );
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         g.classList.add("node-group");
         g.dataset.nodeId = id;
-        g.setAttribute("transform", `translate(${pos.x},${pos.y})`);
+        const nodeRotation = NODE_DATA[id].rotation || 0;
+        g.setAttribute("transform", `translate(${pos.x},${pos.y}) rotate(${nodeRotation})`);
 		let r = savedSizes[id] || 55;
 		if (!savedSizes[id]) {
 		 if (window.innerWidth <= 480) r = 45;
@@ -6665,7 +7532,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         const titleOffsetY = styles.titleOffsetY || 0;
         const subOffsetX = styles.subOffsetX || 0;
         const subOffsetY = styles.subOffsetY || 0;
-        const label = document.createElementNS("http://www.w3.org/2000/svg", "text", );
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
         label.classList.add("node-label");
         label.setAttribute("x", titleOffsetX);
         label.setAttribute("y", -r * 0.28 + titleOffsetY);
@@ -6675,7 +7542,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
       label.style.fill = styles.titleColor || PAGE_STATE.nodeTitle || "#e2e8f0";
         label.style.fontFamily = styles.titleFont || PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
         label.style.pointerEvents = "none";
-        const sub = document.createElementNS("http://www.w3.org/2000/svg", "text", );
+        const sub = document.createElementNS("http://www.w3.org/2000/svg", "text");
         sub.classList.add("node-sub");
         sub.setAttribute("x", subOffsetX);
         sub.setAttribute("y", r * 0.4 + subOffsetY);
@@ -6685,6 +7552,66 @@ minimapSvg.insertBefore(frag, minimapViewport);
       sub.style.fill = styles.subColor || PAGE_STATE.nodeSub || "#94a3b8";
         sub.style.fontFamily = styles.subFont || PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
         sub.style.pointerEvents = "none";
+if ((node.shape === "camera" || node.shape === "cctv") && node.fovEnabled) {
+  const fovAngle = node.fovAngle || 90;
+  const fovDistance = node.fovDistance || 150;
+  const fovRotation = node.fovRotation || 0;
+  const fovColor = node.fovColor || "#f59e0b";
+  const fovAnimate = node.fovAnimate || false;
+  const fovSweep = node.fovSweep || 120;
+  const fovSpeed = node.fovSpeed || 4;
+  const fovGroup = document.createElementNS(ns, "g");
+  fovGroup.classList.add("fov-group");
+  
+  const fovPath = document.createElementNS(ns, "path");
+  
+  if (fovAngle >= 360) {
+    fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
+  } else {
+    const angleRad = (fovAngle * Math.PI) / 180;
+    const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
+    
+    const startAngle = rotationRad - angleRad / 2;
+    const endAngle = rotationRad + angleRad / 2;
+    
+    const x1 = Math.cos(startAngle) * fovDistance;
+    const y1 = Math.sin(startAngle) * fovDistance;
+    const x2 = Math.cos(endAngle) * fovDistance;
+    const y2 = Math.sin(endAngle) * fovDistance;
+    
+    const largeArc = fovAngle > 180 ? 1 : 0;
+    
+    fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+  }
+  
+  fovPath.style.fill = fovColor + "33";
+  fovPath.style.stroke = fovColor;
+  fovPath.style.strokeWidth = "2";
+  fovPath.style.pointerEvents = "none";
+  fovPath.classList.add("fov-cone");
+  
+  fovGroup.appendChild(fovPath);
+  if (fovAnimate && fovAngle < 360) {
+    const animationName = `fov-sweep-${id}`;
+    const halfSweep = fovSweep / 2;
+    const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+    styleEl.textContent = `
+      @keyframes ${animationName} {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(${fovSweep}deg); }
+      }
+    `;
+    fovGroup.appendChild(styleEl);
+    const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
+    const animationOffset = elapsedSeconds % fovSpeed;
+    
+    fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+    fovGroup.style.animationDelay = `-${animationOffset}s`;
+    fovGroup.style.transformOrigin = "0 0";
+  }
+  
+  g.appendChild(fovGroup);
+}
         g.append(hitArea, shapeEl, label, sub);
         if (NODE_DATA[id]?.locked) {
           const lockIcon = document.createElementNS(ns, "text");
@@ -6803,7 +7730,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          const pt = svgEl.createSVGPoint();
          pt.x = e.clientX;
          pt.y = e.clientY;
-         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
          startX = svgP.x;
          startY = svgP.y;
       if (selectedNodes.has(id)) {
@@ -6846,7 +7773,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          const pt = svgEl.createSVGPoint();
          pt.x = e.clientX;
          pt.y = e.clientY;
-         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
          const dx = svgP.x - startX;
          const dy = svgP.y - startY;
          let nodesToMove = selectedNodes.has(id) ? Array.from(selectedNodes) : [id];
@@ -6880,8 +7807,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
           let newX = initialPos.x + dx;
           let newY = initialPos.y + dy;
           const nodeSize = savedSizes[nodeId] || 55;
-          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX), );
-          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY), );
+          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
+          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
           savedPositions[nodeId] = { x: newX, y: newY };
           positions[nodeId] = { x: newX, y: newY };
           if (nodeId === id) {
@@ -6938,7 +7865,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
            } else if (edgeEl.tagName === "path") {
             const edgeId = edgeEl.dataset.edgeId;
             const edge = EDGE_DATA.list.find(
-             (e) => e.id === edgeId, );
+             (e) => e.id === edgeId);
             if (edge) {
              const pairTotal = edge._pairTotal || 1;
              const pairIndex = edge._pairIndex || 0;
@@ -6955,7 +7882,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
              }
              const ctrlX = midX + perpX * offsetAmount;
              const ctrlY = midY + perpY * offsetAmount;
-             edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+             edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
             }
            }
           }
@@ -7003,7 +7930,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           const touch = e.touches[0];
           pt.x = touch.clientX;
           pt.y = touch.clientY;
-          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
           touchStartX = svgP.x;
           touchStartY = svgP.y;
           startX = svgP.x;
@@ -7022,7 +7949,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           e.stopPropagation();
          }, {
           passive: false
-         }, );
+         });
         g.addEventListener("touchmove", (e) => {
 		if (isViewOnly()) return;
          e.preventDefault();
@@ -7031,7 +7958,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          const touch = e.touches[0];
          pt.x = touch.clientX;
          pt.y = touch.clientY;
-         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
          const dx = Math.abs(svgP.x - touchStartX);
          const dy = Math.abs(svgP.y - touchStartY);
          if (dx > (isMobileDevice() ? 4 : 10) || dy > (isMobileDevice() ? 4 : 10)) {
@@ -7072,8 +7999,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
           let newX = initialPos.x + deltaX;
           let newY = initialPos.y + deltaY;
           const nodeSize = savedSizes[nodeId] || 55;
-          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX), );
-          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY), );
+          newX = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_WIDTH - nodeSize - CANVAS_PADDING, newX));
+          newY = Math.max(nodeSize + CANVAS_PADDING, Math.min(CANVAS_HEIGHT - nodeSize - CANVAS_PADDING, newY));
           savedPositions[nodeId] = { x: newX, y: newY };
           positions[nodeId] = { x: newX, y: newY };
           if (nodeId === id) {
@@ -7106,7 +8033,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
            } else if (edgeEl.tagName === "path") {
             const edgeId = edgeEl.dataset.edgeId;
             const edge = EDGE_DATA.list.find(
-             (e) => e.id === edgeId, );
+             (e) => e.id === edgeId);
             if (edge) {
              const pairTotal = edge._pairTotal || 1;
              const pairIndex = edge._pairIndex || 0;
@@ -7123,7 +8050,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
              }
              const ctrlX = midX + perpX * offsetAmount;
              const ctrlY = midY + perpY * offsetAmount;
-             edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`, );
+             edgeEl.setAttribute("d", `M ${p1.x} ${p1.y} Q ${ctrlX} ${ctrlY} ${p2.x} ${p2.y}`);
             }
            }
           }
@@ -7189,6 +8116,12 @@ minimapSvg.insertBefore(frag, minimapViewport);
            const g = document.createElementNS(ns, "g");
            g.classList.add("rect-group");
            g.dataset.rectId = rect.id;
+           const rectCenterX = rect.x + rect.width / 2;
+           const rectCenterY = rect.y + rect.height / 2;
+           const rectRotation = rect.rotation || 0;
+           if (rectRotation !== 0) {
+             g.setAttribute("transform", `rotate(${rectRotation}, ${rectCenterX}, ${rectCenterY})`);
+           }
            const rectEl = document.createElementNS(ns, "rect");
            rectEl.classList.add("rect-shape");
            rectEl.setAttribute("x", rect.x);
@@ -7199,7 +8132,40 @@ minimapSvg.insertBefore(frag, minimapViewport);
            rectEl.style.stroke = rect.borderColor || rect.color;
            rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 3) + "px";
            if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
-           else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
+else if (rect.lineStyle === "wall") {
+  rectEl.style.fill = rect.color;
+  rectEl.style.fillOpacity = "0.5";
+  rectEl.style.stroke = rect.borderColor || rect.color;
+  rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
+  const hatchGroup = document.createElementNS(ns, "g");
+  hatchGroup.classList.add("wall-hatch-lines");
+  hatchGroup.style.pointerEvents = "none";
+  const spacing = 12;
+  const hatchColor = rect.borderColor || rect.color;
+  for (let i = -rect.height; i < rect.width + rect.height; i += spacing) {
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", rect.x + i);
+    line.setAttribute("y1", rect.y);
+    line.setAttribute("x2", rect.x + i - rect.height);
+    line.setAttribute("y2", rect.y + rect.height);
+    line.style.stroke = hatchColor;
+    line.style.strokeWidth = "2";
+    hatchGroup.appendChild(line);
+  }
+  const clipId = "clip-" + rect.id;
+  const clipPath = document.createElementNS(ns, "clipPath");
+  clipPath.id = clipId;
+  const clipRect = document.createElementNS(ns, "rect");
+  clipRect.setAttribute("x", rect.x);
+  clipRect.setAttribute("y", rect.y);
+  clipRect.setAttribute("width", rect.width);
+  clipRect.setAttribute("height", rect.height);
+  clipPath.appendChild(clipRect);
+  defs.appendChild(clipPath);
+  hatchGroup.setAttribute("clip-path", "url(#" + clipId + ")");
+  g.appendChild(hatchGroup);
+}
            else { rectEl.style.strokeDasharray = "none"; }
            rectEl.style.cursor = "move";
            rectEl.addEventListener("click", (e) => {
@@ -7389,6 +8355,54 @@ minimapSvg.insertBefore(frag, minimapViewport);
              rectEl.style.cursor = "move";
             }
            }, { passive: false });
+           if (currentRectId === rect.id) {
+             const corners = [
+               { cx: rect.x, cy: rect.y, cursor: 'nwse-resize', dx: -1, dy: -1 },
+               { cx: rect.x + rect.width, cy: rect.y, cursor: 'nesw-resize', dx: 1, dy: -1 },
+               { cx: rect.x, cy: rect.y + rect.height, cursor: 'nesw-resize', dx: -1, dy: 1 },
+               { cx: rect.x + rect.width, cy: rect.y + rect.height, cursor: 'nwse-resize', dx: 1, dy: 1 }
+             ];
+             corners.forEach((corner, idx) => {
+               const handle = document.createElementNS(ns, "circle");
+               handle.setAttribute("cx", corner.cx);
+               handle.setAttribute("cy", corner.cy);
+               const borderW = rect.borderWidth !== undefined ? rect.borderWidth : 3;
+               const handleSize = Math.max(PAGE_STATE.selectionHandleSize || 8, borderW + 4);
+               handle.setAttribute("r", handleSize);
+               handle.style.fill = PAGE_STATE.selectionHandle || "#f59e0b";
+               handle.style.stroke = "#fff";
+               handle.style.strokeWidth = "2";
+               handle.style.cursor = corner.cursor;
+               handle.addEventListener("mousedown", (e) => {
+                 if (isViewOnly()) return;
+                 e.preventDefault();
+                 e.stopPropagation();
+                 pushUndo("resize zone");
+                 let dragging = true;
+                 const startX = e.clientX, startY = e.clientY;
+                 const origX = rect.x, origY = rect.y, origW = rect.width, origH = rect.height;
+                 const moveHandler = (ev) => {
+                   if (!dragging) return;
+                   const pt1 = svg.createSVGPoint(); pt1.x = startX; pt1.y = startY;
+                   const pt2 = svg.createSVGPoint(); pt2.x = ev.clientX; pt2.y = ev.clientY;
+                   const svgP1 = pt1.matrixTransform(svg.getScreenCTM().inverse());
+                   const svgP2 = pt2.matrixTransform(svg.getScreenCTM().inverse());
+                   const dx = svgP2.x - svgP1.x, dy = svgP2.y - svgP1.y;
+                   if (corner.dx < 0) { rect.x = origX + dx; rect.width = origW - dx; }
+                   else { rect.width = origW + dx; }
+                   if (corner.dy < 0) { rect.y = origY + dy; rect.height = origH - dy; }
+                   else { rect.height = origH + dy; }
+                   if (rect.width < 20) rect.width = 20;
+                   if (rect.height < 20) rect.height = 20;
+                   forgeTheTopology();
+                 };
+                 const upHandler = () => { dragging = false; document.removeEventListener("mousemove", moveHandler); document.removeEventListener("mouseup", upHandler); };
+                 document.addEventListener("mousemove", moveHandler);
+                 document.addEventListener("mouseup", upHandler);
+               });
+               g.appendChild(handle);
+             });
+           }
            if (rect.groupId) {
              const groupIndicator = document.createElementNS(ns, "rect");
              groupIndicator.setAttribute("x", rect.x - 4);
@@ -7414,6 +8428,10 @@ minimapSvg.insertBefore(frag, minimapViewport);
           const g = document.createElementNS(ns, "g");
           g.classList.add("text-group");
           g.dataset.textId = textItem.id;
+          const textRotation = textItem.rotation || 0;
+          if (textRotation !== 0) {
+            g.setAttribute("transform", `rotate(${textRotation}, ${textItem.x}, ${textItem.y})`);
+          }
           if (textItem.bgEnabled) {
            const bgRect = document.createElementNS(ns, "rect");
            bgRect.classList.add("text-bg");
@@ -7761,14 +8779,14 @@ minimapSvg.insertBefore(frag, minimapViewport);
          (newTitle) => {
           PAGE_STATE.title = newTitle;
           wieldThePower();
-         }, );
+         });
        });
       }
       function editNodeName(id) {
        showEditModal("Edit Name", NODE_DATA[id].name, (newName) => {
         pushUndo("edit node name");
         NODE_DATA[id].name = newName;
-        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`, );
+        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`);
         if (nodeGroup) {
          const label = nodeGroup.querySelector(".node-label");
          if (label) label.textContent = newName;
@@ -7782,7 +8800,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        showEditModal("Edit IP/Subtitle", NODE_DATA[id].ip, (newIp) => {
         pushUndo("edit node ip");
         NODE_DATA[id].ip = newIp;
-        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`, );
+        const nodeGroup = document.querySelector(`g[data-node-id="${id}"]`);
         if (nodeGroup) {
          const sub = nodeGroup.querySelector(".node-sub");
          if (sub) sub.textContent = newIp;
@@ -7831,6 +8849,27 @@ minimapSvg.insertBefore(frag, minimapViewport);
        updateTopologyToolbarVisibility();
        document.getElementById("node-name").textContent = data.name;
        document.getElementById("node-ip").textContent = data.ip;
+const fovSection = document.getElementById("fov-section");
+if (fovSection) {
+  if (data.shape === "camera" || data.shape === "cctv") {
+    fovSection.style.display = "block";
+    document.getElementById("fov-enabled").checked = data.fovEnabled || false;
+    document.getElementById("fov-angle").value = data.fovAngle || 90;
+    document.getElementById("fov-angle-value").textContent = (data.fovAngle || 90) + "°";
+    document.getElementById("fov-distance").value = data.fovDistance || 150;
+    document.getElementById("fov-distance-value").textContent = data.fovDistance || 150;
+    document.getElementById("fov-rotation").value = data.fovRotation || 0;
+    document.getElementById("fov-rotation-value").textContent = (data.fovRotation || 0) + "°";
+    document.getElementById("fov-color").value = data.fovColor || "#f59e0b";
+    document.getElementById("fov-animate").checked = data.fovAnimate || false;
+    document.getElementById("fov-sweep").value = data.fovSweep || 120;
+    document.getElementById("fov-sweep-value").textContent = (data.fovSweep || 120) + "°";
+    document.getElementById("fov-speed").value = data.fovSpeed || 4;
+    document.getElementById("fov-speed-value").textContent = (data.fovSpeed || 4) + "s";
+  } else {
+    fovSection.style.display = "none";
+  }
+}
        document.getElementById("node-role").textContent = data.role;
        document.getElementById("node-mac").textContent = data.mac || "--";
        document.getElementById("node-rack").textContent = data.rackUnit || "--";
@@ -7933,17 +8972,68 @@ minimapSvg.insertBefore(frag, minimapViewport);
        }
        document.getElementById("node-name").onclick = () => editNodeName(id);
        document.getElementById("node-ip").onclick = () => editNodeIp(id);
+document.getElementById("fov-enabled").onchange = function() {
+  if (!currentNodeId) return;
+  pushUndo("toggle fov");
+  NODE_DATA[currentNodeId].fovEnabled = this.checked;
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-angle").oninput = function() {
+  document.getElementById("fov-angle-value").textContent = this.value + "°";
+  if (!currentNodeId) return;
+  NODE_DATA[currentNodeId].fovAngle = parseInt(this.value);
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-distance").oninput = function() {
+  document.getElementById("fov-distance-value").textContent = this.value;
+  if (!currentNodeId) return;
+  NODE_DATA[currentNodeId].fovDistance = parseInt(this.value);
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-rotation").oninput = function() {
+  document.getElementById("fov-rotation-value").textContent = this.value + "°";
+  if (!currentNodeId) return;
+  NODE_DATA[currentNodeId].fovRotation = parseInt(this.value);
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-color").oninput = function() {
+  if (!currentNodeId) return;
+  pushUndo("change fov color");
+  NODE_DATA[currentNodeId].fovColor = this.value;
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-animate").onchange = function() {
+  if (!currentNodeId) return;
+  pushUndo("toggle fov animation");
+  NODE_DATA[currentNodeId].fovAnimate = this.checked;
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-sweep").oninput = function() {
+  document.getElementById("fov-sweep-value").textContent = this.value + "°";
+  if (!currentNodeId) return;
+  NODE_DATA[currentNodeId].fovSweep = parseInt(this.value);
+  updateFovCone(currentNodeId);
+};
+document.getElementById("fov-speed").oninput = function() {
+  document.getElementById("fov-speed-value").textContent = this.value + "s";
+  if (!currentNodeId) return;
+  NODE_DATA[currentNodeId].fovSpeed = parseInt(this.value);
+  updateFovCone(currentNodeId);
+};
        document.getElementById("node-mac").onclick = () => editNodeMac(id);
        document.getElementById("node-rack").onclick = () => editNodeRack(id);
        document.getElementById("node-uheight").onclick = () => editNodeUHeight(id);
        const currentSize = savedSizes[id] || getDefaultSize();
        document.getElementById("size-slider").value = currentSize;
        document.getElementById("size-value").textContent = currentSize;
+       const currentRotation = NODE_DATA[id].rotation || 0;
+       document.getElementById("rotation-slider").value = Math.max(-360, Math.min(360, currentRotation));
+       document.getElementById("rotation-value").value = currentRotation;
        const styleEntry = savedStyles[id] || {};
        const resolvedStyles = resolveStylesEntry(styleEntry);
        const scopeKey = currentStyleScope || "all";
        const flatProps = ["circleColor", "circleBorder", "titleColor", "titleFont", "titleSize", "subColor", "subFont", "subSize", ];
-       const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(styleEntry, p), );
+       const isFlat = flatProps.some((p) => Object.prototype.hasOwnProperty.call(styleEntry, p));
        const scopedStyles = isFlat ? styleEntry : styleEntry[scopeKey] || {};
        const circleColorInput = document.getElementById("circle-color");
        const titleColorInput = document.getElementById("title-color");
@@ -8018,7 +9108,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
            newTags.forEach((t) => data.tags.push(t));
            claimTheImmortal(id);
           }
-         }, );
+         });
        });
        tagEl.append(addTagBtn);
        const notesEl = document.getElementById("node-notes");
@@ -8038,7 +9128,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
            pushUndo("delete note");
            data.notes.splice(i, 1);
            claimTheImmortal(id);
-          }, );
+          });
         });
         li.append(noteText, deleteBtn);
         noteText.addEventListener("dblclick", () => {
@@ -8123,6 +9213,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
        directionSelect.value = edge.direction || "none";
        lineStyleSelect.value = edge.lineStyle || "solid";
        routingSelect.value = edge.routing || "curved";
+       document.getElementById("edge-animate").checked = edge.animate === true;
+       document.getElementById("edge-animation-style").value = edge.animationStyle || "";
+       document.getElementById("edge-animation-speed").value = edge.animationSpeed || "";
        const fromPortRow = document.getElementById("edge-from-port-row");
        const toPortRow = document.getElementById("edge-to-port-row");
        const fromPortInput = document.getElementById("edge-from-port");
@@ -8205,7 +9298,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          zoomTo(canvasState.zoom * delta, mouseX, mouseY);
         }, {
          passive: false
-        }, );
+        });
        let initialPinchDistance = 0;
        let initialPinchZoom = 1;
        let pinchCenter = {
@@ -8223,7 +9316,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           e.preventDefault();
           const touch1 = e.touches[0];
           const touch2 = e.touches[1];
-          initialPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY, );
+          initialPinchDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
           initialPinchZoom = canvasState.zoom;
           const rect = viewport.getBoundingClientRect();
           const centerX = (touch1.clientX + touch2.clientX) / 2;
@@ -8233,7 +9326,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          }
         }, {
          passive: false
-        }, );
+        });
        viewport.addEventListener("touchend", (e) => {
         if (e.touches.length === 0 && threeFingerTapStart > 0) {
          const duration = Date.now() - threeFingerTapStart;
@@ -8251,7 +9344,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           e.preventDefault();
           const touch1 = e.touches[0];
           const touch2 = e.touches[1];
-          const currentDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY, );
+          const currentDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
           if (initialPinchDistance > 0) {
            const scale = currentDistance / initialPinchDistance;
            const newZoom = initialPinchZoom * scale;
@@ -8260,7 +9353,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          }
         }, {
          passive: false
-        }, );
+        });
        let panStartViewX = 0;
        let panStartViewY = 0;
        let lastEmptyTapTime = 0;
@@ -8306,7 +9399,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          return;
         }
       const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point');
+      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point') || e.target.dataset.edgeId;
       const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
       const isRectElement = e.target.closest('.rect-group');
       if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
@@ -8348,7 +9441,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           return;
          }
       const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point');
+      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point') || e.target.dataset.edgeId;
       const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
       const isRectElement = e.target.closest('.rect-group');
       if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
@@ -8360,7 +9453,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
       document.getElementById("rect-panel").style.display = "none";
       forgeTheTopology();
       }
-          if (isEmptySpace && e.touches.length === 1) {
+         if (e.touches.length === 1) {
            e.preventDefault();
            emptyTapMoved = false;
            emptyTapStartX = e.touches[0].clientX;
@@ -8374,7 +9467,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          }
         }, {
          passive: false
-        }, );
+        });
        let panRAFPending = false;
        let lastPanEvent = null;
        document.addEventListener("mousemove", (e) => {
@@ -8485,7 +9578,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          updatePanFromMinimapTouch(e);
         }, {
          passive: false
-        }, );
+        });
        document.addEventListener("mousemove", (e) => {
         if (minimapDragging) {
          updatePanFromMinimap(e);
@@ -8551,7 +9644,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        sizeValue.textContent = newSize;
        pushUndo("resize node");
        savedSizes[currentNodeId] = newSize;
-       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`, );
+       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
        if (nodeGroup) {
         const oldShape = nodeGroup.querySelector(".node-circle");
         if (oldShape) oldShape.remove();
@@ -8582,7 +9675,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const defaultSize = getDefaultSize();
        sizeSlider.value = defaultSize;
        sizeValue.textContent = defaultSize;
-       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`, );
+       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
        if (nodeGroup) {
         const oldShape = nodeGroup.querySelector(".node-circle");
         if (oldShape) oldShape.remove();
@@ -8606,13 +9699,49 @@ minimapSvg.insertBefore(frag, minimapViewport);
         }
        }
       });
+      const rotationSlider = document.getElementById("rotation-slider");
+      const rotationInput = document.getElementById("rotation-value");
+      const resetRotationBtn = document.getElementById("reset-rotation");
+      rotationSlider.addEventListener("input", () => {
+        const newRotation = parseInt(rotationSlider.value, 10);
+        rotationInput.value = newRotation;
+        pushUndo("rotate node");
+        NODE_DATA[currentNodeId].rotation = newRotation;
+        const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+        if (nodeGroup) {
+          const pos = savedPositions[currentNodeId] || { x: 0, y: 0 };
+          nodeGroup.setAttribute("transform", `translate(${pos.x},${pos.y}) rotate(${newRotation})`);
+        }
+      });
+      rotationInput.addEventListener("input", () => {
+        const newRotation = parseInt(rotationInput.value, 10) || 0;
+        rotationSlider.value = Math.max(-360, Math.min(360, newRotation));
+        pushUndo("rotate node");
+        NODE_DATA[currentNodeId].rotation = newRotation;
+        const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+        if (nodeGroup) {
+          const pos = savedPositions[currentNodeId] || { x: 0, y: 0 };
+          nodeGroup.setAttribute("transform", `translate(${pos.x},${pos.y}) rotate(${newRotation})`);
+        }
+      });
+      resetRotationBtn.addEventListener("click", () => {
+        pushUndo("reset rotation");
+        NODE_DATA[currentNodeId].rotation = 0;
+        rotationSlider.value = 0;
+        rotationInput.value = 0;
+        const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
+        if (nodeGroup) {
+          const pos = savedPositions[currentNodeId] || { x: 0, y: 0 };
+          nodeGroup.setAttribute("transform", `translate(${pos.x},${pos.y}) rotate(0)`);
+        }
+      });
       const applyStyle = (property, value) => {
        pushUndo("style change");
        const styleEntry = ensureStyleEntry(currentNodeId);
        const scopeKey = currentStyleScope || "all";
        if (!styleEntry[scopeKey]) styleEntry[scopeKey] = {};
        styleEntry[scopeKey][property] = value;
-       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`, );
+       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
        if (!nodeGroup) return;
        const shapeEl = nodeGroup.querySelector(".node-circle");
        const label = nodeGroup.querySelector(".node-label");
@@ -8626,14 +9755,14 @@ minimapSvg.insertBefore(frag, minimapViewport);
        else if (property === "subFont" && sub) sub.style.fontFamily = value;
        else if (property === "subSize" && sub) sub.style.fontSize = value + "px";
       };
-      document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value), );
-      document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value), );
-      document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value), );
-      document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value), );
-      document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)), );
-      document.getElementById("sub-color").addEventListener("input", (e) => applyStyle("subColor", e.target.value), );
-      document.getElementById("sub-font").addEventListener("change", (e) => applyStyle("subFont", e.target.value), );
-      document.getElementById("sub-size").addEventListener("input", (e) => applyStyle("subSize", parseInt(e.target.value, 10)), );
+      document.getElementById("circle-color").addEventListener("input", (e) => applyStyle("circleColor", e.target.value));
+      document.getElementById("circle-border").addEventListener("input", (e) => applyStyle("circleBorder", e.target.value));
+      document.getElementById("title-color").addEventListener("input", (e) => applyStyle("titleColor", e.target.value));
+      document.getElementById("title-font").addEventListener("change", (e) => applyStyle("titleFont", e.target.value));
+      document.getElementById("title-size").addEventListener("input", (e) => applyStyle("titleSize", parseInt(e.target.value, 10)));
+      document.getElementById("sub-color").addEventListener("input", (e) => applyStyle("subColor", e.target.value));
+      document.getElementById("sub-font").addEventListener("change", (e) => applyStyle("subFont", e.target.value));
+      document.getElementById("sub-size").addEventListener("input", (e) => applyStyle("subSize", parseInt(e.target.value, 10)));
       document.getElementById("title-offset-y").addEventListener("input", (e) => {
        applyStyle("titleOffsetY", parseInt(e.target.value, 10) || 0);
        forgeTheTopology();
@@ -8667,7 +9796,15 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const shape = e.target.value || "circle";
        pushUndo("change shape");
        NODE_DATA[currentNodeId].shape = shape;
-       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`, );
+const fovSection = document.getElementById("fov-section");
+if (fovSection) {
+  if (shape === "camera" || shape === "cctv") {
+    fovSection.style.display = "block";
+  } else {
+    fovSection.style.display = "none";
+  }
+}
+       const nodeGroup = document.querySelector(`g[data-node-id="${currentNodeId}"]`);
        if (!nodeGroup) return;
        const oldShape = nodeGroup.querySelector(".node-circle");
        if (oldShape) oldShape.remove();
@@ -8699,7 +9836,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        if (Number.isNaN(v) || v <= 0) return;
        pushUndo("edit edge");
        edge.width = v;
-       const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`, );
+       const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`);
        if (el) el.style.strokeWidth = v;
       });
       document.getElementById("edge-color").addEventListener("input", () => {
@@ -8709,7 +9846,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const color = document.getElementById("edge-color").value;
        pushUndo("edit edge");
        edge.color = color;
-       const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`, );
+       const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`);
        if (el) el.style.stroke = color;
        forgeTheLegend();
       });
@@ -8738,6 +9875,24 @@ minimapSvg.insertBefore(frag, minimapViewport);
        pushUndo("edit edge routing");
        edge.routing = document.getElementById("edge-routing").value;
        forgeTheTopology();
+       selectTheConnection(currentEdgeId);
+      });
+      document.getElementById("edge-animate").addEventListener("change", (e) => {
+       if (!currentEdgeId) return;
+       const edge = EDGE_DATA.list.find((ed) => ed.id === currentEdgeId);
+       if (!edge) return;
+       pushUndo("edit edge animate");
+       edge.animate = e.target.checked;
+       forgeTheTopology();
+       selectTheConnection(currentEdgeId);
+      });
+      document.getElementById("edge-animation-speed").addEventListener("change", (e) => {
+       if (!currentEdgeId) return;
+       const edge = EDGE_DATA.list.find((ed) => ed.id === currentEdgeId);
+       if (!edge) return;
+       pushUndo("edit edge animation speed");
+       edge.animationSpeed = e.target.value || "";
+       if (PAGE_STATE.animateConnections && edge.animate !== false) forgeTheTopology();
        selectTheConnection(currentEdgeId);
       });
       const addEdgeNoteBtn = document.getElementById("add-edge-note");
@@ -8780,6 +9935,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
       document.getElementById("rect-border-width").value = rect.borderWidth !== undefined ? rect.borderWidth : 2;
       document.getElementById("rect-style-select").value = rect.style || "filled";
       document.getElementById("rect-line-style").value = rect.lineStyle || "solid";
+	  document.getElementById("rect-rotation").value = Math.max(-360, Math.min(360, rect.rotation || 0));
+      document.getElementById("rect-rotation-value").value = rect.rotation || 0;
       document.getElementById("rect-fill-row").style.display = (rect.style === "outlined") ? "none" : "flex";
       const list = document.getElementById("rect-notes");
       list.innerHTML = "";
@@ -8838,6 +9995,25 @@ minimapSvg.insertBefore(frag, minimapViewport);
       forgeTheTopology();
       selectTheRect(currentRectId);
       });
+document.getElementById("rect-rotation").addEventListener("input", () => {
+        if (!currentRectId) return;
+        const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+        if (!rect) return;
+        pushUndo("rotate zone");
+        rect.rotation = parseInt(document.getElementById("rect-rotation").value) || 0;
+        document.getElementById("rect-rotation-value").value = rect.rotation;
+        forgeTheTopology();
+      });
+      document.getElementById("rect-rotation-value").addEventListener("input", () => {
+        if (!currentRectId) return;
+        const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+        if (!rect) return;
+        pushUndo("rotate zone");
+        const val = parseInt(document.getElementById("rect-rotation-value").value) || 0;
+        rect.rotation = val;
+        document.getElementById("rect-rotation").value = Math.max(-360, Math.min(360, val));
+        forgeTheTopology();
+      });
       document.getElementById("rect-line-style").addEventListener("change", () => {
       if (!currentRectId) return;
       pushUndo("change zone line style");
@@ -8879,7 +10055,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         () => {
          pushUndo("delete edge");
          EDGE_DATA.list = EDGE_DATA.list.filter(
-          (e) => e.id !== currentEdgeId, );
+          (e) => e.id !== currentEdgeId);
          currentEdgeId = null;
          forgeTheTopology();
          const availableNodes = Object.keys(NODE_DATA);
@@ -8890,7 +10066,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           document.getElementById("edge-panel").style.display = "none";
           document.getElementById("topology-toolbar", ).style.display = "none";
          }
-        }, );
+        });
       });
       document.getElementById("add-line-btn").addEventListener("click", () => {
        if (!currentNodeId) return;
@@ -8958,7 +10134,11 @@ minimapSvg.insertBefore(frag, minimapViewport);
           freeDrawPolylineEl.style.strokeDasharray = "10,5";
          } else if (lineStyle === "dotted") {
           freeDrawPolylineEl.style.strokeDasharray = "2,4";
-         } else {
+         } else if (lineStyle === "wall") {
+  freeDrawPolylineEl.style.stroke = "url(#wall-hatch)";
+  freeDrawPolylineEl.style.strokeWidth = "12";
+  freeDrawPolylineEl.style.strokeDasharray = "none"; 
+  } else {
           freeDrawPolylineEl.style.strokeDasharray = "none";
          }
         }
@@ -8983,7 +10163,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           const pt = svgEl.createSVGPoint();
           pt.x = ev.clientX;
           pt.y = ev.clientY;
-          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+          const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
           const i = parseInt(c.dataset.index, 10);
           if (Number.isNaN(i) || !freeDrawPoints[i]) return;
           freeDrawPoints[i].x = svgP.x;
@@ -9010,7 +10190,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
            const pt = svgEl.createSVGPoint();
            pt.x = ev.touches[0].clientX;
            pt.y = ev.touches[0].clientY;
-           const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+           const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
            const i = parseInt(c.dataset.index, 10);
            if (Number.isNaN(i) || !freeDrawPoints[i]) return;
            freeDrawPoints[i].x = svgP.x;
@@ -9019,14 +10199,14 @@ minimapSvg.insertBefore(frag, minimapViewport);
           };
           const touchUpHandler = () => {
            dragging = false;
-           document.removeEventListener("touchmove", touchMoveHandler, );
-           document.removeEventListener("touchend", touchUpHandler, );
+           document.removeEventListener("touchmove", touchMoveHandler);
+           document.removeEventListener("touchend", touchUpHandler);
           };
           document.addEventListener("touchmove", touchMoveHandler);
           document.addEventListener("touchend", touchUpHandler);
          }, {
           passive: false
-         }, );
+         });
         svg.appendChild(c);
         freeDrawPointEls.push(c);
        });
@@ -9050,12 +10230,14 @@ minimapSvg.insertBefore(frag, minimapViewport);
        freeDrawPointEls = [];
        svgMap.style.cursor = "crosshair";
        drawToggleBtn.textContent = "Done";
+       drawToggleBtn.classList.add("done-btn-active");
        drawUndoBtn.style.display = "none";
       }
       function finishFreeDraw() {
        freeDrawMode = false;
        svgMap.style.cursor = "";
        drawToggleBtn.textContent = "✏️";
+       drawToggleBtn.classList.remove("done-btn-active");
        if (freeDrawPoints.length >= 2) {
         const color = drawColorInput.value || "#475569";
         const lineStyle = drawStyleSelect.value || "solid";
@@ -9177,12 +10359,12 @@ minimapSvg.insertBefore(frag, minimapViewport);
          const pt = svgEl.createSVGPoint();
          pt.x = e.changedTouches[0].clientX;
          pt.y = e.changedTouches[0].clientY;
-         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse(), );
+         const svgP = pt.matrixTransform(svgEl.getScreenCTM().inverse());
          addFreeDrawPoint(svgP.x, svgP.y);
         }
        }, {
         passive: false
-       }, );
+       });
        const rectToggleBtn = document.getElementById("rect-toggle");
        const rectStyleSelect = document.getElementById("rect-style");
        function startRectDraw() {
@@ -9191,6 +10373,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         rectPreviewEl = null;
         svgMap.style.cursor = "crosshair";
         rectToggleBtn.textContent = "Done";
+        rectToggleBtn.classList.add("done-btn-active");
         rectStyle = rectStyleSelect.value || "filled";
         if (freeDrawMode) {
          finishFreeDraw();
@@ -9201,6 +10384,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         rectDrawMode = false;
         svgMap.style.cursor = "";
         rectToggleBtn.textContent = "▭";
+        rectToggleBtn.classList.remove("done-btn-active");
         if (rectPreviewEl) {
          rectPreviewEl.remove();
          rectPreviewEl = null;
@@ -9406,8 +10590,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        textDrawMode = true;
        svgMap.style.cursor = "crosshair";
        textToggleBtn.textContent = "Done";
-       textToggleBtn.style.background = "var(--accent)";
-       textToggleBtn.style.color = "var(--bg)";
+       textToggleBtn.classList.add("done-btn-active");
        if (freeDrawMode) {
         finishFreeDraw();
        }
@@ -9420,8 +10603,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        textDrawMode = false;
        svgMap.style.cursor = "";
        textToggleBtn.textContent = "T";
-       textToggleBtn.style.background = "";
-       textToggleBtn.style.color = "";
+       textToggleBtn.classList.remove("done-btn-active");
        updateTextDeleteButtons();
       }
       textToggleBtn.addEventListener("click", () => {
@@ -9513,6 +10695,8 @@ minimapSvg.insertBefore(frag, minimapViewport);
        document.getElementById("text-bg-enabled").checked = textItem.bgEnabled;
        document.getElementById("text-opacity").value = textItem.opacity;
        document.getElementById("text-opacity-val").textContent = Math.round(textItem.opacity * 100) + "%";
+       document.getElementById("text-rotation").value = Math.max(-360, Math.min(360, textItem.rotation || 0));
+       document.getElementById("text-rotation-val").value = textItem.rotation || 0;
       }
       function updateTextDeleteButtons() {
        const deleteButtons = document.querySelectorAll('.text-delete-btn');
@@ -9610,15 +10794,26 @@ minimapSvg.insertBefore(frag, minimapViewport);
         forgeTheTopology();
        }
       });
-      document.getElementById("text-opacity").addEventListener("input", (e) => {
-       if (!currentTextId) return;
-       const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
-       if (textItem) {
-        pushUndo("edit text");
-        textItem.opacity = parseFloat(e.target.value);
-        document.getElementById("text-opacity-val").textContent = Math.round(textItem.opacity * 100) + "%";
-        forgeTheTopology();
-       }
+      document.getElementById("text-rotation").addEventListener("input", (e) => {
+        if (!currentTextId) return;
+        const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
+        if (textItem) {
+          pushUndo("rotate text");
+          textItem.rotation = parseInt(e.target.value) || 0;
+          document.getElementById("text-rotation-val").value = textItem.rotation;
+          forgeTheTopology();
+        }
+      });
+      document.getElementById("text-rotation-val").addEventListener("input", (e) => {
+        if (!currentTextId) return;
+        const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
+        if (textItem) {
+          pushUndo("rotate text");
+          const val = parseInt(e.target.value) || 0;
+          textItem.rotation = val;
+          document.getElementById("text-rotation").value = Math.max(-360, Math.min(360, val));
+          forgeTheTopology();
+        }
       });
       document.getElementById("delete-text").addEventListener("click", () => {
        if (!currentTextId) return;
@@ -9671,7 +10866,27 @@ minimapSvg.insertBefore(frag, minimapViewport);
        document.getElementById("node-sub-size").value = PAGE_STATE.nodeSubSize || 13;
        document.getElementById("node-font-family").value = PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
        document.getElementById("default-edge-color").value = PAGE_STATE.defaultEdge || "#475569";
-	   document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
+	   document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "curved";
+      document.getElementById("animate-connections-toggle").checked = PAGE_STATE.animateConnections || false;
+      document.getElementById("animation-style-select").value = PAGE_STATE.animationStyle || "arrows";
+      document.getElementById("animation-direction-select").value = PAGE_STATE.animationDirection || "all";
+      document.getElementById("animation-speed-select").value = PAGE_STATE.animationSpeed || 1.5;
+      document.getElementById("animate-connections-toggle").addEventListener("change", (e) => {
+       PAGE_STATE.animateConnections = e.target.checked;
+       forgeTheTopology();
+      });
+      document.getElementById("animation-style-select").addEventListener("change", (e) => {
+       PAGE_STATE.animationStyle = e.target.value;
+       if (PAGE_STATE.animateConnections) forgeTheTopology();
+      });
+      document.getElementById("animation-direction-select").addEventListener("change", (e) => {
+       PAGE_STATE.animationDirection = e.target.value;
+       if (PAGE_STATE.animateConnections) forgeTheTopology();
+      });
+      document.getElementById("animation-speed-select").addEventListener("change", (e) => {
+       PAGE_STATE.animationSpeed = parseFloat(e.target.value);
+       if (PAGE_STATE.animateConnections) forgeTheTopology();
+      });
        document.getElementById("add-line-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
        document.getElementById("selection-handle-color").value = PAGE_STATE.selectionHandle || "#f59e0b";
        document.getElementById("selection-handle-size").value = PAGE_STATE.selectionHandleSize || 8;
@@ -9681,11 +10896,15 @@ minimapSvg.insertBefore(frag, minimapViewport);
        document.getElementById("canvas-border-color").value = PAGE_STATE.canvasBorder || "#475569";
        document.getElementById("canvas-grid-color").value = PAGE_STATE.canvasGrid || "#475569";
        document.getElementById("canvas-grid-size").value = PAGE_STATE.canvasGridSize || 50;
+	   document.getElementById("canvas-grid-enabled").checked = PAGE_STATE.canvasGridEnabled !== false;
        document.getElementById("rack-frame-fill").value = PAGE_STATE.rackFrameFill || "#0f172a";
        document.getElementById("rack-frame-stroke").value = PAGE_STATE.rackFrameStroke || "#4fd1c5";
        document.getElementById("rack-line-color").value = PAGE_STATE.rackLineColor || "#475569";
+	   document.getElementById("rack-grid-enabled").checked = PAGE_STATE.rackGridEnabled !== false;
        document.getElementById("rack-text-color").value = PAGE_STATE.rackTextColor || "#4fd1c5";
 	   document.getElementById("view-only-mode").checked = PAGE_STATE.viewOnly === true;
+       rebuildThemeDropdown();
+       updateDeleteButton();
        settingsModal.classList.add("active");
       });
       settingsClose.addEventListener("click", () => {
@@ -9741,6 +10960,73 @@ minimapSvg.insertBefore(frag, minimapViewport);
        PAGE_STATE.topbarBorder = e.target.value;
        wieldThePower();
       });
+const THEME_PRESETS = {
+  defaulted: { panel:"#0b0e13",panelAlt:"#10141b",sidebarBg:"#10141b",btnBg:"#0b0e13",btnText:"#e2e8f0",accent:"#4fd1c5",danger:"#f56565",textMain:"#e2e8f0",textSoft:"#94a3b8",topbarBg:"rgba(9,12,20,0.9)",topbarBorder:"#1f2533",nodeFill:"#1e293b",nodeStroke:"#475569",nodeTitle:"#e2e8f0",nodeSub:"#94a3b8",defaultEdge:"#475569",canvasGradientTop:"#1e2532",canvasGradientBottom:"#050608",tagFill:"#1e293b",tagText:"#e2e8f0",tagBorder:"#475569",inputBg:"#0b0e13",inputText:"#e2e8f0",inputBorder:"#1f2937",toolbarBg:"#0f172a",toolbarBorder:"#1f2937",toolbarText:"#94a3b8",toolbarBtnBg:"#0b0e13",toolbarBtnText:"#e2e8f0",selectionHandle:"#f59e0b",groupIndicator:"#4fd1c5",minimapDots:"#94a3b8",canvasHintBg:"#0f172a",canvasHintColor:"#94a3b8",canvasBorder:"#475569",canvasGrid:"#475569",rackFrameFill:"#0f172a",rackFrameStroke:"#4fd1c5",rackLineColor:"#475569",rackTextColor:"#4fd1c5" },
+  slate: { panel:"#1e293b",panelAlt:"#334155",sidebarBg:"#1e293b",btnBg:"#334155",btnText:"#f1f5f9",accent:"#3b82f6",danger:"#ef4444",textMain:"#f1f5f9",textSoft:"#94a3b8",topbarBg:"#0f172a",topbarBorder:"#334155",nodeFill:"#334155",nodeStroke:"#3b82f6",nodeTitle:"#f1f5f9",nodeSub:"#94a3b8",defaultEdge:"#64748b",canvasGradientTop:"#1e293b",canvasGradientBottom:"#0f172a",tagFill:"#1e3a5f",tagText:"#93c5fd",tagBorder:"#3b82f6",inputBg:"#0f172a",inputText:"#f1f5f9",inputBorder:"#475569",toolbarBg:"#2563eb",toolbarBorder:"#3b82f6",toolbarText:"#ffffff",toolbarBtnBg:"#3b82f6",toolbarBtnText:"#ffffff",selectionHandle:"#f59e0b",groupIndicator:"#22d3ee",minimapDots:"#64748b",canvasHintBg:"#1e293b",canvasHintColor:"#94a3b8",canvasBorder:"#334155",canvasGrid:"#334155",rackFrameFill:"#1e293b",rackFrameStroke:"#3b82f6",rackLineColor:"#475569",rackTextColor:"#3b82f6" },
+  graphite: { panel:"#1f2937",panelAlt:"#374151",sidebarBg:"#111827",btnBg:"#374151",btnText:"#f9fafb",accent:"#f59e0b",danger:"#ef4444",textMain:"#f9fafb",textSoft:"#9ca3af",topbarBg:"#111827",topbarBorder:"#4b5563",nodeFill:"#374151",nodeStroke:"#f59e0b",nodeTitle:"#f9fafb",nodeSub:"#9ca3af",defaultEdge:"#6b7280",canvasGradientTop:"#1f2937",canvasGradientBottom:"#111827",tagFill:"#44403c",tagText:"#fbbf24",tagBorder:"#f59e0b",inputBg:"#111827",inputText:"#f9fafb",inputBorder:"#4b5563",toolbarBg:"#b45309",toolbarBorder:"#f59e0b",toolbarText:"#ffffff",toolbarBtnBg:"#f59e0b",toolbarBtnText:"#000000",selectionHandle:"#10b981",groupIndicator:"#06b6d4",minimapDots:"#6b7280",canvasHintBg:"#1f2937",canvasHintColor:"#9ca3af",canvasBorder:"#4b5563",canvasGrid:"#374151",rackFrameFill:"#1f2937",rackFrameStroke:"#f59e0b",rackLineColor:"#4b5563",rackTextColor:"#fbbf24" },
+  frost: { panel:"#f8fafc",panelAlt:"#e2e8f0",sidebarBg:"#f1f5f9",btnBg:"#e2e8f0",btnText:"#1e293b",accent:"#1e40af",danger:"#dc2626",textMain:"#0f172a",textSoft:"#475569",topbarBg:"#1e40af",topbarBorder:"#1e3a8a",nodeFill:"#ffffff",nodeStroke:"#1e40af",nodeTitle:"#0f172a",nodeSub:"#475569",defaultEdge:"#64748b",canvasGradientTop:"#e0e7ef",canvasGradientBottom:"#f8fafc",tagFill:"#dbeafe",tagText:"#1e40af",tagBorder:"#3b82f6",inputBg:"#ffffff",inputText:"#0f172a",inputBorder:"#cbd5e1",toolbarBg:"#1e40af",toolbarBorder:"#1e3a8a",toolbarText:"#ffffff",toolbarBtnBg:"#3b82f6",toolbarBtnText:"#ffffff",selectionHandle:"#ea580c",groupIndicator:"#059669",minimapDots:"#64748b",canvasHintBg:"#e2e8f0",canvasHintColor:"#475569",canvasBorder:"#cbd5e1",canvasGrid:"#cbd5e1",rackFrameFill:"#f1f5f9",rackFrameStroke:"#1e40af",rackLineColor:"#94a3b8",rackTextColor:"#1e40af" },
+  synthwave: { panel:"#87366d",panelAlt:"#10141b",sidebarBg:"#340934",btnBg:"#0b0e13",btnText:"#e2e8f0",accent:"#4fd1c5",danger:"#f56565",textMain:"#e2e8f0",textSoft:"#94a3b8",topbarBg:"#781c67",topbarBorder:"#1f2533",nodeFill:"#1e293b",nodeStroke:"#475569",nodeTitle:"#e2e8f0",nodeSub:"#94a3b8",defaultEdge:"#475569",canvasGradientTop:"#1e2532",canvasGradientBottom:"#050608",tagFill:"#1e293b",tagText:"#e2e8f0",tagBorder:"#475569",inputBg:"#0b0e13",inputText:"#e2e8f0",inputBorder:"#1f2937",toolbarBg:"#b95aed",toolbarBorder:"#b800eb",toolbarText:"#000000",toolbarBtnBg:"#ed01fe",toolbarBtnText:"#000000",selectionHandle:"#f59e0b",groupIndicator:"#4fd1c5",minimapDots:"#000000",canvasHintBg:"#0f172a",canvasHintColor:"#94a3b8",canvasBorder:"#000000",canvasGrid:"#000000",rackFrameFill:"#0f172a",rackFrameStroke:"#4fd1c5",rackLineColor:"#475569",rackTextColor:"#4fd1c5" },
+  terminal: { panel:"#000000",panelAlt:"#0a0a0a",sidebarBg:"#050505",btnBg:"#0a0a0a",btnText:"#33ff33",accent:"#33ff33",danger:"#ffaa00",textMain:"#33ff33",textSoft:"#1a9a1a",topbarBg:"#000000",topbarBorder:"#33ff33",nodeFill:"#0a0a0a",nodeStroke:"#33ff33",nodeTitle:"#33ff33",nodeSub:"#1a9a1a",defaultEdge:"#1a9a1a",canvasGradientTop:"#0a0f0a",canvasGradientBottom:"#000000",tagFill:"#0a1a0a",tagText:"#33ff33",tagBorder:"#33ff33",inputBg:"#000000",inputText:"#33ff33",inputBorder:"#1a9a1a",toolbarBg:"#1a9a1a",toolbarBorder:"#33ff33",toolbarText:"#000000",toolbarBtnBg:"#33ff33",toolbarBtnText:"#000000",selectionHandle:"#ffaa00",groupIndicator:"#00ffff",minimapDots:"#33ff33",canvasHintBg:"#0a0a0a",canvasHintColor:"#1a9a1a",canvasBorder:"#1a9a1a",canvasGrid:"#0f1f0f",rackFrameFill:"#050505",rackFrameStroke:"#33ff33",rackLineColor:"#1a9a1a",rackTextColor:"#33ff33" },
+  dracula: { panel:"#282a36",panelAlt:"#44475a",sidebarBg:"#21222c",btnBg:"#44475a",btnText:"#f8f8f2",accent:"#bd93f9",danger:"#ff5555",textMain:"#f8f8f2",textSoft:"#6272a4",topbarBg:"#21222c",topbarBorder:"#6272a4",nodeFill:"#44475a",nodeStroke:"#ff79c6",nodeTitle:"#f8f8f2",nodeSub:"#8be9fd",defaultEdge:"#bd93f9",canvasGradientTop:"#282a36",canvasGradientBottom:"#1a1b23",tagFill:"#3d3f4a",tagText:"#50fa7b",tagBorder:"#50fa7b",inputBg:"#21222c",inputText:"#f8f8f2",inputBorder:"#6272a4",toolbarBg:"#6272a4",toolbarBorder:"#bd93f9",toolbarText:"#f8f8f2",toolbarBtnBg:"#bd93f9",toolbarBtnText:"#282a36",selectionHandle:"#f1fa8c",groupIndicator:"#ff79c6",minimapDots:"#bd93f9",canvasHintBg:"#282a36",canvasHintColor:"#6272a4",canvasBorder:"#44475a",canvasGrid:"#44475a",rackFrameFill:"#282a36",rackFrameStroke:"#ff79c6",rackLineColor:"#6272a4",rackTextColor:"#8be9fd" },
+  cobalt: { panel:"#002240",panelAlt:"#003366",sidebarBg:"#001b33",btnBg:"#003366",btnText:"#ffffff",accent:"#ffc600",danger:"#ff628c",textMain:"#ffffff",textSoft:"#8090a0",topbarBg:"#001525",topbarBorder:"#0088ff",nodeFill:"#003366",nodeStroke:"#0088ff",nodeTitle:"#ffffff",nodeSub:"#80ffbb",defaultEdge:"#0088ff",canvasGradientTop:"#002240",canvasGradientBottom:"#00111f",tagFill:"#004080",tagText:"#ffc600",tagBorder:"#0088ff",inputBg:"#001525",inputText:"#ffffff",inputBorder:"#0066cc",toolbarBg:"#0066cc",toolbarBorder:"#0088ff",toolbarText:"#ffffff",toolbarBtnBg:"#0088ff",toolbarBtnText:"#ffffff",selectionHandle:"#ffc600",groupIndicator:"#3ad900",minimapDots:"#0088ff",canvasHintBg:"#002240",canvasHintColor:"#8090a0",canvasBorder:"#0066cc",canvasGrid:"#003366",rackFrameFill:"#002240",rackFrameStroke:"#0088ff",rackLineColor:"#0066cc",rackTextColor:"#80ffbb" },
+  solarized: { panel:"#073642",panelAlt:"#002b36",sidebarBg:"#002b36",btnBg:"#073642",btnText:"#93a1a1",accent:"#268bd2",danger:"#dc322f",textMain:"#93a1a1",textSoft:"#657b83",topbarBg:"#002b36",topbarBorder:"#586e75",nodeFill:"#073642",nodeStroke:"#2aa198",nodeTitle:"#93a1a1",nodeSub:"#839496",defaultEdge:"#657b83",canvasGradientTop:"#073642",canvasGradientBottom:"#002b36",tagFill:"#0a4050",tagText:"#b58900",tagBorder:"#b58900",inputBg:"#002b36",inputText:"#93a1a1",inputBorder:"#586e75",toolbarBg:"#268bd2",toolbarBorder:"#2aa198",toolbarText:"#fdf6e3",toolbarBtnBg:"#2aa198",toolbarBtnText:"#002b36",selectionHandle:"#cb4b16",groupIndicator:"#d33682",minimapDots:"#657b83",canvasHintBg:"#073642",canvasHintColor:"#657b83",canvasBorder:"#586e75",canvasGrid:"#094050",rackFrameFill:"#002b36",rackFrameStroke:"#2aa198",rackLineColor:"#586e75",rackTextColor:"#859900" }
+};
+document.getElementById("theme-preset").addEventListener("change", function() {
+  updateDeleteButton();
+  var p = THEME_PRESETS[this.value];
+  if (!p && this.value.startsWith("mytheme-")) {
+    var found = savedStyleSets.find(function(s) { return s.id === document.getElementById("theme-preset").value; });
+    if (found) p = found.styles;
+  }
+  if (!p) return;
+  Object.assign(PAGE_STATE, p);
+  document.getElementById("panel-color").value = p.panel;
+  document.getElementById("panel-alt-color").value = p.panelAlt;
+  document.getElementById("sidebar-bg-color").value = p.sidebarBg;
+  document.getElementById("btn-bg-color").value = p.btnBg;
+  document.getElementById("btn-text-color").value = p.btnText;
+  document.getElementById("accent-color").value = p.accent;
+  document.getElementById("danger-color").value = p.danger;
+  document.getElementById("text-main-color").value = p.textMain;
+  document.getElementById("text-soft-color").value = p.textSoft;
+  document.getElementById("topbar-border-color").value = p.topbarBorder;
+  document.getElementById("node-fill-color").value = p.nodeFill;
+  document.getElementById("node-stroke-color").value = p.nodeStroke;
+  document.getElementById("node-title-color").value = p.nodeTitle;
+  document.getElementById("node-sub-color").value = p.nodeSub;
+  document.getElementById("default-edge-color").value = p.defaultEdge;
+  document.getElementById("canvas-gradient-top").value = p.canvasGradientTop;
+  document.getElementById("canvas-gradient-bottom").value = p.canvasGradientBottom;
+  document.getElementById("tag-fill-color").value = p.tagFill;
+  document.getElementById("tag-text-color").value = p.tagText;
+  document.getElementById("tag-border-color").value = p.tagBorder;
+  document.getElementById("input-bg-color").value = p.inputBg;
+  document.getElementById("input-text-color").value = p.inputText;
+  document.getElementById("input-border-color").value = p.inputBorder;
+  document.getElementById("toolbar-bg-color").value = p.toolbarBg;
+  document.getElementById("toolbar-border-color").value = p.toolbarBorder;
+  document.getElementById("toolbar-text-color").value = p.toolbarText;
+  document.getElementById("toolbar-btn-bg-color").value = p.toolbarBtnBg;
+  document.getElementById("toolbar-btn-text-color").value = p.toolbarBtnText;
+  document.getElementById("selection-handle-color").value = p.selectionHandle;
+  document.getElementById("group-indicator-color").value = p.groupIndicator;
+  document.getElementById("minimap-dots-color").value = p.minimapDots;
+  document.getElementById("canvas-hint-bg-color").value = p.canvasHintBg;
+  document.getElementById("canvas-hint-text-color").value = p.canvasHintColor;
+  document.getElementById("canvas-border-color").value = p.canvasBorder;
+  document.getElementById("canvas-grid-color").value = p.canvasGrid;
+  document.getElementById("rack-frame-fill").value = p.rackFrameFill;
+  document.getElementById("rack-frame-stroke").value = p.rackFrameStroke;
+  document.getElementById("rack-line-color").value = p.rackLineColor;
+  document.getElementById("rack-text-color").value = p.rackTextColor;
+  wieldThePower();
+  forgeTheTopology();
+});
+document.querySelectorAll('#settings-modal .style-content input, #settings-modal .style-content select').forEach(el => {
+  if (el.id === 'theme-preset') return;
+  el.addEventListener('input', () => document.getElementById('theme-preset').value = '');
+  el.addEventListener('change', () => document.getElementById('theme-preset').value = '');
+});
       document.getElementById("panel-color").addEventListener("input", (e) => {
        PAGE_STATE.panel = e.target.value;
        wieldThePower();
@@ -9947,6 +11233,10 @@ minimapSvg.insertBefore(frag, minimapViewport);
        PAGE_STATE.canvasGridSize = parseInt(e.target.value) || 50;
        forgeTheTopology();
       });
+	  document.getElementById("canvas-grid-enabled").addEventListener("change", (e) => {
+ PAGE_STATE.canvasGridEnabled = e.target.checked;
+ forgeTheTopology();
+});
       document.getElementById("rack-frame-fill").addEventListener("input", (e) => {
        PAGE_STATE.rackFrameFill = e.target.value;
        forgeTheTopology();
@@ -9959,6 +11249,10 @@ minimapSvg.insertBefore(frag, minimapViewport);
        PAGE_STATE.rackLineColor = e.target.value;
        forgeTheTopology();
       });
+	  document.getElementById("rack-grid-enabled").addEventListener("change", (e) => {
+ PAGE_STATE.rackGridEnabled = e.target.checked;
+ forgeTheTopology();
+});
       document.getElementById("rack-text-color").addEventListener("input", (e) => {
        PAGE_STATE.rackTextColor = e.target.value;
        forgeTheTopology();
@@ -10069,6 +11363,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
          e.target.value = "";
          return;
         }
+		pushUndo('import json');
         NODE_DATA = data.nodeData || {};
         EDGE_DATA = data.edgeData || {
          list: []
@@ -10080,7 +11375,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         savedSizes = data.nodeSizes || {};
         savedStyles = data.nodeStyles || {};
         if (data.page) {
-         PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, data.page, );
+         PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, data.page);
          wieldThePower();
         }
         if (data.canvas) {
@@ -10091,6 +11386,9 @@ minimapSvg.insertBefore(frag, minimapViewport);
         if (data.page?.title) {
          document.title = data.page.title;
          document.querySelector(".editable-page-title", ).textContent = data.page.title;
+        }
+        if (data.savedStyleSets) {
+          savedStyleSets = data.savedStyleSets;
         }
         if (data.documentTabs) {
          documentTabs = data.documentTabs;
@@ -10118,7 +11416,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           if (!edge.notes) edge.notes = [];
         });
         forgeTheTopology();
-        forgeTheLegend();
+        if (typeof forgeTheLegend === 'function') forgeTheLegend();
 		logAuditEvent("import", `Imported JSON: ${file.name} (${Object.keys(data.nodeData).length} nodes, ${data.edgeData.list?.length || 0} connections)`);
         updateViewBox();
         const nodeIds = Object.keys(NODE_DATA);
@@ -10249,6 +11547,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         currentTabIndex: currentTabIndex,
         encryptedSections: encryptedSections,
         auditLog: auditLog,
+		savedStyleSets: savedStyleSets,
        };
       }
       function assembleTheImmortalForm() {
@@ -10284,7 +11583,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         const body = clone.querySelector("body") || clone;
         body.appendChild(stateScript);
        }
-       stateScript.textContent = JSON.stringify(captureTheQuickening(), null, 2, );
+       stateScript.textContent = JSON.stringify(captureTheQuickening(), null, 2);
        return "<!DOCTYPE html> \n " + clone.outerHTML;
       }
       async function becomeImmortal() {
@@ -10292,7 +11591,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        const encryptEnabled = document.getElementById("encrypt-toggle").checked;
        let stateData = JSON.stringify(captureTheQuickening(), null, 2);
        if (encryptEnabled) {
-        const password = prompt("Enter a password to encrypt your data:\n(Remember this password! You will need it to open this file and its non recoverable!)", );
+        const password = prompt("Enter a password to encrypt your data:\n(Remember this password! You will need it to open this file and its non recoverable!)");
         if (!password) {
          alert("Encryption cancelled. File not saved.");
          return;
@@ -10406,7 +11705,6 @@ minimapSvg.insertBefore(frag, minimapViewport);
        return state;
       }
       let lastUndoPush = 0;
-	  let pendingUndoState = null;
 	  function pushUndo(action = "") {
 	   const now = Date.now();
 	   if (now - lastUndoPush < 100 && undoStack.length > 0) {
@@ -10566,7 +11864,12 @@ minimapSvg.insertBefore(frag, minimapViewport);
         document.getElementById("modal-save").removeEventListener("click", saveHandler);
         document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
         modal.removeEventListener("click", bgHandler);
+        document.removeEventListener("keydown", escHandler);
        };
+       const escHandler = (e) => {
+        if (e.key === "Escape") cleanup();
+       };
+       document.addEventListener("keydown", escHandler);
        const saveHandler = () => {
         pushUndo("edit rack");
         const value = document.getElementById("modal-input").value.trim();
@@ -10598,7 +11901,12 @@ minimapSvg.insertBefore(frag, minimapViewport);
         document.getElementById("modal-save").removeEventListener("click", saveHandler);
         document.getElementById("modal-cancel").removeEventListener("click", cancelHandler);
         modal.removeEventListener("click", bgHandler);
+        document.removeEventListener("keydown", escHandler);
        };
+       const escHandler = (e) => {
+        if (e.key === "Escape") cleanup();
+       };
+       document.addEventListener("keydown", escHandler);
        const saveHandler = () => {
         pushUndo("edit U height");
         const value = document.getElementById("modal-input").value.trim();
@@ -10944,21 +12252,29 @@ minimapSvg.insertBefore(frag, minimapViewport);
         newId = `${baseId}-${counter}`;
         counter++;
        }
-       NODE_DATA[newId] = {
-        shape: source.shape,
-        name: newName,
-        ip: source.ip,
-        role: source.role,
-        tags: [...source.tags],
-        notes: [...source.notes],
-        mac: source.mac || "",
-        rackUnit: source.rackUnit || "",
-        uHeight: source.uHeight || "1",
-        layer: source.layer || "physical",
-        assignedRack: source.assignedRack || "",
-        rackCapacity: source.rackCapacity || "42",
-        isRack: source.isRack || false
-       };
+NODE_DATA[newId] = {
+ shape: source.shape,
+ name: newName,
+ ip: source.ip,
+ role: source.role,
+ tags: [...source.tags],
+ notes: [...source.notes],
+ mac: source.mac || "",
+ rackUnit: source.rackUnit || "",
+ uHeight: source.uHeight || "1",
+ layer: source.layer || "physical",
+ assignedRack: source.assignedRack || "",
+ rackCapacity: source.rackCapacity || "42",
+ isRack: source.isRack || false,
+ fovEnabled: source.fovEnabled || false,
+ fovAngle: source.fovAngle || 90,
+ fovDistance: source.fovDistance || 150,
+ fovRotation: source.fovRotation || 0,
+ fovColor: source.fovColor || "#f59e0b",
+ fovAnimate: source.fovAnimate || false,
+ fovSweep: source.fovSweep || 120,
+ fovSpeed: source.fovSpeed || 4
+};
        if (source.isRack) {
         const childNodes = Object.entries(NODE_DATA).filter(([id, n]) =>
          id !== newId && n.assignedRack === sourceId
@@ -11726,6 +13042,62 @@ minimapSvg.insertBefore(frag, minimapViewport);
         displayTabs();
         logAuditEvent("tab", `Deleted tab`);
       }
+      function saveCurrentTheme() {
+        const name = prompt("Enter a name for this theme:", "My Theme " + (savedStyleSets.length + 1));
+        if (!name || !name.trim()) return;
+        const existingIndex = savedStyleSets.findIndex(s => s.name.toLowerCase() === name.trim().toLowerCase());
+        if (existingIndex !== -1) {
+          if (!confirm("A theme named \"" + name + "\" already exists. Replace it?")) return;
+          savedStyleSets.splice(existingIndex, 1);
+        }
+        const styleSet = {
+          id: "mytheme-" + Date.now(),
+          name: name.trim(),
+          styles: JSON.parse(JSON.stringify(PAGE_STATE))
+        };
+        delete styleSet.styles.title;
+        delete styleSet.styles.viewOnly;
+        savedStyleSets.push(styleSet);
+        rebuildThemeDropdown();
+        document.getElementById("theme-preset").value = styleSet.id;
+        updateDeleteButton();
+        logAuditEvent("style", "Saved theme: " + name);
+      }
+      function deleteCurrentTheme() {
+        const select = document.getElementById("theme-preset");
+        const val = select.value;
+        if (!val.startsWith("mytheme-")) return;
+        const index = savedStyleSets.findIndex(s => s.id === val);
+        if (index === -1) return;
+        if (!confirm("Delete theme \"" + savedStyleSets[index].name + "\"?")) return;
+        savedStyleSets.splice(index, 1);
+        rebuildThemeDropdown();
+        select.value = "defaulted";
+        updateDeleteButton();
+        logAuditEvent("style", "Deleted theme");
+      }
+      function rebuildThemeDropdown() {
+        const group = document.getElementById("my-themes-group");
+        if (!group) return;
+        const select = document.getElementById("theme-preset");
+        const currentValue = select ? select.value : "";
+        group.innerHTML = "";
+        savedStyleSets.forEach(function(s) {
+          const opt = document.createElement("option");
+          opt.value = s.id;
+          opt.textContent = s.name;
+          group.appendChild(opt);
+        });
+        if (select && currentValue) {
+          select.value = currentValue;
+        }
+      }
+      function updateDeleteButton() {
+        const select = document.getElementById("theme-preset");
+        const btn = document.getElementById("delete-theme-btn");
+        if (!btn) return;
+        btn.style.display = select.value.startsWith("mytheme-") ? "block" : "none";
+      }
       function displayTabs() {
         const listEl = document.getElementById("tabs-list");
         if (!listEl) return;
@@ -12180,7 +13552,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           const fromPortDisplay = e.fromPort ? escapeHtml(e.fromPort) : "-";
           const toPortDisplay = e.toPort ? escapeHtml(e.toPort) : "-";
           const goToEdge = `document.getElementById('port-map-modal').classList.remove('active'); selectTheConnection('${escapeHtml(e.id)}'); focusOnSelected()`;
-          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 10px;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${edgeColor}; margin-right: 8px;"></span><span style="cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.from)}'); focusOnSelected()">${escapeHtml(fromName)}</span></td><td style="padding: 10px; font-family: monospace;"><span style="color: ${e.fromPort ? 'var(--accent)' : 'var(--text-soft)'}; cursor: pointer;" onclick="editPortFromMap('${escapeHtml(e.id)}', 'from')">${fromPortDisplay}</span> <span style="cursor: pointer; opacity: 0.6; font-size: 11px;" onclick="${goToEdge}" title="Go to connection">↗</span></td><td style="padding: 10px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.to)}'); focusOnSelected()">${escapeHtml(toName)}</td><td style="padding: 10px; font-family: monospace;"><span style="color: ${e.toPort ? 'var(--accent)' : 'var(--text-soft)'}; cursor: pointer;" onclick="editPortFromMap('${escapeHtml(e.id)}', 'to')">${toPortDisplay}</span> <span style="cursor: pointer; opacity: 0.6; font-size: 11px;" onclick="${goToEdge}" title="Go to connection">↗</span></td><td style="padding: 10px; color: var(--text-soft); font-size: 12px;">${escapeHtml(notes) || "-"}</td></tr>`;
+          html += `<tr style="border-bottom: 1px solid var(--edge-main);"><td style="padding: 8px;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: ${edgeColor}; margin-right: 6px;"></span><button onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.from)}'); focusOnSelected()" style="background: var(--panel-alt); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 13px; min-height: 36px;">${escapeHtml(fromName)}</button></td><td style="padding: 8px;"><button onclick="editPortFromMap('${escapeHtml(e.id)}', 'from')" style="background: ${e.fromPort ? 'var(--accent)' : 'var(--panel)'}; color: ${e.fromPort ? 'var(--bg)' : 'var(--text-soft)'}; border: 1px solid var(--edge-main); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 13px; min-height: 36px;">${fromPortDisplay}</button></td><td style="padding: 8px;"><button onclick="document.getElementById('port-map-modal').classList.remove('active'); claimTheImmortal('${escapeHtml(e.to)}'); focusOnSelected()" style="background: var(--panel-alt); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 13px; min-height: 36px;">${escapeHtml(toName)}</button></td><td style="padding: 8px;"><button onclick="editPortFromMap('${escapeHtml(e.id)}', 'to')" style="background: ${e.toPort ? 'var(--accent)' : 'var(--panel)'}; color: ${e.toPort ? 'var(--bg)' : 'var(--text-soft)'}; border: 1px solid var(--edge-main); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-family: monospace; font-size: 13px; min-height: 36px;">${toPortDisplay}</button></td><td style="padding: 8px;"><button onclick="${goToEdge}" style="background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 13px; min-height: 36px;" title="Go to connection">Go</button></td></tr>`;
         });
         html += '</tbody></table>';
         container.innerHTML = html;
@@ -12223,10 +13595,10 @@ minimapSvg.insertBefore(frag, minimapViewport);
       window.exportPortMap = function() {
         let csv = "From Device,From Port,To Device,To Port,Notes\n";
         (EDGE_DATA.list || []).forEach(e => {
-          const fromName = (NODE_DATA[e.from]?.name || e.from || "").replace(/,/g, ";");
-          const toName = (NODE_DATA[e.to]?.name || e.to || "").replace(/,/g, ";");
-          const notes = (e.notes || []).join("; ").replace(/,/g, ";");
-          csv += `"${fromName}","${e.fromPort || ""}","${toName}","${e.toPort || ""}","${notes}"\n`;
+          const fromName = NODE_DATA[e.from]?.name || e.from || "";
+          const toName = NODE_DATA[e.to]?.name || e.to || "";
+          const notes = (e.notes || []).join("; ");
+          csv += `${csvEscape(fromName)},${csvEscape(e.fromPort || "")},${csvEscape(toName)},${csvEscape(e.toPort || "")},${csvEscape(notes)}\n`;
         });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
@@ -12650,7 +14022,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
           addNodeSave.click();
          }
         });
-       }, );
+       });
       const clearAllBtn = document.getElementById("clear-all-btn");
       const clearAllModal = document.getElementById("clear-all-modal");
       const clearAllCancel = document.getElementById("clear-all-cancel");
@@ -12806,7 +14178,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
         const clonedElements = clone.querySelectorAll("*");
         const rootStyles = getComputedStyle(document.documentElement);
         const bgColor = rootStyles.getPropertyValue("--bg").trim() || "#050608";
-        const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect", );
+        const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         bgRect.setAttribute("x", x);
         bgRect.setAttribute("y", y);
         bgRect.setAttribute("width", width);
@@ -12867,7 +14239,7 @@ minimapSvg.insertBefore(frag, minimapViewport);
        svgClone.setAttribute("height", height);
        const rootStyles = getComputedStyle(document.documentElement);
        const bgColor = rootStyles.getPropertyValue("--bg").trim() || "#050608";
-       const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect", );
+       const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
        bgRect.setAttribute("x", x);
        bgRect.setAttribute("y", y);
        bgRect.setAttribute("width", width);
@@ -13133,6 +14505,9 @@ function showFormatHelp() {
         documentTabs = config.documentTabs;
         currentTabIndex = config.currentTabIndex || 0;
       }
+      if (config.savedStyleSets) {
+        savedStyleSets = config.savedStyleSets;
+      }
       if (config.savedTopologyView) {
         savedTopologyView = config.savedTopologyView;
       }
@@ -13155,7 +14530,7 @@ function showFormatHelp() {
         if (!edge.notes) edge.notes = [];
       });
       forgeTheTopology();
-      forgeTheLegend();
+      if (typeof forgeTheLegend === 'function') forgeTheLegend();
       updateViewBox();
       logAuditEvent('import', `Imported CSV (full restore): ${file.name}`);
       alert(`Full restore complete from CSV backup`);
@@ -13163,13 +14538,13 @@ function showFormatHelp() {
     }
 	
 		if (hasConfig) {
-		  Object.assign(PAGE_STATE, config.pageState);
-		  if (config.canvasView) {
-			canvasState.zoom = config.canvasView.zoom || 1;
-			canvasState.panX = config.canvasView.panX || 0;
-			canvasState.panY = config.canvasView.panY || 0;
+		  Object.assign(PAGE_STATE, config.pageState || config.page);
+		  if (config.canvasView || config.canvas) {
+			canvasState.zoom = (config.canvasView || config.canvas).zoom || 1;
+			canvasState.panX = (config.canvasView || config.canvas).panX || 0;
+			canvasState.panY = (config.canvasView || config.canvas).panY || 0;
 		  }
-		  if (config.legend) Object.assign(EDGE_LEGEND, config.legend);
+		  if (config.legend || config.edgeLegend) Object.assign(EDGE_LEGEND, config.legend || config.edgeLegend);
 		  wieldThePower();
 		}
 		let gridX = 200, gridY = 200;
@@ -13530,9 +14905,16 @@ document.getElementById('import-markdown-file').addEventListener('change', async
       if (sizes[id]) savedSizes[id] = sizes[id];
       if (styles[id]) savedStyles[id] = styles[id];
     });
+    let skippedEdges = 0;
     edges.forEach(edge => {
+      if (!NODE_DATA[edge.from] || !NODE_DATA[edge.to]) {
+        console.warn(`Skipping orphan edge: ${edge.from} -> ${edge.to}`);
+        skippedEdges++;
+        return;
+      }
       EDGE_DATA.list.push({ id: edge.id || `edge-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, from: edge.from, to: edge.to, fromPort: edge.fromPort || '', toPort: edge.toPort || '', label: edge.label || '', color: edge.color || '', width: edge.width || 4, direction: edge.direction || 'none', routing: edge.routing || 'curved', type: edge.type || 'main', lineStyle: edge.lineStyle || 'solid', groupId: edge.groupId || null, points: edge.points || [], notes: edge.notes || [] });
     });
+    if (skippedEdges > 0) console.warn(`Total skipped orphan edges: ${skippedEdges}`);
     rects.forEach(rect => {
       RECT_DATA.list.push({ id: rect.id, x: rect.x || 0, y: rect.y || 0, width: rect.width || 100, height: rect.height || 100, color: rect.color || '#f97316', style: rect.style || 'filled', lineStyle: rect.lineStyle || 'solid', borderColor: rect.borderColor || '', borderWidth: rect.borderWidth !== undefined ? rect.borderWidth : 2, notes: rect.notes || [] });
     });
