@@ -11,20 +11,23 @@ A fully self contained topology builder that runs anywhere as a single standalon
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version 3.9.9.8 : 12/22/25 Animations, walls, settings, themes and tidying up for 4.0
-
-* **Theme System Overhaul**
-  * Added 8 preset themes organized by category
-  * Save your own custom themes for easy tab theming
-* **Animated Connections with Flow**
-  * Show which way data is flowing for all, some, or any number of custom connections
-  * Includes options for all the flow settings
-* **CCTV/Camera nodes now have FOV Cone options for both stationary and PTZ cameras**
-  * Cone can be animated and animation carry over to minimap
-* **Added 13 new device icons in a new "Smart Home" dropdown category:**
-  * Thermostat, Video Doorbell, Smart Lock, Smart Bulb, Smart Plug, Smart Speaker, Smart TV, Smart Hub, Smoke Detector, Motion Sensor, Garage Door, Sprinkler, Robot Vacuum
-* **Bug fixes Core + Networkening Editions [changelog.md](changelog.md)**
-* **Bug fixes Networkening Editions [changelog.md](changelog.md)**
+### Version Version 3.9.9.9 /\ 12/29/25 Upgraded Animations, minimap and editable options
+* **Coverage zones now work on 11 device types**
+* **Added new editable Detection Zone properties**
+* **Added text labels to coverage zones**
+* **Added animation types**
+  * Sweep : Pan back and forth
+  * Pulse : Breathing/scale effect
+  * Rings : Expanding circles emanating outward
+  * Spin : Continuous rotation
+* **Added Zone Presets**
+* **Save your own custom zone presets!**
+* **Added new Bulk Operations for zones**
+* **Updated Line legend to include Zone Legend**
+* **New Main Settings : Animations & Zones**
+* **Minimap Improvements**
+* **Improved: HTTP Ping / Status Monitoring for Networkening edition**
+* **General Bug Fixes**  
 * **See more changes in the [changelog.md](changelog.md)**
 * **I am working on new demos with all the included features**
 

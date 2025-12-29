@@ -1,6 +1,73 @@
 #### CHANGE LOG
 **We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
 
+### Version 3.9.9.9 /\ 12/29/25 Upgraded Animations, minimap and editable options
+* **Coverage zones now work on 11 device types**
+  * Camera, CCTV, Doorbell
+  * Motion Sensor, Smoke Detector
+  * Access Point, WiFi, Router
+  * Sensor, IoT, Sprinkler
+
+* **Added new editable Detection Zone properties**
+  * Inner Radius : Add inner dead spots to zones
+  * Opacity : Control zone fill transparency
+  * Gradient Fade : Zone fades from center to edge
+  * Border Color : Separate color for zone outline
+  * Border Width : Thickness of zone outline
+  * Border Style : Solid, dashed, or dotted outlines
+  * Border Opacity : Transparency of zone outline
+
+* **Added text labels to coverage zones**
+* **Added editable text labels properties to coverage zones**
+
+* **Added animation types**
+  * Sweep : Pan back and forth
+  * Pulse : Breathing/scale effect
+  * Rings : Expanding circles emanating outward
+  * Spin : Continuous rotation
+
+* **Added Zone Presets**
+  * Security Cam, PTZ Cam, Motion Detect
+  * WiFi Strong, WiFi Extended
+  * Smoke Alarm, Sprinkler Arc
+* **Save your own custom presets!**
+
+* **Added new Bulk Operations for zones**
+  * Bulk Copy : Copy zone style from first selected node
+  * Bulk Paste : Apply copied style to all selected nodes
+  * Bulk Toggle : Enable/disable zones on all selected nodes
+  
+* **Updated Line legend to includes zones**
+  * Auto generated legend showing zone colors
+  * Editable labels for each zone color
+  * Click color swatch to select nodes with that zone color for faster editing
+
+* **New Main Settings : Animations & Zones**
+  * Master toggles (all animations, all zones)
+  * Type toggles (sweep, pulse, rings, spin, connections)
+  * Category toggles (cameras, doorbells, motion sensors, smoke detectors, wifi/AP/router, sensors/IoT, sprinklers)
+
+* **Minimap Improvements**
+  * Removed all animations and coverage zones from minimap (performance improvemnet and useless visually)
+  * Simplified node shapes in minimap
+  * Circles for regular nodes
+  * Squares for racks
+  * Outlined diamonds for animatable devices
+  * Added wall rectangles from free draw to minimap
+  * Added orthogonal routing display to minimap
+  * Fixed: resizing nodes now updates minimap immediately
+
+* **Welcome Message addition**
+  * Click or tap anywhere to dismiss early.
+
+* **Improved: HTTP Ping / Status Monitoring for Networkening edition**
+  * More reliable detection that now uses image load method to verify server actually responds with valid content. Built in fetch fallback for edge cases.
+  * Added response time tracking (e.g., "47ms")
+  * Batched checking now checks nodes in groups of 5 for faster bulk checks without overwhelming the network
+  * Added advanced timeout handling
+  
+* **General Bug Fixes**  
+
 ### Version 3.9.9.8 /\ 12/22/25 Animations, walls, settings, themes and tidying up for 4.0
 * **Theme System Overhaul**
   * Added 8 preset themes organized by category

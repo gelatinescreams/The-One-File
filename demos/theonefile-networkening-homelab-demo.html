@@ -96,6 +96,16 @@
       gap: 8px;
       flex-wrap: wrap;
       }
+	  .toggle-switch{position:relative;display:inline-block;min-width:44px !important;height:24px;flex-shrink:0;vertical-align:middle;}
+		.toggle-switch input{opacity:0;width:0;height:0;position:absolute;}
+		.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#475569;transition:.25s;border-radius:24px;}
+		.toggle-slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#e2e8f0;transition:.25s;border-radius:50%;}
+		.toggle-switch input:checked+.toggle-slider{background:var(--accent);}
+		.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);}
+		.anim-zone-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;}
+		.anim-zone-row label{color:var(--text-main);font-size:14px;}
+		.anim-zone-section{font-size:11px;color:var(--text-soft);margin:12px 0 6px;text-transform:uppercase;letter-spacing:0.05em;border-bottom:1px solid var(--edge-main);padding-bottom:4px;}
+		.anim-zone-header{font-size:12px;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;}
       .save-btn {
       padding: 6px 12px;
       background: var(--accent);
@@ -493,6 +503,15 @@
       color: var(--toolbar-text, var(--text-soft));
       margin-bottom: 2px;
       }
+	  .fov-group {
+        transition: opacity 0.3s ease;
+      }
+      g[data-node-id]:not(:hover) .fov-group {
+        opacity: 0.7;
+      }
+      g[data-node-id]:hover .fov-group {
+        opacity: 1;
+      }
       .legend-item {
       display: flex;
       align-items: center;
@@ -615,7 +634,14 @@
       }
       .minimap-edge {
       stroke: var(--edge-main);
-      stroke-width: 1;
+      stroke-width: 8px;
+      fill: none;
+      }
+      .minimap-wall {
+      pointer-events: none;
+      }
+      .minimap-rect {
+      pointer-events: none;
       }
 	  .minimap-close-btn {
       position: absolute;
@@ -680,6 +706,7 @@
       }
       .canvas-hint.visible {
       opacity: 1;
+      pointer-events: auto;
       }
       .edge {
       stroke: var(--edge-main);
@@ -1005,6 +1032,10 @@
 #rect-panel .style-row label,
 #text-panel .style-row label {
   min-width: 80px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
       .style-row label {
       font-size: clamp(13px, 1.5vw, 17px);
@@ -2210,10 +2241,14 @@ header {
                   </optgroup>
                   <optgroup id="my-themes-group" label="My Themes"></optgroup>
                 </select>
-                <button onclick="saveCurrentTheme()" style="padding:4px 8px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap;">Save</button>
-                <button id="delete-theme-btn" onclick="deleteCurrentTheme()" style="padding:4px 8px;background:var(--danger);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;display:none;">Del</button>
               </div>
             </div>
+			<div class="style-row">
+			 <label>  
+			  <button onclick="saveCurrentTheme()" style="padding:4px 8px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap;">Save Custom Theme</button>
+			 </label>
+			  <button id="delete-theme-btn" onclick="deleteCurrentTheme()" style="padding: 4px 8px; background: var(--danger); color: rgb(255, 255, 255); border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: block;" disabled="">Delete Custom Theme</button>
+			</div>
             <div class="style-row">
               <label>Main Background</label>
               <input type="color" id="panel-color" value="#0b0e13">
@@ -2241,6 +2276,18 @@ header {
             <div class="style-row">
               <label>Secondary Text</label>
               <input type="color" id="text-soft-color" value="#94a3b8">
+            </div>
+			<div class="style-row">
+              <label>Tag(s) Fill</label>
+              <input type="color" id="tag-fill-color" value="#1e293b">
+            </div>
+            <div class="style-row">
+              <label>Tag(s) Text</label>
+              <input type="color" id="tag-text-color" value="#e2e8f0">
+            </div>
+            <div class="style-row">
+              <label>Tag(s) Border</label>
+              <input type="color" id="tag-border-color" value="#475569">
             </div>
           </div>
         </details>
@@ -2410,10 +2457,6 @@ header {
               </select>
             </div>
             <div class="style-row">
-              <label>Animate Connections</label>
-              <input type="checkbox" id="animate-connections-toggle">
-            </div>
-            <div class="style-row">
               <label>Animation Style</label>
               <select id="animation-style-select">
                 <option value="arrows">Flowing Arrows</option>
@@ -2442,6 +2485,37 @@ header {
             <div class="style-row" style="grid-column: 1 / -1;">
               <button id="apply-routing-all" style="width:100%;padding:8px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;">Apply Routing to All Connections</button>
             </div>
+          </div>
+        </details>
+		<details class="style-section">
+          <summary>Animations &amp; Zones</summary>
+          <div class="style-content">
+            <div class="style-row"><label>All Animations</label><label class="toggle-switch"><input type="checkbox" id="anim-master" checked=""><span class="toggle-slider"></span></label></div>
+            <div style="grid-column:1/-1;font-size:11px;color:var(--text-soft);text-transform:uppercase;border-bottom:1px solid var(--edge-main);padding-bottom:4px;margin-top:8px;">By Type</div>
+            <div class="style-row"><label>Sweep (Pan)</label><label class="toggle-switch"><input type="checkbox" id="anim-type-sweep" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Pulse (Breathe)</label><label class="toggle-switch"><input type="checkbox" id="anim-type-pulse" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Rings (Emanate)</label><label class="toggle-switch"><input type="checkbox" id="anim-type-rings" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Spin (Rotate)</label><label class="toggle-switch"><input type="checkbox" id="anim-type-spin" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Connections (Flow)</label><label class="toggle-switch"><input type="checkbox" id="anim-type-connections" checked=""><span class="toggle-slider"></span></label></div>
+            <div style="grid-column:1/-1;font-size:11px;color:var(--text-soft);text-transform:uppercase;border-bottom:1px solid var(--edge-main);padding-bottom:4px;margin-top:8px;">By Category</div>
+            <div class="style-row"><label>Cameras</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-camera" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Doorbells</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-doorbell" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Motion Sensors</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-motion" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Smoke Detectors</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-smoke" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>WiFi/AP/Router</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-wifi" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Sensors/IoT</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-sensor" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Sprinklers</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-sprinkler" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Connections</label><label class="toggle-switch"><input type="checkbox" id="anim-cat-connections" checked=""><span class="toggle-slider"></span></label></div>
+            <div style="grid-column:1/-1;font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;font-weight:600;margin-top:16px;padding-top:12px;border-top:1px solid var(--edge-main);">Zone (Animation Cone) Setings</div>
+            <div class="style-row"><label>All Zones</label><label class="toggle-switch"><input type="checkbox" id="zone-master" checked=""><span class="toggle-slider"></span></label></div>
+            <div style="grid-column:1/-1;font-size:11px;color:var(--text-soft);text-transform:uppercase;border-bottom:1px solid var(--edge-main);padding-bottom:4px;margin-top:8px;">By Category</div>
+            <div class="style-row"><label>Cameras</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-camera" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Doorbells</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-doorbell" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Motion Sensors</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-motion" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Smoke Detectors</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-smoke" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>WiFi/AP/Router</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-wifi" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Sensors/IoT</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-sensor" checked=""><span class="toggle-slider"></span></label></div>
+            <div class="style-row"><label>Sprinklers</label><label class="toggle-switch"><input type="checkbox" id="zone-cat-sprinkler" checked=""><span class="toggle-slider"></span></label></div>
           </div>
         </details>
         <details class="style-section">
@@ -2539,23 +2613,6 @@ header {
             <div class="style-row" style="flex-direction:column;align-items:stretch;">
               <label>Custom Text (HTML)</label>
               <textarea id="canvas-hint-text" rows="4" style="width:100%;margin-top:4px;padding:6px;background:var(--panel);color:var(--text-main);border:1px solid var(--topbar-border);border-radius:4px;font-size:12px;resize:vertical;" placeholder="Leave empty for default"></textarea>
-            </div>
-          </div>
-        </details>
-        <details class="style-section">
-          <summary>Tags</summary>
-          <div class="style-content">
-            <div class="style-row">
-              <label>Fill</label>
-              <input type="color" id="tag-fill-color" value="#1e293b">
-            </div>
-            <div class="style-row">
-              <label>Text</label>
-              <input type="color" id="tag-text-color" value="#e2e8f0">
-            </div>
-            <div class="style-row">
-              <label>Border</label>
-              <input type="color" id="tag-border-color" value="#475569">
             </div>
           </div>
         </details>
@@ -2959,6 +3016,7 @@ header {
           <button id="draw-toggle" title="Draw custom line">✏️</button>
           <button id="rect-toggle" title="Draw zone">▭</button>
           <button id="text-toggle" title="Add text">T</button>
+          <span style="border-left: 1px solid var(--edge-main); height: 20px; margin: 0 4px;"></span>
           <select id="rect-style" title="zone style">
             <option value="filled">Filled</option>
             <option value="outlined">Outlined</option>
@@ -2996,9 +3054,9 @@ header {
           </select>
           <button id="add-line-btn">Add</button>
         </div>
-        <div class="topology-toolbar bulk-toolbar-desktop" id="bulk-toolbar" style="display: none;">
+        <div class="topology-toolbar bulk-toolbar-desktop" id="bulk-toolbar" style="display: none">
           <button type="button" class="toolbar-close-btn" id="bulk-toolbar-close" title="Clear selection">✕</button>
-          <label style="font-weight: 600; color: var(--accent)">Selected: <span id="bulk-count">71</span></label>
+          <label style="font-weight: 600; color: var(--accent)">Selected: <span id="bulk-count">0</span></label>
           <button id="bulk-align-left" title="Align left">⬅ Left</button>
           <button id="bulk-align-right" title="Align right">➡ Right</button>
           <button id="bulk-align-top" title="Align top">⬆ Top</button>
@@ -3006,16 +3064,19 @@ header {
           <button id="bulk-distribute-h" title="Distribute horizontally">↔ Distribute H</button>
           <button id="bulk-distribute-v" title="Distribute vertically">↕ Distribute V</button>
           <button id="bulk-clone" title="Clone selected">📋 Clone</button>
+          <button id="bulk-zone-copy" title="Copy zone style">📡 Copy Zone</button>
+          <button id="bulk-zone-paste" title="Paste zone style">📡 Paste Zone</button>
+          <button id="bulk-zone-toggle" title="Toggle zones on selected">📡 Toggle Zones</button>
           <button id="bulk-delete" title="Delete selected" style="background: var(--danger); color: white;">Delete</button>
         </div>
-        <div class="bulk-toolbar-mobile" id="bulk-toolbar-mobile" style="display: none;">
+        <div class="bulk-toolbar-mobile" id="bulk-toolbar-mobile" style="display: none">
           <button type="button" id="bulk-mobile-btn" style="background: var(--accent);color: white;padding: 12px 20px;border-radius: 25px;font-weight: 600;font-size: 16px;box-shadow: 0 4px 12px rgba(0,0,0,0.3);border: none;cursor: pointer;display: flex;align-items: center;gap: 8px;">
-          <span id="bulk-count-mobile">71</span>Selected</button>
+          <span id="bulk-count-mobile">0</span>Selected</button>
         </div>
         <div id="bulk-actions-modal" style="display: none;position: fixed;bottom: 0;left: 0;right: 0;background: var(--panel-alt);border-top-left-radius:20px;border-top-right-radius:20px;padding:20px;padding-bottom:(safe-area-inset-bottom, 20px);box-shadow: 0 -4px 20px rgba(0,0,0,0.5);z-index: 10000;max-height: calc(100vh - 80px);overflow-y: auto;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="margin: 0; color: var(--accent); font-size: 20px;">
-              <span id="bulk-count-modal">71</span> Nodes Selected
+              <span id="bulk-count-modal">0</span> Nodes Selected
             </h3>
             <button id="bulk-modal-close" style="background: none;border: none;font-size: 24px;cursor: pointer;color: var(--text-main);padding: 0;width: 32px;height: 32px;">✕</button>
           </div>
@@ -3031,9 +3092,17 @@ header {
             <button id="bulk-clone-mobile" class="bulk-action-btn">📋<br><span style="font-size: 12px;">Clone All</span></button>
             <button id="bulk-delete-mobile" class="bulk-action-btn" style="background: var(--danger); color: white;">🗑<br><span style="font-size: 12px;">Delete All</span></button>
           </div>
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--edge-main);">
+            <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Coverage Zones</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+              <button id="bulk-zone-copy-mobile" class="bulk-action-btn">📡<br><span style="font-size: 12px;">Copy Zone</span></button>
+              <button id="bulk-zone-paste-mobile" class="bulk-action-btn">📡<br><span style="font-size: 12px;">Paste Zone</span></button>
+              <button id="bulk-zone-toggle-mobile" class="bulk-action-btn">📡<br><span style="font-size: 12px;">Toggle Zones</span></button>
+            </div>
+          </div>
           <button id="bulk-clear-mobile" style="width: 100%;margin-top: 16px;padding: 14px;background: var(--panel-main);border: 1px solid var(--edge-main);border-radius: 8px;color: var(--text-main);font-size: 16px;cursor: pointer;">Clear Selection</button>
         </div>
-        <div class="canvas-hint" id="canvas-hint"></div>
+        <div class="canvas-hint" id="canvas-hint" style="cursor: pointer;"></div>
         <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(85, 226, 8); cursor: pointer;"></span><span class="legend-label" contenteditable="true">ISP LINE</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(76, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">MY Guest NETWORK</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(128, 255, 0); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(255, 0, 208); cursor: pointer;"></span><span class="legend-label" contenteditable="true">iPhone (always guest iPhone)</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
           <svg id="map" viewBox="-5.584863670202822 -99.90831573327841 4031.4509771376233 3023.5882328532175" style=""></svg>
@@ -3054,10 +3123,10 @@ header {
             <button id="zoom-reset-btn" title="Reset view">R</button>
           </div>
         </div>
-        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Line Legend</button>
+        <button type="button" id="edge-legend-mini" class="legend-mini-btn" style="bottom: 10px; display: none;">Connection &amp; Zone Legend</button>
         <button type="button" id="minimap-mini" class="legend-mini-btn" style="right: 10px; left: auto; bottom: 10px; display: none;">Map</button>
         <button type="button" id="draw-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: 10px; right: auto; display: none;">Draw</button>
-        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Line</button>
+        <button type="button" id="topology-toolbar-mini" class="legend-mini-btn" style="top: 10px; left: auto; right: 40px; display: none;">Add Connection</button>
      </section>
       <aside class="details-panel" id="details-panel">
         <div class="sidebar-resizer" id="sidebar-resizer">
@@ -3075,11 +3144,11 @@ header {
           </svg>
         </div>
         <div id="node-panel" style="display: none;">
-          <div class="details-name editable-text" id="node-name">Test Environment</div>
-          <div class="details-ip editable-text" id="node-ip">10.81.0.0/24</div>
+          <div class="details-name editable-text" id="node-name">Core Router 1</div>
+          <div class="details-ip editable-text" id="node-ip">10.0.0.1</div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">MAC:</span>
-            <span class="editable-text" id="node-mac" style="flex: 1; cursor: pointer; color: var(--text-main);">--</span>
+            <span class="editable-text" id="node-mac" style="flex: 1; cursor: pointer; color: var(--text-main);">00:1A:2B:3C:4D:01</span>
           </div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Rack Unit:</span>
@@ -3087,7 +3156,7 @@ header {
           </div>
           <div class="details-info-row" id="uheight-row" style="display: none;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">U Height:</span>
-            <span class="editable-text" id="node-uheight" style="flex: 1; cursor: pointer; color: var(--text-main);">1U</span>
+            <span class="editable-text" id="node-uheight" style="flex: 1; cursor: pointer; color: var(--text-main);">2U</span>
           </div>
           <div class="details-info-row" id="assigned-rack-row" style="display: flex;">
             <span style="color: var(--text-soft); font-size: 14px; width: 80px;">Assigned Rack:</span>
@@ -3112,58 +3181,170 @@ header {
               <option value="application">Application</option>
             </select>
           </div>
-          <div class="details-role" id="node-role">QA/Testing</div>
+          <div class="details-role" id="node-role">Core Routing</div>
 		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">2</span>)</summary>
-            <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 8px 4px; border-bottom: 1px solid var(--edge-main); cursor: pointer;"><span style="color: var(--text-main);">IDF2-SW-01</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">idf</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">distribution</span></div><div style="padding: 8px 4px; border-bottom: 1px solid var(--edge-main); cursor: pointer;"><span style="color: var(--text-main);">IDF2-SW-02</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">idf</span><span style="background: var(--accent); color: var(--bg); padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px;">distribution</span></div></div>
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Nodes in Rack (<span id="rack-contents-count">0</span>)</summary>
+            <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
-          <details id="fov-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Field of View</summary>
+          <details id="fov-section" style="display: block; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Coverage Zone</summary>
             <div style="padding: 10px 0;">
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px; gap: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Preset:</label>
+                <select id="fov-preset" style="flex: 1; padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
+                  <option value="">-- Apply Preset --</option>
+                  <option value="security-cam">Security Camera</option>
+                  <option value="ptz-cam">PTZ Camera</option>
+                  <option value="motion-detect">Motion Detector</option>
+                  <option value="wifi-strong">WiFi</option>
+                  <option value="wifi-extended">WiFi Extender</option>
+                  <option value="smoke-alarm">Smoke Alarm</option>
+                  <option value="sprinkler-arc">Sprinkler Arc</option>
+                </select>
+                <button id="fov-save-preset" title="Save as preset" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); cursor: pointer;">💾</button>
+                <button id="fov-copy-style" title="Copy zone style" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); cursor: pointer;">📋</button>
+                <button id="fov-paste-style" title="Paste zone style" style="padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); cursor: pointer;">📥</button>
+              </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Show FOV:</label>
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Show Zone:</label>
                 <input type="checkbox" id="fov-enabled" style="width: 18px; height: 18px; cursor: pointer;">
               </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Angle:</label>
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Angle:</label>
                 <input type="range" id="fov-angle" min="10" max="360" value="90" style="flex: 1;">
-                <span id="fov-angle-value" style="min-width: 40px; text-align: right; color: var(--text-main);">90°</span>
+                <span id="fov-angle-value" style="min-width: 40px; text-align: right; color: var(--text-main);">360°</span>
               </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Distance:</label>
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Distance:</label>
                 <input type="range" id="fov-distance" min="50" max="500" value="150" style="flex: 1;">
-                <span id="fov-distance-value" style="min-width: 40px; text-align: right; color: var(--text-main);">150</span>
+                <span id="fov-distance-value" style="min-width: 40px; text-align: right; color: var(--text-main);">200</span>
               </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Rotation:</label>
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Inner Radius:</label>
+                <input type="range" id="fov-inner-radius" min="0" max="200" value="0" style="flex: 1;">
+                <span id="fov-inner-radius-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0</span>
+              </div>
+              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Rotation:</label>
                 <input type="range" id="fov-rotation" min="0" max="360" value="0" style="flex: 1;">
                 <span id="fov-rotation-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0°</span>
               </div>
-              <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Color:</label>
-                <input type="color" id="fov-color" value="#f59e0b" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer;">
+              <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
+                <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Fill</div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Color:</label>
+                  <input type="color" id="fov-color" value="#f59e0b" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Opacity:</label>
+                  <input type="range" id="fov-opacity" min="5" max="80" value="20" style="flex: 1;">
+                  <span id="fov-opacity-value" style="min-width: 40px; text-align: right; color: var(--text-main);">20%</span>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Gradient:</label>
+                  <input type="checkbox" id="fov-gradient" style="width: 18px; height: 18px; cursor: pointer;">
+                  <span style="color: var(--text-soft); font-size: 12px; margin-left: 8px;">Fade toward edge</span>
+                </div>
               </div>
               <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
+                <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Border</div>
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Animate:</label>
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Color:</label>
+                  <input type="color" id="fov-border-color" value="#f59e0b" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Width:</label>
+                  <input type="range" id="fov-border-width" min="0" max="10" value="2" style="flex: 1;">
+                  <span id="fov-border-width-value" style="min-width: 40px; text-align: right; color: var(--text-main);">2</span>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Style:</label>
+                  <select id="fov-border-style" style="flex: 1; padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
+                    <option value="solid">Solid</option>
+                    <option value="dashed">Dashed</option>
+                    <option value="dotted">Dotted</option>
+                  </select>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Opacity:</label>
+                  <input type="range" id="fov-border-opacity" min="0" max="100" value="100" style="flex: 1;">
+                  <span id="fov-border-opacity-value" style="min-width: 40px; text-align: right; color: var(--text-main);">100%</span>
+                </div>
+              </div>
+              <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
+                <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Label</div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Text:</label>
+                  <input type="text" id="fov-label" placeholder="e.g. Detection Zone" style="flex: 1; padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Position:</label>
+                  <select id="fov-label-position" style="flex: 1; padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
+                    <option value="center">Center</option>
+                    <option value="edge">Edge</option>
+                    <option value="outside">Outside</option>
+                  </select>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Font Size:</label>
+                  <input type="range" id="fov-label-size" min="8" max="32" value="14" style="flex: 1;">
+                  <span id="fov-label-size-value" style="min-width: 40px; text-align: right; color: var(--text-main);">14px</span>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Font Color:</label>
+                  <input type="color" id="fov-label-color" value="#ffffff" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Bold:</label>
+                  <input type="checkbox" id="fov-label-bold" style="width: 18px; height: 18px; cursor: pointer;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Background:</label>
+                  <input type="checkbox" id="fov-label-bg" style="width: 18px; height: 18px; cursor: pointer;">
+                  <input type="color" id="fov-label-bg-color" value="#000000" style="width: 50px; height: 30px; border: 1px solid var(--edge-main); border-radius: 4px; cursor: pointer; margin-left: 8px;">
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Offset X:</label>
+                  <input type="range" id="fov-label-offset-x" min="-200" max="200" value="0" style="flex: 1;">
+                  <span id="fov-label-offset-x-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0</span>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Offset Y:</label>
+                  <input type="range" id="fov-label-offset-y" min="-200" max="200" value="0" style="flex: 1;">
+                  <span id="fov-label-offset-y-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0</span>
+                </div>
+              </div>
+              <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
+                <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Animation</div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Animate:</label>
                   <input type="checkbox" id="fov-animate" style="width: 18px; height: 18px; cursor: pointer;">
                 </div>
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Sweep:</label>
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Type:</label>
+                  <select id="fov-animation-type" style="flex: 1; padding: 4px 8px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main);">
+                    <option value="sweep">Sweep (Pan)</option>
+                    <option value="pulse">Pulse (Breathe)</option>
+                    <option value="rings">Rings (Emanate)</option>
+                    <option value="spin">Spin (Rotate)</option>
+                  </select>
+                </div>
+                <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Sweep:</label>
                   <input type="range" id="fov-sweep" min="30" max="360" value="120" style="flex: 1;">
                   <span id="fov-sweep-value" style="min-width: 40px; text-align: right; color: var(--text-main);">120°</span>
                 </div>
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
-                  <label style="color: var(--text-soft); font-size: 14px; min-width: 80px;">Speed:</label>
-                  <input type="range" id="fov-speed" min="1" max="30" value="4" style="flex: 1;">
+                  <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Speed:</label>
+                  <input type="range" id="fov-speed" min="1" max="60" value="4" style="flex: 1;">
                   <span id="fov-speed-value" style="min-width: 40px; text-align: right; color: var(--text-main);">4s</span>
                 </div>
               </div>
             </div>
           </details>
           <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px; display: block;">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">1</span>)</summary>
-            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Internal FW</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">9</span>)</summary>
+            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Primary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 2</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 1</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">NYC Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">LA Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Chicago Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">London Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Tokyo Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">AWS Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
           </details>
           <div class="badge-row" id="node-tags"></div>
           <div style="margin-top: 10px; display: flex; gap: 8px">
@@ -3398,8 +3579,8 @@ header {
           </div>
           <button id="delete-node-btn" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: rgb(255, 255, 255);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;">Delete Node</button>
         </div>
-        <div id="edge-panel" style="display: none;">
-          <div class="details-name" id="edge-title">IDF2-SW-01 ↔ Break Room AP</div>
+        <div id="edge-panel" style="display: none">
+          <div class="details-name" id="edge-title">Custom line</div>
           <div class="style-row" style="margin-top: 10px">
             <label>Width:</label>
             <input type="number" id="edge-width" min="1" max="20" value="4">
@@ -3457,11 +3638,11 @@ header {
               <option value="4">Very Slow</option>
             </select>
           </div>
-          <div class="style-row" id="edge-port-fields" style="display: flex;">
+          <div class="style-row" id="edge-port-fields">
             <label>From Port:</label>
             <input type="text" id="edge-from-port" placeholder="e.g. eth0, gi0/1" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);font-size: 14px;">
           </div>
-          <div class="style-row" id="edge-port-fields-to" style="display: flex;">
+          <div class="style-row" id="edge-port-fields-to">
             <label>To Port:</label>
             <input type="text" id="edge-to-port" placeholder="e.g. eth1, gi0/2" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);font-size: 14px;">
           </div>
@@ -4400,6 +4581,8 @@ header {
     "#ff00d0": "iPhone (always guest iPhone)",
     "#f97316": "you can edit me too"
   },
+  "zoneLegend": {},
+  "zonePresets": {},
   "nodePositions": {
     "internet": {
       "x": 2103.968290880771,
@@ -4534,14 +4717,14 @@ header {
     "selfhst-alist": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M260.5 30.8c5.4-.6 11 .6 15.5 3.7 6.8 4.4 11.6 11.1 15.7 17.9 18.4 30.9 37 61.7 55.4 92.6 24.5 41.3 49.1 82.7 73.6 124q25.35 42.9 51 85.8c11.2 19.1 22.8 37.9 33.5 57.3 4.6 8.1 7.2 17.5 6.8 26.8-.3 7.2-1.6 14.7-5.4 20.9-5.3 8.8-14.3 15.1-23.9 18.3-5.2 1.9-10.6 3.1-16.1 3.1H286.3c-5.2-.1-10.4-.7-15.3-2.6-3.5-1.5-7-3.4-9.8-6.1-4.7-4.7-7.8-11.3-7-18.1.4-4.7 1.6-9.4 3.5-13.7 1.9-4.4 4.5-8.5 6.8-12.7 10.1-17.9 20.6-35.6 31.5-53 3.5-5.5 6.6-11.4 11.4-15.8 5.2-4.7 11.6-8.4 18.7-8.9 5.7-.2 11.3 1.7 16.1 4.8 5.4 3.1 9.6 8.4 11 14.5 2 7.7-.2 15.8-3.4 22.9-3.7 8-8.9 15.3-11.7 23.7-.5 1.9-1.2 4.3.2 6 1.4 1.4 3.5 1.9 5.3 2.4 5.5 1.2 11.1.9 16.6.9h61.3c4-.1 8.1.1 12.1-.1 2.9-.3 6.1-.8 8.4-2.9 1.5-1.3 1.7-3.6 1.1-5.4-1.2-4-3.4-7.7-5.5-11.3C383.2 312.9 329 219.7 274 126.9c-1.8-3-3.3-6.2-5.9-8.6-1.3-1.2-3.2-1.9-4.9-1.4-1.5.5-2.5 1.8-3.5 3-2.4 3.1-4.6 6.4-6.6 9.8-9.5 15.4-18.6 31.1-27.9 46.6-53.6 90.1-107.1 180.3-160.7 270.4-3.3 6.1-6.9 12.1-10.7 17.9-3.4 5-7.5 9.6-12.8 12.6-6.2 3.6-13.9 5-20.9 3-5.1-1.6-10-4.1-13.7-8.1-4.6-4.6-6.7-11.3-6.4-17.7.2-6.7 2.5-13.3 5.9-19.1C38.4 380.1 71.1 325 104 269.9c16.9-28.5 33.7-57.1 50.7-85.6 17.2-28.8 34.4-57.7 51.5-86.5 9.5-16.3 19.2-32.5 29.2-48.5 3.1-5.1 7.1-9.6 11.9-13.1 4-2.7 8.4-5 13.2-5.4\" style=\"fill:#70c6be\"/><path d=\"M257.8 244.3c8.1-1.3 16.7.6 23.4 5.4 5.1 3.9 8.6 9.8 9.7 16.2.7 4.9.2 9.9-1.6 14.5-1.4 4-3.3 7.7-5.5 11.3-31.2 52.5-62.5 105-93.7 157.5-4 6.6-7.6 13.4-12.2 19.6-3.3 4.1-7.5 7.7-12.4 9.9-10.2 5.4-23.5 2.1-31.3-6.1-3.9-3.9-6.2-9.4-6.5-14.9-.4-5.7.8-11.5 3.4-16.7 2.3-5 5-9.7 7.8-14.4 13.7-23.1 27.3-46.3 41-69.4 18.7-31.8 37.8-63.4 56.6-95.1 2-3.6 4.5-6.9 7.3-9.9 3.8-4 8.6-7.1 14-7.9\" style=\"fill:#1ba0d8\"/></svg>",
     "simple-amazonwebservices": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Amazon Web Services</title><path d=\"M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.183 0 .08-.048.16-.152.24l-.503.335a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.239-.112a2.47 2.47 0 0 1-.287-.375 6.18 6.18 0 0 1-.248-.471c-.622.734-1.405 1.101-2.347 1.101-.67 0-1.205-.191-1.596-.574-.391-.384-.59-.894-.59-1.533 0-.678.239-1.23.726-1.644.487-.415 1.133-.623 1.955-.623.272 0 .551.024.846.064.296.04.6.104.918.176v-.583c0-.607-.127-1.03-.375-1.277-.255-.248-.686-.367-1.3-.367-.28 0-.568.031-.863.103-.295.072-.583.16-.862.272a2.287 2.287 0 0 1-.28.104.488.488 0 0 1-.127.023c-.112 0-.168-.08-.168-.247v-.391c0-.128.016-.224.056-.28a.597.597 0 0 1 .224-.167c.279-.144.614-.264 1.005-.36a4.84 4.84 0 0 1 1.246-.151c.95 0 1.644.216 2.091.647.439.43.662 1.085.662 1.963v2.586zm-3.24 1.214c.263 0 .534-.048.822-.144.287-.096.543-.271.758-.51.128-.152.224-.32.272-.512.047-.191.08-.423.08-.694v-.335a6.66 6.66 0 0 0-.735-.136 6.02 6.02 0 0 0-.75-.048c-.535 0-.926.104-1.19.32-.263.215-.39.518-.39.917 0 .375.095.655.295.846.191.2.47.296.838.296zm6.41.862c-.144 0-.24-.024-.304-.08-.064-.048-.12-.16-.168-.311L7.586 5.55a1.398 1.398 0 0 1-.072-.32c0-.128.064-.2.191-.2h.783c.151 0 .255.025.31.08.065.048.113.16.16.312l1.342 5.284 1.245-5.284c.04-.16.088-.264.151-.312a.549.549 0 0 1 .32-.08h.638c.152 0 .256.025.32.08.063.048.12.16.151.312l1.261 5.348 1.381-5.348c.048-.16.104-.264.16-.312a.52.52 0 0 1 .311-.08h.743c.127 0 .2.065.2.2 0 .04-.009.08-.017.128a1.137 1.137 0 0 1-.056.2l-1.923 6.17c-.048.16-.104.263-.168.311a.51.51 0 0 1-.303.08h-.687c-.151 0-.255-.024-.32-.08-.063-.056-.119-.16-.15-.32l-1.238-5.148-1.23 5.14c-.04.16-.087.264-.15.32-.065.056-.177.08-.32.08zm10.256.215c-.415 0-.83-.048-1.229-.143-.399-.096-.71-.2-.918-.32-.128-.071-.215-.151-.247-.223a.563.563 0 0 1-.048-.224v-.407c0-.167.064-.247.183-.247.048 0 .096.008.144.024.048.016.12.048.2.08.271.12.566.215.878.279.319.064.63.096.95.096.502 0 .894-.088 1.165-.264a.86.86 0 0 0 .415-.758.777.777 0 0 0-.215-.559c-.144-.151-.416-.287-.807-.415l-1.157-.36c-.583-.183-1.014-.454-1.277-.813a1.902 1.902 0 0 1-.4-1.158c0-.335.073-.63.216-.886.144-.255.335-.479.575-.654.24-.184.51-.32.83-.415.32-.096.655-.136 1.006-.136.175 0 .359.008.535.032.183.024.35.056.518.088.16.04.312.08.455.127.144.048.256.096.336.144a.69.69 0 0 1 .24.2.43.43 0 0 1 .071.263v.375c0 .168-.064.256-.184.256a.83.83 0 0 1-.303-.096 3.652 3.652 0 0 0-1.532-.311c-.455 0-.815.071-1.062.223-.248.152-.375.383-.375.71 0 .224.08.416.24.567.159.152.454.304.877.44l1.134.358c.574.184.99.44 1.237.767.247.327.367.702.367 1.117 0 .343-.072.655-.207.926-.144.272-.336.511-.583.703-.248.2-.543.343-.886.447-.36.111-.734.167-1.142.167zM21.698 16.207c-2.626 1.94-6.442 2.969-9.722 2.969-4.598 0-8.74-1.7-11.87-4.526-.247-.223-.024-.527.272-.351 3.384 1.963 7.559 3.153 11.877 3.153 2.914 0 6.114-.607 9.06-1.852.439-.2.814.287.383.607zM22.792 14.961c-.336-.43-2.22-.207-3.074-.103-.255.032-.295-.192-.063-.36 1.5-1.053 3.967-.75 4.254-.399.287.36-.08 2.826-1.485 4.007-.215.184-.423.088-.327-.151.32-.79 1.03-2.57.695-2.994z\"/></svg>",
     "simple-apple": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Apple</title><path d=\"M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701\"/></svg>",
-    "selfhst-amazon-web-services": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M144.3 214.1c0 6.3.7 11.4 1.9 15.2 1.4 3.7 3.1 7.8 5.4 12.3.9 1.4 1.2 2.7 1.2 3.9 0 1.7-1 3.4-3.2 5.1l-10.7 7.2c-1.5 1-3.1 1.5-4.4 1.5-1.7 0-3.4-.9-5.1-2.4-2.4-2.6-4.4-5.3-6.1-8-1.7-2.9-3.4-6.1-5.3-10-13.3 15.7-30 23.5-50.1 23.5-14.3 0-25.7-4.1-34.1-12.3-8.3-8.2-12.6-19.1-12.6-32.7 0-14.5 5.1-26.2 15.5-35.1S60.8 169 78.4 169c5.8 0 11.7.5 18.1 1.4s12.8 2.2 19.6 3.7v-12.4c0-12.9-2.7-22-8-27.2-5.4-5.3-14.6-7.8-27.8-7.8-6 0-12.1.7-18.4 2.2s-12.4 3.4-18.4 5.8c-2.7 1.2-4.8 1.9-6 2.2s-2 .5-2.7.5c-2.4 0-3.6-1.7-3.6-5.3v-8.3c0-2.7.3-4.8 1.2-6s2.4-2.4 4.8-3.6c6-3.1 13.1-5.6 21.5-7.7 8.3-2.2 17.2-3.2 26.6-3.2 20.3 0 35.1 4.6 44.6 13.8 9.4 9.2 14.1 23.2 14.1 41.9v55.2zM75.2 240c5.6 0 11.4-1 17.5-3.1 6.1-2 11.6-5.8 16.2-10.9 2.7-3.2 4.8-6.8 5.8-10.9s1.7-9 1.7-14.8v-7.2c-4.9-1.2-10.2-2.2-15.7-2.9-5.4-.7-10.7-1-16-1-11.4 0-19.8 2.2-25.4 6.8S51 207.1 51 215.6c0 8 2 14 6.3 18.1 4.1 4.2 10 6.3 17.9 6.3m136.7 18.4c-3.1 0-5.1-.5-6.5-1.7-1.4-1-2.6-3.4-3.6-6.6l-40-131.6c-1-3.4-1.5-5.6-1.5-6.8 0-2.7 1.4-4.3 4.1-4.3h16.7c3.2 0 5.4.5 6.6 1.7 1.4 1 2.4 3.4 3.4 6.6l28.6 112.7 26.6-112.7c.9-3.4 1.9-5.6 3.2-6.6 1.4-1 3.7-1.7 6.8-1.7H270c3.2 0 5.4.5 6.8 1.7 1.4 1 2.6 3.4 3.2 6.6l26.9 114.1 29.5-114.1c1-3.4 2.2-5.6 3.4-6.6 1.4-1 3.6-1.7 6.6-1.7h15.8c2.7 0 4.3 1.4 4.3 4.3 0 .9-.2 1.7-.3 2.7-.2 1-.5 2.4-1.2 4.3l-41 131.6q-1.5 5.1-3.6 6.6c-1.4 1-3.6 1.7-6.5 1.7h-14.6c-3.2 0-5.4-.5-6.8-1.7s-2.6-3.4-3.2-6.8l-26.4-109.8L236.7 250c-.9 3.4-1.9 5.6-3.2 6.8-1.4 1.2-3.7 1.7-6.8 1.7zm218.8 4.6c-8.9 0-17.7-1-26.2-3.1-8.5-2-15.2-4.3-19.6-6.8-2.7-1.5-4.6-3.2-5.3-4.8s-1-3.2-1-4.8v-8.7c0-3.6 1.4-5.3 3.9-5.3 1 0 2 .2 3.1.5 1 .3 2.6 1 4.3 1.7 5.8 2.6 12.1 4.6 18.7 6 6.8 1.4 13.5 2 20.3 2 10.7 0 19.1-1.9 24.9-5.6s8.9-9.2 8.9-16.2c0-4.8-1.5-8.7-4.6-11.9s-8.9-6.1-17.2-8.9l-24.7-7.7c-12.4-3.9-21.6-9.7-27.2-17.4-5.6-7.5-8.5-15.8-8.5-24.7 0-7.2 1.5-13.5 4.6-18.9s7.2-10.2 12.3-14c5.1-3.9 10.9-6.8 17.7-8.9 6.8-2 14-2.9 21.5-2.9 3.7 0 7.7.2 11.4.7 3.9.5 7.5 1.2 11.1 1.9 3.4.9 6.6 1.7 9.7 2.7s5.4 2 7.2 3.1c2.4 1.4 4.1 2.7 5.1 4.3 1 1.4 1.5 3.2 1.5 5.6v8c0 3.6-1.4 5.4-3.9 5.4-1.4 0-3.6-.7-6.5-2q-14.55-6.6-32.7-6.6c-9.7 0-17.4 1.5-22.6 4.8s-8 8.2-8 15.2c0 4.8 1.7 8.9 5.1 12.1s9.7 6.5 18.7 9.4l24.2 7.7c12.3 3.9 21.1 9.4 26.4 16.3s7.8 15 7.8 23.8c0 7.3-1.5 14-4.4 19.8-3.1 5.8-7.2 10.9-12.4 15-5.3 4.3-11.6 7.3-18.9 9.5-8 2.5-16 3.7-24.7 3.7\"/><path d=\"M462.9 345.7c-56 41.4-137.4 63.3-207.4 63.3-98.1 0-186.5-36.3-253.2-96.6-5.3-4.8-.5-11.2 5.8-7.5 72.2 41.9 161.3 67.3 253.4 67.3 62.2 0 130.4-12.9 193.3-39.5 9.3-4.2 17.3 6.2 8.1 13m23.3-26.5c-7.2-9.2-47.3-4.4-65.6-2.2-5.4.7-6.3-4.1-1.4-7.7 32-22.5 84.6-16 90.8-8.5 6.1 7.7-1.7 60.3-31.7 85.5-4.6 3.9-9 1.9-7-3.2 6.9-16.9 22.1-54.9 14.9-63.9\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#f90\"/></svg>",
-    "selfhst-opnsense": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 160.2V400H400V112H112V0h240.4zM112 112H0v240.4L160.2 512H400V400H112z\" style=\"fill:#de3c07\"/></svg>",
+    "mdi-server-security": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server-security\" viewBox=\"0 0 24 24\"><path d=\"M3,1H19A1,1 0 0,1 20,2V6A1,1 0 0,1 19,7H3A1,1 0 0,1 2,6V2A1,1 0 0,1 3,1M3,9H19A1,1 0 0,1 20,10V10.67L17.5,9.56L11,12.44V15H3A1,1 0 0,1 2,14V10A1,1 0 0,1 3,9M3,17H11C11.06,19.25 12,21.4 13.46,23H3A1,1 0 0,1 2,22V18A1,1 0 0,1 3,17M8,5H9V3H8V5M8,13H9V11H8V13M8,21H9V19H8V21M4,3V5H6V3H4M4,11V13H6V11H4M4,19V21H6V19H4M17.5,12L22,14V17C22,19.78 20.08,22.37 17.5,23C14.92,22.37 13,19.78 13,17V14L17.5,12M17.5,13.94L15,15.06V17.72C15,19.26 16.07,20.7 17.5,21.06V13.94Z\" /></svg>",
+    "selfhst-opnsense-v1": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M503.1 465.4v2.1c-6 25.5-28.4 44.5-55 44.5H7.3v-46.6h38.3v7.3h403c1.1 0 2 0 2.9-.1 1.8-.1 3.6-.6 5.2-1.3 2.9-1.3 5.3-3.3 7-5.9zM63.9 0c-26.5 0-49 19-55 44.5V47H48c2.7-4.3 7.3-7.2 12.6-7.6 1-.1 2-.1 3.2-.1h402.6V47h38.3V0z\" style=\"fill:#898b8d\"/><path d=\"M466.1 157.7V197H319.5v-39.3zM45.9 315.4v39.3h146.6v-39.3zm0-157.7V197h146.6v-39.3zm273.6 157.7v39.3h146.6v-39.3z\" style=\"fill:#58595b\"/><path d=\"M83.8 78.6H428v39.3H83.8zm0 315.9H428v39.3H83.8z\" style=\"fill:#403f41\"/><linearGradient id=\"opnsense-v1_svg__a\" x1=\"-1460.617\" x2=\"-1375.11\" y1=\"1248.095\" y2=\"1248.095\" gradientTransform=\"matrix(.1853 .356 .6722 -.353 -90.66 993.802)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"m466.5 78.6 38.2-20.5.1-39.5-38.3 20.7\" style=\"fill:url(#opnsense-v1_svg__a)\"/><linearGradient id=\"opnsense-v1_svg__b\" x1=\"4.634\" x2=\"50.301\" y1=\"462.6\" y2=\"462.6\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 64.5v-8.9c0-5.3 2.6-10 6.5-13l-34-18.5c-6.7 9.5-10.8 21.3-10.9 34l38.3 20.6v-14c.1-.1.1-.2.1-.2\" style=\"fill:url(#opnsense-v1_svg__b)\"/><linearGradient id=\"opnsense-v1_svg__c\" x1=\"-1587.887\" x2=\"-1498.137\" y1=\"-2208.165\" y2=\"-2208.165\" gradientTransform=\"matrix(-.1853 -.356 -.6722 .353 -1743.836 694.098)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 472.7v-38.9L7.3 454.5v39.7l39.9-21.5z\" style=\"fill:url(#opnsense-v1_svg__c)\"/><linearGradient id=\"opnsense-v1_svg__d\" x1=\"460.439\" x2=\"504.436\" y1=\"53\" y2=\"53\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M466.5 456.4c0 5.5-2.7 10.3-6.9 13.2l34.2 18.4c6.8-9.5 10.8-21.2 10.9-33.8L466.5 434v12.8\" style=\"fill:url(#opnsense-v1_svg__d)\"/><linearGradient id=\"opnsense-v1_svg__e\" x1=\"2521.902\" x2=\"2684.464\" y1=\"-2476.233\" y2=\"-2476.233\" gradientTransform=\"matrix(-1.508 -1.0166 -3.1265 -1.519 -3697.438 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 197v-.4l-72.4-38.9H45.9v.2l72.5 39.1z\" style=\"fill:url(#opnsense-v1_svg__e)\"/><linearGradient id=\"opnsense-v1_svg__f\" x1=\"-1594.953\" x2=\"-1432.391\" y1=\"278.458\" y2=\"278.458\" gradientTransform=\"matrix(1.508 -1.0166 3.1265 -1.519 1804.196 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 157.7h-74l-72.6 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__f)\"/><linearGradient id=\"opnsense-v1_svg__g\" x1=\"-4327.142\" x2=\"-4164.581\" y1=\"1572.387\" y2=\"1572.387\" gradientTransform=\"matrix(1.508 1.0166 3.1265 1.519 1863.938 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 354.7v-.4l-72.4-38.9h-74.2v.2l72.6 39.1z\" style=\"fill:url(#opnsense-v1_svg__g)\"/><linearGradient id=\"opnsense-v1_svg__h\" x1=\"-413.668\" x2=\"-246.99\" y1=\"-1046.618\" y2=\"-1046.618\" gradientTransform=\"matrix(-1.508 1.0166 -3.1265 1.519 -3638.692 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 315.4h-74.1l-72.5 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__h)\"/><linearGradient id=\"opnsense-v1_svg__i\" x1=\"74.725\" x2=\"261.062\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(.9914 0 0 -1 -66.782 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 157.7V197L7.3 97.4V58.1z\" style=\"fill:url(#opnsense-v1_svg__i)\"/><linearGradient id=\"opnsense-v1_svg__j\" x1=\"-2461.056\" x2=\"-2274.718\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(-.9914 0 0 -1 -1935.19 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 157.7V197l185.5-99.6V58.1z\" style=\"fill:url(#opnsense-v1_svg__j)\"/><linearGradient id=\"opnsense-v1_svg__k\" x1=\"-2291.845\" x2=\"-2105.508\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(-.9914 0 0 1 -1767.435 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 355.2v-39.8L504.7 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__k)\"/><linearGradient id=\"opnsense-v1_svg__l\" x1=\"-94.103\" x2=\"91.934\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(.9914 0 0 1 100.993 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 355.2v-39.8L7.3 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__l)\"/><path d=\"m319.2 276.1 108.9 58.5v-39.7l-35.3-18.8h111.9v-39.8H392.8l35.3-18.8v-39.3l-108.9 58.1zM83.8 334.6l109-58.5v-39.8l-109-58.1v39.3l35.7 18.8H7.3v39.8h111.9l-35.3 18.8v39.7z\" style=\"fill:#e24525\"/></svg>",
     "selfhst-portainer": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M462.2 512H49.8C22.3 512 0 489.7 0 462.2V49.8C0 22.3 22.3 0 49.8 0h412.4C489.7 0 512 22.3 512 49.8v412.4c0 27.5-22.3 49.8-49.8 49.8\" style=\"fill:#2e2f33\"/><path d=\"M108.2 63.9h140.9c97.2 0 154.6 30.4 154.6 129.5v3.4c0 99.4-57.2 129.5-154.5 129.5h-30.7V447H108.2zm134.5 177.8c30.1 0 46-11.2 46-44.6v-3.9c0-33.2-15.8-44.6-46-44.6h-24.2v93.1zM313 358h90.3v90.1H313z\" style=\"fill:#f7f6f3\"/></svg>",
-    "selfhst-jotty": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M438.6 0H73.4C33.1 0 .3 32.8.3 73.1v365.7c0 40.3 32.8 73.1 73.1 73.1h365.3c40.3 0 73.1-32.8 73.1-73.1V73.1C511.7 32.8 478.9 0 438.6 0\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#8b3bd0\"/><path d=\"M356.8 53.6v261.3c0 39.3-13.9 72.8-41.8 100.7s-61.4 41.8-100.7 41.8l-23.8-95h23.8c13 0 24.1-4.6 33.2-13.8 9.5-9.5 14.3-20.7 14.3-33.7V148.6H157.3v-95z\" style=\"fill:#fff\"/></svg>",
     "selfhst-authportal": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M0 0h512v512H0z\" style=\"fill:#111827\"/><path d=\"M170.7 85.3 369.8 256 170.7 426.7z\" style=\"fill:#f59e0b\"/></svg>",
     "selfhst-docker": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M501.4 212.3c-11.5-8-38-11-58.6-7-2.4-20-13.5-37.5-32.7-53l-11-8-7.7 11.5c-9.6 15-14.4 36-13 56 .5 7 2.9 19.5 10.1 30.5-6.7 4-20.7 9-38.9 9H2.3l-1 4c-3.4 20-3.4 82.5 36 130.5 29.8 36.5 74 55 132.1 55 125.9 0 219.1-60.5 262.8-170 17.3.5 54.3 0 73-37.5.5-1 1.4-3 4.8-10.5l1.9-4zM280 71.3h-52.8v50H280zm0 60h-52.8v50H280zm-62.5 0h-52.8v50h52.8zm-62.4 0h-52.8v50h52.8zm-62.5 60H39.8v50h52.8zm62.5 0h-52.8v50h52.8zm62.4 0h-52.8v50h52.8zm62.5 0h-52.8v50H280zm62.4 0h-52.8v50h52.8z\" style=\"fill:#2396ed\"/></svg>",
-    "selfhst-opnsense-v1": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M503.1 465.4v2.1c-6 25.5-28.4 44.5-55 44.5H7.3v-46.6h38.3v7.3h403c1.1 0 2 0 2.9-.1 1.8-.1 3.6-.6 5.2-1.3 2.9-1.3 5.3-3.3 7-5.9zM63.9 0c-26.5 0-49 19-55 44.5V47H48c2.7-4.3 7.3-7.2 12.6-7.6 1-.1 2-.1 3.2-.1h402.6V47h38.3V0z\" style=\"fill:#898b8d\"/><path d=\"M466.1 157.7V197H319.5v-39.3zM45.9 315.4v39.3h146.6v-39.3zm0-157.7V197h146.6v-39.3zm273.6 157.7v39.3h146.6v-39.3z\" style=\"fill:#58595b\"/><path d=\"M83.8 78.6H428v39.3H83.8zm0 315.9H428v39.3H83.8z\" style=\"fill:#403f41\"/><linearGradient id=\"opnsense-v1_svg__a\" x1=\"-1460.617\" x2=\"-1375.11\" y1=\"1248.095\" y2=\"1248.095\" gradientTransform=\"matrix(.1853 .356 .6722 -.353 -90.66 993.802)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"m466.5 78.6 38.2-20.5.1-39.5-38.3 20.7\" style=\"fill:url(#opnsense-v1_svg__a)\"/><linearGradient id=\"opnsense-v1_svg__b\" x1=\"4.634\" x2=\"50.301\" y1=\"462.6\" y2=\"462.6\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 64.5v-8.9c0-5.3 2.6-10 6.5-13l-34-18.5c-6.7 9.5-10.8 21.3-10.9 34l38.3 20.6v-14c.1-.1.1-.2.1-.2\" style=\"fill:url(#opnsense-v1_svg__b)\"/><linearGradient id=\"opnsense-v1_svg__c\" x1=\"-1587.887\" x2=\"-1498.137\" y1=\"-2208.165\" y2=\"-2208.165\" gradientTransform=\"matrix(-.1853 -.356 -.6722 .353 -1743.836 694.098)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 472.7v-38.9L7.3 454.5v39.7l39.9-21.5z\" style=\"fill:url(#opnsense-v1_svg__c)\"/><linearGradient id=\"opnsense-v1_svg__d\" x1=\"460.439\" x2=\"504.436\" y1=\"53\" y2=\"53\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M466.5 456.4c0 5.5-2.7 10.3-6.9 13.2l34.2 18.4c6.8-9.5 10.8-21.2 10.9-33.8L466.5 434v12.8\" style=\"fill:url(#opnsense-v1_svg__d)\"/><linearGradient id=\"opnsense-v1_svg__e\" x1=\"2521.902\" x2=\"2684.464\" y1=\"-2476.233\" y2=\"-2476.233\" gradientTransform=\"matrix(-1.508 -1.0166 -3.1265 -1.519 -3697.438 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 197v-.4l-72.4-38.9H45.9v.2l72.5 39.1z\" style=\"fill:url(#opnsense-v1_svg__e)\"/><linearGradient id=\"opnsense-v1_svg__f\" x1=\"-1594.953\" x2=\"-1432.391\" y1=\"278.458\" y2=\"278.458\" gradientTransform=\"matrix(1.508 -1.0166 3.1265 -1.519 1804.196 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 157.7h-74l-72.6 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__f)\"/><linearGradient id=\"opnsense-v1_svg__g\" x1=\"-4327.142\" x2=\"-4164.581\" y1=\"1572.387\" y2=\"1572.387\" gradientTransform=\"matrix(1.508 1.0166 3.1265 1.519 1863.938 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 354.7v-.4l-72.4-38.9h-74.2v.2l72.6 39.1z\" style=\"fill:url(#opnsense-v1_svg__g)\"/><linearGradient id=\"opnsense-v1_svg__h\" x1=\"-413.668\" x2=\"-246.99\" y1=\"-1046.618\" y2=\"-1046.618\" gradientTransform=\"matrix(-1.508 1.0166 -3.1265 1.519 -3638.692 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 315.4h-74.1l-72.5 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__h)\"/><linearGradient id=\"opnsense-v1_svg__i\" x1=\"74.725\" x2=\"261.062\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(.9914 0 0 -1 -66.782 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 157.7V197L7.3 97.4V58.1z\" style=\"fill:url(#opnsense-v1_svg__i)\"/><linearGradient id=\"opnsense-v1_svg__j\" x1=\"-2461.056\" x2=\"-2274.718\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(-.9914 0 0 -1 -1935.19 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 157.7V197l185.5-99.6V58.1z\" style=\"fill:url(#opnsense-v1_svg__j)\"/><linearGradient id=\"opnsense-v1_svg__k\" x1=\"-2291.845\" x2=\"-2105.508\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(-.9914 0 0 1 -1767.435 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 355.2v-39.8L504.7 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__k)\"/><linearGradient id=\"opnsense-v1_svg__l\" x1=\"-94.103\" x2=\"91.934\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(.9914 0 0 1 100.993 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 355.2v-39.8L7.3 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__l)\"/><path d=\"m319.2 276.1 108.9 58.5v-39.7l-35.3-18.8h111.9v-39.8H392.8l35.3-18.8v-39.3l-108.9 58.1zM83.8 334.6l109-58.5v-39.8l-109-58.1v39.3l35.7 18.8H7.3v39.8h111.9l-35.3 18.8v39.7z\" style=\"fill:#e24525\"/></svg>",
-    "mdi-server-security": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server-security\" viewBox=\"0 0 24 24\"><path d=\"M3,1H19A1,1 0 0,1 20,2V6A1,1 0 0,1 19,7H3A1,1 0 0,1 2,6V2A1,1 0 0,1 3,1M3,9H19A1,1 0 0,1 20,10V10.67L17.5,9.56L11,12.44V15H3A1,1 0 0,1 2,14V10A1,1 0 0,1 3,9M3,17H11C11.06,19.25 12,21.4 13.46,23H3A1,1 0 0,1 2,22V18A1,1 0 0,1 3,17M8,5H9V3H8V5M8,13H9V11H8V13M8,21H9V19H8V21M4,3V5H6V3H4M4,11V13H6V11H4M4,19V21H6V19H4M17.5,12L22,14V17C22,19.78 20.08,22.37 17.5,23C14.92,22.37 13,19.78 13,17V14L17.5,12M17.5,13.94L15,15.06V17.72C15,19.26 16.07,20.7 17.5,21.06V13.94Z\" /></svg>"
+    "selfhst-jotty": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M438.6 0H73.4C33.1 0 .3 32.8.3 73.1v365.7c0 40.3 32.8 73.1 73.1 73.1h365.3c40.3 0 73.1-32.8 73.1-73.1V73.1C511.7 32.8 478.9 0 438.6 0\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#8b3bd0\"/><path d=\"M356.8 53.6v261.3c0 39.3-13.9 72.8-41.8 100.7s-61.4 41.8-100.7 41.8l-23.8-95h23.8c13 0 24.1-4.6 33.2-13.8 9.5-9.5 14.3-20.7 14.3-33.7V148.6H157.3v-95z\" style=\"fill:#fff\"/></svg>",
+    "selfhst-opnsense": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 160.2V400H400V112H112V0h240.4zM112 112H0v240.4L160.2 512H400V400H112z\" style=\"fill:#de3c07\"/></svg>",
+    "selfhst-amazon-web-services": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M144.3 214.1c0 6.3.7 11.4 1.9 15.2 1.4 3.7 3.1 7.8 5.4 12.3.9 1.4 1.2 2.7 1.2 3.9 0 1.7-1 3.4-3.2 5.1l-10.7 7.2c-1.5 1-3.1 1.5-4.4 1.5-1.7 0-3.4-.9-5.1-2.4-2.4-2.6-4.4-5.3-6.1-8-1.7-2.9-3.4-6.1-5.3-10-13.3 15.7-30 23.5-50.1 23.5-14.3 0-25.7-4.1-34.1-12.3-8.3-8.2-12.6-19.1-12.6-32.7 0-14.5 5.1-26.2 15.5-35.1S60.8 169 78.4 169c5.8 0 11.7.5 18.1 1.4s12.8 2.2 19.6 3.7v-12.4c0-12.9-2.7-22-8-27.2-5.4-5.3-14.6-7.8-27.8-7.8-6 0-12.1.7-18.4 2.2s-12.4 3.4-18.4 5.8c-2.7 1.2-4.8 1.9-6 2.2s-2 .5-2.7.5c-2.4 0-3.6-1.7-3.6-5.3v-8.3c0-2.7.3-4.8 1.2-6s2.4-2.4 4.8-3.6c6-3.1 13.1-5.6 21.5-7.7 8.3-2.2 17.2-3.2 26.6-3.2 20.3 0 35.1 4.6 44.6 13.8 9.4 9.2 14.1 23.2 14.1 41.9v55.2zM75.2 240c5.6 0 11.4-1 17.5-3.1 6.1-2 11.6-5.8 16.2-10.9 2.7-3.2 4.8-6.8 5.8-10.9s1.7-9 1.7-14.8v-7.2c-4.9-1.2-10.2-2.2-15.7-2.9-5.4-.7-10.7-1-16-1-11.4 0-19.8 2.2-25.4 6.8S51 207.1 51 215.6c0 8 2 14 6.3 18.1 4.1 4.2 10 6.3 17.9 6.3m136.7 18.4c-3.1 0-5.1-.5-6.5-1.7-1.4-1-2.6-3.4-3.6-6.6l-40-131.6c-1-3.4-1.5-5.6-1.5-6.8 0-2.7 1.4-4.3 4.1-4.3h16.7c3.2 0 5.4.5 6.6 1.7 1.4 1 2.4 3.4 3.4 6.6l28.6 112.7 26.6-112.7c.9-3.4 1.9-5.6 3.2-6.6 1.4-1 3.7-1.7 6.8-1.7H270c3.2 0 5.4.5 6.8 1.7 1.4 1 2.6 3.4 3.2 6.6l26.9 114.1 29.5-114.1c1-3.4 2.2-5.6 3.4-6.6 1.4-1 3.6-1.7 6.6-1.7h15.8c2.7 0 4.3 1.4 4.3 4.3 0 .9-.2 1.7-.3 2.7-.2 1-.5 2.4-1.2 4.3l-41 131.6q-1.5 5.1-3.6 6.6c-1.4 1-3.6 1.7-6.5 1.7h-14.6c-3.2 0-5.4-.5-6.8-1.7s-2.6-3.4-3.2-6.8l-26.4-109.8L236.7 250c-.9 3.4-1.9 5.6-3.2 6.8-1.4 1.2-3.7 1.7-6.8 1.7zm218.8 4.6c-8.9 0-17.7-1-26.2-3.1-8.5-2-15.2-4.3-19.6-6.8-2.7-1.5-4.6-3.2-5.3-4.8s-1-3.2-1-4.8v-8.7c0-3.6 1.4-5.3 3.9-5.3 1 0 2 .2 3.1.5 1 .3 2.6 1 4.3 1.7 5.8 2.6 12.1 4.6 18.7 6 6.8 1.4 13.5 2 20.3 2 10.7 0 19.1-1.9 24.9-5.6s8.9-9.2 8.9-16.2c0-4.8-1.5-8.7-4.6-11.9s-8.9-6.1-17.2-8.9l-24.7-7.7c-12.4-3.9-21.6-9.7-27.2-17.4-5.6-7.5-8.5-15.8-8.5-24.7 0-7.2 1.5-13.5 4.6-18.9s7.2-10.2 12.3-14c5.1-3.9 10.9-6.8 17.7-8.9 6.8-2 14-2.9 21.5-2.9 3.7 0 7.7.2 11.4.7 3.9.5 7.5 1.2 11.1 1.9 3.4.9 6.6 1.7 9.7 2.7s5.4 2 7.2 3.1c2.4 1.4 4.1 2.7 5.1 4.3 1 1.4 1.5 3.2 1.5 5.6v8c0 3.6-1.4 5.4-3.9 5.4-1.4 0-3.6-.7-6.5-2q-14.55-6.6-32.7-6.6c-9.7 0-17.4 1.5-22.6 4.8s-8 8.2-8 15.2c0 4.8 1.7 8.9 5.1 12.1s9.7 6.5 18.7 9.4l24.2 7.7c12.3 3.9 21.1 9.4 26.4 16.3s7.8 15 7.8 23.8c0 7.3-1.5 14-4.4 19.8-3.1 5.8-7.2 10.9-12.4 15-5.3 4.3-11.6 7.3-18.9 9.5-8 2.5-16 3.7-24.7 3.7\"/><path d=\"M462.9 345.7c-56 41.4-137.4 63.3-207.4 63.3-98.1 0-186.5-36.3-253.2-96.6-5.3-4.8-.5-11.2 5.8-7.5 72.2 41.9 161.3 67.3 253.4 67.3 62.2 0 130.4-12.9 193.3-39.5 9.3-4.2 17.3 6.2 8.1 13m23.3-26.5c-7.2-9.2-47.3-4.4-65.6-2.2-5.4.7-6.3-4.1-1.4-7.7 32-22.5 84.6-16 90.8-8.5 6.1 7.7-1.7 60.3-31.7 85.5-4.6 3.9-9 1.9-7-3.2 6.9-16.9 22.1-54.9 14.9-63.9\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#f90\"/></svg>"
   },
   "page": {
     "title": "The One File",
@@ -9918,6 +10101,90 @@ header {
   "encryptedSections": {},
   "auditLog": [
     {
+      "timestamp": 1767049642232,
+      "type": "tab",
+      "description": "Switched to tab: Homelab 2",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1767049634689,
+      "type": "save",
+      "description": "File saved: the-one-file-corporate.html",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1767049624645,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (107 nodes, 65 connections)",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459550267,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459544255,
+      "type": "export",
+      "description": "Exported Markdown: the-one-file-corporate.md",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459540242,
+      "type": "export",
+      "description": "Exported CSV: the-one-file-corporate.csv",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459536815,
+      "type": "export",
+      "description": "Exported JSON: the-one-file-corporate.json",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459534490,
+      "type": "tab",
+      "description": "Switched to tab: Corporate Site B",
+      "details": {},
+      "tab": "Corporate Site B"
+    },
+    {
+      "timestamp": 1766459525616,
+      "type": "export",
+      "description": "Exported CSV: the-one-file.csv",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459518367,
+      "type": "export",
+      "description": "Exported Markdown: the-one-file.md",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459511746,
+      "type": "export",
+      "description": "Exported JSON: the-one-file.json",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
+      "timestamp": 1766459504374,
+      "type": "save",
+      "description": "File saved: the-one-file.html",
+      "details": {},
+      "tab": "Homelab 2"
+    },
+    {
       "timestamp": 1766459500911,
       "type": "save",
       "description": "File saved: the-one-file.html",
@@ -12194,6 +12461,7 @@ header {
        if (!data || !data.ping || !data.ping.enabled) return;
        data.ping.status = 'checking';
        data.ping.lastCheck = new Date().toISOString();
+       data.ping.responseTime = null;
        updatePingIndicator(nodeId);
        if (currentNodeId === nodeId) {
         updatePingStatusDisplay(nodeId);
@@ -12214,19 +12482,29 @@ header {
         }
         return;
        }
+       const timeout = data.ping.timeout || 3000;
+       const startTime = performance.now();
        try {
-        const controller = new AbortController();
-        const timeout = data.ping.timeout || 3000;
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        const response = await fetch(url, {
-         method: 'HEAD',
-         mode: 'no-cors',
-         signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+        const result = await Promise.race([
+         new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve('online');
+          img.onerror = () => resolve('check-fetch');
+          img.src = `${url}/favicon.ico?_=${Date.now()}`;
+         }),
+         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+        ]);
+        if (result === 'check-fetch') {
+         await Promise.race([
+          fetch(url, { method: 'HEAD', mode: 'no-cors' }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+         ]);
+        }
         data.ping.status = 'online';
+        data.ping.responseTime = Math.round(performance.now() - startTime);
        } catch (error) {
         data.ping.status = 'offline';
+        data.ping.responseTime = null;
        }
        data.ping.lastCheck = new Date().toISOString();
        updatePingIndicator(nodeId);
@@ -12278,13 +12556,16 @@ header {
        if (data.ping.status) indicator.classList.add(data.ping.status);
       }
       }
-      function checkAllNodesStatus() {
-       Object.keys(NODE_DATA).forEach(nodeId => {
+      async function checkAllNodesStatus() {
+       const nodesToCheck = Object.keys(NODE_DATA).filter(nodeId => {
         const data = NODE_DATA[nodeId];
-        if (data && data.ping && data.ping.enabled) {
-         checkNodeStatus(nodeId);
-        }
+        return data && data.ping && data.ping.enabled;
        });
+       const batchSize = 5;
+       for (let i = 0; i < nodesToCheck.length; i += batchSize) {
+        const batch = nodesToCheck.slice(i, i + batchSize);
+        await Promise.all(batch.map(nodeId => checkNodeStatus(nodeId)));
+       }
       }
       function startAutoPing() {
        stopAutoPing();
@@ -12959,6 +13240,8 @@ header {
          rectData: RECT_DATA,
          textData: TEXT_DATA,
          edgeLegend: EDGE_LEGEND,
+         zoneLegend: ZONE_LEGEND,
+         zonePresets: ZONE_PRESETS,
          nodePositions: savedPositions,
          nodeSizes: savedSizes,
          nodeStyles: savedStyles,
@@ -13040,6 +13323,9 @@ header {
             RECT_DATA = saved.rectData || { list: [] };
             TEXT_DATA = saved.textData || { list: [] };
             EDGE_LEGEND = saved.edgeLegend || {};
+            ZONE_LEGEND = saved.zoneLegend || {};
+            ZONE_PRESETS = saved.zonePresets || {};
+            loadCustomPresets();
             savedPositions = saved.nodePositions || {};
             savedSizes = saved.nodeSizes || {};
             savedStyles = saved.nodeStyles || {};
@@ -13172,6 +13458,344 @@ header {
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
 	  const FOV_ANIMATION_START = Date.now();
+	  let ZONES_VISIBLE = true;
+const ANIM_SETTINGS = {
+  masterAnim: true,
+  masterZones: true,
+  animTypes: { sweep: true, pulse: true, rings: true, spin: true, connections: true },
+  animCategories: { camera: true, doorbell: true, motion: true, smoke: true, wifi: true, sensor: true, sprinkler: true, connections: true },
+  zoneCategories: { camera: true, doorbell: true, motion: true, smoke: true, wifi: true, sensor: true, sprinkler: true }
+};
+function getShapeCategory(shape) {
+  const map = {
+    "camera": "camera", "cctv": "camera", "ptz-cam": "camera",
+    "doorbell": "doorbell",
+    "motion-sensor": "motion", "motion-detect": "motion",
+    "smoke-detector": "smoke", "smoke-alarm": "smoke",
+    "access-point": "wifi", "wifi": "wifi", "router": "wifi", "wifi-strong": "wifi", "wifi-weak": "wifi",
+    "sensor": "sensor", "iot": "sensor",
+    "sprinkler": "sprinkler", "sprinkler-arc": "sprinkler"
+  };
+  return map[shape] || null;
+}
+function isAnimationAllowed(shape, animType) {
+  if (!ANIM_SETTINGS.masterAnim) return false;
+  if (!ANIM_SETTINGS.animTypes[animType]) return false;
+  const cat = getShapeCategory(shape);
+  if (cat && !ANIM_SETTINGS.animCategories[cat]) return false;
+  return true;
+}
+function isZoneAllowed(shape) {
+  if (!ANIM_SETTINGS.masterZones) return false;
+  const cat = getShapeCategory(shape);
+  if (cat && !ANIM_SETTINGS.zoneCategories[cat]) return false;
+  return true;
+}
+function applyAnimZoneSettings() {
+  document.querySelectorAll(".fov-group").forEach(g => {
+    const nodeEl = g.closest("g[data-node-id]");
+    if (!nodeEl) return;
+    const nodeId = nodeEl.dataset.nodeId;
+    const node = NODE_DATA[nodeId];
+    if (!node) return;
+    const cat = getShapeCategory(node.shape);
+    const zoneVisible = ANIM_SETTINGS.masterZones && (!cat || ANIM_SETTINGS.zoneCategories[cat]);
+    g.style.display = zoneVisible ? "" : "none";
+    if (zoneVisible && node.fovAnimate) {
+      const animType = node.fovAnimationType || "sweep";
+      const animAllowed = ANIM_SETTINGS.masterAnim && ANIM_SETTINGS.animTypes[animType] && (!cat || ANIM_SETTINGS.animCategories[cat]);
+      g.style.animationPlayState = animAllowed ? "running" : "paused";
+      g.querySelectorAll("circle").forEach(c => c.style.animationPlayState = animAllowed ? "running" : "paused");
+    }
+  });
+  const connAnimAllowed = ANIM_SETTINGS.masterAnim && ANIM_SETTINGS.animTypes.connections && ANIM_SETTINGS.animCategories.connections;
+  document.querySelectorAll(".edge-arrow-forward, .edge-arrow-backward").forEach(a => {
+    a.style.animationPlayState = connAnimAllowed ? "running" : "paused";
+  });
+}
+let ZONE_LEGEND = {};
+let ZONE_PRESETS = {};
+let copiedZoneStyle = null;
+
+function hasCoverageZone(shape) {
+  const supportedShapes = [
+    "camera", "cctv", "doorbell",
+    "motion-sensor", "smoke-detector",
+    "access-point", "wifi", "router",
+    "sensor", "iot", "sprinkler"
+  ];
+  return supportedShapes.includes(shape);
+}
+
+function getCoverageDefaults(shape) {
+  const defaults = {
+    "camera": { angle: 90, distance: 150, animationType: "sweep" },
+    "cctv": { angle: 90, distance: 150, animationType: "sweep" },
+    "doorbell": { angle: 120, distance: 100, animationType: "sweep" },
+    "motion-sensor": { angle: 120, distance: 100, animationType: "pulse" },
+    "smoke-detector": { angle: 360, distance: 80, animationType: "pulse" },
+    "access-point": { angle: 360, distance: 200, animationType: "rings" },
+    "wifi": { angle: 360, distance: 200, animationType: "rings" },
+    "router": { angle: 360, distance: 200, animationType: "rings" },
+    "sensor": { angle: 90, distance: 100, animationType: "pulse" },
+    "iot": { angle: 90, distance: 100, animationType: "pulse" },
+    "sprinkler": { angle: 90, distance: 120, animationType: "spin" }
+  };
+  return defaults[shape] || { angle: 90, distance: 150, animationType: "sweep" };
+}
+
+function toggleAllZones() {
+  ANIM_SETTINGS.masterZones = !ANIM_SETTINGS.masterZones;
+  const masterCheckbox = document.getElementById("zone-master");
+  if (masterCheckbox) masterCheckbox.checked = ANIM_SETTINGS.masterZones;
+  applyAnimZoneSettings();
+}
+
+function copyZoneStyle(nodeId) {
+  const node = NODE_DATA[nodeId];
+  if (!node) return false;
+  if (!hasCoverageZone(node.shape)) {
+    alert("This node type doesn't support coverage zones");
+    return false;
+  }
+  copiedZoneStyle = {
+    fovEnabled: node.fovEnabled,
+    fovAngle: node.fovAngle,
+    fovDistance: node.fovDistance,
+    fovInnerRadius: node.fovInnerRadius,
+    fovRotation: node.fovRotation,
+    fovColor: node.fovColor,
+    fovOpacity: node.fovOpacity,
+    fovGradient: node.fovGradient,
+    fovBorderColor: node.fovBorderColor,
+    fovBorderWidth: node.fovBorderWidth,
+    fovBorderStyle: node.fovBorderStyle,
+    fovBorderOpacity: node.fovBorderOpacity,
+    fovLabel: node.fovLabel,
+    fovLabelPosition: node.fovLabelPosition,
+    fovLabelSize: node.fovLabelSize,
+    fovLabelColor: node.fovLabelColor,
+    fovLabelBold: node.fovLabelBold,
+    fovLabelBg: node.fovLabelBg,
+    fovLabelBgColor: node.fovLabelBgColor,
+    fovLabelOffsetX: node.fovLabelOffsetX,
+    fovLabelOffsetY: node.fovLabelOffsetY,
+    fovAnimate: node.fovAnimate,
+    fovAnimationType: node.fovAnimationType,
+    fovSweep: node.fovSweep,
+    fovSpeed: node.fovSpeed
+  };
+  return true;
+}
+
+function pasteZoneStyle(nodeId) {
+  if (!copiedZoneStyle) {
+    alert("No zone style copied. Copy a zone style first.");
+    return false;
+  }
+  const node = NODE_DATA[nodeId];
+  if (!node) return false;
+  if (!hasCoverageZone(node.shape)) {
+    alert("This node type doesn't support coverage zones");
+    return false;
+  }
+  pushUndo("paste zone style");
+  Object.assign(node, copiedZoneStyle);
+  updateFovCone(nodeId);
+  return true;
+}
+
+function applyZonePreset(preset) {
+  if (!currentNodeId) return;
+  const presets = {
+    "security-cam": { fovEnabled: true, fovAngle: 90, fovDistance: 150, fovColor: "#f59e0b", fovOpacity: 20, fovAnimationType: "sweep", fovAnimate: false },
+    "ptz-cam": { fovEnabled: true, fovAngle: 60, fovDistance: 200, fovColor: "#f59e0b", fovOpacity: 25, fovAnimationType: "sweep", fovAnimate: true, fovSweep: 180, fovSpeed: 8 },
+    "motion-detect": { fovEnabled: true, fovAngle: 120, fovDistance: 100, fovColor: "#10b981", fovOpacity: 15, fovAnimationType: "pulse", fovAnimate: true, fovSpeed: 3 },
+    "wifi-strong": { fovEnabled: true, fovAngle: 360, fovDistance: 150, fovColor: "#3b82f6", fovOpacity: 10, fovAnimationType: "rings", fovAnimate: true, fovSpeed: 4 },
+    "wifi-extended": { fovEnabled: true, fovAngle: 360, fovDistance: 250, fovColor: "#3b82f6", fovOpacity: 8, fovGradient: true, fovAnimationType: "rings", fovAnimate: true, fovSpeed: 5 },
+    "smoke-alarm": { fovEnabled: true, fovAngle: 360, fovDistance: 80, fovColor: "#ef4444", fovOpacity: 15, fovAnimationType: "pulse", fovAnimate: false },
+    "sprinkler-arc": { fovEnabled: true, fovAngle: 90, fovDistance: 120, fovColor: "#06b6d4", fovOpacity: 20, fovAnimationType: "spin", fovAnimate: true, fovSpeed: 6 }
+  };
+  const allPresets = { ...presets, ...ZONE_PRESETS };
+  const settings = allPresets[preset];
+  if (!settings) return;
+  pushUndo("apply zone preset");
+  Object.assign(NODE_DATA[currentNodeId], settings);
+  updateFovCone(currentNodeId);
+  claimTheImmortal(currentNodeId);
+}
+
+function saveCustomZonePreset() {
+  if (!currentNodeId) return;
+  const node = NODE_DATA[currentNodeId];
+  if (!node.fovEnabled) {
+    alert("Enable the zone first before saving as preset");
+    return;
+  }
+  const name = prompt("Enter preset name:");
+  if (!name || !name.trim()) return;
+  const presetId = "custom-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  ZONE_PRESETS[presetId] = {
+    fovEnabled: true,
+    fovAngle: node.fovAngle,
+    fovDistance: node.fovDistance,
+    fovInnerRadius: node.fovInnerRadius,
+    fovColor: node.fovColor,
+    fovOpacity: node.fovOpacity,
+    fovGradient: node.fovGradient,
+    fovBorderColor: node.fovBorderColor,
+    fovBorderWidth: node.fovBorderWidth,
+    fovBorderStyle: node.fovBorderStyle,
+    fovBorderOpacity: node.fovBorderOpacity,
+    fovAnimationType: node.fovAnimationType,
+    fovAnimate: node.fovAnimate,
+    fovSweep: node.fovSweep,
+    fovSpeed: node.fovSpeed
+  };
+  const select = document.getElementById("fov-preset");
+  if (select && !select.querySelector(`option[value="${presetId}"]`)) {
+    const opt = document.createElement("option");
+    opt.value = presetId;
+    opt.textContent = name.trim() + " ★";
+    select.appendChild(opt);
+  }
+  alert("Preset saved: " + name.trim());
+}
+
+function bulkCopyZoneStyle() {
+  if (selectedNodes.size === 0) {
+    alert("Select at least one node first");
+    return;
+  }
+  const firstId = [...selectedNodes][0];
+  if (copyZoneStyle(firstId)) {
+    alert("Zone style copied from first selected node");
+  }
+}
+
+function bulkPasteZoneStyle() {
+  if (selectedNodes.size === 0) {
+    alert("Select nodes first");
+    return;
+  }
+  if (!copiedZoneStyle) {
+    alert("Copy a zone style first");
+    return;
+  }
+  pushUndo("bulk paste zone style");
+  let count = 0;
+  selectedNodes.forEach(id => {
+    const node = NODE_DATA[id];
+    if (node && hasCoverageZone(node.shape)) {
+      Object.assign(node, copiedZoneStyle);
+      updateFovCone(id);
+      count++;
+    }
+  });
+  forgeTheTopology();
+  alert(`Zone style pasted to ${count} node(s)`);
+}
+
+function bulkToggleZones() {
+  if (selectedNodes.size === 0) {
+    alert("Select nodes first");
+    return;
+  }
+  pushUndo("bulk toggle zones");
+  const firstNode = NODE_DATA[[...selectedNodes][0]];
+  const newState = !(firstNode?.fovEnabled);
+  let count = 0;
+  selectedNodes.forEach(id => {
+    const node = NODE_DATA[id];
+    if (node && hasCoverageZone(node.shape)) {
+      node.fovEnabled = newState;
+      updateFovCone(id);
+      count++;
+    }
+  });
+  forgeTheTopology();
+  alert(`Toggled zones on ${count} node(s) to ${newState ? 'ON' : 'OFF'}`);
+}
+
+function loadCustomPresets() {
+  const select = document.getElementById("fov-preset");
+  if (!select) return;
+  Object.keys(ZONE_PRESETS).forEach(id => {
+    if (!select.querySelector(`option[value="${id}"]`)) {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id.replace(/-/g, " ").replace("custom ", "") + " ★";
+      select.appendChild(opt);
+    }
+  });
+}
+
+function updateZoneLegend() {
+  const container = document.getElementById("edge-legend");
+  if (!container) return;
+  container.querySelectorAll(".zone-legend-item").forEach(el => el.remove());
+  container.querySelectorAll(".zone-legend-title").forEach(el => el.remove());
+  const zoneColors = new Set();
+  Object.values(NODE_DATA).forEach(node => {
+    if (hasCoverageZone(node.shape) && node.fovEnabled && node.fovColor) {
+      zoneColors.add(node.fovColor);
+    }
+  });
+  
+  if (zoneColors.size === 0) return;
+  const zoneTitle = document.createElement("div");
+  zoneTitle.className = "legend-title zone-legend-title";
+  zoneTitle.textContent = "Zone Legend";
+  zoneTitle.style.marginTop = "12px";
+  zoneTitle.style.paddingTop = "8px";
+  zoneTitle.style.borderTop = "1px solid var(--edge-main)";
+  container.appendChild(zoneTitle);
+  zoneColors.forEach(color => {
+    if (!ZONE_LEGEND[color]) {
+      ZONE_LEGEND[color] = "Coverage Zone";
+    }
+    const item = document.createElement("div");
+    item.className = "legend-item zone-legend-item";
+    item.addEventListener("mousedown", (e) => e.stopPropagation());
+    item.addEventListener("click", (e) => e.stopPropagation());
+    
+    const swatch = document.createElement("span");
+    swatch.className = "legend-swatch";
+    swatch.style.backgroundColor = color;
+    swatch.style.opacity = "0.5";
+    swatch.style.cursor = "pointer";
+    swatch.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const nodeWithColor = Object.entries(NODE_DATA).find(([id, n]) => 
+        hasCoverageZone(n.shape) && n.fovEnabled && n.fovColor === color
+      );
+      if (nodeWithColor) {
+        claimTheImmortal(nodeWithColor[0]);
+      }
+    });
+    
+    const label = document.createElement("span");
+    label.className = "legend-label";
+    label.textContent = ZONE_LEGEND[color];
+    label.contentEditable = true;
+    label.addEventListener("focus", () => label.classList.add("editing"));
+    label.addEventListener("blur", () => {
+      label.classList.remove("editing");
+      ZONE_LEGEND[color] = label.textContent.trim() || "Coverage Zone";
+    });
+    label.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        label.blur();
+      }
+    });
+    
+    item.append(swatch, label);
+    container.appendChild(item);
+  });
+  
+  updateLegendVisibility();
+}
 	  function isViewOnly() {
        return PAGE_STATE.viewOnly === true;
       }
@@ -13207,17 +13831,42 @@ header {
           document.getElementById("node-ip").textContent = data.ip;
           const fovSection = document.getElementById("fov-section");
           if (fovSection) {
-            if (data.shape === "camera" || data.shape === "cctv") {
+            if (hasCoverageZone(data.shape)) {
               fovSection.style.display = "block";
+              const defaults = getCoverageDefaults(data.shape);
               document.getElementById("fov-enabled").checked = data.fovEnabled || false;
-              document.getElementById("fov-angle").value = data.fovAngle || 90;
-              document.getElementById("fov-angle-value").textContent = (data.fovAngle || 90) + "°";
-              document.getElementById("fov-distance").value = data.fovDistance || 150;
-              document.getElementById("fov-distance-value").textContent = data.fovDistance || 150;
+              document.getElementById("fov-angle").value = data.fovAngle || defaults.angle;
+              document.getElementById("fov-angle-value").textContent = (data.fovAngle || defaults.angle) + "°";
+              document.getElementById("fov-distance").value = data.fovDistance || defaults.distance;
+              document.getElementById("fov-distance-value").textContent = data.fovDistance || defaults.distance;
+              document.getElementById("fov-inner-radius").value = data.fovInnerRadius || 0;
+              document.getElementById("fov-inner-radius-value").textContent = data.fovInnerRadius || 0;
               document.getElementById("fov-rotation").value = data.fovRotation || 0;
               document.getElementById("fov-rotation-value").textContent = (data.fovRotation || 0) + "°";
               document.getElementById("fov-color").value = data.fovColor || "#f59e0b";
+              document.getElementById("fov-opacity").value = data.fovOpacity || 20;
+              document.getElementById("fov-opacity-value").textContent = (data.fovOpacity || 20) + "%";
+              document.getElementById("fov-gradient").checked = data.fovGradient || false;
+              document.getElementById("fov-border-color").value = data.fovBorderColor || "#f59e0b";
+              document.getElementById("fov-border-width").value = data.fovBorderWidth !== undefined ? data.fovBorderWidth : 2;
+              document.getElementById("fov-border-width-value").textContent = data.fovBorderWidth !== undefined ? data.fovBorderWidth : 2;
+              document.getElementById("fov-border-style").value = data.fovBorderStyle || "solid";
+              document.getElementById("fov-border-opacity").value = data.fovBorderOpacity !== undefined ? data.fovBorderOpacity : 100;
+              document.getElementById("fov-border-opacity-value").textContent = (data.fovBorderOpacity !== undefined ? data.fovBorderOpacity : 100) + "%";
+              document.getElementById("fov-label").value = data.fovLabel || "";
+              document.getElementById("fov-label-position").value = data.fovLabelPosition || "center";
+              document.getElementById("fov-label-size").value = data.fovLabelSize || 14;
+              document.getElementById("fov-label-size-value").textContent = (data.fovLabelSize || 14) + "px";
+              document.getElementById("fov-label-color").value = data.fovLabelColor || "#ffffff";
+              document.getElementById("fov-label-bold").checked = data.fovLabelBold || false;
+              document.getElementById("fov-label-bg").checked = data.fovLabelBg || false;
+              document.getElementById("fov-label-bg-color").value = data.fovLabelBgColor || "#000000";
+              document.getElementById("fov-label-offset-x").value = data.fovLabelOffsetX || 0;
+              document.getElementById("fov-label-offset-x-value").textContent = data.fovLabelOffsetX || 0;
+              document.getElementById("fov-label-offset-y").value = data.fovLabelOffsetY || 0;
+              document.getElementById("fov-label-offset-y-value").textContent = data.fovLabelOffsetY || 0;
               document.getElementById("fov-animate").checked = data.fovAnimate || false;
+              document.getElementById("fov-animation-type").value = data.fovAnimationType || defaults.animationType;
               document.getElementById("fov-sweep").value = data.fovSweep || 120;
               document.getElementById("fov-sweep-value").textContent = (data.fovSweep || 120) + "°";
               document.getElementById("fov-speed").value = data.fovSpeed || 4;
@@ -13327,115 +13976,134 @@ header {
 	const MINIMAP_THROTTLE = 100;
 
 	function updateMinimap() {
-	  const now = performance.now();
-	  if (now - lastMinimapRender < MINIMAP_THROTTLE) return;
-	  lastMinimapRender = now;
+  const now = performance.now();
+  if (now - lastMinimapRender < MINIMAP_THROTTLE) return;
+  lastMinimapRender = now;
+  
+  const minimapViewport = document.getElementById("minimap-viewport");
+  const minimapSvg = document.getElementById("minimap");
+  if (!minimapViewport || !minimapSvg) return;
+  const vb = getViewBox();
+  minimapViewport.setAttribute("x", vb.x);
+  minimapViewport.setAttribute("y", vb.y);
+  minimapViewport.setAttribute("width", vb.width);
+  minimapViewport.setAttribute("height", vb.height);
+  minimapSvg.querySelectorAll(".minimap-node, .minimap-edge, .minimap-wall, .minimap-rect").forEach(el => el.remove());
+  const frag = document.createDocumentFragment();
+  const ns = "http://www.w3.org/2000/svg";
+  const dotColor = PAGE_STATE.minimapDots || "#94a3b8";
+
+  if (RECT_DATA && RECT_DATA.list && currentView.mode !== "rack") {
+    RECT_DATA.list.forEach((rect) => {
+      if (rect.lineStyle === "wall") {
+        const wallRect = document.createElementNS(ns, "rect");
+        wallRect.setAttribute("x", rect.x);
+        wallRect.setAttribute("y", rect.y);
+        wallRect.setAttribute("width", rect.width);
+        wallRect.setAttribute("height", rect.height);
+        wallRect.style.fill = rect.color || "#666";
+        wallRect.style.fillOpacity = "0.6";
+        wallRect.style.stroke = rect.borderColor || rect.color || "#666";
+        wallRect.style.strokeWidth = "4";
+        wallRect.classList.add("minimap-wall");
+        frag.appendChild(wallRect);
+      }
+    });
+  }
+
+  EDGE_DATA.list.forEach((edge) => {
+    if (edge.type === "custom") {
+      if (Array.isArray(edge.points) && edge.points.length >= 2) {
+        const polyline = document.createElementNS(ns, "polyline");
+        polyline.setAttribute("points", edge.points.map(p => `${p.x},${p.y}`).join(" "));
+        polyline.classList.add("minimap-edge");
+        frag.appendChild(polyline);
+      }
+      return;
+    }
+    const fromNode = NODE_DATA[edge.from];
+    const toNode = NODE_DATA[edge.to];
+    if (!fromNode || !toNode) return;
+    if (currentView.mode === "rack") {
+      if (fromNode.assignedRack !== currentView.rackId || toNode.assignedRack !== currentView.rackId) return;
+    } else {
+      if (fromNode.assignedRack || toNode.assignedRack) return;
+    }
+    const p1 = savedPositions[edge.from];
+    const p2 = savedPositions[edge.to];
+    if (!p1 || !p2) return;
+    const routing = edge.routing || PAGE_STATE.defaultEdgeRouting || "curved";
+    
+    if (routing === "orthogonal") {
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const polyline = document.createElementNS(ns, "polyline");
+      let points;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        const midX = p1.x + dx / 2;
+        points = `${p1.x},${p1.y} ${midX},${p1.y} ${midX},${p2.y} ${p2.x},${p2.y}`;
+      } else {
+        const midY = p1.y + dy / 2;
+        points = `${p1.x},${p1.y} ${p1.x},${midY} ${p2.x},${midY} ${p2.x},${p2.y}`;
+      }
+      polyline.setAttribute("points", points);
+      polyline.classList.add("minimap-edge");
+      frag.appendChild(polyline);
+    } else {
+      const line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", p1.x);
+      line.setAttribute("y1", p1.y);
+      line.setAttribute("x2", p2.x);
+      line.setAttribute("y2", p2.y);
+      line.classList.add("minimap-edge");
+      frag.appendChild(line);
+    }
+  });
+
+  Object.entries(savedPositions).forEach(([id, pos]) => {
+    const node = NODE_DATA[id];
+    if (!node) return;
+    if (currentView.mode === "rack") {
+      if (node.assignedRack !== currentView.rackId) return;
+    } else {
+      if (node.assignedRack) return;
+    }
+    const nodeSize = savedSizes[id] || 55;
+    const s = nodeSize * 0.5;
+    
+    if (node.isRack) {
+      const rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", pos.x - s);
+      rect.setAttribute("y", pos.y - s);
+      rect.setAttribute("width", s * 2);
+      rect.setAttribute("height", s * 2);
+      rect.style.fill = dotColor;
+      rect.classList.add("minimap-node");
+      frag.appendChild(rect);
+    } else if (hasCoverageZone(node.shape)) {
+      const diamond = document.createElementNS(ns, "polygon");
+      const points = `${pos.x},${pos.y - s} ${pos.x + s},${pos.y} ${pos.x},${pos.y + s} ${pos.x - s},${pos.y}`;
+      diamond.setAttribute("points", points);
+      diamond.style.fill = "none";
+      diamond.style.stroke = dotColor;
+      diamond.style.strokeWidth = "6";
+      diamond.classList.add("minimap-node");
+      frag.appendChild(diamond);
+    } else {
+      const circle = document.createElementNS(ns, "circle");
+      circle.setAttribute("cx", pos.x);
+      circle.setAttribute("cy", pos.y);
+      circle.setAttribute("r", s);
+      circle.style.fill = dotColor;
+      circle.classList.add("minimap-node");
+      frag.appendChild(circle);
+    }
+  });
+
+  minimapSvg.insertBefore(frag, minimapViewport);
+}
 	  
-	  const minimapViewport = document.getElementById("minimap-viewport");
-	  const minimapSvg = document.getElementById("minimap");
-	  if (!minimapViewport || !minimapSvg) return;
-	  const vb = getViewBox();
-	  minimapViewport.setAttribute("x", vb.x);
-	  minimapViewport.setAttribute("y", vb.y);
-	  minimapViewport.setAttribute("width", vb.width);
-	  minimapViewport.setAttribute("height", vb.height);
-	  minimapSvg.querySelectorAll(".minimap-node, .minimap-edge").forEach(el => el.remove());
-	  const frag = document.createDocumentFragment();
-	  EDGE_DATA.list.forEach((edge) => {
-	  if (edge.type === "custom") return;
-	  const fromNode = NODE_DATA[edge.from];
-	  const toNode = NODE_DATA[edge.to];
-	  if (!fromNode || !toNode) return;
-	  if (currentView.mode === "rack") {
-		if (fromNode.assignedRack !== currentView.rackId || toNode.assignedRack !== currentView.rackId) return;
-	  } else {
-		if (fromNode.assignedRack || toNode.assignedRack) return;
-	  }
-	  const p1 = savedPositions[edge.from];
-	  const p2 = savedPositions[edge.to];
-	  if (!p1 || !p2) return;
-	  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-	   line.setAttribute("x1", p1.x);
-	   line.setAttribute("y1", p1.y);
-	   line.setAttribute("x2", p2.x);
-	   line.setAttribute("y2", p2.y);
-	   line.classList.add("minimap-edge");
-	   frag.appendChild(line);
-	  });
-Object.entries(savedPositions).forEach(([id, pos]) => {
-	  const node = NODE_DATA[id];
-	  if (!node) return;
-	  if (currentView.mode === "rack") {
-		if (node.assignedRack !== currentView.rackId) return;
-	  } else {
-		if (node.assignedRack) return;
-	  }
 	  
-	  if ((node.shape === "camera" || node.shape === "cctv") && node.fovEnabled) {
-	    const fovAngle = node.fovAngle || 90;
-	    const fovDistance = (node.fovDistance || 150) * 0.8;
-	    const fovRotation = node.fovRotation || 0;
-	    const fovColor = node.fovColor || "#f59e0b";
-	    const fovAnimate = node.fovAnimate || false;
-	    const fovSweep = node.fovSweep || 120;
-	    const fovSpeed = node.fovSpeed || 4;
-	    
-	    if (fovAngle < 360) {
-	      const angleRad = (fovAngle * Math.PI) / 180;
-	      const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
-	      
-	      const startAngle = rotationRad - angleRad / 2;
-	      const endAngle = rotationRad + angleRad / 2;
-	      
-	      const x1 = pos.x + Math.cos(startAngle) * fovDistance;
-	      const y1 = pos.y + Math.sin(startAngle) * fovDistance;
-	      const x2 = pos.x + Math.cos(endAngle) * fovDistance;
-	      const y2 = pos.y + Math.sin(endAngle) * fovDistance;
-	      
-	      const largeArc = fovAngle > 180 ? 1 : 0;
-	      
-	      const fovGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-	      fovGroup.classList.add("minimap-node");
-	      
-	      const fovPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-	      fovPath.setAttribute("d", `M ${pos.x},${pos.y} L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
-	      fovPath.style.fill = fovColor + "44";
-	      fovPath.style.stroke = fovColor;
-	      fovPath.style.strokeWidth = "2";
-	      fovGroup.appendChild(fovPath);
-	      
-	      if (fovAnimate) {
-	        const animationName = `minimap-fov-sweep-${id}`;
-	        const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
-	        styleEl.textContent = `
-	          @keyframes ${animationName} {
-	            0%, 100% { transform: rotate(0deg); }
-	            50% { transform: rotate(${fovSweep}deg); }
-	          }
-	        `;
-	        fovGroup.appendChild(styleEl);
-	        
-	        const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
-	        const animationOffset = elapsedSeconds % fovSpeed;
-	        
-	        fovGroup.style.transformOrigin = `${pos.x}px ${pos.y}px`;
-	        fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
-	        fovGroup.style.animationDelay = `-${animationOffset}s`;
-	      }
-	      
-	      frag.appendChild(fovGroup);
-	    }
-	  }
-	  
-	  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-	   circle.setAttribute("cx", pos.x);
-	   circle.setAttribute("cy", pos.y);
-	   circle.setAttribute("r", 40);
-	   circle.classList.add("minimap-node");
-	  frag.appendChild(circle);
-	   });
-	   minimapSvg.insertBefore(frag, minimapViewport);	
-	  }
       function zoomTo(newZoom, centerX, centerY) {
        const oldZoom = canvasState.zoom;
        newZoom = Math.max(canvasState.minZoom, Math.min(canvasState.maxZoom, newZoom));
@@ -15380,80 +16048,226 @@ Object.entries(savedPositions).forEach(([id, pos]) => {
         });
        }
        function updateFovCone(nodeId) {
-         const node = NODE_DATA[nodeId];
-         if (!node) return;
-         
-         const nodeGroup = document.querySelector(`g[data-node-id="${nodeId}"]`);
-         if (!nodeGroup) return;
-         
-         const existingFov = nodeGroup.querySelector(".fov-group");
-         if (existingFov) existingFov.remove();
-         
-         if ((node.shape !== "camera" && node.shape !== "cctv") || !node.fovEnabled) return;
-         
-         const ns = "http://www.w3.org/2000/svg";
-         const fovAngle = node.fovAngle || 90;
-         const fovDistance = node.fovDistance || 150;
-         const fovRotation = node.fovRotation || 0;
-         const fovColor = node.fovColor || "#f59e0b";
-         const fovAnimate = node.fovAnimate || false;
-         const fovSweep = node.fovSweep || 120;
-         const fovSpeed = node.fovSpeed || 4;
-         
-         const fovGroup = document.createElementNS(ns, "g");
-         fovGroup.classList.add("fov-group");
-         
-         const fovPath = document.createElementNS(ns, "path");
-         
-         if (fovAngle >= 360) {
-           fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
-         } else {
-           const angleRad = (fovAngle * Math.PI) / 180;
-           const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
-           
-           const startAngle = rotationRad - angleRad / 2;
-           const endAngle = rotationRad + angleRad / 2;
-           
-           const x1 = Math.cos(startAngle) * fovDistance;
-           const y1 = Math.sin(startAngle) * fovDistance;
-           const x2 = Math.cos(endAngle) * fovDistance;
-           const y2 = Math.sin(endAngle) * fovDistance;
-           
-           const largeArc = fovAngle > 180 ? 1 : 0;
-           
-           fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
-         }
-         
-         fovPath.style.fill = fovColor + "33";
-         fovPath.style.stroke = fovColor;
-         fovPath.style.strokeWidth = "2";
-         fovPath.style.pointerEvents = "none";
-         fovPath.classList.add("fov-cone");
-         
-         fovGroup.appendChild(fovPath);
-         
-         if (fovAnimate && fovAngle < 360) {
-           const animationName = `fov-sweep-${nodeId}`;
-           
-           const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
-           styleEl.textContent = `
-             @keyframes ${animationName} {
-               0%, 100% { transform: rotate(0deg); }
-               50% { transform: rotate(${fovSweep}deg); }
-             }
-           `;
-           fovGroup.appendChild(styleEl);
-           
-    const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
-    const animationOffset = elapsedSeconds % fovSpeed;
-    
-    fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
-    fovGroup.style.animationDelay = `-${animationOffset}s`;
-    fovGroup.style.transformOrigin = "0 0";
-  }
-  
-  nodeGroup.insertBefore(fovGroup, nodeGroup.firstChild);
-}
+        const node = NODE_DATA[nodeId];
+        if (!node) return;
+        
+        const nodeGroup = document.querySelector(`g[data-node-id="${nodeId}"]`);
+        if (!nodeGroup) return;
+        const existingFov = nodeGroup.querySelector(".fov-group");
+        if (existingFov) existingFov.remove();
+        if (!hasCoverageZone(node.shape) || !node.fovEnabled) return;
+        
+        const ns = "http://www.w3.org/2000/svg";
+        const defaults = getCoverageDefaults(node.shape);
+        const fovAngle = node.fovAngle || defaults.angle;
+        const fovDistance = node.fovDistance || defaults.distance;
+        const fovInnerRadius = node.fovInnerRadius || 0;
+        const fovRotation = node.fovRotation || 0;
+        const fovColor = node.fovColor || "#f59e0b";
+        const fovOpacity = node.fovOpacity || 20;
+        const fovGradient = node.fovGradient || false;
+        const fovBorderColor = node.fovBorderColor || "#f59e0b";
+        const fovBorderWidth = node.fovBorderWidth ?? 2;
+        const fovBorderStyle = node.fovBorderStyle || "solid";
+        const fovBorderOpacity = node.fovBorderOpacity ?? 100;
+        const fovLabel = node.fovLabel || "";
+        const fovAnimate = node.fovAnimate || false;
+        const fovAnimationType = node.fovAnimationType || defaults.animationType;
+        const fovSweep = node.fovSweep || 120;
+        const fovSpeed = node.fovSpeed || 4;
+        
+        const fovGroup = document.createElementNS(ns, "g");
+        fovGroup.classList.add("fov-group");
+        if (!ZONES_VISIBLE) fovGroup.style.display = "none";
+        
+        if (fovGradient) {
+          const gradientId = `fov-gradient-${nodeId}`;
+          const defs = document.createElementNS(ns, "defs");
+          const gradient = document.createElementNS(ns, "radialGradient");
+          gradient.id = gradientId;
+          gradient.setAttribute("cx", "0");
+          gradient.setAttribute("cy", "0");
+          gradient.setAttribute("r", fovDistance);
+          gradient.setAttribute("gradientUnits", "userSpaceOnUse");
+          const stop1 = document.createElementNS(ns, "stop");
+          stop1.setAttribute("offset", fovInnerRadius / fovDistance);
+          stop1.setAttribute("stop-color", fovColor);
+          stop1.setAttribute("stop-opacity", fovOpacity / 100);
+          const stop2 = document.createElementNS(ns, "stop");
+          stop2.setAttribute("offset", "1");
+          stop2.setAttribute("stop-color", fovColor);
+          stop2.setAttribute("stop-opacity", "0");
+          gradient.appendChild(stop1);
+          gradient.appendChild(stop2);
+          defs.appendChild(gradient);
+          fovGroup.appendChild(defs);
+        }
+        
+        const fovPath = document.createElementNS(ns, "path");
+        
+        if (fovAngle >= 360) {
+          if (fovInnerRadius > 0) {
+            fovPath.setAttribute("d", `M ${fovDistance},0 A ${fovDistance},${fovDistance} 0 1,1 ${-fovDistance},0 A ${fovDistance},${fovDistance} 0 1,1 ${fovDistance},0 M ${fovInnerRadius},0 A ${fovInnerRadius},${fovInnerRadius} 0 1,0 ${-fovInnerRadius},0 A ${fovInnerRadius},${fovInnerRadius} 0 1,0 ${fovInnerRadius},0`);
+            fovPath.setAttribute("fill-rule", "evenodd");
+          } else {
+            fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
+          }
+        } else {
+          const angleRad = (fovAngle * Math.PI) / 180;
+          const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
+          const startAngle = rotationRad - angleRad / 2;
+          const endAngle = rotationRad + angleRad / 2;
+          const x1 = Math.cos(startAngle) * fovDistance;
+          const y1 = Math.sin(startAngle) * fovDistance;
+          const x2 = Math.cos(endAngle) * fovDistance;
+          const y2 = Math.sin(endAngle) * fovDistance;
+          const largeArc = fovAngle > 180 ? 1 : 0;
+          if (fovInnerRadius > 0) {
+            const ix1 = Math.cos(startAngle) * fovInnerRadius;
+            const iy1 = Math.sin(startAngle) * fovInnerRadius;
+            const ix2 = Math.cos(endAngle) * fovInnerRadius;
+            const iy2 = Math.sin(endAngle) * fovInnerRadius;
+            fovPath.setAttribute("d", `M ${ix1},${iy1} L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} L ${ix2},${iy2} A ${fovInnerRadius},${fovInnerRadius} 0 ${largeArc},0 ${ix1},${iy1} Z`);
+          } else {
+            fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+          }
+        }
+        
+        if (fovGradient) {
+          fovPath.style.fill = `url(#fov-gradient-${nodeId})`;
+        } else {
+          const opacityHex = Math.round((fovOpacity / 100) * 255).toString(16).padStart(2, '0');
+          fovPath.style.fill = fovColor + opacityHex;
+        }
+        
+        const borderOpacityHex = Math.round((fovBorderOpacity / 100) * 255).toString(16).padStart(2, '0');
+        fovPath.style.stroke = fovBorderColor + borderOpacityHex;
+        fovPath.style.strokeWidth = fovBorderWidth;
+        if (fovBorderStyle === "dashed") {
+          fovPath.style.strokeDasharray = "10,5";
+        } else if (fovBorderStyle === "dotted") {
+          fovPath.style.strokeDasharray = "3,3";
+        }
+        fovPath.style.pointerEvents = "none";
+        fovPath.classList.add("fov-cone");
+        
+        fovGroup.appendChild(fovPath);
+        
+        if (fovLabel) {
+          const fovLabelPosition = node.fovLabelPosition || "center";
+          const fovLabelSize = node.fovLabelSize || 14;
+          const fovLabelColor = node.fovLabelColor || "#ffffff";
+          const fovLabelBold = node.fovLabelBold || false;
+          const fovLabelBg = node.fovLabelBg || false;
+          const fovLabelBgColor = node.fovLabelBgColor || "#000000";
+          let labelDistance;
+          if (fovLabelPosition === "center") {
+            labelDistance = fovAngle >= 360 ? 0 : fovDistance * 0.4;
+          } else if (fovLabelPosition === "edge") {
+            labelDistance = fovDistance * 0.75;
+          } else {
+            labelDistance = fovDistance + fovLabelSize + 8;
+          }
+          const labelAngle = ((fovRotation - 90) * Math.PI) / 180;
+          const fovLabelOffsetX = node.fovLabelOffsetX || 0;
+          const fovLabelOffsetY = node.fovLabelOffsetY || 0;
+          const labelX = (fovAngle >= 360 && fovLabelPosition === "center" ? 0 : Math.cos(labelAngle) * labelDistance) + fovLabelOffsetX;
+          const labelY = (fovAngle >= 360 && fovLabelPosition === "center" ? 0 : Math.sin(labelAngle) * labelDistance) + fovLabelOffsetY;
+          if (fovLabelBg) {
+            const bgRect = document.createElementNS(ns, "rect");
+            const textWidth = fovLabel.length * fovLabelSize * 0.6;
+            const textHeight = fovLabelSize * 1.4;
+            bgRect.setAttribute("x", labelX - textWidth / 2 - 6);
+            bgRect.setAttribute("y", labelY - textHeight / 2);
+            bgRect.setAttribute("width", textWidth + 12);
+            bgRect.setAttribute("height", textHeight);
+            bgRect.setAttribute("rx", "4");
+            bgRect.style.fill = fovLabelBgColor;
+            bgRect.style.opacity = "0.8";
+            bgRect.style.pointerEvents = "none";
+            fovGroup.appendChild(bgRect);
+          }
+          const labelEl = document.createElementNS(ns, "text");
+          labelEl.setAttribute("x", labelX);
+          labelEl.setAttribute("y", labelY);
+          labelEl.setAttribute("text-anchor", "middle");
+          labelEl.setAttribute("dominant-baseline", "middle");
+          labelEl.style.fill = fovLabelColor;
+          labelEl.style.fontSize = fovLabelSize + "px";
+          labelEl.style.fontWeight = fovLabelBold ? "bold" : "normal";
+          labelEl.style.fontFamily = "system-ui, sans-serif";
+          labelEl.style.pointerEvents = "none";
+          labelEl.textContent = fovLabel;
+          fovGroup.appendChild(labelEl);
+        }
+        
+        if (fovAnimate) {
+          const animationName = `fov-anim-${nodeId}`;
+          const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+          
+          if (fovAnimationType === "sweep" && fovAngle < 360) {
+            styleEl.textContent = `
+              @keyframes ${animationName} {
+                0%, 100% { transform: rotate(0deg); }
+                50% { transform: rotate(${fovSweep}deg); }
+              }
+            `;
+            fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+            fovGroup.style.transformOrigin = "0 0";
+          } else if (fovAnimationType === "pulse") {
+            styleEl.textContent = `
+              @keyframes ${animationName} {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.7; }
+              }
+            `;
+            fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+            fovGroup.style.transformOrigin = "0 0";
+          } else if (fovAnimationType === "rings") {
+            for (let i = 1; i <= 3; i++) {
+              const ring = document.createElementNS(ns, "circle");
+              ring.setAttribute("cx", "0");
+              ring.setAttribute("cy", "0");
+              ring.setAttribute("r", fovDistance * 0.3 * i);
+              ring.style.fill = "none";
+              ring.style.stroke = fovBorderColor;
+              ring.style.strokeWidth = "2";
+              ring.style.opacity = "0";
+              const ringAnimName = `${animationName}-ring-${i}`;
+              const ringStyle = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+              ringStyle.textContent = `
+                @keyframes ${ringAnimName} {
+                  0% { r: ${fovInnerRadius || 10}; opacity: 0.8; }
+                  100% { r: ${fovDistance}; opacity: 0; }
+                }
+              `;
+              ring.style.animation = `${ringAnimName} ${fovSpeed}s ease-out infinite`;
+              ring.style.animationDelay = `${(i - 1) * (fovSpeed / 3)}s`;
+              fovGroup.appendChild(ringStyle);
+              fovGroup.appendChild(ring);
+            }
+          } else if (fovAnimationType === "spin") {
+            styleEl.textContent = `
+              @keyframes ${animationName} {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            `;
+            fovGroup.style.animation = `${animationName} ${fovSpeed}s linear infinite`;
+            fovGroup.style.transformOrigin = "0 0";
+          }
+          
+          if (fovAnimationType !== "rings") {
+            fovGroup.appendChild(styleEl);
+            const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
+            const animationOffset = elapsedSeconds % fovSpeed;
+            fovGroup.style.animationDelay = `-${animationOffset}s`;
+          }
+        }
+        
+        nodeGroup.insertBefore(fovGroup, nodeGroup.firstChild);
+      }
+       
       function forgeTheTopology() {
         if (!NODE_DATA || !EDGE_DATA) {
          console.warn("forgeTheTopology called before data initialized");
@@ -16683,69 +17497,216 @@ Object.entries(savedPositions).forEach(([id, pos]) => {
 		sub.style.fill = styles.subColor || PAGE_STATE.nodeSub || "#94a3b8";
         sub.style.fontFamily = styles.subFont || PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
          sub.style.pointerEvents = "none";
-         if ((node.shape === "camera" || node.shape === "cctv") && node.fovEnabled) {
-           const fovAngle = node.fovAngle || 90;
-           const fovDistance = node.fovDistance || 150;
+         if (hasCoverageZone(node.shape) && node.fovEnabled) {
+           const defaults = getCoverageDefaults(node.shape);
+           const fovAngle = node.fovAngle || defaults.angle;
+           const fovDistance = node.fovDistance || defaults.distance;
+           const fovInnerRadius = node.fovInnerRadius || 0;
            const fovRotation = node.fovRotation || 0;
            const fovColor = node.fovColor || "#f59e0b";
+           const fovOpacity = node.fovOpacity || 20;
+           const fovGradient = node.fovGradient || false;
+           const fovBorderColor = node.fovBorderColor || "#f59e0b";
+           const fovBorderWidth = node.fovBorderWidth ?? 2;
+           const fovBorderStyle = node.fovBorderStyle || "solid";
+           const fovBorderOpacity = node.fovBorderOpacity ?? 100;
+           const fovLabel = node.fovLabel || "";
            const fovAnimate = node.fovAnimate || false;
+           const fovAnimationType = node.fovAnimationType || defaults.animationType;
            const fovSweep = node.fovSweep || 120;
            const fovSpeed = node.fovSpeed || 4;
            
            const fovGroup = document.createElementNS(ns, "g");
            fovGroup.classList.add("fov-group");
+           if (!ZONES_VISIBLE) fovGroup.style.display = "none";
+           
+           if (fovGradient) {
+             const gradientId = `fov-gradient-${id}`;
+             const defs = document.createElementNS(ns, "defs");
+             const gradient = document.createElementNS(ns, "radialGradient");
+             gradient.id = gradientId;
+             gradient.setAttribute("cx", "0");
+             gradient.setAttribute("cy", "0");
+             gradient.setAttribute("r", fovDistance);
+             gradient.setAttribute("gradientUnits", "userSpaceOnUse");
+             const stop1 = document.createElementNS(ns, "stop");
+             stop1.setAttribute("offset", fovInnerRadius / fovDistance);
+             stop1.setAttribute("stop-color", fovColor);
+             stop1.setAttribute("stop-opacity", fovOpacity / 100);
+             const stop2 = document.createElementNS(ns, "stop");
+             stop2.setAttribute("offset", "1");
+             stop2.setAttribute("stop-color", fovColor);
+             stop2.setAttribute("stop-opacity", "0");
+             gradient.appendChild(stop1);
+             gradient.appendChild(stop2);
+             defs.appendChild(gradient);
+             fovGroup.appendChild(defs);
+           }
            
            const fovPath = document.createElementNS(ns, "path");
            
            if (fovAngle >= 360) {
-             fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
+             if (fovInnerRadius > 0) {
+               fovPath.setAttribute("d", `M ${fovDistance},0 A ${fovDistance},${fovDistance} 0 1,1 ${-fovDistance},0 A ${fovDistance},${fovDistance} 0 1,1 ${fovDistance},0 M ${fovInnerRadius},0 A ${fovInnerRadius},${fovInnerRadius} 0 1,0 ${-fovInnerRadius},0 A ${fovInnerRadius},${fovInnerRadius} 0 1,0 ${fovInnerRadius},0`);
+               fovPath.setAttribute("fill-rule", "evenodd");
+             } else {
+               fovPath.setAttribute("d", `M 0,0 m -${fovDistance},0 a ${fovDistance},${fovDistance} 0 1,0 ${fovDistance * 2},0 a ${fovDistance},${fovDistance} 0 1,0 -${fovDistance * 2},0`);
+             }
            } else {
              const angleRad = (fovAngle * Math.PI) / 180;
              const rotationRad = ((fovRotation - 90) * Math.PI) / 180;
-             
              const startAngle = rotationRad - angleRad / 2;
              const endAngle = rotationRad + angleRad / 2;
-             
              const x1 = Math.cos(startAngle) * fovDistance;
              const y1 = Math.sin(startAngle) * fovDistance;
              const x2 = Math.cos(endAngle) * fovDistance;
              const y2 = Math.sin(endAngle) * fovDistance;
-             
              const largeArc = fovAngle > 180 ? 1 : 0;
-             
-             fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+             if (fovInnerRadius > 0) {
+               const ix1 = Math.cos(startAngle) * fovInnerRadius;
+               const iy1 = Math.sin(startAngle) * fovInnerRadius;
+               const ix2 = Math.cos(endAngle) * fovInnerRadius;
+               const iy2 = Math.sin(endAngle) * fovInnerRadius;
+               fovPath.setAttribute("d", `M ${ix1},${iy1} L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} L ${ix2},${iy2} A ${fovInnerRadius},${fovInnerRadius} 0 ${largeArc},0 ${ix1},${iy1} Z`);
+             } else {
+               fovPath.setAttribute("d", `M 0,0 L ${x1},${y1} A ${fovDistance},${fovDistance} 0 ${largeArc},1 ${x2},${y2} Z`);
+             }
            }
            
-           fovPath.style.fill = fovColor + "33";
-           fovPath.style.stroke = fovColor;
-           fovPath.style.strokeWidth = "2";
+           if (fovGradient) {
+             fovPath.style.fill = `url(#fov-gradient-${id})`;
+           } else {
+             const opacityHex = Math.round((fovOpacity / 100) * 255).toString(16).padStart(2, '0');
+             fovPath.style.fill = fovColor + opacityHex;
+           }
+           
+           const borderOpacityHex = Math.round((fovBorderOpacity / 100) * 255).toString(16).padStart(2, '0');
+           fovPath.style.stroke = fovBorderColor + borderOpacityHex;
+           fovPath.style.strokeWidth = fovBorderWidth;
+           if (fovBorderStyle === "dashed") {
+             fovPath.style.strokeDasharray = "10,5";
+           } else if (fovBorderStyle === "dotted") {
+             fovPath.style.strokeDasharray = "3,3";
+           }
            fovPath.style.pointerEvents = "none";
            fovPath.classList.add("fov-cone");
            
            fovGroup.appendChild(fovPath);
            
-           if (fovAnimate && fovAngle < 360) {
-             const animationName = `fov-sweep-${id}`;
-             
+           if (fovLabel) {
+             const fovLabelPosition = node.fovLabelPosition || "center";
+             const fovLabelSize = node.fovLabelSize || 14;
+             const fovLabelColor = node.fovLabelColor || "#ffffff";
+             const fovLabelBold = node.fovLabelBold || false;
+             const fovLabelBg = node.fovLabelBg || false;
+             const fovLabelBgColor = node.fovLabelBgColor || "#000000";
+             let labelDistance;
+             if (fovLabelPosition === "center") {
+               labelDistance = fovAngle >= 360 ? 0 : fovDistance * 0.4;
+             } else if (fovLabelPosition === "edge") {
+               labelDistance = fovDistance * 0.75;
+             } else {
+               labelDistance = fovDistance + fovLabelSize + 8;
+             }
+             const labelAngle = ((fovRotation - 90) * Math.PI) / 180;
+             const fovLabelOffsetX = node.fovLabelOffsetX || 0;
+             const fovLabelOffsetY = node.fovLabelOffsetY || 0;
+             const labelX = (fovAngle >= 360 && fovLabelPosition === "center" ? 0 : Math.cos(labelAngle) * labelDistance) + fovLabelOffsetX;
+             const labelY = (fovAngle >= 360 && fovLabelPosition === "center" ? 0 : Math.sin(labelAngle) * labelDistance) + fovLabelOffsetY;
+             if (fovLabelBg) {
+               const bgRect = document.createElementNS(ns, "rect");
+               const textWidth = fovLabel.length * fovLabelSize * 0.6;
+               const textHeight = fovLabelSize * 1.4;
+               bgRect.setAttribute("x", labelX - textWidth / 2 - 6);
+               bgRect.setAttribute("y", labelY - textHeight / 2);
+               bgRect.setAttribute("width", textWidth + 12);
+               bgRect.setAttribute("height", textHeight);
+               bgRect.setAttribute("rx", "4");
+               bgRect.style.fill = fovLabelBgColor;
+               bgRect.style.opacity = "0.8";
+               bgRect.style.pointerEvents = "none";
+               fovGroup.appendChild(bgRect);
+             }
+             const labelEl = document.createElementNS(ns, "text");
+             labelEl.setAttribute("x", labelX);
+             labelEl.setAttribute("y", labelY);
+             labelEl.setAttribute("text-anchor", "middle");
+             labelEl.setAttribute("dominant-baseline", "middle");
+             labelEl.style.fill = fovLabelColor;
+             labelEl.style.fontSize = fovLabelSize + "px";
+             labelEl.style.fontWeight = fovLabelBold ? "bold" : "normal";
+             labelEl.style.fontFamily = "system-ui, sans-serif";
+             labelEl.style.pointerEvents = "none";
+             labelEl.textContent = fovLabel;
+             fovGroup.appendChild(labelEl);
+           }
+           
+           if (fovAnimate) {
+             const animationName = `fov-anim-${id}`;
              const styleEl = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
-             styleEl.textContent = `
-               @keyframes ${animationName} {
-                 0%, 100% { transform: rotate(0deg); }
-                 50% { transform: rotate(${fovSweep}deg); }
-               }
-             `;
-             fovGroup.appendChild(styleEl);
              
-    const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
-    const animationOffset = elapsedSeconds % fovSpeed;
-    
-    fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
-    fovGroup.style.animationDelay = `-${animationOffset}s`;
-    fovGroup.style.transformOrigin = "0 0";
-  }
-  
-  g.appendChild(fovGroup);
-}
+             if (fovAnimationType === "sweep" && fovAngle < 360) {
+               styleEl.textContent = `
+                 @keyframes ${animationName} {
+                   0%, 100% { transform: rotate(0deg); }
+                   50% { transform: rotate(${fovSweep}deg); }
+                 }
+               `;
+               fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+               fovGroup.style.transformOrigin = "0 0";
+             } else if (fovAnimationType === "pulse") {
+               styleEl.textContent = `
+                 @keyframes ${animationName} {
+                   0%, 100% { transform: scale(1); opacity: 1; }
+                   50% { transform: scale(1.1); opacity: 0.7; }
+                 }
+               `;
+               fovGroup.style.animation = `${animationName} ${fovSpeed}s ease-in-out infinite`;
+               fovGroup.style.transformOrigin = "0 0";
+             } else if (fovAnimationType === "rings") {
+               for (let i = 1; i <= 3; i++) {
+                 const ring = document.createElementNS(ns, "circle");
+                 ring.setAttribute("cx", "0");
+                 ring.setAttribute("cy", "0");
+                 ring.setAttribute("r", fovDistance * 0.3 * i);
+                 ring.style.fill = "none";
+                 ring.style.stroke = fovBorderColor;
+                 ring.style.strokeWidth = "2";
+                 ring.style.opacity = "0";
+                 const ringAnimName = `${animationName}-ring-${i}`;
+                 const ringStyle = document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+                 ringStyle.textContent = `
+                   @keyframes ${ringAnimName} {
+                     0% { r: ${fovInnerRadius || 10}; opacity: 0.8; }
+                     100% { r: ${fovDistance}; opacity: 0; }
+                   }
+                 `;
+                 ring.style.animation = `${ringAnimName} ${fovSpeed}s ease-out infinite`;
+                 ring.style.animationDelay = `${(i - 1) * (fovSpeed / 3)}s`;
+                 fovGroup.appendChild(ringStyle);
+                 fovGroup.appendChild(ring);
+               }
+             } else if (fovAnimationType === "spin") {
+               styleEl.textContent = `
+                 @keyframes ${animationName} {
+                   0% { transform: rotate(0deg); }
+                   100% { transform: rotate(360deg); }
+                 }
+               `;
+               fovGroup.style.animation = `${animationName} ${fovSpeed}s linear infinite`;
+               fovGroup.style.transformOrigin = "0 0";
+             }
+             
+             if (fovAnimationType !== "rings") {
+               fovGroup.appendChild(styleEl);
+               const elapsedSeconds = (Date.now() - FOV_ANIMATION_START) / 1000;
+               const animationOffset = elapsedSeconds % fovSpeed;
+               fovGroup.style.animationDelay = `-${animationOffset}s`;
+             }
+           }
+           
+           g.appendChild(fovGroup);
+         }
         g.append(hitArea, shapeEl, label, sub);
          if (NODE_DATA[id]?.locked) {
            const lockIndicator = document.createElementNS(ns, "text");
@@ -17775,6 +18736,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          updatePingIndicator(nodeId);
         });
         forgeTheLegend();
+		updateZoneLegend();
         updateMinimap();
         if (currentSearchQuery && currentSearchResults.length > 0) {
          highlightSearchResults(currentSearchResults, true);
@@ -17933,25 +18895,50 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         document.getElementById("node-ip").textContent = data.ip;
         const fovSection = document.getElementById("fov-section");
         if (fovSection) {
-          if (data.shape === "camera" || data.shape === "cctv") {
-            fovSection.style.display = "block";
-            document.getElementById("fov-enabled").checked = data.fovEnabled || false;
-            document.getElementById("fov-angle").value = data.fovAngle || 90;
-            document.getElementById("fov-angle-value").textContent = (data.fovAngle || 90) + "°";
-            document.getElementById("fov-distance").value = data.fovDistance || 150;
-            document.getElementById("fov-distance-value").textContent = data.fovDistance || 150;
-            document.getElementById("fov-rotation").value = data.fovRotation || 0;
-            document.getElementById("fov-rotation-value").textContent = (data.fovRotation || 0) + "°";
-            document.getElementById("fov-color").value = data.fovColor || "#f59e0b";
-            document.getElementById("fov-animate").checked = data.fovAnimate || false;
-            document.getElementById("fov-sweep").value = data.fovSweep || 120;
-            document.getElementById("fov-sweep-value").textContent = (data.fovSweep || 120) + "°";
-            document.getElementById("fov-speed").value = data.fovSpeed || 4;
-            document.getElementById("fov-speed-value").textContent = (data.fovSpeed || 4) + "s";
-          } else {
-            fovSection.style.display = "none";
+            if (hasCoverageZone(data.shape)) {
+              fovSection.style.display = "block";
+              const defaults = getCoverageDefaults(data.shape);
+              document.getElementById("fov-enabled").checked = data.fovEnabled || false;
+              document.getElementById("fov-angle").value = data.fovAngle || defaults.angle;
+              document.getElementById("fov-angle-value").textContent = (data.fovAngle || defaults.angle) + "°";
+              document.getElementById("fov-distance").value = data.fovDistance || defaults.distance;
+              document.getElementById("fov-distance-value").textContent = data.fovDistance || defaults.distance;
+              document.getElementById("fov-inner-radius").value = data.fovInnerRadius || 0;
+              document.getElementById("fov-inner-radius-value").textContent = data.fovInnerRadius || 0;
+              document.getElementById("fov-rotation").value = data.fovRotation || 0;
+              document.getElementById("fov-rotation-value").textContent = (data.fovRotation || 0) + "°";
+              document.getElementById("fov-color").value = data.fovColor || "#f59e0b";
+              document.getElementById("fov-opacity").value = data.fovOpacity || 20;
+              document.getElementById("fov-opacity-value").textContent = (data.fovOpacity || 20) + "%";
+              document.getElementById("fov-gradient").checked = data.fovGradient || false;
+              document.getElementById("fov-border-color").value = data.fovBorderColor || "#f59e0b";
+              document.getElementById("fov-border-width").value = data.fovBorderWidth !== undefined ? data.fovBorderWidth : 2;
+              document.getElementById("fov-border-width-value").textContent = data.fovBorderWidth !== undefined ? data.fovBorderWidth : 2;
+              document.getElementById("fov-border-style").value = data.fovBorderStyle || "solid";
+              document.getElementById("fov-border-opacity").value = data.fovBorderOpacity !== undefined ? data.fovBorderOpacity : 100;
+              document.getElementById("fov-border-opacity-value").textContent = (data.fovBorderOpacity !== undefined ? data.fovBorderOpacity : 100) + "%";
+              document.getElementById("fov-label").value = data.fovLabel || "";
+              document.getElementById("fov-label-position").value = data.fovLabelPosition || "center";
+              document.getElementById("fov-label-size").value = data.fovLabelSize || 14;
+              document.getElementById("fov-label-size-value").textContent = (data.fovLabelSize || 14) + "px";
+              document.getElementById("fov-label-color").value = data.fovLabelColor || "#ffffff";
+              document.getElementById("fov-label-bold").checked = data.fovLabelBold || false;
+              document.getElementById("fov-label-bg").checked = data.fovLabelBg || false;
+              document.getElementById("fov-label-bg-color").value = data.fovLabelBgColor || "#000000";
+              document.getElementById("fov-label-offset-x").value = data.fovLabelOffsetX || 0;
+              document.getElementById("fov-label-offset-x-value").textContent = data.fovLabelOffsetX || 0;
+              document.getElementById("fov-label-offset-y").value = data.fovLabelOffsetY || 0;
+              document.getElementById("fov-label-offset-y-value").textContent = data.fovLabelOffsetY || 0;
+              document.getElementById("fov-animate").checked = data.fovAnimate || false;
+              document.getElementById("fov-animation-type").value = data.fovAnimationType || defaults.animationType;
+              document.getElementById("fov-sweep").value = data.fovSweep || 120;
+              document.getElementById("fov-sweep-value").textContent = (data.fovSweep || 120) + "°";
+              document.getElementById("fov-speed").value = data.fovSpeed || 4;
+              document.getElementById("fov-speed-value").textContent = (data.fovSpeed || 4) + "s";
+            } else {
+              fovSection.style.display = "none";
+            }
           }
-        }
         document.getElementById("node-mac").textContent = data.mac || "--";
         document.getElementById("node-rack").textContent = data.rackUnit || "--";
         document.getElementById("node-uheight").textContent = (data.uHeight || "1") + "U";
@@ -18060,11 +19047,15 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         document.getElementById("node-rack").onclick = () => editNodeRack(id);
         document.getElementById("node-uheight").onclick = () => editNodeUHeight(id);
         document.getElementById("fov-enabled").onchange = function() {
-          if (!currentNodeId) return;
-          pushUndo("toggle fov");
-          NODE_DATA[currentNodeId].fovEnabled = this.checked;
-          updateFovCone(currentNodeId);
-        };
+  if (!currentNodeId) return;
+  pushUndo("toggle coverage zone");
+  NODE_DATA[currentNodeId].fovEnabled = this.checked;
+  if (this.checked && !NODE_DATA[currentNodeId].fovColor) {
+    NODE_DATA[currentNodeId].fovColor = document.getElementById("fov-color").value || "#f59e0b";
+  }
+  updateFovCone(currentNodeId);
+  updateZoneLegend();
+};
         document.getElementById("fov-angle").oninput = function() {
           document.getElementById("fov-angle-value").textContent = this.value + "°";
           if (!currentNodeId) return;
@@ -18085,9 +19076,9 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         };
         document.getElementById("fov-color").oninput = function() {
           if (!currentNodeId) return;
-          pushUndo("change fov color");
           NODE_DATA[currentNodeId].fovColor = this.value;
           updateFovCone(currentNodeId);
+          updateZoneLegend();
         };
         document.getElementById("fov-animate").onchange = function() {
           if (!currentNodeId) return;
@@ -18107,6 +19098,121 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
           NODE_DATA[currentNodeId].fovSpeed = parseInt(this.value);
           updateFovCone(currentNodeId);
         };
+        document.getElementById("fov-inner-radius").oninput = function() {
+          document.getElementById("fov-inner-radius-value").textContent = this.value;
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovInnerRadius = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-opacity").oninput = function() {
+          document.getElementById("fov-opacity-value").textContent = this.value + "%";
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovOpacity = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-gradient").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovGradient = this.checked;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-border-color").oninput = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovBorderColor = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-border-width").oninput = function() {
+          document.getElementById("fov-border-width-value").textContent = this.value;
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovBorderWidth = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-border-style").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovBorderStyle = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-border-opacity").oninput = function() {
+          document.getElementById("fov-border-opacity-value").textContent = this.value + "%";
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovBorderOpacity = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label").oninput = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabel = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-position").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelPosition = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-size").oninput = function() {
+          document.getElementById("fov-label-size-value").textContent = this.value + "px";
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelSize = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-color").oninput = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelColor = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-bold").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelBold = this.checked;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-bg").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelBg = this.checked;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-bg-color").oninput = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelBgColor = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-offset-x").oninput = function() {
+          document.getElementById("fov-label-offset-x-value").textContent = this.value;
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelOffsetX = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-label-offset-y").oninput = function() {
+          document.getElementById("fov-label-offset-y-value").textContent = this.value;
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovLabelOffsetY = parseInt(this.value);
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-animation-type").onchange = function() {
+          if (!currentNodeId) return;
+          NODE_DATA[currentNodeId].fovAnimationType = this.value;
+          updateFovCone(currentNodeId);
+        };
+        document.getElementById("fov-preset").addEventListener("change", function() {
+          if (this.value) {
+            applyZonePreset(this.value);
+            this.value = "";
+          }
+        });
+        document.getElementById("fov-save-preset").addEventListener("click", saveCustomZonePreset);
+        document.getElementById("fov-copy-style").addEventListener("click", function() {
+          if (currentNodeId && copyZoneStyle(currentNodeId)) {
+            alert("Zone style copied!");
+          }
+        });
+        document.getElementById("fov-paste-style").addEventListener("click", function() {
+          if (currentNodeId && pasteZoneStyle(currentNodeId)) {
+            claimTheImmortal(currentNodeId);
+          }
+        });
+        document.getElementById("bulk-zone-copy").addEventListener("click", bulkCopyZoneStyle);
+        document.getElementById("bulk-zone-paste").addEventListener("click", bulkPasteZoneStyle);
+        document.getElementById("bulk-zone-toggle").addEventListener("click", bulkToggleZones);
+        document.getElementById("bulk-zone-copy-mobile").addEventListener("click", bulkCopyZoneStyle);
+        document.getElementById("bulk-zone-paste-mobile").addEventListener("click", bulkPasteZoneStyle);
+        document.getElementById("bulk-zone-toggle-mobile").addEventListener("click", bulkToggleZones);
         const currentSize = savedSizes[id] || getDefaultSize();
         document.getElementById("size-slider").value = currentSize;
         const currentRotation = NODE_DATA[id].rotation || 0;
@@ -18325,7 +19431,8 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          checking: '● Checking...',
          unknown: '● Unknown'
         };
-        statusEl.textContent = statusTexts[data.ping.status] || statusTexts.unknown;
+        const statusText = statusTexts[data.ping.status] || statusTexts.unknown;
+		statusEl.textContent = data.ping.responseTime ? `${statusText} (${data.ping.responseTime}ms)` : statusText;
         statusEl.style.color = statusColors[data.ping.status] || statusColors.unknown;
         if (data.ping.lastCheck) {
          const checkTime = new Date(data.ping.lastCheck);
@@ -18461,13 +19568,19 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         }
        });
        (function initZoomPan() {
-        const viewport = document.getElementById("canvas-viewport");
-        const svg = document.getElementById("map");
-        const hint = document.getElementById("canvas-hint");
-        setTimeout(() => {
-         hint.classList.add("visible");
-         setTimeout(() => hint.classList.remove("visible"), 4000);
-        }, 1000);
+       const viewport = document.getElementById("canvas-viewport");
+       const svg = document.getElementById("map");
+       const hint = document.getElementById("canvas-hint");
+       hint.style.cursor = "pointer";
+       let hintDismissed = false;
+       const dismissHint = () => { hintDismissed = true; hint.classList.remove("visible"); };
+       hint.addEventListener("click", dismissHint);
+       hint.addEventListener("touchend", (e) => { e.preventDefault(); dismissHint(); });
+       setTimeout(() => {
+        if (hintDismissed) return;
+        hint.classList.add("visible");
+        setTimeout(() => { if (!hintDismissed) hint.classList.remove("visible"); }, 4000);
+       }, 1000);
         viewport.addEventListener("wheel",
          (e) => {
           e.preventDefault();
@@ -18847,6 +19960,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          }
        updatePingIndicator(currentNodeId);
         }
+		updateMinimap();
        });
        resetSizeBtn.addEventListener("click", () => {
         pushUndo("reset size");
@@ -18878,6 +19992,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          }
           updatePingIndicator(currentNodeId);
         }
+		updateMinimap();
        });
        const rotationSlider = document.getElementById("rotation-slider");
        const rotationInput = document.getElementById("rotation-value");
@@ -19002,7 +20117,19 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         NODE_DATA[currentNodeId].shape = shape;
         const fovSection = document.getElementById("fov-section");
         if (fovSection) {
-          fovSection.style.display = (shape === "camera" || shape === "cctv") ? "block" : "none";
+          const oldShape = NODE_DATA[currentNodeId].shape;
+          fovSection.style.display = hasCoverageZone(shape) ? "block" : "none";
+          if (hasCoverageZone(shape) && !hasCoverageZone(oldShape)) {
+            const defaults = getCoverageDefaults(shape);
+            document.getElementById("fov-angle").value = defaults.angle;
+            document.getElementById("fov-angle-value").textContent = defaults.angle + "°";
+            document.getElementById("fov-distance").value = defaults.distance;
+            document.getElementById("fov-distance-value").textContent = defaults.distance;
+            document.getElementById("fov-animation-type").value = defaults.animationType;
+            NODE_DATA[currentNodeId].fovAngle = defaults.angle;
+            NODE_DATA[currentNodeId].fovDistance = defaults.distance;
+            NODE_DATA[currentNodeId].fovAnimationType = defaults.animationType;
+          }
         }
         if (savedStyles[currentNodeId]) {
          Object.keys(savedStyles[currentNodeId]).forEach(scope => {
@@ -19086,6 +20213,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         const el = document.querySelector(`.edge[data-edge-id="${currentEdgeId}"]`);
         if (el) el.style.stroke = color;
         forgeTheLegend();
+		updateZoneLegend();
        });
        document.getElementById("edge-direction").addEventListener("change", () => {
         if (!currentEdgeId) return;
@@ -19122,10 +20250,6 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         edge.animate = e.target.checked;
         forgeTheTopology();
         selectTheConnection(currentEdgeId);
-       });
-       document.getElementById("animate-connections-toggle").addEventListener("change", (e) => {
-        PAGE_STATE.animateConnections = e.target.checked;
-        forgeTheTopology();
        });
        document.getElementById("animation-style-select").addEventListener("change", (e) => {
         PAGE_STATE.animationStyle = e.target.value;
@@ -19523,6 +20647,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          freeDrawPointEls.forEach((el) => el.remove());
          freeDrawPointEls = [];
          forgeTheLegend();
+		 updateZoneLegend();
         }
         drawUndoBtn.style.display = "none";
        }
@@ -20133,8 +21258,30 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
        document.getElementById("node-sub-size").value = PAGE_STATE.nodeSubSize || 13;
        document.getElementById("node-font-family").value = PAGE_STATE.nodeFont || "Inter, system-ui, sans-serif";
        document.getElementById("default-edge-color").value = PAGE_STATE.defaultEdge || "#475569";
-       document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "orthogonal";
-       document.getElementById("animate-connections-toggle").checked = PAGE_STATE.animateConnections || false;
+       document.getElementById("add-line-color").value = PAGE_STATE.defaultEdge || "#475569";
+       document.getElementById("default-edge-routing").value = PAGE_STATE.defaultEdgeRouting || "curved";
+	   document.getElementById("anim-master").addEventListener("change", e => { ANIM_SETTINGS.masterAnim = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-type-sweep").addEventListener("change", e => { ANIM_SETTINGS.animTypes.sweep = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-type-pulse").addEventListener("change", e => { ANIM_SETTINGS.animTypes.pulse = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-type-rings").addEventListener("change", e => { ANIM_SETTINGS.animTypes.rings = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-type-spin").addEventListener("change", e => { ANIM_SETTINGS.animTypes.spin = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-type-connections").addEventListener("change", e => { ANIM_SETTINGS.animTypes.connections = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-camera").addEventListener("change", e => { ANIM_SETTINGS.animCategories.camera = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-doorbell").addEventListener("change", e => { ANIM_SETTINGS.animCategories.doorbell = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-motion").addEventListener("change", e => { ANIM_SETTINGS.animCategories.motion = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-smoke").addEventListener("change", e => { ANIM_SETTINGS.animCategories.smoke = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-wifi").addEventListener("change", e => { ANIM_SETTINGS.animCategories.wifi = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-sensor").addEventListener("change", e => { ANIM_SETTINGS.animCategories.sensor = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-sprinkler").addEventListener("change", e => { ANIM_SETTINGS.animCategories.sprinkler = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("anim-cat-connections").addEventListener("change", e => { ANIM_SETTINGS.animCategories.connections = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-master").addEventListener("change", e => { ANIM_SETTINGS.masterZones = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-camera").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.camera = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-doorbell").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.doorbell = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-motion").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.motion = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-smoke").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.smoke = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-wifi").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.wifi = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-sensor").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.sensor = e.target.checked; applyAnimZoneSettings(); });
+		document.getElementById("zone-cat-sprinkler").addEventListener("change", e => { ANIM_SETTINGS.zoneCategories.sprinkler = e.target.checked; applyAnimZoneSettings(); });
        document.getElementById("animation-style-select").value = PAGE_STATE.animationStyle || "arrows";
        document.getElementById("animation-direction-select").value = PAGE_STATE.animationDirection || "all";
        document.getElementById("animation-speed-select").value = PAGE_STATE.animationSpeed || 1.5;
@@ -20439,6 +21586,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
       });
       document.getElementById("default-edge-color").addEventListener("input", (e) => {
        PAGE_STATE.defaultEdge = e.target.value;
+       document.getElementById("add-line-color").value = e.target.value;
        forgeTheTopology();
       });
       document.getElementById("default-edge-routing").addEventListener("change", (e) => {
@@ -20700,6 +21848,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         });
         forgeTheTopology();
         if (typeof forgeTheLegend === 'function') forgeTheLegend();
+        if (typeof updateZoneLegend === 'function') updateZoneLegend();
         logAuditEvent("import", `Imported JSON: ${file.name} (${Object.keys(data.nodeData).length} nodes, ${data.edgeData.list?.length || 0} connections)`);
         updateViewBox();
       if (autoPingEnabled) {
@@ -20822,6 +21971,8 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
        rectData: RECT_DATA,
        textData: TEXT_DATA,
        edgeLegend: EDGE_LEGEND,
+       zoneLegend: ZONE_LEGEND,
+       zonePresets: ZONE_PRESETS,
        nodePositions: savedPositions,
        nodeSizes: savedSizes,
        nodeStyles: savedStyles,
@@ -21426,9 +22577,26 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         fovEnabled: source.fovEnabled || false,
         fovAngle: source.fovAngle || 90,
         fovDistance: source.fovDistance || 150,
+        fovInnerRadius: source.fovInnerRadius || 0,
         fovRotation: source.fovRotation || 0,
         fovColor: source.fovColor || "#f59e0b",
+        fovOpacity: source.fovOpacity || 20,
+        fovGradient: source.fovGradient || false,
+        fovBorderColor: source.fovBorderColor || "#f59e0b",
+        fovBorderWidth: source.fovBorderWidth !== undefined ? source.fovBorderWidth : 2,
+        fovBorderStyle: source.fovBorderStyle || "solid",
+        fovBorderOpacity: source.fovBorderOpacity !== undefined ? source.fovBorderOpacity : 100,
+        fovLabel: source.fovLabel || "",
+        fovLabelPosition: source.fovLabelPosition || "center",
+        fovLabelSize: source.fovLabelSize || 14,
+        fovLabelColor: source.fovLabelColor || "#ffffff",
+        fovLabelBold: source.fovLabelBold || false,
+        fovLabelBg: source.fovLabelBg || false,
+        fovLabelBgColor: source.fovLabelBgColor || "#000000",
+        fovLabelOffsetX: source.fovLabelOffsetX || 0,
+        fovLabelOffsetY: source.fovLabelOffsetY || 0,
         fovAnimate: source.fovAnimate || false,
+        fovAnimationType: source.fovAnimationType || "sweep",
         fovSweep: source.fovSweep || 120,
         fovSpeed: source.fovSpeed || 4
        };
@@ -23163,7 +24331,8 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         const select = document.getElementById("theme-preset");
         const btn = document.getElementById("delete-theme-btn");
         if (!btn) return;
-        btn.style.display = select.value.startsWith("mytheme-") ? "block" : "none";
+		btn.style.display = "block";
+		btn.disabled = !select.value.startsWith("mytheme-");
       }
       function displayTabs() {
         const listEl = document.getElementById("tabs-list");
@@ -23472,6 +24641,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         if (typeof displayRollbackVersions === "function") displayRollbackVersions();
         if (typeof displayAuditLog === "function") displayAuditLog();
         if (typeof forgeTheLegend === "function") forgeTheLegend();
+        if (typeof updateZoneLegend === "function") updateZoneLegend();
       });
        (function addDeleteNodeButton() {
        const nodePanel = document.getElementById("node-panel");
@@ -23926,6 +25096,7 @@ document.getElementById('import-csv-file')?.addEventListener('change', async (e)
       });
       forgeTheTopology();
       if (typeof forgeTheLegend === 'function') forgeTheLegend();
+      if (typeof updateZoneLegend === 'function') updateZoneLegend();
       updateViewBox();
       logAuditEvent('import', `Imported CSV (full restore): ${file.name}`);
       alert(`Full restore complete from CSV backup`);
@@ -24323,6 +25494,7 @@ document.getElementById('import-markdown-file')?.addEventListener('change', asyn
     });
     forgeTheTopology();
     if (typeof forgeTheLegend === 'function') forgeTheLegend();
+    if (typeof updateZoneLegend === 'function') updateZoneLegend();
     updateViewBox();
     logAuditEvent('import', `Imported Markdown: ${file.name} (${nodeCount} nodes, ${edgeCount} connections)`);
     alert(`Successfully imported:\n- ${nodeCount} nodes\n- ${edgeCount} connections\n- ${rectCount} zones\n- ${textCount} text labels`);
