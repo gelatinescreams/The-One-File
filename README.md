@@ -34,11 +34,9 @@ A fully self contained topology builder that runs anywhere as a single standalon
 ### Demos
 
 * **Core Edition**
-  * [Core Edition](https://therecanonlybe.one/the-one-file.html)
   * [Core: Corporation Demo](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
   * [Core: Homelab Demo](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
 * **Networkening Edition**
-  * [Networkening Edition](https://therecanonlybe.one/theonefile-networkening.html)
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
 
