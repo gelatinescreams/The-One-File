@@ -1,13 +1,6 @@
 ![The One File](assets/theonefile.jpg)
 
-In the end there can only be "The ONE File". A portable and completely self contained network topology builder. Everything to view and edit lives inside a single standalone HTML file. Any modern browser can open and edit it without any prior setup. (is the idea)
-
-*Two editions are available. Both built from the same core design.*
-* **the-one-file.html**
-A fully self contained topology builder that runs anywhere as a single standalone HTML file and the core of theonefile-networkening.html
-
-* **theonefile-networkening.html**
-  Adds online features like live status/ping per node and icons from awesome libraries such as MDI, Simple Icons and selfh.st/icons. It functions as a bolt on layer while keeping the core workflow unchanged. Still one file!
+There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from selfh.st/icons, MDI, and Simple Icons. Still one file.
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
