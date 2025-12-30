@@ -1,6 +1,6 @@
 ![The One File](assets/theonefile.jpg)
 
-There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from selfh.st/icons, MDI, and Simple Icons. Still one file.
+There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/). Still one file.
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
