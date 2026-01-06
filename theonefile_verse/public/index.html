@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TheOneFile_Verse</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    :root{
+      --bg:#0d0d0d;
+      --bg-alt:#1a1a1a;
+      --surface:#242424;
+      --border:#333;
+      --text:#e8e8e8;
+      --text-soft:#999;
+      --accent:#c9a227;
+      --accent-hover:#d4b23a;
+      --steel:#71717a;
+      --steel-light:#a1a1aa;
+    }
+
+    [data-theme="light"]{
+      --bg:#f5f3ef;
+      --bg-alt:#eae7e0;
+      --surface:#fff;
+      --border:#d4d0c8;
+      --text:#1a1a1a;
+      --text-soft:#666;
+      --accent:#996b1f;
+      --accent-hover:#7a5518;
+      --steel:#52525b;
+      --steel-light:#71717a;
+    }
+
+    body{
+      font-family:system-ui,-apple-system,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .theme-toggle{
+      position:fixed;
+      top:20px;
+      right:20px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:8px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .theme-toggle:hover{background:var(--bg-alt)}
+
+    .container{
+      text-align:center;
+      max-width:400px;
+      width:100%;
+    }
+
+    h1{
+      font-size:28px;
+      font-weight:700;
+      margin-bottom:8px;
+      color:var(--text);
+      letter-spacing:-0.5px;
+    }
+
+    .tagline{
+      color:var(--text-soft);
+      font-size:15px;
+      margin-bottom:40px;
+    }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .btn{
+      padding:14px 24px;
+      font-size:15px;
+      font-weight:500;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      width:100%;
+    }
+
+    .btn-primary{
+      background:var(--accent);
+      color:#fff;
+    }
+    .btn-primary:hover{background:var(--accent-hover)}
+
+    .btn-secondary{
+      background:var(--surface);
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+    .btn-secondary:hover{background:var(--bg-alt)}
+
+    .modal-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:100;
+    }
+    .modal-overlay.active{display:flex}
+
+    .modal{
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:12px;
+      width:100%;
+      max-width:420px;
+    }
+
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:16px 20px;
+      border-bottom:1px solid var(--border);
+    }
+    .modal-header h2{font-size:18px;font-weight:600}
+
+    .modal-close{
+      background:none;
+      border:none;
+      color:var(--text-soft);
+      font-size:22px;
+      cursor:pointer;
+      line-height:1;
+      padding:0;
+    }
+    .modal-close:hover{color:var(--text)}
+
+    .modal-body{
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .form-group{display:flex;flex-direction:column;gap:6px}
+    .form-group label{font-size:13px;font-weight:500;color:var(--text-soft)}
+
+    .form-group input,.form-group select{
+      padding:10px 12px;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:6px;
+      color:var(--text);
+      font-size:14px;
+    }
+    .form-group input:focus,.form-group select:focus{
+      outline:none;
+      border-color:var(--accent);
+    }
+    .form-group input::placeholder{color:var(--text-soft)}
+
+    .file-drop{
+      border:1px dashed var(--border);
+      border-radius:6px;
+      padding:24px;
+      text-align:center;
+      cursor:pointer;
+    }
+    .file-drop:hover{border-color:var(--steel-light)}
+    .file-drop-text{font-size:14px;color:var(--text-soft)}
+    .file-drop-formats{font-size:12px;color:var(--text-soft);margin-top:4px;opacity:0.7}
+
+    .file-selected{
+      display:none;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      background:var(--bg);
+      border-radius:6px;
+      font-size:14px;
+    }
+    .file-selected.active{display:flex}
+    .file-selected-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-selected-clear{background:none;border:none;color:var(--steel);cursor:pointer;font-size:16px}
+
+    .modal-footer{
+      padding:16px 20px;
+      border-top:1px solid var(--border);
+    }
+    .modal-footer .btn{width:100%}
+
+    .error-text{
+      color:#c53030;
+      font-size:13px;
+      display:none;
+    }
+    .error-text.active{display:block}
+
+    .footer{
+      position:fixed;
+      bottom:20px;
+      font-size:12px;
+      color:var(--text-soft);
+    }
+    .footer a{color:var(--steel-light);text-decoration:none}
+    .footer a:hover{color:var(--accent)}
+
+    @media(max-width:480px){
+      h1{font-size:24px}
+      .tagline{font-size:14px;margin-bottom:32px}
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">☀</span>
+  </button>
+
+  <div class="container">
+    <h1>TheOneFile_Verse</h1>
+    <p class="tagline">There can be only one. Collaborate in realtime.</p>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="openModal('create')">Create Room</button>
+      <button class="btn btn-secondary" onclick="openModal('join')">Join Room</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="/admin">Admin</a>
+  </div>
+
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create Room</h2>
+        <button class="modal-close" onclick="closeModal('create')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Password (optional)</label>
+          <input type="password" id="create-password" placeholder="Leave empty for open access">
+        </div>
+        <div class="form-group">
+          <label>Room Expiration</label>
+          <select id="create-destruct">
+            <option value="3600000">1 hour after last activity</option>
+            <option value="21600000">6 hours after last activity</option>
+            <option value="86400000" selected>24 hours after last activity</option>
+            <option value="604800000">7 days after last activity</option>
+            <option value="empty">When everyone leaves</option>
+            <option value="never">Never</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Import file (optional)</label>
+          <div class="file-drop" id="create-file-drop">
+            <div class="file-drop-text">Drop file or click to browse</div>
+            <div class="file-drop-formats">.html .json .csv .md</div>
+          </div>
+          <input type="file" id="create-file-input" accept=".html,.json,.csv,.md,.markdown,.txt" hidden>
+          <div class="file-selected" id="create-file-selected">
+            <span class="file-selected-name" id="create-file-name"></span>
+            <button class="file-selected-clear" onclick="clearFile()">&times;</button>
+          </div>
+        </div>
+        <div class="error-text" id="create-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="createRoom()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="join-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Join Room</h2>
+        <button class="modal-close" onclick="closeModal('join')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Room ID or URL</label>
+          <input type="text" id="join-room-id" placeholder="Paste room ID or link">
+        </div>
+        <div class="form-group" id="join-password-group" style="display:none">
+          <label>Password</label>
+          <input type="password" id="join-password" placeholder="Enter room password">
+        </div>
+        <div class="error-text" id="join-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="joinRoom()">Join</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let forcedTheme = null;
+
+    function getTheme() {
+      if (forcedTheme && forcedTheme !== 'user') return forcedTheme;
+      return localStorage.getItem('theme') || 'dark';
+    }
+    function setTheme(theme) {
+      if (!forcedTheme || forcedTheme === 'user') {
+        localStorage.setItem('theme', theme);
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀' : '☾';
+    }
+    function toggleTheme() {
+      if (forcedTheme && forcedTheme !== 'user') return;
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    }
+    function updateThemeToggleVisibility() {
+      const btn = document.querySelector('.theme-toggle');
+      if (forcedTheme && forcedTheme !== 'user') {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = 'block';
+      }
+    }
+
+    setTheme(getTheme());
+
+    fetch('/api/theme').then(r => r.json()).then(data => {
+      if (data.forcedTheme && data.forcedTheme !== 'user') {
+        forcedTheme = data.forcedTheme;
+        setTheme(forcedTheme);
+      }
+      updateThemeToggleVisibility();
+    }).catch(() => { updateThemeToggleVisibility(); });
+
+    let selectedFile = null;
+    let selectedFileContent = null;
+
+    function generateUUID() {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    function getOrCreateUserId(roomId) {
+      const key = 'collab-user-' + roomId;
+      let id = localStorage.getItem(key);
+      if (!id) { id = generateUUID(); localStorage.setItem(key, id); }
+      return id;
+    }
+
+    function openModal(type) { document.getElementById(type + '-modal').classList.add('active'); }
+    function closeModal(type) {
+      document.getElementById(type + '-modal').classList.remove('active');
+      document.getElementById(type + '-error').classList.remove('active');
+    }
+
+    function showError(type, msg) {
+      const el = document.getElementById(type + '-error');
+      el.textContent = msg;
+      el.classList.add('active');
+    }
+
+    const fileDrop = document.getElementById('create-file-drop');
+    const fileInput = document.getElementById('create-file-input');
+
+    fileDrop.addEventListener('click', () => fileInput.click());
+    fileDrop.addEventListener('dragover', e => { e.preventDefault(); });
+    fileDrop.addEventListener('drop', e => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
+
+    async function handleFile(file) {
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['html', 'json', 'csv', 'md', 'markdown', 'txt'].includes(ext)) {
+        showError('create', 'Invalid file type');
+        return;
+      }
+      selectedFile = file;
+      selectedFileContent = await file.text();
+      document.getElementById('create-file-drop').style.display = 'none';
+      document.getElementById('create-file-selected').classList.add('active');
+      document.getElementById('create-file-name').textContent = file.name;
+    }
+
+    function clearFile() {
+      selectedFile = null;
+      selectedFileContent = null;
+      document.getElementById('create-file-drop').style.display = 'block';
+      document.getElementById('create-file-selected').classList.remove('active');
+      fileInput.value = '';
+    }
+
+    function parseTopologyFile(content, filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      if (ext === 'json') { try { return JSON.parse(content); } catch { return null; } }
+      if (ext === 'html') {
+        const match = content.match(/<script[^>]*id="topology-state"[^>]*>([\s\S]*?)<\/script>/i);
+        if (match) { try { return JSON.parse(match[1]); } catch {} }
+        return null;
+      }
+      if (ext === 'csv') {
+        const m = content.match(/#THEONEFILE_CONFIG:(.+)/);
+        if (m) { try { return JSON.parse(m[1]); } catch {} }
+        return null;
+      }
+      if (['md', 'markdown', 'txt'].includes(ext)) {
+        const m = content.match(/<!--THEONEFILE_CONFIG\s*([\s\S]*?)\s*THEONEFILE_CONFIG-->/);
+        if (m) { try { return JSON.parse(m[1].trim()); } catch {} }
+        return null;
+      }
+      return null;
+    }
+
+    async function createRoom() {
+      const password = document.getElementById('create-password').value;
+      const destructVal = document.getElementById('create-destruct').value;
+
+      let destructMode = 'time', destructMs = parseInt(destructVal);
+      if (destructVal === 'empty') { destructMode = 'empty'; destructMs = 0; }
+      else if (destructVal === 'never') { destructMode = 'never'; destructMs = 0; }
+
+      let topology = null;
+      if (selectedFileContent) topology = parseTopologyFile(selectedFileContent, selectedFile.name);
+
+      const tempId = generateUUID();
+      const creatorId = getOrCreateUserId(tempId);
+
+      try {
+        const res = await fetch('/api/room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: password || null, destructMode, destructValue: destructMs, topology, creatorId })
+        });
+        const data = await res.json();
+        if (data.error) { showError('create', data.error); return; }
+        localStorage.setItem('collab-user-' + data.id, creatorId);
+        window.location.href = data.url;
+      } catch { showError('create', 'Failed to create room'); }
+    }
+
+    const joinInput = document.getElementById('join-room-id');
+    let checking = false;
+
+    joinInput.addEventListener('input', async () => {
+      let id = joinInput.value.trim();
+      if (id.includes('/s/')) { id = id.split('/s/')[1].split('?')[0]; joinInput.value = id; }
+      if (id.length < 36 || checking) return;
+      checking = true;
+      try {
+        const res = await fetch('/api/room/' + id + '/exists');
+        const data = await res.json();
+        document.getElementById('join-password-group').style.display = data.hasPassword ? 'block' : 'none';
+        if (!data.exists) showError('join', 'Room not found');
+        else document.getElementById('join-error').classList.remove('active');
+      } catch {}
+      checking = false;
+    });
+
+    async function joinRoom() {
+      let id = document.getElementById('join-room-id').value.trim();
+      if (id.includes('/s/')) id = id.split('/s/')[1].split('?')[0];
+      const password = document.getElementById('join-password').value;
+      if (!id) { showError('join', 'Enter a room ID'); return; }
+
+      try {
+        const existsRes = await fetch('/api/room/' + id + '/exists');
+        const exists = await existsRes.json();
+        if (!exists.exists) { showError('join', 'Room not found'); return; }
+
+        if (exists.hasPassword) {
+          const verifyRes = await fetch('/api/room/' + id + '/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+          });
+          if (!(await verifyRes.json()).valid) { showError('join', 'Invalid password'); return; }
+        }
+
+        if (password) sessionStorage.setItem('room-' + id + '-pwd', password);
+        window.location.href = '/s/' + id;
+      } catch { showError('join', 'Failed to join room'); }
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+      el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    });
+  </script>
+</body>
+</html>

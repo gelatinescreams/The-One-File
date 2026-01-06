@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  theonefile_verse:
+    build: .
+    ports:
+      - "10101:10101"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=10101
+      - DATA_DIR=/app/data
+      - UPDATE_INTERVAL=24
+    restart: unless-stopped
