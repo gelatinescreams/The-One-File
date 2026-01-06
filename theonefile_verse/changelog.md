@@ -1,0 +1,13 @@
+### TheOneFile_Verse changelog
+
+**1/6/26 Theonefile_verse 1.1** Getting chatty
+  * 1.1 gitea bleeding edge version main lined
+  * adds instant message chat per room
+  * adds duplciate name detection
+  * adds real time mutli user cursor engine
+  * adds current tab to the users top bar name plate
+  * various fixes
+  
+**1/6/26 Theonefile_verse intitial upload 1.0**
+  * initial upload
+

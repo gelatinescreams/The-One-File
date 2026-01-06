@@ -150,6 +150,9 @@
   let lastStateHash = null;
   let syncPaused = false;
   let hasReceivedInitialState = false;
+  let chatMessages = [];
+  let unreadCount = 0;
+  let chatOpen = false;
   
   function connect() {
     if (ws && ws.readyState === WebSocket.OPEN) return;
@@ -197,6 +200,7 @@
       case 'leave':
         users.delete(msg.userId);
         removeUserIndicators(msg.userId);
+        removeRemoteCursor(msg.userId);
         renderUsers();
         break;
       case 'users':
@@ -212,6 +216,7 @@
           if (user) {
             user.selectedNodes = msg.selectedNodes || [];
             user.editingNode = msg.editingNode || null;
+            user.currentTab = msg.currentTab || null;
             users.set(msg.userId, user);
             renderUserIndicators();
             renderUsers();
@@ -233,7 +238,124 @@
       case 'patch':
         if (!syncPaused && hasReceivedInitialState) applyRemoteState(msg.patch);
         break;
+      case 'chat':
+        addChatMessage(msg);
+        break;
+      case 'cursor':
+        if (msg.userId !== window.COLLAB_USER.id) {
+          const user = users.get(msg.userId);
+          if (user) {
+            user.cursorX = msg.x;
+            user.cursorY = msg.y;
+            users.set(msg.userId, user);
+            updateRemoteCursor(msg.userId, user);
+            renderUsers();
+          }
+        }
+        break;
+      case 'name-rejected':
+        handleNameRejected(msg.reason);
+        break;
     }
+  }
+
+  let nameRejectedRecovery = false;
+
+  function handleNameRejected(reason) {
+    hideSyncingOverlay();
+    localStorage.removeItem(`collab-name-${ROOM_ID}`);
+    window.COLLAB_USER.name = null;
+    nameRejectedRecovery = true;
+    showNameModal(false, reason);
+  }
+
+  function addChatMessage(msg) {
+    chatMessages.push({
+      userId: msg.userId,
+      userName: msg.userName,
+      userColor: msg.userColor,
+      text: msg.text,
+      timestamp: msg.timestamp || Date.now()
+    });
+    if (chatMessages.length > 100) chatMessages.shift();
+    if (!chatOpen) {
+      unreadCount++;
+      updateChatBadge();
+    }
+    renderChatMessages();
+  }
+
+  function sendChatMessage(text) {
+    if (!text.trim()) return;
+    const msg = {
+      userId: window.COLLAB_USER.id,
+      userName: window.COLLAB_USER.name,
+      userColor: window.COLLAB_USER.color,
+      text: text.trim(),
+      timestamp: Date.now()
+    };
+    sendMessage('chat', msg);
+    addChatMessage(msg);
+  }
+
+  function updateChatBadge() {
+    const badge = document.getElementById('collab-chat-badge');
+    if (badge) {
+      if (unreadCount > 0) {
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function renderChatMessages() {
+    const container = document.getElementById('collab-chat-messages');
+    if (!container) return;
+    container.innerHTML = chatMessages.map(msg => {
+      const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return `<div class="collab-chat-msg">
+        <span class="collab-chat-name" style="color: ${msg.userColor}">${escapeHtml(msg.userName)}</span>
+        <span class="collab-chat-time">${time}</span>
+        <div class="collab-chat-text">${escapeHtml(msg.text)}</div>
+      </div>`;
+    }).join('');
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function updateRemoteCursor(userId, user) {
+    let cursor = document.getElementById(`collab-cursor-${userId}`);
+    if (!cursor && user.cursorX !== undefined) {
+      cursor = document.createElement('div');
+      cursor.id = `collab-cursor-${userId}`;
+      cursor.className = 'collab-remote-cursor';
+      cursor.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16"><path d="M0 0L16 12L8 12L4 16L0 0Z" fill="${user.color}"/></svg><span class="collab-cursor-name" style="background:${user.color}">${escapeHtml(user.name)}</span>`;
+      document.body.appendChild(cursor);
+    }
+    if (cursor && user.cursorX !== undefined) {
+      cursor.style.left = user.cursorX + 'px';
+      cursor.style.top = user.cursorY + 'px';
+    }
+  }
+
+  function removeRemoteCursor(userId) {
+    const cursor = document.getElementById(`collab-cursor-${userId}`);
+    if (cursor) cursor.remove();
+  }
+
+  function trackCursor() {
+    let lastSent = 0;
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastSent < 50) return;
+      lastSent = now;
+      sendMessage('cursor', {
+        userId: window.COLLAB_USER.id,
+        x: e.clientX,
+        y: e.clientY
+      });
+    });
   }
   
   function getGlobal(name) {
@@ -368,10 +490,29 @@
     }, 250);
   }
   
+  function sendPresence() {
+    sendMessage('presence', {
+      userId: window.COLLAB_USER.id,
+      selectedNodes: window.COLLAB_USER.selectedNodes || [],
+      editingNode: window.COLLAB_USER.editingNode,
+      currentTab: getCurrentTabName()
+    });
+  }
+
   function trackSelection() {
     const map = document.getElementById('map');
     if (!map) { setTimeout(trackSelection, 500); return; }
-    
+
+    let lastTab = getCurrentTabName();
+    setInterval(() => {
+      const currentTab = getCurrentTabName();
+      if (currentTab !== lastTab) {
+        lastTab = currentTab;
+        sendPresence();
+        renderUsers();
+      }
+    }, 500);
+
     const observer = new MutationObserver(() => {
       const selected = [];
       document.querySelectorAll('.node-group.selected, [data-id].selected').forEach(el => {
@@ -380,11 +521,7 @@
       });
       if (JSON.stringify(selected) !== JSON.stringify(window.COLLAB_USER.selectedNodes)) {
         window.COLLAB_USER.selectedNodes = selected;
-        sendMessage('presence', {
-          userId: window.COLLAB_USER.id,
-          selectedNodes: selected,
-          editingNode: window.COLLAB_USER.editingNode
-        });
+        sendPresence();
         renderUsers();
       }
     });
@@ -417,16 +554,31 @@
     }
   }
   
+  function getCurrentTabName() {
+    try {
+      const tabs = getGlobal('documentTabs');
+      const idx = getGlobal('currentTabIndex') || 0;
+      if (tabs && tabs[idx]) return tabs[idx].name || 'Main';
+      return 'Main';
+    } catch { return 'Main'; }
+  }
+
   function renderUsers() {
     const container = document.querySelector('.collab-users');
     if (!container) return;
+    const myTab = getCurrentTabName();
     const allUsers = [window.COLLAB_USER, ...users.values()];
     container.innerHTML = allUsers.map(user => {
       const isMe = user.id === window.COLLAB_USER.id;
       const editingText = user.editingNode ? `<span class="collab-user-editing">editing</span>` : '';
+      const tabName = isMe ? myTab : (user.currentTab || 'Main');
+      const tabDisplay = `<span class="collab-user-tab">${escapeHtml(tabName)}</span>`;
       return `<div class="collab-user ${isMe ? 'me' : ''}" data-user-id="${user.id}">
         <span class="collab-user-dot" style="background: ${user.color}"></span>
-        <span class="collab-user-name">${escapeHtml(user.name)}</span>${editingText}
+        <div class="collab-user-info">
+          <span class="collab-user-name">${escapeHtml(user.name)}</span>${editingText}
+          ${tabDisplay}
+        </div>
       </div>`;
     }).join('');
   }
@@ -469,15 +621,31 @@
   
   function injectCollabBar() {
     document.body.classList.add('collab-active');
-    
+
     const bar = document.createElement('div');
     bar.id = 'collab-bar';
     bar.innerHTML = `<div class="collab-users"></div>
       <div class="collab-actions">
+        <button class="collab-btn" id="collab-chat-btn"><span class="collab-btn-icon">&#9993;</span><span>Chat</span><span class="collab-chat-badge" id="collab-chat-badge"></span></button>
         <button class="collab-btn" id="collab-share-btn"><span class="collab-btn-icon">+</span><span>Share</span></button>
         <button class="collab-btn" id="collab-menu-btn"><span class="collab-btn-icon">=</span></button>
       </div>`;
     document.body.prepend(bar);
+
+    const chatPanel = document.createElement('div');
+    chatPanel.id = 'collab-chat-panel';
+    chatPanel.innerHTML = `
+      <div class="collab-chat-header">
+        <span>Chat</span>
+        <button class="collab-chat-close" id="collab-chat-close">&times;</button>
+      </div>
+      <div class="collab-chat-messages" id="collab-chat-messages"></div>
+      <div class="collab-chat-input-wrap">
+        <input type="text" id="collab-chat-input" placeholder="Type a message..." maxlength="500">
+        <button id="collab-chat-send">Send</button>
+      </div>
+    `;
+    document.body.appendChild(chatPanel);
     
     const shareModal = document.createElement('div');
     shareModal.id = 'collab-share-modal';
@@ -517,6 +685,34 @@
     menuDropdown.innerHTML = menuHtml;
     document.body.appendChild(menuDropdown);
     
+    document.getElementById('collab-chat-btn').addEventListener('click', () => {
+      chatOpen = !chatOpen;
+      chatPanel.classList.toggle('active', chatOpen);
+      if (chatOpen) {
+        unreadCount = 0;
+        updateChatBadge();
+        document.getElementById('collab-chat-input').focus();
+      }
+    });
+
+    document.getElementById('collab-chat-close').addEventListener('click', () => {
+      chatOpen = false;
+      chatPanel.classList.remove('active');
+    });
+
+    document.getElementById('collab-chat-send').addEventListener('click', () => {
+      const input = document.getElementById('collab-chat-input');
+      sendChatMessage(input.value);
+      input.value = '';
+    });
+
+    document.getElementById('collab-chat-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage(e.target.value);
+        e.target.value = '';
+      }
+    });
+
     document.getElementById('collab-share-btn').addEventListener('click', () => {
       shareModal.classList.add('active');
       generateQR();
@@ -629,10 +825,10 @@
     }
   }
   
-  function showNameModal(isChange = false) {
+  function showNameModal(isChange = false, errorMsg = null) {
     const existing = document.getElementById('collab-name-modal');
     if (existing) existing.remove();
-    
+
     const modal = document.createElement('div');
     modal.id = 'collab-name-modal';
     modal.className = 'collab-modal-overlay active';
@@ -643,6 +839,7 @@
       </div>
       <div class="collab-modal-body">
         <input type="text" id="collab-name-input" class="collab-input" placeholder="Your name" maxlength="30">
+        <div class="collab-name-error" id="collab-name-error">${errorMsg || ''}</div>
         <div class="collab-name-actions">
           <button id="collab-name-random" class="collab-btn-secondary">Random</button>
           <button id="collab-name-submit" class="collab-btn-primary">${isChange ? 'Update' : 'Join'}</button>
@@ -650,32 +847,41 @@
       </div>
     </div>`;
     document.body.appendChild(modal);
-    
+
+    const errorEl = document.getElementById('collab-name-error');
+    if (errorMsg) errorEl.classList.add('active');
+
     const input = document.getElementById('collab-name-input');
     if (isChange && window.COLLAB_USER.name) input.value = window.COLLAB_USER.name;
     input.focus();
-    
+
+    input.addEventListener('input', () => {
+      errorEl.classList.remove('active');
+    });
+
     document.getElementById('collab-name-random').addEventListener('click', () => {
       input.value = generateHighlanderName();
+      errorEl.classList.remove('active');
     });
-    
+
     document.getElementById('collab-name-submit').addEventListener('click', () => {
       const name = input.value.trim() || generateHighlanderName();
       setStoredUserName(name);
       window.COLLAB_USER.name = name;
       modal.remove();
-      if (isChange) {
+      if (isChange || nameRejectedRecovery) {
+        nameRejectedRecovery = false;
         sendMessage('join', { user: window.COLLAB_USER });
         renderUsers();
       } else {
         startCollab();
       }
     });
-    
+
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') document.getElementById('collab-name-submit').click();
     });
-    
+
     const closeBtn = modal.querySelector('.collab-modal-close');
     if (closeBtn) closeBtn.addEventListener('click', () => modal.remove());
   }
@@ -766,8 +972,10 @@
       '#collab-name-modal',
       '#collab-password-modal',
       '#collab-sync-overlay',
+      '#collab-chat-panel',
       '.collab-node-indicator',
-      '.collab-selection-ring'
+      '.collab-selection-ring',
+      '.collab-remote-cursor'
     ];
     collabElements.forEach(sel => {
       doc.querySelectorAll(sel).forEach(el => el.remove());
@@ -806,6 +1014,7 @@
     connect();
     startStatePolling();
     setTimeout(trackSelection, 1000);
+    trackCursor();
   }
 
   if (document.readyState === 'loading') {

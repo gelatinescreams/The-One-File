@@ -628,6 +628,7 @@ interface RoomMeta {
 const roomMeta: Map<string, RoomMeta> = new Map();
 const roomConnections: Map<string, Set<any>> = new Map();
 const roomUsers: Map<string, Map<string, any>> = new Map();
+const roomUsedNames: Map<string, Set<string>> = new Map();
 
 async function hashPassword(password: string): Promise<string> {
   return await Bun.password.hash(password, {
@@ -1290,18 +1291,38 @@ ${saveHookScript}
       
       if (msg.type === 'join' && msg.user) {
         const userId = msg.user.id;
+        const userName = msg.user.name?.toLowerCase().trim();
         const users = roomUsers.get(roomId)!;
+
+        if (!roomUsedNames.has(roomId)) roomUsedNames.set(roomId, new Set());
+        const usedNames = roomUsedNames.get(roomId)!;
+
+        const existingUser = users.get(userId);
+        const isNameChange = existingUser && existingUser.name?.toLowerCase().trim() !== userName;
+        const isNewUser = !existingUser;
+
+        if (userName && (isNewUser || isNameChange)) {
+          const nameAlreadyUsed = usedNames.has(userName);
+          if (nameAlreadyUsed) {
+            ws.send(JSON.stringify({ type: 'name-rejected', reason: 'Name already taken in this room' }));
+            return;
+          }
+          usedNames.add(userName);
+        }
+
         (ws.data as any).userId = userId;
         users.delete(userId);
         users.set(userId, msg.user);
         const existingUsers = Array.from(users.values()).filter(u => u.id !== userId);
         if (existingUsers.length > 0) ws.send(JSON.stringify({ type: 'users', users: existingUsers }));
 
-        const room = loadRoom(roomId);
-        if (room && room.topology) {
-          ws.send(JSON.stringify({ type: 'initial-state', state: room.topology }));
-        } else {
-          ws.send(JSON.stringify({ type: 'initial-state', state: null }));
+        if (isNewUser) {
+          const room = loadRoom(roomId);
+          if (room && room.topology) {
+            ws.send(JSON.stringify({ type: 'initial-state', state: room.topology }));
+          } else {
+            ws.send(JSON.stringify({ type: 'initial-state', state: null }));
+          }
         }
 
         const connections = roomConnections.get(roomId);
