@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync, readdirSync } from "fs";
 import { join } from "path";
 
-const PORT = parseInt(process.env.PORT || "3000");
+const PORT = parseInt(process.env.PORT || "10101");
 const DATA_DIR = process.env.DATA_DIR || "./data";
 const ROOMS_DIR = join(DATA_DIR, "rooms");
 const ADMIN_CONFIG_PATH = join(DATA_DIR, "admin.json");
