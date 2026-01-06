@@ -8,7 +8,7 @@ When you're done collaborating, each person can save their own portable copy. Th
 
 **AND/OR**
 
-Rooms auto save your work, no manual exports required. Admins can run as many rooms as needed, a multiOneFileverse of parallel diagrams. Host it privately or open it to the internet with built in password protection and Argon2id encryption.
+Rooms auto save your work, no manual exports required. Admins can run as many rooms as needed, a multiOneFileverse of parallel diagrams. Host it privately or open it to the internet (use tons of caution and a secure reverse proxy) with built in password protection and Argon2id encryption.
 
 ## Quick Start
 
