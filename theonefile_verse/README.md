@@ -10,7 +10,7 @@
 
 *As it turns out, there can be more than one*
 
-![The One File Verse Mutli User Collaboration](assets/https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/collab-preview.gif)
+![The One File Verse Mutli User Collaboration](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/collab-preview.gif)
 
 An easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
 
