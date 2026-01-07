@@ -741,6 +741,7 @@ const server = Bun.serve({
       const roomId = path.split("/")[2];
       const room = loadRoom(roomId);
       if (!room) return new Response("Room not found", { status: 404 });
+      // Check instance lock or legacy env var
       if (ENV_ADMIN_PASSWORD || isInstanceLocked()) {
         const token = getTokenFromRequest(req);
         if (!token || !INSTANCE_TOKENS.has(token)) return new Response("Unauthorized", { status: 401 });
@@ -1232,7 +1233,7 @@ const server = Bun.serve({
 window.ROOM_ID = "${id}";
 window.ROOM_HAS_PASSWORD = ${!!room.passwordHash && !isAdmin};
 window.ROOM_CREATOR_ID = "${room.creatorId}";
-window.WS_URL = "ws://" + location.host + "/ws/${id}";
+window.WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + "/ws/${id}";
 window.ROOM_IS_ADMIN = ${isAdmin};
 window.ROOM_IS_CREATOR = (function(){
   var uid = localStorage.getItem('collab-user-${id}');
