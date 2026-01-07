@@ -19,21 +19,21 @@
       return v.toString(16);
     });
   }
-  
+
   function getOrCreateUserId() {
-    const storageKey = `collab-user-${ROOM_ID}`;
-    let userId = localStorage.getItem(storageKey);
+    const globalKey = 'collab-global-user-id';
+    let userId = localStorage.getItem(globalKey);
     if (!userId) {
       userId = generateUUID();
-      localStorage.setItem(storageKey, userId);
+      localStorage.setItem(globalKey, userId);
     }
     return userId;
   }
-  
+
   function getStoredUserName() {
     return localStorage.getItem(`collab-name-${ROOM_ID}`);
   }
-  
+
   function setStoredUserName(name) {
     localStorage.setItem(`collab-name-${ROOM_ID}`, name);
   }
@@ -104,7 +104,6 @@
       ws = null;
     }
 
-    localStorage.removeItem(`collab-user-${ROOM_ID}`);
     localStorage.removeItem(`collab-name-${ROOM_ID}`);
     localStorage.removeItem(`collab-color-${ROOM_ID}`);
     sessionStorage.removeItem(`room-${ROOM_ID}-pwd`);

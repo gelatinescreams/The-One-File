@@ -1,5 +1,10 @@
 ### TheOneFile_Verse changelog
 
+**1/6/26 Theonefile_verse 1.2** Flip it and reverse it
+  * Fixed an issue where revere proxies did not pick us WSS correctly
+  * Fixed an issue where username did not persist in some rare cases
+  * various fixes
+  
 **1/6/26 Theonefile_verse 1.1** Getting chatty
   * 1.1 gitea bleeding edge version main lined
   * adds instant message chat per room

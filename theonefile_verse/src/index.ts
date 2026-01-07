@@ -628,7 +628,7 @@ interface RoomMeta {
 const roomMeta: Map<string, RoomMeta> = new Map();
 const roomConnections: Map<string, Set<any>> = new Map();
 const roomUsers: Map<string, Map<string, any>> = new Map();
-const roomUsedNames: Map<string, Set<string>> = new Map();
+const roomUsedNames: Map<string, Map<string, string>> = new Map();
 
 async function hashPassword(password: string): Promise<string> {
   return await Bun.password.hash(password, {
@@ -741,7 +741,7 @@ const server = Bun.serve({
       const roomId = path.split("/")[2];
       const room = loadRoom(roomId);
       if (!room) return new Response("Room not found", { status: 404 });
-      // Check instance lock or legacy env var
+	  
       if (ENV_ADMIN_PASSWORD || isInstanceLocked()) {
         const token = getTokenFromRequest(req);
         if (!token || !INSTANCE_TOKENS.has(token)) return new Response("Unauthorized", { status: 401 });
@@ -1295,7 +1295,7 @@ ${saveHookScript}
         const userName = msg.user.name?.toLowerCase().trim();
         const users = roomUsers.get(roomId)!;
 
-        if (!roomUsedNames.has(roomId)) roomUsedNames.set(roomId, new Set());
+        if (!roomUsedNames.has(roomId)) roomUsedNames.set(roomId, new Map());
         const usedNames = roomUsedNames.get(roomId)!;
 
         const existingUser = users.get(userId);
@@ -1303,12 +1303,15 @@ ${saveHookScript}
         const isNewUser = !existingUser;
 
         if (userName && (isNewUser || isNameChange)) {
-          const nameAlreadyUsed = usedNames.has(userName);
-          if (nameAlreadyUsed) {
+          const nameOwner = usedNames.get(userName);
+          if (nameOwner && nameOwner !== userId) {
             ws.send(JSON.stringify({ type: 'name-rejected', reason: 'Name already taken in this room' }));
             return;
           }
-          usedNames.add(userName);
+          if (isNameChange && existingUser?.name) {
+            usedNames.delete(existingUser.name.toLowerCase().trim());
+          }
+          usedNames.set(userName, userId);
         }
 
         (ws.data as any).userId = userId;
