@@ -10,6 +10,8 @@
 
 *As it turns out, there can be more than one*
 
+![The One File Verse Mutli User Collaboration](assets/https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/collab-preview.gif)
+
 An easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
 
 When you're done collaborating, each person can save their own portable copy. That file works exactly like the original TheOneFile: fully offline, self contained, editable anywhere. Import it back into the TheOneFile_Verse anytime to continue collaborating.
