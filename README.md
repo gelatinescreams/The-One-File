@@ -1,26 +1,15 @@
 ![The One File](assets/theonefile.jpg)
 
-There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/). Still one file.
+There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/). Still one file. TheOneFile_Verse adds a collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version Version 3.9.9.9 /\ 12/29/25 Upgraded Animations, minimap and editable options
-* **Coverage zones now work on 11 device types**
-* **Added new editable Detection Zone properties**
-* **Added text labels to coverage zones**
-* **Added animation types**
-  * Sweep : Pan back and forth
-  * Pulse : Breathing/scale effect
-  * Rings : Expanding circles emanating outward
-  * Spin : Continuous rotation
-* **Added Zone Presets**
-* **Save your own custom zone presets!**
-* **Added new Bulk Operations for zones**
-* **Updated Line legend to include Zone Legend**
-* **New Main Settings : Animations & Zones**
-* **Minimap Improvements**
-* **Improved: HTTP Ping / Status Monitoring for Networkening edition**
-* **General Bug Fixes**  
+### Version Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
+* **4.0.0 Stable! Thank you to everyone!**
+* **TheOneFile_Verse launch** This realtime collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
+*  TheOneFile_Verse is easily deployed via docker.
+* [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
+* **Fixed an issue where node and racks did not display correctly in print export**
 * **See more changes in the [changelog.md](changelog.md)**
 * **I am working on new demos with all the included features**
 
@@ -32,41 +21,48 @@ There can only be One File. Map networks, smart homes, mind maps, infrastructure
 * **Networkening Edition**
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
+* **TheOneFile_Verse Edition** 
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one)
+  
+### Core vs Networkening vs TheOneFile_Verse
 
-### Online vs Offline
+| Feature | theonefile.html | theonefile-networkening.html | TheOneFile_Verse |
+|---------|---------|--------|--------|
+| All core features | ✓ | ✓ | ✓ |
+| Create/edit/save topologies | ✓ | ✓ | ✓ |
+| Shapes, lines, styling | ✓ | ✓ | ✓ |
+| U slot rack topologies | ✓ | ✓ | ✓ |
+| **Add text labels anywhere** | ✓ | ✓ | ✓ |
+| **Draw rectangles/boxes** | ✓ | ✓ | ✓ |
+| **Free draw custom lines** | ✓ | ✓ | ✓ |
+| **Keyboard shortcuts** | ✓ | ✓ | ✓ |
+| Encryption, export | ✓ | ✓ | ✓ |
+| Bulk operations | ✓ | ✓ | ✓ |
+| Multi select | ✓ | ✓ | ✓ |
+| **AES 256 GCM encryption (OPTIONAL)** | ✓ | ✓ | ✓ |
+| Live node search | ✓ | ✓ | ✓ |
+| Per device styling | ✓ | ✓ | ✓ |
+| Mobile optimized | ✓ | ✓ | ✓ |
+| Offline only | ✓ |  | ✓ |
+| No dependencies | ✓ |  | ✓ |
+| **[MDI Icons](https://pictogrammers.com/library/mdi/)**       |  | ✓ | ✓ |
+| **[Simple Icons](https://simpleicons.org/?q=ping)**   |  | ✓ | ✓ |
+| **[selfh.st/icons](https://selfh.st/icons/)** |  | ✓ | ✓ |
+| **Auto Status Checking** |  | ✓ | ✓ |
+| **Live Ping/Health Status** |  | ✓ | ✓ |
+| **Real time, multi user collaboration** |  | ✓ | ✓ |
 
-| Feature | theonefile.html | theonefile-networkening.html |
-|---------|---------|--------|
-| All core features | ✓ | ✓ |
-| Create/edit/save topologies | ✓ | ✓ |
-| Shapes, lines, styling | ✓ | ✓ |
-| U slot rack topologies | ✓ | ✓ |
-| **Add text labels anywhere** | ✓ | ✓ |
-| **Draw rectangles/boxes** | ✓ | ✓ |
-| **Free draw custom lines** | ✓ | ✓ |
-| **Keyboard shortcuts** | ✓ | ✓ |
-| Encryption, export | ✓ | ✓ |
-| Bulk operations | ✓ | ✓ |
-| Multi select | ✓ | ✓ |
-| **AES 256 GCM encryption (OPTIONAL)** | ✓ | ✓ |
-| Live node search | ✓ | ✓ |
-| Per device styling | ✓ | ✓ |
-| Mobile optimized | ✓ | ✓ |
-| Offline only | ✓ |  |
-| No dependencies | ✓ |  |
-| **[MDI Icons](https://pictogrammers.com/library/mdi/)**       |  | ✓ |
-| **[Simple Icons](https://simpleicons.org/?q=ping)**   |  | ✓ |
-| **[selfh.st/icons](https://selfh.st/icons/)** |  | ✓ |
-| **Auto Status Checking** |  | ✓ |
-| **Live Ping/Health Status** |  | ✓ |
+### TheOneFile_Verse mutli user 
 
-### Download:
 
 * [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/24375394/the-one-file-corporate-demo.html)
 * [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/24375395/the-one-file-homelab-demo.html)
 * [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/24375396/theonefile-networkening-corporate-demo.html)
 * [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/24375397/theonefile-networkening-homelab-demo.html)
 
+### Core + Networkening Editions Download:
+
+* [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
 
 ### Why It Exists
 

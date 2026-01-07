@@ -1,5 +1,13 @@
 #### CHANGE LOG
-**We are very close to 4.0 Stable, community! Thank you to all the testers. We are making this for all of us :)**
+**4.0.0 Stable is here community! Thank you to all the testers, downloaders and shooting stars. We are making this for all of us :)**
+
+### Version Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
+* **4.0.0 Stable! Thank you to everyone!**
+* **TheOneFile_Verse launch** This realtime collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
+* [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
+* **Fixed an issue where node and racks did not display correctly in print export**
+* **See more changes in the [changelog.md](changelog.md)**
+* **I am working on new demos with all the included features**
 
 ### Version 3.9.9.9 /\ 12/29/25 Upgraded Animations, minimap and editable options
 * **Coverage zones now work on 11 device types**

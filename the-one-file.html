@@ -1600,16 +1600,23 @@ header {
 		position: static !important;
 		overflow: visible !important;
 	  }
-	  #map circle[class*="node"],
-	  #map .node-shape,
-	  #map .node-group circle,
-	  #map .node-group rect,
-	  #map .node-group path,
-	  #map .node-group polygon {
+
+	  #map .node-hit-area,
+	  #map .group-indicator,
+	  #map .lock-indicator,
+	  #map .fov-group,
+	  #map .edge-arrow-forward,
+	  #map .edge-arrow-backward {
+		display: none !important;
+	  }
+
+	  #map .node-circle,
+	  #map .node-shape {
 		fill: white !important;
 		stroke: #000 !important;
 		stroke-width: 2px !important;
 	  }
+
 	  #map text {
 		fill: #000 !important;
 		stroke: none !important;
