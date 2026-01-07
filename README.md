@@ -4,7 +4,7 @@ There can only be One File. Map networks, smart homes, mind maps, infrastructure
 
 ![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
 
-### Version Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
+### Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**
 * **TheOneFile_Verse launch** This realtime collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
 *  TheOneFile_Verse is easily deployed via docker.
