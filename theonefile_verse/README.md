@@ -83,6 +83,8 @@ Admin panel settings for:
 ### TheOneFile_Verse
 - Full admin panel
 - Realtime sync via WebSocket
+- Realtime chat **1.1** [changelog](changelog.md)
+- Real time mutli user cursor engine **1.1** [changelog](changelog.md)
 - Room based sessions with optional passwords
 - Auto destruct rooms
 - All the functions of TheOneFile
