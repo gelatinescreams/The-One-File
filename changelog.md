@@ -1,12 +1,13 @@
 #### CHANGE LOG
 **4.0.0 Stable is here community! Thank you to all the testers, downloaders and shooting stars. We are making this for all of us :)**
 
-### Version Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
+### Version 4.0.0 /\ 1/6/26 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**
-* **TheOneFile_Verse launch** This realtime collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
+* **TheOneFile_Verse launch** An easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
+  * *join from different browsers to see real time changes*
 * [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
-* **Fixed an issue where node and racks did not display correctly in print export**
-* **See more changes in the [changelog.md](changelog.md)**
+* **Fixed an issue where nodes and racks did not display correctly in print export**
 * **I am working on new demos with all the included features**
 
 ### Version 3.9.9.9 /\ 12/29/25 Upgraded Animations, minimap and editable options

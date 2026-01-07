@@ -1,15 +1,24 @@
+<p align="center">
+  <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
+  <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
+  <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
+  <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&label=docker&logo=docker&logoColor=white" alt="Docker Ready">
+  </a>
+</p>
+
 ![The One File](assets/theonefile.jpg)
 
 There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/). Still one file. TheOneFile_Verse adds a collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
 
-![The One File](assets/corporate-preview.gif) ![The One File](assets/routing-preview.gif) ![The One File](assets/homelab-preview.gif) ![The One File](assets/mobilepreviews.jpg)
+![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-### Version 4.0.0 /\ 1/6/26 4.0.0 Stable + TheOneFile_Verse
+### Version 4.0.0 /\ 1/6/26 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**
-* **TheOneFile_Verse launch** This realtime collaborative wrapper thats easily deployable with docker lets multiple users edit the same networks, smart homes, mind maps, infrastructure, or anything with nodes and connections....together!
-*  TheOneFile_Verse is easily deployed via docker.
+* **TheOneFile_Verse launch** An easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
+  * *join from different browsers to see real time changes*
 * [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
-* **Fixed an issue where node and racks did not display correctly in print export**
+* **Fixed an issue where nodes and racks did not display correctly in print export**
 * **See more changes in the [changelog.md](changelog.md)**
 * **I am working on new demos with all the included features**
 
@@ -22,7 +31,10 @@ There can only be One File. Map networks, smart homes, mind maps, infrastructure
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
 * **TheOneFile_Verse Edition** 
-  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one)
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
+  * *join from different browsers to see real time changes*
+  * [TheOneFile_Verse landing page](https://multiverse.therecanonlybe.one) 
+  
   
 ### Core vs Networkening vs TheOneFile_Verse
 
@@ -52,7 +64,31 @@ There can only be One File. Map networks, smart homes, mind maps, infrastructure
 | **Live Ping/Health Status** |  | ✓ | ✓ |
 | **Real time, multi user collaboration** |  | ✓ | ✓ |
 
-### TheOneFile_Verse mutli user 
+### Docker & TheOneFile_Verse
+
+```bash
+docker run -d -p 10101:10101 -v theonefile-data:/app/data ghcr.io/gelatinescreams/theonefile_verse:latest
+```
+
+Or with docker compose, create a `docker-compose.yml`:
+
+```yaml
+services:
+  theonefile_verse:
+    image: ghcr.io/gelatinescreams/theonefile_verse:latest
+    ports:
+      - "10101:10101"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+```
+
+Then run:
+```bash
+docker compose up -d
+```
+
+Open `http://localhost:10101`
 
 * [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
 
