@@ -1600,16 +1600,23 @@ header {
 		position: static !important;
 		overflow: visible !important;
 	  }
-	  #map circle[class*="node"],
-	  #map .node-shape,
-	  #map .node-group circle,
-	  #map .node-group rect,
-	  #map .node-group path,
-	  #map .node-group polygon {
+
+	  #map .node-hit-area,
+	  #map .group-indicator,
+	  #map .lock-indicator,
+	  #map .fov-group,
+	  #map .edge-arrow-forward,
+	  #map .edge-arrow-backward {
+		display: none !important;
+	  }
+
+	  #map .node-circle,
+	  #map .node-shape {
 		fill: white !important;
 		stroke: #000 !important;
 		stroke-width: 2px !important;
 	  }
+
 	  #map text {
 		fill: #000 !important;
 		stroke: none !important;
@@ -2498,20 +2505,11 @@ header {
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;">Manage multiple topologies</p>
         <div id="tabs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;">
             <div class="tab-item active" onclick="switchTab(0)">
-              <div class="tab-name">Corporate Site B</div>
-              <div class="tab-stats">107 nodes • 64 connections</div>
+              <div class="tab-name">Main Topology</div>
+              <div class="tab-stats">0 nodes • 0 connections</div>
               <div class="tab-actions">
                 <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(0)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(0)" title="Delete tab">🗑️</button>
-              </div>
-            </div>
-          
-            <div class="tab-item " onclick="switchTab(1)">
-              <div class="tab-name">Homelab 2</div>
-              <div class="tab-stats">16 nodes • 10 connections</div>
-              <div class="tab-actions">
-                <button class="btn-cancel" onclick="event.stopPropagation(); renameTab(1)" title="Rename tab">✏️</button>
-                <button class="btn-cancel" onclick="event.stopPropagation(); deleteTab(1)" title="Delete tab">🗑️</button>
+                
               </div>
             </div>
           </div>
@@ -2809,20 +2807,20 @@ header {
             <li>Your time is NOW!</li>
           </ul>
         </div>
-        <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Trusted Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Secure Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">DMZ</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(71, 85, 105); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Main ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Alternate ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(168, 85, 247); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(14, 165, 233); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(34, 197, 94); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(148, 163, 184); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 191, 36); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(56, 189, 248); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(200, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-title zone-legend-title" style="margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--edge-main);">Zone Legend</div><div class="legend-item zone-legend-item"><span class="legend-swatch" style="background-color: rgb(0, 8, 255); opacity: 0.5; cursor: pointer;"></span><span class="legend-label" contenteditable="true">Coverage Zone</span></div><div class="legend-item zone-legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); opacity: 0.5; cursor: pointer;"></span><span class="legend-label" contenteditable="true">Coverage Zone</span></div></div>
+        <div class="legend-container" id="edge-legend" style="display: flex;"><div class="legend-title">Line Legend</div><button type="button" class="legend-close-btn">✕</button><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(16, 185, 129); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Trusted Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(245, 158, 11); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Secure Lan</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(239, 68, 68); cursor: pointer;"></span><span class="legend-label" contenteditable="true">DMZ</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(71, 85, 105); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Main ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(59, 130, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">Alternate ISP</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(139, 92, 246); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(6, 182, 212); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(168, 85, 247); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(249, 115, 22); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(14, 165, 233); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(34, 197, 94); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(148, 163, 184); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(251, 191, 36); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(56, 189, 248); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div><div class="legend-item"><span class="legend-swatch" style="background-color: rgb(200, 0, 255); cursor: pointer;"></span><span class="legend-label" contenteditable="true">you can edit me too</span></div></div>
         <div class="canvas-viewport" id="canvas-viewport">
-          <svg id="map" viewBox="-1541.9775683210573 -1040.9457823572359 5729.063551870465 4296.797663902849" style=""></svg>
+          <svg id="map" viewBox="-191.26917538063572 -261.51832729948296 4570.339735330435 3427.7548014978265" style=""></svg>
         </div>
         <div class="minimap-zoom-wrapper" id="minimap-zoom-wrapper" style="display: block;">
           <button type="button" class="minimap-close-btn" id="minimap-close-btn" title="Hide map &amp; zoom">✕</button>
           <div class="minimap-container" id="minimap-container">
             <svg id="minimap" viewBox="0 0 4000 3000">
-              <rect x="904.5889892578125" y="115.40318298339844" width="110.93878173828125" height="919.6242218017578" class="minimap-wall" style="fill: rgb(82, 21, 249); fill-opacity: 0.6; stroke: rgb(82, 21, 249); stroke-width: 4;"></rect><rect x="130.93685150146484" y="1072.3624877929688" width="872.9131851196289" height="99.260986328125" class="minimap-wall" style="fill: rgb(82, 21, 249); fill-opacity: 0.6; stroke: rgb(82, 21, 249); stroke-width: 4;"></rect><rect class="minimap-viewport" id="minimap-viewport" x="-825.1289501587653" y="-611.1070715404196" width="4640.541477015077" height="3480.406107761308"></rect>
+              <rect x="904.5889892578125" y="115.40318298339844" width="110.93878173828125" height="919.6242218017578" class="minimap-wall" style="fill: rgb(82, 21, 249); fill-opacity: 0.6; stroke: rgb(82, 21, 249); stroke-width: 4;"></rect><rect x="130.93685150146484" y="1072.3624877929688" width="872.9131851196289" height="99.260986328125" class="minimap-wall" style="fill: rgb(82, 21, 249); fill-opacity: 0.6; stroke: rgb(82, 21, 249); stroke-width: 4;"></rect><rect class="minimap-viewport" id="minimap-viewport" x="-191.26917538063572" y="-261.51832729948296" width="4570.339735330435" height="3427.7548014978265"></rect>
             </svg>
           </div>
           <div class="zoom-toolbar" id="zoom-toolbar">
             <button id="zoom-in-btn" title="Zoom in">+</button>
-            <div class="zoom-level" id="zoom-level">70%</div>
+            <div class="zoom-level" id="zoom-level">88%</div>
             <button id="zoom-out-btn" title="Zoom out">-</button>
             <div class="divider"></div>
             <button id="zoom-fit-btn" title="Fit to view">[ ]</button>
@@ -2849,12 +2847,12 @@ header {
           </svg>
         </div>
         <div id="node-panel" style="display: block;">
-          <div class="details-name editable-text" id="node-name">Core Router 2</div>
-          <div class="details-ip editable-text" id="node-ip">10.0.0.2</div>
+          <div class="details-name editable-text" id="node-name">Core Router 1</div>
+          <div class="details-ip editable-text" id="node-ip">10.0.0.1</div>
           <div class="details-role" id="node-role">Core Routing</div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">MAC:</span>
-            <span class="editable-text" id="node-mac" style="margin-left: 8px; font-size: 14px;">00:1A:2B:3C:4D:02</span>
+            <span class="editable-text" id="node-mac" style="margin-left: 8px; font-size: 14px;">00:1A:2B:3C:4D:01</span>
           </div>
           <div class="details-info-row">
             <span style="color: var(--text-soft); font-size: 14px;">Rack Unit:</span>
@@ -2892,7 +2890,7 @@ header {
             <div id="rack-contents-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
 		  
-          <details id="fov-section" style="display: block; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
+          <details id="fov-section" style="display: block; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
             <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Coverage Zone</summary>
             <div style="padding: 10px 0;">
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px; gap: 8px;">
@@ -2923,17 +2921,17 @@ header {
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                 <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Distance:</label>
                 <input type="range" id="fov-distance" min="50" max="500" value="150" style="flex: 1;">
-                <span id="fov-distance-value" style="min-width: 40px; text-align: right; color: var(--text-main);">500</span>
+                <span id="fov-distance-value" style="min-width: 40px; text-align: right; color: var(--text-main);">200</span>
               </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                 <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Inner Radius:</label>
                 <input type="range" id="fov-inner-radius" min="0" max="200" value="0" style="flex: 1;">
-                <span id="fov-inner-radius-value" style="min-width: 40px; text-align: right; color: var(--text-main);">106</span>
+                <span id="fov-inner-radius-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0</span>
               </div>
               <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                 <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Rotation:</label>
                 <input type="range" id="fov-rotation" min="0" max="360" value="0" style="flex: 1;">
-                <span id="fov-rotation-value" style="min-width: 40px; text-align: right; color: var(--text-main);">191°</span>
+                <span id="fov-rotation-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0°</span>
               </div>
               <div style="border-top: 1px solid var(--edge-main); margin-top: 10px; padding-top: 10px;">
                 <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Fill</div>
@@ -2944,7 +2942,7 @@ header {
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                   <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Opacity:</label>
                   <input type="range" id="fov-opacity" min="5" max="80" value="20" style="flex: 1;">
-                  <span id="fov-opacity-value" style="min-width: 40px; text-align: right; color: var(--text-main);">36%</span>
+                  <span id="fov-opacity-value" style="min-width: 40px; text-align: right; color: var(--text-main);">20%</span>
                 </div>
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                   <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Gradient:</label>
@@ -2961,7 +2959,7 @@ header {
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                   <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Width:</label>
                   <input type="range" id="fov-border-width" min="0" max="10" value="2" style="flex: 1;">
-                  <span id="fov-border-width-value" style="min-width: 40px; text-align: right; color: var(--text-main);">0</span>
+                  <span id="fov-border-width-value" style="min-width: 40px; text-align: right; color: var(--text-main);">2</span>
                 </div>
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                   <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Style:</label>
@@ -3043,20 +3041,20 @@ header {
                 <div class="style-row" style="display: flex; align-items: center; margin-bottom: 8px;">
                   <label style="color: var(--text-soft); font-size: 14px; min-width: 100px;">Speed:</label>
                   <input type="range" id="fov-speed" min="1" max="60" value="4" style="flex: 1;">
-                  <span id="fov-speed-value" style="min-width: 40px; text-align: right; color: var(--text-main);">8s</span>
+                  <span id="fov-speed-value" style="min-width: 40px; text-align: right; color: var(--text-main);">4s</span>
                 </div>
               </div>
             </div>
           </details>
           <details id="node-connections-section" ...="" <details="" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px; display: block;">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">4</span>)</summary>
-            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Secondary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 1</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 2</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Azure Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;">Connections (<span id="node-connections-count">9</span>)</summary>
+            <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/1</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">ISP Primary</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi0/0)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to view connection" style="color: var(--accent); font-family: monospace; cursor: pointer;">Gi1/0/24</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Core Router 2</span><span title="Click to view connection" style="color: var(--accent); font-family: monospace; margin-left: 6px; cursor: pointer;">(Gi1/0/24)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">External FW 1</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">NYC Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">LA Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Chicago Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">London Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">Tokyo Branch Router</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div><div style="padding: 6px 0px; border-bottom: 1px solid var(--edge-main); display: flex; align-items: center; font-size: 13px;"><span title="Click to set port" style="color: var(--text-soft); cursor: pointer;">-</span><span style="color: var(--text-soft); margin: 0px 8px;">↔</span><span title="Click to view connection" style="color: var(--text-main); cursor: pointer;">AWS Cloud</span><span title="Click to set port" style="color: var(--text-soft); margin-left: 6px; cursor: pointer;">(-)</span></div></div>
           </details>
           <div class="badge-row" id="node-tags"></div>
           <div class="size-controls">
             <label>Size:</label>
             <input type="range" id="size-slider" min="20" max="200" value="55">
-            <span id="size-value">120</span>
+            <span id="size-value">55</span>
             <button id="reset-size">Reset</button>
           </div>
           <div class="size-controls">
@@ -3066,7 +3064,7 @@ header {
             <span style="color: var(--text-soft);">°</span>
             <button id="reset-rotation">Reset</button>
           </div>
-          <details class="style-section" open="">
+          <details class="style-section">
             <summary>Styling</summary>
             <div class="style-content">
               <div class="style-row">
@@ -3492,19 +3490,7 @@ header {
       "timeout": 3000,
       "status": "online",
       "lastCheck": "2025-12-09T00:15:04.343Z"
-    },
-    "fovEnabled": true,
-    "fovRotation": 191,
-    "fovInnerRadius": 106,
-    "fovDistance": 500,
-    "fovColor": "#0008ff",
-    "fovOpacity": 36,
-    "fovGradient": true,
-    "fovBorderColor": "#f4fbf5",
-    "fovBorderWidth": 0,
-    "fovAnimate": true,
-    "fovAnimationType": "rings",
-    "fovSpeed": 8
+    }
   },
   "fw-external-1": {
     "shape": "firewall",
@@ -6058,31 +6044,6 @@ header {
     "fovSweep": 60,
     "fovSpeed": 10,
     "fovAnimate": false
-  },
-  "motion-sensor-a": {
-    "shape": "motion-sensor",
-    "name": "Motion Sensor A",
-    "ip": "0.0.0.0",
-    "role": "",
-    "tags": [],
-    "notes": [],
-    "mac": "",
-    "rackUnit": "",
-    "uHeight": "1",
-    "layer": "physical",
-    "assignedRack": "",
-    "rackCapacity": "42",
-    "isRack": false,
-    "locked": false,
-    "groupId": null,
-    "fovEnabled": true,
-    "fovAngle": 360,
-    "fovDistance": 150,
-    "fovColor": "#3b82f6",
-    "fovOpacity": 10,
-    "fovAnimationType": "rings",
-    "fovAnimate": true,
-    "fovSpeed": 4
   }
 }</script>
     <script id="topology-state" type="application/json">{
@@ -6141,19 +6102,7 @@ header {
         "timeout": 3000,
         "status": "online",
         "lastCheck": "2025-12-09T00:15:04.343Z"
-      },
-      "fovEnabled": true,
-      "fovRotation": 191,
-      "fovInnerRadius": 106,
-      "fovDistance": 500,
-      "fovColor": "#0008ff",
-      "fovOpacity": 36,
-      "fovGradient": true,
-      "fovBorderColor": "#f4fbf5",
-      "fovBorderWidth": 0,
-      "fovAnimate": true,
-      "fovAnimationType": "rings",
-      "fovSpeed": 8
+      }
     },
     "fw-external-1": {
       "shape": "firewall",
@@ -8707,31 +8656,6 @@ header {
       "fovSweep": 60,
       "fovSpeed": 10,
       "fovAnimate": false
-    },
-    "motion-sensor-a": {
-      "shape": "motion-sensor",
-      "name": "Motion Sensor A",
-      "ip": "0.0.0.0",
-      "role": "",
-      "tags": [],
-      "notes": [],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null,
-      "fovEnabled": true,
-      "fovAngle": 360,
-      "fovDistance": 150,
-      "fovColor": "#3b82f6",
-      "fovOpacity": 10,
-      "fovAnimationType": "rings",
-      "fovAnimate": true,
-      "fovSpeed": 4
     }
   },
   "edgeData": {
@@ -10011,8 +9935,8 @@ header {
       "y": 245.9932403564453
     },
     "core-router-2": {
-      "x": 3407.535263107053,
-      "y": 418.8290797140478
+      "x": 2499.883407638303,
+      "y": 329.99503430389154
     },
     "fw-external-1": {
       "x": 3221.7385182723783,
@@ -10055,8 +9979,8 @@ header {
       "y": 610.8312056412005
     },
     "mgmt-rack": {
-      "x": 1616.7481830713564,
-      "y": 1269.8881842944074
+      "x": 1601.2987201807314,
+      "y": 1281.4753424975324
     },
     "esxi-host-01": {
       "x": 2162.2166789540615,
@@ -10215,8 +10139,8 @@ header {
       "y": 506.90625
     },
     "branch-router-chi": {
-      "x": 3053.76091620728,
-      "y": 346.8323669433594
+      "x": 3355.02409980103,
+      "y": 393.1805725097656
     },
     "branch-router-lon": {
       "x": 3113.609823320121,
@@ -10227,8 +10151,8 @@ header {
       "y": 471.4241027832031
     },
     "cloud-aws": {
-      "x": 3417.216354945388,
-      "y": 611.6213989257812
+      "x": 3436.528122523513,
+      "y": 545.9614868164062
     },
     "cloud-azure": {
       "x": 2592.566210818907,
@@ -10433,10 +10357,6 @@ header {
     "camera-a-copy": {
       "x": 1040.653076171875,
       "y": 738.42822265625
-    },
-    "motion-sensor-a": {
-      "x": 2554.817110220086,
-      "y": 1250.7788103965372
     }
   },
   "nodeSizes": {
@@ -10610,9 +10530,9 @@ header {
     "autoPingInterval": 30
   },
   "canvas": {
-    "zoom": 0.6981943844372352,
-    "panX": -1541.9775683210573,
-    "panY": -1040.9457823572359
+    "zoom": 0.8752084596859406,
+    "panX": -191.26917538063572,
+    "panY": -261.51832729948296
   },
   "savedTopologyView": {
     "zoom": 0.9111098220009686,
@@ -10678,19 +10598,7 @@ header {
             "timeout": 3000,
             "status": "online",
             "lastCheck": "2025-12-09T00:15:04.343Z"
-          },
-          "fovEnabled": true,
-          "fovRotation": 191,
-          "fovInnerRadius": 106,
-          "fovDistance": 500,
-          "fovColor": "#0008ff",
-          "fovOpacity": 36,
-          "fovGradient": true,
-          "fovBorderColor": "#f4fbf5",
-          "fovBorderWidth": 0,
-          "fovAnimate": true,
-          "fovAnimationType": "rings",
-          "fovSpeed": 8
+          }
         },
         "fw-external-1": {
           "shape": "firewall",
@@ -13244,31 +13152,6 @@ header {
           "fovSweep": 60,
           "fovSpeed": 10,
           "fovAnimate": false
-        },
-        "motion-sensor-a": {
-          "shape": "motion-sensor",
-          "name": "Motion Sensor A",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null,
-          "fovEnabled": true,
-          "fovAngle": 360,
-          "fovDistance": 150,
-          "fovColor": "#3b82f6",
-          "fovOpacity": 10,
-          "fovAnimationType": "rings",
-          "fovAnimate": true,
-          "fovSpeed": 4
         }
       },
       "edges": {
@@ -14366,8 +14249,8 @@ header {
           "y": 245.9932403564453
         },
         "core-router-2": {
-          "x": 3407.535263107053,
-          "y": 418.8290797140478
+          "x": 2499.883407638303,
+          "y": 329.99503430389154
         },
         "fw-external-1": {
           "x": 3221.7385182723783,
@@ -14410,8 +14293,8 @@ header {
           "y": 610.8312056412005
         },
         "mgmt-rack": {
-          "x": 1616.7481830713564,
-          "y": 1269.8881842944074
+          "x": 1601.2987201807314,
+          "y": 1281.4753424975324
         },
         "esxi-host-01": {
           "x": 2162.2166789540615,
@@ -14570,8 +14453,8 @@ header {
           "y": 506.90625
         },
         "branch-router-chi": {
-          "x": 3053.76091620728,
-          "y": 346.8323669433594
+          "x": 3355.02409980103,
+          "y": 393.1805725097656
         },
         "branch-router-lon": {
           "x": 3113.609823320121,
@@ -14582,8 +14465,8 @@ header {
           "y": 471.4241027832031
         },
         "cloud-aws": {
-          "x": 3417.216354945388,
-          "y": 611.6213989257812
+          "x": 3436.528122523513,
+          "y": 545.9614868164062
         },
         "cloud-azure": {
           "x": 2592.566210818907,
@@ -14788,10 +14671,6 @@ header {
         "camera-a-copy": {
           "x": 1040.653076171875,
           "y": 738.42822265625
-        },
-        "motion-sensor-a": {
-          "x": 2554.817110220086,
-          "y": 1250.7788103965372
         }
       },
       "sizes": {
@@ -16046,525 +15925,7 @@ header {
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1767049841350,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049841244,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049841140,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049841034,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049840930,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049840827,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049840293,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049840181,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049840009,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049839829,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049839581,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049839288,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049839184,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049839078,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049838975,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049838238,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049838134,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049838028,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049837579,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049837475,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049837369,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049836957,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049836815,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049836388,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835884,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835780,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835674,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835404,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835300,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835194,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049835069,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049834963,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049834859,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049834019,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833912,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833808,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833702,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833598,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833492,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833171,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049833037,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049832925,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049832797,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049832686,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049823839,
-      "type": "node",
-      "description": "change animation type",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049820167,
-      "type": "node",
-      "description": "change animation type",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049817906,
-      "type": "node",
-      "description": "toggle coverage animation",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049807088,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806960,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806849,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806744,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806638,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806534,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806144,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049806040,
-      "type": "node",
-      "description": "change coverage border color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049800744,
-      "type": "node",
-      "description": "toggle coverage gradient",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049795361,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049795249,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049795146,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049795032,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049794500,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049794396,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049794201,
-      "type": "node",
-      "description": "change coverage color",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049770466,
-      "type": "node",
-      "description": "toggle coverage zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049712422,
-      "type": "node",
-      "description": "apply zone preset",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049705952,
-      "type": "node",
-      "description": "change shape",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049689724,
-      "type": "node",
-      "description": "add node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049665691,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049610174,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049606681,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049600155,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1767049576635,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1767049571847,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1767049556910,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1767049555310,
+      "timestamp": 1767758411187,
       "type": "import",
       "description": "Imported JSON: the-one-file-corporate-demo.json (107 nodes, 64 connections)",
       "details": {},

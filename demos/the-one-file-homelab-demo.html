@@ -1600,16 +1600,23 @@ header {
 		position: static !important;
 		overflow: visible !important;
 	  }
-	  #map circle[class*="node"],
-	  #map .node-shape,
-	  #map .node-group circle,
-	  #map .node-group rect,
-	  #map .node-group path,
-	  #map .node-group polygon {
+
+	  #map .node-hit-area,
+	  #map .group-indicator,
+	  #map .lock-indicator,
+	  #map .fov-group,
+	  #map .edge-arrow-forward,
+	  #map .edge-arrow-backward {
+		display: none !important;
+	  }
+
+	  #map .node-circle,
+	  #map .node-shape {
 		fill: white !important;
 		stroke: #000 !important;
 		stroke-width: 2px !important;
 	  }
+
 	  #map text {
 		fill: #000 !important;
 		stroke: none !important;
@@ -10014,21 +10021,21 @@ header {
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1767049571847,
+      "timestamp": 1767758429637,
       "type": "tab",
       "description": "Switched to tab: Homelab 2",
       "details": {},
       "tab": "Homelab 2"
     },
     {
-      "timestamp": 1767049556910,
+      "timestamp": 1767758412490,
       "type": "save",
       "description": "File saved: the-one-file-corporate.html",
       "details": {},
       "tab": "Corporate Site B"
     },
     {
-      "timestamp": 1767049555310,
+      "timestamp": 1767758411187,
       "type": "import",
       "description": "Imported JSON: the-one-file-corporate-demo.json (107 nodes, 64 connections)",
       "details": {},
