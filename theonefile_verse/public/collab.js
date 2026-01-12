@@ -246,6 +246,7 @@
           if (user) {
             user.cursorX = msg.x;
             user.cursorY = msg.y;
+            user.isRatio = msg.isRatio || false;
             users.set(msg.userId, user);
             updateRemoteCursor(msg.userId, user);
             renderUsers();
@@ -333,8 +334,18 @@
       document.body.appendChild(cursor);
     }
     if (cursor && user.cursorX !== undefined) {
-      cursor.style.left = user.cursorX + 'px';
-      cursor.style.top = user.cursorY + 'px';
+      let screenX = user.cursorX;
+      let screenY = user.cursorY;
+      if (user.isRatio) {
+        const viewport = document.getElementById('canvas-viewport');
+        if (viewport) {
+          const rect = viewport.getBoundingClientRect();
+          screenX = rect.left + user.cursorX * rect.width;
+          screenY = rect.top + user.cursorY * rect.height;
+        }
+      }
+      cursor.style.left = screenX + 'px';
+      cursor.style.top = screenY + 'px';
     }
   }
 
@@ -349,11 +360,24 @@
       const now = Date.now();
       if (now - lastSent < 50) return;
       lastSent = now;
-      sendMessage('cursor', {
-        userId: window.COLLAB_USER.id,
-        x: e.clientX,
-        y: e.clientY
-      });
+      const viewport = document.getElementById('canvas-viewport');
+      if (viewport) {
+        const rect = viewport.getBoundingClientRect();
+        const ratioX = (e.clientX - rect.left) / rect.width;
+        const ratioY = (e.clientY - rect.top) / rect.height;
+        sendMessage('cursor', {
+          userId: window.COLLAB_USER.id,
+          x: ratioX,
+          y: ratioY,
+          isRatio: true
+        });
+      } else {
+        sendMessage('cursor', {
+          userId: window.COLLAB_USER.id,
+          x: e.clientX,
+          y: e.clientY
+        });
+      }
     });
   }
   
@@ -368,44 +392,58 @@
   }
   
   function captureState() {
+    let state = null;
+
     if (typeof captureTheQuickening === 'function') {
       try {
-        const state = captureTheQuickening();
+        state = captureTheQuickening();
         delete state.canvas;
-        delete state.animSettings;
-        delete state.page;
-        delete state.savedStyleSets;
-        delete state.autoPingEnabled;
-        delete state.autoPingInterval;
-        delete state.savedTopologyView;
-        delete state.encryptedSections;
         if (state.documentTabs) {
           state.documentTabs = state.documentTabs.map(tab => {
             const { pageState, ...rest } = tab;
             return rest;
           });
         }
-        return state;
       } catch (e) { console.error('captureTheQuickening error:', e); }
     }
-    const nodeData = getGlobal('NODE_DATA');
-    if (!nodeData) return null;
-    return {
-      nodeData: nodeData,
-      edgeData: getGlobal('EDGE_DATA'),
-      rectData: getGlobal('RECT_DATA'),
-      textData: getGlobal('TEXT_DATA'),
-      nodePositions: getGlobal('savedPositions'),
-      nodeSizes: getGlobal('savedSizes'),
-      nodeStyles: getGlobal('savedStyles'),
-      edgeLegend: getGlobal('EDGE_LEGEND'),
-      zoneLegend: getGlobal('ZONE_LEGEND'),
-      zonePresets: getGlobal('ZONE_PRESETS'),
-      documentTabs: getGlobal('documentTabs'),
-      currentTabIndex: getGlobal('currentTabIndex'),
-      iconCache: getGlobal('iconCache'),
-      auditLog: getGlobal('auditLog')
-    };
+	
+    if (!state) {
+      const nodeData = getGlobal('NODE_DATA');
+      if (!nodeData) return null;
+      state = {
+        nodeData: nodeData,
+        edgeData: getGlobal('EDGE_DATA'),
+        rectData: getGlobal('RECT_DATA'),
+        textData: getGlobal('TEXT_DATA'),
+        nodePositions: getGlobal('savedPositions'),
+        nodeSizes: getGlobal('savedSizes'),
+        nodeStyles: getGlobal('savedStyles'),
+        edgeLegend: getGlobal('EDGE_LEGEND'),
+        zoneLegend: getGlobal('ZONE_LEGEND'),
+        zonePresets: getGlobal('ZONE_PRESETS'),
+        documentTabs: getGlobal('documentTabs'),
+        currentTabIndex: getGlobal('currentTabIndex'),
+        iconCache: getGlobal('iconCache'),
+        auditLog: getGlobal('auditLog'),
+        savedStyleSets: getGlobal('savedStyleSets'),
+        autoPingEnabled: getGlobal('autoPingEnabled'),
+        autoPingInterval: getGlobal('autoPingInterval'),
+        savedTopologyView: getGlobal('savedTopologyView'),
+        encryptedSections: getGlobal('encryptedSections')
+      };
+    }
+
+    state.animSettings = getGlobal('ANIM_SETTINGS');
+    state.rollbackVersions = getGlobal('rollbackVersions');
+    state.customLang = getGlobal('CUSTOM_LANG');
+
+    if (window.COLLAB_DEBUG) {
+      console.log('[Collab] Captured state keys:', Object.keys(state));
+      console.log('[Collab] nodeStyles count:', state.nodeStyles ? Object.keys(state.nodeStyles).length : 0);
+      console.log('[Collab] savedStyleSets count:', state.savedStyleSets ? state.savedStyleSets.length : 0);
+    }
+
+    return state;
   }
   
   function hashState(state) { return JSON.stringify(state); }
@@ -421,6 +459,11 @@
     if (!state) return;
     syncPaused = true;
     try {
+      if (window.COLLAB_DEBUG) {
+        console.log('[Collab] Applying remote state, keys:', Object.keys(state));
+        console.log('[Collab] Incoming nodeStyles:', state.nodeStyles ? Object.keys(state.nodeStyles).length : 'none');
+      }
+
       const localTabIndex = getGlobal('currentTabIndex') || 0;
       const senderTabIndex = state.currentTabIndex !== undefined ? state.currentTabIndex : 0;
 
@@ -439,38 +482,58 @@
       if (state.zoneLegend) setGlobal('ZONE_LEGEND', state.zoneLegend);
       if (state.zonePresets) setGlobal('ZONE_PRESETS', state.zonePresets);
 
+      const tabs = getGlobal('documentTabs') || [];
+      const myTab = tabs[localTabIndex];
+
       if (localTabIndex === senderTabIndex) {
+        if (window.COLLAB_DEBUG) console.log('[Collab] Same tab, applying directly');
         if (state.nodeData) setGlobal('NODE_DATA', state.nodeData);
         if (state.edgeData) setGlobal('EDGE_DATA', state.edgeData);
         if (state.rectData) setGlobal('RECT_DATA', state.rectData);
         if (state.textData) setGlobal('TEXT_DATA', state.textData);
         if (state.nodePositions) setGlobal('savedPositions', state.nodePositions);
         if (state.nodeSizes) setGlobal('savedSizes', state.nodeSizes);
-        if (state.nodeStyles) setGlobal('savedStyles', state.nodeStyles);
-        if (state.edgeLegend) setGlobal('EDGE_LEGEND', state.edgeLegend);
-      } else {
-        const tabs = getGlobal('documentTabs');
-        if (tabs && tabs[localTabIndex]) {
-          const myTab = tabs[localTabIndex];
-          if (myTab.nodes) setGlobal('NODE_DATA', myTab.nodes);
-          if (myTab.edges) setGlobal('EDGE_DATA', myTab.edges);
-          if (myTab.positions) setGlobal('savedPositions', myTab.positions);
-          if (myTab.sizes) setGlobal('savedSizes', myTab.sizes);
-          if (myTab.styles) setGlobal('savedStyles', myTab.styles);
-          if (myTab.legend) setGlobal('EDGE_LEGEND', myTab.legend);
-          if (myTab.rects) setGlobal('RECT_DATA', myTab.rects);
-          if (myTab.texts) setGlobal('TEXT_DATA', myTab.texts);
+        if (state.nodeStyles) {
+          if (window.COLLAB_DEBUG) console.log('[Collab] Setting savedStyles from nodeStyles');
+          setGlobal('savedStyles', state.nodeStyles);
         }
+        if (state.edgeLegend) setGlobal('EDGE_LEGEND', state.edgeLegend);
+      } else if (myTab) {
+        if (myTab.nodes) setGlobal('NODE_DATA', myTab.nodes);
+        if (myTab.edges) setGlobal('EDGE_DATA', myTab.edges);
+        if (myTab.positions) setGlobal('savedPositions', myTab.positions);
+        if (myTab.sizes) setGlobal('savedSizes', myTab.sizes);
+        if (myTab.styles) setGlobal('savedStyles', myTab.styles);
+        if (myTab.legend) setGlobal('EDGE_LEGEND', myTab.legend);
+        if (myTab.rects) setGlobal('RECT_DATA', myTab.rects);
+        if (myTab.texts) setGlobal('TEXT_DATA', myTab.texts);
       }
 
       if (state.iconCache) setGlobal('iconCache', state.iconCache);
       if (state.auditLog) setGlobal('auditLog', state.auditLog);
+
+      if (state.savedStyleSets !== undefined) setGlobal('savedStyleSets', state.savedStyleSets);
+      if (state.animSettings !== undefined) setGlobal('ANIM_SETTINGS', state.animSettings);
+      if (state.autoPingEnabled !== undefined) setGlobal('autoPingEnabled', state.autoPingEnabled);
+      if (state.autoPingInterval !== undefined) setGlobal('autoPingInterval', state.autoPingInterval);
+      if (state.savedTopologyView !== undefined) setGlobal('savedTopologyView', state.savedTopologyView);
+      if (state.encryptedSections !== undefined) setGlobal('encryptedSections', state.encryptedSections);
+
+      if (state.rollbackVersions !== undefined) setGlobal('rollbackVersions', state.rollbackVersions);
+      if (state.customLang !== undefined) setGlobal('CUSTOM_LANG', state.customLang);
+
+      if (state.page) {
+        setGlobal('PAGE_STATE', state.page);
+        if (typeof wieldThePower === 'function') wieldThePower();
+      }
 
       if (typeof forgeTheTopology === 'function') forgeTheTopology();
       if (typeof forgeTheLegend === 'function') forgeTheLegend();
       if (typeof updateZoneLegend === 'function') updateZoneLegend();
       if (typeof updateViewBox === 'function') updateViewBox();
       if (typeof displayTabs === 'function') displayTabs();
+      if (typeof applyAnimZoneSettings === 'function') applyAnimZoneSettings();
+      if (typeof rebuildThemeDropdown === 'function') rebuildThemeDropdown();
 
       lastStateHash = hashState(state);
     } catch (e) { console.error('applyRemoteState error:', e); } finally { syncPaused = false; }

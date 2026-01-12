@@ -8,6 +8,7 @@
 | **Drag empty space** | Pan canvas | Any view |
 | **Pinch** | Zoom in/out | Any view |
 | **Triple Tap** | Undo | Any view |
+| **Long Press** | Add Waypoint to line | Any view |
 
 ## Multi-Selection
 

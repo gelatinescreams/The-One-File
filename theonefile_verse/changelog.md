@@ -1,5 +1,10 @@
 ### TheOneFile_Verse changelog
 
+**1/12/26 Theonefile_verse 1.3** Its all coming together now
+  * Completely rewrote the cross user mouse logic. It is much more reliable now.
+  * Fixed an issue where styles and some variables were not saving across user instances
+  * Various bug fixes
+
 **1/6/26 Theonefile_verse 1.2** Flip it and reverse it
   * Fixed an issue where revere proxies did not pick us WSS correctly
   * Fixed an issue where username did not persist in some rare cases

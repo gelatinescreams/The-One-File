@@ -1,7 +1,6 @@
-version: "3.8"
 services:
   theonefile_verse:
-    build: .
+    image: ghcr.io/gelatinescreams/theonefile_verse:latest
     ports:
       - "10101:10101"
     volumes:

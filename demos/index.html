@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The One File : Demo Browser</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0a0a0a; }
+    #demo-browser-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: linear-gradient(135deg, #3e3e59 0%, #14151c 100%);
+      border-bottom: 2px solid #0f3460;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+      z-index: 999999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    #demo-browser-bar h1 {
+      color: #e5e5e5;
+      font-size: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    #demo-browser-bar select {
+      padding: 8px 12px;
+      background: #0f3460;
+      color: #eee;
+      border: 1px solid #e5e5e5;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      min-width: 150px;
+    }
+    #demo-browser-bar select:hover {
+      background: #1a4a7a;
+    }
+    #demo-browser-bar label {
+      color: #aaa;
+      font-size: 13px;
+    }
+    .demo-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #demo-frame {
+      position: fixed;
+      top: 50px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: none;
+      width: 100%;
+      height: calc(100vh - 50px);
+    }
+    #loading-overlay {
+      position: fixed;
+      top: 50px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999998;
+      color: #e94560;
+      font-size: 18px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #1a1a2e;
+      border-top-color: #e94560;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 15px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="demo-browser-bar">
+    <h1>The One File : Demo Browser</h1>
+    <div class="demo-control">
+      <label>Version:</label>
+      <select id="version-select">
+        <option value="networkening">Networkening</option>
+        <option value="core">Core</option>
+      </select>
+    </div>
+    <div class="demo-control">
+      <label>Demo:</label>
+      <select id="demo-select">
+        <option value="corporate">Corporate</option>
+        <option value="homelab">Homelab</option>
+		<option value="sports">Sports</option>
+      </select>
+    </div>
+  </div>
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    Loading demo...
+  </div>
+  <iframe id="demo-frame" sandbox="allow-scripts allow-same-origin allow-downloads allow-modals"></iframe>
+
+  <script>
+    const DEMOS = {
+      core: {
+        corporate: 'json-exports/the-one-file-corporate-demo.json',
+        homelab: 'json-exports/the-one-file-homelab-demo.json'
+      },
+      networkening: {
+        corporate: 'json-exports/theonefile-networkening-corporate-demo.json',
+        homelab: 'json-exports/theonefile-networkening-homelab-demo.json',
+		sports: 'json-exports/theonefile-networkening-sports-demo.json'
+      }
+    };
+
+    const BASE_HTML = {
+      core: '../the-one-file.html',
+      networkening: '../theonefile-networkening.html'
+    };
+
+    const versionSelect = document.getElementById('version-select');
+    const demoSelect = document.getElementById('demo-select');
+    const demoFrame = document.getElementById('demo-frame');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        version: params.get('version') || 'networkening',
+        demo: params.get('demo') || 'corporate'
+      };
+    }
+
+    function updateUrl(version, demo) {
+      const url = new URL(window.location);
+      url.searchParams.set('version', version);
+      url.searchParams.set('demo', demo);
+      window.history.replaceState({}, '', url);
+    }
+
+    let currentDemoData = null;
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'DEMO_READY') {
+        loadingOverlay.style.display = 'none';
+      }
+    });
+
+    async function loadDemo(version, demo) {
+      loadingOverlay.style.display = 'flex';
+
+      try {
+        const [htmlResponse, jsonResponse] = await Promise.all([
+          fetch(BASE_HTML[version]),
+          fetch(DEMOS[version][demo])
+        ]);
+
+        if (!htmlResponse.ok || !jsonResponse.ok) {
+          throw new Error('Failed to load files');
+        }
+
+        let html = await htmlResponse.text();
+        currentDemoData = await jsonResponse.json();
+
+        const listenerScript = '<scr' + 'ipt>' +
+          'window.addEventListener("message", function(event) {' +
+          '  if (event.data && event.data.type === "LOAD_DEMO_DATA") {' +
+          '    var data = event.data.payload;' +
+          '    function applyData() {' +
+          '      if (typeof NODE_DATA === "undefined" || typeof forgeTheTopology === "undefined") {' +
+          '        setTimeout(applyData, 50);' +
+          '        return;' +
+          '      }' +
+          '      NODE_DATA = data.nodeData || {};' +
+          '      EDGE_DATA = data.edgeData || { list: [] };' +
+          '      EDGE_LEGEND = data.edgeLegend || {};' +
+          '      if (typeof RECT_DATA !== "undefined") RECT_DATA = data.rectData || { list: [] };' +
+          '      if (typeof TEXT_DATA !== "undefined") TEXT_DATA = data.textData || { list: [] };' +
+          '      savedPositions = data.nodePositions || {};' +
+          '      savedSizes = data.nodeSizes || {};' +
+          '      savedStyles = data.nodeStyles || {};' +
+          '      if (data.page && typeof PAGE_STATE !== "undefined" && typeof DEFAULT_PAGE_STATE !== "undefined") {' +
+          '        PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, data.page);' +
+          '        if (typeof wieldThePower === "function") wieldThePower();' +
+          '      }' +
+          '      if (data.canvas && typeof canvasState !== "undefined") {' +
+          '        canvasState.zoom = data.canvas.zoom || 1;' +
+          '        canvasState.panX = data.canvas.panX || 0;' +
+          '        canvasState.panY = data.canvas.panY || 0;' +
+          '      }' +
+          '      if (data.documentTabs && typeof documentTabs !== "undefined") {' +
+          '        documentTabs = data.documentTabs;' +
+          '        currentTabIndex = data.currentTabIndex || 0;' +
+          '      }' +
+          '      if (data.page && data.page.title) {' +
+          '        document.title = data.page.title;' +
+          '        var titleEl = document.querySelector(".editable-page-title");' +
+          '        if (titleEl) titleEl.textContent = data.page.title;' +
+          '      }' +
+          '      var layerMap = { "physical": "layer1", "logical": "layer2", "security": "layer3", "application": "layer4" };' +
+          '      Object.values(NODE_DATA).forEach(function(node) {' +
+          '        if (!node.tags) node.tags = [];' +
+          '        if (!node.notes) node.notes = [];' +
+          '        if (!node.layer || layerMap[node.layer]) node.layer = layerMap[node.layer] || "layer1";' +
+          '      });' +
+          '      forgeTheTopology();' +
+          '      if (typeof updateViewBox === "function") updateViewBox();' +
+          '      if (typeof showWelcomeModal === "function") showWelcomeModal();' +
+          '      window.parent.postMessage({ type: "DEMO_READY" }, "*");' +
+          '    }' +
+          '    applyData();' +
+          '  }' +
+          '});' +
+          '</scr' + 'ipt>';
+
+        const autosaveBlockerScript = '<scr' + 'ipt>' +
+          '(function(){' +
+          '  window.DEMO_MODE = true;' +
+          '  var blockedKeys = ["topology", "autosave", "savedState", "nodeData", "edgeData", "canvasState", "lastState", "PAGE_STATE", "theonefile"];' +
+          '  function isBlockedKey(key) {' +
+          '    if (!key) return false;' +
+          '    var lk = key.toLowerCase();' +
+          '    for (var i = 0; i < blockedKeys.length; i++) {' +
+          '      if (lk.indexOf(blockedKeys[i].toLowerCase()) !== -1) return true;' +
+          '    }' +
+          '    return false;' +
+          '  }' +
+          '  var origGetItem = localStorage.getItem.bind(localStorage);' +
+          '  var origSetItem = localStorage.setItem.bind(localStorage);' +
+          '  var origRemoveItem = localStorage.removeItem.bind(localStorage);' +
+          '  localStorage.getItem = function(key) {' +
+          '    if (isBlockedKey(key)) return null;' +
+          '    return origGetItem(key);' +
+          '  };' +
+          '  localStorage.setItem = function(key, value) {' +
+          '    if (isBlockedKey(key)) return;' +
+          '    return origSetItem(key, value);' +
+          '  };' +
+          '  localStorage.removeItem = function(key) {' +
+          '    if (isBlockedKey(key)) return;' +
+          '    return origRemoveItem(key);' +
+          '  };' +
+          '  var origOpen = indexedDB.open.bind(indexedDB);' +
+          '  indexedDB.open = function(name) {' +
+          '    if (name && name.toLowerCase().indexOf("theonefile") !== -1) {' +
+          '      var fakeRequest = {' +
+          '        result: null,' +
+          '        error: null,' +
+          '        onsuccess: null,' +
+          '        onerror: null,' +
+          '        onupgradeneeded: null,' +
+          '        onblocked: null,' +
+          '        readyState: "done",' +
+          '        transaction: null,' +
+          '        source: null' +
+          '      };' +
+          '      setTimeout(function() {' +
+          '        if (fakeRequest.onerror) fakeRequest.onerror(new Event("error"));' +
+          '      }, 0);' +
+          '      return fakeRequest;' +
+          '    }' +
+          '    return origOpen.apply(indexedDB, arguments);' +
+          '  };' +
+          '})();' +
+          '</scr' + 'ipt>';
+
+        html = html.replace(/<head[^>]*>/i, '$&' + autosaveBlockerScript);
+
+        html = html.replace(/<\/head>/i, listenerScript + '</head>');
+
+        const blob = new Blob([html], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+
+        demoFrame.onload = () => {
+          URL.revokeObjectURL(blobUrl);
+          demoFrame.contentWindow.postMessage({
+            type: 'LOAD_DEMO_DATA',
+            payload: currentDemoData
+          }, '*');
+        };
+
+        demoFrame.src = blobUrl;
+        updateUrl(version, demo);
+
+      } catch (error) {
+        console.error('Error loading demo:', error);
+        loadingOverlay.innerHTML = `<div style="color: #e94560;">Demo Coming Soon!</div>`;
+      }
+    }
+
+    versionSelect.addEventListener('change', () => {
+      loadDemo(versionSelect.value, demoSelect.value);
+    });
+
+    demoSelect.addEventListener('change', () => {
+      loadDemo(versionSelect.value, demoSelect.value);
+    });
+
+    const params = getUrlParams();
+    if (DEMOS[params.version]) {
+      versionSelect.value = params.version;
+    }
+    if (DEMOS[versionSelect.value][params.demo]) {
+      demoSelect.value = params.demo;
+    }
+
+    loadDemo(versionSelect.value, demoSelect.value);
+  </script>
+</body>
+</html>

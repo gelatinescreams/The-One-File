@@ -93,16 +93,20 @@ Admin panel settings for:
 [TheOneFile features available here](https://github.com/gelatinescreams/The-One-File)
 
 ### TheOneFile_Verse
-- Full admin panel
-- Realtime sync via WebSocket
-- Realtime chat **1.1** [changelog](changelog.md)
-- Real time mutli user cursor engine **1.1** [changelog](changelog.md)
-- Room based sessions with optional passwords
-- Auto destruct rooms
-- All the functions of TheOneFile
-- Argon2id password hashing
+* **Current Version 1.3** [changelog](changelog.md)
+* Full admin panel
+* Realtime sync via WebSocket
+* Realtime chat **1.1** [changelog](changelog.md)
+* Real time mutli user cursor engine **1.1** [changelog](changelog.md)
+* Room based sessions with optional passwords
+* Auto destruct rooms
+* All the functions of TheOneFile
+* Argon2id password hashing
 
 ## How It Works
-1. Server fetches the latest TheOneFile Networkening HTML from GitHub on startup
+1. Server fetches the latest TheOneFile Networkening HTML from GitHub on startup or upload your own custom tempalte
 2. When users create or join rooms, the HTML is served with collaboration scripts injected
 3. All edits sync in realtime via WebSocket
+4. Data can be saved in the room and can be export into a fully editable and portable version of The One File
+5. Or data can be exported in all popular editing formats
+6. Bring it back later and import the HTML, CSV, JSON, or MD right back into your room

@@ -8,13 +8,35 @@
 
 ![The One File](assets/theonefile.jpg)
 
-There can only be One File. Map networks, smart homes, mind maps, infrastructure or anything with nodes and connections. Animated zones, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. 
+There can only be One File. Map networks, smart homes, sports plays, mind maps, infrastructure or anything with nodes and connections. Animated zones, replay video export, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. 
 
 *The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/).* Still one file. 
 
-*TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
+*TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to create, edit and share together!
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
+
+### Version 4.1.0 /\ 1/12/26 The Vision Converges
+* **Added custom language system**
+  * full GUI for language editing
+  * or import/export via json
+* **Expanded Mapping Modes**
+  * added Sports, MindMap, Smart Home and Blueprint
+  * each with their own custom sports grid
+* **Expanded Grid System**
+  * new network grid : dots, blueprint
+  * new sports grids : basketball, american football, football(soccer), hockey, baseball, tennis
+* **Full motion recording system**
+  * record and play back different situations on your map type
+  * saves replays to your data and/or export them as movies (webm)
+* **Orthogonal Overhaul** Complete rewrite of the entire connections system. 
+  * Create waypoints anywhere on the connection and drag it around.
+  * custom script that re evaluates routing in real time, no matter how many way points you need.
+  * double click on desktop and long press on mobile
+* **Tons of performance tweaks**
+* **Tons Of visual fixes**
+* **TheOneFile_Verse enhancements + fixes** [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
+* **+ More. See more changes in the [changelog.md](changelog.md)**
 
 ### Version 4.0.0 /\ 1/6/26 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**

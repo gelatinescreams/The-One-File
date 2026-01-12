@@ -1,5 +1,32 @@
 #### CHANGE LOG
-**4.0.0 Stable is here community! Thank you to all the testers, downloaders and shooting stars. We are making this for all of us :)**
+
+### Version 4.1.0 /\ 1/12/26 The Vision Converges
+* **Added custom language system**
+  * full GUI for language editing
+  * or import/export via json
+  * language system available in the main settings menu
+  * more translations are coming in the future
+* **Expanded Mapping Modes**
+  * added Sports, MindMap, Smart Home and Blueprint
+  * each with their own custom sports grid
+* **Expanded Grid System**
+  * new network grids available : dots, blueprint
+  * new sports grids available : basketball, american football, football(soccer), hockey, baseball, tennis
+* **Full motion recording system**
+  * record and play back different situations on your map type
+  * saves replays to your data and/or export them as movies (webm)
+* **Orthogonal Overhaul** Complete rewrite of the entire connections system. 
+  * Create waypoints anywhere on the connection and drag it around.
+  * custom script that re evaluates routing in real time, no matter how many way points you need.
+  * double click on desktop and long press on mobile
+* **Added a new welcome modal to make map mode switching easier**  
+  * each tab has its own mapping type. unlimited options
+* **Tons of performance tweaks**
+  * updated preset themes	
+* **Added new demo browser**  
+* **Tons Of visual fixes**
+* **Added new print color option**
+* **TheOneFile_Verse enhancements + fixes** [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
 
 ### Version 4.0.0 /\ 1/6/26 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**

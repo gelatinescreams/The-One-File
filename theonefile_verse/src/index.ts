@@ -417,18 +417,30 @@ const adminDashboardHtml = `<!DOCTYPE html>
         </div>
       </div>
       <div class="settings-section">
-        <h3>Auto-Updates</h3>
+        <h3>TheOneFile Source</h3>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Skip Updates</div><div class="setting-desc">Disable automatic updates from GitHub</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-skip-updates" onclick="toggleSetting('skipUpdates')"></div></div>
+          <div class="setting-info"><div class="setting-label">Source Mode</div><div class="setting-desc">Choose where to load TheOneFile from</div></div>
+          <div class="setting-control">
+            <select id="source-mode" onchange="changeSourceMode()"><option value="github">GitHub (Auto-Update)</option><option value="local">Local (Manual Upload)</option></select>
+          </div>
         </div>
-        <div class="setting-row">
+        <div class="setting-row" id="github-settings">
           <div class="setting-info"><div class="setting-label">Update Interval</div><div class="setting-desc">Hours between auto-updates (0 = manual only)</div></div>
           <div class="setting-control"><input type="number" id="update-interval" min="0" max="168" style="width:80px"><button class="btn btn-sm btn-primary" onclick="saveUpdateInterval()">Save</button></div>
         </div>
-        <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Manual Update</div><div class="setting-desc">Fetch latest version from GitHub now</div></div>
+        <div class="setting-row" id="github-update-row">
+          <div class="setting-info"><div class="setting-label">Fetch from GitHub</div><div class="setting-desc">Download latest version now</div></div>
           <div class="setting-control"><button class="btn btn-sm btn-success" id="update-btn" onclick="triggerUpdate()">Update Now</button></div>
+        </div>
+        <div class="setting-row" id="upload-row" style="display:none">
+          <div class="setting-info"><div class="setting-label">Upload Local File</div><div class="setting-desc" id="upload-status">Upload your own TheOneFile HTML</div></div>
+          <div class="setting-control">
+            <input type="file" id="upload-file" accept=".html" style="display:none" onchange="uploadFile()">
+            <button class="btn btn-sm btn-primary" onclick="document.getElementById('upload-file').click()">Choose File</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Current File</div><div class="setting-desc" id="current-file-info">Loading...</div></div>
         </div>
       </div>
       <div class="settings-section">
@@ -482,7 +494,6 @@ const adminDashboardHtml = `<!DOCTYPE html>
     async function loadSettings(){try{const res=await fetch('/api/admin/settings');if(!res.ok)return;settings=await res.json();renderSettings()}catch(e){console.error(e)}}
     function renderSettings(){
       document.getElementById('toggle-instance-lock').classList.toggle('active',settings.instancePasswordEnabled);
-      document.getElementById('toggle-skip-updates').classList.toggle('active',settings.skipUpdates);
       document.getElementById('toggle-public-rooms').classList.toggle('active',settings.allowPublicRoomCreation);
       document.getElementById('update-interval').value=settings.updateIntervalHours||0;
       document.getElementById('default-destruct-mode').value=settings.defaultDestructMode||'time';
@@ -491,8 +502,8 @@ const adminDashboardHtml = `<!DOCTYPE html>
       document.getElementById('forced-theme').value=settings.forcedTheme||'user';
       document.getElementById('instance-pwd-row').style.display=settings.instancePasswordEnabled?'flex':'none';
       document.getElementById('instance-pwd-status').textContent=settings.instancePasswordSet?'Password is set':'No password set';
-      document.getElementById('update-btn').disabled=settings.skipUpdates;
       if(settings.envAdminPasswordSet){document.getElementById('toggle-instance-lock').style.opacity='0.5';document.getElementById('toggle-instance-lock').onclick=null}
+      updateSourceUI();
     }
     async function saveForcedTheme(){
       const val=document.getElementById('forced-theme').value;
@@ -522,10 +533,48 @@ const adminDashboardHtml = `<!DOCTYPE html>
     async function triggerUpdate(){
       const btn=document.getElementById('update-btn');btn.disabled=true;btn.textContent='Updating...';
       try{const res=await fetch('/api/admin/update',{method:'POST'});const data=await res.json();
-        if(data.success)showStatus('Updated successfully ('+Math.round(data.size/1024)+'KB)','success');
-        else showStatus('Update failed','error');
+        if(data.success){showStatus('Updated successfully ('+Math.round(data.size/1024)+'KB)','success');loadSettings()}
+        else showStatus(data.error||'Update failed','error');
       }catch{showStatus('Update failed','error')}
-      btn.disabled=settings.skipUpdates;btn.textContent='Update Now';
+      btn.disabled=false;btn.textContent='Update Now';
+    }
+    async function changeSourceMode(){
+      const mode=document.getElementById('source-mode').value;
+      try{
+        const res=await fetch('/api/admin/source-mode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode})});
+        const data=await res.json();
+        if(data.success){
+          showStatus('Source mode changed to '+mode,'success');
+          loadSettings();
+        }else{showStatus(data.error||'Failed to change mode','error')}
+      }catch{showStatus('Failed to change mode','error')}
+    }
+    async function uploadFile(){
+      const input=document.getElementById('upload-file');
+      if(!input.files||!input.files[0])return;
+      const file=input.files[0];
+      const formData=new FormData();
+      formData.append('file',file);
+      try{
+        const res=await fetch('/api/admin/upload-html',{method:'POST',body:formData});
+        const data=await res.json();
+        if(data.success){
+          showStatus('Uploaded successfully ('+Math.round(data.size/1024)+'KB) - '+data.edition+' edition','success');
+          loadSettings();
+        }else{showStatus(data.error||'Upload failed','error')}
+      }catch{showStatus('Upload failed','error')}
+      input.value='';
+    }
+    function updateSourceUI(){
+      const isLocal=settings.skipUpdates;
+      document.getElementById('source-mode').value=isLocal?'local':'github';
+      document.getElementById('github-settings').style.display=isLocal?'none':'flex';
+      document.getElementById('github-update-row').style.display=isLocal?'none':'flex';
+      document.getElementById('upload-row').style.display=isLocal?'flex':'none';
+      const sizeKB=settings.currentFileSize?Math.round(settings.currentFileSize/1024):0;
+      const edition=settings.currentFileEdition||'unknown';
+      const source=isLocal?'Local upload':'GitHub';
+      document.getElementById('current-file-info').textContent=sizeKB+'KB - '+edition+' edition ('+source+')';
     }
     async function saveRoomDefaults(){
       await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
@@ -691,6 +740,42 @@ function resetDestructionTimer(roomId: string): void {
 let theOneFileHtml = "";
 const theOneFilePath = join(process.cwd(), "public", "theonefile.html");
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/gelatinescreams/The-One-File/main/theonefile-networkening.html";
+
+interface ValidationResult {
+  valid: boolean;
+  error?: string;
+  edition?: string;
+}
+
+function validateTheOneFileHtml(html: string): ValidationResult {
+  if (!html || html.length < 1000) {
+    return { valid: false, error: "File too small to be valid" };
+  }
+  if (!html.trim().startsWith("<!DOCTYPE html>") && !html.trim().startsWith("<html")) {
+    return { valid: false, error: "Not a valid HTML file" };
+  }
+  const hasHeaderComment = html.includes("The One File") && html.includes("There can be only one");
+  if (!hasHeaderComment) {
+    return { valid: false, error: "Missing The One File header comment" };
+  }
+  const hasLangJson = html.includes('id="lang-json"');
+  if (!hasLangJson) {
+    return { valid: false, error: "Missing language system (lang-json)" };
+  }
+  const hasTopologyState = html.includes('id="topology-state"');
+  if (!hasTopologyState) {
+    return { valid: false, error: "Missing topology state element" };
+  }
+  let edition = "core";
+  if (html.includes("The Networkening") || html.includes("networkening")) {
+    edition = "networkening";
+  }
+  const hasCoreVars = html.includes("NODE_DATA") && html.includes("EDGE_DATA") && html.includes("savedPositions");
+  if (!hasCoreVars) {
+    return { valid: false, error: "Missing core topology variables" };
+  }
+  return { valid: true, edition };
+}
 
 async function fetchLatestFromGitHub(): Promise<boolean> {
   try {
@@ -905,10 +990,13 @@ const server = Bun.serve({
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
       const { instancePasswordHash, ...safeSettings } = instanceSettings;
+      const fileValidation = validateTheOneFileHtml(theOneFileHtml);
       return Response.json({
         ...safeSettings,
         instancePasswordSet: !!instancePasswordHash,
-        envAdminPasswordSet: !!ENV_ADMIN_PASSWORD
+        envAdminPasswordSet: !!ENV_ADMIN_PASSWORD,
+        currentFileSize: theOneFileHtml.length,
+        currentFileEdition: fileValidation.valid ? fileValidation.edition : "invalid"
       }, { headers: corsHeaders });
     }
 
@@ -968,6 +1056,59 @@ const server = Bun.serve({
       }
       const success = await fetchLatestFromGitHub();
       return Response.json({ success, size: theOneFileHtml.length }, { headers: corsHeaders });
+    }
+
+    if (path === "/api/admin/upload-html" && req.method === "POST") {
+      const token = getTokenFromRequest(req);
+      if (!token || !validateAdminToken(token)) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const formData = await req.formData();
+        const file = formData.get("file") as File | null;
+        if (!file) {
+          return Response.json({ error: "No file provided" }, { status: 400, headers: corsHeaders });
+        }
+        const html = await file.text();
+        const validationResult = validateTheOneFileHtml(html);
+        if (!validationResult.valid) {
+          return Response.json({ error: validationResult.error }, { status: 400, headers: corsHeaders });
+        }
+        writeFileSync(theOneFilePath, html);
+        theOneFileHtml = html;
+        instanceSettings.skipUpdates = true;
+        saveSettings(instanceSettings);
+        if (updateTimer) { clearInterval(updateTimer); updateTimer = null; }
+        console.log(`[Upload] Admin uploaded local file (${(html.length / 1024).toFixed(1)}KB) - ${validationResult.edition}`);
+        return Response.json({ success: true, size: html.length, edition: validationResult.edition }, { headers: corsHeaders });
+      } catch (e) {
+        return Response.json({ error: "Failed to process upload" }, { status: 500, headers: corsHeaders });
+      }
+    }
+
+    if (path === "/api/admin/source-mode" && req.method === "POST") {
+      const token = getTokenFromRequest(req);
+      if (!token || !validateAdminToken(token)) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (body.mode === "github") {
+          instanceSettings.skipUpdates = false;
+          saveSettings(instanceSettings);
+          await fetchLatestFromGitHub();
+          restartUpdateTimer();
+          return Response.json({ success: true, mode: "github", size: theOneFileHtml.length }, { headers: corsHeaders });
+        } else if (body.mode === "local") {
+          instanceSettings.skipUpdates = true;
+          saveSettings(instanceSettings);
+          if (updateTimer) { clearInterval(updateTimer); updateTimer = null; }
+          return Response.json({ success: true, mode: "local" }, { headers: corsHeaders });
+        }
+        return Response.json({ error: "Invalid mode" }, { status: 400, headers: corsHeaders });
+      } catch {
+        return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders });
+      }
     }
 
     if (path === "/api/theme" && req.method === "GET") {
@@ -1130,6 +1271,9 @@ const server = Bun.serve({
             case 'encryptedSections': return typeof encryptedSections !== 'undefined' ? encryptedSections : {};
             case 'iconCache': return typeof IconLibrary !== 'undefined' ? IconLibrary.iconCache : {};
             case 'ANIM_SETTINGS': return typeof ANIM_SETTINGS !== 'undefined' ? ANIM_SETTINGS : null;
+            case 'rollbackVersions': return typeof rollbackVersions !== 'undefined' ? rollbackVersions : [];
+            case 'CUSTOM_LANG': return typeof CUSTOM_LANG !== 'undefined' ? CUSTOM_LANG : null;
+            case 'PAGE_STATE': return typeof PAGE_STATE !== 'undefined' ? PAGE_STATE : {};
             default: return undefined;
           }
         } catch(e) { return undefined; }
@@ -1157,6 +1301,9 @@ const server = Bun.serve({
             case 'encryptedSections': if(typeof encryptedSections !== 'undefined') encryptedSections = value; return true;
             case 'iconCache': if(typeof IconLibrary !== 'undefined') IconLibrary.iconCache = value; return true;
             case 'ANIM_SETTINGS': if(typeof ANIM_SETTINGS !== 'undefined') { Object.assign(ANIM_SETTINGS, value); return true; } return false;
+            case 'rollbackVersions': if(typeof rollbackVersions !== 'undefined') { rollbackVersions = value; return true; } return false;
+            case 'CUSTOM_LANG': CUSTOM_LANG = value; if(typeof LANG !== 'undefined' && typeof DEFAULT_LANG !== 'undefined' && value) { LANG = deepMerge(DEFAULT_LANG, value); } return true;
+            case 'PAGE_STATE': if(typeof PAGE_STATE !== 'undefined') { Object.assign(PAGE_STATE, value); return true; } return false;
             default: return false;
           }
         } catch(e) { return false; }
@@ -1245,7 +1392,7 @@ window.ROOM_IS_CREATOR = (function(){
 ${saveHookScript}
 </body>`;
       
-      injectedHtml = injectedHtml.replace("</body>", configScript);
+      injectedHtml = injectedHtml.replace(/<\/body>\s*<\/html>\s*$/i, configScript + "\n</html>");
       
       return new Response(injectedHtml, { headers: { "Content-Type": "text/html" } });
     }
