@@ -120,10 +120,8 @@ Open `http://localhost:10101`
 
 ### Core + Networkening Editions Download:
 
-* [the-one-file-corporate-demo.html](https://github.com/user-attachments/files/24463905/the-one-file-corporate-demo.html)
-* [the-one-file-homelab-demo.html](https://github.com/user-attachments/files/24463906/the-one-file-homelab-demo.html)
-* [theonefile-networkening-corporate-demo.html](https://github.com/user-attachments/files/24463907/theonefile-networkening-corporate-demo.html)
-* [theonefile-networkening-homelab-demo.html](https://github.com/user-attachments/files/24463908/theonefile-networkening-homelab-demo.html)
+* Core [the-one-file.html](https://github.com/user-attachments/files/24575736/the-one-file.html)
+* Networkening [theonefile-networkening.html](https://github.com/user-attachments/files/24575735/theonefile-networkening.html)
 
 ### Why It Exists
 
