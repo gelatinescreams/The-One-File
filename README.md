@@ -51,11 +51,11 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 ### Demos
 
 * **Core Edition**
-  * [Core: Corporation Demo](https://therecanonlybe.one/demos/the-one-file-corporate-demo.html)
-  * [Core: Homelab Demo](https://therecanonlybe.one/demos/the-one-file-homelab-demo.html)
+  * [Core: Corporation Demo](https://therecanonlybe.one/demos/?version=core&demo=corporate)
+  * [Core: Homelab Demo](https://therecanonlybe.one/demos/?version=core&demo=homelab)
 * **Networkening Edition**
-  * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/theonefile-networkening-corporate-demo.html)
-  * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/theonefile-networkening-homelab-demo.html)
+  * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/?version=networkening&demo=corporate)
+  * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/?version=networkening&demo=homelab)
 * **TheOneFile_Verse Edition** 
   * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
   * *join from different browsers to see real time changes*
