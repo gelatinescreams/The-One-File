@@ -16,7 +16,11 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-### Version 4.1.0 /\ 1/12/26 The Vision Converges
+- 
+
+### Version 4.1.1 /\ 1/12/26 The Vision Converges + step by step
+
+* **V 4.1.1 : added step by step recording for precise frame by frame capture**
 * **Added custom language system**
   * full GUI for language editing
   * or import/export via json
@@ -311,6 +315,15 @@ Instead of building another hosted application, I built a file.
 | `Delete` | Delete selected item(s) |
 | `Scroll` | Zoom in/out |
 | `Shift + Click/Drag` | Multiple Select (marquee selection) |
+
+## Recording
+
+| Key | Action |
+|-----|--------|
+| R | Start/stop real time recording |
+| Shift+R | Start/stop step by step recording |
+| Space | Add step (step recording) / Play/Pause (playback) |
+| P | Play recording |
 
 ### Mobile Gestures & Touch Controls
 

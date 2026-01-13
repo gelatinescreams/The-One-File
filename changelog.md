@@ -1,5 +1,11 @@
 #### CHANGE LOG
 
+### Version 4.1.1 /\ 1/12/26 Step by step recording
+* **Added step by step recording**
+  * Step by step recording mode (green ●+ button) for manual frame capture
+  * Each step plays for 1 second in playback
+  * Keyboard shortcuts for recording: R (real time), Shift+R (step), Space (add step/play/pause), P (play)
+
 ### Version 4.1.0 /\ 1/12/26 The Vision Converges
 * **Added custom language system**
   * full GUI for language editing

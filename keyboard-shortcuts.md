@@ -37,3 +37,12 @@
 | `Ctrl/Cmd + 0` | Reset view to default zoom and position |
 | `Space + Drag` | Pan canvas (hold space and drag with mouse) |
 | `Scroll` | Zoom in/out at cursor position |
+
+## Recording
+
+| Key | Action |
+|-----|--------|
+| R | Start/stop real time recording |
+| Shift+R | Start/stop step by step recording |
+| Space | Add step (step recording) / Play/Pause (playback) |
+| P | Play recording |

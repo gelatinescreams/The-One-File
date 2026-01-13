@@ -1818,6 +1818,25 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
               <td style="padding: 8px;" data-lang="help.desktop.exitRackView">Exit rack view</td>
             </tr>
           </tbody></table>
+          <h4 style="color: var(--accent); margin-bottom: 12px;" data-lang="help.desktop.recording">Recording</h4>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
+            <tbody><tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;" data-lang="help.desktop.rKey">R</code></td>
+              <td style="padding: 8px;" data-lang="help.desktop.startStopRecording">Start/stop real time recording</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;" data-lang="help.desktop.shiftR">Shift+R</code></td>
+              <td style="padding: 8px;" data-lang="help.desktop.startStopStepRecording">Start/stop step by step recording</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;" data-lang="help.desktop.spaceKey">Space</code></td>
+              <td style="padding: 8px;" data-lang="help.desktop.addStepOrPlayPause">Add step (step recording) / Play/Pause (playback)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--edge-main);">
+              <td style="padding: 8px;"><code style="background: var(--panel-alt); padding: 2px 6px; border-radius: 4px;" data-lang="help.desktop.pKey">P</code></td>
+              <td style="padding: 8px;" data-lang="help.desktop.playRecording">Play recording</td>
+            </tr>
+          </tbody></table>
         </div>
         <div id="help-tab-mobile" class="help-tab-content" style="display: none;">
           <h4 style="color: var(--accent); margin-bottom: 12px;" data-lang="help.mobile.basicGestures">Basic Gestures</h4>
@@ -1918,31 +1937,40 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
         <div id="help-tab-recording" class="help-tab-content" style="display: none;">
           <h4 style="color: var(--accent); margin-bottom: 12px;" data-lang="help.recording.title">Canvas Recording</h4>
           <p style="margin-bottom: 12px;" data-lang="help.recording.overview">Record your canvas activity to create visual documentation, tutorials, or demonstrations of your network topology changes.</p>
-          <h4 style="color: var(--accent); margin-bottom: 8px; margin-top: 16px;" data-lang="help.recording.howItWorks">How It Works</h4>
+          <h4 style="color: var(--accent); margin-bottom: 8px; margin-top: 16px;" data-lang="help.recording.twoModes">Two Recording Modes</h4>
+          <p style="margin-bottom: 8px;"><strong style="color: #f56565;" data-lang="help.recording.realtimeTitle">Real time Recording</strong> <span data-lang="help.recording.realtimeDesc">(red ● button) captures the canvas continuously at 10 frames per second as you work. Good for demonstrating workflows.</span></p>
+          <p style="margin-bottom: 12px;"><strong style="color: #48bb78;" data-lang="help.recording.stepByStepTitle">Step by Step Recording</strong> <span data-lang="help.recording.stepByStepDesc">(green ●+ button) lets you manually capture each frame. Click the green button to start, then press + or Space to capture each step. Each frame plays for 1 second. Good for tutorials where you want precise control over what's shown.</span></p>
           <ul style="margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
-            <li data-lang="help.recording.capturesCanvas">Records the canvas area in real-time as you work</li>
-            <li data-lang="help.recording.fullInteraction">Continue adding nodes, creating connections, dragging elements, and making any changes while recording</li>
             <li data-lang="help.recording.savedInFile">Recordings are saved within your data file for later playback</li>
             <li data-lang="help.recording.exportVideo">Can be exported as a video file (WebM format) for sharing</li>
+            <li data-lang="help.recording.playWhileRecording">Pressing Play while recording will stop and immediately play the new recording</li>
           </ul>
           <h4 style="color: var(--accent); margin-bottom: 8px; margin-top: 16px;" data-lang="help.recording.controls">Controls</h4>
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px;">
             <tbody>
               <tr style="border-bottom: 1px solid var(--edge-main);">
                 <td style="padding: 8px;"><strong style="color: #f56565;">●</strong> <span data-lang="help.recording.recordBtn">Record</span></td>
-                <td style="padding: 8px;" data-lang="help.recording.recordBtnDesc">Start recording the canvas</td>
+                <td style="padding: 8px;" data-lang="help.recording.recordBtnDesc">Start real time recording (captures 10 frames/sec). Press R</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong style="color: #48bb78;">●+</strong> <span data-lang="help.recording.stepRecordBtn">Step Record</span></td>
+                <td style="padding: 8px;" data-lang="help.recording.stepRecordBtnDesc">Start step by step recording. Press Shift+R</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--edge-main);">
+                <td style="padding: 8px;"><strong style="color: #48bb78;">+</strong> <span data-lang="help.recording.addStepBtn">Add Step</span></td>
+                <td style="padding: 8px;" data-lang="help.recording.addStepBtnDesc">Capture current state as next frame (during step recording). Press Space</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--edge-main);">
                 <td style="padding: 8px;"><strong>▶</strong> <span data-lang="help.recording.playBtn">Play</span></td>
-                <td style="padding: 8px;" data-lang="help.recording.playBtnDesc">Play back a saved recording</td>
+                <td style="padding: 8px;" data-lang="help.recording.playBtnDesc">Play back a saved recording. Press P</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--edge-main);">
                 <td style="padding: 8px;"><strong>■</strong> <span data-lang="help.recording.stopBtn">Stop</span></td>
-                <td style="padding: 8px;" data-lang="help.recording.stopBtnDesc">Stop recording or playback</td>
+                <td style="padding: 8px;" data-lang="help.recording.stopBtnDesc">Stop recording or playback. Press R or Shift+R again</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--edge-main);">
                 <td style="padding: 8px;"><strong>❚❚</strong> <span data-lang="help.recording.pauseBtn">Pause</span></td>
-                <td style="padding: 8px;" data-lang="help.recording.pauseBtnDesc">Pause playback</td>
+                <td style="padding: 8px;" data-lang="help.recording.pauseBtnDesc">Pause playback. Press Space</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--edge-main);">
                 <td style="padding: 8px;"><strong data-lang="help.recording.scrubber">Scrubber</strong></td>
@@ -2889,6 +2917,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
         <button id="secrets-btn" data-lang="ui.tooltips.manageNotes" data-lang-attr="title" style="padding: 6px 12px;background: var(--btn-bg);color: var(--btn-text);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;font-weight: 600;" data-lang-text="ui.buttons.notes">Notes</button>
 		<div id="recording-controls" style="display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:4px 8px;background:var(--panel-alt);border:1px solid var(--edge-main);border-radius:6px;">
           <button id="record-btn" data-lang="recording.startRecording" data-lang-attr="title" style="padding:4px 8px;background:var(--btn-bg);color:#f56565;border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;font-size:14px;">●</button>
+          <button id="step-record-btn" title="Step by step recording" style="padding:4px 8px;background:var(--btn-bg);color:#48bb78;border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;font-size:14px;">●+</button>
           <button id="play-btn" data-lang="recording.playRecording" data-lang-attr="title" style="padding:4px 8px;background:var(--btn-bg);color:var(--btn-text);border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;font-size:14px;">▶</button>
           <div id="recording-expanded" style="display:none;align-items:center;gap:4px;">
             <button id="stop-btn" data-lang="recording.stop" data-lang-attr="title" style="padding:4px 8px;background:var(--btn-bg);color:var(--btn-text);border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;font-size:14px;">■</button>
@@ -4108,7 +4137,12 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "rightClick": "Right Click", "multiSelectToggle": "Multi select toggle",
       "dblClickRack": "Double click rack", "enterRackView": "Enter rack view",
       "dblClickConnection": "Double click connection", "addWaypoint": "Add waypoint",
-      "dblClickEmpty": "Double click empty (in rack)", "exitRackView": "Exit rack view"
+      "dblClickEmpty": "Double click empty (in rack)", "exitRackView": "Exit rack view",
+      "recording": "Recording",
+      "rKey": "R", "startStopRecording": "Start/stop real time recording",
+      "shiftR": "Shift+R", "startStopStepRecording": "Start/stop step by step recording",
+      "spaceKey": "Space", "addStepOrPlayPause": "Add step (step recording) / Play/Pause (playback)",
+      "pKey": "P", "playRecording": "Play recording"
     },
     "mobile": {
       "basicGestures": "Basic Gestures", "rackView": "Rack View",
@@ -4132,20 +4166,27 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "svg": "SVG", "svgDesc": "Vector image, scalable and editable image of current canvas tab"
     },
     "recording": {
-      "title": "Recording",
-      "overview": "Records your tab activity and creates visual documentation, tutorials, plays and/or demonstrations of your mapping changes.",
-      "howItWorks": "How It Works",
-      "capturesCanvas": "Records the tab area in real time as you create, edit and work",
-      "fullInteraction": "Continue adding nodes, creating connections, dragging elements, and making any changes while recording",
+      "title": "Canvas Recording",
+      "overview": "Record your canvas activity to create visual documentation, tutorials, or demonstrations of your network topology changes.",
+      "twoModes": "Two Recording Modes",
+      "realtimeTitle": "Real time Recording",
+      "realtimeDesc": "(red ● button) captures the canvas continuously at 10 frames per second as you work. Good for demonstrating workflows.",
+      "stepByStepTitle": "Step by Step Recording",
+      "stepByStepDesc": "(green ●+ button) lets you manually capture each frame. Click the green button to start, then press + or Space to capture each step. Each frame plays for 1 second. Good for tutorials where you want precise control over what's shown.",
       "savedInFile": "Recordings are saved within your data file for later playback",
-      "exportVideo": "Recordings can be exported as a video file (WebM format) for sharing",
+      "exportVideo": "Can be exported as a video file (WebM format) for sharing",
+      "playWhileRecording": "Pressing Play while recording will stop and immediately play the new recording",
       "controls": "Controls",
-      "recordBtn": "Record", "recordBtnDesc": "Start recording the canvas",
-      "playBtn": "Play", "playBtnDesc": "Play back a saved recording",
-      "stopBtn": "Stop", "stopBtnDesc": "Stop recording or playback",
-      "pauseBtn": "Pause", "pauseBtnDesc": "Pause playback",
+      "recordBtn": "Record", "recordBtnDesc": "Start real time recording (captures 10 frames/sec). Press R",
+      "stepRecordBtn": "Step Record", "stepRecordBtnDesc": "Start step by step recording. Press Shift+R",
+      "addStepBtn": "Add Step", "addStepBtnDesc": "Capture current state as next frame (during step recording). Press Space",
+      "playBtn": "Play", "playBtnDesc": "Play back a saved recording. Press P",
+      "stopBtn": "Stop", "stopBtnDesc": "Stop recording or playback. Press R or Shift+R again",
+      "pauseBtn": "Pause", "pauseBtnDesc": "Pause playback. Press Space",
+      "scrubber": "Scrubber", "scrubberDesc": "Seek to any point in the recording",
       "speed": "Speed", "speedDesc": "Adjust playback speed (0.5x, 1x, 2x, 4x)",
-      "loop": "Loop", "loopDesc": "Toggle continuous loop playback"
+      "loop": "Loop", "loopDesc": "Toggle continuous loop playback",
+      "manage": "Manage", "manageDesc": "View, rename, export, or delete saved recordings"
     }
   },
   "pageLayoutHelp": {
@@ -5733,7 +5774,10 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
 	    videoCanvas: null,
 	    videoCtx: null,
 	    videoAnimFrame: null,
-	    isVideoRecording: false
+	    isVideoRecording: false,
+	    isStepRecording: false,
+	    stepFrames: [],
+	    stepCount: 0
 	  };
 	  
 		const ANIM_SETTINGS = {
@@ -16899,6 +16943,38 @@ fovEnabled: source.fovEnabled || false,
         clearSelection();
         clearSearchHighlight();
        }
+       if (event.key === "r" && !event.ctrlKey && !event.shiftKey) {
+        event.preventDefault();
+        if (RECORDING_STATE.isRecording) {
+          stopRecording();
+        } else if (!RECORDING_STATE.isStepRecording) {
+          startRecording();
+        }
+       }
+       if (event.key === "R" && event.shiftKey && !event.ctrlKey) {
+        event.preventDefault();
+        if (RECORDING_STATE.isStepRecording) {
+          stopStepRecording();
+        } else if (!RECORDING_STATE.isRecording) {
+          startStepRecording();
+        }
+       }
+       if (event.key === " " && !event.ctrlKey) {
+        event.preventDefault();
+        if (RECORDING_STATE.isStepRecording) {
+          captureStepFrame();
+        } else if (RECORDING_STATE.isPlaying) {
+          pauseRecording();
+        } else if (RECORDING_STATE.isPaused) {
+          playRecording();
+        }
+       }
+       if ((event.key === "p" || event.key === "P") && !event.ctrlKey) {
+        event.preventDefault();
+        if (!RECORDING_STATE.isRecording && !RECORDING_STATE.isStepRecording) {
+          playRecording();
+        }
+       }
        if (event.ctrlKey && event.key === "d") {
         event.preventDefault();
         if (currentNodeId && NODE_DATA[currentNodeId]) {
@@ -19797,6 +19873,72 @@ function showFormatHelp() {
 	  document.getElementById('pause-btn').style.display = 'none';
 	}
 
+	function startStepRecording() {
+	  if (RECORDING_STATE.isStepRecording || RECORDING_STATE.isRecording) return;
+	  RECORDING_STATE.isStepRecording = true;
+	  RECORDING_STATE.stepFrames = [];
+	  RECORDING_STATE.stepCount = 0;
+	  captureStepFrame();
+	  const stepBtn = document.getElementById('step-record-btn');
+	  stepBtn.textContent = '+';
+	  stepBtn.style.background = '#48bb78';
+	  stepBtn.style.color = 'white';
+	  document.getElementById('recording-expanded').style.display = 'inline-flex';
+	  document.getElementById('pause-btn').style.display = 'none';
+	  document.getElementById('record-btn').style.display = 'none';
+	  updateStepRecordingTime();
+	  logAuditEvent('recording', 'Started step by step recording');
+	}
+
+	function captureStepFrame() {
+	  const frame = {
+	    time: RECORDING_STATE.stepCount * 1000,
+	    positions: {},
+	    waypoints: {}
+	  };
+	  Object.keys(savedPositions).forEach(id => {
+	    frame.positions[id] = { x: savedPositions[id].x, y: savedPositions[id].y };
+	  });
+	  EDGE_DATA.list.forEach(edge => {
+	    if (edge.waypoints && edge.waypoints.length > 0) {
+	      frame.waypoints[edge.id] = edge.waypoints.map(wp => ({ x: wp.x, y: wp.y }));
+	    }
+	  });
+	  RECORDING_STATE.stepFrames.push(frame);
+	  RECORDING_STATE.stepCount++;
+	  updateStepRecordingTime();
+	}
+
+	function updateStepRecordingTime() {
+	  const timeEl = document.getElementById('recording-time');
+	  if (timeEl) {
+	    timeEl.textContent = RECORDING_STATE.stepCount + ' frames';
+	  }
+	}
+
+	function stopStepRecording() {
+	  if (!RECORDING_STATE.isStepRecording) return;
+	  RECORDING_STATE.isStepRecording = false;
+	  if (RECORDING_STATE.stepFrames.length > 1) {
+	    const recording = {
+	      id: 'rec-' + Date.now(),
+	      name: 'Step Recording ' + (RECORDING_STATE.recordings.length + 1),
+	      created: new Date().toISOString(),
+	      duration: (RECORDING_STATE.stepCount - 1) * 1000,
+	      frames: RECORDING_STATE.stepFrames
+	    };
+	    RECORDING_STATE.recordings.push(recording);
+	    RECORDING_STATE.currentRecording = recording;
+	    logAuditEvent('recording', `Saved step recording: ${recording.name} (${RECORDING_STATE.stepCount} frames)`);
+	  }
+	  const stepBtn = document.getElementById('step-record-btn');
+	  stepBtn.textContent = '●+';
+	  stepBtn.style.background = 'var(--btn-bg)';
+	  stepBtn.style.color = '#48bb78';
+	  document.getElementById('record-btn').style.display = 'inline-block';
+	  document.getElementById('recording-time').textContent = '0:00';
+	}
+
 	function playNextFrame() {
 	  if (!RECORDING_STATE.isPlaying || !RECORDING_STATE.currentRecording) return;
 	  const frames = RECORDING_STATE.currentRecording.frames;
@@ -20378,8 +20520,31 @@ function showFormatHelp() {
 	    startRecording();
 	  }
 	});
-	document.getElementById('stop-btn')?.addEventListener('click', stopRecording);
+	document.getElementById('step-record-btn')?.addEventListener('click', () => {
+	  if (RECORDING_STATE.isStepRecording) {
+	    captureStepFrame();
+	  } else {
+	    startStepRecording();
+	  }
+	});
+	document.getElementById('stop-btn')?.addEventListener('click', () => {
+	  if (RECORDING_STATE.isStepRecording) {
+	    stopStepRecording();
+	  } else {
+	    stopRecording();
+	  }
+	});
 	document.getElementById('play-btn')?.addEventListener('click', () => {
+	  if (RECORDING_STATE.isRecording) {
+	    stopRecording();
+	    playRecording();
+	    return;
+	  }
+	  if (RECORDING_STATE.isStepRecording) {
+	    stopStepRecording();
+	    playRecording();
+	    return;
+	  }
 	  const expanded = document.getElementById('recording-expanded');
 	  if (expanded.style.display === 'none') {
 	    expanded.style.display = 'inline-flex';
