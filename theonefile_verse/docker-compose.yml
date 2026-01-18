@@ -9,4 +9,17 @@ services:
       - PORT=10101
       - DATA_DIR=/app/data
       - UPDATE_INTERVAL=24
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
     restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+volumes:
+  redis_data:

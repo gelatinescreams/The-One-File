@@ -74,6 +74,8 @@
     return HIGHLANDER_SYNC_QUOTES[Math.floor(Math.random() * HIGHLANDER_SYNC_QUOTES.length)];
   }
 
+  let syncOverlayTimeout = null;
+
   function showSyncingOverlay() {
     if (document.getElementById('collab-sync-overlay')) return;
     const overlay = document.createElement('div');
@@ -87,9 +89,17 @@
       </div>
     `;
     document.body.appendChild(overlay);
+    syncOverlayTimeout = setTimeout(() => {
+      hideSyncingOverlay();
+      showToast('Sync timed out. You may need to refresh.');
+    }, 30000);
   }
 
   function hideSyncingOverlay() {
+    if (syncOverlayTimeout) {
+      clearTimeout(syncOverlayTimeout);
+      syncOverlayTimeout = null;
+    }
     const overlay = document.getElementById('collab-sync-overlay');
     if (overlay) {
       overlay.classList.add('fade-out');
@@ -247,6 +257,7 @@
             user.cursorX = msg.x;
             user.cursorY = msg.y;
             user.isRatio = msg.isRatio || false;
+            user.isCanvasCoords = msg.isCanvasCoords || false;
             users.set(msg.userId, user);
             updateRemoteCursor(msg.userId, user);
             renderUsers();
@@ -287,15 +298,33 @@
 
   function sendChatMessage(text) {
     if (!text.trim()) return;
+    let trimmedText = text.trim();
+    if (trimmedText.length > 500) {
+      trimmedText = trimmedText.substring(0, 500);
+      showToast('Message truncated to 500 characters');
+    }
     const msg = {
       userId: window.COLLAB_USER.id,
       userName: window.COLLAB_USER.name,
       userColor: window.COLLAB_USER.color,
-      text: text.trim(),
+      text: trimmedText,
       timestamp: Date.now()
     };
     sendMessage('chat', msg);
     addChatMessage(msg);
+  }
+
+  function showToast(message) {
+    let toast = document.getElementById('collab-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'collab-toast';
+      toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:100001;opacity:0;transition:opacity 0.3s';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    setTimeout(() => { toast.style.opacity = '0'; }, 3000);
   }
 
   function updateChatBadge() {
@@ -324,6 +353,52 @@
     container.scrollTop = container.scrollHeight;
   }
 
+  const CANVAS_WIDTH = 4000;
+  const CANVAS_HEIGHT = 3000;
+
+  function getCanvasState() {
+    const state = getGlobal('canvasState');
+    return state || { zoom: 1, panX: 0, panY: 0 };
+  }
+
+  function screenToCanvasCoords(screenX, screenY) {
+    const viewport = document.getElementById('canvas-viewport');
+    if (!viewport) return null;
+
+    const rect = viewport.getBoundingClientRect();
+    const cs = getCanvasState();
+
+    const viewportX = screenX - rect.left;
+    const viewportY = screenY - rect.top;
+
+    const viewWidth = CANVAS_WIDTH / cs.zoom;
+    const viewHeight = CANVAS_HEIGHT / cs.zoom;
+
+    const canvasX = cs.panX + (viewportX / rect.width) * viewWidth;
+    const canvasY = cs.panY + (viewportY / rect.height) * viewHeight;
+
+    return { x: canvasX, y: canvasY };
+  }
+
+  function canvasToScreenCoords(canvasX, canvasY) {
+    const viewport = document.getElementById('canvas-viewport');
+    if (!viewport) return null;
+
+    const rect = viewport.getBoundingClientRect();
+    const cs = getCanvasState();
+
+    const viewWidth = CANVAS_WIDTH / cs.zoom;
+    const viewHeight = CANVAS_HEIGHT / cs.zoom;
+
+    const ratioX = (canvasX - cs.panX) / viewWidth;
+    const ratioY = (canvasY - cs.panY) / viewHeight;
+
+    const screenX = rect.left + ratioX * rect.width;
+    const screenY = rect.top + ratioY * rect.height;
+
+    return { x: screenX, y: screenY };
+  }
+
   function updateRemoteCursor(userId, user) {
     let cursor = document.getElementById(`collab-cursor-${userId}`);
     if (!cursor && user.cursorX !== undefined) {
@@ -334,19 +409,50 @@
       document.body.appendChild(cursor);
     }
     if (cursor && user.cursorX !== undefined) {
-      let screenX = user.cursorX;
-      let screenY = user.cursorY;
-      if (user.isRatio) {
-        const viewport = document.getElementById('canvas-viewport');
-        if (viewport) {
-          const rect = viewport.getBoundingClientRect();
-          screenX = rect.left + user.cursorX * rect.width;
-          screenY = rect.top + user.cursorY * rect.height;
-        }
+      const viewport = document.getElementById('canvas-viewport');
+      if (!viewport) {
+        cursor.style.display = 'none';
+        return;
       }
+
+      const rect = viewport.getBoundingClientRect();
+      let screenX, screenY;
+
+      if (user.isCanvasCoords) {
+        const screen = canvasToScreenCoords(user.cursorX, user.cursorY);
+        if (!screen) {
+          cursor.style.display = 'none';
+          return;
+        }
+        screenX = screen.x;
+        screenY = screen.y;
+      } else if (user.isRatio) {
+        screenX = rect.left + user.cursorX * rect.width;
+        screenY = rect.top + user.cursorY * rect.height;
+      } else {
+        screenX = user.cursorX;
+        screenY = user.cursorY;
+      }
+
+      const margin = 100;
+      if (screenX < rect.left - margin || screenX > rect.right + margin ||
+          screenY < rect.top - margin || screenY > rect.bottom + margin) {
+        cursor.style.display = 'none';
+        return;
+      }
+
+      cursor.style.display = 'block';
       cursor.style.left = screenX + 'px';
       cursor.style.top = screenY + 'px';
     }
+  }
+
+  function refreshAllRemoteCursors() {
+    users.forEach((user, userId) => {
+      if (user.cursorX !== undefined) {
+        updateRemoteCursor(userId, user);
+      }
+    });
   }
 
   function removeRemoteCursor(userId) {
@@ -356,39 +462,57 @@
 
   function trackCursor() {
     let lastSent = 0;
-    document.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastSent < 50) return;
-      lastSent = now;
-      const viewport = document.getElementById('canvas-viewport');
-      if (viewport) {
-        const rect = viewport.getBoundingClientRect();
-        const ratioX = (e.clientX - rect.left) / rect.width;
-        const ratioY = (e.clientY - rect.top) / rect.height;
+    let pendingPos = null;
+    let rafId = null;
+
+    function sendCursorUpdate() {
+      if (!pendingPos) return;
+      const canvas = screenToCanvasCoords(pendingPos.x, pendingPos.y);
+      if (canvas) {
         sendMessage('cursor', {
           userId: window.COLLAB_USER.id,
-          x: ratioX,
-          y: ratioY,
-          isRatio: true
-        });
-      } else {
-        sendMessage('cursor', {
-          userId: window.COLLAB_USER.id,
-          x: e.clientX,
-          y: e.clientY
+          x: canvas.x,
+          y: canvas.y,
+          isCanvasCoords: true
         });
       }
+      pendingPos = null;
+      rafId = null;
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastSent < 25) return;
+      lastSent = now;
+
+      pendingPos = { x: e.clientX, y: e.clientY };
+      if (rafId === null) {
+        rafId = requestAnimationFrame(sendCursorUpdate);
+      }
     });
+
+    let lastZoom = null;
+    let lastPanX = null;
+    let lastPanY = null;
+    setInterval(() => {
+      const cs = getCanvasState();
+      if (cs.zoom !== lastZoom || cs.panX !== lastPanX || cs.panY !== lastPanY) {
+        lastZoom = cs.zoom;
+        lastPanX = cs.panX;
+        lastPanY = cs.panY;
+        refreshAllRemoteCursors();
+      }
+    }, 100);
   }
   
   function getGlobal(name) {
     if (typeof window.__collabGetVar === 'function') return window.__collabGetVar(name);
-    try { return (0, eval)(name); } catch { return undefined; }
+    return undefined;
   }
-  
+
   function setGlobal(name, value) {
     if (typeof window.__collabSetVar === 'function') return window.__collabSetVar(name, value);
-    try { (0, eval)(`${name} = ${JSON.stringify(value)}`); return true; } catch { return false; }
+    return false;
   }
   
   function captureState() {
@@ -509,6 +633,7 @@
         if (myTab.legend) setGlobal('EDGE_LEGEND', myTab.legend);
         if (myTab.rects) setGlobal('RECT_DATA', myTab.rects);
         if (myTab.texts) setGlobal('TEXT_DATA', myTab.texts);
+        if (myTab.images) setGlobal('IMAGE_DATA', myTab.images);
       }
 
       if (state.iconCache) setGlobal('iconCache', state.iconCache);
@@ -536,6 +661,7 @@
       if (typeof displayTabs === 'function') displayTabs();
       if (typeof applyAnimZoneSettings === 'function') applyAnimZoneSettings();
       if (typeof rebuildThemeDropdown === 'function') rebuildThemeDropdown();
+      if (typeof renderCanvasImages === 'function') renderCanvasImages();
 
       lastStateHash = hashState(state);
     } catch (e) { console.error('applyRemoteState error:', e); } finally { syncPaused = false; }
@@ -594,11 +720,10 @@
   
   function setupAuditLogInjection() {
     if (typeof window.__collabGetVar !== 'function') return;
-    
-    const originalAddAuditEntry = window.addAuditEntry;
-    if (typeof addAuditEntry === 'function') {
-      window.__collabOriginalAddAudit = addAuditEntry;
-      const newFn = function(type, description, details) {
+
+    if (typeof window.addAuditEntry === 'function') {
+      window.__collabOriginalAddAudit = window.addAuditEntry;
+      window.addAuditEntry = function(type, description, details) {
         const entry = {
           timestamp: Date.now(),
           type: type,
@@ -614,7 +739,6 @@
         window.__collabSetVar('auditLog', auditLog);
         return entry;
       };
-      eval('addAuditEntry = ' + newFn.toString());
     }
   }
   

@@ -93,14 +93,16 @@ Admin panel settings for:
 [TheOneFile features available here](https://github.com/gelatinescreams/The-One-File)
 
 ### TheOneFile_Verse
-* **Current Version 1.3** [changelog](changelog.md)
-* Full admin panel
+* **Current Version 1.4** [changelog](changelog.md)
+* Full Admin Panel
+* Full Logging System V1.4
+* Full Api System V1.4 [api.md](api.md)
 * Realtime sync via WebSocket
 * Realtime chat **1.1** [changelog](changelog.md)
 * Real time mutli user cursor engine **1.1** [changelog](changelog.md)
 * Room based sessions with optional passwords
 * Auto destruct rooms
-* All the functions of TheOneFile
+* All the functions of TheOneFile_Networkening
 * Argon2id password hashing
 
 ## How It Works

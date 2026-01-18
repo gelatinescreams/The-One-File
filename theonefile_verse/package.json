@@ -1,10 +1,12 @@
 {
   "name": "theonefile_verse",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts"
   },
-  "dependencies": {}
+  "dependencies": {
+    "redis": "^4.6.13"
+  }
 }

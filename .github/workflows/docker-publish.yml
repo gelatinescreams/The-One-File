@@ -2,12 +2,18 @@ name: Build TheOneFile Verse
 
 on:
   push:
-    branches: [main, master]
+    branches:
+      - main
+      - master
     paths:
       - 'theonefile_verse/**'
-    tags: ['v*']
+      - '.github/workflows/docker-publish.yml'
+  create:
+    tags:
+      - 'v*'
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
