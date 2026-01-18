@@ -1176,6 +1176,158 @@ button:disabled {
       font-size: clamp(14px, 1.6vw, 18px);
       margin: 0 0 20px 0;
       }
+      #note-editor-modal .modal-content {
+      width: 600px;
+      max-width: 95vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      }
+      .note-editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 8px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+      }
+      .note-editor-toolbar button {
+      padding: 6px 10px;
+      background: var(--panel-alt);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 14px;
+      min-width: 32px;
+      }
+      .note-editor-toolbar button:hover {
+      background: var(--accent);
+      color: var(--bg);
+      }
+      .note-editor-toolbar button.active {
+      background: var(--accent);
+      color: var(--bg);
+      }
+      .note-editor-toolbar .toolbar-separator {
+      width: 1px;
+      background: var(--edge-main);
+      margin: 0 4px;
+      }
+      .note-editor-toolbar select {
+      padding: 6px 8px;
+      background: var(--panel-alt);
+      border: 1px solid var(--edge-main);
+      border-radius: 4px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 14px;
+      }
+      .note-editor-content {
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 0 0 6px 6px;
+      color: var(--text-main);
+      font-size: 14px;
+      line-height: 1.6;
+      outline: none;
+      }
+      .note-editor-content:focus {
+      border-color: var(--accent);
+      }
+      .note-editor-content h1 { font-size: 1.8em; margin: 0.5em 0; color: var(--text-main); }
+      .note-editor-content h2 { font-size: 1.5em; margin: 0.5em 0; color: var(--text-main); }
+      .note-editor-content h3 { font-size: 1.2em; margin: 0.5em 0; color: var(--text-main); }
+      .note-editor-content p { margin: 0.5em 0; }
+      .note-editor-content ul, .note-editor-content ol { margin: 0.5em 0; padding-left: 1.5em; }
+      .note-editor-content li { margin: 0.25em 0; }
+      .note-editor-content code {
+      background: var(--panel-alt);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+      }
+      .note-editor-content pre {
+      background: var(--panel-alt);
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 0.5em 0;
+      }
+      .note-editor-content pre code {
+      background: none;
+      padding: 0;
+      }
+      .note-editor-content a { color: var(--accent); }
+      .note-editor-content blockquote {
+      border-left: 3px solid var(--accent);
+      margin: 0.5em 0;
+      padding-left: 12px;
+      color: var(--text-soft);
+      }
+      .notes-feed {
+      max-height: 200px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+      }
+      .note-card {
+      background: var(--panel);
+      border: 1px solid var(--edge-main);
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      }
+      .note-card:hover {
+      border-color: var(--accent);
+      }
+      .note-card-content {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-main);
+      max-height: 60px;
+      overflow: hidden;
+      word-break: break-word;
+      }
+      .note-card-content h1, .note-card-content h2, .note-card-content h3 {
+      font-size: 14px;
+      margin: 0;
+      }
+      .note-card-content p { margin: 0; }
+      .note-card-content pre { margin: 0; font-size: 12px; }
+      .note-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      justify-content: flex-end;
+      }
+      .note-card-actions button {
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 4px;
+      border: 1px solid var(--edge-main);
+      background: var(--panel-alt);
+      color: var(--text-main);
+      cursor: pointer;
+      }
+      .note-card-actions button:hover {
+      background: var(--accent);
+      color: var(--bg);
+      }
+      .note-card-actions button.delete-note:hover {
+      background: var(--danger);
+      color: white;
+      }
       .context-menu-item {
       transition: background 0.15s;
       }
@@ -1640,6 +1792,11 @@ button:disabled {
       border-radius: 6px;
       border-left: 3px solid var(--danger);
       }
+      .secret-item.note-type-global { border-left-color: var(--danger); }
+      .secret-item.note-type-node { border-left-color: var(--accent); }
+      .secret-item.note-type-edge { border-left-color: #22c55e; }
+      .secret-item.note-type-rect { border-left-color: #f97316; }
+      .secret-item.note-type-image { border-left-color: #8b5cf6; }
       .secret-item .secret-name {
       font-weight: 600;
       color: var(--text-main);
@@ -1648,6 +1805,28 @@ button:disabled {
       .secret-item .secret-status {
       font-size: 11px;
       color: var(--text-soft);
+      margin-right: 10px;
+      }
+      .secret-item .note-source {
+      font-size: 11px;
+      color: var(--text-soft);
+      background: var(--panel-alt);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 10px;
+      cursor: pointer;
+      }
+      .secret-item .note-source:hover {
+      background: var(--accent);
+      color: var(--bg);
+      }
+      .secret-item .note-preview {
+      font-size: 12px;
+      color: var(--text-soft);
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       margin-right: 10px;
       }
 	  body.view-only-mode:not(.view-only-inspect) #node-panel,
@@ -1997,14 +2176,26 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       </div>
     </div>
     <div class="modal" id="secrets-modal">
-      <div class="modal-content" style="max-width: 600px;">
-        <h3 data-lang="ui.modals.notes">Notes</h3>
-        <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;" data-lang="messages.notesEncryptionNote">Notes can also be stored with AES 256 encryption</p>
-        <div id="secrets-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; margin-bottom: 15px;">
+      <div class="modal-content" style="max-width: 700px;">
+        <h3 data-lang="ui.modals.notesHub">Notes Hub</h3>
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input type="text" id="notes-hub-search" placeholder="Search notes..." style="flex: 1; min-width: 0; padding: 8px 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: 14px;">
+          <select id="notes-hub-filter" style="flex-shrink: 0; width: auto; padding: 8px 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-size: 14px;">
+            <option value="all">All Notes</option>
+            <option value="global">Global Notes</option>
+            <option value="node">Node Notes</option>
+            <option value="edge">Line Notes</option>
+            <option value="rect">Zone Notes</option>
+            <option value="image">Image Notes</option>
+          </select>
         </div>
-        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <input type="text" id="new-secret-name" data-lang="ui.placeholders.sectionName" data-lang-attr="placeholder" placeholder="Section name (e.g., 'Root Passwords')..." style="flex: 1; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);">
-          <button class="btn-save" onclick="createNewSecret()" data-lang="ui.buttons.addNote">+ Add Note</button>
+        <div id="secrets-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);" data-lang="notes.noNotes">No notes yet</div></div>
+        <div style="border-top: 1px solid var(--edge-main); padding-top: 12px; margin-top: 8px;">
+          <p style="font-size: 12px; color: var(--text-soft); margin-bottom: 10px;" data-lang="messages.notesEncryptionNote">Global notes can be stored with AES 256 encryption</p>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="new-secret-name" placeholder="New global note name..." style="flex: 1; padding: 8px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main);" data-lang="notes.namePlaceholder" data-lang-attr="placeholder">
+            <button class="btn-save" onclick="createNewSecret()" data-lang="ui.buttons.addNote">+ Add Note</button>
+          </div>
         </div>
         <div class="modal-buttons">
           <button class="btn-cancel" id="secrets-modal-close" data-lang="ui.buttons.close">Close</button>
@@ -2014,8 +2205,30 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
     <div class="modal" id="secret-editor-modal">
       <div class="modal-content" style="max-width: 600px;">
         <h3 id="secret-editor-title" data-lang="ui.modals.editNote">Edit Note</h3>
-        <textarea id="secret-editor-content" data-lang="ui.placeholders.enterInfo" data-lang-attr="placeholder" placeholder="Enter sensitive information here..." style="width: 100%; height: 200px; padding: 12px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 6px; color: var(--text-main); font-family: monospace; resize: vertical; margin-bottom: 15px;"></textarea>
-        <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+        <div class="note-editor-toolbar" id="secret-editor-toolbar">
+          <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+          <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+          <span class="toolbar-separator"></span>
+          <select id="secret-heading-select" title="Heading">
+            <option value="">Normal</option>
+            <option value="h1">H1</option>
+            <option value="h2">H2</option>
+            <option value="h3">H3</option>
+          </select>
+          <span class="toolbar-separator"></span>
+          <button type="button" data-command="insertUnorderedList" title="Bullet List">•</button>
+          <button type="button" data-command="insertOrderedList" title="Numbered List">1.</button>
+          <span class="toolbar-separator"></span>
+          <button type="button" data-command="code" title="Inline Code">&lt;/&gt;</button>
+          <button type="button" data-command="codeblock" title="Code Block">[ ]</button>
+          <button type="button" data-command="createLink" title="Link">🔗</button>
+          <button type="button" data-command="blockquote" title="Quote">"</button>
+          <span class="toolbar-separator"></span>
+          <button type="button" data-command="removeFormat" title="Clear Formatting">✖</button>
+        </div>
+        <div class="note-editor-content" id="secret-editor-content" contenteditable="true" style="height: 200px;"></div>
+        <div style="margin: 15px 0; display: flex; align-items: center; gap: 8px;">
           <label class="toggle-switch"><input type="checkbox" id="secret-auto-encrypt" checked><span class="toggle-slider"></span></label>
           <span data-lang="ui.labels.encryptNote">Encrypt Note</span>
         </div>
@@ -2035,7 +2248,9 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
           <button onclick="exportMarkdown(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="ui.buttons.markdown">Markdown</button>
           <button onclick="exportCSV(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="ui.buttons.csv">CSV</button>
           <button onclick="printTopology(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="ui.buttons.printBW">Print B&W</button>
-          <button onclick="printTopologyColor(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="ui.buttons.printColor">Print Color</button>
+          <button onclick="printTopologyColor(); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="mobileExport.printColorFull">Print Full Color</button>
+          <button onclick="printTopologyColor('#ffffff'); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="mobileExport.printColorWhite">Print White BG</button>
+          <button onclick="printTopologyColor('#000000'); document.getElementById('mobile-export-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="mobileExport.printColorBlack">Print Black BG</button>
 		  <button onclick="showFormatHelp(); document.getElementById('mobile-import-modal').classList.remove('active');" style="padding: 14px; background: var(--panel-alt); border: 1px solid var(--edge-main); border-radius: 8px; color: var(--text-main); font-size: 16px; cursor: pointer;" data-lang="ui.buttons.importHelp">Import Help</button>
         </div>
         <button onclick="document.getElementById('mobile-export-modal').classList.remove('active');" style="margin-top: 20px; padding: 12px; background: var(--danger); border: none; border-radius: 8px; color: white; font-size: 16px; cursor: pointer; width: 100%;" data-lang="ui.buttons.cancel">Cancel</button>
@@ -2061,6 +2276,39 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
         <div class="modal-buttons">
           <button class="btn-cancel" id="modal-cancel" data-lang="ui.buttons.cancel">Cancel</button>
           <button class="btn-save" id="modal-save" data-lang="ui.buttons.save">Save</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="note-editor-modal">
+      <div class="modal-content">
+        <h3 id="note-editor-title" data-lang="noteEditor.title">Edit Note</h3>
+        <div class="note-editor-toolbar">
+          <button type="button" data-command="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+          <button type="button" data-command="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+          <button type="button" data-command="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+          <div class="toolbar-separator"></div>
+          <select id="note-heading-select" title="Heading">
+            <option value="">Normal</option>
+            <option value="h1">H1</option>
+            <option value="h2">H2</option>
+            <option value="h3">H3</option>
+          </select>
+          <div class="toolbar-separator"></div>
+          <button type="button" data-command="insertUnorderedList" title="Bullet List">&#8226;</button>
+          <button type="button" data-command="insertOrderedList" title="Numbered List">1.</button>
+          <div class="toolbar-separator"></div>
+          <button type="button" data-command="code" title="Inline Code">&lt;/&gt;</button>
+          <button type="button" data-command="codeblock" title="Code Block">[ ]</button>
+          <div class="toolbar-separator"></div>
+          <button type="button" data-command="createLink" title="Insert Link">&#128279;</button>
+          <button type="button" data-command="blockquote" title="Quote">&#8220;</button>
+          <div class="toolbar-separator"></div>
+          <button type="button" data-command="removeFormat" title="Clear Formatting">&#10006;</button>
+        </div>
+        <div class="note-editor-content" id="note-editor-content" contenteditable="true"></div>
+        <div class="modal-buttons">
+          <button class="btn-cancel" id="note-editor-cancel" data-lang="ui.buttons.cancel">Cancel</button>
+          <button class="btn-save" id="note-editor-save" data-lang="ui.buttons.save">Save</button>
         </div>
       </div>
     </div>
@@ -3043,11 +3291,42 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       <div class="modal-content" style="max-width: 600px;">
         <h3 data-lang="ui.modals.recordings">Recordings</h3>
         <p style="font-size: 13px; color: var(--text-soft); margin-bottom: 15px;" data-lang="messages.manageRecordings">Manage recorded movement sequences</p>
-        <div id="recordings-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);" data-lang="messages.noRecordingsYet">No recordings yet. Press Record to start.</div></div>
-        <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-start;">
+        <div id="recordings-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 15px;"><div style="text-align: center; padding: 40px; color: var(--text-soft);" data-lang="messages.noRecordingsYet">No recordings yet. Press Record to start.</div></div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-start; margin-bottom: 15px;">
           <button class="btn-save" onclick="exportRecordingVideo()" style="flex:0 0 auto;" data-lang="recordings.exportVideo">Export Video</button>
           <button class="btn-cancel" onclick="deleteSelectedRecording()" style="background:var(--danger);color:white;flex:0 0 auto;" data-lang="ui.buttons.del">Delete</button>
-          <button class="btn-cancel" id="recordings-modal-close" style="flex:0 0 auto;" data-lang="ui.buttons.close">Close</button>
+        </div>
+        <details style="background: var(--panel-alt); border-radius: 6px; padding: 10px; margin-bottom: 15px;">
+          <summary style="color: var(--accent); font-weight: 600; cursor: pointer;" data-lang="trails.title">Motion Trails</summary>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="color: var(--text-main); font-size: 14px;" data-lang="trails.enableTrails">Enable Trails:</label>
+              <label class="toggle-switch"><input type="checkbox" id="trail-enabled-toggle" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="color: var(--text-main); font-size: 14px;" data-lang="trails.trailLength">Trail Length:</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="range" id="trail-length-slider" min="2" max="20" value="8" style="width: 100px;">
+                <span id="trail-length-value" style="min-width: 30px; color: var(--text-soft);">8</span>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="color: var(--text-main); font-size: 14px;" data-lang="trails.trailStyle">Trail Style:</label>
+              <select id="trail-style-select" style="padding: 4px 8px; background: var(--panel); color: var(--text-main); border: 1px solid var(--edge-main); border-radius: 4px;">
+                <option value="solid" data-lang="trails.styleSolid">Solid Fade</option>
+                <option value="dashed" data-lang="trails.styleDashed">Dashed</option>
+                <option value="dots" data-lang="trails.styleDots">Dots</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="color: var(--text-main); font-size: 14px;" data-lang="trails.showArrow">Show Direction Arrow:</label>
+              <label class="toggle-switch"><input type="checkbox" id="trail-arrow-toggle" checked><span class="toggle-slider"></span></label>
+            </div>
+            <p style="font-size: 12px; color: var(--text-soft); margin: 0;" data-lang="trails.perNodeHint">Tip: Enable/disable trails per node in the node panel</p>
+          </div>
+        </details>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button class="btn-cancel" id="recordings-modal-close" data-lang="ui.buttons.close">Close</button>
         </div>
       </div>
     </div>
@@ -3180,7 +3459,9 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
               <button type="button" onclick="exportCSV()" data-lang="help.formats.csv">CSV</button>
               <div class="dropdown-divider"></div>
               <button type="button" onclick="printTopology()" data-lang="ui.buttons.printBW">Print B&W</button>
-              <button type="button" onclick="printTopologyColor()" data-lang="ui.buttons.printColor">Print Color</button>
+              <button type="button" onclick="printTopologyColor()" data-lang="ui.buttons.printColorFull">Print Full Color</button>
+              <button type="button" onclick="printTopologyColor('#ffffff')" data-lang="ui.buttons.printColorWhite">Print White BG</button>
+              <button type="button" onclick="printTopologyColor('#000000')" data-lang="ui.buttons.printColorBlack">Print Black BG</button>
 			  <div class="dropdown-divider"></div>
 			  <button type="button" onclick="showFormatHelp()" data-lang="ui.buttons.exportHelp">Export Help</button>
             </div>
@@ -3255,6 +3536,8 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
           <button id="draw-toggle" title="Draw custom line">✏️</button>
           <button id="rect-toggle" title="Draw zone">▭</button>
           <button id="text-toggle" title="Add text">T</button>
+          <button id="image-toggle" data-lang="tooltips.addImage" data-lang-attr="title">🖼️</button>
+          <input type="file" id="image-file-input" accept="image/*" style="display: none;">
           <span style="border-left: 1px solid var(--edge-main); height: 20px; margin: 0 4px;"></span>
           <select id="rect-style" title="zone style">
             <option value="filled">Filled</option>
@@ -3423,6 +3706,10 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
               <option id="node-layer-opt3" value="layer3">Layer 3</option>
               <option id="node-layer-opt4" value="layer4">Layer 4</option>
             </select>
+          </div>
+          <div class="details-info-row" id="node-trail-row">
+            <span style="color: var(--text-soft); font-size: 14px;" data-lang="nodePanel.motionTrail">Motion Trail:</span>
+            <label class="toggle-switch" style="margin-left: 8px;"><input type="checkbox" id="node-trail-enabled" checked><span class="toggle-slider"></span></label>
           </div>
           <div class="details-role" id="node-role">WAN</div>
 		  <details id="rack-contents-section" style="display: none; margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;" open="">
@@ -3756,38 +4043,35 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             </div>
           </details>
           <div class="section-label" data-lang="ui.sections.notes">Notes</div>
-          <ul class="list" id="node-notes"></ul>
-          <div style="margin-top: 10px; display: flex; gap: 8px">
-            <input type="text" id="new-note-input" placeholder="Type new note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
-            <button id="add-note-btn" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="ui.buttons.add">Add</button>
-          </div>
+          <div class="notes-feed" id="node-notes"></div>
+          <button id="add-note-btn" style="margin-top: 10px;padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="ui.buttons.addNote">+ Add Note</button>
           <button id="delete-node-btn" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: rgb(255, 255, 255);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="ui.buttons.deleteNode">Delete Node</button>
         </div>
         <div id="edge-panel" style="display: none">
           <div class="details-name" id="edge-title" data-lang="edgePanel.customLine">Custom line</div>
           <div class="style-row" style="margin-top: 10px">
-            <label data-lang="edgePanel.width">Width:</label>
+            <label data-lang="ui.labels.width">Width:</label>
             <input type="number" id="edge-width" min="1" max="20" value="4">
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.color">Color:</label>
+            <label data-lang="ui.labels.color">Color:</label>
             <input type="color" id="edge-color" value="#475569">
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.lineStyle">Line Style:</label>
+            <label data-lang="ui.labels.style">Line Style:</label>
             <select id="edge-line-style">
               <option value="solid" data-lang="ui.options.solid">Solid</option>
               <option value="dashed" data-lang="ui.options.dashed">Dashed</option>
               <option value="dotted" data-lang="ui.options.dotted">Dotted</option>
-              <option value="wall" data-lang="edgePanel.wall">Wall</option>
+              <option value="wall" data-lang="drawToolbar.wall">Wall</option>
             </select>
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.routing">Routing:</label>
+            <label data-lang="ui.labels.routing">Routing:</label>
             <select id="edge-routing">
-              <option value="orthogonal" data-lang="edgePanel.orthogonal">Orthogonal (90°)</option>
-              <option value="curved" data-lang="edgePanel.curved">Curved</option>
-              <option value="straight" data-lang="edgePanel.straight">Straight</option>
+              <option value="orthogonal" data-lang="ui.options.orthogonal">Orthogonal (90°)</option>
+              <option value="curved" data-lang="ui.options.curved">Curved</option>
+              <option value="straight" data-lang="ui.options.straight">Straight</option>
             </select>
           </div>
           <div class="style-row" id="waypoints-row" style="display: none;">
@@ -3795,12 +4079,12 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             <button id="clear-waypoints-btn" style="padding: 6px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;cursor: pointer;font-size: 14px;color: var(--text-main);" data-lang="ui.buttons.clearAll">Clear All</button>
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.direction">Direction:</label>
+            <label data-lang="ui.labels.direction">Direction:</label>
             <select id="edge-direction">
-              <option value="none" data-lang="edgePanel.noArrows">No arrows</option>
-              <option value="forward" data-lang="edgePanel.forward">→ Forward</option>
-              <option value="backward" data-lang="edgePanel.backward">← Backward</option>
-              <option value="both" data-lang="edgePanel.bidirectional">↔ Bidirectional</option>
+              <option value="none" data-lang="topologyToolbar.noArrows">No arrows</option>
+              <option value="forward" data-lang="topologyToolbar.forward">→ Forward</option>
+              <option value="backward" data-lang="topologyToolbar.backward">← Backward</option>
+              <option value="both" data-lang="topologyToolbar.bidirectional">↔ Bidirectional</option>
             </select>
           </div>
           <div class="style-row">
@@ -3808,86 +4092,85 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             <label class="toggle-switch"><input type="checkbox" id="edge-animate"><span class="toggle-slider"></span></label>
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.style">Style:</label>
+            <label data-lang="ui.labels.style">Style:</label>
             <select id="edge-animation-style">
-              <option value="" data-lang="themes.default">Default</option>
-              <option value="arrows" data-lang="edgePanel.flowingArrows">Flowing Arrows</option>
-              <option value="dots" data-lang="edgePanel.dotArrows">Dot Arrows</option>
+              <option value="" data-lang="ui.options.default">Default</option>
+              <option value="arrows" data-lang="ui.options.flowingArrows">Flowing Arrows</option>
+              <option value="dots" data-lang="ui.options.dotArrows">Dot Arrows</option>
             </select>
           </div>
           <div class="style-row">
-            <label data-lang="edgePanel.speed">Speed:</label>
+            <label data-lang="ui.labels.animationSpeed">Speed:</label>
             <select id="edge-animation-speed">
-              <option value="" data-lang="themes.default">Default</option>
-              <option value="0.5" data-lang="edgePanel.veryFast">Very Fast</option>
-              <option value="1" data-lang="edgePanel.fast">Fast</option>
-              <option value="1.5" data-lang="edgePanel.normal">Normal</option>
-              <option value="2.5" data-lang="edgePanel.slow">Slow</option>
-              <option value="4" data-lang="edgePanel.verySlow">Very Slow</option>
+              <option value="" data-lang="ui.options.default">Default</option>
+              <option value="0.5" data-lang="ui.options.veryFast">Very Fast</option>
+              <option value="1" data-lang="ui.options.fast">Fast</option>
+              <option value="1.5" data-lang="ui.options.normal">Normal</option>
+              <option value="2.5" data-lang="ui.options.slow">Slow</option>
+              <option value="4" data-lang="ui.options.verySlow">Very Slow</option>
             </select>
           </div>
           <div class="style-row" id="edge-port-fields">
-            <label data-lang="edgePanel.fromPort">From Port:</label>
+            <label data-lang="ui.labels.fromPort">From Port:</label>
             <input type="text" id="edge-from-port" placeholder="e.g. eth0, gi0/1" data-lang="ui.placeholders.fromPort" data-lang-attr="placeholder" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);font-size: 14px;">
           </div>
           <div class="style-row" id="edge-port-fields-to">
-            <label data-lang="edgePanel.toPort">To Port:</label>
+            <label data-lang="ui.labels.toPort">To Port:</label>
             <input type="text" id="edge-to-port" placeholder="e.g. eth1, gi0/2" data-lang="ui.placeholders.toPort" data-lang-attr="placeholder" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);font-size: 14px;">
           </div>
-          <div class="section-label" data-lang="edgePanel.lineNotes">Line Notes</div>
-          <ul class="list" id="edge-notes"></ul>
-          <div style="margin-top: 10px; display: flex; gap: 8px">
-            <input type="text" id="new-edge-note" placeholder="Add note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
-            <button id="add-edge-note" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="ui.buttons.add">Add</button>
-          </div>
+          <div class="section-label" data-lang="ui.labels.lineNotes">Line Notes</div>
+          <div class="notes-feed" id="edge-notes"></div>
+          <button id="add-edge-note" style="margin-top: 10px;padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="ui.buttons.addNote">+ Add Note</button>
           <button id="delete-edge" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="ui.buttons.delete">Delete Line</button>
         </div>
         <div id="rect-panel" style="display: none">
-          <div class="details-name" id="rect-title" data-lang="zone.title">Zone</div>
+          <div class="details-name" id="rect-title" data-lang="rectPanel.zone">Zone</div>
           <div class="style-row" id="rect-fill-row" style="margin-top: 10px">
-            <label data-lang="zone.fillColor">Fill Color:</label>
+            <label data-lang="rectPanel.fillColor">Fill Color:</label>
             <input type="color" id="rect-color" value="#f97316">
           </div>
+          <div class="style-row" id="rect-opacity-row">
+            <label data-lang="rectPanel.fillOpacity">Fill Opacity:</label>
+            <input type="range" id="rect-fill-opacity" min="0" max="100" value="30" style="flex: 1;">
+            <span id="rect-fill-opacity-value" style="min-width: 40px; text-align: right; color: var(--text-soft);">30%</span>
+          </div>
           <div class="style-row">
-            <label data-lang="zone.borderColor">Border Color:</label>
+            <label data-lang="rectPanel.borderColor">Border Color:</label>
             <input type="color" id="rect-border-color" value="#f97316">
           </div>
           <div class="style-row">
-            <label data-lang="zone.borderWidth">Border Width:</label>
+            <label data-lang="rectPanel.borderWidth">Border Width:</label>
             <input type="number" id="rect-border-width" min="0" max="20" value="2">
           </div>
           <div class="style-row">
-            <label data-lang="zone.style">Style:</label>
+            <label data-lang="ui.labels.style">Style:</label>
             <select id="rect-style-select">
-              <option value="filled" data-lang="zone.filled">Filled</option>
-              <option value="outlined" data-lang="zone.outlined">Outlined</option>
+              <option value="filled" data-lang="drawToolbar.filled">Filled</option>
+              <option value="outlined" data-lang="drawToolbar.outlined">Outlined</option>
             </select>
           </div>
 		  <div class="style-row">
-            <label data-lang="zone.lineStyle">Line Style:</label>
+            <label data-lang="rectPanel.lineStyle">Line Style:</label>
             <select id="rect-line-style">
               <option value="solid" data-lang="ui.options.solid">Solid</option>
               <option value="dashed" data-lang="ui.options.dashed">Dashed</option>
               <option value="dotted" data-lang="ui.options.dotted">Dotted</option>
-              <option value="wall" data-lang="edgePanel.wall">Wall</option>
+              <option value="wall" data-lang="drawToolbar.wall">Wall</option>
             </select>
           </div>
           <div class="style-row">
-            <label data-lang="zone.rotation">Rotation:</label>
+            <label data-lang="ui.labels.rotation">Rotation:</label>
             <input type="range" id="rect-rotation" min="-360" max="360" value="0" style="flex: 1;">
             <input type="number" id="rect-rotation-value" value="0" style="width: 60px; padding: 4px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); text-align: center;">
             <span style="color: var(--text-soft);">°</span>
           </div>
-          <div class="section-label" data-lang="zone.notes">Zone Notes</div>
-          <ul class="list" id="rect-notes"></ul>
-          <div style="margin-top: 10px; display: flex; gap: 8px">
-            <input type="text" id="new-rect-note" placeholder="Add note..." style="flex: 1;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: clamp(14px, 1.6vw, 18px);">
-            <button id="add-rect-note" style="padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="ui.buttons.add">Add</button>
-          </div>
-          <button id="delete-rect" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="zone.delete">Delete Zone</button>
+          <div class="section-label" data-lang="ui.labels.zoneNotes">Zone Notes</div>
+          <div class="notes-feed" id="rect-notes"></div>
+          <button id="add-rect-note" style="margin-top: 10px;padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="ui.buttons.addNote">+ Add Note</button>
+          <button id="delete-rect" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="ui.buttons.delete">Delete Zone</button>
         </div>
         <div id="text-panel" style="display: none">
-          <div class="details-name" id="text-title" data-lang="textPanel.title">Text Element</div>
+          <div class="details-name" id="text-title" data-lang="textPanel.textElement">Text Element</div>
           <div class="style-row" style="margin-top: 10px">
             <label data-lang="textPanel.content">Content:</label>
             <textarea id="text-content" placeholder="Enter text..." data-lang="ui.placeholders.enterText" data-lang-attr="placeholder" style="width: 100%;padding: 8px 12px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 6px;color: var(--text-main);font-size: 14px;min-height: 80px;resize: vertical;font-family: inherit;"></textarea>
@@ -3897,13 +4180,13 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             <input type="number" id="text-font-size" min="8" max="200" value="18" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);">
           </div>
           <div class="style-row">
-            <label data-lang="textPanel.color">Color:</label>
+            <label data-lang="textPanel.colorLabel">Color:</label>
             <input type="color" id="text-color" value="#e2e8f0">
           </div>
           <div class="style-row">
             <label data-lang="textPanel.fontWeight">Font Weight:</label>
             <select id="text-font-weight" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
-              <option value="normal" data-lang="textPanel.normal">Normal</option>
+              <option value="normal" data-lang="ui.options.normal">Normal</option>
               <option value="bold" data-lang="textPanel.bold">Bold</option>
               <option value="600" data-lang="textPanel.semiBold">Semi-Bold</option>
               <option value="300" data-lang="textPanel.light">Light</option>
@@ -3912,28 +4195,28 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
           <div class="style-row">
             <label data-lang="textPanel.fontStyle">Font Style:</label>
             <select id="text-font-style" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
-              <option value="normal" data-lang="textPanel.normal">Normal</option>
+              <option value="normal" data-lang="ui.options.normal">Normal</option>
               <option value="italic" data-lang="textPanel.italic">Italic</option>
             </select>
           </div>
           <div class="style-row">
             <label data-lang="textPanel.textAlign">Text Align:</label>
             <select id="text-align" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
-              <option value="start" data-lang="textPanel.left">Left</option>
-              <option value="middle" data-lang="textPanel.center">Center</option>
-              <option value="end" data-lang="textPanel.right">Right</option>
+              <option value="start" data-lang="ui.options.left">Left</option>
+              <option value="middle" data-lang="ui.options.center">Center</option>
+              <option value="end" data-lang="ui.options.right">Right</option>
             </select>
           </div>
           <div class="style-row">
             <label data-lang="textPanel.textDecoration">Text Decoration:</label>
             <select id="text-decoration" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
-              <option value="none" data-lang="textPanel.none">None</option>
+              <option value="none" data-lang="ui.options.none">None</option>
               <option value="underline" data-lang="textPanel.underline">Underline</option>
               <option value="line-through" data-lang="textPanel.strikeThrough">Strike Through</option>
             </select>
           </div>
           <div class="style-row">
-            <label data-lang="textPanel.background">Background:</label>
+            <label data-lang="ui.labels.background">Background:</label>
             <input type="color" id="text-bg-color" value="#000000">
             <div style="margin-left: 10px; display: flex; align-items: center; gap: 6px;">
             <label class="toggle-switch"><input type="checkbox" id="text-bg-enabled"><span class="toggle-slider"></span></label>
@@ -3941,17 +4224,52 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             </div>
           </div>
           <div class="style-row">
-            <label data-lang="textPanel.opacity">Opacity:</label>
+            <label data-lang="ui.labels.opacity">Opacity:</label>
             <input type="range" id="text-opacity" min="0" max="1" step="0.1" value="1" style="flex: 1">
             <span id="text-opacity-val" style="min-width: 35px; text-align: right">100%</span>
           </div>
           <div class="style-row">
-            <label data-lang="textPanel.rotation">Rotation:</label>
+            <label data-lang="ui.labels.rotation">Rotation:</label>
             <input type="range" id="text-rotation" min="-360" max="360" value="0" style="flex: 1">
             <input type="number" id="text-rotation-val" value="0" style="width: 60px; padding: 4px; background: var(--panel); border: 1px solid var(--edge-main); border-radius: 4px; color: var(--text-main); text-align: center;">
             <span style="color: var(--text-soft);">°</span>
           </div>
           <button id="delete-text" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="textPanel.deleteText">Delete Text</button>
+        </div>
+        <div id="image-panel" style="display: none">
+          <div class="details-name editable-text" id="image-title">Image</div>
+          <div class="style-row" style="margin-top: 10px">
+            <label data-lang="images.opacity">Opacity:</label>
+            <input type="range" id="image-panel-opacity" min="10" max="100" value="100" style="flex: 1">
+            <span id="image-panel-opacity-val" style="min-width: 40px; text-align: right">100%</span>
+          </div>
+          <div class="style-row">
+            <label data-lang="images.size">Size:</label>
+            <input type="range" id="image-panel-size" min="20" max="200" value="100" style="flex: 1">
+            <span id="image-panel-size-val" style="min-width: 40px; text-align: right">100%</span>
+          </div>
+          <div class="style-row">
+            <label data-lang="images.border">Border:</label>
+            <select id="image-panel-border" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
+              <option value="none" data-lang="images.none">None</option>
+              <option value="thin" data-lang="images.thin">Thin</option>
+              <option value="medium" data-lang="images.medium">Medium</option>
+              <option value="thick" data-lang="images.thick">Thick</option>
+            </select>
+          </div>
+          <div class="style-row">
+            <label data-lang="images.shadow">Shadow:</label>
+            <select id="image-panel-shadow" style="flex: 1;padding: 6px 10px;background: var(--panel);border: 1px solid var(--edge-main);border-radius: 4px;color: var(--text-main);cursor: pointer;">
+              <option value="none" data-lang="images.none">None</option>
+              <option value="small" data-lang="images.small">Small</option>
+              <option value="medium" data-lang="images.medium">Medium</option>
+              <option value="large" data-lang="images.large">Large</option>
+            </select>
+          </div>
+          <div class="section-label" data-lang="images.imageNotes">Image Notes</div>
+          <div class="notes-feed" id="image-notes"></div>
+          <button id="add-image-note" style="margin-top: 10px;padding: 8px 16px;background: var(--accent);color: var(--bg);border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;width: 100%;" data-lang="ui.buttons.addNote">+ Add Note</button>
+          <button id="delete-image-panel" style="margin-top: 15px;padding: 10px 16px;background: var(--danger);color: #fff;border: none;border-radius: 6px;cursor: pointer;font-size: clamp(14px, 1.6vw, 18px);font-weight: 600;" data-lang="images.delete">Delete Image</button>
         </div>
      <details class="style-section" open="">
           <summary data-lang="ui.sections.pageLayout">Page Layout</summary>
@@ -4085,7 +4403,8 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "deleteNode": "Delete {node}", "exportLang": "Export Language File",
       "importLang": "Import Language File", "resetLang": "Reset to English",
       "editStrings": "Edit Strings", "applyRoutingAll": "Apply Routing to All Connections",
-      "saveHtml": "Save HTML", "saveFile": "Save File", "printBW": "Print B&W", "printColor": "Print Color",
+      "saveHtml": "Save HTML", "saveFile": "Save File", "printBW": "Print B&W",
+      "printColorFull": "Print Full Color", "printColorWhite": "Print White BG", "printColorBlack": "Print Black BG",
       "exportJson": "Export JSON", "exportCsv": "Export CSV", "exportMd": "Export Markdown",
       "exportPng": "Export PNG", "exportSvg": "Export SVG", "exportVideo": "Export Video",
       "importJson": "Import JSON", "importMd": "Import Markdown",
@@ -4189,7 +4508,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "settings": "Settings", "addNode": "Add New {node}", "addRack": "Add New {rack}",
       "editNode": "Edit {node}", "editRack": "Edit {rack}", "confirmDelete": "Confirm Delete",
       "languageEditor": "Language Editor", "welcome": "Welcome",
-      "layerVisibility": "Layer Visibility", "notes": "Notes", "auditLog": "Audit Log",
+      "layerVisibility": "Layer Visibility", "notes": "Notes", "notesHub": "Notes Hub", "auditLog": "Audit Log",
       "portMap": "Port Map", "export": "Export", "import": "Import",
       "clearAllNodes": "Clear All Nodes", "recording": "Recording", "recordings": "Recordings",
       "saveInfo": "Save Info", "howToSave": "How to Save", "keyboardShortcuts": "Keyboard Shortcuts",
@@ -4453,6 +4772,12 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
     "editUHeight": "Edit U Height",
     "rackPlacementError": "Rack Placement Error"
   },
+  "noteEditor": {
+    "title": "Edit Note",
+    "addNote": "Add Note",
+    "editNote": "Edit Note",
+    "viewNote": "View Note"
+  },
   "notes": {
     "noNotes": "No notes yet",
     "namePlaceholder": "Note name (e.g., 'Root Passwords')...",
@@ -4605,7 +4930,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
     "animate": "Animate"
   },
   "rectPanel": {
-    "zone": "Zone", "fillColor": "Fill Color:", "borderColor": "Border Color:", "borderWidth": "Border Width:",
+    "zone": "Zone", "fillColor": "Fill Color:", "fillOpacity": "Fill Opacity:", "borderColor": "Border Color:", "borderWidth": "Border Width:",
     "lineStyle": "Line Style:", "deleteZone": "Delete Zone"
   },
   "textPanel": {
@@ -4642,7 +4967,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
     "pngImage": "PNG Image", "svgVector": "SVG Vector", "jsonFullBackup": "JSON (Full Backup)",
     "markdownExport": "Markdown", "csvExport": "CSV",
     "jsonBackup": "JSON (Full Backup)", "markdown": "Markdown",
-    "csv": "CSV", "printBW": "Print B&W", "printColor": "Print Color", "exportHelp": "Export Help"
+    "csv": "CSV", "printBW": "Print B&W", "printColorFull": "Print Full Color", "printColorWhite": "Print White BG", "printColorBlack": "Print Black BG", "exportHelp": "Export Help"
   },
   "mobileImport": {
     "jsonImport": "JSON", "markdownImport": "Markdown",
@@ -4752,7 +5077,8 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
     "timeoutMs": "Timeout (ms):",
     "currentStatus": "Current Status:",
     "lastChecked": "Last checked:",
-    "checkStatusNow": "Check Status Now"
+    "checkStatusNow": "Check Status Now",
+    "motionTrail": "Motion Trail:"
   },
   "langEditor": {
     "tabs": {
@@ -4782,6 +5108,36 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
   "recordings": {
     "noRecordings": "No recordings yet. Press Record to start.",
     "exportVideo": "Export Video"
+  },
+  "trails": {
+    "title": "Motion Trails",
+    "enableTrails": "Enable Trails:",
+    "trailLength": "Trail Length:",
+    "trailStyle": "Trail Style:",
+    "styleSolid": "Solid Fade",
+    "styleDashed": "Dashed",
+    "styleDots": "Dots",
+    "showArrow": "Show Direction Arrow:",
+    "perNodeHint": "Tip: Enable/disable trails per node in the node panel"
+  },
+  "images": {
+    "title": "Canvas Image",
+    "name": "Name:",
+    "addImage": "Add Image",
+    "dropHint": "Drop image here or click to browse",
+    "maxImages": "Maximum images reached (40)",
+    "opacity": "Opacity:",
+    "border": "Border:",
+    "shadow": "Shadow:",
+    "size": "Size:",
+    "delete": "Delete Image",
+    "none": "None",
+    "thin": "Thin",
+    "medium": "Medium",
+    "thick": "Thick",
+    "small": "Small",
+    "large": "Large",
+    "imageNotes": "Image Notes"
   },
   "rack": {
     "capacity42": "42U (Standard Full Rack)",
@@ -5889,6 +6245,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       };
       let currentRectId = null;
       let currentTextId = null;
+      let currentImageId = null;
       let rectDrawMode = false;
       let RECT_DATA = {
        list: []
@@ -5896,6 +6253,11 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       let TEXT_DATA = {
        list: []
       };
+      let IMAGE_DATA = {
+       list: []
+      };
+      const MAX_CANVAS_IMAGES = 40;
+      const MAX_IMAGE_SIZE = 250;
       let EDGE_LEGEND = {};
       let savedPositions = {};
       let savedSizes = {};
@@ -6437,6 +6799,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
          edgeData: EDGE_DATA,
          rectData: RECT_DATA,
          textData: TEXT_DATA,
+         imageData: IMAGE_DATA,
          edgeLegend: EDGE_LEGEND,
          zoneLegend: ZONE_LEGEND,
          zonePresets: ZONE_PRESETS,
@@ -6466,7 +6829,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
          tx.onerror = () => reject(tx.error);
         });
         lastAutosaveTime = Date.now();
-        console.log("Auto-saved to IndexedDB at", new Date().toLocaleTimeString());
+        console.log("Autosaved to IndexedDB at", new Date().toLocaleTimeString());
        } catch (e) {
         console.warn("Auto-save failed:", e);
        }
@@ -6524,6 +6887,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             EDGE_DATA = saved.edgeData || { list: [] };
             RECT_DATA = saved.rectData || { list: [] };
             TEXT_DATA = saved.textData || { list: [] };
+            IMAGE_DATA = saved.imageData || { list: [] };
             EDGE_LEGEND = saved.edgeLegend || {};
             ZONE_LEGEND = saved.zoneLegend || {};
             ZONE_PRESETS = saved.zonePresets || {};
@@ -6664,6 +7028,10 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
 	   animationStyle: "arrows",
 	   animationDirection: "all",
 	   animationSpeed: 1.5,
+	   motionTrailsEnabled: true,
+	   motionTrailLength: 8,
+	   motionTrailStyle: "solid",
+	   motionTrailArrow: true,
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
 	  const FOV_ANIMATION_START = Date.now();
@@ -6690,7 +7058,8 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
 	    isVideoRecording: false,
 	    isStepRecording: false,
 	    stepFrames: [],
-	    stepCount: 0
+	    stepCount: 0,
+	    trailHistory: {}
 	  };
 const ANIM_SETTINGS = {
   masterAnim: true,
@@ -7775,6 +8144,7 @@ function updateZoneLegend() {
         };
         RECT_DATA = { list: [] };
         TEXT_DATA = { list: [] };
+        IMAGE_DATA = { list: [] };
         EDGE_LEGEND = {};
         savedPositions = {};
         savedSizes = {};
@@ -7798,6 +8168,7 @@ function updateZoneLegend() {
         };
         RECT_DATA = initialState.rectData ? initialState.rectData : { list: [] };
         TEXT_DATA = initialState.textData ? initialState.textData : { list: [] };
+        IMAGE_DATA = initialState.imageData ? initialState.imageData : { list: [] };
         EDGE_LEGEND = initialState.edgeLegend || {};
         savedPositions = initialState.nodePositions || {};
         savedSizes = initialState.nodeSizes || {};
@@ -7843,6 +8214,14 @@ function updateZoneLegend() {
        }
        if (initialState.encryptedSections) {
         encryptedSections = initialState.encryptedSections;
+       }
+       if (initialState.recordings && Array.isArray(initialState.recordings)) {
+        RECORDING_STATE.recordings = initialState.recordings;
+        RECORDING_STATE.currentRecording = initialState.recordings[0] || null;
+       }
+       if (initialState.customLanguage) {
+        CUSTOM_LANG = initialState.customLanguage;
+        applyLanguage();
        }
        const layerMap = { "physical": "layer1", "logical": "layer2", "security": "layer3", "application": "layer4" };
        Object.values(NODE_DATA).forEach(node => {
@@ -10276,7 +10655,7 @@ function updateZoneLegend() {
         if (RECT_DATA && RECT_DATA.list) {
          RECT_DATA.list.forEach((rect) => {
           if (currentView.mode === "rack") return;
-          if (rect.style === "filled") {
+          if (rect.style === "filled" || rect.style === "outlined") {
            const g = document.createElementNS(ns, "g");
            g.classList.add("rect-group");
            g.dataset.rectId = rect.id;
@@ -10292,15 +10671,19 @@ function updateZoneLegend() {
            rectEl.setAttribute("y", rect.y);
            rectEl.setAttribute("width", rect.width);
            rectEl.setAttribute("height", rect.height);
-           rectEl.style.fill = rect.color;
-           rectEl.style.fillOpacity = "0.3";
+           if (rect.style === "filled") {
+             rectEl.style.fill = rect.color;
+             rectEl.style.fillOpacity = rect.fillOpacity !== undefined ? rect.fillOpacity : 0.3;
+           } else {
+             rectEl.style.fill = "none";
+           }
            rectEl.style.stroke = rect.borderColor || rect.color;
            rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
            if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
            else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
            else if (rect.lineStyle === "wall") {
              rectEl.style.fill = rect.color;
-             rectEl.style.fillOpacity = "0.5";
+             rectEl.style.fillOpacity = rect.fillOpacity !== undefined ? rect.fillOpacity : 0.5;
              rectEl.style.stroke = rect.borderColor || rect.color;
              rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
              const hatchGroup = document.createElementNS(ns, "g");
@@ -12332,283 +12715,6 @@ function updateZoneLegend() {
          });
          svg.appendChild(g);
         });
-        if (RECT_DATA && RECT_DATA.list) {
-         RECT_DATA.list.forEach((rect) => {
-          if (currentView.mode === "rack") return;
-          if (rect.style === "outlined") {
-           const g = document.createElementNS(ns, "g");
-           g.classList.add("rect-group");
-           g.dataset.rectId = rect.id;
-           const rectCenterX = rect.x + rect.width / 2;
-           const rectCenterY = rect.y + rect.height / 2;
-           const rectRotation = rect.rotation || 0;
-           if (rectRotation !== 0) {
-             g.setAttribute("transform", `rotate(${rectRotation}, ${rectCenterX}, ${rectCenterY})`);
-           }
-           const rectEl = document.createElementNS(ns, "rect");
-           rectEl.classList.add("rect-shape");
-           rectEl.setAttribute("x", rect.x);
-           rectEl.setAttribute("y", rect.y);
-           rectEl.setAttribute("width", rect.width);
-           rectEl.setAttribute("height", rect.height);
-           rectEl.style.fill = "none";
-           rectEl.style.stroke = rect.borderColor || rect.color;
-           rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 3) + "px";
-if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
-           else if (rect.lineStyle === "dotted") { rectEl.style.strokeDasharray = "2,4"; }
-           else if (rect.lineStyle === "wall") {
-             rectEl.style.fill = rect.color;
-             rectEl.style.fillOpacity = "0.5";
-             rectEl.style.stroke = rect.borderColor || rect.color;
-             rectEl.style.strokeWidth = (rect.borderWidth !== undefined ? rect.borderWidth : 2) + "px";
-             const hatchGroup = document.createElementNS(ns, "g");
-             hatchGroup.classList.add("wall-hatch-lines");
-             hatchGroup.style.pointerEvents = "none";
-             const spacing = 12;
-             const hatchColor = rect.borderColor || rect.color;
-             for (let i = -rect.height; i < rect.width + rect.height; i += spacing) {
-               const line = document.createElementNS(ns, "line");
-               line.setAttribute("x1", rect.x + i);
-               line.setAttribute("y1", rect.y);
-               line.setAttribute("x2", rect.x + i - rect.height);
-               line.setAttribute("y2", rect.y + rect.height);
-               line.style.stroke = hatchColor;
-               line.style.strokeWidth = "2";
-               hatchGroup.appendChild(line);
-             }
-             const clipId = "clip-" + rect.id;
-             const clipPath = document.createElementNS(ns, "clipPath");
-             clipPath.id = clipId;
-             const clipRect = document.createElementNS(ns, "rect");
-             clipRect.setAttribute("x", rect.x);
-             clipRect.setAttribute("y", rect.y);
-             clipRect.setAttribute("width", rect.width);
-             clipRect.setAttribute("height", rect.height);
-             clipPath.appendChild(clipRect);
-             defs.appendChild(clipPath);
-             hatchGroup.setAttribute("clip-path", "url(#" + clipId + ")");
-             g.appendChild(hatchGroup);
-           }
-           else { rectEl.style.strokeDasharray = "none"; }
-           rectEl.style.cursor = "move";
-           rectEl.addEventListener("click", (e) => {
-             if (rectDrawMode) return;
-             e.stopPropagation();
-             currentRectId = rect.id;
-             selectTheRect(rect.id);
-           });
-           rectEl.addEventListener("contextmenu", (e) => {
-             e.preventDefault();
-             e.stopPropagation();
-             if (selectedRects.has(rect.id)) {
-               selectedRects.delete(rect.id);
-             } else {
-               selectedRects.add(rect.id);
-             }
-             updateAllSelections();
-           });
-           let rectLastTap = 0;
-           rectEl.addEventListener("touchend", (e) => {
-             const now = Date.now();
-             if (now - rectLastTap < 300) {
-               e.preventDefault();
-               if (selectedRects.has(rect.id)) {
-                 selectedRects.delete(rect.id);
-               } else {
-                 selectedRects.add(rect.id);
-               }
-               updateAllSelections();
-               if (navigator.vibrate) navigator.vibrate(50);
-               rectLastTap = 0;
-             } else {
-               rectLastTap = now;
-             }
-           }, { passive: false });
-           const deleteBtn = document.createElementNS(ns, "g");
-           deleteBtn.classList.add("rect-delete-btn");
-           deleteBtn.style.cursor = "pointer";
-           deleteBtn.style.display = rectDrawMode ? "block" : "none";
-           const deleteBg = document.createElementNS(ns, "circle");
-           deleteBg.setAttribute("cx", rect.x + rect.width - 10);
-           deleteBg.setAttribute("cy", rect.y + 10);
-           deleteBg.setAttribute("r", 12);
-           deleteBg.style.fill = "#f56565";
-           deleteBg.style.stroke = "white";
-           deleteBg.style.strokeWidth = "2";
-           const deleteX = document.createElementNS(ns, "text");
-           deleteX.setAttribute("x", rect.x + rect.width - 10);
-           deleteX.setAttribute("y", rect.y + 10);
-           deleteX.setAttribute("text-anchor", "middle");
-           deleteX.setAttribute("dominant-baseline", "middle");
-           deleteX.style.fill = "white";
-           deleteX.style.fontSize = "16px";
-           deleteX.style.fontWeight = "bold";
-           deleteX.style.pointerEvents = "none";
-           deleteX.textContent = "×";
-           deleteBtn.appendChild(deleteBg);
-           deleteBtn.appendChild(deleteX);
-           deleteBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            deleteRectangle(rect.id);
-           });
-           let isDragging = false;
-           let dragStartX, dragStartY;
-           let rectStartX, rectStartY;
-           rectEl.addEventListener("mousedown", (e) => {
-		   if (isViewOnly()) return;
-            if (rectDrawMode) return;
-            e.preventDefault();
-            e.stopPropagation();
-            isDragging = true;
-            dragStartX = e.clientX;
-            dragStartY = e.clientY;
-            rectStartX = rect.x;
-            rectStartY = rect.y;
-            rectEl.style.cursor = "grabbing";
-           });
-      const moveHandler = (e) => {
-      if (!isDragging || rectDrawMode) return;
-      const svgEl = svg;
-      const pt1 = svgEl.createSVGPoint();
-      pt1.x = dragStartX;
-      pt1.y = dragStartY;
-      const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
-      const pt2 = svgEl.createSVGPoint();
-      pt2.x = e.clientX;
-      pt2.y = e.clientY;
-      const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
-      const dx = svgP2.x - svgP1.x;
-      const dy = svgP2.y - svgP1.y;
-      rect.x = rectStartX + dx;
-      rect.y = rectStartY + dy;
-      if (selectedRects.has(rect.id)) {
-      selectedNodes.forEach(nodeId => { if (initialPositions[nodeId]) { savedPositions[nodeId] = { x: initialPositions[nodeId].x + dx, y: initialPositions[nodeId].y + dy }; } });
-      selectedRects.forEach(rectId => { if (rectId === rect.id) return; const r = RECT_DATA.list.find(x => x.id === rectId); if (r && r._dragStartX !== undefined) { r.x = r._dragStartX + dx; r.y = r._dragStartY + dy; } });
-      selectedTexts.forEach(textId => { const t = TEXT_DATA.list.find(x => x.id === textId); if (t && t._dragStartX !== undefined) { t.x = t._dragStartX + dx; t.y = t._dragStartY + dy; } });
-      selectedEdges.forEach(edgeId => { const ed = EDGE_DATA.list.find(x => x.id === edgeId); if (ed && ed._dragStartPoints) { ed.points.forEach((p, i) => { p.x = ed._dragStartPoints[i].x + dx; p.y = ed._dragStartPoints[i].y + dy; }); } });
-      }
-      forgeTheTopology();
-      };
-           const upHandler = () => {
-            if (isDragging) {
-             isDragging = false;
-             rectEl.style.cursor = "move";
-            }
-           };
-           document.addEventListener("mousemove", moveHandler);
-           document.addEventListener("mouseup", upHandler);
-           let touchStartX, touchStartY;
-           let touchRectStartX, touchRectStartY;
-           rectEl.addEventListener("touchstart", (e) => {
-		    if (isViewOnly()) return;
-            if (rectDrawMode) return;
-            e.preventDefault();
-            e.stopPropagation();
-            isDragging = true;
-            const touch = e.touches[0];
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            touchRectStartX = rect.x;
-            touchRectStartY = rect.y;
-            rectEl.style.cursor = "grabbing";
-           }, { passive: false });
-           rectEl.addEventListener("touchmove", (e) => {
-		   if (isViewOnly()) return;
-            if (!isDragging || rectDrawMode) return;
-            if (!e.touches[0]) return;
-            e.preventDefault();
-            e.stopPropagation();
-            const svgEl = svg;
-            const pt1 = svgEl.createSVGPoint();
-            pt1.x = touchStartX;
-            pt1.y = touchStartY;
-            const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
-            const touch = e.touches[0];
-            const pt2 = svgEl.createSVGPoint();
-            pt2.x = touch.clientX;
-            pt2.y = touch.clientY;
-            const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
-            const dx = svgP2.x - svgP1.x;
-            const dy = svgP2.y - svgP1.y;
-            rect.x = touchRectStartX + dx;
-            rect.y = touchRectStartY + dy;
-            forgeTheTopology();
-           }, { passive: false });
-           rectEl.addEventListener("touchend", (e) => {
-            if (isDragging) {
-             e.preventDefault();
-             isDragging = false;
-             rectEl.style.cursor = "move";
-            }
-           }, { passive: false });
-           if (currentRectId === rect.id) {
-             const corners = [
-               { cx: rect.x, cy: rect.y, cursor: 'nwse-resize', dx: -1, dy: -1 },
-               { cx: rect.x + rect.width, cy: rect.y, cursor: 'nesw-resize', dx: 1, dy: -1 },
-               { cx: rect.x, cy: rect.y + rect.height, cursor: 'nesw-resize', dx: -1, dy: 1 },
-               { cx: rect.x + rect.width, cy: rect.y + rect.height, cursor: 'nwse-resize', dx: 1, dy: 1 }
-             ];
-             corners.forEach((corner) => {
-               const handle = document.createElementNS(ns, "circle");
-               handle.setAttribute("cx", corner.cx);
-               handle.setAttribute("cy", corner.cy);
-               const borderW = rect.borderWidth !== undefined ? rect.borderWidth : 3;
-               const handleSize = Math.max(PAGE_STATE.selectionHandleSize || 8, borderW + 4);
-               handle.setAttribute("r", handleSize);
-               handle.style.fill = PAGE_STATE.selectionHandle || "#f59e0b";
-               handle.style.stroke = "#fff";
-               handle.style.strokeWidth = "2";
-               handle.style.cursor = corner.cursor;
-               handle.addEventListener("mousedown", (e) => {
-			   if (isViewOnly()) return;
-                 e.preventDefault();
-                 e.stopPropagation();
-				 pushUndo("resize zone");
-                 let dragging = true;
-                 const startX = e.clientX, startY = e.clientY;
-                 const origX = rect.x, origY = rect.y, origW = rect.width, origH = rect.height;
-                 const moveHandler = (ev) => {
-                   if (!dragging) return;
-                   const pt1 = svg.createSVGPoint(); pt1.x = startX; pt1.y = startY;
-                   const pt2 = svg.createSVGPoint(); pt2.x = ev.clientX; pt2.y = ev.clientY;
-                   const svgP1 = pt1.matrixTransform(svg.getScreenCTM().inverse());
-                   const svgP2 = pt2.matrixTransform(svg.getScreenCTM().inverse());
-                   const dx = svgP2.x - svgP1.x, dy = svgP2.y - svgP1.y;
-                   if (corner.dx < 0) { rect.x = origX + dx; rect.width = origW - dx; }
-                   else { rect.width = origW + dx; }
-                   if (corner.dy < 0) { rect.y = origY + dy; rect.height = origH - dy; }
-                   else { rect.height = origH + dy; }
-                   if (rect.width < 20) rect.width = 20;
-                   if (rect.height < 20) rect.height = 20;
-                   forgeTheTopology();
-                 };
-                 const upHandler = () => { dragging = false; document.removeEventListener("mousemove", moveHandler); document.removeEventListener("mouseup", upHandler); };
-                 document.addEventListener("mousemove", moveHandler);
-                 document.addEventListener("mouseup", upHandler);
-               });
-               g.appendChild(handle);
-             });
-           }
-           if (rect.groupId) {
-             const groupIndicator = document.createElementNS(ns, "rect");
-             groupIndicator.setAttribute("x", rect.x - 4);
-             groupIndicator.setAttribute("y", rect.y - 4);
-             groupIndicator.setAttribute("width", rect.width + 8);
-             groupIndicator.setAttribute("height", rect.height + 8);
-             groupIndicator.style.fill = "none";
-         groupIndicator.style.stroke = PAGE_STATE.groupIndicator || "#4fd1c5";
-             groupIndicator.style.strokeWidth = "3";
-             groupIndicator.style.strokeDasharray = "5,5";
-             groupIndicator.style.pointerEvents = "none";
-             g.insertBefore(groupIndicator, g.firstChild);
-           }
-           g.appendChild(rectEl);
-           g.appendChild(deleteBtn);
-           svg.appendChild(g);
-          }
-         });
-        }
         if (TEXT_DATA && TEXT_DATA.list) {
          TEXT_DATA.list.forEach((textItem) => {
           if (currentView.mode === "rack") return;
@@ -12869,6 +12975,117 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
           svg.appendChild(g);
          });
         }
+        if (IMAGE_DATA && IMAGE_DATA.list) {
+         IMAGE_DATA.list.forEach((img) => {
+          if (currentView.mode === "rack") return;
+          const g = document.createElementNS(ns, "g");
+          g.classList.add("image-group");
+          g.dataset.imageId = img.id;
+          const imgEl = document.createElementNS(ns, "image");
+          imgEl.setAttribute("x", img.x);
+          imgEl.setAttribute("y", img.y);
+          imgEl.setAttribute("width", img.width);
+          imgEl.setAttribute("height", img.height);
+          imgEl.setAttribute("href", img.src);
+          imgEl.setAttribute("preserveAspectRatio", "xMidYMid meet");
+          imgEl.style.opacity = img.opacity || 1;
+          imgEl.style.cursor = "move";
+          if (img.border && img.border !== "none") {
+           const borderWidth = img.border === "thin" ? 1 : img.border === "medium" ? 2 : 4;
+           const borderRect = document.createElementNS(ns, "rect");
+           borderRect.setAttribute("x", img.x);
+           borderRect.setAttribute("y", img.y);
+           borderRect.setAttribute("width", img.width);
+           borderRect.setAttribute("height", img.height);
+           borderRect.style.fill = "none";
+           borderRect.style.stroke = "#fff";
+           borderRect.style.strokeWidth = borderWidth;
+           g.appendChild(borderRect);
+          }
+          if (img.shadow && img.shadow !== "none") {
+           const shadowSize = img.shadow === "small" ? 4 : img.shadow === "medium" ? 8 : 16;
+           imgEl.style.filter = `drop-shadow(${shadowSize/2}px ${shadowSize/2}px ${shadowSize}px rgba(0,0,0,0.5))`;
+          }
+          g.appendChild(imgEl);
+          let isDragging = false;
+          let dragStartX, dragStartY;
+          let imgStartX, imgStartY;
+          imgEl.addEventListener("mousedown", (e) => {
+           if (isViewOnly()) return;
+           e.preventDefault();
+           e.stopPropagation();
+           isDragging = true;
+           dragStartX = e.clientX;
+           dragStartY = e.clientY;
+           imgStartX = img.x;
+           imgStartY = img.y;
+           imgEl.style.cursor = "grabbing";
+           showImagePanel(img.id);
+          });
+          const moveHandler = (e) => {
+           if (!isDragging) return;
+           const svgEl = svg;
+           const pt1 = svgEl.createSVGPoint();
+           pt1.x = dragStartX;
+           pt1.y = dragStartY;
+           const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+           const pt2 = svgEl.createSVGPoint();
+           pt2.x = e.clientX;
+           pt2.y = e.clientY;
+           const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+           const dx = svgP2.x - svgP1.x;
+           const dy = svgP2.y - svgP1.y;
+           img.x = imgStartX + dx;
+           img.y = imgStartY + dy;
+           forgeTheTopology();
+          };
+          const upHandler = () => {
+           if (isDragging) {
+            isDragging = false;
+            imgEl.style.cursor = "move";
+           }
+          };
+          document.addEventListener("mousemove", moveHandler);
+          document.addEventListener("mouseup", upHandler);
+          let touchStartX = 0, touchStartY = 0;
+          let imgTouchStartX = 0, imgTouchStartY = 0;
+          imgEl.addEventListener("touchstart", (e) => {
+           if (isViewOnly()) return;
+           if (e.touches.length !== 1) return;
+           e.preventDefault();
+           e.stopPropagation();
+           const touch = e.touches[0];
+           isDragging = true;
+           touchStartX = touch.clientX;
+           touchStartY = touch.clientY;
+           imgTouchStartX = img.x;
+           imgTouchStartY = img.y;
+           showImagePanel(img.id);
+          }, { passive: false });
+          imgEl.addEventListener("touchmove", (e) => {
+           if (!isDragging) return;
+           if (e.touches.length !== 1) return;
+           e.preventDefault();
+           const touch = e.touches[0];
+           const svgEl = svg;
+           const pt1 = svgEl.createSVGPoint();
+           pt1.x = touchStartX;
+           pt1.y = touchStartY;
+           const svgP1 = pt1.matrixTransform(svgEl.getScreenCTM().inverse());
+           const pt2 = svgEl.createSVGPoint();
+           pt2.x = touch.clientX;
+           pt2.y = touch.clientY;
+           const svgP2 = pt2.matrixTransform(svgEl.getScreenCTM().inverse());
+           img.x = imgTouchStartX + (svgP2.x - svgP1.x);
+           img.y = imgTouchStartY + (svgP2.y - svgP1.y);
+           forgeTheTopology();
+          }, { passive: false });
+          imgEl.addEventListener("touchend", () => {
+           isDragging = false;
+          }, { passive: false });
+          svg.appendChild(g);
+         });
+        }
         Object.keys(NODE_DATA).forEach(nodeId => {
          updatePingIndicator(nodeId);
         });
@@ -12877,6 +13094,9 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         updateMinimap();
         if (currentSearchQuery && currentSearchResults.length > 0) {
          highlightSearchResults(currentSearchResults, true);
+        }
+        if (typeof renderMotionTrails === 'function') {
+         renderMotionTrails(svg);
         }
        }
        const _forgeTheTopologyImpl = forgeTheTopology;
@@ -12934,6 +13154,221 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         input.addEventListener("keypress", handleEnter);
         modal.addEventListener("click", bgHandler);
        }
+
+      let noteEditorCallback = null;
+      let noteEditorEditIndex = null;
+      function showNoteEditor(title, currentContent, onSave, editIndex = null) {
+       const modal = document.getElementById("note-editor-modal");
+       const content = document.getElementById("note-editor-content");
+       const titleEl = document.getElementById("note-editor-title");
+       const saveBtn = document.getElementById("note-editor-save");
+       const cancelBtn = document.getElementById("note-editor-cancel");
+       titleEl.textContent = title || t("noteEditor.title");
+       content.innerHTML = currentContent || "<p><br></p>";
+       noteEditorCallback = onSave;
+       noteEditorEditIndex = editIndex;
+       modal.classList.add("active");
+       content.focus();
+       const range = document.createRange();
+       const sel = window.getSelection();
+       range.selectNodeContents(content);
+       range.collapse(false);
+       sel.removeAllRanges();
+       sel.addRange(range);
+      }
+      function closeNoteEditor() {
+       const modal = document.getElementById("note-editor-modal");
+       modal.classList.remove("active");
+       noteEditorCallback = null;
+       noteEditorEditIndex = null;
+       document.getElementById("note-heading-select").value = "";
+      }
+      function saveNoteEditor() {
+       const content = document.getElementById("note-editor-content");
+       let html = content.innerHTML.trim();
+       if (html === "<p><br></p>" || html === "<br>" || html === "") {
+        closeNoteEditor();
+        return;
+       }
+       if (noteEditorCallback) {
+        noteEditorCallback(html, noteEditorEditIndex);
+       }
+       closeNoteEditor();
+      }
+      function execNoteCommand(command, value = null) {
+       const content = document.getElementById("note-editor-content");
+       content.focus();
+       if (command === "code") {
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+         const range = sel.getRangeAt(0);
+         const selectedText = range.toString();
+         if (selectedText) {
+          const code = document.createElement("code");
+          code.textContent = selectedText;
+          range.deleteContents();
+          range.insertNode(code);
+          range.setStartAfter(code);
+          range.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(range);
+         }
+        }
+       } else if (command === "codeblock") {
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+         const range = sel.getRangeAt(0);
+         const selectedText = range.toString() || "code here";
+         const pre = document.createElement("pre");
+         const code = document.createElement("code");
+         code.textContent = selectedText;
+         pre.appendChild(code);
+         range.deleteContents();
+         range.insertNode(pre);
+         const p = document.createElement("p");
+         p.innerHTML = "<br>";
+         pre.parentNode.insertBefore(p, pre.nextSibling);
+         range.setStart(p, 0);
+         range.collapse(true);
+         sel.removeAllRanges();
+         sel.addRange(range);
+        }
+       } else if (command === "blockquote") {
+        document.execCommand("formatBlock", false, "blockquote");
+       } else if (command === "createLink") {
+        const url = prompt("Enter URL:", "https://");
+        if (url) {
+         document.execCommand("createLink", false, url);
+        }
+       } else if (command === "heading") {
+        if (value) {
+         document.execCommand("formatBlock", false, value);
+        } else {
+         document.execCommand("formatBlock", false, "p");
+        }
+       } else {
+        document.execCommand(command, false, value);
+       }
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+       const modal = document.getElementById("note-editor-modal");
+       const saveBtn = document.getElementById("note-editor-save");
+       const cancelBtn = document.getElementById("note-editor-cancel");
+       const headingSelect = document.getElementById("note-heading-select");
+       const content = document.getElementById("note-editor-content");
+       saveBtn?.addEventListener("click", saveNoteEditor);
+       cancelBtn?.addEventListener("click", closeNoteEditor);
+       modal?.addEventListener("click", (e) => {
+        if (e.target === modal) closeNoteEditor();
+       });
+
+       document.querySelectorAll(".note-editor-toolbar:not(#secret-editor-toolbar) button[data-command]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+         e.preventDefault();
+         execNoteCommand(btn.dataset.command);
+        });
+       });
+       headingSelect?.addEventListener("change", (e) => {
+        execNoteCommand("heading", e.target.value);
+        e.target.value = "";
+       });
+       content?.addEventListener("keydown", (e) => {
+        if (e.ctrlKey || e.metaKey) {
+         if (e.key === "b") { e.preventDefault(); execNoteCommand("bold"); }
+         if (e.key === "i") { e.preventDefault(); execNoteCommand("italic"); }
+         if (e.key === "u") { e.preventDefault(); execNoteCommand("underline"); }
+        }
+       });
+       content?.addEventListener("paste", (e) => {
+        const sel = window.getSelection();
+        if (sel.anchorNode) {
+         const parent = sel.anchorNode.parentElement;
+         if (parent && (parent.tagName === "CODE" || parent.tagName === "PRE" || parent.closest("pre"))) {
+          e.preventDefault();
+          const text = e.clipboardData.getData("text/plain");
+          document.execCommand("insertText", false, text);
+         }
+        }
+       });
+      });
+      function showNoteViewer(content) {
+       const modal = document.getElementById("note-editor-modal");
+       const titleEl = document.getElementById("note-editor-title");
+       const contentEl = document.getElementById("note-editor-content");
+       const toolbar = modal.querySelector(".note-editor-toolbar");
+       const saveBtn = document.getElementById("note-editor-save");
+       const cancelBtn = document.getElementById("note-editor-cancel");
+       titleEl.textContent = t("noteEditor.viewNote");
+       contentEl.innerHTML = content;
+       contentEl.contentEditable = "false";
+       toolbar.style.display = "none";
+       saveBtn.style.display = "none";
+       cancelBtn.textContent = t("ui.buttons.close");
+       modal.classList.add("active");
+       const closeViewer = () => {
+        modal.classList.remove("active");
+        contentEl.contentEditable = "true";
+        toolbar.style.display = "";
+        saveBtn.style.display = "";
+        cancelBtn.textContent = t("ui.buttons.cancel");
+        cancelBtn.removeEventListener("click", closeViewer);
+        modal.removeEventListener("click", bgClose);
+       };
+       const bgClose = (e) => { if (e.target === modal) closeViewer(); };
+       cancelBtn.addEventListener("click", closeViewer);
+       modal.addEventListener("click", bgClose);
+      }
+      function renderNotesFeed(notes, containerId, elementType, elementId, onUpdate) {
+       const container = document.getElementById(containerId);
+       if (!container) return;
+       container.innerHTML = "";
+       container.className = "notes-feed";
+       if (!notes || notes.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-soft); font-size: 13px; text-align: center; padding: 10px;">No notes yet</div>';
+        return;
+       }
+       notes.forEach((note, idx) => {
+        const noteContent = typeof note === "string" ? note : (note.content || "");
+        const card = document.createElement("div");
+        card.className = "note-card";
+        card.innerHTML = `
+         <div class="note-card-content">${noteContent}</div>
+         <div class="note-card-actions">
+          <button class="view-note" data-index="${idx}">View</button>
+          <button class="edit-note" data-index="${idx}">Edit</button>
+          <button class="delete-note" data-index="${idx}">Delete</button>
+         </div>
+        `;
+
+        card.querySelector(".view-note").addEventListener("click", (e) => {
+         e.stopPropagation();
+         showNoteViewer(noteContent);
+        });
+
+        card.querySelector(".edit-note").addEventListener("click", (e) => {
+         e.stopPropagation();
+         showNoteEditor(t("noteEditor.editNote"), noteContent, (newContent, editIdx) => {
+          pushUndo("edit note");
+          if (typeof notes[editIdx] === "string") {
+           notes[editIdx] = newContent;
+          } else {
+           notes[editIdx].content = newContent;
+          }
+          renderNotesFeed(notes, containerId, elementType, elementId, onUpdate);
+          if (onUpdate) onUpdate();
+         }, idx);
+        });
+
+        card.querySelector(".delete-note").addEventListener("click", (e) => {
+         e.stopPropagation();
+         pushUndo("delete note");
+         notes.splice(idx, 1);
+         renderNotesFeed(notes, containerId, elementType, elementId, onUpdate);
+         if (onUpdate) onUpdate();
+        });
+        container.appendChild(card);
+       });
+      }
        function challengeTheImmortal(message, onConfirm) {
         const modal = document.getElementById("confirm-modal");
         const messageEl = document.getElementById("confirm-message");
@@ -13426,6 +13861,10 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         if (layerSelect) {
          layerSelect.value = data.layer || "layer1";
         }
+        const trailToggle = document.getElementById("node-trail-enabled");
+        if (trailToggle) {
+         trailToggle.checked = data.trailEnabled !== false;
+        }
         scopeSelect.value = currentStyleScope || "all";
         document.getElementById("title-offset-y").value = scopedStyles.titleOffsetY || resolvedStyles.titleOffsetY || 0;
         document.getElementById("title-offset-x").value = scopedStyles.titleOffsetX || resolvedStyles.titleOffsetX || 0;
@@ -13521,39 +13960,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
           });
         });
         tagEl.append(addTagBtn);
-        const notesEl = document.getElementById("node-notes");
-        notesEl.innerHTML = "";
-        data.notes.forEach((note, i) => {
-         const li = document.createElement("li");
-         const noteText = document.createElement("span");
-         noteText.textContent = note;
-         noteText.style.flex = "1";
-         const deleteBtn = document.createElement("span");
-         deleteBtn.className = "delete-note";
-         deleteBtn.textContent = "✕";
-         deleteBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          challengeTheImmortal("Are you sure you want to delete this note?",
-           () => {
-            pushUndo("delete note");
-            data.notes.splice(i, 1);
-            claimTheImmortal(id);
-           });
-         });
-         li.append(noteText, deleteBtn);
-         noteText.addEventListener("dblclick", () => {
-          noteText.classList.add("editing");
-          noteText.contentEditable = true;
-          noteText.focus();
-         });
-         noteText.addEventListener("blur", () => {
-          noteText.classList.remove("editing");
-          noteText.contentEditable = false;
-          pushUndo("edit note");
-          data.notes[i] = noteText.textContent;
-         });
-         notesEl.append(li);
-        });
+        renderNotesFeed(data.notes, "node-notes", "node", id);
         const addLineSelect = document.getElementById("add-line-select");
       addLineSelect.innerHTML = "";
       const currentRack = data.assignedRack || "";
@@ -13692,38 +14099,7 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
           toPortInput.onchange = () => updateEdgePortLabels(id);
          }
         }
-        const list = document.getElementById("edge-notes");
-        list.innerHTML = "";
-        edge.notes.forEach((note, i) => {
-         const li = document.createElement("li");
-         const txt = document.createElement("span");
-         txt.textContent = note;
-         txt.style.flex = "1";
-         const del = document.createElement("span");
-         del.className = "delete-note";
-         del.textContent = "✕";
-         del.addEventListener("click", (e) => {
-          e.stopPropagation();
-         challengeTheImmortal("Delete this line note?", () => {
-           pushUndo("delete edge note");
-           edge.notes.splice(i, 1);
-           selectTheConnection(id);
-          });
-         });
-         txt.addEventListener("dblclick", () => {
-          txt.classList.add("editing");
-          txt.contentEditable = true;
-          txt.focus();
-         });
-        txt.addEventListener("blur", () => {
-          txt.classList.remove("editing");
-          txt.contentEditable = false;
-          pushUndo("edit edge note");
-          edge.notes[i] = txt.textContent;
-         });
-         li.append(txt, del);
-         list.appendChild(li);
-       });
+        renderNotesFeed(edge.notes, "edge-notes", "edge", id);
        if (edge.type === "custom" && Array.isArray(edge.points)) {
         forgeTheTopology();
        }
@@ -13866,17 +14242,29 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
           return;
          }
       const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point') || e.target.dataset.edgeId;
-      const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
-      const isRectElement = e.target.closest('.rect-group');
-      if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
-      currentEdgeId = null;
-      forgeTheTopology();
-      }
-      if (!isRectElement && currentRectId) {
-      currentRectId = null;
-      document.getElementById("rect-panel").style.display = "none";
-      forgeTheTopology();
+      if (isEmptySpace) {
+        if (currentNodeId) {
+          currentNodeId = null;
+          document.getElementById("node-panel").style.display = "none";
+          document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+        }
+        if (currentEdgeId) {
+          currentEdgeId = null;
+          document.getElementById("edge-panel").style.display = "none";
+        }
+        if (currentRectId) {
+          currentRectId = null;
+          document.getElementById("rect-panel").style.display = "none";
+        }
+        if (currentTextId) {
+          currentTextId = null;
+          document.getElementById("text-panel").style.display = "none";
+        }
+        if (currentImageId) {
+          currentImageId = null;
+          document.getElementById("image-panel").style.display = "none";
+        }
+        forgeTheTopology();
       }
          if (isViewOnly()) {
          document.body.classList.remove("view-only-inspect");
@@ -13908,17 +14296,29 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
            return;
           }
       const isEmptySpace = e.target === svg || e.target === viewport || e.target.tagName === "svg";
-      const isEdgeElement = e.target.closest('.edge') || e.target.classList.contains('edge-edit-point') || e.target.dataset.edgeId;
-      const isTextElement = e.target.closest('.text-group') || e.target.closest('.text-element');
-      const isRectElement = e.target.closest('.rect-group');
-      if (!isEdgeElement && !isTextElement && !isRectElement && currentEdgeId) {
-      currentEdgeId = null;
-      forgeTheTopology();
-      }
-      if (!isRectElement && currentRectId) {
-      currentRectId = null;
-      document.getElementById("rect-panel").style.display = "none";
-      forgeTheTopology();
+      if (isEmptySpace) {
+        if (currentNodeId) {
+          currentNodeId = null;
+          document.getElementById("node-panel").style.display = "none";
+          document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+        }
+        if (currentEdgeId) {
+          currentEdgeId = null;
+          document.getElementById("edge-panel").style.display = "none";
+        }
+        if (currentRectId) {
+          currentRectId = null;
+          document.getElementById("rect-panel").style.display = "none";
+        }
+        if (currentTextId) {
+          currentTextId = null;
+          document.getElementById("text-panel").style.display = "none";
+        }
+        if (currentImageId) {
+          currentImageId = null;
+          document.getElementById("image-panel").style.display = "none";
+        }
+        forgeTheTopology();
       }
           if (isEmptySpace && e.touches.length === 1) {
            e.preventDefault();
@@ -14316,21 +14716,13 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         if (customOpt) customOpt.remove();
         forgeTheTopology();
        });
-       const addNoteBtn = document.getElementById("add-note-btn");
-       const noteInput = document.getElementById("new-note-input");
-       addNoteBtn.addEventListener("click", () => {
-        const newNote = noteInput.value.trim();
-        if (newNote && currentNodeId && NODE_DATA[currentNodeId]) {
+       document.getElementById("add-note-btn")?.addEventListener("click", () => {
+        if (!currentNodeId) return;
+        showNoteEditor(t("noteEditor.addNote"), "", (content) => {
          pushUndo("add note");
-         NODE_DATA[currentNodeId].notes.push(newNote);
-         claimTheImmortal(currentNodeId);
-         noteInput.value = "";
-        }
-       });
-       noteInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-         addNoteBtn.click();
-        }
+         NODE_DATA[currentNodeId].notes.push(content);
+         renderNotesFeed(NODE_DATA[currentNodeId].notes, "node-notes", "node", currentNodeId);
+        });
        });
        document.getElementById('node-pingable').addEventListener('change', (e) => {
         if (!currentNodeId || !NODE_DATA[currentNodeId]) return;
@@ -14455,22 +14847,15 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         if (PAGE_STATE.animateConnections || edge.animate === true) forgeTheTopology();
         selectTheConnection(currentEdgeId);
        });
-       const addEdgeNoteBtn = document.getElementById("add-edge-note");
-       const newEdgeNoteInput = document.getElementById("new-edge-note");
-       addEdgeNoteBtn.addEventListener("click", () => {
-        const txt = newEdgeNoteInput.value.trim();
-        if (!txt || !currentEdgeId) return;
+       document.getElementById("add-edge-note")?.addEventListener("click", () => {
+        if (!currentEdgeId) return;
         const edge = EDGE_DATA.list.find((e) => e.id === currentEdgeId);
         if (!edge) return;
-		pushUndo("add edge note");
-        edge.notes.push(txt);
-        newEdgeNoteInput.value = "";
-        selectTheConnection(currentEdgeId);
-       });
-       newEdgeNoteInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-         addEdgeNoteBtn.click();
-        }
+        showNoteEditor(t("noteEditor.addNote"), "", (content) => {
+         pushUndo("add edge note");
+         edge.notes.push(content);
+         renderNotesFeed(edge.notes, "edge-notes", "edge", currentEdgeId);
+        });
        });
       function selectTheRect(id) {
 	  if (isViewOnly()) return;
@@ -14494,31 +14879,15 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
       document.getElementById("rect-border-color").value = rect.borderColor || rect.color || "#f97316";
       document.getElementById("rect-border-width").value = rect.borderWidth !== undefined ? rect.borderWidth : 2;
       document.getElementById("rect-style-select").value = rect.style || "filled";
+      document.getElementById("rect-line-style").value = rect.lineStyle || "solid";
       document.getElementById("rect-rotation").value = Math.max(-360, Math.min(360, rect.rotation || 0));
       document.getElementById("rect-rotation-value").value = rect.rotation || 0;
+      const opacityVal = rect.fillOpacity !== undefined ? Math.round(rect.fillOpacity * 100) : 30;
+      document.getElementById("rect-fill-opacity").value = opacityVal;
+      document.getElementById("rect-fill-opacity-value").textContent = opacityVal + "%";
       document.getElementById("rect-fill-row").style.display = (rect.style === "outlined") ? "none" : "flex";
-      const list = document.getElementById("rect-notes");
-      list.innerHTML = "";
-      (rect.notes || []).forEach((note, i) => {
-      const li = document.createElement("li");
-      const txt = document.createElement("span");
-      txt.textContent = note;
-      txt.style.flex = "1";
-      const del = document.createElement("span");
-      del.className = "delete-note";
-      del.textContent = "✕";
-      del.addEventListener("click", (e) => {
-      e.stopPropagation();
-      challengeTheImmortal("Delete this note?", () => {
-        pushUndo("delete zone note");
-        rect.notes.splice(i, 1);
-        selectTheRect(id);
-      });
-      });
-      li.appendChild(txt);
-      li.appendChild(del);
-      list.appendChild(li);
-      });
+      document.getElementById("rect-opacity-row").style.display = (rect.style === "outlined") ? "none" : "flex";
+      renderNotesFeed(rect.notes || [], "rect-notes", "rect", id);
       forgeTheTopology();
       }
       document.getElementById("rect-color").addEventListener("input", () => {
@@ -14573,22 +14942,34 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
         document.getElementById("rect-rotation").value = Math.max(-360, Math.min(360, val));
         forgeTheTopology();
       });
-      document.getElementById("add-rect-note").addEventListener("click", () => {
-      const input = document.getElementById("new-rect-note");
-      const txt = input.value.trim();
-      if (!txt || !currentRectId) return;
+      document.getElementById("rect-line-style").addEventListener("change", () => {
+      if (!currentRectId) return;
+      pushUndo("change zone line style");
       const rect = RECT_DATA.list.find(r => r.id === currentRectId);
       if (!rect) return;
-      if (!rect.notes) rect.notes = [];
-	  pushUndo("add zone note");
-      rect.notes.push(txt);
-      input.value = "";
-      selectTheRect(currentRectId);
+      rect.lineStyle = document.getElementById("rect-line-style").value;
+      forgeTheTopology();
       });
-      document.getElementById("new-rect-note").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-      document.getElementById("add-rect-note").click();
-      }
+      document.getElementById("rect-fill-opacity").addEventListener("input", () => {
+      if (!currentRectId) return;
+      const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+      if (!rect) return;
+      pushUndo("change zone fill opacity");
+      const val = parseInt(document.getElementById("rect-fill-opacity").value);
+      rect.fillOpacity = val / 100;
+      document.getElementById("rect-fill-opacity-value").textContent = val + "%";
+      forgeTheTopology();
+      });
+      document.getElementById("add-rect-note").addEventListener("click", () => {
+        if (!currentRectId) return;
+        const rect = RECT_DATA.list.find(r => r.id === currentRectId);
+        if (!rect) return;
+        if (!rect.notes) rect.notes = [];
+        showNoteEditor(t("noteEditor.addNote"), "", (content) => {
+          pushUndo("add zone note");
+          rect.notes.push(content);
+          renderNotesFeed(rect.notes, "rect-notes", "rect", currentRectId);
+        });
       });
       document.getElementById("delete-rect").addEventListener("click", () => {
       if (!currentRectId) return;
@@ -15289,6 +15670,203 @@ if (rect.lineStyle === "dashed") { rectEl.style.strokeDasharray = "10,5"; }
          currentTextId = null;
         }
        }
+      function processAndAddImage(file, canvasX, canvasY, filename = null) {
+       if (IMAGE_DATA.list.length >= MAX_CANVAS_IMAGES) {
+        showAlert(t("images.maxImages"));
+        return;
+       }
+       const imageName = filename || file.name.replace(/\.[^/.]+$/, "") || "Image";
+       const reader = new FileReader();
+       reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+         let width = img.width;
+         let height = img.height;
+         if (width > MAX_IMAGE_SIZE || height > MAX_IMAGE_SIZE) {
+          const ratio = Math.min(MAX_IMAGE_SIZE / width, MAX_IMAGE_SIZE / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+         }
+         const canvas = document.createElement("canvas");
+         canvas.width = width;
+         canvas.height = height;
+         const ctx = canvas.getContext("2d");
+         ctx.drawImage(img, 0, 0, width, height);
+         const imageData = ctx.getImageData(0, 0, width, height);
+         const data = imageData.data;
+         let hasTransparency = false;
+         for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 255) { hasTransparency = true; break; }
+         }
+         let compressedSrc;
+         const webpTest = canvas.toDataURL("image/webp", 0.8);
+         const supportsWebP = webpTest.startsWith("data:image/webp");
+         if (supportsWebP) {
+          compressedSrc = canvas.toDataURL("image/webp", 0.8);
+         } else if (hasTransparency) {
+          compressedSrc = canvas.toDataURL("image/png");
+         } else {
+          compressedSrc = canvas.toDataURL("image/jpeg", 0.8);
+         }
+         const newId = "img-" + Date.now();
+         pushUndo("add image");
+         IMAGE_DATA.list.push({
+          id: newId,
+          name: imageName,
+          x: canvasX - width / 2,
+          y: canvasY - height / 2,
+          width: width,
+          height: height,
+          src: compressedSrc,
+          opacity: 1,
+          border: "none",
+          shadow: "none",
+          notes: [],
+          baseWidth: width,
+          baseHeight: height
+         });
+         forgeTheTopology();
+        };
+        img.src = e.target.result;
+       };
+       reader.readAsDataURL(file);
+      }
+      function showImagePanel(imageId) {
+       const img = IMAGE_DATA.list.find(i => i.id === imageId);
+       if (!img) return;
+       currentImageId = imageId;
+       currentNodeId = null;
+       currentEdgeId = null;
+       currentRectId = null;
+       currentTextId = null;
+       document.getElementById("node-panel").style.display = "none";
+       document.getElementById("edge-panel").style.display = "none";
+       document.getElementById("rect-panel").style.display = "none";
+       document.getElementById("text-panel").style.display = "none";
+       document.getElementById("image-panel").style.display = "block";
+       document.querySelectorAll(".node-group").forEach(n => n.classList.remove("active"));
+       document.querySelectorAll(".edge").forEach(e => e.classList.remove("active"));
+       document.querySelectorAll(".rect-group").forEach(r => r.classList.remove("active"));
+       document.querySelectorAll(".text-element").forEach(t => t.classList.remove("active"));
+       document.getElementById("image-title").textContent = img.name || "Image";
+       document.getElementById("image-title").onclick = () => editImageName(imageId);
+       document.getElementById("image-panel-opacity").value = Math.round((img.opacity || 1) * 100);
+       document.getElementById("image-panel-opacity-val").textContent = Math.round((img.opacity || 1) * 100) + "%";
+       document.getElementById("image-panel-border").value = img.border || "none";
+       document.getElementById("image-panel-shadow").value = img.shadow || "none";
+       const sizePercent = img.baseWidth ? Math.round((img.width / img.baseWidth) * 100) : 100;
+       document.getElementById("image-panel-size").value = sizePercent;
+       document.getElementById("image-panel-size-val").textContent = sizePercent + "%";
+       renderNotesFeed(img.notes || [], "image-notes", "image", imageId);
+      }
+      function editImageName(imageId) {
+       const img = IMAGE_DATA.list.find(i => i.id === imageId);
+       if (!img) return;
+       showEditModal(t("editModal.editName"), img.name || "", (newName) => {
+        pushUndo("edit image name");
+        img.name = newName;
+        document.getElementById("image-title").textContent = newName || "Image";
+       });
+      }
+      function hideImagePanel() {
+       document.getElementById("image-panel").style.display = "none";
+       currentImageId = null;
+      }
+      function deleteImage(imageId) {
+       pushUndo("delete image");
+       IMAGE_DATA.list = IMAGE_DATA.list.filter(i => i.id !== imageId);
+       forgeTheTopology();
+       hideImagePanel();
+      }
+      document.getElementById("image-toggle")?.addEventListener("click", () => {
+       document.getElementById("image-file-input").click();
+      });
+      document.getElementById("image-file-input")?.addEventListener("change", (e) => {
+       const file = e.target.files[0];
+       if (!file) return;
+       const svg = document.getElementById("map");
+       const viewBox = svg.viewBox.baseVal;
+       const centerX = viewBox.x + viewBox.width / 2;
+       const centerY = viewBox.y + viewBox.height / 2;
+       processAndAddImage(file, centerX, centerY);
+       e.target.value = "";
+      });
+      document.getElementById("image-panel-opacity")?.addEventListener("input", (e) => {
+       if (!currentImageId) return;
+       const img = IMAGE_DATA.list.find(i => i.id === currentImageId);
+       if (img) {
+        img.opacity = parseInt(e.target.value) / 100;
+        document.getElementById("image-panel-opacity-val").textContent = e.target.value + "%";
+        forgeTheTopology();
+       }
+      });
+      document.getElementById("image-panel-border")?.addEventListener("change", (e) => {
+       if (!currentImageId) return;
+       const img = IMAGE_DATA.list.find(i => i.id === currentImageId);
+       if (img) {
+        img.border = e.target.value;
+        forgeTheTopology();
+       }
+      });
+      document.getElementById("image-panel-shadow")?.addEventListener("change", (e) => {
+       if (!currentImageId) return;
+       const img = IMAGE_DATA.list.find(i => i.id === currentImageId);
+       if (img) {
+        img.shadow = e.target.value;
+        forgeTheTopology();
+       }
+      });
+      document.getElementById("image-panel-size")?.addEventListener("input", (e) => {
+       if (!currentImageId) return;
+       const img = IMAGE_DATA.list.find(i => i.id === currentImageId);
+       if (img) {
+        const scale = parseInt(e.target.value) / 100;
+        const baseWidth = img.baseWidth || img.width;
+        const baseHeight = img.baseHeight || img.height;
+        if (!img.baseWidth) img.baseWidth = img.width;
+        if (!img.baseHeight) img.baseHeight = img.height;
+        img.width = Math.round(baseWidth * scale);
+        img.height = Math.round(baseHeight * scale);
+        document.getElementById("image-panel-size-val").textContent = e.target.value + "%";
+        forgeTheTopology();
+       }
+      });
+      document.getElementById("add-image-note")?.addEventListener("click", () => {
+        if (!currentImageId) return;
+        const img = IMAGE_DATA.list.find(i => i.id === currentImageId);
+        if (!img) return;
+        if (!img.notes) img.notes = [];
+        showNoteEditor(t("noteEditor.addNote"), "", (content) => {
+          pushUndo("add image note");
+          img.notes.push(content);
+          renderNotesFeed(img.notes, "image-notes", "image", currentImageId);
+        });
+      });
+      document.getElementById("delete-image-panel")?.addEventListener("click", () => {
+       if (!currentImageId) return;
+       deleteImage(currentImageId);
+      });
+      (function() {
+       const viewport = document.getElementById("canvas-viewport");
+       viewport?.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "copy";
+       });
+       viewport?.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (isViewOnly()) return;
+        const files = e.dataTransfer.files;
+        if (files.length === 0) return;
+        const file = files[0];
+        if (!file.type.startsWith("image/")) return;
+        const svg = document.getElementById("map");
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        processAndAddImage(file, svgP.x, svgP.y);
+       });
+      })();
        document.getElementById("text-content").addEventListener("input", (e) => {
         if (!currentTextId) return;
         const textItem = TEXT_DATA.list.find(t => t.id === currentTextId);
@@ -15989,6 +16567,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
          EDGE_LEGEND = data.edgeLegend || {};
          RECT_DATA = data.rectData || { list: [] };
          TEXT_DATA = data.textData || { list: [] };
+         IMAGE_DATA = data.imageData || { list: [] };
          savedPositions = data.nodePositions || {};
          savedSizes = data.nodeSizes || {};
          savedStyles = data.nodeStyles || {};
@@ -16035,6 +16614,10 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
          } catch (e) {
            console.warn("Failed to sync audit log to localStorage:", e);
          }
+        }
+        if (data.recordings && Array.isArray(data.recordings)) {
+          RECORDING_STATE.recordings = data.recordings;
+          RECORDING_STATE.currentRecording = data.recordings[0] || null;
         }
         const layerMap = { "physical": "layer1", "logical": "layer2", "security": "layer3", "application": "layer4" };
         Object.values(NODE_DATA).forEach(node => {
@@ -16167,12 +16750,14 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
       currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
       currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
       currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+      currentTab.images = JSON.parse(JSON.stringify(IMAGE_DATA));
       currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
       return {
       nodeData: NODE_DATA,
        edgeData: EDGE_DATA,
        rectData: RECT_DATA,
        textData: TEXT_DATA,
+       imageData: IMAGE_DATA,
        edgeLegend: EDGE_LEGEND,
        zoneLegend: ZONE_LEGEND,
        zonePresets: ZONE_PRESETS,
@@ -16194,6 +16779,8 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
        encryptedSections: encryptedSections,
 	   auditLog: auditLog,
        savedStyleSets: savedStyleSets,
+       recordings: RECORDING_STATE.recordings,
+       customLanguage: CUSTOM_LANG || null,
        };
       }
        function assembleTheImmortalForm() {
@@ -16233,6 +16820,8 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         return " <!DOCTYPE html> \n " + clone.outerHTML;
        }
        async function becomeImmortal() {
+        if (RECORDING_STATE.isRecording) stopRecording();
+        if (RECORDING_STATE.isStepRecording) stopStepRecording();
         const encryptEnabled = document.getElementById("encrypt-toggle").checked;
         let stateData = JSON.stringify(captureTheQuickening(), null, 2);
         if (encryptEnabled) {
@@ -17913,6 +18502,82 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
            }
          });
        }
+
+       function execSecretCommand(command, value = null) {
+         const content = document.getElementById("secret-editor-content");
+         content.focus();
+         if (command === "code") {
+           const sel = window.getSelection();
+           if (sel.rangeCount > 0) {
+             const range = sel.getRangeAt(0);
+             const selectedText = range.toString();
+             if (selectedText) {
+               const code = document.createElement("code");
+               code.textContent = selectedText;
+               range.deleteContents();
+               range.insertNode(code);
+               range.setStartAfter(code);
+               range.collapse(true);
+               sel.removeAllRanges();
+               sel.addRange(range);
+             }
+           }
+         } else if (command === "codeblock") {
+           const sel = window.getSelection();
+           if (sel.rangeCount > 0) {
+             const range = sel.getRangeAt(0);
+             const selectedText = range.toString() || "code here";
+             const pre = document.createElement("pre");
+             const code = document.createElement("code");
+             code.textContent = selectedText;
+             pre.appendChild(code);
+             range.deleteContents();
+             range.insertNode(pre);
+             const p = document.createElement("p");
+             p.innerHTML = "<br>";
+             pre.parentNode.insertBefore(p, pre.nextSibling);
+             range.setStart(p, 0);
+             range.collapse(true);
+             sel.removeAllRanges();
+             sel.addRange(range);
+           }
+         } else if (command === "blockquote") {
+           document.execCommand("formatBlock", false, "blockquote");
+         } else if (command === "createLink") {
+           const url = prompt("Enter URL:", "https://");
+           if (url) document.execCommand("createLink", false, url);
+         } else if (command === "heading") {
+           if (value) {
+             document.execCommand("formatBlock", false, value);
+           } else {
+             document.execCommand("formatBlock", false, "p");
+           }
+         } else {
+           document.execCommand(command, false, null);
+         }
+       }
+       document.querySelectorAll("#secret-editor-toolbar button[data-command]").forEach(btn => {
+         btn.addEventListener("click", (e) => {
+           e.preventDefault();
+           execSecretCommand(btn.dataset.command);
+         });
+       });
+       const secretHeadingSelect = document.getElementById("secret-heading-select");
+       if (secretHeadingSelect) {
+         secretHeadingSelect.addEventListener("change", (e) => {
+           execSecretCommand("heading", e.target.value);
+           e.target.value = "";
+         });
+       }
+
+       const notesHubSearch = document.getElementById("notes-hub-search");
+       const notesHubFilter = document.getElementById("notes-hub-filter");
+       if (notesHubSearch) {
+         notesHubSearch.addEventListener("input", () => displaySecrets());
+       }
+       if (notesHubFilter) {
+         notesHubFilter.addEventListener("change", () => displaySecrets());
+       }
        ["1", "2", "3", "4"].forEach(num => {
         const checkbox = document.getElementById(`layer-${num}`);
         if (checkbox) {
@@ -18432,6 +19097,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         currentTab.legend = JSON.parse(JSON.stringify(EDGE_LEGEND));
         currentTab.rects = JSON.parse(JSON.stringify(RECT_DATA));
         currentTab.texts = JSON.parse(JSON.stringify(TEXT_DATA));
+        currentTab.images = JSON.parse(JSON.stringify(IMAGE_DATA));
         currentTab.pageState = JSON.parse(JSON.stringify(PAGE_STATE));
         currentTabIndex = index;
         const newTab = documentTabs[index];
@@ -18443,6 +19109,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
         RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
         TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+        IMAGE_DATA = JSON.parse(JSON.stringify(newTab.images || { list: [] }));
         PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
         wieldThePower();
         document.title = PAGE_STATE.title || newTab.name;
@@ -18451,9 +19118,13 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         currentNodeId = null;
         currentEdgeId = null;
         currentTextId = null;
+        currentRectId = null;
+        currentImageId = null;
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("edge-panel").style.display = "none";
         document.getElementById("text-panel").style.display = "none";
+        document.getElementById("rect-panel").style.display = "none";
+        document.getElementById("image-panel").style.display = "none";
         displayTabs();
         logAuditEvent("tab", `Switched to tab: ${newTab.name}`);
         const hasData = Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0;
@@ -18518,15 +19189,20 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
           EDGE_LEGEND = JSON.parse(JSON.stringify(newTab.legend));
           RECT_DATA = JSON.parse(JSON.stringify(newTab.rects));
           TEXT_DATA = JSON.parse(JSON.stringify(newTab.texts));
+          IMAGE_DATA = JSON.parse(JSON.stringify(newTab.images || { list: [] }));
           PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE, newTab.pageState || {});
           wieldThePower();
           forgeTheTopology();
           currentNodeId = null;
           currentEdgeId = null;
           currentTextId = null;
+          currentRectId = null;
+          currentImageId = null;
           document.getElementById("node-panel").style.display = "none";
           document.getElementById("edge-panel").style.display = "none";
           document.getElementById("text-panel").style.display = "none";
+          document.getElementById("rect-panel").style.display = "none";
+          document.getElementById("image-panel").style.display = "none";
         }
         displayTabs();
         logAuditEvent("tab", `Deleted tab`);
@@ -18745,7 +19421,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
           try {
             const decrypted = await decryptData(section.data, password);
             document.getElementById("secret-editor-title").textContent = `Edit Secret: ${name}`;
-            document.getElementById("secret-editor-content").value = decrypted;
+            document.getElementById("secret-editor-content").innerHTML = decrypted;
             document.getElementById("secrets-modal").classList.remove("active");
             document.getElementById("secret-editor-modal").classList.add("active");
           } catch (e) {
@@ -18753,14 +19429,14 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
           }
         } else {
           document.getElementById("secret-editor-title").textContent = `Edit note: ${name}`;
-          document.getElementById("secret-editor-content").value = section.data;
+          document.getElementById("secret-editor-content").innerHTML = section.data;
           document.getElementById("secrets-modal").classList.remove("active");
           document.getElementById("secret-editor-modal").classList.add("active");
         }
       }
       async function saveSecret() {
         if (!currentSecretName) return;
-        const content = document.getElementById("secret-editor-content").value;
+        const content = document.getElementById("secret-editor-content").innerHTML;
         const autoEncrypt = document.getElementById("secret-auto-encrypt").checked;
         if (autoEncrypt) {
           const password = await showPrompt(t("dialogs.enterEncryptPasswordFor", { name: currentSecretName }));
@@ -18795,28 +19471,224 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         displaySecrets();
         logAuditEvent("secret", `Deleted note: ${name}`);
       }
+      function getAllNotesAggregated() {
+        const allNotes = [];
+
+        Object.keys(encryptedSections).forEach(name => {
+          const section = encryptedSections[name];
+          allNotes.push({
+            type: "global",
+            name: name,
+            content: section.encrypted ? "[Encrypted]" : section.content,
+            encrypted: section.encrypted,
+            elementId: null,
+            elementName: null
+          });
+        });
+
+        Object.entries(NODE_DATA).forEach(([nodeId, node]) => {
+          (node.notes || []).forEach((note, idx) => {
+            const noteContent = typeof note === "string" ? note : (note.content || "");
+            allNotes.push({
+              type: "node",
+              name: `Note ${idx + 1}`,
+              content: noteContent,
+              encrypted: false,
+              elementId: nodeId,
+              elementName: node.name,
+              noteIndex: idx
+            });
+          });
+        });
+
+        (EDGE_DATA.list || []).forEach(edge => {
+          (edge.notes || []).forEach((note, idx) => {
+            const noteContent = typeof note === "string" ? note : (note.content || "");
+            const fromName = NODE_DATA[edge.from]?.name || edge.from;
+            const toName = NODE_DATA[edge.to]?.name || edge.to;
+            allNotes.push({
+              type: "edge",
+              name: `Note ${idx + 1}`,
+              content: noteContent,
+              encrypted: false,
+              elementId: edge.id,
+              elementName: `${fromName} ↔ ${toName}`,
+              noteIndex: idx
+            });
+          });
+        });
+
+        (RECT_DATA.list || []).forEach(rect => {
+          (rect.notes || []).forEach((note, idx) => {
+            const noteContent = typeof note === "string" ? note : (note.content || "");
+            allNotes.push({
+              type: "rect",
+              name: `Note ${idx + 1}`,
+              content: noteContent,
+              encrypted: false,
+              elementId: rect.id,
+              elementName: `Zone`,
+              noteIndex: idx
+            });
+          });
+        });
+
+        (IMAGE_DATA.list || []).forEach(img => {
+          (img.notes || []).forEach((note, idx) => {
+            const noteContent = typeof note === "string" ? note : (note.content || "");
+            allNotes.push({
+              type: "image",
+              name: `Note ${idx + 1}`,
+              content: noteContent,
+              encrypted: false,
+              elementId: img.id,
+              elementName: img.name || "Image",
+              noteIndex: idx
+            });
+          });
+        });
+        return allNotes;
+      }
       function displaySecrets() {
         const listEl = document.getElementById("secrets-list");
         if (!listEl) return;
-        const secrets = Object.keys(encryptedSections);
-        if (secrets.length === 0) {
+        const searchInput = document.getElementById("notes-hub-search");
+        const filterSelect = document.getElementById("notes-hub-filter");
+        const searchTerm = (searchInput?.value || "").toLowerCase();
+        const filterType = filterSelect?.value || "all";
+        let allNotes = getAllNotesAggregated();
+
+        if (filterType !== "all") {
+          allNotes = allNotes.filter(n => n.type === filterType);
+        }
+
+        if (searchTerm) {
+          allNotes = allNotes.filter(n =>
+            n.name.toLowerCase().includes(searchTerm) ||
+            n.content.toLowerCase().includes(searchTerm) ||
+            (n.elementName && n.elementName.toLowerCase().includes(searchTerm))
+          );
+        }
+        if (allNotes.length === 0) {
           listEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-soft);">' + t("emptyStates.noNotesYet") + '</div>';
           return;
         }
-        listEl.innerHTML = secrets.map(name => {
-          const section = encryptedSections[name];
-          const status = section.encrypted ? "🔒 Encrypted" : "🔓 Plaintext";
-          return `
-            <div class="secret-item">
-              <div class="secret-name">${escapeHtml(name)}</div>
-              <div class="secret-status">${status}</div>
-              <div class="tab-actions">
-                <button class="btn-cancel" onclick="editSecret('${escapeHtml(name)}')" title="Edit note">✏️</button>
-                <button class="btn-cancel" onclick="deleteSecret('${escapeHtml(name)}')" title="Delete note">🗑️</button>
+        listEl.innerHTML = allNotes.map((note, i) => {
+          const typeLabels = { global: "Global", node: "Node", edge: "Line", rect: "Zone", image: "Image" };
+          const typeLabel = typeLabels[note.type] || note.type;
+          if (note.type === "global") {
+            const status = note.encrypted ? "🔒" : "🔓";
+            return `
+              <div class="secret-item note-type-${note.type}">
+                <div class="secret-name">${escapeHtml(note.name)}</div>
+                <div class="secret-status">${status} ${typeLabel}</div>
+                <div class="tab-actions">
+                  <button class="btn-cancel" onclick="viewGlobalNote('${escapeHtml(note.name)}')" title="View">👁️</button>
+                  <button class="btn-cancel" onclick="editSecret('${escapeHtml(note.name)}')" title="Edit">✏️</button>
+                  <button class="btn-cancel" onclick="deleteSecret('${escapeHtml(note.name)}')" title="Delete">🗑️</button>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          } else {
+            const preview = note.content.replace(/<[^>]*>/g, '').substring(0, 60) + (note.content.length > 60 ? '...' : '');
+            return `
+              <div class="secret-item note-type-${note.type}">
+                <div class="note-source" onclick="navigateToNoteSource('${note.type}', '${escapeHtml(note.elementId)}')">${typeLabel}: ${escapeHtml(note.elementName)}</div>
+                <div class="note-preview">${escapeHtml(preview)}</div>
+                <div class="tab-actions">
+                  <button class="btn-cancel" onclick="viewElementNote('${note.type}', '${escapeHtml(note.elementId)}', ${note.noteIndex})" title="View">👁️</button>
+                  <button class="btn-cancel" onclick="editElementNote('${note.type}', '${escapeHtml(note.elementId)}', ${note.noteIndex})" title="Edit">✏️</button>
+                </div>
+              </div>
+            `;
+          }
         }).join('');
+      }
+      function navigateToNoteSource(type, elementId) {
+        document.getElementById("secrets-modal").classList.remove("active");
+        if (type === "node") {
+          claimTheImmortal(elementId);
+          focusOnSelected();
+        } else if (type === "edge") {
+          selectTheConnection(elementId);
+        } else if (type === "rect") {
+          selectTheRect(elementId);
+        } else if (type === "image") {
+          showImagePanel(elementId);
+        }
+      }
+      function viewElementNote(type, elementId, noteIndex) {
+        let notes = [];
+        if (type === "node" && NODE_DATA[elementId]) {
+          notes = NODE_DATA[elementId].notes || [];
+        } else if (type === "edge") {
+          const edge = EDGE_DATA.list.find(e => e.id === elementId);
+          if (edge) notes = edge.notes || [];
+        } else if (type === "rect") {
+          const rect = RECT_DATA.list.find(r => r.id === elementId);
+          if (rect) notes = rect.notes || [];
+        } else if (type === "image") {
+          const img = IMAGE_DATA.list.find(i => i.id === elementId);
+          if (img) notes = img.notes || [];
+        }
+        if (notes[noteIndex] !== undefined) {
+          const noteContent = typeof notes[noteIndex] === "string" ? notes[noteIndex] : (notes[noteIndex].content || "");
+          showNoteViewer(noteContent);
+        }
+      }
+      function viewGlobalNote(name) {
+        const section = encryptedSections[name];
+        if (!section) return;
+        if (section.encrypted) {
+          const pwd = prompt(t("notes.enterPassword"));
+          if (!pwd) return;
+          try {
+            const decrypted = CryptoJS.AES.decrypt(section.data, pwd).toString(CryptoJS.enc.Utf8);
+            if (!decrypted) { alert(t("notes.wrongPassword")); return; }
+            showNoteViewer(decrypted);
+          } catch { alert(t("notes.wrongPassword")); }
+        } else {
+          showNoteViewer(section.data);
+        }
+      }
+      function editElementNote(type, elementId, noteIndex) {
+        let notes = [];
+        let updateFn = null;
+        if (type === "node" && NODE_DATA[elementId]) {
+          notes = NODE_DATA[elementId].notes || [];
+          updateFn = () => { if (currentNodeId === elementId) renderNotesFeed(notes, "node-notes", "node", elementId); };
+        } else if (type === "edge") {
+          const edge = EDGE_DATA.list.find(e => e.id === elementId);
+          if (edge) {
+            notes = edge.notes || [];
+            updateFn = () => { if (currentEdgeId === elementId) renderNotesFeed(notes, "edge-notes", "edge", elementId); };
+          }
+        } else if (type === "rect") {
+          const rect = RECT_DATA.list.find(r => r.id === elementId);
+          if (rect) {
+            notes = rect.notes || [];
+            updateFn = () => { if (currentRectId === elementId) renderNotesFeed(notes, "rect-notes", "rect", elementId); };
+          }
+        } else if (type === "image") {
+          const img = IMAGE_DATA.list.find(i => i.id === elementId);
+          if (img) {
+            notes = img.notes || [];
+            updateFn = () => { if (currentImageId === elementId) renderNotesFeed(notes, "image-notes", "image", elementId); };
+          }
+        }
+        if (notes[noteIndex] !== undefined) {
+          const noteContent = typeof notes[noteIndex] === "string" ? notes[noteIndex] : (notes[noteIndex].content || "");
+          showNoteEditor(t("noteEditor.editNote"), noteContent, (newContent) => {
+            pushUndo("edit note");
+            if (typeof notes[noteIndex] === "string") {
+              notes[noteIndex] = newContent;
+            } else {
+              notes[noteIndex].content = newContent;
+            }
+            displaySecrets();
+            if (updateFn) updateFn();
+          }, noteIndex);
+        }
       }
        const clearAllBtn = document.getElementById("clear-all-btn");
        const clearAllModal = document.getElementById("clear-all-modal");
@@ -18839,6 +19711,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         EDGE_LEGEND = {};
         RECT_DATA = { list: [] };
         TEXT_DATA = { list: [] };
+        IMAGE_DATA = { list: [] };
         savedPositions = {};
         savedSizes = {};
         savedStyles = {};
@@ -18866,6 +19739,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
           legend: {},
           rects: { list: [] },
           texts: { list: [] },
+          images: { list: [] },
           pageState: null
         }];
         currentTabIndex = 0;
@@ -18890,10 +19764,14 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         document.getElementById("node-panel").style.display = "none";
         document.getElementById("edge-panel").style.display = "none";
         document.getElementById("text-panel").style.display = "none";
+        document.getElementById("rect-panel").style.display = "none";
+        document.getElementById("image-panel").style.display = "none";
         document.getElementById("topology-toolbar").style.display = "none";
         currentNodeId = null;
         currentEdgeId = null;
         currentTextId = null;
+        currentRectId = null;
+        currentImageId = null;
         if (typeof displayRollbackVersions === "function") displayRollbackVersions();
         if (typeof displayAuditLog === "function") displayAuditLog();
         if (typeof forgeTheLegend === "function") forgeTheLegend();
@@ -19195,7 +20073,7 @@ function printTopology() {
     }, 500);
   }, 100);
 }
-function printTopologyColor() {
+function printTopologyColor(bgOverride) {
   const svg = document.getElementById("map");
   if (!svg) { window.print(); return; }
   const svgClone = svg.cloneNode(true);
@@ -19213,7 +20091,7 @@ function printTopologyColor() {
     const elements = original.querySelectorAll("*");
     const clonedElements = clone.querySelectorAll("*");
     const rootStyles = getComputedStyle(document.documentElement);
-    const bgColor = rootStyles.getPropertyValue("--bg").trim() || "#050608";
+    const bgColor = bgOverride || rootStyles.getPropertyValue("--bg").trim() || "#050608";
     const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     bgRect.setAttribute("x", x);
     bgRect.setAttribute("y", y);
@@ -19413,6 +20291,10 @@ document.getElementById('import-csv-file')?.addEventListener('change', async (e)
         } catch (e) {
           console.warn("Failed to sync audit log to localStorage:", e);
         }
+      }
+      if (config.recordings && Array.isArray(config.recordings)) {
+        RECORDING_STATE.recordings = config.recordings;
+        RECORDING_STATE.currentRecording = config.recordings[0] || null;
       }
       const layerMap = { "physical": "layer1", "logical": "layer2", "security": "layer3", "application": "layer4" };
       Object.values(NODE_DATA).forEach(node => {
@@ -19780,6 +20662,10 @@ document.getElementById('import-markdown-file')?.addEventListener('change', asyn
           console.warn("Failed to sync audit log to localStorage:", e);
         }
       }
+      if (config.recordings && Array.isArray(config.recordings)) {
+        RECORDING_STATE.recordings = config.recordings;
+        RECORDING_STATE.currentRecording = config.recordings[0] || null;
+      }
     } else if (config && config.pageState) {
       Object.assign(PAGE_STATE, config.pageState);
       wieldThePower();
@@ -19923,6 +20809,10 @@ document.getElementById('import-html-file')?.addEventListener('change', async (e
         console.warn("Failed to sync audit log to localStorage:", err);
       }
     }
+    if (data.recordings && Array.isArray(data.recordings)) {
+      RECORDING_STATE.recordings = data.recordings;
+      RECORDING_STATE.currentRecording = data.recordings[0] || null;
+    }
     const layerMap = { "physical": "layer1", "logical": "layer2", "security": "layer3", "application": "layer4" };
     Object.values(NODE_DATA).forEach(node => {
       if (!node.tags) node.tags = [];
@@ -19968,7 +20858,9 @@ function captureRecordingFrame() {
   const frame = {
     time: Date.now() - RECORDING_STATE.startTime,
     positions: {},
-    waypoints: {}
+    waypoints: {},
+    rects: [],
+    texts: []
   };
   Object.keys(savedPositions).forEach(id => {
     frame.positions[id] = { x: savedPositions[id].x, y: savedPositions[id].y };
@@ -19978,6 +20870,12 @@ function captureRecordingFrame() {
       frame.waypoints[edge.id] = edge.waypoints.map(wp => ({ x: wp.x, y: wp.y }));
     }
   });
+  if (RECT_DATA && RECT_DATA.list) {
+    frame.rects = RECT_DATA.list.map(r => ({ id: r.id, x: r.x, y: r.y, width: r.width, height: r.height, rotation: r.rotation || 0 }));
+  }
+  if (TEXT_DATA && TEXT_DATA.list) {
+    frame.texts = TEXT_DATA.list.map(t => ({ id: t.id, x: t.x, y: t.y }));
+  }
   RECORDING_STATE.frames.push(frame);
   document.getElementById('recording-time').textContent = formatRecordingTime(frame.time);
 }
@@ -20022,6 +20920,8 @@ function stopRecording() {
     clearTimeout(RECORDING_STATE.playbackTimer);
     RECORDING_STATE.isPlaying = false;
     RECORDING_STATE.isPaused = false;
+    RECORDING_STATE.trailHistory = {};
+    forgeTheTopology();
   }
   document.getElementById('stop-btn').style.display = 'none';
   document.getElementById('play-btn').style.display = 'inline-block';
@@ -20088,7 +20988,9 @@ function captureStepFrame() {
   const frame = {
     time: RECORDING_STATE.stepCount * 1000,
     positions: {},
-    waypoints: {}
+    waypoints: {},
+    rects: [],
+    texts: []
   };
   Object.keys(savedPositions).forEach(id => {
     frame.positions[id] = { x: savedPositions[id].x, y: savedPositions[id].y };
@@ -20098,6 +21000,12 @@ function captureStepFrame() {
       frame.waypoints[edge.id] = edge.waypoints.map(wp => ({ x: wp.x, y: wp.y }));
     }
   });
+  if (RECT_DATA && RECT_DATA.list) {
+    frame.rects = RECT_DATA.list.map(r => ({ id: r.id, x: r.x, y: r.y, width: r.width, height: r.height, rotation: r.rotation || 0 }));
+  }
+  if (TEXT_DATA && TEXT_DATA.list) {
+    frame.texts = TEXT_DATA.list.map(t => ({ id: t.id, x: t.x, y: t.y }));
+  }
   RECORDING_STATE.stepFrames.push(frame);
   RECORDING_STATE.stepCount++;
   updateStepRecordingTime();
@@ -20139,14 +21047,23 @@ function playNextFrame() {
   if (RECORDING_STATE.playbackIndex >= frames.length) {
     if (RECORDING_STATE.loopPlayback) {
       RECORDING_STATE.playbackIndex = 0;
+      RECORDING_STATE.trailHistory = {};
     } else {
       stopRecording();
       return;
     }
   }
   const frame = frames[RECORDING_STATE.playbackIndex];
+  const trailLength = PAGE_STATE.motionTrailLength || 8;
   Object.keys(frame.positions).forEach(id => {
     if (savedPositions[id]) {
+      if (PAGE_STATE.motionTrailsEnabled) {
+        if (!RECORDING_STATE.trailHistory[id]) RECORDING_STATE.trailHistory[id] = [];
+        RECORDING_STATE.trailHistory[id].push({ x: frame.positions[id].x, y: frame.positions[id].y });
+        if (RECORDING_STATE.trailHistory[id].length > trailLength) {
+          RECORDING_STATE.trailHistory[id].shift();
+        }
+      }
       savedPositions[id].x = frame.positions[id].x;
       savedPositions[id].y = frame.positions[id].y;
     }
@@ -20157,6 +21074,27 @@ function playNextFrame() {
         edge.waypoints = frame.waypoints[edge.id].map(wp => ({ x: wp.x, y: wp.y }));
       } else {
         edge.waypoints = [];
+      }
+    });
+  }
+  if (frame.rects && RECT_DATA && RECT_DATA.list) {
+    frame.rects.forEach(frameRect => {
+      const rect = RECT_DATA.list.find(r => r.id === frameRect.id);
+      if (rect) {
+        rect.x = frameRect.x;
+        rect.y = frameRect.y;
+        rect.width = frameRect.width;
+        rect.height = frameRect.height;
+        rect.rotation = frameRect.rotation || 0;
+      }
+    });
+  }
+  if (frame.texts && TEXT_DATA && TEXT_DATA.list) {
+    frame.texts.forEach(frameText => {
+      const text = TEXT_DATA.list.find(t => t.id === frameText.id);
+      if (text) {
+        text.x = frameText.x;
+        text.y = frameText.y;
       }
     });
   }
@@ -20174,6 +21112,77 @@ function playNextFrame() {
     RECORDING_STATE.playbackTimer = setTimeout(playNextFrame, 100);
   } else {
     stopRecording();
+  }
+}
+
+function renderMotionTrails(svg) {
+  if (!PAGE_STATE.motionTrailsEnabled || !RECORDING_STATE.isPlaying) return;
+  if (Object.keys(RECORDING_STATE.trailHistory).length === 0) return;
+  const ns = "http://www.w3.org/2000/svg";
+  const trailGroup = document.createElementNS(ns, "g");
+  trailGroup.id = "motion-trails";
+  const trailStyle = PAGE_STATE.motionTrailStyle || "solid";
+  const showArrow = PAGE_STATE.motionTrailArrow !== false;
+  Object.keys(RECORDING_STATE.trailHistory).forEach(nodeId => {
+    const node = NODE_DATA[nodeId];
+    if (!node) return;
+    if (node.trailEnabled === false) return;
+    const trail = RECORDING_STATE.trailHistory[nodeId];
+    if (!trail || trail.length < 2) return;
+    const nodeSize = (savedSizes[nodeId] && savedSizes[nodeId].size) || 55;
+    const nodeColor = (savedStyles[nodeId] && savedStyles[nodeId].stroke) || PAGE_STATE.nodeStroke || "#475569";
+    if (trailStyle === "dots") {
+      trail.forEach((point, idx) => {
+        const opacity = (idx + 1) / trail.length * 0.7;
+        const dotSize = 3 + (idx / trail.length) * 4;
+        const dot = document.createElementNS(ns, "circle");
+        dot.setAttribute("cx", point.x);
+        dot.setAttribute("cy", point.y);
+        dot.setAttribute("r", dotSize);
+        dot.setAttribute("fill", nodeColor);
+        dot.setAttribute("opacity", opacity);
+        trailGroup.appendChild(dot);
+      });
+    } else {
+      const path = document.createElementNS(ns, "polyline");
+      const points = trail.map(p => `${p.x},${p.y}`).join(" ");
+      path.setAttribute("points", points);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", nodeColor);
+      path.setAttribute("stroke-width", "3");
+      path.setAttribute("stroke-linecap", "round");
+      path.setAttribute("stroke-linejoin", "round");
+      path.setAttribute("opacity", "0.6");
+      if (trailStyle === "dashed") {
+        path.setAttribute("stroke-dasharray", "8,4");
+      }
+      trailGroup.appendChild(path);
+    }
+    if (showArrow && trail.length >= 2) {
+      const last = trail[trail.length - 1];
+      const prev = trail[trail.length - 2];
+      const angle = Math.atan2(last.y - prev.y, last.x - prev.x);
+      const arrowSize = 10;
+      const arrowX = last.x + Math.cos(angle) * (nodeSize / 2 + 5);
+      const arrowY = last.y + Math.sin(angle) * (nodeSize / 2 + 5);
+      const arrow = document.createElementNS(ns, "polygon");
+      const p1x = arrowX + Math.cos(angle) * arrowSize;
+      const p1y = arrowY + Math.sin(angle) * arrowSize;
+      const p2x = arrowX + Math.cos(angle + 2.5) * arrowSize * 0.7;
+      const p2y = arrowY + Math.sin(angle + 2.5) * arrowSize * 0.7;
+      const p3x = arrowX + Math.cos(angle - 2.5) * arrowSize * 0.7;
+      const p3y = arrowY + Math.sin(angle - 2.5) * arrowSize * 0.7;
+      arrow.setAttribute("points", `${p1x},${p1y} ${p2x},${p2y} ${p3x},${p3y}`);
+      arrow.setAttribute("fill", nodeColor);
+      arrow.setAttribute("opacity", "0.8");
+      trailGroup.appendChild(arrow);
+    }
+  });
+  const firstChild = svg.firstChild;
+  if (firstChild) {
+    svg.insertBefore(trailGroup, firstChild);
+  } else {
+    svg.appendChild(trailGroup);
   }
 }
 
@@ -20196,6 +21205,27 @@ function seekRecording(percent) {
           edge.waypoints = frame.waypoints[edge.id].map(wp => ({ x: wp.x, y: wp.y }));
         } else {
           edge.waypoints = [];
+        }
+      });
+    }
+    if (frame.rects && RECT_DATA && RECT_DATA.list) {
+      frame.rects.forEach(frameRect => {
+        const rect = RECT_DATA.list.find(r => r.id === frameRect.id);
+        if (rect) {
+          rect.x = frameRect.x;
+          rect.y = frameRect.y;
+          rect.width = frameRect.width;
+          rect.height = frameRect.height;
+          rect.rotation = frameRect.rotation || 0;
+        }
+      });
+    }
+    if (frame.texts && TEXT_DATA && TEXT_DATA.list) {
+      frame.texts.forEach(frameText => {
+        const text = TEXT_DATA.list.find(t => t.id === frameText.id);
+        if (text) {
+          text.x = frameText.x;
+          text.y = frameText.y;
         }
       });
     }
@@ -20564,6 +21594,11 @@ document.getElementById('loop-playback')?.addEventListener('change', (e) => {
 });
 document.getElementById('recordings-btn')?.addEventListener('click', () => {
   renderRecordingsList();
+  document.getElementById('trail-enabled-toggle').checked = PAGE_STATE.motionTrailsEnabled !== false;
+  document.getElementById('trail-length-slider').value = PAGE_STATE.motionTrailLength || 8;
+  document.getElementById('trail-length-value').textContent = PAGE_STATE.motionTrailLength || 8;
+  document.getElementById('trail-style-select').value = PAGE_STATE.motionTrailStyle || 'solid';
+  document.getElementById('trail-arrow-toggle').checked = PAGE_STATE.motionTrailArrow !== false;
   document.getElementById('recordings-modal').classList.add('active');
 });
 document.getElementById('recordings-modal-close')?.addEventListener('click', () => {
@@ -20571,6 +21606,32 @@ document.getElementById('recordings-modal-close')?.addEventListener('click', () 
 });
 document.getElementById('recordings-modal')?.addEventListener('click', (e) => {
   if (e.target.id === 'recordings-modal') e.target.classList.remove('active');
+});
+
+document.getElementById('trail-enabled-toggle')?.addEventListener('change', (e) => {
+  PAGE_STATE.motionTrailsEnabled = e.target.checked;
+  if (!e.target.checked) {
+    RECORDING_STATE.trailHistory = {};
+    forgeTheTopology();
+  }
+});
+document.getElementById('trail-length-slider')?.addEventListener('input', (e) => {
+  PAGE_STATE.motionTrailLength = parseInt(e.target.value);
+  document.getElementById('trail-length-value').textContent = e.target.value;
+});
+document.getElementById('trail-style-select')?.addEventListener('change', (e) => {
+  PAGE_STATE.motionTrailStyle = e.target.value;
+  forgeTheTopology();
+});
+document.getElementById('trail-arrow-toggle')?.addEventListener('change', (e) => {
+  PAGE_STATE.motionTrailArrow = e.target.checked;
+  forgeTheTopology();
+});
+
+document.getElementById('node-trail-enabled')?.addEventListener('change', (e) => {
+  if (currentNodeId && NODE_DATA[currentNodeId]) {
+    NODE_DATA[currentNodeId].trailEnabled = e.target.checked;
+  }
 });
 
 function renderCanvasTemplate(svg, ns, template, width, height, padding, templateColor) {

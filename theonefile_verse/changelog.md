@@ -1,5 +1,7 @@
 ### TheOneFile_Verse changelog
 
+**1/17/26 Theonefile_verse 1.3** Updated for Image and Notes update
+
 **1/12/26 Theonefile_verse 1.3** Its all coming together now
   * Completely rewrote the cross user mouse logic. It is much more reliable now.
   * Fixed an issue where styles and some variables were not saving across user instances

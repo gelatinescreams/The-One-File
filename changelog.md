@@ -1,5 +1,32 @@
 #### CHANGE LOG
 
+### Version 4.1.2 /\ 1-12-26 Image support, Notes Enhancements and Squashing Bugs
+* **Image System**
+  * New image upload icon added to toolbar
+  * Drag and drop images added to canvas
+  * Each image has their own customizable styles
+  * Images are compressed for the one file purpose. NOT FOR ARCHIVING!
+
+* **Notes System Enhancements**
+  * Added rich text editor to all notes
+  * Added notes linking to main notes hub with notes search
+  * Added search to all individual notes sections
+  
+* **Bug Fixes**
+  * Fixed outlined zones rendering on top of nodes
+  * Fixed z order issue where outlined zones appeared above nodes and racks
+  * Fixed wall style overwriting opacity with hardcoded value
+  * Fixed recordings not saving with HTML export in some rare cases
+  * Fixed and issue where zones and text labels not captured in recordings
+  
+* **Core Edition**
+  * Fixed errant translation keys for the language system
+ 
+* **Networkening Edition**
+  * Fixed Zone line style dropdown not working.  Big thank you to legendary tester [mohacc2008-ctrl](https://github.com/mohacc2008-ctrl)
+  * Fixed z order issue where outlined zones appeared above nodes and racks
+  * Fixed four (4) missing and incorrect language keys
+
 ### Version 4.1.1 /\ 1/12/26 Step by step recording
 * **Added step by step recording**
   * Step by step recording mode (green ●+ button) for manual frame capture

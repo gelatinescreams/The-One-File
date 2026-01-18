@@ -16,31 +16,17 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-- 
-
-### Version 4.1.1 /\ 1/12/26 The Vision Converges + step by step
-
-* **V 4.1.1 : added step by step recording for precise frame by frame capture**
-* **Added custom language system**
-  * full GUI for language editing
-  * or import/export via json
-* **Expanded Mapping Modes**
-  * added Sports, MindMap, Smart Home and Blueprint
-  * each with their own custom sports grid
-* **Expanded Grid System**
-  * new network grid : dots, blueprint
-  * new sports grids : basketball, american football, football(soccer), hockey, baseball, tennis
-* **Full motion recording system**
-  * record and play back different situations on your map type
-  * saves replays to your data and/or export them as movies (webm)
-* **Orthogonal Overhaul** Complete rewrite of the entire connections system. 
-  * Create waypoints anywhere on the connection and drag it around.
-  * custom script that re evaluates routing in real time, no matter how many way points you need.
-  * double click on desktop and long press on mobile
-* **Tons of performance tweaks**
-* **Tons Of visual fixes**
-* **TheOneFile_Verse enhancements + fixes** [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
-* **+ More. See more changes in the [changelog.md](changelog.md)**
+### Version 4.1.2 /\ 1-12-26 Image support, Notes Enhancements and Squashing Bugs
+* **Image System**
+  * New image upload icon added to toolbar
+  * Drag and drop images added to canvas
+* **Notes System Enhancements**
+  * Added rich text editor to all notes
+  * Added notes linking to main notes hub with notes search
+  * Added search to all individual notes sections  
+* **Bug Fixes**
+  * Fixed Zone line style dropdown not applying.  Big thank you to legendary tester [mohacc2008-ctrl](https://github.com/mohacc2008-ctrl)
+  * + many more see [changelog.md](changelog.md)
 
 ### Demos
 

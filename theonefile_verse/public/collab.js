@@ -415,6 +415,7 @@
         edgeData: getGlobal('EDGE_DATA'),
         rectData: getGlobal('RECT_DATA'),
         textData: getGlobal('TEXT_DATA'),
+        imageData: getGlobal('IMAGE_DATA'),
         nodePositions: getGlobal('savedPositions'),
         nodeSizes: getGlobal('savedSizes'),
         nodeStyles: getGlobal('savedStyles'),
@@ -491,6 +492,7 @@
         if (state.edgeData) setGlobal('EDGE_DATA', state.edgeData);
         if (state.rectData) setGlobal('RECT_DATA', state.rectData);
         if (state.textData) setGlobal('TEXT_DATA', state.textData);
+        if (state.imageData) setGlobal('IMAGE_DATA', state.imageData);
         if (state.nodePositions) setGlobal('savedPositions', state.nodePositions);
         if (state.nodeSizes) setGlobal('savedSizes', state.nodeSizes);
         if (state.nodeStyles) {
