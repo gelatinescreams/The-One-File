@@ -4,7 +4,6 @@
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
   <img src="https://img.shields.io/badge/Docker%20Version-1.5.0-blue" alt="Docker Version 1.5.0">
   </a>
-  <img alt="any text you like" src="https://img.shields.io/badge/any%20text-you%20like-blue">
 </p>
 
 ![The One File](assets/theonefile.jpg)
