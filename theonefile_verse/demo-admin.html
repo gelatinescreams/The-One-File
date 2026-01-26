@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Demo | TheOneFile_Verse</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d0d0d;
+      --bg-alt:#1a1a1a;
+      --surface:#242424;
+      --border:#333;
+      --text:#e8e8e8;
+      --text-soft:#999;
+      --accent:#c9a227;
+      --accent-hover:#d4b23a;
+      --accent-bg:rgba(201,162,39,0.1);
+      --accent-bg-hover:rgba(201,162,39,0.15);
+    }
+    [data-theme="light"]{
+      --bg:#f5f3ef;
+      --bg-alt:#eae7e0;
+      --surface:#fff;
+      --border:#d4d0c8;
+      --text:#1a1a1a;
+      --text-soft:#666;
+      --accent:#996b1f;
+      --accent-hover:#7a5518;
+      --accent-bg:rgba(153,107,31,0.1);
+      --accent-bg-hover:rgba(153,107,31,0.15);
+    }
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px;padding-bottom:80px}
+    .container{max-width:1200px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    h1{font-size:24px;display:flex;align-items:center;gap:12px}
+    .demo-badge{background:linear-gradient(135deg,#c9a227,#f59e0b);color:#000;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .header-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px}
+    .theme-toggle:hover{background:var(--bg-alt)}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-hover)}
+    .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg-alt)}
+    .btn-danger{background:#dc2626;color:white}.btn-danger:hover{background:#b91c1c}
+    .btn-success{background:#22c55e;color:white}.btn-success:hover{background:#16a34a}
+    .btn-sm{padding:6px 12px;font-size:12px}
+    .btn:disabled{opacity:0.5;cursor:not-allowed}
+    .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
+    .tab{padding:12px 20px;background:transparent;border:none;color:var(--text-soft);font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+    .tab:hover{color:var(--text)}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .tab-content{display:none}
+    .tab-content.active{display:block}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+    .stat-value{font-size:28px;font-weight:700;color:var(--accent)}
+    .stat-label{font-size:13px;color:var(--text-soft);margin-top:4px}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+    .section-title{font-size:18px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .bulk-actions{display:none;gap:8px;align-items:center;flex-wrap:wrap}
+    .bulk-actions.active{display:flex}
+    .selected-count{font-size:13px;color:var(--text-soft);padding:6px 12px;background:var(--surface);border-radius:6px}
+    .room-list{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    .room-header{display:grid;grid-template-columns:40px 1fr 100px 100px 80px 140px;padding:12px 16px;background:var(--bg-alt);font-size:12px;font-weight:600;color:var(--text-soft);text-transform:uppercase;gap:8px;align-items:center}
+    .room-row{display:grid;grid-template-columns:40px 1fr 100px 100px 80px 140px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;gap:8px;transition:background 0.15s}
+    .room-row:last-child{border-bottom:none}
+    .room-row:hover{background:var(--accent-bg)}
+    .room-row.selected{background:var(--accent-bg-hover)}
+    .room-checkbox{width:20px;height:20px;cursor:pointer;accent-color:var(--accent)}
+    .room-id{font-family:monospace;font-size:11px;color:var(--text-soft);word-break:break-all}
+    .room-name{font-weight:500;font-size:14px}
+    .badge{display:inline-block;padding:4px 8px;border-radius:12px;font-size:11px;font-weight:500}
+    .badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
+    .badge-yellow{background:rgba(201,162,39,0.15);color:#c9a227}
+    .badge-gray{background:rgba(100,116,139,0.15);color:#94a3b8}
+    .badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+    .room-actions{display:flex;gap:6px;flex-wrap:wrap}
+    #user-list .room-header,#user-list .room-row{grid-template-columns:1fr 100px 120px 100px 140px}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--text-soft)}
+    .empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
+    .settings-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+    .settings-section h3{font-size:16px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+    .setting-row:last-child{border-bottom:none}
+    .setting-info{flex:1;min-width:200px}
+    .setting-label{font-size:14px;font-weight:500;margin-bottom:4px}
+    .setting-desc{font-size:12px;color:var(--text-soft)}
+    .setting-control{display:flex;align-items:center;gap:8px}
+    .toggle{position:relative;width:48px;height:26px;background:var(--border);border-radius:13px;cursor:pointer;transition:background 0.2s}
+    .toggle.active{background:var(--accent)}
+    .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:var(--text);border-radius:50%;transition:transform 0.2s}
+    .toggle.active::after{transform:translateX(22px)}
+    input[type="text"],input[type="password"],input[type="number"],input[type="email"],select{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;min-width:120px}
+    input:focus,select:focus{outline:none;border-color:var(--accent)}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.active{display:flex}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .modal-header h3{font-size:18px}
+    .modal-close{background:none;border:none;color:var(--text-soft);font-size:24px;cursor:pointer;padding:4px}
+    .modal-body{padding:20px}
+    .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+    .info-row:last-child{border-bottom:none}
+    .info-label{color:var(--text-soft);font-size:14px}
+    .info-value{font-weight:500;font-size:14px;word-break:break-all}
+    .status-msg{padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px}
+    .status-msg.success{background:rgba(34,197,94,0.15);color:#22c55e}
+    .status-msg.error{background:rgba(239,68,68,0.15);color:#ef4444}
+    .status-msg.info{background:rgba(59,130,246,0.15);color:#3b82f6}
+    @media(max-width:900px){.room-header,.room-row{grid-template-columns:32px 1fr 80px 100px}.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 80px 100px}#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}}
+    @media(max-width:600px){body{padding:12px;padding-bottom:80px}header{flex-direction:column;align-items:flex-start}h1{font-size:20px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat-card{padding:12px}.stat-value{font-size:22px}.stat-label{font-size:11px}.room-header,.room-row{grid-template-columns:32px 1fr 90px}.room-header>*:nth-child(3),.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(3),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 90px}#user-list .room-header>*:nth-child(2),#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(2),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}.room-actions{justify-content:flex-end}.btn{padding:8px 12px;font-size:12px}.btn-sm{padding:6px 10px;font-size:11px}.section-header{flex-direction:column;align-items:flex-start}.bulk-actions{width:100%;justify-content:flex-start}.tabs{overflow-x:auto}.setting-row{flex-direction:column;align-items:flex-start}.setting-control{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Dashboard <span class="demo-badge">Demo Mode</span></h1>
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()"><span id="theme-icon"></span></button>
+        <a href="/" class="btn btn-secondary">Back to App</a>
+        <button class="btn btn-secondary" onclick="demoAlert('Logout')">Logout</button>
+      </div>
+    </header>
+
+    <div class="status-msg info" style="margin-bottom:20px">
+      This is a demo admin panel with sample data. All buttons are non functional for security.
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('rooms')">Rooms</button>
+      <button class="tab" onclick="showTab('users')">Users</button>
+      <button class="tab" onclick="showTab('auth')">Authentication</button>
+      <button class="tab" onclick="showTab('settings')">Settings</button>
+      <button class="tab" onclick="showTab('logs')">Logs</button>
+      <button class="tab" onclick="showTab('backups')">Backups</button>
+      <button class="tab" onclick="showTab('apikeys')">API Keys</button>
+    </div>
+
+    <div id="tab-rooms" class="tab-content active">
+      <div class="stats">
+        <div class="stat-card"><div class="stat-value">12</div><div class="stat-label">Total Rooms</div></div>
+        <div class="stat-card"><div class="stat-value">5</div><div class="stat-label">Active</div></div>
+        <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">Protected</div></div>
+        <div class="stat-card"><div class="stat-value">23</div><div class="stat-label">Users Online</div></div>
+      </div>
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h2 class="section-title">All Rooms</h2>
+          <input type="text" placeholder="Search rooms..." style="padding:8px 12px;width:200px">
+        </div>
+        <div class="bulk-actions" id="bulk-actions">
+          <span class="selected-count">0 selected</span>
+          <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Selected')">Delete Selected</button>
+          <button class="btn btn-secondary btn-sm">Clear</button>
+        </div>
+      </div>
+      <div class="room-list" id="room-list">
+        <div class="room-header">
+          <input type="checkbox" class="room-checkbox">
+          <span>Room</span>
+          <span>Users</span>
+          <span>Created</span>
+          <span>Password</span>
+          <span>Actions</span>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">a1b2c3d4-e5f6-7890-abcd-ef1234567890</div></div>
+          <div><span class="badge badge-green">4</span></div>
+          <div>Jan 15, 2026</div>
+          <div><span class="badge badge-yellow">Yes</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">b208667b-7a9e-4a18-ac98-5cb6e73bb669</div></div>
+          <div><span class="badge badge-green">7</span></div>
+          <div>Jan 18, 2026</div>
+          <div><span class="badge badge-yellow">Yes</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">c3d4e5f6-7890-abcd-ef12-345678901234</div></div>
+          <div><span class="badge badge-green">2</span></div>
+          <div>Jan 20, 2026</div>
+          <div><span class="badge badge-gray">No</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">d4e5f678-90ab-cdef-1234-567890123456</div></div>
+          <div><span class="badge badge-green">5</span></div>
+          <div>Jan 22, 2026</div>
+          <div><span class="badge badge-yellow">Yes</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">e5f67890-abcd-ef12-3456-789012345678</div></div>
+          <div><span class="badge badge-green">5</span></div>
+          <div>Jan 24, 2026</div>
+          <div><span class="badge badge-yellow">Yes</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <input type="checkbox" class="room-checkbox">
+          <div><div class="room-name">Room</div><div class="room-id">f6789012-cdef-3456-7890-abcdef123456</div></div>
+          <div><span class="badge badge-gray">0</span></div>
+          <div>Jan 25, 2026</div>
+          <div><span class="badge badge-yellow">Yes</span></div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-users" class="tab-content">
+      <div class="section-header">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h2 class="section-title">User Management</h2>
+          <input type="text" placeholder="Search users..." style="padding:8px 12px;width:200px">
+        </div>
+        <button class="btn btn-primary" onclick="demoAlert('Create User')">Create User</button>
+      </div>
+      <div class="room-list" id="user-list">
+        <div class="room-header">
+          <span>User</span>
+          <span>Role</span>
+          <span>Status</span>
+          <span>Created</span>
+          <span>Actions</span>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">Administrator</div><div class="room-id">admin@example.com</div></div>
+          <div><span class="badge badge-yellow">Admin</span></div>
+          <div><span class="badge badge-green">Active</span></div>
+          <div>Jan 1, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">John Doe</div><div class="room-id">john.doe@company.com</div></div>
+          <div><span class="badge badge-gray">User</span></div>
+          <div><span class="badge badge-green">Active</span></div>
+          <div>Jan 5, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">Jane Smith</div><div class="room-id">jane.smith@company.com</div></div>
+          <div><span class="badge badge-gray">User</span></div>
+          <div><span class="badge badge-green">Active</span></div>
+          <div>Jan 8, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">Bob Wilson</div><div class="room-id">bob.wilson@external.org</div></div>
+          <div><span class="badge badge-gray">User</span></div>
+          <div><span class="badge badge-green">Active</span> <span class="badge badge-yellow">Unverified</span></div>
+          <div>Jan 12, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">Sarah Connor</div><div class="room-id">sarah@skynet.io</div></div>
+          <div><span class="badge badge-yellow">Admin</span></div>
+          <div><span class="badge badge-green">Active</span></div>
+          <div>Jan 15, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+        <div class="room-row">
+          <div><div class="room-name">Mike Chen</div><div class="room-id">mike.chen@startup.co</div></div>
+          <div><span class="badge badge-gray">User</span></div>
+          <div><span class="badge badge-gray">Inactive</span></div>
+          <div>Jan 18, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-auth" class="tab-content">
+      <div class="settings-section">
+        <h3>Authentication Mode</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Default Auth Mode</div><div class="setting-desc">How users can access the system</div></div>
+          <div class="setting-control">
+            <select onchange="demoAlert('Change Auth Mode')">
+              <option value="open">Open (Anyone can register)</option>
+              <option value="registration" selected>Registration Required</option>
+              <option value="oidc_only">OIDC Only</option>
+              <option value="invite_only">Invite Only</option>
+              <option value="closed">Closed (No new users)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Require Email Verification</div><div class="setting-desc">Users must verify email before accessing</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Email Verification')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Allow Magic Link Login</div><div class="setting-desc">Users can login via email link</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Magic Link')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Match OIDC Emails</div><div class="setting-desc">Auto link OIDC accounts with matching email. <span style="color:#f59e0b">Only enable with trusted providers</span></div></div>
+          <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle OIDC Email Match')"></div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Security</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Production Mode</div><div class="setting-desc">Enable HTTPS secure cookies. <span style="color:#ef4444">Required for production</span></div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Production Mode')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">ID Token Max Age (hours)</div><div class="setting-desc">Maximum age for OIDC ID tokens before they are considered too old</div></div>
+          <div class="setting-control"><input type="number" value="2" min="1" max="168" style="width:80px" onchange="demoAlert('Update Token Age')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Email Rate Limit Window (seconds)</div><div class="setting-desc">Time window for email rate limiting</div></div>
+          <div class="setting-control"><input type="number" value="300" min="60" max="3600" style="width:80px" onchange="demoAlert('Update Rate Limit')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Email Rate Limit Max Attempts</div><div class="setting-desc">Maximum email requests per address within window</div></div>
+          <div class="setting-control"><input type="number" value="3" min="1" max="20" style="width:80px" onchange="demoAlert('Update Max Attempts')"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Guest Access</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Allow Guest Room Creation</div><div class="setting-desc">Unregistered users can create rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Guest Room Creation')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Allow Guest Room Join</div><div class="setting-desc">Unregistered users can join rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Guest Room Join')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Room Creator Guest Setting</div><div class="setting-desc">Let room creators choose guest access per room</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Room Creator Guest Setting')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Share Button</div><div class="setting-desc">Show share button in rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Share Button')"></div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>OIDC Providers</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <p style="color:var(--text-soft);font-size:13px">Configure OpenID Connect providers for SSO</p>
+          <button class="btn btn-primary btn-sm" onclick="demoAlert('Add OIDC Provider')">Add Provider</button>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Google</div>
+              <div style="font-size:12px;color:var(--text-soft)">generic | <span style="color:#22c55e">Active</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Google Provider')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Google Provider')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Authentik (Internal)</div>
+              <div style="font-size:12px;color:var(--text-soft)">authentik | <span style="color:#22c55e">Active</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Authentik Provider')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Authentik Provider')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-weight:500">GitHub</div>
+              <div style="font-size:12px;color:var(--text-soft)">generic | <span style="color:#94a3b8">Inactive</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit GitHub Provider')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete GitHub Provider')">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>SMTP Configuration</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <p style="color:var(--text-soft);font-size:13px">Configure email delivery for verification and notifications</p>
+          <button class="btn btn-primary btn-sm" onclick="demoAlert('Add SMTP Config')">Add SMTP</button>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Primary SMTP <span class="badge badge-green">Default</span></div>
+              <div style="font-size:12px;color:var(--text-soft)">smtp.sendgrid.net:587 (starttls) | <span style="color:#22c55e">Active</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Primary SMTP')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Primary SMTP')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-weight:500">Backup SMTP</div>
+              <div style="font-size:12px;color:var(--text-soft)">smtp.mailgun.org:465 (tls) | <span style="color:#22c55e">Active</span></div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Backup SMTP')">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup SMTP')">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Email Templates</h3>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Email Verification</div>
+              <div style="font-size:12px;color:var(--text-soft)">Subject: Verify your email | TheOneFile_Verse</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Email Verification Template')">Edit</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Password Reset</div>
+              <div style="font-size:12px;color:var(--text-soft)">Subject: Reset your password | TheOneFile_Verse</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Password Reset Template')">Edit</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Magic Link</div>
+              <div style="font-size:12px;color:var(--text-soft)">Subject: Your login link | TheOneFile_Verse</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Magic Link Template')">Edit</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-weight:500">Room Invitation</div>
+              <div style="font-size:12px;color:var(--text-soft)">Subject: You've been invited to collaborate | TheOneFile_Verse</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Room Invitation Template')">Edit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Email Logs</h3>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center">
+          <input type="text" placeholder="Filter by email..." style="width:250px">
+          <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Email Logs')">Clear All</button>
+        </div>
+        <div style="max-height:200px;overflow-y:auto">
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 10:32 AM</span> <span class="badge badge-green">sent</span> john.doe@company.com <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 9:15 AM</span> <span class="badge badge-green">sent</span> jane.smith@company.com <span style="color:var(--text-soft)">Your login link | TheOneFile_Verse</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/25/2026, 4:45 PM</span> <span class="badge badge-green">sent</span> bob.wilson@external.org <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/25/2026, 2:20 PM</span> <span class="badge badge-gray">failed</span> invalid@nowhere.xyz <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span> <span style="color:#ef4444">Recipient rejected</span>
+          </div>
+          <div style="padding:8px 0;font-size:13px">
+            <span style="color:var(--text-soft)">1/24/2026, 11:00 AM</span> <span class="badge badge-green">sent</span> sarah@skynet.io <span style="color:var(--text-soft)">You've been invited to collaborate | TheOneFile_Verse</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-settings" class="tab-content">
+      <div class="settings-section">
+        <h3>Instance Access</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Password Lock</div><div class="setting-desc">Require password to access the entire instance</div></div>
+          <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Password Lock')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Admin Panel Path</div><div class="setting-desc">Custom URL path for the admin panel (default: admin)</div></div>
+          <div class="setting-control">
+            <span style="color:#8892a0;font-size:12px">/</span>
+            <input type="text" value="admin" placeholder="admin" style="width:150px">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Save Admin Path')">Save</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label"></div><div class="setting-desc" style="color:#4ade80">Current path: /admin</div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>TheOneFile Source</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Source Mode</div><div class="setting-desc">Choose where to load TheOneFile from</div></div>
+          <div class="setting-control">
+            <select onchange="demoAlert('Change Source Mode')">
+              <option value="github" selected>GitHub (Auto-Update)</option>
+              <option value="local">Local (Manual Upload)</option>
+            </select>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Update Interval</div><div class="setting-desc">Hours between auto updates (0 = manual only)</div></div>
+          <div class="setting-control">
+            <input type="number" value="24" min="0" max="168" style="width:80px">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Save Update Interval')">Save</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Fetch from GitHub</div><div class="setting-desc">Download latest version now</div></div>
+          <div class="setting-control"><button class="btn btn-sm btn-success" onclick="demoAlert('Update Now')">Update Now</button></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Current File</div><div class="setting-desc">245KB, networkening edition (GitHub)</div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Appearance</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Theme</div><div class="setting-desc">Force a theme for all users or let them choose</div></div>
+          <div class="setting-control">
+            <select onchange="demoAlert('Change Theme')">
+              <option value="user" selected>User Choice</option>
+              <option value="dark">Force Dark</option>
+              <option value="light">Force Light</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Room Defaults</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Default Self Destruct</div><div class="setting-desc">Default expiration for new rooms</div></div>
+          <div class="setting-control">
+            <select>
+              <option value="time" selected>After time</option>
+              <option value="empty">When empty</option>
+              <option value="never">Never</option>
+            </select>
+            <input type="number" value="24" min="1" max="720" style="width:70px">
+            <span style="color:#8892a0;font-size:12px">hours</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Max Rooms</div><div class="setting-desc">Maximum rooms allowed (0 = unlimited)</div></div>
+          <div class="setting-control"><input type="number" value="100" min="0" max="1000" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Public Room Creation</div><div class="setting-desc">Allow anyone to create rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Public Room Creation')"></div></div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-primary" onclick="demoAlert('Save Room Settings')">Save Room Settings</button></div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Rate Limiting</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Enable Rate Limiting</div><div class="setting-desc">Protect against brute force attacks</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Rate Limiting')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Limit Settings</div><div class="setting-desc">Max attempts per time window</div></div>
+          <div class="setting-control">
+            <input type="number" value="10" min="1" max="100" style="width:60px">
+            <span style="color:#8892a0;font-size:12px">attempts per</span>
+            <input type="number" value="60" min="10" max="3600" style="width:70px">
+            <span style="color:#8892a0;font-size:12px">seconds</span>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-primary" onclick="demoAlert('Save Rate Limit Settings')">Save Rate Limit Settings</button></div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Collaboration Features</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Chat</div><div class="setting-desc">Enable chat in rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Chat')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Cursor Sharing</div><div class="setting-desc">Show other users cursors</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Cursor Sharing')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Name Changes</div><div class="setting-desc">Allow users to change name after joining</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Name Changes')"></div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Webhooks</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Enable Webhooks</div><div class="setting-desc">Send notifications for events</div></div>
+          <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Webhooks')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Webhook URL</div><div class="setting-desc">POST endpoint for notifications</div></div>
+          <div class="setting-control">
+            <input type="text" placeholder="https://..." style="width:250px">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Save Webhook URL')">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Automatic Backups</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Enable Auto Backup</div><div class="setting-desc">Automatically backup data</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Auto Backup')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Backup Settings</div><div class="setting-desc">Interval and retention</div></div>
+          <div class="setting-control">
+            <span style="color:#8892a0;font-size:12px">Every</span>
+            <input type="number" value="24" min="1" max="168" style="width:60px">
+            <span style="color:#8892a0;font-size:12px">hours, keep</span>
+            <input type="number" value="7" min="1" max="100" style="width:60px">
+            <span style="color:#8892a0;font-size:12px">backups</span>
+          </div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-primary" onclick="demoAlert('Save Backup Settings')">Save Backup Settings</button></div>
+      </div>
+    </div>
+
+    <div id="tab-logs" class="tab-content">
+      <div class="settings-section">
+        <h3>Activity Log</h3>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center">
+          <input type="text" placeholder="Filter by room ID..." style="width:250px">
+          <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Activity Logs')">Clear All</button>
+        </div>
+        <div style="max-height:300px;overflow-y:auto">
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:45 AM</span> <span class="badge badge-green">join</span> John Doe <span style="color:var(--text-soft);font-size:11px">a1b2c3d4</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:42 AM</span> <span class="badge badge-gray">leave</span> Jane Smith <span style="color:var(--text-soft);font-size:11px">b208667b</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:30 AM</span> <span class="badge badge-green">join</span> Guest_7842 <span style="color:var(--text-soft);font-size:11px">c3d4e5f6</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:15 AM</span> <span class="badge badge-green">join</span> Sarah Connor <span style="color:var(--text-soft);font-size:11px">a1b2c3d4</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 10:58 AM</span> <span class="badge badge-gray">leave</span> Bob Wilson <span style="color:var(--text-soft);font-size:11px">d4e5f678</span>
+          </div>
+          <div style="padding:8px 0;font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 10:45 AM</span> <span class="badge badge-green">join</span> Mike Chen <span style="color:var(--text-soft);font-size:11px">e5f67890</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Audit Log</h3>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center">
+          <input type="text" placeholder="Search..." style="width:250px">
+          <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Audit Logs')">Clear All</button>
+        </div>
+        <div style="max-height:300px;overflow-y:auto">
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:30 AM</span> <span class="badge badge-yellow">settings_update</span> admin@example.com
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 11:15 AM</span> <span class="badge badge-yellow">user_create</span> admin@example.com <span style="color:var(--text-soft);font-size:11px">abc123de</span>
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 10:45 AM</span> <span class="badge badge-yellow">backup_create</span> system
+          </div>
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 9:30 AM</span> <span class="badge badge-yellow">oidc_update</span> admin@example.com <span style="color:var(--text-soft);font-size:11px">google_01</span>
+          </div>
+          <div style="padding:8px 0;font-size:13px">
+            <span style="color:var(--text-soft)">1/26/2026, 8:00 AM</span> <span class="badge badge-yellow">admin_login</span> admin@example.com
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-backups" class="tab-content">
+      <div class="settings-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0;border:none;padding:0">Backups</h3>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Create Backup')">Create Backup</button>
+            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Export All')">Export All</button>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">backup_2026-01-26_110000.json</div>
+              <div style="font-size:12px;color:var(--text-soft)">1/26/2026, 11:00:00 AM | 156KB | 12 rooms | Auto</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Download Backup')">Download</button>
+              <button class="btn btn-sm btn-success" onclick="demoAlert('Restore Backup')">Restore</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">backup_2026-01-25_110000.json</div>
+              <div style="font-size:12px;color:var(--text-soft)">1/25/2026, 11:00:00 AM | 148KB | 11 rooms | Auto</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Download Backup')">Download</button>
+              <button class="btn btn-sm btn-success" onclick="demoAlert('Restore Backup')">Restore</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">backup_2026-01-24_143022.json</div>
+              <div style="font-size:12px;color:var(--text-soft)">1/24/2026, 2:30:22 PM | 142KB | 10 rooms</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Download Backup')">Download</button>
+              <button class="btn btn-sm btn-success" onclick="demoAlert('Restore Backup')">Restore</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup')">Delete</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-weight:500">backup_2026-01-23_110000.json</div>
+              <div style="font-size:12px;color:var(--text-soft)">1/23/2026, 11:00:00 AM | 128KB | 8 rooms | Auto</div>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Download Backup')">Download</button>
+              <button class="btn btn-sm btn-success" onclick="demoAlert('Restore Backup')">Restore</button>
+              <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup')">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-apikeys" class="tab-content">
+      <div class="settings-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0;border:none;padding:0">API Keys</h3>
+          <button class="btn btn-primary btn-sm" onclick="demoAlert('Create API Key')">Create API Key</button>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Production API</div>
+              <div style="font-size:12px;color:var(--text-soft)">read, write | Created: 1/15/2026 | Last used: 1/26/2026</div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="demoAlert('Revoke API Key')">Revoke</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div>
+              <div style="font-weight:500">Monitoring Service</div>
+              <div style="font-size:12px;color:var(--text-soft)">read | Created: 1/10/2026 | Last used: 1/26/2026</div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="demoAlert('Revoke API Key')">Revoke</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
+            <div>
+              <div style="font-weight:500">Admin CLI Tool</div>
+              <div style="font-size:12px;color:var(--text-soft)">read, write, admin | Created: 1/1/2026 | Expires: 2/1/2026</div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="demoAlert('Revoke API Key')">Revoke</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getTheme() {
+      return localStorage.getItem('demo-theme') || 'dark';
+    }
+
+    function setTheme(theme) {
+      localStorage.setItem('demo-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('theme-icon').textContent = theme === 'dark' ? '\u2600' : '\u263E';
+    }
+
+    function toggleTheme() {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    }
+
+    setTheme(getTheme());
+
+    function showTab(name) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelector('.tab-content#tab-' + name).classList.add('active');
+      document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+    }
+
+    function demoAlert(action) {
+      alert('Demo Mode: "' + action + '" action is disabled.\n\nThis is a demonstration of the admin interface with sample data.');
+    }
+  </script>
+</body>
+</html>

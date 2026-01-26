@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&label=docker&logo=docker&logoColor=white" alt="Docker Ready">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.5.0-blue" alt="Docker Version 1.5.0">
   </a>
 </p>
 
@@ -23,6 +23,7 @@ Rooms auto save your work, no manual exports required. Admins can run as many ro
 * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
 * *join from different browsers to see real time changes*
 * [TheOneFile_Verse landing page](https://multiverse.therecanonlybe.one)
+* [TheOneFile_Verse admin demo](https://therecanonlybe.one/theonefile_verse/demo-admin.html)
 
 ### Option 1: Easiest
 

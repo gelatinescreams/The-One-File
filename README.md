@@ -40,6 +40,7 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
   * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
   * *join from different browsers to see real time changes*
   * [TheOneFile_Verse landing page](https://multiverse.therecanonlybe.one) 
+  * [TheOneFile_Verse admin demo](https://therecanonlybe.one/theonefile_verse/demo-admin.html) 
 
 ### Download
 
