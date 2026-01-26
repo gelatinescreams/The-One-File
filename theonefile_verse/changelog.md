@@ -1,5 +1,71 @@
 ### TheOneFile_Verse changelog
 
+**1/26/26 Theonefile_verse 1.5.0** *The Identity Update* 
+* **Full User Account System**
+  * User registration with email verification
+  * Magic link login for passwordless authentication
+  * Session management with device tracking (browser, OS, IP)
+  * Multiple active sessions per user
+  * Account lockout protection
+  * User profile management (display name, avatar)
+  * User preferences (theme, email notifications)
+  * Self service account deletion
+
+* **Single Sign On (SSO/OIDC)**
+  * Sign in with Authentik, Google, GitHub, Microsoft, or any OpenID Connect provider
+  * Link multiple SSO providers to a single account
+  * Auto account linking by email
+  * Configurable provider settings (scopes, display order, icons)
+  * Secure encrypted token storage
+
+* **Email System**
+  * SMTP configuration with TLS/STARTTLS support
+  * Email verification on signup
+  * Password reset via email
+  * Magic link authentication
+  * Room invitation emails
+  * Customizable email templates with variables
+  * Email delivery logging with status tracking
+  * Multiple SMTP configurations supported
+
+* **Enhanced Security**
+  * AES 256 GCM encryption for all stored secrets
+  * PBKDF2 key derivation (100,000 iterations)
+  * CSRF token protection on all forms
+  * Secure HTTP only cookies
+  * SameSite cookie policy
+  * Production mode with HSTS headers
+  * WebSocket session tokens for authenticated connections
+  * Custom admin path option
+  * Configurable trusted proxy support
+  * Content Security Policy headers
+
+* **Rate Limiting**
+  * Endpoint rate limiting (configurable window and max attempts)
+  * Email action rate limiting (signup, password reset, magic link)
+  * WebSocket token bucket rate limiting per message type
+  * Brute force protection on login attempts
+
+* **Authentication Modes**
+  * Open registration 
+  * Email verification required mode
+  * OIDC only
+  * Invite only
+  * Closed
+  * Guest room join controls
+
+* **Admin Dashboard Enhancements**
+  * Full user management (create, edit, deactivate, delete)
+  * Role based access control (admin, user, guest)
+  * OIDC provider configuration UI
+  * SMTP configuration management
+  * Email template customization
+  * Email delivery logs
+  * Auth settings configuration
+
+* **Bug Fixes**
+  * Many bug and security fixes. As above and so below
+
 **1/18/26 Theonefile_verse 1.4.0** *From Alpha to Beta status*
 *  **New Features**
 *  **Database & Storage Migration**
@@ -62,7 +128,7 @@
   * Fixed an issue where revere proxies did not pick us WSS correctly
   * Fixed an issue where username did not persist in some rare cases
   * various fixes
-  
+
 **1/6/26 Theonefile_verse 1.1** Getting chatty
   * 1.1 gitea bleeding edge version main lined
   * adds instant message chat per room
@@ -70,7 +136,7 @@
   * adds real time mutli user cursor engine
   * adds current tab to the users top bar name plate
   * various fixes
-  
+
 **1/6/26 Theonefile_verse intitial upload 1.0**
   * initial upload
 

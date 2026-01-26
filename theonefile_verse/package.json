@@ -1,6 +1,6 @@
 {
   "name": "theonefile_verse",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",

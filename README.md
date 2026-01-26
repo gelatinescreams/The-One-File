@@ -2,8 +2,9 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&label=docker&logo=docker&logoColor=white" alt="Docker Ready">
+  <img src="https://img.shields.io/badge/Docker%20Version-1.5.0-blue" alt="Docker Version 1.5.0">
   </a>
+  <img alt="any text you like" src="https://img.shields.io/badge/any%20text-you%20like-blue">
 </p>
 
 ![The One File](assets/theonefile.jpg)
@@ -106,31 +107,6 @@ Open `http://localhost:10101`
 
 * Core [the-one-file.html](https://github.com/user-attachments/files/24578723/the-one-file.html)
 * Networkening [theonefile-networkening.html](https://github.com/user-attachments/files/24578724/theonefile-networkening.html)
-
-### Why It Exists
-
-I wanted a tool that is:
-
-* fully offline
-* portable
-* zero setup
-* stable
-* fast
-* dependable in emergencies
-
-Instead of building another hosted application, I built a file.
-
-### What You Can Use It For
-* Homelab mapping  
-* Office network layouts  
-* Rack diagrams  
-* VLAN and subnet planning  
-* Mind Maps and flowcharts
-* Annotated network documentation with labels and zones
-* Logical and physical maps  
-* Encrypted break glass documentation  
-* Offline or air gapped environments  
-* Sharing a topology by sending a single file
 
 ### Features
 * Zero coding knowledge required    

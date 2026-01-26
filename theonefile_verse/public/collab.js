@@ -8,6 +8,8 @@
   const HAS_PASSWORD = window.ROOM_HAS_PASSWORD;
   const IS_ADMIN = window.ROOM_IS_ADMIN || false;
   const IS_CREATOR = window.ROOM_IS_CREATOR || IS_ADMIN;
+
+  let shareButtonEnabled = true;
   
   function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -125,10 +127,18 @@
     return HIGHLANDER_NAMES[Math.floor(Math.random() * HIGHLANDER_NAMES.length)];
   }
   
+  function isValidColor(color) {
+    return typeof color === 'string' && /^#[0-9a-fA-F]{6}$/.test(color);
+  }
+
+  function sanitizeColor(color) {
+    return isValidColor(color) ? color : COLORS[0];
+  }
+
   function getOrCreateUserColor() {
     const storageKey = `collab-color-${ROOM_ID}`;
     let color = localStorage.getItem(storageKey);
-    if (!color) {
+    if (!color || !isValidColor(color)) {
       color = pickUniqueColor();
       localStorage.setItem(storageKey, color);
     }
@@ -163,10 +173,36 @@
   let unreadCount = 0;
   let chatOpen = false;
   
-  function connect() {
+  let currentWsToken = null;
+
+  async function fetchWsToken() {
+    try {
+      const res = await fetch(`/api/room/${ROOM_ID}/ws-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collabUserId: window.COLLAB_USER.id })
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.wsToken;
+    } catch (e) {
+      console.warn('[Collab] Failed to fetch WS token:', e);
+      return null;
+    }
+  }
+
+  async function connect() {
     if (ws && ws.readyState === WebSocket.OPEN) return;
-    ws = new WebSocket(WS_URL);
-    
+
+    currentWsToken = await fetchWsToken();
+
+    let wsUrl = WS_URL;
+    if (currentWsToken) {
+      wsUrl += (WS_URL.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(currentWsToken);
+    }
+
+    ws = new WebSocket(wsUrl);
+
     ws.onopen = () => {
       reconnectAttempts = 0;
       window.COLLAB_USER.color = getOrCreateUserColor();
@@ -174,14 +210,14 @@
       showSyncingOverlay();
       sendMessage('join', { user: window.COLLAB_USER });
     };
-    
+
     ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data);
         handleMessage(msg);
       } catch (e) {}
     };
-    
+
     ws.onclose = () => { scheduleReconnect(); };
     ws.onerror = () => {};
   }
@@ -199,10 +235,17 @@
     }
   }
   
+  function sanitizeUser(user) {
+    if (user && user.color) {
+      user.color = sanitizeColor(user.color);
+    }
+    return user;
+  }
+
   function handleMessage(msg) {
     switch (msg.type) {
       case 'join':
-        users.set(msg.user.id, msg.user);
+        users.set(msg.user.id, sanitizeUser(msg.user));
         renderUsers();
         renderUserIndicators();
         break;
@@ -214,7 +257,7 @@
         break;
       case 'users':
         msg.users.forEach(u => {
-          if (u.id !== window.COLLAB_USER.id) users.set(u.id, u);
+          if (u.id !== window.COLLAB_USER.id) users.set(u.id, sanitizeUser(u));
         });
         renderUsers();
         renderUserIndicators();
@@ -344,8 +387,9 @@
     if (!container) return;
     container.innerHTML = chatMessages.map(msg => {
       const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const safeColor = sanitizeColor(msg.userColor);
       return `<div class="collab-chat-msg">
-        <span class="collab-chat-name" style="color: ${msg.userColor}">${escapeHtml(msg.userName)}</span>
+        <span class="collab-chat-name" style="color: ${safeColor}">${escapeHtml(msg.userName)}</span>
         <span class="collab-chat-time">${time}</span>
         <div class="collab-chat-text">${escapeHtml(msg.text)}</div>
       </div>`;
@@ -399,13 +443,19 @@
     return { x: screenX, y: screenY };
   }
 
+  function safeElementId(userId) {
+    return typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(userId) : userId.replace(/[^a-zA-Z0-9-_]/g, '');
+  }
+
   function updateRemoteCursor(userId, user) {
-    let cursor = document.getElementById(`collab-cursor-${userId}`);
+    const safeId = safeElementId(userId);
+    let cursor = document.getElementById(`collab-cursor-${safeId}`);
     if (!cursor && user.cursorX !== undefined) {
       cursor = document.createElement('div');
-      cursor.id = `collab-cursor-${userId}`;
+      cursor.id = `collab-cursor-${safeId}`;
       cursor.className = 'collab-remote-cursor';
-      cursor.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16"><path d="M0 0L16 12L8 12L4 16L0 0Z" fill="${user.color}"/></svg><span class="collab-cursor-name" style="background:${user.color}">${escapeHtml(user.name)}</span>`;
+      const safeColor = sanitizeColor(user.color);
+      cursor.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16"><path d="M0 0L16 12L8 12L4 16L0 0Z" fill="${safeColor}"/></svg><span class="collab-cursor-name" style="background:${safeColor}">${escapeHtml(user.name)}</span>`;
       document.body.appendChild(cursor);
     }
     if (cursor && user.cursorX !== undefined) {
@@ -456,7 +506,7 @@
   }
 
   function removeRemoteCursor(userId) {
-    const cursor = document.getElementById(`collab-cursor-${userId}`);
+    const cursor = document.getElementById(`collab-cursor-${safeElementId(userId)}`);
     if (cursor) cursor.remove();
   }
 
@@ -571,7 +621,15 @@
     return state;
   }
   
-  function hashState(state) { return JSON.stringify(state); }
+  function hashState(state) {
+    const str = JSON.stringify(state);
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) + hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return hash.toString(36);
+  }
   
   function sendFullState() {
     const state = captureState();
@@ -667,16 +725,41 @@
     } catch (e) { console.error('applyRemoteState error:', e); } finally { syncPaused = false; }
   }
   
+  let stateSyncTimeout = null;
+  let lastStateSyncTime = 0;
+  const STATE_SYNC_MIN_INTERVAL = 250;
+  const STATE_SYNC_DEBOUNCE = 100;
+
+  function syncStateIfChanged() {
+    if (syncPaused || !hasReceivedInitialState) return;
+    const state = captureState();
+    if (!state) return;
+    const hash = hashState(state);
+    if (hash !== lastStateHash) {
+      lastStateHash = hash;
+      sendMessage('state', { state });
+      lastStateSyncTime = Date.now();
+    }
+  }
+
   function startStatePolling() {
     setInterval(() => {
       if (syncPaused || !hasReceivedInitialState) return;
-      const state = captureState();
-      if (!state) return;
-      const hash = hashState(state);
-      if (hash !== lastStateHash) {
-        lastStateHash = hash;
-        sendMessage('state', { state });
+
+      const now = Date.now();
+      const timeSinceLastSync = now - lastStateSyncTime;
+
+      if (timeSinceLastSync < STATE_SYNC_MIN_INTERVAL) {
+        if (!stateSyncTimeout) {
+          stateSyncTimeout = setTimeout(() => {
+            stateSyncTimeout = null;
+            syncStateIfChanged();
+          }, STATE_SYNC_DEBOUNCE);
+        }
+        return;
       }
+
+      syncStateIfChanged();
     }, 250);
   }
   
@@ -761,8 +844,9 @@
       const editingText = user.editingNode ? `<span class="collab-user-editing">editing</span>` : '';
       const tabName = isMe ? myTab : (user.currentTab || 'Main');
       const tabDisplay = `<span class="collab-user-tab">${escapeHtml(tabName)}</span>`;
-      return `<div class="collab-user ${isMe ? 'me' : ''}" data-user-id="${user.id}">
-        <span class="collab-user-dot" style="background: ${user.color}"></span>
+      const safeColor = sanitizeColor(user.color);
+      return `<div class="collab-user ${isMe ? 'me' : ''}" data-user-id="${escapeHtml(user.id)}">
+        <span class="collab-user-dot" style="background: ${safeColor}"></span>
         <div class="collab-user-info">
           <span class="collab-user-name">${escapeHtml(user.name)}</span>${editingText}
           ${tabDisplay}
@@ -815,7 +899,7 @@
     bar.innerHTML = `<div class="collab-users"></div>
       <div class="collab-actions">
         <button class="collab-btn" id="collab-chat-btn"><span class="collab-btn-icon">&#9993;</span><span>Chat</span><span class="collab-chat-badge" id="collab-chat-badge"></span></button>
-        <button class="collab-btn" id="collab-share-btn"><span class="collab-btn-icon">+</span><span>Share</span></button>
+        <button class="collab-btn" id="collab-share-btn" style="${shareButtonEnabled ? '' : 'display:none'}"><span class="collab-btn-icon">+</span><span>Share</span></button>
         <button class="collab-btn" id="collab-menu-btn"><span class="collab-btn-icon">=</span></button>
       </div>`;
     document.body.prepend(bar);
@@ -862,8 +946,11 @@
     
     const menuDropdown = document.createElement('div');
     menuDropdown.id = 'collab-menu-dropdown';
-    let menuHtml = `<button class="collab-menu-item" id="collab-menu-copy">Copy Link</button>
-      <button class="collab-menu-item" id="collab-menu-info">Room Info</button>
+    let menuHtml = '';
+    if (shareButtonEnabled) {
+      menuHtml += `<button class="collab-menu-item" id="collab-menu-copy">Copy Link</button>`;
+    }
+    menuHtml += `<button class="collab-menu-item" id="collab-menu-info">Room Info</button>
       <button class="collab-menu-item" id="collab-menu-name">Change Name</button>
       <div class="collab-menu-divider"></div>
       <button class="collab-menu-item" id="collab-menu-leave">Leave Room</button>`;
@@ -928,9 +1015,12 @@
     });
     document.addEventListener('click', () => menuDropdown.classList.remove('active'));
     
-    document.getElementById('collab-menu-copy').addEventListener('click', () => {
-      navigator.clipboard.writeText(window.location.href);
-    });
+    const copyBtn = document.getElementById('collab-menu-copy');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(window.location.href);
+      });
+    }
     
     document.getElementById('collab-menu-info').addEventListener('click', async () => {
       try {
@@ -948,9 +1038,9 @@
           }
         }
         document.getElementById('collab-info-content').innerHTML = `
-          <div class="collab-info-row"><span class="collab-info-label">Room ID</span><span class="collab-info-value collab-info-id">${ROOM_ID}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Created</span><span class="collab-info-value">${new Date(data.created).toLocaleString()}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Self-Destruct</span><span class="collab-info-value">${destructText}</span></div>
+          <div class="collab-info-row"><span class="collab-info-label">Room ID</span><span class="collab-info-value collab-info-id">${escapeHtml(ROOM_ID)}</span></div>
+          <div class="collab-info-row"><span class="collab-info-label">Created</span><span class="collab-info-value">${escapeHtml(new Date(data.created).toLocaleString())}</span></div>
+          <div class="collab-info-row"><span class="collab-info-label">Self Destruct</span><span class="collab-info-value">${escapeHtml(destructText)}</span></div>
           <div class="collab-info-row"><span class="collab-info-label">Password</span><span class="collab-info-value">${data.hasPassword ? 'Yes' : 'No'}</span></div>
           <div class="collab-info-row"><span class="collab-info-label">Connected</span><span class="collab-info-value">${users.size + 1} users</span></div>
           <div class="collab-info-row"><span class="collab-info-label">You are</span><span class="collab-info-value">${IS_CREATOR ? 'Room Creator' : 'Participant'}</span></div>`;
@@ -1020,6 +1110,7 @@
     const modal = document.createElement('div');
     modal.id = 'collab-name-modal';
     modal.className = 'collab-modal-overlay active';
+    const safeErrorMsg = errorMsg ? escapeHtml(errorMsg) : '';
     modal.innerHTML = `<div class="collab-modal">
       <div class="collab-modal-header">
         <h3>${isChange ? 'Change Name' : 'Enter Your Name'}</h3>
@@ -1027,7 +1118,7 @@
       </div>
       <div class="collab-modal-body">
         <input type="text" id="collab-name-input" class="collab-input" placeholder="Your name" maxlength="30">
-        <div class="collab-name-error" id="collab-name-error">${errorMsg || ''}</div>
+        <div class="collab-name-error" id="collab-name-error">${safeErrorMsg}</div>
         <div class="collab-name-actions">
           <button id="collab-name-random" class="collab-btn-secondary">Random</button>
           <button id="collab-name-submit" class="collab-btn-primary">${isChange ? 'Update' : 'Join'}</button>
@@ -1128,7 +1219,19 @@
   async function init() {
     const authorized = await checkPassword();
     if (!authorized) { window.location.href = '/'; return; }
-    
+
+    try {
+      const themeRes = await fetch('/api/theme');
+      if (themeRes.ok) {
+        const themeData = await themeRes.json();
+        if (themeData.shareButtonEnabled !== undefined) {
+          shareButtonEnabled = themeData.shareButtonEnabled;
+        }
+      }
+    } catch (e) {
+      console.error('[Collab] Failed to fetch theme settings:', e);
+    }
+
     function waitForApp() {
       const hasForge = typeof forgeTheTopology === 'function';
       const hasHelper = typeof window.__collabGetVar === 'function';

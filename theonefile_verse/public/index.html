@@ -218,9 +218,128 @@
     .footer a{color:var(--steel-light);text-decoration:none}
     .footer a:hover{color:var(--accent)}
 
+    .user-menu{
+      position:fixed;
+      top:20px;
+      left:20px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .user-avatar{
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:var(--accent);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:600;
+      font-size:14px;
+    }
+    .user-name{font-size:14px;color:var(--text)}
+    .user-btn{
+      background:var(--surface);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:6px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .user-btn:hover{background:var(--bg-alt)}
+
+    .auth-buttons{
+      display:flex;
+      gap:8px;
+      position:fixed;
+      top:20px;
+      left:20px;
+    }
+    .auth-buttons .btn{padding:8px 16px;font-size:13px;width:auto}
+
+    .oidc-providers{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom:16px;
+    }
+    .oidc-btn{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 16px;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:8px;
+      color:var(--text);
+      cursor:pointer;
+      font-size:14px;
+      width:100%;
+    }
+    .oidc-btn:hover{border-color:var(--accent)}
+    .oidc-btn img{width:20px;height:20px}
+
+    .divider{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:16px 0;
+      color:var(--text-soft);
+      font-size:13px;
+    }
+    .divider::before,.divider::after{
+      content:'';
+      flex:1;
+      height:1px;
+      background:var(--border);
+    }
+
+    .tabs{
+      display:flex;
+      border-bottom:1px solid var(--border);
+      margin-bottom:16px;
+    }
+    .tab{
+      flex:1;
+      padding:12px;
+      background:none;
+      border:none;
+      color:var(--text-soft);
+      cursor:pointer;
+      font-size:14px;
+    }
+    .tab.active{
+      color:var(--accent);
+      border-bottom:2px solid var(--accent);
+      margin-bottom:-1px;
+    }
+
+    .guest-mode-toggle{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:12px;
+      background:var(--bg);
+      border-radius:6px;
+      margin-top:12px;
+    }
+    .guest-mode-toggle input{width:18px;height:18px}
+    .guest-mode-toggle label{font-size:13px;color:var(--text-soft)}
+
     @media(max-width:480px){
       h1{font-size:24px}
       .tagline{font-size:14px;margin-bottom:32px}
+      .auth-buttons,.user-menu{
+        top:12px;
+        left:12px;
+        gap:8px;
+      }
+      .auth-buttons .btn{padding:6px 10px;font-size:12px}
+      .user-avatar{width:32px;height:32px;font-size:12px}
+      .user-name{font-size:12px}
+      .user-btn{padding:4px 8px;font-size:11px}
     }
   </style>
 </head>
@@ -228,6 +347,17 @@
   <button class="theme-toggle" onclick="toggleTheme()">
     <span id="theme-icon">☀</span>
   </button>
+
+  <div class="user-menu" id="user-menu" style="display:none">
+    <div class="user-avatar" id="user-avatar"></div>
+    <span class="user-name" id="user-name"></span>
+    <button class="user-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="auth-buttons" id="auth-buttons" style="display:none">
+    <button class="btn btn-secondary" onclick="openModal('login')">Sign In</button>
+    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
+  </div>
 
   <div class="container">
     <h1>TheOneFile_Verse</h1>
@@ -277,6 +407,10 @@
             <button class="file-selected-clear" onclick="clearFile()">&times;</button>
           </div>
         </div>
+        <div class="guest-mode-toggle" id="guest-toggle-container" style="display:none">
+          <input type="checkbox" id="create-allow-guests" checked>
+          <label for="create-allow-guests">Allow unregistered users (guests) to join</label>
+        </div>
         <div class="error-text" id="create-error"></div>
       </div>
       <div class="modal-footer">
@@ -304,6 +438,106 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" onclick="joinRoom()">Join</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="login-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Sign In</h2>
+        <button class="modal-close" onclick="closeModal('login')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="oidc-providers" id="login-oidc-providers"></div>
+        <div class="divider" id="login-divider" style="display:none">or</div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="login-password" placeholder="Your password">
+        </div>
+        <div class="error-text" id="login-error"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <a href="#" onclick="openModal('forgot');closeModal('login');return false" style="font-size:13px;color:var(--accent)">Forgot password?</a>
+          <a href="#" onclick="openModal('magic');closeModal('login');return false" style="font-size:13px;color:var(--accent)">Email me a link</a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="loginWithPassword()">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="register-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create Account</h2>
+        <button class="modal-close" onclick="closeModal('register')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="oidc-providers" id="register-oidc-providers"></div>
+        <div class="divider" id="register-divider" style="display:none">or</div>
+        <div class="form-group">
+          <label>Display Name</label>
+          <input type="text" id="register-name" placeholder="How should we call you?">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="register-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="register-password" placeholder="At least 8 characters">
+        </div>
+        <div class="error-text" id="register-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="registerUser()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="forgot-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Reset Password</h2>
+        <button class="modal-close" onclick="closeModal('forgot')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">Enter your email and we'll send you a link to reset your password.</p>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="forgot-email" placeholder="you@example.com">
+        </div>
+        <div class="error-text" id="forgot-error"></div>
+        <div class="error-text" id="forgot-success" style="color:#22c55e"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="requestPasswordReset()">Send Reset Link</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="magic-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Passwordless Login</h2>
+        <button class="modal-close" onclick="closeModal('magic')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">We'll email you a magic link that logs you in instantly.</p>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="magic-email" placeholder="you@example.com">
+        </div>
+        <div class="error-text" id="magic-error"></div>
+        <div class="error-text" id="magic-success" style="color:#22c55e"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="requestMagicLink()">Send Magic Link</button>
       </div>
     </div>
   </div>
@@ -383,8 +617,17 @@
     fileDrop.addEventListener('drop', e => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
     fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
 
+    const MAX_FILE_SIZE_MB = 10;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
     async function handleFile(file) {
       if (!file) return;
+
+      if (file.size > MAX_FILE_SIZE_BYTES) {
+        showError('create', `File too large. Maximum size is ${MAX_FILE_SIZE_MB}MB`);
+        return;
+      }
+
       const ext = file.name.split('.').pop().toLowerCase();
       if (!['html', 'json', 'csv', 'md', 'markdown', 'txt'].includes(ext)) {
         showError('create', 'Invalid file type');
@@ -394,7 +637,7 @@
       selectedFileContent = await file.text();
       document.getElementById('create-file-drop').style.display = 'none';
       document.getElementById('create-file-selected').classList.add('active');
-      document.getElementById('create-file-name').textContent = file.name;
+      document.getElementById('create-file-name').textContent = file.name + ` (${(file.size / 1024).toFixed(1)}KB)`;
     }
 
     function clearFile() {
@@ -429,6 +672,8 @@
     async function createRoom() {
       const password = document.getElementById('create-password').value;
       const destructVal = document.getElementById('create-destruct').value;
+      const allowGuestsCheckbox = document.getElementById('create-allow-guests');
+      const allowGuests = allowGuestsCheckbox ? allowGuestsCheckbox.checked : true;
 
       let destructMode = 'time', destructMs = parseInt(destructVal);
       if (destructVal === 'empty') { destructMode = 'empty'; destructMs = 0; }
@@ -444,7 +689,7 @@
         const res = await fetch('/api/room', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: password || null, destructMode, destructValue: destructMs, topology, creatorId })
+          body: JSON.stringify({ password: password || null, destructMode, destructValue: destructMs, topology, creatorId, allowGuests })
         });
         const data = await res.json();
         if (data.error) { showError('create', data.error); return; }
@@ -502,6 +747,245 @@
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
     });
+
+    let currentUser = null;
+    let authSettings = null;
+    let oidcProviders = [];
+
+    async function loadAuthState() {
+      try {
+        const settingsRes = await fetch('/api/auth/settings', { credentials: 'include' });
+        const settingsData = await settingsRes.json();
+        authSettings = settingsData.settings;
+        oidcProviders = settingsData.providers || [];
+        const userRes = await fetch('/api/auth/me', { credentials: 'include' });
+        const userData = await userRes.json();
+        currentUser = userData.user;
+        updateAuthUI();
+      } catch (e) {
+        console.error('Failed to load auth state:', e);
+      }
+    }
+
+    function updateAuthUI() {
+      const userMenu = document.getElementById('user-menu');
+      const authButtons = document.getElementById('auth-buttons');
+      const guestToggle = document.getElementById('guest-toggle-container');
+
+      if (currentUser) {
+        userMenu.style.display = 'flex';
+        authButtons.style.display = 'none';
+        document.getElementById('user-avatar').textContent = (currentUser.displayName || currentUser.email || 'U')[0].toUpperCase();
+        document.getElementById('user-name').textContent = currentUser.displayName || currentUser.email?.split('@')[0] || 'User';
+      } else if (authSettings) {
+        userMenu.style.display = 'none';
+        const hasOidc = oidcProviders && oidcProviders.length > 0;
+        const registrationOpen = authSettings.authMode === 'open' || authSettings.authMode === 'registration';
+        if (registrationOpen || hasOidc) {
+          authButtons.style.display = 'flex';
+        }
+      }
+
+      if (authSettings && authSettings.allowRoomCreatorGuestSetting) {
+        if (currentUser || authSettings.allowGuestRoomCreation) {
+          guestToggle.style.display = 'flex';
+        } else {
+          guestToggle.style.display = 'none';
+        }
+      } else {
+        guestToggle.style.display = 'none';
+      }
+      renderOidcProviders('login-oidc-providers', 'login');
+      renderOidcProviders('register-oidc-providers', 'register');
+    }
+
+    function renderOidcProviders(containerId, mode) {
+      const container = document.getElementById(containerId);
+      const divider = document.getElementById(mode + '-divider');
+      container.innerHTML = '';
+
+      if (oidcProviders.length === 0) {
+        container.style.display = 'none';
+        divider.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'flex';
+      divider.style.display = 'flex';
+
+      oidcProviders.forEach(provider => {
+        const btn = document.createElement('button');
+        btn.className = 'oidc-btn';
+        btn.innerHTML = provider.iconUrl
+          ? `<img src="${provider.iconUrl}" alt="${provider.name}"> Continue with ${provider.name}`
+          : `Continue with ${provider.name}`;
+        btn.onclick = () => startOidcLogin(provider.id);
+        container.appendChild(btn);
+      });
+    }
+
+    async function startOidcLogin(providerId) {
+      try {
+        const res = await fetch('/api/auth/oidc/' + providerId);
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          showError('login', data.error || 'Failed to start SSO');
+        }
+      } catch {
+        showError('login', 'Failed to start SSO');
+      }
+    }
+
+    async function loginWithPassword() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!email || !password) {
+        showError('login', 'Please enter email and password');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.location.reload();
+        } else {
+          showError('login', data.error || 'Login failed');
+        }
+      } catch {
+        showError('login', 'Connection error');
+      }
+    }
+
+    async function registerUser() {
+      const displayName = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+
+      if (!email || !password) {
+        showError('register', 'Please enter email and password');
+        return;
+      }
+      if (password.length < 8) {
+        showError('register', 'Password must be at least 8 characters');
+        return;
+      }
+      if (!/[a-zA-Z]/.test(password)) {
+        showError('register', 'Password must contain at least one letter');
+        return;
+      }
+      if (!/[0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/.test(password)) {
+        showError('register', 'Password must contain a number or special character');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email, password, displayName })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (data.requiresVerification) {
+            closeModal('register');
+            alert('Please check your email to verify your account.');
+          } else {
+            window.location.reload();
+          }
+        } else {
+          showError('register', data.error || 'Registration failed');
+        }
+      } catch {
+        showError('register', 'Connection error');
+      }
+    }
+
+    async function requestPasswordReset() {
+      const email = document.getElementById('forgot-email').value.trim();
+      if (!email) {
+        showError('forgot', 'Please enter your email');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        document.getElementById('forgot-error').classList.remove('active');
+        const success = document.getElementById('forgot-success');
+        success.textContent = 'If an account exists, we\'ve sent a reset link.';
+        success.classList.add('active');
+      } catch {
+        showError('forgot', 'Connection error');
+      }
+    }
+
+    async function requestMagicLink() {
+      const email = document.getElementById('magic-email').value.trim();
+      if (!email) {
+        showError('magic', 'Please enter your email');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        document.getElementById('magic-error').classList.remove('active');
+        const success = document.getElementById('magic-success');
+        success.textContent = 'If an account exists, we\'ve sent a magic link.';
+        success.classList.add('active');
+      } catch {
+        showError('magic', 'Connection error');
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+        localStorage.removeItem('collab_token');
+        localStorage.removeItem('user_token');
+        currentUser = null;
+        updateAuthUI();
+        window.location.reload();
+      } catch {
+        window.location.reload();
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('auth_error')) {
+      alert('Authentication error: ' + urlParams.get('auth_error'));
+      history.replaceState({}, '', '/');
+    }
+    if (urlParams.get('verified') === 'true') {
+      alert('Email verified! You can now sign in.');
+      history.replaceState({}, '', '/');
+    }
+    if (urlParams.get('welcome') === 'true') {
+      alert('Welcome! Your account has been created.');
+      history.replaceState({}, '', '/');
+    }
+
+    loadAuthState();
   </script>
 </body>
 </html>
