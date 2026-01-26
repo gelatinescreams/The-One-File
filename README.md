@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/Docker%20Version-1.5.0-blue" alt="Docker Version 1.5.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.5.0-blue" alt="Docker Version 1.5.0">
   </a>
 </p>
 
