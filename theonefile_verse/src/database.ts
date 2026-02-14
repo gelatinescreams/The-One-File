@@ -280,6 +280,7 @@ db.exec(`
     nonce TEXT NOT NULL,
     redirect_uri TEXT NOT NULL,
     link_user_id TEXT,
+    post_login_redirect TEXT,
     created_at TEXT NOT NULL,
     expires_at TEXT NOT NULL
   )
@@ -288,8 +289,13 @@ db.exec(`
 db.exec(`CREATE INDEX IF NOT EXISTS idx_oidc_states_expires ON oidc_states(expires_at)`);
 
 try {
-  db.exec(`ALTER TABLE oidc_states ADD COLUMN post_login_redirect TEXT`);
-} catch {}
+  const cols = db.prepare(`PRAGMA table_info(oidc_states)`).all() as any[];
+  if (!cols.some((c: any) => c.name === "post_login_redirect")) {
+    db.exec(`ALTER TABLE oidc_states ADD COLUMN post_login_redirect TEXT`);
+  }
+} catch (e: any) {
+  console.error("oidc_states migration error:", e.message);
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS csrf_tokens (
