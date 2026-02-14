@@ -14,6 +14,17 @@ const db = new Database(DB_PATH);
 db.exec("PRAGMA journal_mode = WAL");
 db.exec("PRAGMA foreign_keys = ON");
 
+function migrateAddColumn(table: string, column: string, definition: string) {
+  try {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all() as any[];
+    if (!cols.some((c: any) => c.name === column)) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
+  } catch (e: any) {
+    console.error(`Migration error (${table}.${column}):`, e.message);
+  }
+}
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS rooms (
     id TEXT PRIMARY KEY,
@@ -29,12 +40,8 @@ db.exec(`
   )
 `);
 
-try {
-  db.exec(`ALTER TABLE rooms ADD COLUMN owner_user_id TEXT`);
-} catch {}
-try {
-  db.exec(`ALTER TABLE rooms ADD COLUMN allow_guests INTEGER NOT NULL DEFAULT 1`);
-} catch {}
+migrateAddColumn("rooms", "owner_user_id", "TEXT");
+migrateAddColumn("rooms", "allow_guests", "INTEGER NOT NULL DEFAULT 1");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS admin_settings (
@@ -126,19 +133,17 @@ db.exec(`
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     last_login TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1
+    is_active INTEGER NOT NULL DEFAULT 1,
+    failed_login_attempts INTEGER NOT NULL DEFAULT 0,
+    locked_until TEXT
   )
 `);
 
 db.exec(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)`);
 
-try {
-  db.exec(`ALTER TABLE users ADD COLUMN failed_login_attempts INTEGER NOT NULL DEFAULT 0`);
-} catch {}
-try {
-  db.exec(`ALTER TABLE users ADD COLUMN locked_until TEXT`);
-} catch {}
+migrateAddColumn("users", "failed_login_attempts", "INTEGER NOT NULL DEFAULT 0");
+migrateAddColumn("users", "locked_until", "TEXT");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS user_oidc_links (
@@ -210,9 +215,7 @@ db.exec(`
   )
 `);
 
-try {
-  db.exec(`ALTER TABLE smtp_configs ADD COLUMN allow_insecure_tls INTEGER NOT NULL DEFAULT 0`);
-} catch {}
+migrateAddColumn("smtp_configs", "allow_insecure_tls", "INTEGER NOT NULL DEFAULT 0");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS oidc_providers (
@@ -288,14 +291,7 @@ db.exec(`
 
 db.exec(`CREATE INDEX IF NOT EXISTS idx_oidc_states_expires ON oidc_states(expires_at)`);
 
-try {
-  const cols = db.prepare(`PRAGMA table_info(oidc_states)`).all() as any[];
-  if (!cols.some((c: any) => c.name === "post_login_redirect")) {
-    db.exec(`ALTER TABLE oidc_states ADD COLUMN post_login_redirect TEXT`);
-  }
-} catch (e: any) {
-  console.error("oidc_states migration error:", e.message);
-}
+migrateAddColumn("oidc_states", "post_login_redirect", "TEXT");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS csrf_tokens (
