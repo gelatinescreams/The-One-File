@@ -22,6 +22,13 @@ function isValidUUID(id: string): boolean {
   return UUID_REGEX.test(id);
 }
 
+interface WsData {
+  roomId?: string;
+  connectionId?: string;
+  userId?: string;
+  verifiedUserId?: string;
+}
+
 interface RateLimitEntry {
   count: number;
   resetAt: number;
@@ -86,6 +93,22 @@ async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSe
     return await redis.checkRateLimitRedis(key, settings.rateLimitMaxAttempts, settings.rateLimitWindow);
   }
 
+  if (rateLimitStore.size > 10000) {
+    const now = Date.now();
+    for (const [k, v] of rateLimitStore.entries()) {
+      if (now > v.resetAt) rateLimitStore.delete(k);
+    }
+    if (rateLimitStore.size > 10000) {
+      let removed = 0;
+      const target = rateLimitStore.size - 5000;
+      for (const [k] of rateLimitStore.entries()) {
+        if (removed >= target) break;
+        rateLimitStore.delete(k);
+        removed++;
+      }
+    }
+  }
+
   const now = Date.now();
   const entry = rateLimitStore.get(key);
   const window = settings.rateLimitWindow * 1000;
@@ -128,11 +151,20 @@ async function checkEmailRateLimit(email: string, action: string, settings: Inst
   return true;
 }
 
+const IPV4_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
+const IPV6_REGEX = /^([\da-fA-F]{0,4}:){2,7}[\da-fA-F]{0,4}$/;
+
+function isValidIP(ip: string): boolean {
+  return IPV4_REGEX.test(ip) || IPV6_REGEX.test(ip) || ip === '::1';
+}
+
 function getClientIP(req: Request): string {
   const xForwardedFor = req.headers.get("x-forwarded-for");
 
   if (xForwardedFor) {
-    const ips = xForwardedFor.split(",").map(ip => ip.trim());
+    const ips = xForwardedFor.split(",").map(ip => ip.trim()).filter(isValidIP);
+
+    if (ips.length === 0) return "unknown";
 
     if (instanceSettings.trustedProxies.length > 0) {
       for (let i = ips.length - 1; i >= 0; i--) {
@@ -150,7 +182,9 @@ function getClientIP(req: Request): string {
     return ips[0];
   }
 
-  return req.headers.get("x-real-ip") || "unknown";
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp && isValidIP(realIp.trim())) return realIp.trim();
+  return "unknown";
 }
 
 setInterval(() => {
@@ -308,11 +342,7 @@ function needsAdminMigration(): boolean {
 async function verifyAdminPassword(password: string): Promise<boolean> {
   if (ENV_ADMIN_PASSWORD) {
     if (password.length !== ENV_ADMIN_PASSWORD.length) return false;
-    let result = 0;
-    for (let i = 0; i < password.length; i++) {
-      result |= password.charCodeAt(i) ^ ENV_ADMIN_PASSWORD.charCodeAt(i);
-    }
-    return result === 0;
+    return crypto.timingSafeEqual(Buffer.from(password), Buffer.from(ENV_ADMIN_PASSWORD));
   }
   const config = loadAdminConfig();
   if (!config) return false;
@@ -436,7 +466,13 @@ setInterval(() => {
       ADMIN_TOKENS.delete(token);
     }
   }
-}, 60 * 60 * 1000);
+  if (ADMIN_TOKENS.size > 10000) {
+    const sorted = [...ADMIN_TOKENS.entries()].sort((a, b) => a[1].createdAt - b[1].createdAt);
+    for (let i = 0; i < sorted.length - 5000; i++) {
+      ADMIN_TOKENS.delete(sorted[i][0]);
+    }
+  }
+}, 10 * 60 * 1000);
 
 function getTokenFromRequest(req: Request): string | null {
   const cookie = req.headers.get("cookie") || "";
@@ -507,8 +543,29 @@ function validateAdminPath(newPath: string): { valid: boolean; error?: string } 
   return { valid: true };
 }
 
+function isValidWebhookUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) return false;
+    const hostname = parsed.hostname.toLowerCase();
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]') return false;
+    if (hostname === '169.254.169.254' || hostname === 'metadata.google.internal') return false;
+    if (/^10\./.test(hostname)) return false;
+    if (/^172\.(1[6-9]|2\d|3[01])\./.test(hostname)) return false;
+    if (/^192\.168\./.test(hostname)) return false;
+    if (/^0\./.test(hostname) || hostname === '0.0.0.0') return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function sendWebhook(event: string, data: any): Promise<void> {
   if (!instanceSettings.webhookEnabled || !instanceSettings.webhookUrl) return;
+  if (!isValidWebhookUrl(instanceSettings.webhookUrl)) {
+    console.error('[Webhook] Blocked request to disallowed URL:', instanceSettings.webhookUrl);
+    return;
+  }
   try {
     await fetch(instanceSettings.webhookUrl, {
       method: "POST",
@@ -654,7 +711,7 @@ const setupPageHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          btn.innerHTML=(p.iconUrl?'<img src="'+p.iconUrl+'" width="20" height="20">':'')+' Continue with '+p.name;
+          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img)}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -891,7 +948,7 @@ const userLoginHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          btn.innerHTML=(p.iconUrl?'<img src="'+p.iconUrl+'" width="20" height="20">':'')+' Continue with '+p.name;
+          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img)}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -995,7 +1052,7 @@ const userRegisterHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          btn.innerHTML=(p.iconUrl?'<img src="'+p.iconUrl+'" width="20" height="20">':'')+' Continue with '+p.name;
+          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img)}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -1381,7 +1438,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Source Mode</div><div class="setting-desc">Choose where to load TheOneFile from</div></div>
           <div class="setting-control">
-            <select id="source-mode" onchange="changeSourceMode()"><option value="github">GitHub (Auto-Update)</option><option value="local">Local (Manual Upload)</option></select>
+            <select id="source-mode" onchange="changeSourceMode()"><option value="github">GitHub (Auto Update)</option><option value="local">Local (Manual Upload)</option></select>
           </div>
         </div>
         <div class="setting-row" id="github-settings">
@@ -1717,6 +1774,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
     function updateThemeToggleVisibility(){const btn=document.getElementById('theme-toggle');if(forcedTheme&&forcedTheme!=='user')btn.style.display='none';else btn.style.display='block'}
     setTheme(getTheme());
     fetch('/api/theme').then(r=>r.json()).then(data=>{if(data.forcedTheme&&data.forcedTheme!=='user'){forcedTheme=data.forcedTheme;setTheme(forcedTheme)}updateThemeToggleVisibility()}).catch(()=>updateThemeToggleVisibility());
+    function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
     let rooms=[],selected=new Set(),settings={},totalRooms=0,searchTimeout=null,users=[],authSettings={},oidcProviders=[],smtpConfigs=[],emailLogs=[];
     function showTab(name){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelector('.tab-content#tab-'+name).classList.add('active');document.querySelector('.tab[onclick*="'+name+'"]').classList.add('active');if(name==='settings')loadSettings();if(name==='logs'){loadActivityLogs();loadAuditLogs()}if(name==='backups')loadBackups();if(name==='apikeys')loadApiKeys();if(name==='users')loadUsers();if(name==='auth'){loadAuthSettings();loadOidcProviders();loadSmtpConfigs();loadEmailTemplates();loadEmailLogs()}}
     async function loadData(query=''){try{const url=query?'/api/admin/rooms?q='+encodeURIComponent(query):'/api/admin/rooms';const res=await fetch(url);if(!res.ok){if(res.status===401)window.location.href='/admin/login';return}const data=await res.json();rooms=data.rooms||data;totalRooms=data.total||rooms.length;renderStats();renderRooms();updateBulkUI()}catch(e){console.error(e)}}
@@ -1936,7 +1994,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
     let emailTemplates=[],currentEditTemplate=null,isHtmlSourceView=false;
     async function loadEmailTemplates(){try{const res=await fetch('/api/admin/email-templates');if(!res.ok)return;const data=await res.json();emailTemplates=data.templates||[];renderEmailTemplates(emailTemplates)}catch{}}
     function renderEmailTemplates(templates){const el=document.getElementById('email-template-list');if(!templates||templates.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No email templates. Default templates will be used.</p>';return}
-    el.innerHTML=templates.map(t=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+t.name+'</div><div style="font-size:12px;color:var(--text-soft)">Subject: '+t.subject+'</div></div><button class="btn btn-sm btn-secondary" onclick="editTemplate(\\''+t.id+'\\')">Edit</button></div>').join('')}
+    el.innerHTML=templates.map(t=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+esc(t.name)+'</div><div style="font-size:12px;color:var(--text-soft)">Subject: '+esc(t.subject)+'</div></div><button class="btn btn-sm btn-secondary" onclick="editTemplate(\\''+esc(t.id)+'\\')">Edit</button></div>').join('')}
     function editTemplate(id){const t=emailTemplates.find(x=>x.id===id);if(!t)return;currentEditTemplate=t;document.getElementById('template-edit-id').value=id;document.getElementById('template-name').value=t.name;document.getElementById('template-subject').value=t.subject||'';document.getElementById('template-editor').innerHTML=t.bodyHtml||'';document.getElementById('template-html-source').value=t.bodyHtml||'';document.getElementById('template-text').value=t.bodyText||'';isHtmlSourceView=false;showWysiwygView();document.getElementById('template-modal').classList.add('active')}
     function closeTemplateModal(){document.getElementById('template-modal').classList.remove('active');currentEditTemplate=null}
     function showWysiwygView(){document.getElementById('template-editor').style.display='block';document.getElementById('template-editor-toolbar').style.display='flex';document.getElementById('template-html-source').style.display='none'}
@@ -1955,7 +2013,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
     document.getElementById('template-preview-modal').addEventListener('click',e=>{if(e.target.id==='template-preview-modal')closeTemplatePreview()});
     async function loadEmailLogs(){try{const email=document.getElementById('email-log-search').value;const url=email?'/api/admin/email-logs?email='+encodeURIComponent(email):'/api/admin/email-logs';const res=await fetch(url);if(!res.ok)return;const data=await res.json();emailLogs=data.logs||[];renderEmailLogs()}catch{}}
     function renderEmailLogs(){const el=document.getElementById('email-log-list');if(!emailLogs||emailLogs.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No email logs</p>';return}
-    el.innerHTML=emailLogs.map(l=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-soft)">'+new Date(l.sentAt).toLocaleString()+'</span> <span class="badge badge-'+(l.status==='sent'?'green':'gray')+'">'+l.status+'</span> '+l.toEmail+' <span style="color:var(--text-soft)">'+l.subject+'</span>'+(l.errorMessage?' <span style="color:#ef4444">'+l.errorMessage+'</span>':'')+'</div>').join('')}
+    el.innerHTML=emailLogs.map(l=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-soft)">'+esc(new Date(l.sentAt).toLocaleString())+'</span> <span class="badge badge-'+(l.status==='sent'?'green':'gray')+'">'+esc(l.status)+'</span> '+esc(l.toEmail)+' <span style="color:var(--text-soft)">'+esc(l.subject)+'</span>'+(l.errorMessage?' <span style="color:#ef4444">'+esc(l.errorMessage)+'</span>':'')+'</div>').join('')}
     async function clearEmailLogs(){if(!confirm('Clear all email logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/email-logs',{method:'DELETE'});if(res.ok){loadEmailLogs();showAuthStatus('Email logs cleared','success')}}catch{}}
     async function clearActivityLogs(){if(!confirm('Clear all activity logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/activity-logs',{method:'DELETE'});if(res.ok){loadActivityLogs();showAuthStatus('Activity logs cleared','success')}}catch{}}
     async function clearAuditLogs(){if(!confirm('Clear all audit logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/audit-logs',{method:'DELETE'});if(res.ok){loadAuditLogs();showAuthStatus('Audit logs cleared','success')}}catch{}}
@@ -2019,7 +2077,7 @@ const adminLoginHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          btn.innerHTML=(p.iconUrl?'<img src="'+p.iconUrl+'" width="20" height="20">':'')+' Continue with '+p.name;
+          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img)}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login?redirect=/admin';
           container.appendChild(btn);
         });
@@ -2090,7 +2148,8 @@ function getPasswordResetHtml(token: string): string {
       if(pw!==confirm){err.textContent='Passwords do not match';err.classList.add('active');return}
       if(pw.length<8){err.textContent='Password must be at least 8 characters';err.classList.add('active');return}
       try{
-        const res=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'${token}',password:pw})});
+        const csrfRes=await fetch('/api/auth/csrf');const csrfData=await csrfRes.json();
+        const res=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'${token}',password:pw,csrfToken:csrfData.token})});
         const data=await res.json();
         if(data.success){document.getElementById('form').style.display='none';document.getElementById('success').classList.add('active')}
         else{err.textContent=data.error||'Failed to reset password';err.classList.add('active')}
@@ -2180,7 +2239,7 @@ function scheduleDestruction(roomId: string, delayMs: number): void {
   meta.destructTimer = setTimeout(() => {
     const room = loadRoom(roomId);
     if (room && room.destruct.mode === "time") {
-      console.log(`[Room] ${roomId} self-destructed`);
+      console.log(`[Room] ${roomId} self destructed`);
       deleteRoomData(roomId);
     }
   }, delayMs);
@@ -2406,7 +2465,7 @@ function restartUpdateTimer(): void {
   updateTimer = null;
   if (instanceSettings.updateIntervalHours > 0 && !instanceSettings.skipUpdates) {
     updateTimer = setInterval(() => { fetchLatestFromGitHub(); }, instanceSettings.updateIntervalHours * 60 * 60 * 1000);
-    console.log(`[Update] Auto-update every ${instanceSettings.updateIntervalHours} hours`);
+    console.log(`[Update] Auto update every ${instanceSettings.updateIntervalHours} hours`);
   }
 }
 
@@ -2425,6 +2484,17 @@ if (instanceSettings.skipUpdates) {
 
 restartUpdateTimer();
 
+const wsConnectionCounts = new Map<string, { count: number; resetAt: number }>();
+const MAX_WS_CONNECTIONS_PER_IP = 50;
+const WS_CONNECTION_WINDOW = 3600 * 1000;
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of wsConnectionCounts.entries()) {
+    if (now > entry.resetAt) wsConnectionCounts.delete(ip);
+  }
+}, 5 * 60 * 1000);
+
 const server = Bun.serve({
   port: PORT,
   async fetch(req, server) {
@@ -2432,6 +2502,18 @@ const server = Bun.serve({
     const path = url.pathname;
     
     if (path.match(/^\/ws\/[\w-]+$/)) {
+      const clientIp = getClientIP(req);
+      const now = Date.now();
+      const wsEntry = wsConnectionCounts.get(clientIp);
+      if (wsEntry && now < wsEntry.resetAt && wsEntry.count >= MAX_WS_CONNECTIONS_PER_IP) {
+        return new Response("Too many WebSocket connections", { status: 429 });
+      }
+      if (!wsEntry || now > wsEntry.resetAt) {
+        wsConnectionCounts.set(clientIp, { count: 1, resetAt: now + WS_CONNECTION_WINDOW });
+      } else {
+        wsEntry.count++;
+      }
+
       const roomId = path.split("/")[2];
       if (!isValidUUID(roomId)) {
         return new Response("Invalid room ID", { status: 400 });
@@ -2678,6 +2760,10 @@ const server = Bun.serve({
 
       const userToken = getUserTokenFromRequest(req);
       if (userToken) {
+        const user = await oidc.validateUserSessionToken(userToken);
+        if (user) {
+          oidc.revokeUserOidcTokens(user.id).catch(e => console.error('[OIDC] Token revocation error:', e));
+        }
         await auth.logout(userToken);
         if (redis.isRedisConnected()) await redis.deleteSessionToken(userToken);
       }
@@ -2794,6 +2880,10 @@ const server = Bun.serve({
     if (path === "/api/auth/logout" && req.method === "POST") {
       const token = getUserTokenFromRequest(req);
       if (token) {
+        const user = await oidc.validateUserSessionToken(token);
+        if (user) {
+          oidc.revokeUserOidcTokens(user.id).catch(e => console.error('[OIDC] Token revocation error:', e));
+        }
         await auth.logout(token);
         if (redis.isRedisConnected()) await redis.deleteSessionToken(token);
       }
@@ -2816,7 +2906,7 @@ const server = Bun.serve({
       const redirectParam = url.searchParams.get("redirect");
       const validatedRedirect = oidc.validateRedirectUrl(redirectParam, baseUrl);
 
-      const result = await oidc.generateAuthorizationUrl(providerId, baseUrl);
+      const result = await oidc.generateAuthorizationUrl(providerId, baseUrl, undefined, validatedRedirect);
       if (!result) {
         return Response.redirect(new URL("/?auth_error=provider_unavailable", req.url).toString(), 302);
       }
@@ -2871,16 +2961,24 @@ const server = Bun.serve({
         return Response.redirect(new URL("/?auth_error=missing_params", req.url).toString(), 302);
       }
 
-      const result = await oidc.processOidcCallback(providerId, code, state, clientIP, req.headers.get("user-agent") || "");
+      const currentUserToken = getUserTokenFromRequest(req);
+      const result = await oidc.processOidcCallback(providerId, code, state, clientIP, req.headers.get("user-agent") || "", currentUserToken);
 
       if (!result.success) {
         return Response.redirect(new URL(`/?auth_error=${encodeURIComponent(result.error || "unknown")}`, req.url).toString(), 302);
       }
 
+      let redirectTo = "/";
+      if (result.isNewUser) {
+        redirectTo = "/?welcome=true";
+      } else if (result.postLoginRedirect && result.postLoginRedirect !== "/") {
+        redirectTo = result.postLoginRedirect;
+      }
+
       return new Response(null, {
         status: 302,
         headers: {
-          "Location": result.isNewUser ? "/?welcome=true" : "/",
+          "Location": redirectTo,
           "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!),
           "X-Content-Type-Options": "nosniff",
           "Cache-Control": "no-store"
@@ -2943,6 +3041,10 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
+        if (!oidc.validateCsrfToken(csrfToken)) {
+          return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
+        }
         const result = await auth.resetPassword(body.token, body.password);
         if (!result.success) {
           return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
@@ -3549,7 +3651,7 @@ const server = Bun.serve({
         const body = await req.json();
         let valid = false;
         if (ENV_ADMIN_PASSWORD) {
-          valid = body.password === ENV_ADMIN_PASSWORD;
+          valid = await verifyAdminPassword(body.password);
         } else {
           valid = await verifyInstancePassword(body.password);
         }
@@ -3651,6 +3753,9 @@ const server = Bun.serve({
           instanceSettings.webhookEnabled = body.webhookEnabled;
         }
         if (body.webhookUrl !== undefined) {
+          if (body.webhookUrl && !isValidWebhookUrl(body.webhookUrl)) {
+            return Response.json({ error: "Invalid webhook URL: must be http(s) and not point to private/internal addresses" }, { status: 400, headers: corsHeaders });
+          }
           instanceSettings.webhookUrl = body.webhookUrl || null;
         }
         if (typeof body.backupEnabled === "boolean") {
@@ -4330,10 +4435,10 @@ ${saveHookScript}
   },
   websocket: {
     open(ws) {
-      const roomId = (ws.data as any)?.roomId;
+      const roomId = (ws.data as WsData)?.roomId;
       if (!roomId) return;
       const connectionId = crypto.randomUUID();
-      (ws.data as any).connectionId = connectionId;
+      (ws.data as WsData).connectionId = connectionId;
       if (!roomConnections.has(roomId)) roomConnections.set(roomId, new Set());
       roomConnections.get(roomId)!.add(ws);
       if (!roomUsers.has(roomId)) roomUsers.set(roomId, new Map());
@@ -4344,8 +4449,8 @@ ${saveHookScript}
       roomMeta.set(roomId, meta);
     },
     message(ws, message) {
-      const roomId = (ws.data as any)?.roomId;
-      const connectionId = (ws.data as any)?.connectionId;
+      const roomId = (ws.data as WsData)?.roomId;
+      const connectionId = (ws.data as WsData)?.connectionId;
       if (!roomId || !connectionId) return;
       let msg;
       try { msg = JSON.parse(message.toString()); } catch { return; }
@@ -4372,7 +4477,7 @@ ${saveHookScript}
         let userId = msg.user.id;
         if (!userId || !isValidUUID(userId)) return;
 
-        const verifiedUserId = (ws.data as any)?.verifiedUserId;
+        const verifiedUserId = (ws.data as WsData)?.verifiedUserId;
         if (verifiedUserId) {
           if (userId !== verifiedUserId) {
             ws.send(JSON.stringify({ type: 'error', error: 'User ID mismatch with session token' }));
@@ -4407,7 +4512,7 @@ ${saveHookScript}
           usedNames.set(userName, userId);
         }
 
-        (ws.data as any).userId = userId;
+        (ws.data as WsData).userId = userId;
         users.delete(userId);
         users.set(userId, msg.user);
         const existingUsers = Array.from(users.values()).filter(u => u.id !== userId);
@@ -4457,8 +4562,8 @@ ${saveHookScript}
       resetDestructionTimer(roomId);
     },
     close(ws) {
-      const roomId = (ws.data as any)?.roomId;
-      const userId = (ws.data as any)?.userId;
+      const roomId = (ws.data as WsData)?.roomId;
+      const userId = (ws.data as WsData)?.userId;
       if (!roomId) return;
       const connections = roomConnections.get(roomId);
       if (connections) {
@@ -4526,9 +4631,9 @@ for (const admin of adminUsers) {
 console.log(`TheOneFile Collab running on http://localhost:${PORT}`);
 if (ENV_ADMIN_PASSWORD) console.log(`Instance password lock: ENV`);
 else if (isInstanceLocked()) console.log(`Instance password lock: Settings`);
-if (instanceSettings.skipUpdates) console.log(`Auto-updates: Disabled`);
-else if (instanceSettings.updateIntervalHours > 0) console.log(`Auto-updates: Every ${instanceSettings.updateIntervalHours}h`);
-if (instanceSettings.backupEnabled) console.log(`Auto-backups: Every ${instanceSettings.backupIntervalHours}h, keep ${instanceSettings.backupRetentionCount}`);
+if (instanceSettings.skipUpdates) console.log(`Auto updates: Disabled`);
+else if (instanceSettings.updateIntervalHours > 0) console.log(`Auto updates: Every ${instanceSettings.updateIntervalHours}h`);
+if (instanceSettings.backupEnabled) console.log(`Auto backups: Every ${instanceSettings.backupIntervalHours}h, keep ${instanceSettings.backupRetentionCount}`);
 console.log(`Admin: ${isAdminConfigured() ? 'Configured' : 'Not set up'} | Rooms: ${db.countRooms()}`);
 
 const allRooms = db.listRooms();

@@ -1,5 +1,28 @@
 ### TheOneFile_Verse changelog
 
+**2/14/26 Theonefile_verse 1.5.1** *Fixes and further security hardening*
+* **OIDC/SSO**
+  * JWT signature verification now correctly maps hash algorithms (SHA 256/384/512) per token header
+  * Discovery document validation ensures authorization and token endpoints exist and issuer matches
+  * Sub claim enforcement on all ID tokens per OIDC spec
+  * Openid scope automatically enforced on all provider configurations
+  * Token type validation on token exchange responses
+  * Post login redirect persistence across SSO flows
+  * Account linking reverification ensures session is still valid before linking
+  * Increased entropy in random string generation for required values
+
+* **Security Hardening**
+  * Added CSRF token protection on password reset endpoint
+  * Constant time token comparison using crypto.timingSafeEqual
+  * SSRF protection on webhook URLs (blocks private/internal IP ranges)
+  * WebSocket connection rate limiting per IP address
+  * IP validation on all rate limited endpoints
+  * Automatic admin token cleanup on startup
+  * Rate limit store memory management improvements
+  * Token revocation on session termination
+  * Docker Redis password security via --requirepass
+  * Dockerfile now uses non root USER directive
+
 **1/26/26 Theonefile_verse 1.5.0** *The Identity Update* 
 * **Full User Account System**
   * User registration with email verification

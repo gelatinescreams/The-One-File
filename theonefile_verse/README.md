@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.5.0-blue" alt="Docker Version 1.5.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.5.1-blue" alt="Docker Version 1.5.1">
   </a>
 </p>
 
@@ -69,7 +69,7 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 
 ### TheOneFile_Verse Features
 
-* **Current Version 1.5** **The Identity Update**  [changelog](changelog.md)
+* **Current Version 1.5.1** **Fixes and further security hardening**  [changelog](changelog.md)
 
 #### Core Collaboration
 * Realtime sync via WebSocket
@@ -88,11 +88,14 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Multiple active sessions per user
 * Account lockout protection
 
-#### Single Sign On (SSO/OIDC) **NEW 1.5**
+#### Single Sign On (SSO/OIDC) **NEW 1.5** **Enhanced 1.6**
 * Sign in with Authentik, Google, GitHub, Microsoft, or any OIDC provider
 * Link multiple SSO providers to one account
 * Auto account linking by email
 * Configurable per provider settings
+* Full OIDC spec compliance (JWT algorithm mapping, discovery validation, sub claim enforcement)
+* Post login redirect persistence across SSO flows
+* Secure account linking re verification
 
 #### Email System **NEW 1.5**
 * SMTP configuration with TLS/STARTTLS support
@@ -115,19 +118,23 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Email delivery logs
 * System settings management
 
-#### Security & Protection **NEW 1.5**
+#### Security & Protection **NEW 1.5** **Enhanced 1.6**
 * AES 256 GCM encryption for all secrets
 * PBKDF2 key derivation (100,000 iterations)
 * Argon2id password hashing
-* CSRF token protection
+* CSRF token protection on all forms including password reset
 * Secure HTTP only cookies
 * SameSite cookie policy
 * Production mode with HSTS
 * WebSocket session tokens
+* WebSocket connection rate limiting per IP
 * IP based rate limiting
 * Email rate limiting
 * Configurable trusted proxy support
 * Custom admin path (security through obscurity but not everyone likes the default)
+* Constant time token comparison
+* SSRF protection on webhook URLs
+* Automatic admin token cleanup
 
 #### Rate Limiting **NEW 1.5**
 * Endpoint rate limiting (configurable window and max attempts)

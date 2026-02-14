@@ -816,9 +816,16 @@
       oidcProviders.forEach(provider => {
         const btn = document.createElement('button');
         btn.className = 'oidc-btn';
-        btn.innerHTML = provider.iconUrl
-          ? `<img src="${provider.iconUrl}" alt="${provider.name}"> Continue with ${provider.name}`
-          : `Continue with ${provider.name}`;
+        const safeUrl = provider.iconUrl && /^https?:\/\//i.test(provider.iconUrl) ? provider.iconUrl : null;
+        const safeName = document.createElement('span');
+        safeName.textContent = 'Continue with ' + (provider.name || 'SSO');
+        if (safeUrl) {
+          const img = document.createElement('img');
+          img.src = safeUrl;
+          img.alt = provider.name || 'SSO';
+          btn.appendChild(img);
+        }
+        btn.appendChild(safeName);
         btn.onclick = () => startOidcLogin(provider.id);
         container.appendChild(btn);
       });

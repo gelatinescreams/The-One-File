@@ -63,7 +63,8 @@ export async function checkRateLimitRedis(
     }
 
     return current <= maxAttempts;
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Rate limit check failed:", err.message);
     return true;
   }
 }
@@ -77,7 +78,9 @@ export async function setSessionToken(
 
   try {
     await client.setEx(`session:${token}`, ttlSeconds, JSON.stringify(data));
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Set session token failed:", err.message);
+  }
 }
 
 export async function getSessionToken(token: string): Promise<{ type: string; createdAt: number } | null> {
@@ -86,7 +89,8 @@ export async function getSessionToken(token: string): Promise<{ type: string; cr
   try {
     const data = await client.get(`session:${token}`);
     return data ? JSON.parse(data) : null;
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Get session token failed:", err.message);
     return null;
   }
 }
@@ -96,7 +100,9 @@ export async function deleteSessionToken(token: string): Promise<void> {
 
   try {
     await client.del(`session:${token}`);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Delete session token failed:", err.message);
+  }
 }
 
 export async function setUserPresence(
@@ -110,7 +116,9 @@ export async function setUserPresence(
   try {
     await client.hSet(`presence:${roomId}`, userId, JSON.stringify(userData));
     await client.expire(`presence:${roomId}`, ttlSeconds);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Set user presence failed:", err.message);
+  }
 }
 
 export async function getUserPresence(roomId: string, userId: string): Promise<any | null> {
@@ -119,7 +127,8 @@ export async function getUserPresence(roomId: string, userId: string): Promise<a
   try {
     const data = await client.hGet(`presence:${roomId}`, userId);
     return data ? JSON.parse(data) : null;
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Get user presence failed:", err.message);
     return null;
   }
 }
@@ -133,7 +142,9 @@ export async function getAllUserPresence(roomId: string): Promise<Map<string, an
     for (const [userId, userData] of Object.entries(data)) {
       result.set(userId, JSON.parse(userData));
     }
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Get all user presence failed:", err.message);
+  }
 
   return result;
 }
@@ -143,7 +154,9 @@ export async function removeUserPresence(roomId: string, userId: string): Promis
 
   try {
     await client.hDel(`presence:${roomId}`, userId);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Remove user presence failed:", err.message);
+  }
 }
 
 export async function setRoomStateCache(roomId: string, state: any, ttlSeconds: number = 3600): Promise<void> {
@@ -151,7 +164,9 @@ export async function setRoomStateCache(roomId: string, state: any, ttlSeconds: 
 
   try {
     await client.setEx(`roomstate:${roomId}`, ttlSeconds, JSON.stringify(state));
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Set room state cache failed:", err.message);
+  }
 }
 
 export async function getRoomStateCache(roomId: string): Promise<any | null> {
@@ -160,7 +175,8 @@ export async function getRoomStateCache(roomId: string): Promise<any | null> {
   try {
     const data = await client.get(`roomstate:${roomId}`);
     return data ? JSON.parse(data) : null;
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Get room state cache failed:", err.message);
     return null;
   }
 }
@@ -170,7 +186,9 @@ export async function deleteRoomStateCache(roomId: string): Promise<void> {
 
   try {
     await client.del(`roomstate:${roomId}`);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Delete room state cache failed:", err.message);
+  }
 }
 
 export async function publishMessage(channel: string, message: string): Promise<void> {
@@ -178,7 +196,9 @@ export async function publishMessage(channel: string, message: string): Promise<
 
   try {
     await client.publish(channel, message);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Publish message failed:", err.message);
+  }
 }
 
 export async function subscribeToChannel(
@@ -198,7 +218,9 @@ export async function subscribeToChannel(
       });
     }
     messageHandlers.get(channel)!.add(handler);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Subscribe to channel failed:", err.message);
+  }
 }
 
 export async function unsubscribeFromChannel(
@@ -221,7 +243,9 @@ export async function unsubscribeFromChannel(
       messageHandlers.delete(channel);
       await subscriber.unsubscribe(channel);
     }
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Unsubscribe from channel failed:", err.message);
+  }
 }
 
 export async function publishToRoom(roomId: string, message: any): Promise<void> {
@@ -235,7 +259,9 @@ export async function subscribeToRoom(
   const wrappedHandler = (msg: string) => {
     try {
       handler(JSON.parse(msg));
-    } catch {}
+    } catch (err: any) {
+      console.error("[Redis] Room message parse failed:", err.message);
+    }
   };
 
   await subscribeToChannel(`room:${roomId}`, wrappedHandler);
@@ -250,7 +276,8 @@ export async function incrementCounter(key: string): Promise<number> {
 
   try {
     return await client.incr(`counter:${key}`);
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Increment counter failed:", err.message);
     return 0;
   }
 }
@@ -261,7 +288,8 @@ export async function getCounter(key: string): Promise<number> {
   try {
     const value = await client.get(`counter:${key}`);
     return value ? parseInt(value, 10) : 0;
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Get counter failed:", err.message);
     return 0;
   }
 }
@@ -271,7 +299,9 @@ export async function setWithExpiry(key: string, value: string, ttlSeconds: numb
 
   try {
     await client.setEx(key, ttlSeconds, value);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Set with expiry failed:", err.message);
+  }
 }
 
 export async function getValue(key: string): Promise<string | null> {
@@ -279,7 +309,8 @@ export async function getValue(key: string): Promise<string | null> {
 
   try {
     return await client.get(key);
-  } catch {
+  } catch (err: any) {
+    console.error("[Redis] Get value failed:", err.message);
     return null;
   }
 }
@@ -289,7 +320,9 @@ export async function deleteKey(key: string): Promise<void> {
 
   try {
     await client.del(key);
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Delete key failed:", err.message);
+  }
 }
 
 export async function disconnectRedis(): Promise<void> {
@@ -304,7 +337,9 @@ export async function disconnectRedis(): Promise<void> {
     }
     isConnected = false;
     console.log("[Redis] Disconnected");
-  } catch {}
+  } catch (err: any) {
+    console.error("[Redis] Disconnect failed:", err.message);
+  }
 }
 
 export function getRedisClient(): RedisClientType | null {

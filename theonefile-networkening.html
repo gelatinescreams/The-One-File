@@ -1090,6 +1090,7 @@ button:disabled {
       }
       .modal.active {
       display: inline-grid;
+      touch-action: pan-y;
       }
       #dialog-modal {
       z-index: 9999999;
@@ -1102,6 +1103,9 @@ button:disabled {
       border: 1px solid var(--edge-main);
       min-width: 300px;
       max-width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
       }
       .modal-content h3 {
       margin: 0 0 15px 0;
@@ -1474,11 +1478,14 @@ button:disabled {
       padding: 12px;
       display: none;
       flex-direction: column;
-      width: 180px;
+      max-height: calc(100vh - var(--topbar-height));
+      overflow-y: auto;
+      overscroll-behavior: contain;
       z-index: 999;
       }
       #topbar-menu.open {
       display: flex;
+      touch-action: pan-y;
       }
       header {
       position: relative;
@@ -3478,6 +3485,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             </div>
           </div>
           <input type="file" id="import-html-file" accept=".html,.htm" style="display:none">
+          <input type="file" id="import-json-file" accept=".json" style="display:none">
           <input type="file" id="import-markdown-file" accept=".md,.markdown,.txt" style="display:none">
           <input type="file" id="import-csv-file" accept=".csv,.txt" style="display:none">
           <span id="save-help-btn" class="help-icon" title="Why save?">?</span>
@@ -4420,7 +4428,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "copyStyle": "Copy Style", "pasteStyle": "Paste Style",
       "clearHistory": "Clear History", "createSnapshot": "Create Snapshot",
       "del": "Del", "done": "Done", "pngImage": "PNG Image", "svgVector": "SVG Vector",
-      "json": "JSON", "markdown": "Markdown", "csv": "CSV"
+      "html": "HTML", "json": "JSON", "markdown": "Markdown", "csv": "CSV"
     },
     "labels": {
       "name": "Name", "ip": "IP / Subtitle", "tags": "Tags", "category": "Category",
@@ -6236,7 +6244,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
         return MODE_DEFAULT_CATEGORIES[PAGE_STATE.mappingMode || 'network'] || 'basic';
       }
 
-      let currentNodeId = "host";
+      let currentNodeId = null;
       let currentEdgeId = null;
       let currentStyleScope = "all";
       let NODE_DATA = {};
@@ -14265,6 +14273,7 @@ function updateZoneLegend() {
           document.getElementById("image-panel").style.display = "none";
         }
         forgeTheTopology();
+        updateTopologyToolbarVisibility();
       }
          if (isViewOnly()) {
          document.body.classList.remove("view-only-inspect");
@@ -14319,6 +14328,7 @@ function updateZoneLegend() {
           document.getElementById("image-panel").style.display = "none";
         }
         forgeTheTopology();
+        updateTopologyToolbarVisibility();
       }
           if (isEmptySpace && e.touches.length === 1) {
            e.preventDefault();
@@ -16650,6 +16660,7 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
           document.getElementById("edge-panel").style.display = "none";
           document.getElementById("topology-toolbar").style.display = "none";
          }
+         updateDrawToolbarVisibility();
          showAlert(t("dialogs.jsonImportSuccess", { nodeCount, edgeCount, rectCount, textCount }));
          e.target.value = "";
         } catch (err) {
@@ -19126,6 +19137,8 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
         document.getElementById("rect-panel").style.display = "none";
         document.getElementById("image-panel").style.display = "none";
         displayTabs();
+        updateDrawToolbarVisibility();
+        updateTopologyToolbarVisibility();
         logAuditEvent("tab", `Switched to tab: ${newTab.name}`);
         const hasData = Object.keys(NODE_DATA).length > 0 || EDGE_DATA.list.length > 0;
         const hasPageState = newTab.pageState !== null && newTab.pageState !== undefined;
@@ -20309,6 +20322,8 @@ document.getElementById('import-csv-file')?.addEventListener('change', async (e)
       if (typeof forgeTheLegend === 'function') forgeTheLegend();
       if (typeof updateZoneLegend === 'function') updateZoneLegend();
       updateViewBox();
+      updateDrawToolbarVisibility();
+      updateTopologyToolbarVisibility();
       logAuditEvent('import', `Imported CSV (full restore): ${file.name}`);
       showAlert(t("dialogs.fullRestoreComplete"));
       return;
@@ -20356,6 +20371,8 @@ document.getElementById('import-csv-file')?.addEventListener('change', async (e)
     });
     forgeTheTopology();
     updateViewBox();
+    updateDrawToolbarVisibility();
+    updateTopologyToolbarVisibility();
     logAuditEvent('import', `Imported CSV: ${file.name} (${nodes.length} nodes)`);
     showAlert(t("dialogs.importedNodesCount", { count: nodes.length }));
   } catch (err) {
@@ -20710,6 +20727,8 @@ document.getElementById('import-markdown-file')?.addEventListener('change', asyn
     if (typeof forgeTheLegend === 'function') forgeTheLegend();
     if (typeof updateZoneLegend === 'function') updateZoneLegend();
     updateViewBox();
+    updateDrawToolbarVisibility();
+    updateTopologyToolbarVisibility();
     logAuditEvent('import', `Imported Markdown: ${file.name} (${nodeCount} nodes, ${edgeCount} connections)`);
     showAlert(t("dialogs.markdownImportSuccess", { nodeCount, edgeCount, rectCount, textCount }));
   } catch (err) {
@@ -20840,10 +20859,23 @@ document.getElementById('import-html-file')?.addEventListener('change', async (e
       document.getElementById("edge-panel").style.display = "none";
       document.getElementById("topology-toolbar").style.display = "none";
     }
+    updateDrawToolbarVisibility();
     showAlert(t("dialogs.htmlImportSuccess", { nodeCount, edgeCount }));
   } catch (err) {
     console.error("HTML import error:", err);
     showAlert(t("dialogs.invalidHtmlFile"));
+  }
+});
+document.getElementById('import-json-file')?.addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = '';
+  const existingInput = document.getElementById('import-data-file');
+  if (existingInput) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    existingInput.files = dt.files;
+    existingInput.dispatchEvent(new Event('change'));
   }
 });
 

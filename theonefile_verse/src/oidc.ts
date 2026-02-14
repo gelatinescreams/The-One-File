@@ -43,11 +43,9 @@ setInterval(() => {
 }, 60 * 1000);
 
 function generateRandomString(length: number): string {
-  const byteLength = Math.ceil(length * 0.75);
-  const array = new Uint8Array(byteLength);
+  const array = new Uint8Array(length);
   crypto.getRandomValues(array);
-  const base64 = Buffer.from(array).toString('base64url');
-  return base64.slice(0, length);
+  return base64UrlEncode(array);
 }
 
 function generateCodeVerifier(): string {
@@ -116,8 +114,13 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
     crypto.getRandomValues(keyBytes);
     keyHex = Array.from(keyBytes, b => b.toString(16).padStart(2, '0')).join('');
     db.setSetting('encryption_key', keyHex);
-    console.warn('[Security] ENCRYPTION_KEY environment variable not set. Generated random key stored in database.');
-    console.warn('[Security] For production deployments, set ENCRYPTION_KEY environment variable for better security.');
+    console.warn('='.repeat(70));
+    console.warn('[SECURITY WARNING] ENCRYPTION_KEY environment variable not set.');
+    console.warn('[SECURITY WARNING] A random key has been generated and stored in the database.');
+    console.warn('[SECURITY WARNING] This means the encryption key lives alongside the encrypted data,');
+    console.warn('[SECURITY WARNING] defeating the purpose of encryption if the database is compromised.');
+    console.warn('[SECURITY WARNING] Set ENCRYPTION_KEY in your environment for production deployments.');
+    console.warn('='.repeat(70));
   }
 
   return new Uint8Array(keyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
@@ -210,6 +213,7 @@ interface OidcDiscovery {
   userinfo_endpoint: string;
   jwks_uri: string;
   scopes_supported?: string[];
+  revocation_endpoint?: string;
 }
 
 async function discoverOidcEndpoints(issuerUrl: string): Promise<OidcDiscovery | null> {
@@ -217,7 +221,15 @@ async function discoverOidcEndpoints(issuerUrl: string): Promise<OidcDiscovery |
     const wellKnownUrl = issuerUrl.replace(/\/$/, '') + '/.well-known/openid-configuration';
     const res = await fetch(wellKnownUrl);
     if (!res.ok) return null;
-    return await res.json();
+    const disc = await res.json();
+    if (!disc.authorization_endpoint || !disc.token_endpoint) return null;
+    const normExpected = issuerUrl.replace(/\/$/, '');
+    const normActual = (disc.issuer || '').replace(/\/$/, '');
+    if (normActual && normActual !== normExpected) {
+      logOidcError('Discovery issuer mismatch', { expected: normExpected, got: normActual });
+      return null;
+    }
+    return disc;
   } catch {
     return null;
   }
@@ -248,7 +260,8 @@ export interface OidcTokenResponse {
 export async function generateAuthorizationUrl(
   providerId: string,
   baseUrl: string,
-  linkUserId?: string
+  linkUserId?: string,
+  postLoginRedirect?: string
 ): Promise<OidcAuthUrl | null> {
   const provider = db.getOidcProvider(providerId);
   if (!provider || !provider.isActive) return null;
@@ -271,6 +284,7 @@ export async function generateAuthorizationUrl(
     nonce,
     redirectUri,
     linkUserId: linkUserId || null,
+    postLoginRedirect: postLoginRedirect || null,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString()
   });
@@ -286,11 +300,14 @@ export async function generateAuthorizationUrl(
 
   if (!authUrl) return null;
 
+  let scopes = provider.scopes || 'openid email profile';
+  if (!scopes.split(' ').includes('openid')) scopes = 'openid ' + scopes;
+
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: provider.clientId,
     redirect_uri: redirectUri,
-    scope: provider.scopes || 'openid email profile',
+    scope: scopes,
     state,
     nonce,
     code_challenge: codeChallenge,
@@ -307,7 +324,7 @@ export async function exchangeCodeForTokens(
   providerId: string,
   code: string,
   state: string
-): Promise<{ tokens: OidcTokenResponse; userInfo: OidcUserInfo; linkUserId?: string } | null> {
+): Promise<{ tokens: OidcTokenResponse; userInfo: OidcUserInfo; linkUserId?: string; postLoginRedirect?: string } | null> {
   const storedState = db.getOidcState(state);
   if (!storedState || storedState.providerId !== providerId) {
     return null;
@@ -355,6 +372,7 @@ export async function exchangeCodeForTokens(
   });
   const storedNonce = storedState.nonce;
   const storedLinkUserId = storedState.linkUserId;
+  const storedPostLoginRedirect = storedState.postLoginRedirect;
 
   try {
     const tokenRes = await fetch(tokenUrl, {
@@ -369,6 +387,11 @@ export async function exchangeCodeForTokens(
     }
 
     const tokens: OidcTokenResponse = await tokenRes.json();
+
+    if (tokens.token_type && tokens.token_type.toLowerCase() !== 'bearer') {
+      logOidcError('Unsupported token type', tokens.token_type);
+      return null;
+    }
 
     let userInfo: OidcUserInfo | null = null;
 
@@ -397,7 +420,7 @@ export async function exchangeCodeForTokens(
       return null;
     }
 
-    return { tokens, userInfo, linkUserId: storedLinkUserId || undefined };
+    return { tokens, userInfo, linkUserId: storedLinkUserId || undefined, postLoginRedirect: storedPostLoginRedirect || undefined };
   } catch (e) {
     logOidcError('Token exchange error', e);
     return null;
@@ -460,13 +483,19 @@ async function fetchJwks(jwksUri: string): Promise<JsonWebKey[]> {
   return [];
 }
 
+function getHashAlgorithm(alg: string): string {
+  if (alg.endsWith('384')) return 'SHA-384';
+  if (alg.endsWith('512')) return 'SHA-512';
+  return 'SHA-256';
+}
+
 async function importJwkForVerify(jwk: JsonWebKey): Promise<CryptoKey | null> {
   try {
     const alg = jwk.alg || 'RS256';
     let algorithm: RsaHashedImportParams | EcKeyImportParams;
 
     if (alg.startsWith('RS')) {
-      algorithm = { name: 'RSASSA-PKCS1-v1_5', hash: { name: 'SHA-256' } };
+      algorithm = { name: 'RSASSA-PKCS1-v1_5', hash: { name: getHashAlgorithm(alg) } };
     } else if (alg.startsWith('ES')) {
       algorithm = { name: 'ECDSA', namedCurve: jwk.crv || 'P-256' };
     } else {
@@ -502,7 +531,7 @@ async function verifyJwtSignature(token: string, jwks: JsonWebKey[]): Promise<bo
       if (alg.startsWith('RS')) {
         verifyAlg = { name: 'RSASSA-PKCS1-v1_5' };
       } else if (alg.startsWith('ES')) {
-        verifyAlg = { name: 'ECDSA', hash: { name: 'SHA-256' } };
+        verifyAlg = { name: 'ECDSA', hash: { name: getHashAlgorithm(alg) } };
       } else {
         continue;
       }
@@ -592,6 +621,11 @@ async function parseIdToken(
       return null;
     }
 
+    if (!payload.sub) {
+      logOidcError('ID token missing required sub claim');
+      return null;
+    }
+
     return {
       sub: payload.sub,
       email: payload.email,
@@ -610,7 +644,8 @@ export async function processOidcCallback(
   code: string,
   state: string,
   ipAddress: string,
-  userAgent: string
+  userAgent: string,
+  currentUserToken?: string | null
 ): Promise<{
   success: boolean;
   userId?: string;
@@ -619,13 +654,14 @@ export async function processOidcCallback(
   isNewUser?: boolean;
   isLinked?: boolean;
   message?: string;
+  postLoginRedirect?: string;
 }> {
   const result = await exchangeCodeForTokens(providerId, code, state);
   if (!result) {
     return { success: false, error: 'Failed to exchange code for tokens' };
   }
 
-  const { tokens, userInfo, linkUserId } = result;
+  const { tokens, userInfo, linkUserId, postLoginRedirect } = result;
   const provider = db.getOidcProvider(providerId);
   if (!provider) {
     return { success: false, error: 'Provider not found' };
@@ -652,10 +688,19 @@ export async function processOidcCallback(
     const sessionToken = await createUserSessionToken(existingLink.userId, ipAddress, userAgent);
 
     db.logAuthEvent('oidc_login', existingLink.userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub });
-    return { success: true, userId: existingLink.userId, sessionToken, isNewUser: false };
+    return { success: true, userId: existingLink.userId, sessionToken, isNewUser: false, postLoginRedirect };
   }
 
   if (linkUserId) {
+    if (currentUserToken) {
+      const currentUser = await validateUserSessionToken(currentUserToken);
+      if (!currentUser || currentUser.id !== linkUserId) {
+        return { success: false, error: 'Session expired or invalid for account linking' };
+      }
+    } else {
+      return { success: false, error: 'Authentication required for account linking' };
+    }
+
     const user = db.getUserById(linkUserId);
     if (!user) {
       return { success: false, error: 'User not found for linking' };
@@ -680,7 +725,7 @@ export async function processOidcCallback(
     });
 
     db.logAuthEvent('oidc_link', linkUserId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub });
-    return { success: true, userId: linkUserId, isNewUser: false, isLinked: true, message: `Successfully linked ${provider.name} account` };
+    return { success: true, userId: linkUserId, isNewUser: false, isLinked: true, message: `Successfully linked ${provider.name} account`, postLoginRedirect };
   }
 
   const authSettings = getAuthSettings();
@@ -715,7 +760,7 @@ export async function processOidcCallback(
 
     const sessionToken = await createUserSessionToken(existingUser.id, ipAddress, userAgent);
     db.logAuthEvent('oidc_login_email_match', existingUser.id, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, matchedEmail: userInfo.email });
-    return { success: true, userId: existingUser.id, sessionToken, isNewUser: false };
+    return { success: true, userId: existingUser.id, sessionToken, isNewUser: false, postLoginRedirect };
   }
 
   const userId = crypto.randomUUID();
@@ -762,7 +807,7 @@ export async function processOidcCallback(
   const sessionToken = await createUserSessionToken(userId, ipAddress, userAgent);
 
   db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role, isFirstUser });
-  return { success: true, userId, sessionToken, isNewUser: true };
+  return { success: true, userId, sessionToken, isNewUser: true, postLoginRedirect };
 }
 
 async function createUserSessionToken(
@@ -912,6 +957,66 @@ export async function refreshOidcTokens(linkId: string): Promise<{
   }
 }
 
+export async function revokeUserOidcTokens(userId: string): Promise<void> {
+  const links = db.getOidcLinksByUser(userId);
+  for (const link of links) {
+    try {
+      const provider = db.getOidcProviderByName(link.provider);
+      if (!provider) continue;
+
+      let revocationUrl: string | undefined;
+      if (provider.issuerUrl) {
+        const discovery = await discoverOidcEndpoints(provider.issuerUrl);
+        revocationUrl = discovery?.revocation_endpoint ?? undefined;
+      }
+      if (!revocationUrl) continue;
+
+      let clientSecret: string | null = null;
+      if (provider.clientSecretEncrypted) {
+        try { clientSecret = await decryptSecret(provider.clientSecretEncrypted); } catch { continue; }
+      }
+
+      const tokensToRevoke: { token: string; hint: string }[] = [];
+
+      if (link.accessTokenEncrypted) {
+        try {
+          const accessToken = await decryptSecret(link.accessTokenEncrypted);
+          tokensToRevoke.push({ token: accessToken, hint: 'access_token' });
+        } catch {}
+      }
+      if (link.refreshTokenEncrypted) {
+        try {
+          const refreshToken = await decryptSecret(link.refreshTokenEncrypted);
+          tokensToRevoke.push({ token: refreshToken, hint: 'refresh_token' });
+        } catch {}
+      }
+
+      for (const { token, hint } of tokensToRevoke) {
+        try {
+          const params = new URLSearchParams({
+            token,
+            token_type_hint: hint,
+            client_id: provider.clientId
+          });
+          if (clientSecret) params.set('client_secret', clientSecret);
+
+          await fetch(revocationUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: params.toString()
+          });
+        } catch (e: any) {
+          logOidcError(`Token revocation failed for provider ${link.provider}`, e);
+        }
+      }
+
+      db.updateOidcLinkTokens(link.id, null, null, null);
+    } catch (e: any) {
+      logOidcError(`Failed to revoke tokens for OIDC link ${link.id}`, e);
+    }
+  }
+}
+
 export interface AuthSettings {
   authMode: 'open' | 'registration' | 'oidc_only' | 'invite_only' | 'closed';
   allowGuestRoomCreation: boolean;
@@ -966,11 +1071,22 @@ function getIdTokenMaxAgeMs(): number {
   return settings.idTokenMaxAgeHours * 60 * 60 * 1000;
 }
 
+function sanitizeIconUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') return url;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function getActiveProviders(): { id: string; name: string; iconUrl: string | null }[] {
   return db.listActiveOidcProviders().map(p => ({
     id: p.id,
     name: p.name,
-    iconUrl: p.iconUrl
+    iconUrl: sanitizeIconUrl(p.iconUrl)
   }));
 }
 
