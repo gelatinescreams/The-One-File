@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(python:*)",
+      "Bash(where:*)"
     ]
   }
 }

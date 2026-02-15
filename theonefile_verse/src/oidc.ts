@@ -1157,7 +1157,7 @@ export function validateCsrfToken(token: string): boolean {
 export function getCsrfCookie(token: string): string {
   const settings = getAuthSettings();
   const secure = settings.productionMode ? '; Secure' : '';
-  return `csrf_token=${token}; Path=/; SameSite=Strict${secure}; Max-Age=3600`;
+  return `csrf_token=${token}; Path=/; HttpOnly; SameSite=Strict${secure}; Max-Age=3600`;
 }
 
 export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string): string {
