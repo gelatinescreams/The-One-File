@@ -702,32 +702,32 @@ const setupPageHtml = `<!DOCTYPE html>
   </div>
   <script>
     (function(){document.documentElement.setAttribute('data-theme',localStorage.getItem('theme')||'dark')})();
-    const email=document.getElementById('email'),pwd=document.getElementById('password'),confirm=document.getElementById('confirm'),btn=document.getElementById('submit-btn'),error=document.getElementById('error');
+    const emailEl=document.getElementById('email'),pwdEl=document.getElementById('password'),confirmEl=document.getElementById('confirm'),submitBtn=document.getElementById('submit-btn'),errorEl=document.getElementById('error');
     fetch('/api/auth/providers').then(r=>r.json()).then(providers=>{
       if(providers.length>0){
         document.getElementById('divider').style.display='flex';
         const container=document.getElementById('oidc-buttons');
         providers.forEach(p=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.className='oidc-btn';
-          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img)}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
-          btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
-          container.appendChild(btn);
+          const b=document.createElement('button');
+          b.type='button';
+          b.className='oidc-btn';
+          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;b.appendChild(img)}b.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
+          b.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
+          container.appendChild(b);
         });
       }
     }).catch(()=>{});
     document.getElementById('setup-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();error.classList.remove('active');
-      if(!email.value||!email.value.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      if(pwd.value.length<8){error.textContent='Password must be at least 8 characters';error.classList.add('active');return}
-      if(pwd.value!==confirm.value){error.textContent='Passwords do not match';error.classList.add('active');return}
+      e.preventDefault();errorEl.classList.remove('active');
+      if(!emailEl.value||!emailEl.value.includes('@')){errorEl.textContent='Please enter a valid email';errorEl.classList.add('active');return}
+      if(pwdEl.value.length<8){errorEl.textContent='Password must be at least 8 characters';errorEl.classList.add('active');return}
+      if(pwdEl.value!==confirmEl.value){errorEl.textContent='Passwords do not match';errorEl.classList.add('active');return}
       try{
-        const res=await fetch('/api/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.value,password:pwd.value})});
+        const res=await fetch('/api/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:emailEl.value,password:pwdEl.value})});
         const d=await res.json();
         if(res.ok&&d.success){window.location.href='/admin'}
-        else{error.textContent=d.error||'Setup failed';error.classList.add('active')}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
+        else{errorEl.textContent=d.error||'Setup failed';errorEl.classList.add('active')}
+      }catch{errorEl.textContent='Connection error';errorEl.classList.add('active')}
     });
   </script>
 </body>
@@ -2600,12 +2600,14 @@ const server = Bun.serve({
         if (!result.success) {
           return Response.json({ error: result.error || "Registration failed" }, { status: 400, headers: corsHeaders });
         }
-        const clientIP = getClientIP(req);
         const loginResult = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
         if (!loginResult.success || !loginResult.sessionToken) {
           return Response.json({ error: "Account created but login failed" }, { status: 400, headers: corsHeaders });
         }
-        return Response.json({ success: true, sessionToken: loginResult.sessionToken }, { headers: corsHeaders });
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json",
+            "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken) }
+        });
       } catch { return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
     }
 
