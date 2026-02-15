@@ -427,7 +427,8 @@ async function sendViaSMTP(
           console.log("[Mailer] Post-TLS capabilities:", capabilities.join(", "));
         }
       } else {
-        console.warn("[Mailer] Server doesn't support STARTTLS, continuing without encryption");
+        client.close();
+        throw new Error("STARTTLS required but server does not support it. Refusing to send credentials over plaintext.");
       }
     }
 
@@ -459,22 +460,28 @@ async function sendViaSMTP(
   }
 }
 
+function stripCRLF(str: string): string {
+  return str.replace(/[\r\n]/g, '');
+}
+
 function buildMessage(message: EmailMessage, config: db.SmtpConfig): string {
   const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
   const messageId = `<${crypto.randomUUID()}@${config.host}>`;
   const date = new Date().toUTCString();
 
-  const fromHeader = config.fromName
-    ? `"${config.fromName.replace(/"/g, '\\"')}" <${config.fromEmail}>`
-    : config.fromEmail;
+  const safeName = config.fromName ? stripCRLF(config.fromName) : '';
+  const safeFromEmail = stripCRLF(config.fromEmail);
+  const fromHeader = safeName
+    ? `"${safeName.replace(/"/g, '\\"')}" <${safeFromEmail}>`
+    : safeFromEmail;
 
-  const subjectEncoded = encodeSubject(message.subject);
+  const subjectEncoded = encodeSubject(stripCRLF(message.subject));
 
   const headers = [
     `Message-ID: ${messageId}`,
     `Date: ${date}`,
     `From: ${fromHeader}`,
-    `To: ${message.to}`,
+    `To: ${stripCRLF(message.to)}`,
     `Subject: ${subjectEncoded}`,
     `MIME-Version: 1.0`,
     `Content-Type: multipart/alternative; boundary="${boundary}"`,
@@ -580,7 +587,8 @@ export async function sendTemplatedEmail(
   for (const [key, value] of Object.entries(variables)) {
     const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
     const escapedValueForHtml = escapeHtml(value);
-    subject = subject.replace(pattern, value);
+    const safeValue = value.replace(/[\r\n]/g, '');
+    subject = subject.replace(pattern, safeValue);
     html = html.replace(pattern, escapedValueForHtml);
     text = text.replace(pattern, value);
   }

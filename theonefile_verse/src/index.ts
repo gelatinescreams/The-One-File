@@ -214,6 +214,8 @@ function getSecurityHeaders(isAdminPage: boolean = false): Record<string, string
 
   if (isAdminPage) {
     headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
+  } else {
+    headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'";
   }
 
   return headers;
@@ -343,8 +345,13 @@ function needsAdminMigration(): boolean {
 
 async function verifyAdminPassword(password: string): Promise<boolean> {
   if (ENV_ADMIN_PASSWORD) {
-    if (password.length !== ENV_ADMIN_PASSWORD.length) return false;
-    return crypto.timingSafeEqual(Buffer.from(password), Buffer.from(ENV_ADMIN_PASSWORD));
+    const maxLen = Math.max(password.length, ENV_ADMIN_PASSWORD.length);
+    const padded = Buffer.alloc(maxLen, 0);
+    const expected = Buffer.alloc(maxLen, 0);
+    Buffer.from(password).copy(padded);
+    Buffer.from(ENV_ADMIN_PASSWORD).copy(expected);
+    const match = crypto.timingSafeEqual(padded, expected);
+    return match && password.length === ENV_ADMIN_PASSWORD.length;
   }
   const config = loadAdminConfig();
   if (!config) return false;
@@ -1980,7 +1987,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
     function showAuthStatus(msg,type){const el=document.getElementById('auth-status');el.innerHTML='<div class="status-msg '+type+'">'+msg+'</div>';setTimeout(()=>el.innerHTML='',3000)}
     async function loadOidcProviders(){try{const res=await fetch('/api/admin/oidc-providers');if(!res.ok)return;const data=await res.json();oidcProviders=data.providers||[];renderOidcProviders()}catch{}}
     function renderOidcProviders(){const el=document.getElementById('oidc-provider-list');if(!oidcProviders||oidcProviders.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No OIDC providers configured</p>';return}
-    el.innerHTML=oidcProviders.map(p=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+p.name+'</div><div style="font-size:12px;color:var(--text-soft)">'+p.providerType+' | '+(p.isActive?'<span style="color:#22c55e">Active</span>':'<span style="color:#94a3b8">Inactive</span>')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="editOidcProvider(\\''+p.id+'\\')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteOidcProvider(\\''+p.id+'\\')">Delete</button></div></div>').join('')}
+    el.innerHTML=oidcProviders.map(p=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+esc(p.name)+'</div><div style="font-size:12px;color:var(--text-soft)">'+esc(p.providerType)+' | '+(p.isActive?'<span style="color:#22c55e">Active</span>':'<span style="color:#94a3b8">Inactive</span>')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="editOidcProvider(\\''+p.id+'\\')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteOidcProvider(\\''+p.id+'\\')">Delete</button></div></div>').join('')}
     function showAddOidcProvider(){document.getElementById('oidc-modal-title').textContent='Add OIDC Provider';document.getElementById('oidc-edit-id').value='';document.getElementById('oidc-name').value='';document.getElementById('oidc-type').value='generic';document.getElementById('oidc-client-id').value='';document.getElementById('oidc-client-secret').value='';document.getElementById('oidc-issuer').value='';document.getElementById('oidc-auth-url').value='';document.getElementById('oidc-token-url').value='';document.getElementById('oidc-userinfo-url').value='';document.getElementById('oidc-scopes').value='openid email profile';document.getElementById('oidc-active').checked=true;document.getElementById('oidc-modal').classList.add('active')}
     function editOidcProvider(id){const p=oidcProviders.find(x=>x.id===id);if(!p)return;document.getElementById('oidc-modal-title').textContent='Edit OIDC Provider';document.getElementById('oidc-edit-id').value=id;document.getElementById('oidc-name').value=p.name;document.getElementById('oidc-type').value=p.providerType;document.getElementById('oidc-client-id').value=p.clientId;document.getElementById('oidc-client-secret').value='';document.getElementById('oidc-issuer').value=p.issuerUrl||'';document.getElementById('oidc-auth-url').value=p.authorizationUrl||'';document.getElementById('oidc-token-url').value=p.tokenUrl||'';document.getElementById('oidc-userinfo-url').value=p.userinfoUrl||'';document.getElementById('oidc-scopes').value=p.scopes||'openid email profile';document.getElementById('oidc-active').checked=p.isActive;document.getElementById('oidc-modal').classList.add('active')}
     function closeOidcModal(){document.getElementById('oidc-modal').classList.remove('active')}
@@ -2565,7 +2572,7 @@ const server = Bun.serve({
 
     const corsHeaders = {
       "Access-Control-Allow-Origin": allowedOrigin,
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Access-Control-Allow-Credentials": "true",
       ...securityHeaders
@@ -3832,6 +3839,9 @@ const server = Bun.serve({
         if (!file) {
           return Response.json({ error: "No file provided" }, { status: 400, headers: corsHeaders });
         }
+        if (file.size > 50 * 1024 * 1024) {
+          return Response.json({ error: "File too large. Maximum size is 50MB." }, { status: 400, headers: corsHeaders });
+        }
         const html = await file.text();
         const validationResult = validateTheOneFileHtml(html);
         if (!validationResult.valid) {
@@ -4482,7 +4492,7 @@ ${saveHookScript}
       if (msg.type === 'chat') {
         if (!msg.text || typeof msg.text !== 'string') return;
         if (msg.text.length > 500) msg.text = msg.text.substring(0, 500);
-        msg.text = msg.text.replace(/[<>]/g, '');
+        msg.text = msg.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
       }
 
       if (msg.type === 'join' && msg.user) {
@@ -4499,7 +4509,7 @@ ${saveHookScript}
 
         let rawName = msg.user.name;
         if (rawName && typeof rawName === 'string') {
-          rawName = rawName.substring(0, 30).replace(/[<>]/g, '').trim();
+          rawName = rawName.substring(0, 30).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').trim();
           msg.user.name = rawName;
         }
         const userName = rawName?.toLowerCase().trim();

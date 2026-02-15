@@ -17,7 +17,10 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
   const encoder = new TextEncoder();
   const data = encoder.encode(password + "theonefile-collab-salt-v1");
   const legacyHash = await crypto.subtle.digest("SHA-256", data);
-  return Buffer.from(legacyHash).toString("hex") === hash;
+  const computed = Buffer.from(Buffer.from(legacyHash).toString("hex"));
+  const stored = Buffer.from(hash);
+  if (computed.length !== stored.length) return false;
+  return crypto.timingSafeEqual(computed, stored);
 }
 
 export function isLegacyHash(hash: string): boolean {
@@ -85,7 +88,7 @@ export async function registerUser(
 
   const existing = db.getUserByEmail(normalizedEmail);
   if (existing) {
-    return { success: false, error: "Email already registered" };
+    return { success: false, error: "Registration failed. Please try again or use a different email." };
   }
 
   const authSettings = oidc.getAuthSettings();
@@ -152,7 +155,7 @@ export async function loginWithPassword(
   }
 
   if (!user.isActive) {
-    return { success: false, error: "Account is disabled" };
+    return { success: false, error: "Invalid email or password" };
   }
 
   if (user.lockedUntil) {
@@ -662,7 +665,7 @@ export async function adminCreateUser(
 
   const existing = db.getUserByEmail(email);
   if (existing) {
-    return { success: false, error: "Email already registered" };
+    return { success: false, error: "Registration failed. Please try again or use a different email." };
   }
 
   const userId = crypto.randomUUID();
