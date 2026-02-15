@@ -712,7 +712,7 @@ const setupPageHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
+          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -954,7 +954,7 @@ const userLoginHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
+          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -1058,7 +1058,7 @@ const userRegisterHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
+          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
           container.appendChild(btn);
         });
@@ -2083,7 +2083,7 @@ const adminLoginHtml = `<!DOCTYPE html>
           const btn=document.createElement('button');
           btn.type='button';
           btn.className='oidc-btn';
-          if(p.iconUrl&&/^https?:\/\//.test(p.iconUrl)){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
+          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
           btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login?redirect=/admin';
           container.appendChild(btn);
         });
