@@ -1,5 +1,21 @@
 ### TheOneFile_Verse changelog
 
+**2/14/26 Theonefile_verse 1.5.2** *Auth flow fixes, error logging, version tracking*
+* **Auth Flow Fixes**
+  * Fixed setup page JavaScript SyntaxError that prevented form submission
+  * Fixed missing SetCookie header on /api/setup route
+  * Fixed password reset form variable shadowing window.confirm
+  * Added defensive semicolons to OIDC button rendering across all forms
+* **Error Logging**
+  * All server side catch blocks now log errors with tagged prefixes
+  * Tags: [Setup], [Login], [Register], [AdminLogin], [API], [Backup], [Update], etc.
+* **Infrastructure**
+  * Docker entrypoint now handles volume permissions automatically via su exec
+  * Database migrations use safe column existence check before ALTER TABLE (BUN FIX)
+  * Added /api/version endpoint for build verification
+  * Version displayed in startup logs
+  * CSRF cookie now includes HttpOnly flag
+
 **2/14/26 Theonefile_verse 1.5.1** *Fixes and further security hardening*
 * **OIDC/SSO**
   * JWT signature verification now correctly maps hash algorithms (SHA 256/384/512) per token header

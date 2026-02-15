@@ -1,13 +1,13 @@
 #### CHANGE LOG
 
-### Version 4.1.3 /\ 2-14-26 Styles, bugs and TheOneFile_Verse 1.5.1
+### Version 4.1.3 /\ 2-14-26 Styles, bugs and TheOneFile_Verse 1.5.2
 * Fixed an issue where scrolling down on modals was not possible on some mobile environments
 * Fixed an issue where draw and add connection buttons would show at inverse times
 * Fixed an issue where the draw button would dissapear on mobile in some rare cases during import
 * Fixed an issue where JSON import was not working in networkening edition
 * Fixed one (1) missing and incorrect language keys from networkening edition
 * **New Demo**
-* **TheOneFile_Verse 1.5.1** Fixes and further security hardening
+* **TheOneFile_Verse 1.5.2** Auth flow fixes, error logging, version tracking
   * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full details
 
 ### Version 4.1.2 /\ 1-12-26 Image support, Notes Enhancements and Squashing Bugs

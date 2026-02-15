@@ -5,7 +5,9 @@ import * as redis from "./redis";
 import * as auth from "./auth";
 import * as oidc from "./oidc";
 import * as mailer from "./mailer";
+import pkg from "../package.json";
 
+const APP_VERSION = pkg.version || "unknown";
 const PORT = parseInt(process.env.PORT || "10101");
 const DATA_DIR = process.env.DATA_DIR || "./data";
 const ROOMS_DIR = join(DATA_DIR, "rooms");
@@ -4034,6 +4036,10 @@ const server = Bun.serve({
       return new Response(JSON.stringify(exportData, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="theonefile_export_${new Date().toISOString().slice(0, 10)}.json"`, ...securityHeaders } });
     }
 
+    if (path === "/api/version" && req.method === "GET") {
+      return Response.json({ version: APP_VERSION }, { headers: corsHeaders });
+    }
+
     if (path === "/api/theme" && req.method === "GET") {
       const authSettings = oidc.getAuthSettings();
       return Response.json({
@@ -4634,7 +4640,7 @@ for (const admin of adminUsers) {
   }
 }
 
-console.log(`TheOneFile Collab running on http://localhost:${PORT}`);
+console.log(`TheOneFile Verse v${APP_VERSION} | http://localhost:${PORT}`);
 if (ENV_ADMIN_PASSWORD) console.log(`Instance password lock: ENV`);
 else if (isInstanceLocked()) console.log(`Instance password lock: Settings`);
 if (instanceSettings.skipUpdates) console.log(`Auto updates: Disabled`);
