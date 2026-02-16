@@ -47,6 +47,7 @@ const WS_RATE_LIMITS = {
   state: { bucketSize: 10, refillRate: 2 },
   chat: { bucketSize: 5, refillRate: 1 },
   cursor: { bucketSize: 30, refillRate: 15 },
+  typing: { bucketSize: 5, refillRate: 1 },
   presence: { bucketSize: 20, refillRate: 5 },
   default: { bucketSize: 20, refillRate: 5 }
 };
@@ -2197,6 +2198,7 @@ const roomMeta: Map<string, RoomMeta> = new Map();
 const roomConnections: Map<string, Set<any>> = new Map();
 const roomUsers: Map<string, Map<string, any>> = new Map();
 const roomUsedNames: Map<string, Map<string, string>> = new Map();
+const roomChatHistory: Map<string, any[]> = new Map();
 
 async function hashPassword(password: string): Promise<string> {
   return await Bun.password.hash(password, {
@@ -2239,6 +2241,7 @@ function deleteRoomData(id: string): boolean {
   if (result) {
     roomMeta.delete(id);
     roomUsedNames.delete(id);
+    roomChatHistory.delete(id);
     if (redis.isRedisConnected()) {
       redis.deleteRoomStateCache(id);
     }
@@ -4477,7 +4480,7 @@ ${saveHookScript}
       let msg;
       try { msg = JSON.parse(message.toString()); } catch { return; }
 
-      const validTypes = ['join', 'leave', 'presence', 'state', 'patch', 'chat', 'cursor'];
+      const validTypes = ['join', 'leave', 'presence', 'state', 'patch', 'chat', 'cursor', 'typing'];
       if (!msg.type || !validTypes.includes(msg.type)) return;
 
       if (!checkWsRateLimit(connectionId, msg.type)) {
@@ -4493,6 +4496,10 @@ ${saveHookScript}
         if (!msg.text || typeof msg.text !== 'string') return;
         if (msg.text.length > 500) msg.text = msg.text.substring(0, 500);
         msg.text = msg.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        if (!roomChatHistory.has(roomId)) roomChatHistory.set(roomId, []);
+        const history = roomChatHistory.get(roomId)!;
+        history.push({ ...msg, timestamp: Date.now() });
+        if (history.length > 100) history.splice(0, history.length - 100);
       }
 
       if (msg.type === 'join' && msg.user) {
@@ -4546,6 +4553,10 @@ ${saveHookScript}
             ws.send(JSON.stringify({ type: 'initial-state', state: room.topology }));
           } else {
             ws.send(JSON.stringify({ type: 'initial-state', state: null }));
+          }
+          const chatHistory = roomChatHistory.get(roomId);
+          if (chatHistory && chatHistory.length > 0) {
+            ws.send(JSON.stringify({ type: 'chat-history', messages: chatHistory }));
           }
           db.addActivityLog({ timestamp: new Date().toISOString(), roomId, userId, userName: rawName, eventType: "join" });
           if (redis.isRedisConnected()) {

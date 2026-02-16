@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.5.2-blue" alt="Docker Version 1.5.2">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.6.0-blue" alt="Docker Version 1.6.0">
   </a>
 </p>
 
@@ -15,6 +15,11 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 *TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to create, edit and share together!
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
+
+### TheOneFile_Verse 1.6.0
+* **TheOneFile_Verse 1.6.0** Security hardening, chat overhaul, UX improvements
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full details
+
 
 ### Version 4.1.3 /\ 2-14-26 Styles, bugs and TheOneFile_Verse 1.5.2
 * **The One File Core + Networkening 4.1.3** Mobile style fixes and a few bugs squashed

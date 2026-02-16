@@ -1,5 +1,42 @@
 ### TheOneFile_Verse changelog
 
+**2/15/26 Theonefile_verse 1.6.0** *Security hardening, chat overhaul, UX improvements*
+* **Security Hardening**
+  * Timing safe comparison for legacy password hashes using crypto.timingSafeEqual
+  * Length padded admin password comparison to prevent length oracle attacks
+  * Full HTML entity escaping on chat messages and usernames (& < > " ')
+  * Content Security Policy headers applied to all pages
+  * OIDC provider name/type XSS protection with esc() in admin panel
+  * PUT method added to CORS allowed methods
+  * 50MB file upload size limit enforced before processing
+  * Generic error messages on registration and disabled accounts to prevent user enumeration
+  * CRLF injection prevention in all email headers (from, to, subject)
+  * STARTTLS downgrade now throws error instead of continuing in plaintext
+  * Template subject variable CRLF sanitization
+
+* **Chat System Overhaul**
+  * Chat message persistence sffrf
+  * Typing indicators with "user is typing" display
+  * Message replies with quoted reference
+  * @mention highlighting with notification sound
+  * 500 character counter with visual warning
+  * Emoji picker with most common emojis
+  * Relative timestamps (2m ago, 1h ago)
+
+* **UX Improvements**
+  * iOS safe area inset support on collab bar, modals, toasts
+  * User avatars with colored initials in user list
+  * Connection status indicator (green/yellow/red dot with pulse)
+  * Offline/reconnecting banner with manual reconnect button
+  * Stacking notification toasts with slide animations
+  * Full screen mobile chat at 640px breakpoint
+  * Smooth CSS transitions on remote cursors
+  * Room expiry countdown display for auto destruct rooms
+
+* **Server**
+  * Typing message type with dedicated rate limit (5 bucket, 1/sec refill)
+  * Chat history cleanup on room deletion
+
 **2/14/26 Theonefile_verse 1.5.2** *Auth flow fixes, error logging, version tracking*
 * **Auth Flow Fixes**
   * Fixed setup page JavaScript SyntaxError that prevented form submission
