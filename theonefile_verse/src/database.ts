@@ -98,6 +98,18 @@ db.exec(`
 `);
 
 db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_activity_logs_room_timestamp ON activity_logs(room_id, timestamp DESC)
+`);
+
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_rooms_last_activity ON rooms(last_activity)
+`);
+
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_rooms_creator ON rooms(creator_id)
+`);
+
+db.exec(`
   CREATE TABLE IF NOT EXISTS api_keys (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -144,6 +156,11 @@ db.exec(`CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)`);
 
 migrateAddColumn("users", "failed_login_attempts", "INTEGER NOT NULL DEFAULT 0");
 migrateAddColumn("users", "locked_until", "TEXT");
+migrateAddColumn("users", "totp_secret", "TEXT");
+migrateAddColumn("users", "totp_enabled", "INTEGER NOT NULL DEFAULT 0");
+migrateAddColumn("users", "totp_backup_codes", "TEXT");
+migrateAddColumn("users", "pending_email", "TEXT");
+migrateAddColumn("users", "pending_email_token", "TEXT");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS user_oidc_links (
@@ -193,6 +210,7 @@ db.exec(`
 
 db.exec(`CREATE INDEX IF NOT EXISTS idx_user_tokens_hash ON user_tokens(token_hash)`);
 db.exec(`CREATE INDEX IF NOT EXISTS idx_user_tokens_user ON user_tokens(user_id)`);
+migrateAddColumn("user_tokens", "failed_attempts", "INTEGER NOT NULL DEFAULT 0");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS smtp_configs (
@@ -402,6 +420,11 @@ export interface User {
   isActive: boolean;
   failedLoginAttempts: number;
   lockedUntil: string | null;
+  totpSecret: string | null;
+  totpEnabled: boolean;
+  totpBackupCodes: string | null;
+  pendingEmail: string | null;
+  pendingEmailToken: string | null;
 }
 
 export interface UserOidcLink {
@@ -429,11 +452,12 @@ export interface UserSession {
 export interface UserToken {
   id: string;
   userId: string;
-  type: 'email_verify' | 'password_reset' | 'magic_link';
+  type: 'email_verify' | 'password_reset' | 'magic_link' | 'totp_pending' | 'email_change';
   tokenHash: string;
   expiresAt: string;
   usedAt: string | null;
   createdAt: string;
+  failedAttempts: number;
 }
 
 export interface SmtpConfig {
@@ -974,7 +998,7 @@ const stmtInsertUser = db.prepare(`
 const stmtGetUserById = db.prepare(`SELECT * FROM users WHERE id = ?`);
 const stmtGetUserByEmail = db.prepare(`SELECT * FROM users WHERE email = ? COLLATE NOCASE`);
 const stmtUpdateUser = db.prepare(`
-  UPDATE users SET email = ?, email_verified = ?, display_name = ?, avatar_url = ?, password_hash = ?, role = ?, updated_at = ?, last_login = ?, is_active = ?, failed_login_attempts = ?, locked_until = ?
+  UPDATE users SET email = ?, email_verified = ?, display_name = ?, avatar_url = ?, password_hash = ?, role = ?, updated_at = ?, last_login = ?, is_active = ?, failed_login_attempts = ?, locked_until = ?, totp_secret = ?, totp_enabled = ?, totp_backup_codes = ?, pending_email = ?, pending_email_token = ?
   WHERE id = ?
 `);
 const stmtIncrementFailedLogin = db.prepare(`UPDATE users SET failed_login_attempts = failed_login_attempts + 1, updated_at = ? WHERE id = ?`);
@@ -1002,7 +1026,12 @@ function rowToUser(row: any): User | null {
     lastLogin: row.last_login,
     isActive: row.is_active === 1,
     failedLoginAttempts: row.failed_login_attempts || 0,
-    lockedUntil: row.locked_until
+    lockedUntil: row.locked_until,
+    totpSecret: row.totp_secret || null,
+    totpEnabled: row.totp_enabled === 1,
+    totpBackupCodes: row.totp_backup_codes || null,
+    pendingEmail: row.pending_email || null,
+    pendingEmailToken: row.pending_email_token || null
   };
 }
 
@@ -1025,7 +1054,10 @@ export function updateUser(user: User): void {
   stmtUpdateUser.run(
     user.email, user.emailVerified ? 1 : 0, user.displayName, user.avatarUrl, user.passwordHash,
     user.role, user.updatedAt, user.lastLogin, user.isActive ? 1 : 0,
-    user.failedLoginAttempts, user.lockedUntil, user.id
+    user.failedLoginAttempts, user.lockedUntil,
+    user.totpSecret, user.totpEnabled ? 1 : 0, user.totpBackupCodes,
+    user.pendingEmail, user.pendingEmailToken,
+    user.id
   );
 }
 
@@ -1064,6 +1096,12 @@ export function countUsersByRole(role: string): number {
 
 export function listUsersByRole(role: string): User[] {
   return (stmtListUsersByRole.all(role) as any[]).map(rowToUser).filter(u => u !== null) as User[];
+}
+
+const stmtVerifyAdminEmails = db.prepare(`UPDATE users SET email_verified = 1, updated_at = ? WHERE role = 'admin' AND email_verified = 0`);
+
+export function verifyAllAdminEmails(): number {
+  return stmtVerifyAdminEmails.run(new Date().toISOString()).changes;
 }
 
 
@@ -1132,6 +1170,8 @@ const stmtMarkUserTokenUsed = db.prepare(`UPDATE user_tokens SET used_at = ? WHE
 const stmtDeleteUserToken = db.prepare(`DELETE FROM user_tokens WHERE id = ?`);
 const stmtDeleteExpiredUserTokens = db.prepare(`DELETE FROM user_tokens WHERE expires_at < ?`);
 const stmtDeleteUserTokensByUser = db.prepare(`DELETE FROM user_tokens WHERE user_id = ? AND type = ?`);
+const stmtIncrementTokenFailedAttempts = db.prepare(`UPDATE user_tokens SET failed_attempts = failed_attempts + 1 WHERE id = ?`);
+const stmtGetTokenFailedAttempts = db.prepare(`SELECT failed_attempts FROM user_tokens WHERE id = ?`);
 
 function rowToUserToken(row: any): UserToken | null {
   if (!row) return null;
@@ -1142,7 +1182,8 @@ function rowToUserToken(row: any): UserToken | null {
     tokenHash: row.token_hash,
     expiresAt: row.expires_at,
     usedAt: row.used_at,
-    createdAt: row.created_at
+    createdAt: row.created_at,
+    failedAttempts: row.failed_attempts || 0
   };
 }
 
@@ -1156,6 +1197,12 @@ export function getUserTokenByHash(tokenHash: string): UserToken | null {
 
 export function markUserTokenUsed(id: string): void {
   stmtMarkUserTokenUsed.run(new Date().toISOString(), id);
+}
+
+export function incrementTokenFailedAttempts(id: string): number {
+  stmtIncrementTokenFailedAttempts.run(id);
+  const row = stmtGetTokenFailedAttempts.get(id) as any;
+  return row ? row.failed_attempts : 0;
 }
 
 export function deleteUserToken(id: string): boolean {

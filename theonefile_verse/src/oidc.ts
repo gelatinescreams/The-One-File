@@ -70,7 +70,7 @@ function base64UrlEncode(buffer: Uint8Array): string {
 }
 
 const ENCRYPTION_KEY_LENGTH = 32;
-const PBKDF2_ITERATIONS = 100000;
+const PBKDF2_ITERATIONS = 600000;
 const PBKDF2_SALT_LENGTH = 16;
 let encryptionKey: CryptoKey | null = null;
 
@@ -107,6 +107,18 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
     return new Uint8Array(hash);
   }
 
+  const authSettings = db.getSetting('authSettings');
+  const isProduction = authSettings ? JSON.parse(authSettings).productionMode : false;
+
+  if (isProduction) {
+    console.error('='.repeat(70));
+    console.error('[FATAL] ENCRYPTION_KEY environment variable is required in production mode.');
+    console.error('[FATAL] Set ENCRYPTION_KEY in your environment before starting the server.');
+    console.error('[FATAL] Generate one with: openssl rand -hex 32');
+    console.error('='.repeat(70));
+    process.exit(1);
+  }
+
   let keyHex = db.getSetting('encryption_key');
 
   if (!keyHex) {
@@ -117,9 +129,8 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
     console.warn('='.repeat(70));
     console.warn('[SECURITY WARNING] ENCRYPTION_KEY environment variable not set.');
     console.warn('[SECURITY WARNING] A random key has been generated and stored in the database.');
-    console.warn('[SECURITY WARNING] This means the encryption key lives alongside the encrypted data,');
-    console.warn('[SECURITY WARNING] defeating the purpose of encryption if the database is compromised.');
-    console.warn('[SECURITY WARNING] Set ENCRYPTION_KEY in your environment for production deployments.');
+    console.warn('[SECURITY WARNING] This is acceptable for development but NOT for production.');
+    console.warn('[SECURITY WARNING] Enable productionMode and set ENCRYPTION_KEY for production.');
     console.warn('='.repeat(70));
   }
 
@@ -382,7 +393,8 @@ export async function exchangeCodeForTokens(
     });
 
     if (!tokenRes.ok) {
-      logOidcError('Token exchange failed', await tokenRes.text());
+      const errText = await tokenRes.text();
+      logOidcError('Token exchange failed', errText.substring(0, 200).replace(/access_token[^&]*/gi, 'access_token=[REDACTED]').replace(/refresh_token[^&]*/gi, 'refresh_token=[REDACTED]'));
       return null;
     }
 
@@ -781,7 +793,14 @@ export async function processOidcCallback(
     createdAt: now,
     updatedAt: now,
     lastLogin: now,
-    isActive: true
+    isActive: true,
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    totpSecret: null,
+    totpEnabled: false,
+    totpBackupCodes: null,
+    pendingEmail: null,
+    pendingEmailToken: null
   };
 
   db.createUser(newUser);
@@ -936,7 +955,8 @@ export async function refreshOidcTokens(linkId: string): Promise<{
     });
 
     if (!tokenRes.ok) {
-      logOidcError('Token refresh failed', await tokenRes.text());
+      const errText = await tokenRes.text();
+      logOidcError('Token refresh failed', errText.substring(0, 200).replace(/access_token[^&]*/gi, 'access_token=[REDACTED]').replace(/refresh_token[^&]*/gi, 'refresh_token=[REDACTED]'));
       return { success: false, error: 'Token refresh failed' };
     }
 
@@ -1038,7 +1058,7 @@ export function getAuthSettings(): AuthSettings {
     allowGuestRoomCreation: true,
     allowGuestRoomJoin: true,
     allowRoomCreatorGuestSetting: true,
-    oidcEmailMatching: true,
+    oidcEmailMatching: false,
     requireEmailVerification: false,
     allowMagicLinkLogin: true,
     shareButtonEnabled: true,

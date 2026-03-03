@@ -4,7 +4,7 @@ RUN apk add --no-cache su-exec
 COPY package.json ./
 RUN bun install --production
 COPY src ./src
-COPY public/index.html public/collab.js public/collab.css ./public/
+COPY public/index.html public/collab.js public/collab.css public/landing.js public/admin-dashboard.js public/admin-auth.js public/admin-pages.js ./public/
 COPY entrypoint.sh ./
 RUN mkdir -p /app/data/rooms /app/data/backups /app/public && \
     addgroup -S appgroup && adduser -S appuser -G appgroup && \

@@ -1177,7 +1177,7 @@
           </div>
         </div>
         <div class="collab-chat-input-wrap">
-          <button class="collab-emoji-toggle" id="collab-emoji-toggle">&#9786;</button>
+          <button class="collab-emoji-toggle" id="collab-emoji-toggle">😊</button>
           <div class="collab-chat-input-inner">
             <input type="text" id="collab-chat-input" placeholder="Type a message..." maxlength="500" autocomplete="off">
             <div class="collab-chat-char-count" id="collab-char-count"></div>

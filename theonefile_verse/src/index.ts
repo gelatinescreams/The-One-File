@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync, readdirSync } from "fs";
+import { readFileSync, existsSync, mkdirSync } from "fs";
+import { unlink } from "fs/promises";
 import { join } from "path";
 import * as db from "./database";
 import * as redis from "./redis";
@@ -17,6 +18,8 @@ const SETTINGS_PATH = join(DATA_DIR, "settings.json");
 const ENV_UPDATE_INTERVAL = parseInt(process.env.UPDATE_INTERVAL || "0");
 const ENV_SKIP_UPDATE = process.env.SKIP_UPDATE === "true";
 const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
+const ENV_TRUSTED_PROXY_COUNT = process.env.TRUSTED_PROXY_COUNT ? parseInt(process.env.TRUSTED_PROXY_COUNT) : null;
+const ENV_TRUSTED_PROXIES = process.env.TRUSTED_PROXIES ? process.env.TRUSTED_PROXIES.split(",").map(s => s.trim()).filter(Boolean) : null;
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -36,6 +39,7 @@ interface RateLimitEntry {
   resetAt: number;
 }
 
+const MAX_RATE_LIMIT_ENTRIES = 10000;
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 interface WsTokenBucket {
@@ -52,6 +56,7 @@ const WS_RATE_LIMITS = {
   default: { bucketSize: 20, refillRate: 5 }
 };
 
+const MAX_WS_RATE_LIMIT_BUCKETS = 50000;
 const wsRateLimitBuckets = new Map<string, WsTokenBucket>();
 
 function checkWsRateLimit(connectionId: string, messageType: string): boolean {
@@ -85,6 +90,11 @@ setInterval(() => {
       wsRateLimitBuckets.delete(key);
     }
   }
+  if (wsRateLimitBuckets.size > MAX_WS_RATE_LIMIT_BUCKETS) {
+    const entries = [...wsRateLimitBuckets.entries()].sort((a, b) => a[1].lastRefill - b[1].lastRefill);
+    const toRemove = entries.length - Math.floor(MAX_WS_RATE_LIMIT_BUCKETS * 0.75);
+    for (let i = 0; i < toRemove; i++) wsRateLimitBuckets.delete(entries[i][0]);
+  }
 }, 30 * 1000);
 
 async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSettings): Promise<boolean> {
@@ -96,19 +106,15 @@ async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSe
     return await redis.checkRateLimitRedis(key, settings.rateLimitMaxAttempts, settings.rateLimitWindow);
   }
 
-  if (rateLimitStore.size > 10000) {
+  if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
     const now = Date.now();
     for (const [k, v] of rateLimitStore.entries()) {
       if (now > v.resetAt) rateLimitStore.delete(k);
     }
-    if (rateLimitStore.size > 10000) {
-      let removed = 0;
-      const target = rateLimitStore.size - 5000;
-      for (const [k] of rateLimitStore.entries()) {
-        if (removed >= target) break;
-        rateLimitStore.delete(k);
-        removed++;
-      }
+    if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
+      const entries = [...rateLimitStore.entries()].sort((a, b) => a[1].resetAt - b[1].resetAt);
+      const toRemove = entries.length - Math.floor(MAX_RATE_LIMIT_ENTRIES * 0.75);
+      for (let i = 0; i < toRemove; i++) rateLimitStore.delete(entries[i][0]);
     }
   }
 
@@ -200,23 +206,23 @@ setInterval(() => {
   db.cleanupEmailRateLimits(3600);
 }, 60 * 1000);
 
-function getSecurityHeaders(isAdminPage: boolean = false): Record<string, string> {
-  const authSettings = oidc.getAuthSettings();
+
+
+function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' = 'public'): Record<string, string> {
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
   };
 
-  if (authSettings.productionMode) {
-    headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";
-  }
-
-  if (isAdminPage) {
-    headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
+  if (pageType === 'admin') {
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
+  } else if (pageType === 'room') {
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
   } else {
-    headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'";
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
   }
 
   return headers;
@@ -226,8 +232,23 @@ const securityHeaders = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "X-XSS-Protection": "1; mode=block",
-  "Referrer-Policy": "strict-origin-when-cross-origin"
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Cache-Control": "no-store"
 };
+
+function serveHtml(html: string, pageType: 'admin' | 'public' | 'room' = 'public', req?: Request): Response {
+  const headers: Record<string, string> = { "Content-Type": "text/html; charset=utf-8", ...getSecurityHeaders(pageType), "Vary": "Accept-Encoding" };
+  if (req && html.length > 1024 && (req.headers.get('accept-encoding') || '').includes('gzip')) {
+    headers["Content-Encoding"] = "gzip";
+    return new Response(Bun.gzipSync(Buffer.from(html)), { headers });
+  }
+  return new Response(html, { headers });
+}
+
+function apiError(e: any, corsHeaders: Record<string, string>, message = "Invalid request", status = 400): Response {
+  console.error("[API]", e.message);
+  return Response.json({ error: message }, { status, headers: corsHeaders });
+}
 
 interface AdminConfig {
   passwordHash: string;
@@ -318,6 +339,8 @@ let instanceSettings = loadSettings();
 
 if (ENV_SKIP_UPDATE) instanceSettings.skipUpdates = true;
 if (ENV_UPDATE_INTERVAL > 0) instanceSettings.updateIntervalHours = ENV_UPDATE_INTERVAL;
+if (ENV_TRUSTED_PROXY_COUNT !== null) instanceSettings.trustedProxyCount = ENV_TRUSTED_PROXY_COUNT;
+if (ENV_TRUSTED_PROXIES !== null) instanceSettings.trustedProxies = ENV_TRUSTED_PROXIES;
 
 function loadAdminConfig(): AdminConfig | null {
   const hash = db.getSetting("admin_password_hash");
@@ -430,12 +453,18 @@ async function validateWsSessionToken(token: string, roomId: string): Promise<{ 
   return { valid: true, collabUserId: tokenData.collabUserId };
 }
 
+const MAX_WS_SESSION_TOKENS = 50000;
 setInterval(() => {
   const now = Date.now();
   for (const [token, data] of WS_SESSION_TOKENS.entries()) {
     if (now > data.expiresAt) {
       WS_SESSION_TOKENS.delete(token);
     }
+  }
+  if (WS_SESSION_TOKENS.size > MAX_WS_SESSION_TOKENS) {
+    const entries = [...WS_SESSION_TOKENS.entries()].sort((a, b) => a[1].createdAt - b[1].createdAt);
+    const toRemove = entries.length - Math.floor(MAX_WS_SESSION_TOKENS * 0.75);
+    for (let i = 0; i < toRemove; i++) WS_SESSION_TOKENS.delete(entries[i][0]);
   }
 }, 60 * 1000);
 
@@ -504,7 +533,30 @@ function getUserTokenFromRequest(req: Request): string | null {
   return null;
 }
 
+function validateRequestCsrf(req: Request, body?: any): boolean {
+  const headerToken = req.headers.get("x-csrf-token");
+  const bodyToken = body?.csrfToken;
+  const token = headerToken || bodyToken;
+  if (token && oidc.validateCsrfToken(token)) return true;
+  const origin = req.headers.get("origin");
+  const reqUrl = new URL(req.url);
+  if (origin) return origin === reqUrl.origin;
+  const referer = req.headers.get("referer");
+  if (referer) {
+    try { return new URL(referer).origin === reqUrl.origin; } catch { return false; }
+  }
+  return false;
+}
+
+function csrfReject(corsHeaders: Record<string, string>): Response {
+  return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
+}
+
 async function validateAdminUser(req: Request): Promise<db.User | null> {
+  const method = req.method;
+  if (method === "POST" || method === "PUT" || method === "DELETE") {
+    if (!validateRequestCsrf(req)) return null;
+  }
   const token = getUserTokenFromRequest(req);
   if (!token) return null;
   const user = await oidc.validateUserSessionToken(token);
@@ -599,14 +651,14 @@ async function createBackup(autoGenerated: boolean = false): Promise<{ id: strin
     const settings = db.getAllSettings();
     const backupData = { version: 1, timestamp: new Date().toISOString(), rooms, settings };
     const content = JSON.stringify(backupData, null, 2);
-    writeFileSync(join(BACKUPS_DIR, filename), content);
+    await Bun.write(join(BACKUPS_DIR, filename), content);
     const size = content.length;
     db.createBackupRecord({ id, filename, createdAt: new Date().toISOString(), sizeBytes: size, roomCount: rooms.length, autoGenerated });
     if (autoGenerated && instanceSettings.backupRetentionCount > 0) {
       const oldBackups = db.getOldAutoBackups(instanceSettings.backupRetentionCount);
       for (const backup of oldBackups) {
         const backupPath = join(BACKUPS_DIR, backup.filename);
-        if (existsSync(backupPath)) unlinkSync(backupPath);
+        try { await unlink(backupPath); } catch {}
         db.deleteBackupRecord(backup.id);
       }
     }
@@ -619,9 +671,10 @@ async function restoreBackup(backupId: string): Promise<{ success: boolean; erro
   const backup = backups.find(b => b.id === backupId);
   if (!backup) return { success: false, error: "Backup not found" };
   const backupPath = join(BACKUPS_DIR, backup.filename);
-  if (!existsSync(backupPath)) return { success: false, error: "Backup file missing" };
+  const backupFile = Bun.file(backupPath);
+  if (!await backupFile.exists()) return { success: false, error: "Backup file missing" };
   try {
-    const content = readFileSync(backupPath, "utf-8");
+    const content = await backupFile.text();
     const data = JSON.parse(content);
     if (!data.rooms || !Array.isArray(data.rooms)) return { success: false, error: "Invalid backup format" };
     let roomsRestored = 0;
@@ -671,9 +724,10 @@ const setupPageHtml = `<!DOCTYPE html>
   <title>Setup - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .setup-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:450px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     .subtitle{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -690,9 +744,11 @@ const setupPageHtml = `<!DOCTYPE html>
     .oidc-btn:hover{background:var(--bg-alt)}
     .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--text-soft);font-size:12px}
     .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="setup">
   <div class="setup-box">
     <h1>Welcome to The One File Collab</h1>
     <p class="subtitle">Create your admin account to get started</p>
@@ -710,40 +766,8 @@ const setupPageHtml = `<!DOCTYPE html>
       <button type="submit" id="submit-btn">Create Admin Account</button>
     </form>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    fetch('/api/auth/providers').then(r=>r.json()).then(providers=>{
-      if(providers.length>0){
-        document.getElementById('divider').style.display='flex';
-        const container=document.getElementById('oidc-buttons');
-        providers.forEach(p=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.className='oidc-btn';
-          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
-          btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
-          container.appendChild(btn);
-        });
-      }
-    }).catch(()=>{});
-    document.getElementById('setup-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const error=document.getElementById('error');
-      error.classList.remove('active');
-      const email=document.getElementById('email').value;
-      const pwd=document.getElementById('password').value;
-      const confirmVal=document.getElementById('confirm').value;
-      if(!email||!email.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      if(pwd.length<8){error.textContent='Password must be at least 8 characters';error.classList.add('active');return}
-      if(pwd!==confirmVal){error.textContent='Passwords do not match';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/setup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:pwd})});
-        const d=await res.json();
-        if(res.ok&&d.success){window.location.href='/admin'}
-        else{error.textContent=d.error||'Setup failed';error.classList.add('active')}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -755,9 +779,10 @@ const migrationPageHtml = `<!DOCTYPE html>
   <title>Migrate Admin - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .setup-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:450px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     .subtitle{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -769,9 +794,11 @@ const migrationPageHtml = `<!DOCTYPE html>
     button:hover{background:var(--accent-hover)}
     .error{color:#ef4444;font-size:14px;text-align:center;margin-bottom:16px;display:none}
     .error.active{display:block}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="migration">
   <div class="setup-box">
     <h1>Migrate to User Account</h1>
     <p class="subtitle">Convert your admin password to a user account</p>
@@ -779,29 +806,16 @@ const migrationPageHtml = `<!DOCTYPE html>
     <div class="error" id="error"></div>
     <form id="migrate-form">
       <label for="old-password">Current Admin Password</label>
-      <input type="password" id="old-password" placeholder="Your existing admin password" autofocus>
+      <input type="password" id="old-password" placeholder="Your existing admin password" autocomplete="current-password" autofocus>
       <label for="email">Email for Admin Account</label>
       <input type="email" id="email" placeholder="admin@example.com" autocomplete="email">
       <label for="new-password">New Password (optional)</label>
-      <input type="password" id="new-password" placeholder="Leave blank to keep current password">
+      <input type="password" id="new-password" placeholder="Leave blank to keep current password" autocomplete="new-password">
       <button type="submit">Migrate Account</button>
     </form>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    const oldPwd=document.getElementById('old-password'),email=document.getElementById('email'),newPwd=document.getElementById('new-password'),error=document.getElementById('error');
-    document.getElementById('migrate-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();error.classList.remove('active');
-      if(!oldPwd.value){error.textContent='Please enter your current admin password';error.classList.add('active');return}
-      if(!email.value||!email.value.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/admin/migrate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({oldPassword:oldPwd.value,email:email.value,newPassword:newPwd.value||null})});
-        const d=await res.json();
-        if(res.ok&&d.success){window.location.href='/admin'}
-        else{error.textContent=d.error||'Migration failed';error.classList.add('active')}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -813,9 +827,10 @@ const loginPageHtml = `<!DOCTYPE html>
   <title>Login - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -825,9 +840,11 @@ const loginPageHtml = `<!DOCTYPE html>
     button:hover{background:var(--accent-hover)}
     .error{color:#ef4444;font-size:14px;text-align:center;margin-bottom:16px;display:none}
     .error.active{display:block}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="login">
   <div class="login-box">
     <h1>The One File Collab</h1>
     <p>This instance requires a password</p>
@@ -837,18 +854,8 @@ const loginPageHtml = `<!DOCTYPE html>
       <button type="submit">Login</button>
     </form>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    document.getElementById('login-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const password=document.getElementById('password').value;
-      try{
-        const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
-        if(res.ok)window.location.reload();
-        else{document.getElementById('error').classList.add('active');document.getElementById('password').value=''}
-      }catch{document.getElementById('error').textContent='Connection error';document.getElementById('error').classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -860,9 +867,10 @@ const instanceLoginPageHtml = `<!DOCTYPE html>
   <title>Access - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -872,9 +880,11 @@ const instanceLoginPageHtml = `<!DOCTYPE html>
     button:hover{background:var(--accent-hover)}
     .error{color:#ef4444;font-size:14px;text-align:center;margin-bottom:16px;display:none}
     .error.active{display:block}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="instance-login">
   <div class="login-box">
     <h1>The One File Collab</h1>
     <p>This instance requires a password to access</p>
@@ -884,17 +894,8 @@ const instanceLoginPageHtml = `<!DOCTYPE html>
       <button type="submit">Access</button>
     </form>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    document.getElementById('login-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      try{
-        const res=await fetch('/api/instance-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:document.getElementById('password').value})});
-        if(res.ok)window.location.reload();
-        else{document.getElementById('error').classList.add('active');document.getElementById('password').value=''}
-      }catch{document.getElementById('error').textContent='Connection error';document.getElementById('error').classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -906,9 +907,10 @@ const userLoginHtml = `<!DOCTYPE html>
   <title>Login - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -928,9 +930,11 @@ const userLoginHtml = `<!DOCTYPE html>
     .oidc-btn:hover{background:var(--bg-alt)}
     .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--text-soft);font-size:12px}
     .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="user-login">
   <div class="login-box">
     <h1>Welcome Back</h1>
     <p>Sign in to your account</p>
@@ -950,40 +954,8 @@ const userLoginHtml = `<!DOCTYPE html>
       <a href="/auth/register">Create account</a>
     </div>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    let csrfToken='';
-    fetch('/api/auth/csrf').then(r=>r.json()).then(d=>{csrfToken=d.token}).catch(()=>{});
-    fetch('/api/auth/providers').then(r=>r.json()).then(providers=>{
-      if(providers.length>0){
-        document.getElementById('divider').style.display='flex';
-        const container=document.getElementById('oidc-buttons');
-        providers.forEach(p=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.className='oidc-btn';
-          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
-          btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
-          container.appendChild(btn);
-        });
-      }
-    }).catch(()=>{});
-    document.getElementById('login-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const error=document.getElementById('error');
-      error.classList.remove('active');
-      const email=document.getElementById('email').value;
-      const password=document.getElementById('password').value;
-      if(!email||!email.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      if(!password){error.textContent='Please enter your password';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,csrfToken})});
-        const d=await res.json();
-        if(res.ok&&d.success){const redirect=new URLSearchParams(window.location.search).get('redirect')||'/';window.location.href=redirect}
-        else{error.textContent=d.error||'Invalid credentials';error.classList.add('active');document.getElementById('password').value='';fetch('/api/auth/csrf').then(r=>r.json()).then(c=>{csrfToken=c.token}).catch(()=>{})}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -995,9 +967,10 @@ const userRegisterHtml = `<!DOCTYPE html>
   <title>Register - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -1027,9 +1000,11 @@ const userRegisterHtml = `<!DOCTYPE html>
     .password-strength-text.weak{color:#ef4444}
     .password-strength-text.medium{color:#f59e0b}
     .password-strength-text.strong{color:#22c55e}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="user-register">
   <div class="login-box">
     <h1>Create Account</h1>
     <p>Join The One File Collab</p>
@@ -1054,66 +1029,8 @@ const userRegisterHtml = `<!DOCTYPE html>
       Already have an account? <a href="/auth/login">Sign in</a>
     </div>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    let csrfToken='';
-    fetch('/api/auth/csrf').then(r=>r.json()).then(d=>{csrfToken=d.token}).catch(()=>{});
-    fetch('/api/auth/providers').then(r=>r.json()).then(providers=>{
-      if(providers.length>0){
-        document.getElementById('divider').style.display='flex';
-        const container=document.getElementById('oidc-buttons');
-        providers.forEach(p=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.className='oidc-btn';
-          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
-          btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login';
-          container.appendChild(btn);
-        });
-      }
-    }).catch(()=>{});
-    function checkPasswordStrength(pwd){
-      if(!pwd)return{strength:'',text:''};
-      let score=0;
-      if(pwd.length>=8)score++;
-      if(pwd.length>=12)score++;
-      if(/[a-z]/.test(pwd)&&/[A-Z]/.test(pwd))score++;
-      if(/[0-9]/.test(pwd))score++;
-      if(/[^a-zA-Z0-9]/.test(pwd))score++;
-      if(score<=2)return{strength:'weak',text:'Weak - Add more characters, numbers, or symbols'};
-      if(score<=3)return{strength:'medium',text:'Medium - Getting better, add more variety'};
-      return{strength:'strong',text:'Strong password'};
-    }
-    document.getElementById('password').addEventListener('input',(e)=>{
-      const{strength,text}=checkPasswordStrength(e.target.value);
-      const bar=document.getElementById('strength-bar');
-      const txt=document.getElementById('strength-text');
-      bar.className='password-strength-bar'+( strength?' '+strength:'');
-      txt.className='password-strength-text'+(strength?' '+strength:'');
-      txt.textContent=text;
-    });
-    document.getElementById('register-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const error=document.getElementById('error');
-      const success=document.getElementById('success');
-      error.classList.remove('active');success.classList.remove('active');
-      const email=document.getElementById('email').value;
-      const displayName=document.getElementById('displayName').value;
-      const password=document.getElementById('password').value;
-      const confirmPassword=document.getElementById('confirmPassword').value;
-      if(!email||!email.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      if(!password){error.textContent='Please enter a password';error.classList.add('active');return}
-      if(password!==confirmPassword){error.textContent='Passwords do not match';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,displayName:displayName||null,csrfToken})});
-        const d=await res.json();
-        if(res.ok){
-          if(d.requiresVerification){success.textContent='Account created! Please check your email to verify your account.';success.classList.add('active');document.getElementById('register-form').reset()}
-          else{window.location.href='/'}
-        }else{error.textContent=d.error||'Registration failed';error.classList.add('active');fetch('/api/auth/csrf').then(r=>r.json()).then(c=>{csrfToken=c.token}).catch(()=>{})}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -1125,9 +1042,10 @@ const userForgotPasswordHtml = `<!DOCTYPE html>
   <title>Forgot Password - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -1143,9 +1061,11 @@ const userForgotPasswordHtml = `<!DOCTYPE html>
     .links{text-align:center;margin-top:20px;font-size:14px}
     .links a{color:var(--accent);text-decoration:none}
     .links a:hover{text-decoration:underline}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="user-forgot-password">
   <div class="login-box">
     <h1>Reset Password</h1>
     <p>Enter your email to receive a reset link</p>
@@ -1160,23 +1080,8 @@ const userForgotPasswordHtml = `<!DOCTYPE html>
       <a href="/auth/login">Back to login</a>
     </div>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    document.getElementById('forgot-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const error=document.getElementById('error');
-      const success=document.getElementById('success');
-      error.classList.remove('active');success.classList.remove('active');
-      const email=document.getElementById('email').value;
-      if(!email||!email.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
-        const d=await res.json();
-        if(res.ok){success.textContent='If an account exists with this email, a reset link has been sent.';success.classList.add('active');document.getElementById('email').value=''}
-        else{error.textContent=d.error||'Failed to send reset email';error.classList.add('active')}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
@@ -1188,6 +1093,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
   <title>Admin - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a,.btn,.tab,.toggle,.room-checkbox,.modal-close{-webkit-tap-highlight-color:transparent}
     :root{
       --bg:#0d0d0d;
       --bg-alt:#1a1a1a;
@@ -1212,22 +1118,22 @@ const adminDashboardHtml = `<!DOCTYPE html>
       --accent-bg:rgba(153,107,31,0.1);
       --accent-bg-hover:rgba(153,107,31,0.15);
     }
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px;padding-bottom:80px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(80px,calc(80px + env(safe-area-inset-bottom,0px)))}
     .container{max-width:1200px;margin:0 auto}
     header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
     h1{font-size:24px;display:flex;align-items:center;gap:12px}
     .header-actions{display:flex;gap:8px;flex-wrap:wrap}
     .theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px}
     .theme-toggle:hover{background:var(--bg-alt)}
-    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px}
     .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-hover)}
     .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg-alt)}
     .btn-danger{background:#dc2626;color:white}.btn-danger:hover{background:#b91c1c}
     .btn-success{background:#22c55e;color:white}.btn-success:hover{background:#16a34a}
-    .btn-sm{padding:6px 12px;font-size:12px}
+    .btn-sm{padding:8px 12px;font-size:12px;min-height:44px}
     .btn:disabled{opacity:0.5;cursor:not-allowed}
     .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
-    .tab{padding:12px 20px;background:transparent;border:none;color:var(--text-soft);font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+    .tab{padding:12px 20px;background:transparent;border:none;color:var(--text-soft);font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;min-height:44px}
     .tab:hover{color:var(--text)}
     .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     .tab-content{display:none}
@@ -1242,8 +1148,8 @@ const adminDashboardHtml = `<!DOCTYPE html>
     .bulk-actions.active{display:flex}
     .selected-count{font-size:13px;color:var(--text-soft);padding:6px 12px;background:var(--surface);border-radius:6px}
     .room-list{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-    .room-header{display:grid;grid-template-columns:40px 1fr 100px 100px 80px 140px;padding:12px 16px;background:var(--bg-alt);font-size:12px;font-weight:600;color:var(--text-soft);text-transform:uppercase;gap:8px;align-items:center}
-    .room-row{display:grid;grid-template-columns:40px 1fr 100px 100px 80px 140px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;gap:8px;transition:background 0.15s}
+    .room-header{display:grid;grid-template-columns:40px 1fr 80px 100px 80px 200px;padding:12px 16px;background:var(--bg-alt);font-size:12px;font-weight:600;color:var(--text-soft);text-transform:uppercase;gap:8px;align-items:center}
+    .room-row{display:grid;grid-template-columns:40px 1fr 80px 100px 80px 200px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;gap:8px;transition:background 0.15s}
     .room-row:last-child{border-bottom:none}
     .room-row:hover{background:var(--accent-bg)}
     .room-row.selected{background:var(--accent-bg-hover)}
@@ -1254,7 +1160,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
     .badge-green{background:rgba(34,197,94,0.15);color:#22c55e}
     .badge-yellow{background:rgba(201,162,39,0.15);color:#c9a227}
     .badge-gray{background:rgba(100,116,139,0.15);color:#94a3b8}
-    .room-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .room-actions{display:flex;gap:6px;flex-wrap:nowrap}
     #user-list .room-header,#user-list .room-row{grid-template-columns:1fr 100px 120px 100px 140px}
     .empty-state{text-align:center;padding:60px 20px;color:var(--text-soft)}
     .empty-state h3{font-size:18px;margin-bottom:8px;color:var(--text)}
@@ -1270,14 +1176,15 @@ const adminDashboardHtml = `<!DOCTYPE html>
     .toggle.active{background:var(--accent)}
     .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:var(--text);border-radius:50%;transition:transform 0.2s}
     .toggle.active::after{transform:translateX(22px)}
-    input[type="text"],input[type="password"],input[type="number"],input[type="email"],select{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;min-width:120px}
+    .toggle::before{content:'';position:absolute;top:-9px;left:-4px;right:-4px;bottom:-9px}
+    input[type="text"],input[type="password"],input[type="number"],input[type="email"],select{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:16px;min-width:120px;min-height:44px}
     input:focus,select:focus{outline:none;border-color:var(--accent)}
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .modal-overlay.active{display:flex}
     .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px}
     .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
     .modal-header h3{font-size:18px}
-    .modal-close{background:none;border:none;color:var(--text-soft);font-size:24px;cursor:pointer;padding:4px}
+    .modal-close{background:none;border:none;color:var(--text-soft);font-size:24px;cursor:pointer;padding:4px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center}
     .modal-body{padding:20px}
     .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
     .info-row:last-child{border-bottom:none}
@@ -1286,8 +1193,10 @@ const adminDashboardHtml = `<!DOCTYPE html>
     .status-msg{padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px}
     .status-msg.success{background:rgba(34,197,94,0.15);color:#22c55e}
     .status-msg.error{background:rgba(239,68,68,0.15);color:#ef4444}
-    @media(max-width:900px){.room-header,.room-row{grid-template-columns:32px 1fr 80px 100px}.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 80px 100px}#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}}
-    @media(max-width:600px){body{padding:12px;padding-bottom:80px}header{flex-direction:column;align-items:flex-start}h1{font-size:20px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat-card{padding:12px}.stat-value{font-size:22px}.stat-label{font-size:11px}.room-header,.room-row{grid-template-columns:32px 1fr 90px}.room-header>*:nth-child(3),.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(3),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 90px}#user-list .room-header>*:nth-child(2),#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(2),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}.room-actions{justify-content:flex-end}.btn{padding:8px 12px;font-size:12px}.btn-sm{padding:6px 10px;font-size:11px}.section-header{flex-direction:column;align-items:flex-start}.bulk-actions{width:100%;justify-content:flex-start}.tabs{overflow-x:auto}.setting-row{flex-direction:column;align-items:flex-start}.setting-control{width:100%}}
+    .tabs,#email-log-list,#activity-log-list,#audit-log-list{-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{display:none}
+    @media(max-width:900px){.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch}.room-header,.room-row{grid-template-columns:32px 1fr 80px 170px}.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 80px 100px}#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}}
+    @media(max-width:640px){body{padding:12px;padding-left:max(12px,env(safe-area-inset-left,12px));padding-right:max(12px,env(safe-area-inset-right,12px));padding-bottom:max(80px,calc(80px + env(safe-area-inset-bottom,0px)))}header{flex-direction:column;align-items:flex-start}h1{font-size:20px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat-card{padding:12px}.stat-value{font-size:22px}.stat-label{font-size:11px}.room-header,.room-row{grid-template-columns:32px 1fr 140px}.room-header>*:nth-child(3),.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(3),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 100px}#user-list .room-header>*:nth-child(2),#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(2),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}.room-actions{justify-content:flex-end}.btn{padding:8px 12px;font-size:12px;min-height:44px}.btn-sm{padding:6px 10px;font-size:11px;min-height:44px}.section-header{flex-direction:column;align-items:flex-start}.bulk-actions{width:100%;justify-content:flex-start}.tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{padding:12px 16px;white-space:nowrap;min-height:44px}.setting-row{flex-direction:column;align-items:flex-start}.setting-control{width:100%}.setting-control input,.setting-control select{width:100%;max-width:none}}
   </style>
 </head>
 <body>
@@ -1295,31 +1204,31 @@ const adminDashboardHtml = `<!DOCTYPE html>
     <header>
       <h1>Admin Dashboard</h1>
       <div class="header-actions">
-        <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()"><span id="theme-icon"></span></button>
+        <button class="theme-toggle" id="theme-toggle" data-action="toggleTheme"><span id="theme-icon"></span></button>
         <a href="/" class="btn btn-secondary">Back to App</a>
-        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        <button class="btn btn-secondary" data-action="logout">Logout</button>
       </div>
     </header>
     <div class="tabs">
-      <button class="tab active" onclick="showTab('rooms')">Rooms</button>
-      <button class="tab" onclick="showTab('users')">Users</button>
-      <button class="tab" onclick="showTab('auth')">Authentication</button>
-      <button class="tab" onclick="showTab('settings')">Settings</button>
-      <button class="tab" onclick="showTab('logs')">Logs</button>
-      <button class="tab" onclick="showTab('backups')">Backups</button>
-      <button class="tab" onclick="showTab('apikeys')">API Keys</button>
+      <button class="tab active" data-action="showTab" data-tab="rooms">Rooms</button>
+      <button class="tab" data-action="showTab" data-tab="users">Users</button>
+      <button class="tab" data-action="showTab" data-tab="auth">Authentication</button>
+      <button class="tab" data-action="showTab" data-tab="settings">Settings</button>
+      <button class="tab" data-action="showTab" data-tab="logs">Logs</button>
+      <button class="tab" data-action="showTab" data-tab="backups">Backups</button>
+      <button class="tab" data-action="showTab" data-tab="apikeys">API Keys</button>
     </div>
     <div id="tab-rooms" class="tab-content active">
       <div class="stats" id="stats"></div>
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <h2 class="section-title">All Rooms</h2>
-          <input type="text" id="room-search" placeholder="Search rooms..." style="padding:8px 12px;width:200px" onkeyup="searchRooms(this.value)">
+          <input type="text" id="room-search" placeholder="Search rooms..." style="padding:8px 12px;width:100%;max-width:200px" data-action="searchRooms">
         </div>
         <div class="bulk-actions" id="bulk-actions">
           <span class="selected-count" id="selected-count">0 selected</span>
-          <button class="btn btn-danger btn-sm" onclick="deleteSelected()">Delete Selected</button>
-          <button class="btn btn-secondary btn-sm" onclick="clearSelection()">Clear</button>
+          <button class="btn btn-danger btn-sm" data-action="deleteSelected">Delete Selected</button>
+          <button class="btn btn-secondary btn-sm" data-action="clearSelection">Clear</button>
         </div>
       </div>
       <div class="room-list" id="room-list"></div>
@@ -1328,9 +1237,9 @@ const adminDashboardHtml = `<!DOCTYPE html>
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <h2 class="section-title">User Management</h2>
-          <input type="text" id="user-search" placeholder="Search users..." style="padding:8px 12px;width:200px" onkeyup="searchUsers(this.value)">
+          <input type="text" id="user-search" placeholder="Search users..." style="padding:8px 12px;width:100%;max-width:200px" data-action="searchUsers">
         </div>
-        <button class="btn btn-primary" onclick="showCreateUser()">Create User</button>
+        <button class="btn btn-primary" data-action="showCreateUser">Create User</button>
       </div>
       <div class="room-list" id="user-list"></div>
     </div>
@@ -1341,7 +1250,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Default Auth Mode</div><div class="setting-desc">How users can access the system</div></div>
           <div class="setting-control">
-            <select id="auth-mode" onchange="saveAuthSettings()">
+            <select id="auth-mode" data-action="saveAuthSettings">
               <option value="open">Open (Anyone can register)</option>
               <option value="registration">Registration Required</option>
               <option value="oidc_only">OIDC Only</option>
@@ -1352,60 +1261,60 @@ const adminDashboardHtml = `<!DOCTYPE html>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Require Email Verification</div><div class="setting-desc">Users must verify email before accessing</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-require-email-verify" onclick="toggleAuthSetting('requireEmailVerification')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-require-email-verify" data-action="toggleAuthSetting" data-setting="requireEmailVerification"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Allow Magic Link Login</div><div class="setting-desc">Users can login via email link</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-magic-link" onclick="toggleAuthSetting('allowMagicLinkLogin')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-magic-link" data-action="toggleAuthSetting" data-setting="allowMagicLinkLogin"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Match OIDC Emails</div><div class="setting-desc">Auto link OIDC accounts with matching email. <span style="color:#f59e0b">Only enable with trusted providers</span></div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-oidc-email-match" onclick="toggleAuthSetting('oidcEmailMatching')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-oidc-email-match" data-action="toggleAuthSetting" data-setting="oidcEmailMatching"></div></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>Security</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Production Mode</div><div class="setting-desc">Enable HTTPS secure cookies. <span style="color:#ef4444">Required for production</span></div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-production-mode" onclick="toggleAuthSetting('productionMode')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-production-mode" data-action="toggleAuthSetting" data-setting="productionMode"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">ID Token Max Age (hours)</div><div class="setting-desc">Maximum age for OIDC ID tokens before they are considered too old</div></div>
-          <div class="setting-control"><input type="number" id="input-id-token-max-age" min="1" max="168" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" onchange="updateAuthNumber('idTokenMaxAgeHours',this.value)"></div>
+          <div class="setting-control"><input type="number" id="input-id-token-max-age" min="1" max="168" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" data-action="updateAuthNumber" data-setting="idTokenMaxAgeHours"></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Email Rate Limit Window (seconds)</div><div class="setting-desc">Time window for email rate limiting</div></div>
-          <div class="setting-control"><input type="number" id="input-email-rate-window" min="60" max="3600" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" onchange="updateAuthNumber('emailRateLimitWindowSeconds',this.value)"></div>
+          <div class="setting-control"><input type="number" id="input-email-rate-window" min="60" max="3600" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" data-action="updateAuthNumber" data-setting="emailRateLimitWindowSeconds"></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Email Rate Limit Max Attempts</div><div class="setting-desc">Maximum email requests per address within window</div></div>
-          <div class="setting-control"><input type="number" id="input-email-rate-max" min="1" max="20" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" onchange="updateAuthNumber('emailRateLimitMaxAttempts',this.value)"></div>
+          <div class="setting-control"><input type="number" id="input-email-rate-max" min="1" max="20" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" data-action="updateAuthNumber" data-setting="emailRateLimitMaxAttempts"></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>Guest Access</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Allow Guest Room Creation</div><div class="setting-desc">Unregistered users can create rooms</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-guest-room-create" onclick="toggleAuthSetting('allowGuestRoomCreation')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-guest-room-create" data-action="toggleAuthSetting" data-setting="allowGuestRoomCreation"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Allow Guest Room Join</div><div class="setting-desc">Unregistered users can join rooms</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-guest-room-join" onclick="toggleAuthSetting('allowGuestRoomJoin')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-guest-room-join" data-action="toggleAuthSetting" data-setting="allowGuestRoomJoin"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Room Creator Guest Setting</div><div class="setting-desc">Let room creators choose guest access per room</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-room-creator-guest" onclick="toggleAuthSetting('allowRoomCreatorGuestSetting')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-room-creator-guest" data-action="toggleAuthSetting" data-setting="allowRoomCreatorGuestSetting"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Share Button</div><div class="setting-desc">Show share button in rooms</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-share-button" onclick="toggleAuthSetting('shareButtonEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-share-button" data-action="toggleAuthSetting" data-setting="shareButtonEnabled"></div></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>OIDC Providers</h3>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <p style="color:var(--text-soft);font-size:13px">Configure OpenID Connect providers for SSO</p>
-          <button class="btn btn-primary btn-sm" onclick="showAddOidcProvider()">Add Provider</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddOidcProvider">Add Provider</button>
         </div>
         <div id="oidc-provider-list"></div>
       </div>
@@ -1413,7 +1322,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <h3>SMTP Configuration</h3>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <p style="color:var(--text-soft);font-size:13px">Configure email delivery for verification and notifications</p>
-          <button class="btn btn-primary btn-sm" onclick="showAddSmtpConfig()">Add SMTP</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddSmtpConfig">Add SMTP</button>
         </div>
         <div id="smtp-config-list"></div>
       </div>
@@ -1423,7 +1332,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
       </div>
       <div class="settings-section">
         <h3>Email Logs</h3>
-        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="email-log-search" placeholder="Filter by email..." style="width:250px" onkeyup="loadEmailLogs()"><button class="btn btn-sm btn-secondary" onclick="clearEmailLogs()">Clear All</button></div>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="email-log-search" placeholder="Filter by email..." style="width:100%;max-width:250px" data-action="loadEmailLogs"><button class="btn btn-sm btn-secondary" data-action="clearEmailLogs">Clear All</button></div>
         <div id="email-log-list" style="max-height:300px;overflow-y:auto"></div>
       </div>
     </div>
@@ -1433,15 +1342,15 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <h3>Instance Access</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Password Lock</div><div class="setting-desc">Require password to access the entire instance</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-instance-lock" onclick="toggleSetting('instancePasswordEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-instance-lock" data-action="toggleSetting" data-setting="instancePasswordEnabled"></div></div>
         </div>
         <div class="setting-row" id="instance-pwd-row" style="display:none">
           <div class="setting-info"><div class="setting-label">Instance Password</div><div class="setting-desc" id="instance-pwd-status">Set a password for instance access</div></div>
-          <div class="setting-control"><input type="password" id="instance-password" placeholder="New password"><button class="btn btn-sm btn-primary" onclick="setInstancePassword()">Set</button></div>
+          <div class="setting-control"><input type="password" id="instance-password" placeholder="New password"><button class="btn btn-sm btn-primary" data-action="setInstancePassword">Set</button></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Admin Panel Path</div><div class="setting-desc">Custom URL path for the admin panel (default: admin)</div></div>
-          <div class="setting-control"><span style="color:#8892a0;font-size:12px">/</span><input type="text" id="admin-path" placeholder="admin" style="width:150px" pattern="[a-zA-Z0-9_-]+"><button class="btn btn-sm btn-primary" onclick="saveAdminPath()">Save</button></div>
+          <div class="setting-control"><span style="color:#8892a0;font-size:12px">/</span><input type="text" id="admin-path" placeholder="admin" style="width:100%;max-width:150px" pattern="[a-zA-Z0-9_-]+"><button class="btn btn-sm btn-primary" data-action="saveAdminPath">Save</button></div>
         </div>
         <div class="setting-row" id="admin-path-info" style="display:none">
           <div class="setting-info"><div class="setting-label"></div><div class="setting-desc" id="admin-path-current" style="color:#4ade80">Current path: /admin</div></div>
@@ -1452,22 +1361,22 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Source Mode</div><div class="setting-desc">Choose where to load TheOneFile from</div></div>
           <div class="setting-control">
-            <select id="source-mode" onchange="changeSourceMode()"><option value="github">GitHub (Auto Update)</option><option value="local">Local (Manual Upload)</option></select>
+            <select id="source-mode" data-action="changeSourceMode"><option value="github">GitHub (Auto Update)</option><option value="local">Local (Manual Upload)</option></select>
           </div>
         </div>
         <div class="setting-row" id="github-settings">
           <div class="setting-info"><div class="setting-label">Update Interval</div><div class="setting-desc">Hours between auto updates (0 = manual only)</div></div>
-          <div class="setting-control"><input type="number" id="update-interval" min="0" max="168" style="width:80px"><button class="btn btn-sm btn-primary" onclick="saveUpdateInterval()">Save</button></div>
+          <div class="setting-control"><input type="number" id="update-interval" min="0" max="168" style="width:80px"><button class="btn btn-sm btn-primary" data-action="saveUpdateInterval">Save</button></div>
         </div>
         <div class="setting-row" id="github-update-row">
           <div class="setting-info"><div class="setting-label">Fetch from GitHub</div><div class="setting-desc">Download latest version now</div></div>
-          <div class="setting-control"><button class="btn btn-sm btn-success" id="update-btn" onclick="triggerUpdate()">Update Now</button></div>
+          <div class="setting-control"><button class="btn btn-sm btn-success" id="update-btn" data-action="triggerUpdate">Update Now</button></div>
         </div>
         <div class="setting-row" id="upload-row" style="display:none">
           <div class="setting-info"><div class="setting-label">Upload Local File</div><div class="setting-desc" id="upload-status">Upload your own TheOneFile HTML</div></div>
           <div class="setting-control">
-            <input type="file" id="upload-file" accept=".html" style="display:none" onchange="uploadFile()">
-            <button class="btn btn-sm btn-primary" onclick="document.getElementById('upload-file').click()">Choose File</button>
+            <input type="file" id="upload-file" accept=".html" style="display:none" data-action="uploadFile">
+            <button class="btn btn-sm btn-primary" data-action="uploadFileClick">Choose File</button>
           </div>
         </div>
         <div class="setting-row">
@@ -1479,7 +1388,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Theme</div><div class="setting-desc">Force a theme for all users or let them choose</div></div>
           <div class="setting-control">
-            <select id="forced-theme" onchange="saveForcedTheme()"><option value="user">User Choice</option><option value="dark">Force Dark</option><option value="light">Force Light</option></select>
+            <select id="forced-theme" data-action="saveForcedTheme"><option value="user">User Choice</option><option value="dark">Force Dark</option><option value="light">Force Light</option></select>
           </div>
         </div>
       </div>
@@ -1499,15 +1408,15 @@ const adminDashboardHtml = `<!DOCTYPE html>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Public Room Creation</div><div class="setting-desc">Allow anyone to create rooms</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-public-rooms" onclick="toggleSetting('allowPublicRoomCreation')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-public-rooms" data-action="toggleSetting" data-setting="allowPublicRoomCreation"></div></div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveRoomDefaults()">Save Room Settings</button></div>
+        <div style="margin-top:16px"><button class="btn btn-primary" data-action="saveRoomDefaults">Save Room Settings</button></div>
       </div>
       <div class="settings-section">
         <h3>Rate Limiting</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Enable Rate Limiting</div><div class="setting-desc">Protect against brute force attacks</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-rate-limit" onclick="toggleSetting('rateLimitEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-rate-limit" data-action="toggleSetting" data-setting="rateLimitEnabled"></div></div>
         </div>
         <div class="setting-row" id="rate-limit-options">
           <div class="setting-info"><div class="setting-label">Limit Settings</div><div class="setting-desc">Max attempts per time window</div></div>
@@ -1518,39 +1427,39 @@ const adminDashboardHtml = `<!DOCTYPE html>
             <span style="color:#8892a0;font-size:12px">seconds</span>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveRateLimitSettings()">Save Rate Limit Settings</button></div>
+        <div style="margin-top:16px"><button class="btn btn-primary" data-action="saveRateLimitSettings">Save Rate Limit Settings</button></div>
       </div>
       <div class="settings-section">
         <h3>Collaboration Features</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Chat</div><div class="setting-desc">Enable chat in rooms</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-chat" onclick="toggleSetting('chatEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-chat" data-action="toggleSetting" data-setting="chatEnabled"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Cursor Sharing</div><div class="setting-desc">Show other users cursors</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-cursor" onclick="toggleSetting('cursorSharingEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-cursor" data-action="toggleSetting" data-setting="cursorSharingEnabled"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Name Changes</div><div class="setting-desc">Allow users to change name after joining</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-namechange" onclick="toggleSetting('nameChangeEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-namechange" data-action="toggleSetting" data-setting="nameChangeEnabled"></div></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>Webhooks</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Enable Webhooks</div><div class="setting-desc">Send notifications for events</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-webhook" onclick="toggleSetting('webhookEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-webhook" data-action="toggleSetting" data-setting="webhookEnabled"></div></div>
         </div>
         <div class="setting-row" id="webhook-url-row">
           <div class="setting-info"><div class="setting-label">Webhook URL</div><div class="setting-desc">POST endpoint for notifications</div></div>
-          <div class="setting-control"><input type="text" id="webhook-url" placeholder="https://..." style="width:250px"><button class="btn btn-sm btn-primary" onclick="saveWebhookUrl()">Save</button></div>
+          <div class="setting-control"><input type="text" id="webhook-url" placeholder="https://..." style="width:100%;max-width:250px"><button class="btn btn-sm btn-primary" data-action="saveWebhookUrl">Save</button></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>Automatic Backups</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Enable Auto Backup</div><div class="setting-desc">Automatically backup data</div></div>
-          <div class="setting-control"><div class="toggle" id="toggle-backup" onclick="toggleSetting('backupEnabled')"></div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-backup" data-action="toggleSetting" data-setting="backupEnabled"></div></div>
         </div>
         <div class="setting-row" id="backup-options">
           <div class="setting-info"><div class="setting-label">Backup Settings</div><div class="setting-desc">Interval and retention</div></div>
@@ -1562,18 +1471,18 @@ const adminDashboardHtml = `<!DOCTYPE html>
             <span style="color:#8892a0;font-size:12px">backups</span>
           </div>
         </div>
-        <div style="margin-top:16px"><button class="btn btn-primary" onclick="saveBackupSettings()">Save Backup Settings</button></div>
+        <div style="margin-top:16px"><button class="btn btn-primary" data-action="saveBackupSettings">Save Backup Settings</button></div>
       </div>
     </div>
     <div id="tab-logs" class="tab-content">
       <div class="settings-section">
         <h3>Activity Log</h3>
-        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="activity-search" placeholder="Filter by room ID..." style="width:250px" onkeyup="loadActivityLogs()"><button class="btn btn-sm btn-secondary" onclick="clearActivityLogs()">Clear All</button></div>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="activity-search" placeholder="Filter by room ID..." style="width:100%;max-width:250px" data-action="loadActivityLogs"><button class="btn btn-sm btn-secondary" data-action="clearActivityLogs">Clear All</button></div>
         <div id="activity-log-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
       <div class="settings-section">
         <h3>Audit Log</h3>
-        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="audit-search" placeholder="Search..." style="width:250px" onkeyup="loadAuditLogs()"><button class="btn btn-sm btn-secondary" onclick="clearAuditLogs()">Clear All</button></div>
+        <div style="margin-bottom:12px;display:flex;gap:12px;align-items:center"><input type="text" id="audit-search" placeholder="Search..." style="width:100%;max-width:250px" data-action="loadAuditLogs"><button class="btn btn-sm btn-secondary" data-action="clearAuditLogs">Clear All</button></div>
         <div id="audit-log-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
     </div>
@@ -1582,8 +1491,8 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <h3 style="margin:0;border:none;padding:0">Backups</h3>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-primary btn-sm" onclick="createBackup()">Create Backup</button>
-            <button class="btn btn-secondary btn-sm" onclick="exportAll()">Export All</button>
+            <button class="btn btn-primary btn-sm" data-action="createBackup">Create Backup</button>
+            <button class="btn btn-secondary btn-sm" data-action="exportAll">Export All</button>
           </div>
         </div>
         <div id="backup-list"></div>
@@ -1593,7 +1502,7 @@ const adminDashboardHtml = `<!DOCTYPE html>
       <div class="settings-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <h3 style="margin:0;border:none;padding:0">API Keys</h3>
-          <button class="btn btn-primary btn-sm" onclick="showCreateApiKey()">Create API Key</button>
+          <button class="btn btn-primary btn-sm" data-action="showCreateApiKey">Create API Key</button>
         </div>
         <div id="apikey-list"></div>
         <div id="new-key-display" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border-radius:8px">
@@ -1606,13 +1515,13 @@ const adminDashboardHtml = `<!DOCTYPE html>
   </div>
   <div class="modal-overlay" id="room-modal">
     <div class="modal">
-      <div class="modal-header"><h3 id="modal-title">Room Details</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>
+      <div class="modal-header"><h3 id="modal-title">Room Details</h3><button class="modal-close" data-action="closeModal">&times;</button></div>
       <div class="modal-body" id="modal-body"></div>
     </div>
   </div>
   <div class="modal-overlay" id="apikey-modal">
     <div class="modal">
-      <div class="modal-header"><h3>Create API Key</h3><button class="modal-close" onclick="closeApiKeyModal()">&times;</button></div>
+      <div class="modal-header"><h3>Create API Key</h3><button class="modal-close" data-action="closeApiKeyModal">&times;</button></div>
       <div class="modal-body">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="apikey-name" placeholder="My API Key" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Expires In (days, 0=never)</label><input type="number" id="apikey-expires" value="0" min="0" style="width:100%"></div>
@@ -1621,13 +1530,13 @@ const adminDashboardHtml = `<!DOCTYPE html>
           <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-write"> Write rooms</label>
           <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-admin"> Admin access</label>
         </div>
-        <button class="btn btn-primary" onclick="createApiKey()" style="width:100%">Create Key</button>
+        <button class="btn btn-primary" data-action="createApiKey" style="width:100%">Create Key</button>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="user-modal">
     <div class="modal">
-      <div class="modal-header"><h3>Create User</h3><button class="modal-close" onclick="closeUserModal()">&times;</button></div>
+      <div class="modal-header"><h3>Create User</h3><button class="modal-close" data-action="closeUserModal">&times;</button></div>
       <div class="modal-body">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Email</label><input type="email" id="user-email" placeholder="user@example.com" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Display Name</label><input type="text" id="user-displayname" placeholder="John Doe" style="width:100%"></div>
@@ -1635,13 +1544,13 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Role</label>
           <select id="user-role" style="width:100%"><option value="user">User</option><option value="admin">Admin</option></select>
         </div>
-        <button class="btn btn-primary" onclick="createUser()" style="width:100%">Create User</button>
+        <button class="btn btn-primary" data-action="createUser" style="width:100%">Create User</button>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="edit-user-modal">
     <div class="modal">
-      <div class="modal-header"><h3>Edit User</h3><button class="modal-close" onclick="closeEditUserModal()">&times;</button></div>
+      <div class="modal-header"><h3>Edit User</h3><button class="modal-close" data-action="closeEditUserModal">&times;</button></div>
       <div class="modal-body">
         <input type="hidden" id="edit-user-id">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Email</label><input type="email" id="edit-user-email" style="width:100%;background:var(--bg-alt)" readonly></div>
@@ -1655,15 +1564,15 @@ const adminDashboardHtml = `<!DOCTYPE html>
           <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="edit-user-verified"> Email Verified</label>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary" onclick="resetUserPassword()" style="flex:1">Send Password Reset</button>
-          <button class="btn btn-primary" onclick="saveUserEdit()" style="flex:1">Save</button>
+          <button class="btn btn-secondary" data-action="resetUserPassword" style="flex:1">Send Password Reset</button>
+          <button class="btn btn-primary" data-action="saveUserEdit" style="flex:1">Save</button>
         </div>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="oidc-modal">
     <div class="modal" style="max-width:550px">
-      <div class="modal-header"><h3 id="oidc-modal-title">Add OIDC Provider</h3><button class="modal-close" onclick="closeOidcModal()">&times;</button></div>
+      <div class="modal-header"><h3 id="oidc-modal-title">Add OIDC Provider</h3><button class="modal-close" data-action="closeOidcModal">&times;</button></div>
       <div class="modal-body">
         <input type="hidden" id="oidc-edit-id">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="oidc-name" placeholder="My Provider" style="width:100%"></div>
@@ -1678,13 +1587,13 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Userinfo URL</label><input type="text" id="oidc-userinfo-url" placeholder="https://auth.example.com/userinfo" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Scopes</label><input type="text" id="oidc-scopes" value="openid email profile" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="oidc-active" checked> Active</label></div>
-        <button class="btn btn-primary" onclick="saveOidcProvider()" style="width:100%">Save Provider</button>
+        <button class="btn btn-primary" data-action="saveOidcProvider" style="width:100%">Save Provider</button>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="smtp-modal">
     <div class="modal" style="max-width:550px">
-      <div class="modal-header"><h3 id="smtp-modal-title">Add SMTP Configuration</h3><button class="modal-close" onclick="closeSmtpModal()">&times;</button></div>
+      <div class="modal-header"><h3 id="smtp-modal-title">Add SMTP Configuration</h3><button class="modal-close" data-action="closeSmtpModal">&times;</button></div>
       <div class="modal-body">
         <input type="hidden" id="smtp-edit-id">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="smtp-name" placeholder="Primary SMTP" style="width:100%"></div>
@@ -1702,15 +1611,15 @@ const adminDashboardHtml = `<!DOCTYPE html>
           <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="smtp-active" checked> Active</label>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary" onclick="testSmtpConfig()" style="flex:1">Test</button>
-          <button class="btn btn-primary" onclick="saveSmtpConfig()" style="flex:1">Save</button>
+          <button class="btn btn-secondary" data-action="testSmtpConfig" style="flex:1">Test</button>
+          <button class="btn btn-primary" data-action="saveSmtpConfig" style="flex:1">Save</button>
         </div>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="template-modal">
     <div class="modal" style="max-width:900px;max-height:90vh;display:flex;flex-direction:column">
-      <div class="modal-header"><h3 id="template-modal-title">Edit Email Template</h3><button class="modal-close" onclick="closeTemplateModal()">&times;</button></div>
+      <div class="modal-header"><h3 id="template-modal-title">Edit Email Template</h3><button class="modal-close" data-action="closeTemplateModal">&times;</button></div>
       <div class="modal-body" style="flex:1;overflow:auto;display:flex;flex-direction:column">
         <input type="hidden" id="template-edit-id">
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Template Name</label><input type="text" id="template-name" readonly style="width:100%;background:var(--bg-alt)"></div>
@@ -1718,59 +1627,59 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
           <label style="font-size:14px">HTML Body</label>
           <div style="display:flex;gap:4px">
-            <button class="btn btn-sm btn-secondary" onclick="insertTemplateVar('displayName')">{{displayName}}</button>
-            <button class="btn btn-sm btn-secondary" onclick="insertTemplateVar('actionUrl')">{{actionUrl}}</button>
-            <button class="btn btn-sm btn-secondary" onclick="insertTemplateVar('appName')">{{appName}}</button>
-            <button class="btn btn-sm btn-secondary" onclick="toggleTemplateView()">Toggle HTML/Preview</button>
+            <button class="btn btn-sm btn-secondary" data-action="insertTemplateVar" data-varname="displayName">{{displayName}}</button>
+            <button class="btn btn-sm btn-secondary" data-action="insertTemplateVar" data-varname="actionUrl">{{actionUrl}}</button>
+            <button class="btn btn-sm btn-secondary" data-action="insertTemplateVar" data-varname="appName">{{appName}}</button>
+            <button class="btn btn-sm btn-secondary" data-action="toggleTemplateView">Toggle HTML/Preview</button>
           </div>
         </div>
         <div style="flex:1;min-height:300px;position:relative">
           <div id="template-editor-toolbar" style="background:var(--bg-alt);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:8px;display:flex;gap:4px;flex-wrap:wrap">
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('bold')" title="Bold"><b>B</b></button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('italic')" title="Italic"><i>I</i></button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('underline')" title="Underline"><u>U</u></button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="bold" title="Bold"><b>B</b></button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="italic" title="Italic"><i>I</i></button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="underline" title="Underline"><u>U</u></button>
             <span style="border-left:1px solid var(--border);margin:0 4px"></span>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('justifyLeft')" title="Align Left">&#8676;</button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('justifyCenter')" title="Center">&#8596;</button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('justifyRight')" title="Align Right">&#8677;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="justifyLeft" title="Align Left">&#8676;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="justifyCenter" title="Center">&#8596;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="justifyRight" title="Align Right">&#8677;</button>
             <span style="border-left:1px solid var(--border);margin:0 4px"></span>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('insertUnorderedList')" title="Bullet List">&#8226;</button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="execCmd('insertOrderedList')" title="Numbered List">1.</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="insertUnorderedList" title="Bullet List">&#8226;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="execCmd" data-cmd="insertOrderedList" title="Numbered List">1.</button>
             <span style="border-left:1px solid var(--border);margin:0 4px"></span>
-            <select onchange="execCmdArg('formatBlock',this.value);this.selectedIndex=0" style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
+            <select data-action="execCmdArg" data-cmd="formatBlock" style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
               <option value="">Heading</option>
               <option value="h1">Heading 1</option>
               <option value="h2">Heading 2</option>
               <option value="h3">Heading 3</option>
               <option value="p">Paragraph</option>
             </select>
-            <select onchange="execCmdArg('fontSize',this.value);this.selectedIndex=0" style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
+            <select data-action="execCmdArg" data-cmd="fontSize" style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
               <option value="">Size</option>
               <option value="1">Small</option>
               <option value="3">Normal</option>
               <option value="5">Large</option>
               <option value="7">Huge</option>
             </select>
-            <input type="color" id="template-color" onchange="execCmdArg('foreColor',this.value)" title="Text Color" style="width:30px;height:26px;padding:0;border:1px solid var(--border);border-radius:4px;cursor:pointer">
+            <input type="color" id="template-color" data-action="templateColor" title="Text Color" style="width:30px;height:26px;padding:0;border:1px solid var(--border);border-radius:4px;cursor:pointer">
             <span style="border-left:1px solid var(--border);margin:0 4px"></span>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="insertLink()" title="Insert Link">&#128279;</button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="insertImage()" title="Insert Image">&#128247;</button>
-            <button type="button" class="btn btn-sm btn-secondary" onclick="insertButton()" title="Insert Button">&#9634; Btn</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="insertLink" title="Insert Link">&#128279;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="insertImage" title="Insert Image">&#128247;</button>
+            <button type="button" class="btn btn-sm btn-secondary" data-action="insertButton" title="Insert Button">&#9634; Btn</button>
           </div>
           <div id="template-editor" contenteditable="true" style="flex:1;min-height:250px;background:var(--surface);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px;overflow-y:auto;font-family:system-ui;line-height:1.6"></div>
           <textarea id="template-html-source" style="display:none;width:100%;min-height:300px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:monospace;font-size:13px;color:var(--text);resize:vertical"></textarea>
         </div>
         <div style="margin-top:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Plain Text Body (fallback)</label><textarea id="template-text" placeholder="Plain text version for email clients that don't support HTML" style="width:100%;height:100px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:13px;color:var(--text);resize:vertical"></textarea></div>
         <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
-          <button class="btn btn-secondary" onclick="previewTemplate()">Preview</button>
-          <button class="btn btn-primary" onclick="saveTemplate()">Save Template</button>
+          <button class="btn btn-secondary" data-action="previewTemplate">Preview</button>
+          <button class="btn btn-primary" data-action="saveTemplate">Save Template</button>
         </div>
       </div>
     </div>
   </div>
   <div class="modal-overlay" id="template-preview-modal">
     <div class="modal" style="max-width:700px;max-height:80vh">
-      <div class="modal-header"><h3>Email Preview</h3><button class="modal-close" onclick="closeTemplatePreview()">&times;</button></div>
+      <div class="modal-header"><h3>Email Preview</h3><button class="modal-close" data-action="closeTemplatePreview">&times;</button></div>
       <div class="modal-body" style="padding:0">
         <div style="padding:12px 16px;background:var(--bg-alt);border-bottom:1px solid var(--border)">
           <div style="font-size:12px;color:var(--text-soft)">Subject:</div>
@@ -1780,259 +1689,8 @@ const adminDashboardHtml = `<!DOCTYPE html>
       </div>
     </div>
   </div>
-  <script>
-    let forcedTheme=null;
-    function getTheme(){if(forcedTheme&&forcedTheme!=='user')return forcedTheme;return localStorage.getItem('theme')||'dark'}
-    function setTheme(theme){if(!forcedTheme||forcedTheme==='user')localStorage.setItem('theme',theme);document.documentElement.setAttribute('data-theme',theme);document.getElementById('theme-icon').textContent=theme==='dark'?'\\u2600':'\\u263E'}
-    function toggleTheme(){if(forcedTheme&&forcedTheme!=='user')return;setTheme(getTheme()==='dark'?'light':'dark')}
-    function updateThemeToggleVisibility(){const btn=document.getElementById('theme-toggle');if(forcedTheme&&forcedTheme!=='user')btn.style.display='none';else btn.style.display='block'}
-    setTheme(getTheme());
-    fetch('/api/theme').then(r=>r.json()).then(data=>{if(data.forcedTheme&&data.forcedTheme!=='user'){forcedTheme=data.forcedTheme;setTheme(forcedTheme)}updateThemeToggleVisibility()}).catch(()=>updateThemeToggleVisibility());
-    function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-    let rooms=[],selected=new Set(),settings={},totalRooms=0,searchTimeout=null,users=[],authSettings={},oidcProviders=[],smtpConfigs=[],emailLogs=[];
-    function showTab(name){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelector('.tab-content#tab-'+name).classList.add('active');document.querySelector('.tab[onclick*="'+name+'"]').classList.add('active');if(name==='settings')loadSettings();if(name==='logs'){loadActivityLogs();loadAuditLogs()}if(name==='backups')loadBackups();if(name==='apikeys')loadApiKeys();if(name==='users')loadUsers();if(name==='auth'){loadAuthSettings();loadOidcProviders();loadSmtpConfigs();loadEmailTemplates();loadEmailLogs()}}
-    async function loadData(query=''){try{const url=query?'/api/admin/rooms?q='+encodeURIComponent(query):'/api/admin/rooms';const res=await fetch(url);if(!res.ok){if(res.status===401)window.location.href='/admin/login';return}const data=await res.json();rooms=data.rooms||data;totalRooms=data.total||rooms.length;renderStats();renderRooms();updateBulkUI()}catch(e){console.error(e)}}
-    function searchRooms(q){if(searchTimeout)clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>loadData(q),300)}
-    async function loadSettings(){try{const res=await fetch('/api/admin/settings');if(!res.ok)return;settings=await res.json();renderSettings()}catch(e){console.error(e)}}
-    function renderSettings(){
-      document.getElementById('toggle-instance-lock').classList.toggle('active',settings.instancePasswordEnabled);
-      document.getElementById('toggle-public-rooms').classList.toggle('active',settings.allowPublicRoomCreation);
-      document.getElementById('toggle-rate-limit').classList.toggle('active',settings.rateLimitEnabled!==false);
-      document.getElementById('update-interval').value=settings.updateIntervalHours||0;
-      document.getElementById('default-destruct-mode').value=settings.defaultDestructMode||'time';
-      document.getElementById('default-destruct-hours').value=settings.defaultDestructHours||24;
-      document.getElementById('max-rooms').value=settings.maxRoomsPerInstance||0;
-      document.getElementById('forced-theme').value=settings.forcedTheme||'user';
-      document.getElementById('rate-limit-attempts').value=settings.rateLimitMaxAttempts||10;
-      document.getElementById('rate-limit-window').value=settings.rateLimitWindow||60;
-      document.getElementById('rate-limit-options').style.display=settings.rateLimitEnabled!==false?'flex':'none';
-      document.getElementById('instance-pwd-row').style.display=settings.instancePasswordEnabled?'flex':'none';
-      document.getElementById('instance-pwd-status').textContent=settings.instancePasswordSet?'Password is set':'No password set';
-      if(settings.envAdminPasswordSet){document.getElementById('toggle-instance-lock').style.opacity='0.5';document.getElementById('toggle-instance-lock').onclick=null}
-      document.getElementById('toggle-chat').classList.toggle('active',settings.chatEnabled!==false);
-      document.getElementById('toggle-cursor').classList.toggle('active',settings.cursorSharingEnabled!==false);
-      document.getElementById('toggle-namechange').classList.toggle('active',settings.nameChangeEnabled!==false);
-      document.getElementById('toggle-webhook').classList.toggle('active',settings.webhookEnabled);
-      document.getElementById('webhook-url').value=settings.webhookUrl||'';
-      document.getElementById('webhook-url-row').style.display=settings.webhookEnabled?'flex':'none';
-      document.getElementById('toggle-backup').classList.toggle('active',settings.backupEnabled);
-      document.getElementById('backup-interval').value=settings.backupIntervalHours||24;
-      document.getElementById('backup-retention').value=settings.backupRetentionCount||7;
-      document.getElementById('backup-options').style.display=settings.backupEnabled?'flex':'none';
-      document.getElementById('admin-path').value=settings.adminPath||'admin';
-      document.getElementById('admin-path-info').style.display='flex';
-      document.getElementById('admin-path-current').textContent='Current path: /'+(settings.adminPath||'admin');
-      updateSourceUI();
-    }
-    async function saveAdminPath(){
-      const newPath=document.getElementById('admin-path').value.trim();
-      if(!newPath){showStatus('Admin path cannot be empty','error');return}
-      if(!/^[a-zA-Z0-9_-]+$/.test(newPath)){showStatus('Admin path can only contain letters, numbers, hyphens, and underscores','error');return}
-      if(newPath.length<2){showStatus('Admin path must be at least 2 characters','error');return}
-      const reserved=['api','s','ws','auth','public','static','assets'];
-      if(reserved.includes(newPath.toLowerCase())){showStatus('This path is reserved','error');return}
-      try{
-        const res=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({adminPath:newPath})});
-        const data=await res.json();
-        if(!res.ok){showStatus(data.error||'Failed to save','error');return}
-        document.getElementById('admin-path-current').textContent='Current path: /'+newPath;
-        showStatus('Admin path saved! Redirecting to new path...','success');
-        setTimeout(()=>{window.location.href='/'+newPath},1500);
-      }catch(e){showStatus('Error saving admin path','error')}
-    }
-    async function saveRateLimitSettings(){
-      const attempts=parseInt(document.getElementById('rate-limit-attempts').value)||10;
-      const window=parseInt(document.getElementById('rate-limit-window').value)||60;
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rateLimitMaxAttempts:attempts,rateLimitWindow:window})});
-      showStatus('Rate limit settings saved','success');
-    }
-    async function saveForcedTheme(){
-      const val=document.getElementById('forced-theme').value;
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({forcedTheme:val})});
-      showStatus('Theme setting saved','success');
-    }
-    async function toggleSetting(key){
-      if(key==='instancePasswordEnabled'&&settings.envAdminPasswordSet)return;
-      settings[key]=!settings[key];
-      renderSettings();
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[key]:settings[key]})});
-      showStatus('Setting updated','success');
-    }
-    async function setInstancePassword(){
-      const pwd=document.getElementById('instance-password').value;
-      if(pwd.length<10){showStatus('Password must be at least 10 characters','error');return}
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({instancePassword:pwd})});
-      document.getElementById('instance-password').value='';
-      showStatus('Password updated','success');
-      loadSettings();
-    }
-    async function saveUpdateInterval(){
-      const val=parseInt(document.getElementById('update-interval').value)||0;
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({updateIntervalHours:val})});
-      showStatus('Update interval saved','success');
-    }
-    async function triggerUpdate(){
-      const btn=document.getElementById('update-btn');btn.disabled=true;btn.textContent='Updating...';
-      try{const res=await fetch('/api/admin/update',{method:'POST'});const data=await res.json();
-        if(data.success){showStatus('Updated successfully ('+Math.round(data.size/1024)+'KB)','success');loadSettings()}
-        else showStatus(data.error||'Update failed','error');
-      }catch{showStatus('Update failed','error')}
-      btn.disabled=false;btn.textContent='Update Now';
-    }
-    async function changeSourceMode(){
-      const mode=document.getElementById('source-mode').value;
-      try{
-        const res=await fetch('/api/admin/source-mode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode})});
-        const data=await res.json();
-        if(data.success){
-          showStatus('Source mode changed to '+mode,'success');
-          loadSettings();
-        }else{showStatus(data.error||'Failed to change mode','error')}
-      }catch{showStatus('Failed to change mode','error')}
-    }
-    async function uploadFile(){
-      const input=document.getElementById('upload-file');
-      if(!input.files||!input.files[0])return;
-      const file=input.files[0];
-      const formData=new FormData();
-      formData.append('file',file);
-      try{
-        const res=await fetch('/api/admin/upload-html',{method:'POST',body:formData});
-        const data=await res.json();
-        if(data.success){
-          showStatus('Uploaded successfully ('+Math.round(data.size/1024)+'KB), '+data.edition+' edition','success');
-          loadSettings();
-        }else{showStatus(data.error||'Upload failed','error')}
-      }catch{showStatus('Upload failed','error')}
-      input.value='';
-    }
-    function updateSourceUI(){
-      const isLocal=settings.skipUpdates;
-      document.getElementById('source-mode').value=isLocal?'local':'github';
-      document.getElementById('github-settings').style.display=isLocal?'none':'flex';
-      document.getElementById('github-update-row').style.display=isLocal?'none':'flex';
-      document.getElementById('upload-row').style.display=isLocal?'flex':'none';
-      const sizeKB=settings.currentFileSize?Math.round(settings.currentFileSize/1024):0;
-      const edition=settings.currentFileEdition||'unknown';
-      const source=isLocal?'Local upload':'GitHub';
-      document.getElementById('current-file-info').textContent=sizeKB+'KB, '+edition+' edition ('+source+')';
-    }
-    async function saveRoomDefaults(){
-      await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        defaultDestructMode:document.getElementById('default-destruct-mode').value,
-        defaultDestructHours:parseInt(document.getElementById('default-destruct-hours').value)||24,
-        maxRoomsPerInstance:parseInt(document.getElementById('max-rooms').value)||0
-      })});
-      showStatus('Room defaults saved','success');
-    }
-    function showStatus(msg,type){
-      const el=document.getElementById('settings-status');
-      el.innerHTML='<div class="status-msg '+type+'">'+msg+'</div>';
-      setTimeout(()=>el.innerHTML='',3000);
-    }
-    function renderStats(){const active=rooms.filter(r=>r.connectedUsers>0).length;const withPwd=rooms.filter(r=>r.hasPassword).length;document.getElementById('stats').innerHTML='<div class="stat-card"><div class="stat-value">'+rooms.length+'</div><div class="stat-label">Total Rooms</div></div><div class="stat-card"><div class="stat-value">'+active+'</div><div class="stat-label">Active</div></div><div class="stat-card"><div class="stat-value">'+withPwd+'</div><div class="stat-label">Protected</div></div><div class="stat-card"><div class="stat-value">'+rooms.reduce((a,r)=>a+r.connectedUsers,0)+'</div><div class="stat-label">Users Online</div></div>'}
-    function renderRooms(){if(rooms.length===0){document.getElementById('room-list').innerHTML='<div class="empty-state"><h3>No rooms yet</h3><p>Rooms will appear here when created</p></div>';return}let html='<div class="room-header"><input type="checkbox" class="room-checkbox" onchange="toggleAll(this.checked)" '+(selected.size===rooms.length&&rooms.length>0?'checked':'')+'><span>Room</span><span>Users</span><span>Created</span><span>Password</span><span>Actions</span></div>';rooms.forEach(r=>{const created=new Date(r.created).toLocaleDateString();const users=r.connectedUsers>0?'<span class="badge badge-green">'+r.connectedUsers+'</span>':'<span class="badge badge-gray">0</span>';const pwd=r.hasPassword?'<span class="badge badge-yellow">Yes</span>':'<span class="badge badge-gray">No</span>';const isSelected=selected.has(r.id);html+='<div class="room-row'+(isSelected?' selected':'')+'"><input type="checkbox" class="room-checkbox" '+(isSelected?'checked':'')+' onchange="toggleSelect(\\''+r.id+'\\',this.checked)"><div><div class="room-name">Room</div><div class="room-id">'+r.id+'</div></div><div>'+users+'</div><div>'+created+'</div><div>'+pwd+'</div><div class="room-actions"><button class="btn btn-secondary btn-sm" onclick="viewRoom(\\''+r.id+'\\')">View</button><button class="btn btn-primary btn-sm" onclick="joinRoom(\\''+r.id+'\\')">Join</button><button class="btn btn-danger btn-sm" onclick="deleteRoom(\\''+r.id+'\\')">Del</button></div></div>'});document.getElementById('room-list').innerHTML=html}
-    function toggleSelect(id,checked){if(checked)selected.add(id);else selected.delete(id);updateBulkUI();renderRooms()}
-    function toggleAll(checked){if(checked)rooms.forEach(r=>selected.add(r.id));else selected.clear();updateBulkUI();renderRooms()}
-    function clearSelection(){selected.clear();updateBulkUI();renderRooms()}
-    function updateBulkUI(){const bulk=document.getElementById('bulk-actions');const count=document.getElementById('selected-count');if(selected.size>0){bulk.classList.add('active');count.textContent=selected.size+' selected'}else{bulk.classList.remove('active')}}
-    async function deleteSelected(){if(selected.size===0)return;if(!confirm('Delete '+selected.size+' room(s) permanently?'))return;for(const id of selected){try{await fetch('/api/admin/rooms/'+id,{method:'DELETE'})}catch{}}selected.clear();loadData()}
-    function viewRoom(id){const room=rooms.find(r=>r.id===id);if(!room)return;let destruct='Never';if(room.destruct.mode==='time'){const h=room.destruct.value/3600000;destruct=h<1?Math.round(h*60)+' min':h<24?h+' hours':Math.round(h/24)+' days'}else if(room.destruct.mode==='empty')destruct='When empty';document.getElementById('modal-title').textContent='Room Details';document.getElementById('modal-body').innerHTML='<div class="info-row"><span class="info-label">Room ID</span><span class="info-value" style="font-family:monospace;font-size:12px">'+room.id+'</span></div><div class="info-row"><span class="info-label">Created</span><span class="info-value">'+new Date(room.created).toLocaleString()+'</span></div><div class="info-row"><span class="info-label">Last Activity</span><span class="info-value">'+new Date(room.lastActivity).toLocaleString()+'</span></div><div class="info-row"><span class="info-label">Connected Users</span><span class="info-value">'+room.connectedUsers+'</span></div><div class="info-row"><span class="info-label">Password Protected</span><span class="info-value">'+(room.hasPassword?'Yes':'No')+'</span></div><div class="info-row"><span class="info-label">Self-Destruct</span><span class="info-value">'+destruct+'</span></div><div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap"><button class="btn btn-primary" onclick="joinRoom(\\''+room.id+'\\');closeModal()">Join Room</button><button class="btn btn-danger" onclick="deleteRoom(\\''+room.id+'\\');closeModal()">Delete Room</button></div>';document.getElementById('room-modal').classList.add('active')}
-    function closeModal(){document.getElementById('room-modal').classList.remove('active')}
-    function joinRoom(id){window.open('/s/'+id,'_blank')}
-    async function deleteRoom(id){if(!confirm('Delete this room permanently?'))return;try{const res=await fetch('/api/admin/rooms/'+id,{method:'DELETE'});if(res.ok){selected.delete(id);loadData()}else alert('Failed to delete room')}catch{alert('Error deleting room')}}
-    async function logout(){await fetch('/api/logout',{method:'POST',credentials:'include'});window.location.href='/'}
-    document.getElementById('room-modal').addEventListener('click',e=>{if(e.target.id==='room-modal')closeModal()});
-    document.getElementById('apikey-modal').addEventListener('click',e=>{if(e.target.id==='apikey-modal')closeApiKeyModal()});
-    async function saveWebhookUrl(){const url=document.getElementById('webhook-url').value;await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhookUrl:url})});showStatus('Webhook URL saved','success')}
-    async function saveBackupSettings(){const interval=parseInt(document.getElementById('backup-interval').value)||24;const retention=parseInt(document.getElementById('backup-retention').value)||7;await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({backupIntervalHours:interval,backupRetentionCount:retention})});showStatus('Backup settings saved','success')}
-    async function loadActivityLogs(){try{const room=document.getElementById('activity-search').value;const url=room?'/api/admin/activity-logs?room='+encodeURIComponent(room):'/api/admin/activity-logs';const res=await fetch(url);if(!res.ok)return;const data=await res.json();renderActivityLogs(data.logs)}catch{}}
-    async function loadAuditLogs(){try{const q=document.getElementById('audit-search').value;const url=q?'/api/admin/audit-logs?q='+encodeURIComponent(q):'/api/admin/audit-logs';const res=await fetch(url);if(!res.ok)return;const data=await res.json();renderAuditLogs(data.logs)}catch{}}
-    function renderActivityLogs(logs){const el=document.getElementById('activity-log-list');if(!logs||logs.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No activity logs</p>';return}el.innerHTML=logs.map(l=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-soft)">'+new Date(l.timestamp).toLocaleString()+'</span> <span class="badge badge-'+(l.eventType==='join'?'green':'gray')+'">'+l.eventType+'</span> '+(l.userName||'Unknown')+' <span style="color:var(--text-soft);font-size:11px">'+l.roomId.slice(0,8)+'</span></div>').join('')}
-    function renderAuditLogs(logs){const el=document.getElementById('audit-log-list');if(!logs||logs.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No audit logs</p>';return}el.innerHTML=logs.map(l=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-soft)">'+new Date(l.timestamp).toLocaleString()+'</span> <span class="badge badge-yellow">'+l.action+'</span> '+(l.actor||'system')+(l.targetId?' <span style="color:var(--text-soft);font-size:11px">'+l.targetId.slice(0,8)+'</span>':'')+'</div>').join('')}
-    async function loadBackups(){try{const res=await fetch('/api/admin/backups');if(!res.ok)return;const data=await res.json();renderBackups(data.backups)}catch{}}
-    function renderBackups(backups){const el=document.getElementById('backup-list');if(!backups||backups.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No backups</p>';return}el.innerHTML=backups.map(b=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+b.filename+'</div><div style="font-size:12px;color:var(--text-soft)">'+new Date(b.createdAt).toLocaleString()+' | '+Math.round(b.sizeBytes/1024)+'KB | '+b.roomCount+' rooms'+(b.autoGenerated?' | Auto':'')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="downloadBackup(\\''+b.id+'\\')">Download</button><button class="btn btn-sm btn-success" onclick="restoreBackup(\\''+b.id+'\\')">Restore</button><button class="btn btn-sm btn-danger" onclick="deleteBackup(\\''+b.id+'\\')">Delete</button></div></div>').join('')}
-    async function createBackup(){try{const res=await fetch('/api/admin/backups',{method:'POST'});const data=await res.json();if(data.success){showStatus('Backup created','success');loadBackups()}else showStatus(data.error||'Failed','error')}catch{showStatus('Failed to create backup','error')}}
-    async function downloadBackup(id){window.open('/api/admin/backups/'+id+'/download','_blank')}
-    async function restoreBackup(id){if(!confirm('Restore this backup? This will add missing rooms.'))return;try{const res=await fetch('/api/admin/backups/'+id+'/restore',{method:'POST'});const data=await res.json();if(data.success){showStatus('Restored '+data.roomsRestored+' rooms','success');loadData()}else showStatus(data.error||'Failed','error')}catch{showStatus('Failed to restore','error')}}
-    async function deleteBackup(id){if(!confirm('Delete this backup?'))return;try{await fetch('/api/admin/backups/'+id,{method:'DELETE'});loadBackups()}catch{}}
-    async function exportAll(){window.open('/api/admin/export','_blank')}
-    async function loadApiKeys(){try{const res=await fetch('/api/admin/api-keys');if(!res.ok)return;const data=await res.json();renderApiKeys(data.keys)}catch{}}
-    function renderApiKeys(keys){const el=document.getElementById('apikey-list');if(!keys||keys.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No API keys</p>';return}el.innerHTML=keys.map(k=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+k.name+'</div><div style="font-size:12px;color:var(--text-soft)">'+k.permissions.join(', ')+' | Created: '+new Date(k.createdAt).toLocaleDateString()+(k.lastUsed?' | Last used: '+new Date(k.lastUsed).toLocaleDateString():'')+(k.expiresAt?' | Expires: '+new Date(k.expiresAt).toLocaleDateString():'')+'</div></div><button class="btn btn-sm btn-danger" onclick="revokeApiKey(\\''+k.id+'\\')">Revoke</button></div>').join('')}
-    function showCreateApiKey(){document.getElementById('apikey-modal').classList.add('active');document.getElementById('new-key-display').style.display='none'}
-    function closeApiKeyModal(){document.getElementById('apikey-modal').classList.remove('active')}
-    async function createApiKey(){const name=document.getElementById('apikey-name').value;if(!name){alert('Name required');return}const perms=[];if(document.getElementById('perm-read').checked)perms.push('read');if(document.getElementById('perm-write').checked)perms.push('write');if(document.getElementById('perm-admin').checked)perms.push('admin');const expires=parseInt(document.getElementById('apikey-expires').value)||0;try{const res=await fetch('/api/admin/api-keys',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,permissions:perms,expiresInDays:expires||null})});const data=await res.json();if(data.key){closeApiKeyModal();document.getElementById('new-key-display').style.display='block';document.getElementById('new-key-value').textContent=data.key;loadApiKeys()}else alert(data.error||'Failed')}catch{alert('Failed to create key')}}
-    async function revokeApiKey(id){if(!confirm('Revoke this API key?'))return;try{await fetch('/api/admin/api-keys/'+id,{method:'DELETE'});loadApiKeys()}catch{}}
-    async function loadUsers(q=''){try{const url=q?'/api/admin/users?q='+encodeURIComponent(q):'/api/admin/users';const res=await fetch(url);if(!res.ok)return;const data=await res.json();users=data.users||[];renderUsers()}catch{}}
-    function searchUsers(q){if(searchTimeout)clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>loadUsers(q),300)}
-    function renderUsers(){const el=document.getElementById('user-list');if(!users||users.length===0){el.innerHTML='<div class="empty-state"><h3>No users yet</h3><p>Users will appear here when registered</p></div>';return}
-    let html='<div class="room-header"><span>User</span><span>Role</span><span>Status</span><span>Created</span><span>Actions</span></div>';
-    users.forEach(u=>{const role=u.role==='admin'?'<span class="badge badge-yellow">Admin</span>':'<span class="badge badge-gray">User</span>';const status=u.isActive?'<span class="badge badge-green">Active</span>':'<span class="badge badge-gray">Inactive</span>';const verified=u.emailVerified?'':'<span class="badge badge-yellow">Unverified</span>';
-    html+='<div class="room-row"><div><div class="room-name">'+(u.displayName||'No name')+'</div><div class="room-id">'+u.email+'</div></div><div>'+role+'</div><div>'+status+verified+'</div><div>'+new Date(u.createdAt).toLocaleDateString()+'</div><div class="room-actions"><button class="btn btn-secondary btn-sm" onclick="editUser(\\''+u.id+'\\')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteUser(\\''+u.id+'\\')">Del</button></div></div>'});
-    el.innerHTML=html}
-    function showCreateUser(){document.getElementById('user-modal').classList.add('active')}
-    function closeUserModal(){document.getElementById('user-modal').classList.remove('active');document.getElementById('user-email').value='';document.getElementById('user-displayname').value='';document.getElementById('user-password').value='';document.getElementById('user-role').value='user'}
-    async function createUser(){const email=document.getElementById('user-email').value;const displayName=document.getElementById('user-displayname').value;const password=document.getElementById('user-password').value||null;const role=document.getElementById('user-role').value;if(!email){alert('Email required');return}try{const res=await fetch('/api/admin/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,displayName,password,role})});const data=await res.json();if(data.success){closeUserModal();loadUsers();showAuthStatus('User created','success')}else{alert(data.error||'Failed')}}catch{alert('Failed to create user')}}
-    async function deleteUser(id){if(!confirm('Delete this user permanently?'))return;try{await fetch('/api/admin/users/'+id,{method:'DELETE'});loadUsers()}catch{alert('Error deleting user')}}
-    function editUser(id){const u=users.find(x=>x.id===id);if(!u)return;document.getElementById('edit-user-id').value=id;document.getElementById('edit-user-email').value=u.email;document.getElementById('edit-user-displayname').value=u.displayName||'';document.getElementById('edit-user-password').value='';document.getElementById('edit-user-role').value=u.role||'user';document.getElementById('edit-user-active').checked=u.isActive!==false;document.getElementById('edit-user-verified').checked=u.emailVerified===true;document.getElementById('edit-user-modal').classList.add('active')}
-    function closeEditUserModal(){document.getElementById('edit-user-modal').classList.remove('active')}
-    async function saveUserEdit(){const id=document.getElementById('edit-user-id').value;const data={displayName:document.getElementById('edit-user-displayname').value,role:document.getElementById('edit-user-role').value,isActive:document.getElementById('edit-user-active').checked,emailVerified:document.getElementById('edit-user-verified').checked};const password=document.getElementById('edit-user-password').value;if(password)data.password=password;try{const res=await fetch('/api/admin/users/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(result.success){closeEditUserModal();loadUsers();showAuthStatus('User updated','success')}else{alert(result.error||'Failed to update user')}}catch{alert('Failed to update user')}}
-    async function resetUserPassword(){const id=document.getElementById('edit-user-id').value;const email=document.getElementById('edit-user-email').value;if(!confirm('Send password reset email to '+email+'?'))return;try{const res=await fetch('/api/admin/users/'+id+'/reset-password',{method:'POST'});const result=await res.json();if(result.success){alert('Password reset email sent!')}else{alert(result.error||'Failed to send reset email')}}catch{alert('Failed to send reset email')}}
-    document.getElementById('user-modal').addEventListener('click',e=>{if(e.target.id==='user-modal')closeUserModal()});
-    document.getElementById('edit-user-modal').addEventListener('click',e=>{if(e.target.id==='edit-user-modal')closeEditUserModal()});
-    async function loadAuthSettings(){try{const res=await fetch('/api/admin/auth-settings');if(!res.ok)return;authSettings=await res.json();renderAuthSettings()}catch{}}
-    function renderAuthSettings(){document.getElementById('auth-mode').value=authSettings.authMode||'open';document.getElementById('toggle-require-email-verify').classList.toggle('active',authSettings.requireEmailVerification);document.getElementById('toggle-magic-link').classList.toggle('active',authSettings.allowMagicLinkLogin);document.getElementById('toggle-oidc-email-match').classList.toggle('active',authSettings.oidcEmailMatching);document.getElementById('toggle-production-mode').classList.toggle('active',authSettings.productionMode);document.getElementById('toggle-guest-room-create').classList.toggle('active',authSettings.allowGuestRoomCreation!==false);document.getElementById('toggle-guest-room-join').classList.toggle('active',authSettings.allowGuestRoomJoin!==false);document.getElementById('toggle-room-creator-guest').classList.toggle('active',authSettings.allowRoomCreatorGuestSetting!==false);document.getElementById('toggle-share-button').classList.toggle('active',authSettings.shareButtonEnabled!==false);document.getElementById('input-id-token-max-age').value=authSettings.idTokenMaxAgeHours||2;document.getElementById('input-email-rate-window').value=authSettings.emailRateLimitWindowSeconds||300;document.getElementById('input-email-rate-max').value=authSettings.emailRateLimitMaxAttempts||3}
-    async function saveAuthSettings(){const mode=document.getElementById('auth-mode').value;await fetch('/api/admin/auth-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({authMode:mode})});showAuthStatus('Auth mode saved','success')}
-    async function toggleAuthSetting(key){authSettings[key]=!authSettings[key];renderAuthSettings();await fetch('/api/admin/auth-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[key]:authSettings[key]})});showAuthStatus('Setting updated','success')}
-    async function updateAuthNumber(key,value){const num=parseInt(value);if(isNaN(num))return;authSettings[key]=num;await fetch('/api/admin/auth-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({[key]:num})});showAuthStatus('Setting updated','success')}
-    function showAuthStatus(msg,type){const el=document.getElementById('auth-status');el.innerHTML='<div class="status-msg '+type+'">'+msg+'</div>';setTimeout(()=>el.innerHTML='',3000)}
-    async function loadOidcProviders(){try{const res=await fetch('/api/admin/oidc-providers');if(!res.ok)return;const data=await res.json();oidcProviders=data.providers||[];renderOidcProviders()}catch{}}
-    function renderOidcProviders(){const el=document.getElementById('oidc-provider-list');if(!oidcProviders||oidcProviders.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No OIDC providers configured</p>';return}
-    el.innerHTML=oidcProviders.map(p=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+esc(p.name)+'</div><div style="font-size:12px;color:var(--text-soft)">'+esc(p.providerType)+' | '+(p.isActive?'<span style="color:#22c55e">Active</span>':'<span style="color:#94a3b8">Inactive</span>')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="editOidcProvider(\\''+p.id+'\\')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteOidcProvider(\\''+p.id+'\\')">Delete</button></div></div>').join('')}
-    function showAddOidcProvider(){document.getElementById('oidc-modal-title').textContent='Add OIDC Provider';document.getElementById('oidc-edit-id').value='';document.getElementById('oidc-name').value='';document.getElementById('oidc-type').value='generic';document.getElementById('oidc-client-id').value='';document.getElementById('oidc-client-secret').value='';document.getElementById('oidc-issuer').value='';document.getElementById('oidc-auth-url').value='';document.getElementById('oidc-token-url').value='';document.getElementById('oidc-userinfo-url').value='';document.getElementById('oidc-scopes').value='openid email profile';document.getElementById('oidc-active').checked=true;document.getElementById('oidc-modal').classList.add('active')}
-    function editOidcProvider(id){const p=oidcProviders.find(x=>x.id===id);if(!p)return;document.getElementById('oidc-modal-title').textContent='Edit OIDC Provider';document.getElementById('oidc-edit-id').value=id;document.getElementById('oidc-name').value=p.name;document.getElementById('oidc-type').value=p.providerType;document.getElementById('oidc-client-id').value=p.clientId;document.getElementById('oidc-client-secret').value='';document.getElementById('oidc-issuer').value=p.issuerUrl||'';document.getElementById('oidc-auth-url').value=p.authorizationUrl||'';document.getElementById('oidc-token-url').value=p.tokenUrl||'';document.getElementById('oidc-userinfo-url').value=p.userinfoUrl||'';document.getElementById('oidc-scopes').value=p.scopes||'openid email profile';document.getElementById('oidc-active').checked=p.isActive;document.getElementById('oidc-modal').classList.add('active')}
-    function closeOidcModal(){document.getElementById('oidc-modal').classList.remove('active')}
-    async function saveOidcProvider(){const id=document.getElementById('oidc-edit-id').value;const data={name:document.getElementById('oidc-name').value,providerType:document.getElementById('oidc-type').value,clientId:document.getElementById('oidc-client-id').value,clientSecret:document.getElementById('oidc-client-secret').value||undefined,issuerUrl:document.getElementById('oidc-issuer').value,authorizationUrl:document.getElementById('oidc-auth-url').value,tokenUrl:document.getElementById('oidc-token-url').value,userinfoUrl:document.getElementById('oidc-userinfo-url').value,scopes:document.getElementById('oidc-scopes').value,isActive:document.getElementById('oidc-active').checked};if(!data.name||!data.clientId){alert('Name and Client ID required');return}try{const url=id?'/api/admin/oidc-providers/'+id:'/api/admin/oidc-providers';const method=id?'PUT':'POST';const res=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(result.success){closeOidcModal();loadOidcProviders();showAuthStatus('Provider saved','success')}else{alert(result.error||'Failed')}}catch{alert('Failed to save provider')}}
-    async function deleteOidcProvider(id){if(!confirm('Delete this OIDC provider?'))return;try{await fetch('/api/admin/oidc-providers/'+id,{method:'DELETE'});loadOidcProviders()}catch{}}
-    document.getElementById('oidc-modal').addEventListener('click',e=>{if(e.target.id==='oidc-modal')closeOidcModal()});
-    async function loadSmtpConfigs(){try{const res=await fetch('/api/admin/smtp-configs');if(!res.ok)return;const data=await res.json();smtpConfigs=data.configs||[];renderSmtpConfigs()}catch{}}
-    function renderSmtpConfigs(){const el=document.getElementById('smtp-config-list');if(!smtpConfigs||smtpConfigs.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No SMTP configurations</p>';return}
-    el.innerHTML=smtpConfigs.map(s=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+s.name+(s.isDefault?' <span class="badge badge-green">Default</span>':'')+'</div><div style="font-size:12px;color:var(--text-soft)">'+s.host+':'+s.port+' ('+s.secureMode+') | '+(s.isActive?'<span style="color:#22c55e">Active</span>':'<span style="color:#94a3b8">Inactive</span>')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-secondary" onclick="editSmtpConfig(\\''+s.id+'\\')">Edit</button><button class="btn btn-sm btn-danger" onclick="deleteSmtpConfig(\\''+s.id+'\\')">Delete</button></div></div>').join('')}
-    function showAddSmtpConfig(){document.getElementById('smtp-modal-title').textContent='Add SMTP Configuration';document.getElementById('smtp-edit-id').value='';document.getElementById('smtp-name').value='';document.getElementById('smtp-host').value='';document.getElementById('smtp-port').value='587';document.getElementById('smtp-secure-mode').value='starttls';document.getElementById('smtp-username').value='';document.getElementById('smtp-password').value='';document.getElementById('smtp-from-email').value='';document.getElementById('smtp-from-name').value='';document.getElementById('smtp-default').checked=false;document.getElementById('smtp-active').checked=true;document.getElementById('smtp-modal').classList.add('active')}
-    function editSmtpConfig(id){const s=smtpConfigs.find(x=>x.id===id);if(!s)return;document.getElementById('smtp-modal-title').textContent='Edit SMTP Configuration';document.getElementById('smtp-edit-id').value=id;document.getElementById('smtp-name').value=s.name;document.getElementById('smtp-host').value=s.host||'';document.getElementById('smtp-port').value=s.port||587;document.getElementById('smtp-secure-mode').value=s.secureMode||'starttls';document.getElementById('smtp-username').value=s.username||'';document.getElementById('smtp-password').value='';document.getElementById('smtp-from-email').value=s.fromEmail||'';document.getElementById('smtp-from-name').value=s.fromName||'';document.getElementById('smtp-default').checked=s.isDefault;document.getElementById('smtp-active').checked=s.isActive;document.getElementById('smtp-modal').classList.add('active')}
-    function closeSmtpModal(){document.getElementById('smtp-modal').classList.remove('active')}
-    async function saveSmtpConfig(){const id=document.getElementById('smtp-edit-id').value;const data={name:document.getElementById('smtp-name').value,host:document.getElementById('smtp-host').value,port:parseInt(document.getElementById('smtp-port').value),secureMode:document.getElementById('smtp-secure-mode').value,username:document.getElementById('smtp-username').value,password:document.getElementById('smtp-password').value||undefined,fromEmail:document.getElementById('smtp-from-email').value,fromName:document.getElementById('smtp-from-name').value,isDefault:document.getElementById('smtp-default').checked,isActive:document.getElementById('smtp-active').checked};if(!data.name||!data.host){alert('Name and Host required');return}try{const url=id?'/api/admin/smtp-configs/'+id:'/api/admin/smtp-configs';const method=id?'PUT':'POST';const res=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(result.success){closeSmtpModal();loadSmtpConfigs();showAuthStatus('SMTP config saved','success')}else{alert(result.error||'Failed')}}catch{alert('Failed to save config')}}
-    async function testSmtpConfig(){const data={name:document.getElementById('smtp-name').value,host:document.getElementById('smtp-host').value,port:parseInt(document.getElementById('smtp-port').value),secureMode:document.getElementById('smtp-secure-mode').value,username:document.getElementById('smtp-username').value,password:document.getElementById('smtp-password').value,fromEmail:document.getElementById('smtp-from-email').value,fromName:document.getElementById('smtp-from-name').value};try{const res=await fetch('/api/admin/smtp-configs/test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(result.success){alert('Test email sent successfully!')}else{alert('Test failed: '+(result.error||'Unknown error'))}}catch{alert('Test failed')}}
-    async function deleteSmtpConfig(id){if(!confirm('Delete this SMTP configuration?'))return;try{await fetch('/api/admin/smtp-configs/'+id,{method:'DELETE'});loadSmtpConfigs()}catch{}}
-    document.getElementById('smtp-modal').addEventListener('click',e=>{if(e.target.id==='smtp-modal')closeSmtpModal()});
-    let emailTemplates=[],currentEditTemplate=null,isHtmlSourceView=false;
-    async function loadEmailTemplates(){try{const res=await fetch('/api/admin/email-templates');if(!res.ok)return;const data=await res.json();emailTemplates=data.templates||[];renderEmailTemplates(emailTemplates)}catch{}}
-    function renderEmailTemplates(templates){const el=document.getElementById('email-template-list');if(!templates||templates.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No email templates. Default templates will be used.</p>';return}
-    el.innerHTML=templates.map(t=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:500">'+esc(t.name)+'</div><div style="font-size:12px;color:var(--text-soft)">Subject: '+esc(t.subject)+'</div></div><button class="btn btn-sm btn-secondary" onclick="editTemplate(\\''+esc(t.id)+'\\')">Edit</button></div>').join('')}
-    function editTemplate(id){const t=emailTemplates.find(x=>x.id===id);if(!t)return;currentEditTemplate=t;document.getElementById('template-edit-id').value=id;document.getElementById('template-name').value=t.name;document.getElementById('template-subject').value=t.subject||'';document.getElementById('template-editor').innerHTML=t.bodyHtml||'';document.getElementById('template-html-source').value=t.bodyHtml||'';document.getElementById('template-text').value=t.bodyText||'';isHtmlSourceView=false;showWysiwygView();document.getElementById('template-modal').classList.add('active')}
-    function closeTemplateModal(){document.getElementById('template-modal').classList.remove('active');currentEditTemplate=null}
-    function showWysiwygView(){document.getElementById('template-editor').style.display='block';document.getElementById('template-editor-toolbar').style.display='flex';document.getElementById('template-html-source').style.display='none'}
-    function showHtmlSourceView(){document.getElementById('template-html-source').value=document.getElementById('template-editor').innerHTML;document.getElementById('template-editor').style.display='none';document.getElementById('template-editor-toolbar').style.display='none';document.getElementById('template-html-source').style.display='block'}
-    function toggleTemplateView(){if(isHtmlSourceView){document.getElementById('template-editor').innerHTML=document.getElementById('template-html-source').value;showWysiwygView()}else{showHtmlSourceView()}isHtmlSourceView=!isHtmlSourceView}
-    function execCmd(cmd){document.execCommand(cmd,false,null);document.getElementById('template-editor').focus()}
-    function execCmdArg(cmd,arg){if(!arg)return;document.execCommand(cmd,false,arg);document.getElementById('template-editor').focus()}
-    function insertTemplateVar(varName){const editor=document.getElementById('template-editor');editor.focus();document.execCommand('insertText',false,'{{'+varName+'}}')}
-    function insertLink(){const url=prompt('Enter URL:');if(url){document.execCommand('createLink',false,url)}}
-    function insertImage(){const url=prompt('Enter image URL:');if(url){document.execCommand('insertImage',false,url)}}
-    function insertButton(){const url=prompt('Enter button URL:');const text=prompt('Enter button text:','Click Here');if(url&&text){const btn='<a href="'+url+'" style="display:inline-block;padding:12px 24px;background:#c9a227;color:#fff;text-decoration:none;border-radius:6px;font-weight:600">'+text+'</a>';document.execCommand('insertHTML',false,btn)}}
-    async function saveTemplate(){const id=document.getElementById('template-edit-id').value;if(!id){alert('No template selected');return}const html=isHtmlSourceView?document.getElementById('template-html-source').value:document.getElementById('template-editor').innerHTML;const data={subject:document.getElementById('template-subject').value,bodyHtml:html,bodyText:document.getElementById('template-text').value};try{const res=await fetch('/api/admin/email-templates/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const result=await res.json();if(result.success){closeTemplateModal();loadEmailTemplates();showAuthStatus('Template saved','success')}else{alert(result.error||'Failed to save')}}catch{alert('Failed to save template')}}
-    function previewTemplate(){const subject=document.getElementById('template-subject').value.replace(/\\{\\{displayName\\}\\}/g,'John Doe').replace(/\\{\\{actionUrl\\}\\}/g,'https://example.com/action').replace(/\\{\\{appName\\}\\}/g,'TheOneFile_Verse');const html=(isHtmlSourceView?document.getElementById('template-html-source').value:document.getElementById('template-editor').innerHTML).replace(/\\{\\{displayName\\}\\}/g,'John Doe').replace(/\\{\\{actionUrl\\}\\}/g,'https://example.com/action').replace(/\\{\\{appName\\}\\}/g,'TheOneFile_Verse');document.getElementById('preview-subject').textContent=subject;const frame=document.getElementById('preview-frame');frame.srcdoc='<!DOCTYPE html><html><head><style>body{font-family:system-ui,sans-serif;padding:20px;line-height:1.6;color:#333}</style></head><body>'+html+'</body></html>';document.getElementById('template-preview-modal').classList.add('active')}
-    function closeTemplatePreview(){document.getElementById('template-preview-modal').classList.remove('active')}
-    document.getElementById('template-modal').addEventListener('click',e=>{if(e.target.id==='template-modal')closeTemplateModal()});
-    document.getElementById('template-preview-modal').addEventListener('click',e=>{if(e.target.id==='template-preview-modal')closeTemplatePreview()});
-    async function loadEmailLogs(){try{const email=document.getElementById('email-log-search').value;const url=email?'/api/admin/email-logs?email='+encodeURIComponent(email):'/api/admin/email-logs';const res=await fetch(url);if(!res.ok)return;const data=await res.json();emailLogs=data.logs||[];renderEmailLogs()}catch{}}
-    function renderEmailLogs(){const el=document.getElementById('email-log-list');if(!emailLogs||emailLogs.length===0){el.innerHTML='<p style="color:var(--text-soft);padding:12px">No email logs</p>';return}
-    el.innerHTML=emailLogs.map(l=>'<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-soft)">'+esc(new Date(l.sentAt).toLocaleString())+'</span> <span class="badge badge-'+(l.status==='sent'?'green':'gray')+'">'+esc(l.status)+'</span> '+esc(l.toEmail)+' <span style="color:var(--text-soft)">'+esc(l.subject)+'</span>'+(l.errorMessage?' <span style="color:#ef4444">'+esc(l.errorMessage)+'</span>':'')+'</div>').join('')}
-    async function clearEmailLogs(){if(!confirm('Clear all email logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/email-logs',{method:'DELETE'});if(res.ok){loadEmailLogs();showAuthStatus('Email logs cleared','success')}}catch{}}
-    async function clearActivityLogs(){if(!confirm('Clear all activity logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/activity-logs',{method:'DELETE'});if(res.ok){loadActivityLogs();showAuthStatus('Activity logs cleared','success')}}catch{}}
-    async function clearAuditLogs(){if(!confirm('Clear all audit logs? This cannot be undone.'))return;try{const res=await fetch('/api/admin/audit-logs',{method:'DELETE'});if(res.ok){loadAuditLogs();showAuthStatus('Audit logs cleared','success')}}catch{}}
-    loadData();setInterval(loadData,10000);
-  </script>
+  <script type="application/json" id="page-data">{"adminPath":"ADMIN_PATH_PLACEHOLDER"}</script>
+  <script src="/admin-dashboard.js"></script>
 </body>
 </html>`;
 
@@ -2044,9 +1702,10 @@ const adminLoginHtml = `<!DOCTYPE html>
   <title>Admin Login - The One File Collab</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--bg-alt:#1a1a1a;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
     [data-theme="light"]{--bg:#f5f3ef;--bg-alt:#eae7e0;--surface:#fff;--border:#d4d0c8;--text:#1a1a1a;--text-soft:#666;--accent:#996b1f;--accent-hover:#7a5518}
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -2063,9 +1722,11 @@ const adminLoginHtml = `<!DOCTYPE html>
     .oidc-btn:hover{background:var(--bg-alt)}
     .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--text-soft);font-size:12px}
     .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="admin-login">
   <div class="login-box">
     <h1>Admin Login</h1>
     <p>Sign in with your admin account</p>
@@ -2081,42 +1742,14 @@ const adminLoginHtml = `<!DOCTYPE html>
     </form>
     <div class="back-link"><a href="/">Back to App</a></div>
   </div>
-  <script>
-    (function(){let f=null;function g(){if(f&&f!=='user')return f;return localStorage.getItem('theme')||'dark'}function s(t){document.documentElement.setAttribute('data-theme',t)}s(g());fetch('/api/theme').then(r=>r.json()).then(d=>{if(d.forcedTheme&&d.forcedTheme!=='user'){f=d.forcedTheme;s(f)}}).catch(()=>{})})();
-    fetch('/api/auth/providers').then(r=>r.json()).then(providers=>{
-      if(providers.length>0){
-        document.getElementById('divider').style.display='flex';
-        const container=document.getElementById('oidc-buttons');
-        providers.forEach(p=>{
-          const btn=document.createElement('button');
-          btn.type='button';
-          btn.className='oidc-btn';
-          if(p.iconUrl&&(p.iconUrl.startsWith('http://')||p.iconUrl.startsWith('https://'))){const img=document.createElement('img');img.src=p.iconUrl;img.width=20;img.height=20;btn.appendChild(img);}btn.appendChild(document.createTextNode(' Continue with '+(p.name||'')));
-          btn.onclick=()=>window.location.href='/api/auth/oidc/'+p.id+'/login?redirect=/admin';
-          container.appendChild(btn);
-        });
-      }
-    }).catch(()=>{});
-    document.getElementById('login-form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const error=document.getElementById('error');
-      error.classList.remove('active');
-      const email=document.getElementById('email').value;
-      const password=document.getElementById('password').value;
-      if(!email||!email.includes('@')){error.textContent='Please enter a valid email';error.classList.add('active');return}
-      if(!password){error.textContent='Please enter your password';error.classList.add('active');return}
-      try{
-        const res=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
-        const d=await res.json();
-        if(res.ok&&d.success){window.location.href='/admin'}
-        else{error.textContent=d.error||'Invalid credentials';error.classList.add('active');document.getElementById('password').value=''}
-      }catch{error.textContent='Connection error';error.classList.add('active')}
-    });
-  </script>
+  <script type="application/json" id="page-data">{"adminPath":"ADMIN_PATH_PLACEHOLDER"}</script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 
 function getPasswordResetHtml(token: string): string {
+  const safePageData = JSON.stringify({ token }).replace(/</g, '\\u003c');
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2125,8 +1758,9 @@ function getPasswordResetHtml(token: string): string {
   <title>Reset Password - TheOneFile_Verse</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{--bg:#0d0d0d;--surface:#242424;--border:#333;--text:#e8e8e8;--text-soft:#999;--accent:#c9a227;--accent-hover:#d4b23a}
-    body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:400px}
     h1{font-size:24px;margin-bottom:8px;text-align:center}
     p{color:var(--text-soft);font-size:14px;text-align:center;margin-bottom:32px}
@@ -2138,38 +1772,25 @@ function getPasswordResetHtml(token: string): string {
     .error.active{display:block}
     .success{color:#22c55e;font-size:14px;text-align:center;margin-bottom:16px;display:none}
     .success.active{display:block}
+    @media(max-width:640px){.setup-box,.login-box,.box{padding:24px}}
+    @media(max-width:380px){.setup-box,.login-box,.box{padding:20px 16px}}
   </style>
 </head>
-<body>
+<body data-page="password-reset">
   <div class="box">
     <h1>Reset Password</h1>
     <p>Enter your new password</p>
     <div class="error" id="error"></div>
     <div class="success" id="success">Password reset successfully! <a href="/" style="color:var(--accent)">Go to home</a></div>
     <form id="form">
-      <input type="password" id="password" placeholder="New password (min 8 characters)" minlength="8" required>
-      <input type="password" id="confirm" placeholder="Confirm password" required>
+      <input type="password" id="password" placeholder="New password (min 8 characters)" minlength="8" required autocomplete="new-password">
+      <input type="password" id="confirm" placeholder="Confirm password" required autocomplete="new-password">
       <button type="submit">Reset Password</button>
     </form>
   </div>
-  <script>
-    document.getElementById('form').addEventListener('submit',async(e)=>{
-      e.preventDefault();
-      const pw=document.getElementById('password').value;
-      const confirmVal=document.getElementById('confirm').value;
-      const err=document.getElementById('error');
-      err.classList.remove('active');
-      if(pw!==confirmVal){err.textContent='Passwords do not match';err.classList.add('active');return}
-      if(pw.length<8){err.textContent='Password must be at least 8 characters';err.classList.add('active');return}
-      try{
-        const csrfRes=await fetch('/api/auth/csrf');const csrfData=await csrfRes.json();
-        const res=await fetch('/api/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:'${token}',password:pw,csrfToken:csrfData.token})});
-        const data=await res.json();
-        if(data.success){document.getElementById('form').style.display='none';document.getElementById('success').classList.add('active')}
-        else{err.textContent=data.error||'Failed to reset password';err.classList.add('active')}
-      }catch{err.textContent='Connection error';err.classList.add('active')}
-    });
-  </script>
+  <script type="application/json" id="page-data">${safePageData}</script>
+  <script src="/admin-auth.js"></script>
+  <script src="/admin-pages.js"></script>
 </body>
 </html>`;
 }
@@ -2467,7 +2088,7 @@ async function fetchLatestFromGitHub(): Promise<boolean> {
       console.log(`[Update] Admin can set this hash in settings to enable integrity checking.`);
     }
 
-    writeFileSync(theOneFilePath, html);
+    await Bun.write(theOneFilePath, html);
     theOneFileHtml = html;
     console.log(`[Update] Downloaded (${(html.length / 1024).toFixed(1)}KB)`);
     return true;
@@ -2486,15 +2107,19 @@ function restartUpdateTimer(): void {
 }
 
 if (instanceSettings.skipUpdates) {
-  if (existsSync(theOneFilePath)) {
-    theOneFileHtml = readFileSync(theOneFilePath, "utf-8");
+  const localFile = Bun.file(theOneFilePath);
+  if (await localFile.exists()) {
+    theOneFileHtml = await localFile.text();
     console.log("[Update] Using local file (updates disabled)");
   }
 } else {
   await fetchLatestFromGitHub();
-  if (!theOneFileHtml && existsSync(theOneFilePath)) {
-    theOneFileHtml = readFileSync(theOneFilePath, "utf-8");
-    console.log("[Update] Using cached file");
+  if (!theOneFileHtml) {
+    const cachedFile = Bun.file(theOneFilePath);
+    if (await cachedFile.exists()) {
+      theOneFileHtml = await cachedFile.text();
+      console.log("[Update] Using cached file");
+    }
   }
 }
 
@@ -2511,12 +2136,10 @@ setInterval(() => {
   }
 }, 5 * 60 * 1000);
 
-const server = Bun.serve({
-  port: PORT,
-  async fetch(req, server) {
+async function handleRequest(req: Request, server: any): Promise<Response | undefined> {
     const url = new URL(req.url);
     const path = url.pathname;
-    
+
     if (path.match(/^\/ws\/[\w-]+$/)) {
       const clientIp = getClientIP(req);
       const now = Date.now();
@@ -2584,7 +2207,7 @@ const server = Bun.serve({
     if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
         if (!isAdminConfigured() && (path === "/" || path === "/index.html")) {
-      return new Response(setupPageHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(setupPageHtml, 'public', req);
     }
 
     if (path === "/api/setup" && req.method === "POST") {
@@ -2624,7 +2247,7 @@ const server = Bun.serve({
           headers: { ...corsHeaders, "Content-Type": "application/json",
             "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken) }
         });
-      } catch (e: any) { console.error("[Setup]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     const adminPath = getAdminPath();
@@ -2632,7 +2255,7 @@ const server = Bun.serve({
     if (path === `/${adminPath}`) {
       if (needsAdminMigration()) {
         const migrationWithPath = migrationPageHtml.replace(/\/admin/g, `/${adminPath}`);
-        return new Response(migrationWithPath, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+        return serveHtml(migrationWithPath, 'admin', req);
       }
       if (!hasAdminUser()) {
         return Response.redirect(new URL("/", req.url).toString(), 302);
@@ -2642,9 +2265,10 @@ const server = Bun.serve({
         return Response.redirect(new URL(`/${adminPath}/login`, req.url).toString(), 302);
       }
       const dashboardWithPath = adminDashboardHtml
+        .replace('ADMIN_PATH_PLACEHOLDER', adminPath)
         .replace(/\/admin\/login/g, `/${adminPath}/login`)
         .replace(/\/admin/g, `/${adminPath}`);
-      return new Response(dashboardWithPath, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(dashboardWithPath, 'admin', req);
     }
 
     if (path === `/${adminPath}/login`) {
@@ -2654,8 +2278,8 @@ const server = Bun.serve({
       if (!hasAdminUser()) {
         return Response.redirect(new URL("/", req.url).toString(), 302);
       }
-      const loginWithPath = adminLoginHtml.replace(/\/admin/g, `/${adminPath}`);
-      return new Response(loginWithPath, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      const loginWithPath = adminLoginHtml.replace('ADMIN_PATH_PLACEHOLDER', adminPath).replace(/\/admin/g, `/${adminPath}`);
+      return serveHtml(loginWithPath, 'admin', req);
     }
 
     if (path === "/api/admin/login" && req.method === "POST") {
@@ -2672,6 +2296,13 @@ const server = Bun.serve({
           return Response.json({ error: "Email and password required" }, { status: 400, headers: corsHeaders });
         }
         const result = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
+        if (result.requires2FA) {
+          const user = db.getUserByEmail(body.email);
+          if (!user || user.role !== 'admin') {
+            return Response.json({ error: "Not authorized as admin" }, { status: 403, headers: corsHeaders });
+          }
+          return Response.json({ requires2FA: true, pendingToken: result.pendingToken }, { headers: corsHeaders });
+        }
         if (!result.success || !result.sessionToken) {
           return Response.json({ error: result.error || "Invalid credentials" }, { status: 403, headers: corsHeaders });
         }
@@ -2683,7 +2314,7 @@ const server = Bun.serve({
           headers: { ...corsHeaders, "Content-Type": "application/json",
             "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken) }
         });
-      } catch (e: any) { console.error("[AdminLogin]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/admin/migrate" && req.method === "POST") {
@@ -2726,7 +2357,7 @@ const server = Bun.serve({
           headers: { ...corsHeaders, "Content-Type": "application/json",
             "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken) }
         });
-      } catch (e: any) { console.error("[AdminMigrate]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/admin/rooms" && req.method === "GET") {
@@ -2735,7 +2366,7 @@ const server = Bun.serve({
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
       const searchQuery = url.searchParams.get("q") || "";
-      const limit = parseInt(url.searchParams.get("limit") || "100");
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
       const dbRooms = searchQuery ? db.searchRooms(searchQuery, limit, offset) : db.listRooms();
       const rooms = dbRooms.map(room => {
@@ -2830,6 +2461,9 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (typeof body.email !== "string" || typeof body.password !== "string" || (body.displayName !== undefined && body.displayName !== null && typeof body.displayName !== "string")) {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
         if (!oidc.validateCsrfToken(csrfToken)) {
           return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
@@ -2853,7 +2487,7 @@ const server = Bun.serve({
           });
         }
         return Response.json({ success: true, userId: result.userId }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[Register]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/auth/login" && req.method === "POST") {
@@ -2863,11 +2497,17 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (typeof body.email !== "string" || typeof body.password !== "string") {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
         if (!oidc.validateCsrfToken(csrfToken)) {
           return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
         }
         const result = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
+        if (result.requires2FA) {
+          return Response.json({ requires2FA: true, pendingToken: result.pendingToken }, { headers: corsHeaders });
+        }
         if (!result.success) {
           return Response.json({ error: result.error }, { status: 401, headers: corsHeaders });
         }
@@ -2875,7 +2515,28 @@ const server = Bun.serve({
           headers: { ...corsHeaders, "Content-Type": "application/json",
             "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!) }
         });
-      } catch (e: any) { console.error("[Login]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/auth/2fa/login" && req.method === "POST") {
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "2fa-login", instanceSettings))) {
+        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (!body.pendingToken || !body.code || typeof body.pendingToken !== "string" || typeof body.code !== "string") {
+          return Response.json({ error: "Token and code required" }, { status: 400, headers: corsHeaders });
+        }
+        const result = await auth.loginWith2FA(body.pendingToken, body.code, clientIP, req.headers.get("user-agent") || "");
+        if (!result.success) {
+          return Response.json({ error: result.error }, { status: 401, headers: corsHeaders });
+        }
+        return new Response(JSON.stringify({ success: true, userId: result.userId }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json",
+            "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!) }
+        });
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/auth/me" && req.method === "GET") {
@@ -2891,7 +2552,7 @@ const server = Bun.serve({
       if (!user) {
         return Response.json({ user: null }, { headers: corsHeaders });
       }
-      const { passwordHash, ...safeUser } = user;
+      const { passwordHash, totpSecret, totpBackupCodes, pendingEmailToken, ...safeUser } = user;
       return Response.json({ user: safeUser }, { headers: corsHeaders });
     }
 
@@ -3005,15 +2666,15 @@ const server = Bun.serve({
     }
 
     if (path === "/auth/login" && req.method === "GET") {
-      return new Response(userLoginHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(userLoginHtml, 'public', req);
     }
 
     if (path === "/auth/register" && req.method === "GET") {
-      return new Response(userRegisterHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(userRegisterHtml, 'public', req);
     }
 
     if (path === "/auth/forgot-password" && req.method === "GET") {
-      return new Response(userForgotPasswordHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(userForgotPasswordHtml, 'public', req);
     }
 
     if (path === "/auth/verify" && req.method === "GET") {
@@ -3035,13 +2696,16 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (typeof body.email !== "string") {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         if (body.email && !(await checkEmailRateLimit(body.email, "password-reset", instanceSettings))) {
           return Response.json({ success: true }, { headers: corsHeaders });
         }
         const baseUrl = new URL(req.url).origin;
         await auth.requestPasswordReset(body.email, baseUrl);
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/auth/reset-password" && req.method === "GET") {
@@ -3049,7 +2713,7 @@ const server = Bun.serve({
       if (!token) {
         return Response.redirect(new URL("/?reset_error=missing_token", req.url).toString(), 302);
       }
-      return new Response(getPasswordResetHtml(token), { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(getPasswordResetHtml(token), 'public', req);
     }
 
     if (path === "/api/auth/reset-password" && req.method === "POST") {
@@ -3059,6 +2723,9 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (typeof body.token !== "string" || typeof body.password !== "string") {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
         if (!oidc.validateCsrfToken(csrfToken)) {
           return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
@@ -3068,7 +2735,7 @@ const server = Bun.serve({
           return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
         }
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/auth/magic-link" && req.method === "POST") {
@@ -3078,13 +2745,16 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (typeof body.email !== "string") {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         if (body.email && !(await checkEmailRateLimit(body.email, "magic-link", instanceSettings))) {
           return Response.json({ success: true }, { headers: corsHeaders });
         }
         const baseUrl = new URL(req.url).origin;
         await auth.requestMagicLink(body.email, baseUrl);
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/auth/magic-link" && req.method === "GET") {
@@ -3126,12 +2796,16 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (!validateRequestCsrf(req, body)) return csrfReject(corsHeaders);
+        if (typeof body !== "object" || body === null || Array.isArray(body)) {
+          return Response.json({ error: "Invalid input" }, { status: 400, headers: corsHeaders });
+        }
         const result = auth.updateProfile(user.id, body);
         if (!result.success) {
           return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
         }
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/auth/change-password" && req.method === "POST") {
@@ -3149,12 +2823,16 @@ const server = Bun.serve({
       }
       try {
         const body = await req.json();
+        if (!validateRequestCsrf(req, body)) return csrfReject(corsHeaders);
+        if (typeof body.currentPassword !== "string" || typeof body.newPassword !== "string") {
+          return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
+        }
         const result = await auth.changePassword(user.id, body.currentPassword, body.newPassword);
         if (!result.success) {
           return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
         }
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/auth/sessions" && req.method === "GET") {
@@ -3171,6 +2849,7 @@ const server = Bun.serve({
     }
 
     if (path === "/api/auth/sessions" && req.method === "DELETE") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
       const token = getUserTokenFromRequest(req);
       if (!token) {
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
@@ -3202,6 +2881,7 @@ const server = Bun.serve({
     }
 
     if (path.match(/^\/api\/auth\/oidc-links\/[\w-]+$/) && req.method === "DELETE") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
       const linkId = path.split("/")[4];
       const token = getUserTokenFromRequest(req);
       if (!token) {
@@ -3218,6 +2898,126 @@ const server = Bun.serve({
       return Response.json({ success: true }, { headers: corsHeaders });
     }
 
+    if (path === "/api/auth/2fa/setup" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "2fa-setup", instanceSettings))) {
+        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      const token = getUserTokenFromRequest(req);
+      if (!token) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      const user = await oidc.validateUserSessionToken(token);
+      if (!user) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const result = await auth.setupTOTP(user.id);
+        if (!result.success) {
+          return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
+        }
+        return Response.json({ secret: result.secret, otpauthUrl: result.otpauthUrl }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/auth/2fa/verify" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "2fa-verify", instanceSettings))) {
+        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      const token = getUserTokenFromRequest(req);
+      if (!token) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      const user = await oidc.validateUserSessionToken(token);
+      if (!user) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (!body.code || typeof body.code !== "string" || body.code.length !== 6) {
+          return Response.json({ error: "Valid 6 digit code required" }, { status: 400, headers: corsHeaders });
+        }
+        const result = await auth.verifyAndEnableTOTP(user.id, body.code);
+        if (!result.success) {
+          return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
+        }
+        return Response.json({ success: true, backupCodes: result.backupCodes }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/auth/2fa/disable" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "2fa-disable", instanceSettings))) {
+        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      const token = getUserTokenFromRequest(req);
+      if (!token) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      const user = await oidc.validateUserSessionToken(token);
+      if (!user) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (!body.password || typeof body.password !== "string") {
+          return Response.json({ error: "Password required" }, { status: 400, headers: corsHeaders });
+        }
+        const result = await auth.disableTOTP(user.id, body.password);
+        if (!result.success) {
+          return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
+        }
+        return Response.json({ success: true }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/auth/email-change" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "email-change", instanceSettings))) {
+        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      const token = getUserTokenFromRequest(req);
+      if (!token) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      const user = await oidc.validateUserSessionToken(token);
+      if (!user) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (!body.newEmail || !body.password || typeof body.newEmail !== "string" || typeof body.password !== "string") {
+          return Response.json({ error: "New email and password required" }, { status: 400, headers: corsHeaders });
+        }
+        const baseUrl = new URL(req.url).origin;
+        const result = await auth.requestEmailChange(user.id, body.newEmail, body.password, baseUrl);
+        if (!result.success) {
+          return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
+        }
+        return Response.json({ success: true }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/auth/verify-email-change" && req.method === "GET") {
+      const token = url.searchParams.get("token");
+      if (!token) {
+        return Response.redirect(new URL("/?email_change_error=missing_token", req.url).toString(), 302);
+      }
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "email-change-verify", instanceSettings))) {
+        return Response.redirect(new URL("/?email_change_error=rate_limited", req.url).toString(), 302);
+      }
+      const result = await auth.confirmEmailChange(token);
+      if (!result.success) {
+        return Response.redirect(new URL(`/?email_change_error=${encodeURIComponent(result.error || "unknown")}`, req.url).toString(), 302);
+      }
+      return Response.redirect(new URL("/?email_changed=true", req.url).toString(), 302);
+    }
 
     if (path === "/api/admin/users" && req.method === "GET") {
       const adminUser = await validateAdminUser(req);
@@ -3225,11 +3025,11 @@ const server = Bun.serve({
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
       const searchQuery = url.searchParams.get("q") || "";
-      const limit = parseInt(url.searchParams.get("limit") || "100");
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
       const users = searchQuery ? db.searchUsers(searchQuery, limit, offset) : db.listUsers(limit, offset);
       const safeUsers = users.map(u => {
-        const { passwordHash, ...safe } = u;
+        const { passwordHash, totpSecret, totpBackupCodes, pendingEmailToken, ...safe } = u;
         return safe;
       });
       return Response.json({ users: safeUsers, total: db.countUsers() }, { headers: corsHeaders });
@@ -3248,7 +3048,7 @@ const server = Bun.serve({
         }
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_created", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: result.userId });
         return Response.json({ success: true, userId: result.userId }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/users\/[\w-]+$/) && req.method === "PUT") {
@@ -3265,7 +3065,7 @@ const server = Bun.serve({
         }
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_updated", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: userId, details: body });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/users\/[\w-]+\/reset-password$/) && req.method === "POST") {
@@ -3286,7 +3086,7 @@ const server = Bun.serve({
         await auth.requestPasswordReset(user.email, baseUrl);
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_password_reset_sent", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: userId });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Failed to send reset email" }, { status: 500, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders, "Failed to send reset email", 500); }
     }
 
     if (path.match(/^\/api\/admin\/users\/[\w-]+\/set-password$/) && req.method === "POST") {
@@ -3306,7 +3106,7 @@ const server = Bun.serve({
         }
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_password_set", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: userId });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/users\/[\w-]+$/) && req.method === "DELETE") {
@@ -3342,7 +3142,7 @@ const server = Bun.serve({
         oidc.saveAuthSettings(body);
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "auth_settings_changed", actor: adminUser.id, actorIp: getClientIP(req), details: body });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
 
@@ -3393,7 +3193,7 @@ const server = Bun.serve({
         db.createOidcProvider(provider);
         db.addAuditLog({ timestamp: now, action: "oidc_provider_created", actor: adminUser.id, actorIp: getClientIP(req), targetType: "oidc_provider", targetId: provider.id, details: { name: provider.name } });
         return Response.json({ success: true, id: provider.id }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/oidc-providers\/[\w-]+$/) && req.method === "PUT") {
@@ -3429,7 +3229,7 @@ const server = Bun.serve({
         db.updateOidcProvider(updated);
         db.addAuditLog({ timestamp: now, action: "oidc_provider_updated", actor: adminUser.id, actorIp: getClientIP(req), targetType: "oidc_provider", targetId: providerId });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/oidc-providers\/[\w-]+$/) && req.method === "DELETE") {
@@ -3491,7 +3291,7 @@ const server = Bun.serve({
         db.createSmtpConfig(config);
         db.addAuditLog({ timestamp: now, action: "smtp_config_created", actor: adminUser.id, actorIp: getClientIP(req), targetType: "smtp_config", targetId: config.id, details: { name: config.name } });
         return Response.json({ success: true, id: config.id }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/smtp-configs\/[\w-]+$/) && req.method === "PUT") {
@@ -3525,7 +3325,7 @@ const server = Bun.serve({
         db.updateSmtpConfig(updated);
         db.addAuditLog({ timestamp: now, action: "smtp_config_updated", actor: adminUser.id, actorIp: getClientIP(req), targetType: "smtp_config", targetId: configId });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/admin/smtp-configs/test" && req.method === "POST") {
@@ -3596,7 +3396,7 @@ const server = Bun.serve({
       if (!adminUser) {
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
-      const limit = parseInt(url.searchParams.get("limit") || "100");
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
       const logs = db.listEmailLogs(limit, offset);
       const stats = mailer.getEmailStats();
@@ -3642,7 +3442,7 @@ const server = Bun.serve({
         };
         db.updateEmailTemplate(updated);
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if ((ENV_ADMIN_PASSWORD || isInstanceLocked()) && isAdminRoute(path)) {
@@ -3651,7 +3451,7 @@ const server = Bun.serve({
       const hasInstanceAccess = (token && INSTANCE_TOKENS.has(token)) || adminUser;
       if (!hasInstanceAccess) {
         if (path === "/" || path === "/index.html" || path.startsWith("/s/")) {
-          return new Response(instanceLoginPageHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+          return serveHtml(instanceLoginPageHtml, 'public', req);
         }
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
@@ -3682,7 +3482,7 @@ const server = Bun.serve({
           });
         }
         return Response.json({ error: "Invalid password" }, { status: 403, headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/admin/settings" && req.method === "GET") {
@@ -3816,7 +3616,7 @@ const server = Bun.serve({
         saveSettings(instanceSettings);
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "settings_changed", actor: adminUser.id, actorIp: getClientIP(req), details: body });
         return Response.json({ success: true }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path === "/api/admin/update" && req.method === "POST") {
@@ -3850,7 +3650,7 @@ const server = Bun.serve({
         if (!validationResult.valid) {
           return Response.json({ error: validationResult.error }, { status: 400, headers: corsHeaders });
         }
-        writeFileSync(theOneFilePath, html);
+        await Bun.write(theOneFilePath, html);
         theOneFileHtml = html;
         instanceSettings.skipUpdates = true;
         saveSettings(instanceSettings);
@@ -3893,7 +3693,7 @@ const server = Bun.serve({
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
       const query = url.searchParams.get("q") || "";
-      const limit = parseInt(url.searchParams.get("limit") || "100");
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
       const logs = query ? db.searchAuditLogs(query, limit, offset) : db.getAuditLogs(limit, offset);
       return Response.json({ logs }, { headers: corsHeaders });
@@ -3914,7 +3714,7 @@ const server = Bun.serve({
         return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
       }
       const roomId = url.searchParams.get("room") || "";
-      const limit = parseInt(url.searchParams.get("limit") || "100");
+      const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
       const logs = roomId ? db.getActivityLogs(roomId, limit, offset) : db.getAllActivityLogs(limit, offset);
       return Response.json({ logs }, { headers: corsHeaders });
@@ -3975,9 +3775,9 @@ const server = Bun.serve({
       const backup = backups.find(b => b.id === backupId);
       if (!backup) return Response.json({ error: "Backup not found" }, { status: 404, headers: corsHeaders });
       const backupPath = join(BACKUPS_DIR, backup.filename);
-      if (!existsSync(backupPath)) return Response.json({ error: "Backup file missing" }, { status: 404, headers: corsHeaders });
-      const content = readFileSync(backupPath, "utf-8");
-      return new Response(content, { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${backup.filename}"`, ...securityHeaders } });
+      const backupFile = Bun.file(backupPath);
+      if (!await backupFile.exists()) return Response.json({ error: "Backup file missing" }, { status: 404, headers: corsHeaders });
+      return new Response(backupFile, { headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${backup.filename}"`, ...securityHeaders } });
     }
 
     if (path.match(/^\/api\/admin\/backups\/[\w-]+$/) && req.method === "DELETE") {
@@ -3990,7 +3790,7 @@ const server = Bun.serve({
       const backup = backups.find(b => b.id === backupId);
       if (!backup) return Response.json({ error: "Backup not found" }, { status: 404, headers: corsHeaders });
       const backupPath = join(BACKUPS_DIR, backup.filename);
-      if (existsSync(backupPath)) unlinkSync(backupPath);
+      try { await unlink(backupPath); } catch {}
       db.deleteBackupRecord(backupId);
       db.addAuditLog({ timestamp: new Date().toISOString(), action: "backup_deleted", actor: adminUser.id, actorIp: getClientIP(req), targetType: "backup", targetId: backupId });
       return Response.json({ deleted: true }, { headers: corsHeaders });
@@ -4021,7 +3821,7 @@ const server = Bun.serve({
         db.createApiKey({ id, name: body.name, keyHash, permissions, createdAt: new Date().toISOString(), expiresAt, active: true });
         db.addAuditLog({ timestamp: new Date().toISOString(), action: "api_key_created", actor: adminUser.id, actorIp: getClientIP(req), targetType: "api_key", targetId: id, details: { name: body.name } });
         return Response.json({ id, key: rawKey, name: body.name, permissions, expiresAt }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
 
     if (path.match(/^\/api\/admin\/api-keys\/[\w-]+$/) && req.method === "DELETE") {
@@ -4051,6 +3851,10 @@ const server = Bun.serve({
 
     if (path === "/api/version" && req.method === "GET") {
       return Response.json({ version: APP_VERSION }, { headers: corsHeaders });
+    }
+
+    if (path === "/api/health" && req.method === "GET") {
+      return Response.json({ status: "ok", version: APP_VERSION }, { headers: corsHeaders });
     }
 
     if (path === "/api/theme" && req.method === "GET") {
@@ -4122,7 +3926,7 @@ const server = Bun.serve({
         if (room.destruct.mode === "time") scheduleDestruction(id, room.destruct.value);
         sendWebhook("room_created", { roomId: id, hasPassword: !!room.passwordHash, destructMode, creatorId });
         return Response.json({ id, url: `/s/${id}`, hasPassword: !!room.passwordHash, allowGuests: room.allowGuests }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
     
     if (path.match(/^\/api\/room\/[\w-]+\/verify$/) && req.method === "POST") {
@@ -4157,7 +3961,7 @@ const server = Bun.serve({
           return Response.json({ deleted: true }, { headers: corsHeaders });
         }
         return Response.json({ error: "Only room creator can delete" }, { status: 403, headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
     
     if (path.match(/^\/api\/room\/[\w-]+\/exists$/) && req.method === "GET") {
@@ -4196,7 +4000,7 @@ const server = Bun.serve({
         const wsToken = await generateWsSessionToken(id, collabUserId);
 
         return Response.json({ wsToken, expiresIn: WS_TOKEN_EXPIRY / 1000 }, { headers: corsHeaders });
-      } catch (e: any) { console.error("[API]", e.message); return Response.json({ error: "Invalid request" }, { status: 400, headers: corsHeaders }); }
+      } catch (e: any) { return apiError(e, corsHeaders); }
     }
     
     if (path === "/api/refresh" && req.method === "POST") {
@@ -4434,12 +4238,12 @@ ${saveHookScript}
 
       injectedHtml = injectedHtml.replace(/<\/body>\s*<\/html>\s*$/i, configScript + "\n</html>");
 
-      return new Response(injectedHtml, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      return serveHtml(injectedHtml, 'room', req);
     }
     
     if (path === "/" || path === "/index.html") {
       const file = Bun.file(join(process.cwd(), "public", "index.html"));
-      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "text/html", ...securityHeaders } });
+      if (await file.exists()) return serveHtml(await file.text(), 'public', req);
     }
 
     if (path === "/collab.js") {
@@ -4452,13 +4256,48 @@ ${saveHookScript}
       if (await file.exists()) return new Response(file, { headers: { "Content-Type": "text/css", ...securityHeaders } });
     }
 
+    if (path === "/landing.js") {
+      const file = Bun.file(join(process.cwd(), "public", "landing.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=3600" } });
+    }
+
+    if (path === "/admin-dashboard.js") {
+      const file = Bun.file(join(process.cwd(), "public", "admin-dashboard.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=3600" } });
+    }
+
+    if (path === "/admin-auth.js") {
+      const file = Bun.file(join(process.cwd(), "public", "admin-auth.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=3600" } });
+    }
+
+    if (path === "/admin-pages.js") {
+      const file = Bun.file(join(process.cwd(), "public", "admin-pages.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=3600" } });
+    }
+
     if (path === "/favicon.ico") {
       return new Response(null, { status: 204 });
     }
 
     return new Response("Not found", { status: 404, headers: securityHeaders });
+}
+
+const server = Bun.serve({
+  port: PORT,
+  async fetch(req, server) {
+    const start = performance.now();
+    const response = await handleRequest(req, server);
+    if (response) {
+      const path = new URL(req.url).pathname;
+      if (path !== '/api/health' && !path.startsWith('/ws/')) {
+        console.log(`[HTTP] ${req.method} ${path} ${response.status} ${(performance.now() - start).toFixed(1)}ms`);
+      }
+    }
+    return response;
   },
   websocket: {
+    perMessageDeflate: true,
     open(ws) {
       const roomId = (ws.data as WsData)?.roomId;
       if (!roomId) return;
@@ -4652,14 +4491,7 @@ restartBackupTimer();
 
 db.initializeDefaultEmailTemplates();
 
-const adminUsers = db.listUsersByRole('admin');
-for (const admin of adminUsers) {
-  if (!admin.emailVerified) {
-    admin.emailVerified = true;
-    admin.updatedAt = new Date().toISOString();
-    db.updateUser(admin);
-  }
-}
+db.verifyAllAdminEmails();
 
 console.log(`TheOneFile Verse v${APP_VERSION} | http://localhost:${PORT}`);
 if (ENV_ADMIN_PASSWORD) console.log(`Instance password lock: ENV`);

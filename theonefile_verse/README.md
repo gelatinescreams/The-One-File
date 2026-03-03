@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.6.0-blue" alt="Docker Version 1.6.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.7.0-blue" alt="Docker Version 1.7.0">
   </a>
 </p>
 
@@ -64,12 +64,15 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 | `REDIS_URL` | | Optional Redis connection for scaling |
 | `CORS_ORIGIN` | | Comma separated list of allowed origins |
 | `REQUIRE_WS_TOKEN` | `false` | Require WebSocket session tokens |
+| `TRUSTED_PROXY_COUNT` | | Number of trusted reverse proxies for X Forwarded For |
+| `TRUSTED_PROXIES` | | Comma separated list of trusted proxy IPs |
 | `DEBUG_OIDC` | `false` | Enable OIDC debug logging (dev only) |
 
 
 ### TheOneFile_Verse Features
-
-* **Current Version 1.6.0** **Security hardening, chat overhaul, UX improvements**  [changelog](changelog.md)
+* **Current Version 1.7.0 BETA** **2FA, responsive overhaul, email change, path to stable, further security improvements** 
+  * Very close to a stable 2.0
+  * See [changelog](changelog.md) for full 1.7.0 list
 
 #### Core Collaboration
 * Realtime sync via WebSocket
@@ -82,9 +85,11 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Guest access controls per room
 * All the functions of TheOneFile_Networkening
 
-#### Full User Account System **NEW 1.5**
+#### Full User Account System **NEW 1.5** **Enhanced 1.7**
 * User registration with email verification
 * Secure password login with Argon2id hashing
+* Two factor authentication (TOTP) with backup codes **NEW 1.7**
+* Email change with verification **NEW 1.7**
 * Magic link login (passwordless authentication)
 * Session management with device tracking
 * Multiple active sessions per user
@@ -120,20 +125,19 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Email delivery logs
 * System settings management
 
-#### Security & Protection **NEW 1.5** **Enhanced 1.6**
-* AES 256 GCM encryption for all secrets
-* PBKDF2 key derivation (100,000 iterations)
+#### Security & Protection **NEW 1.5** **Enhanced 1.7**
+* AES 256 GCM encryption for all secrets (including TOTP secrets and backup codes)
+* PBKDF2 key derivation (600,000 iterations) **Enhanced 1.7**
 * Argon2id password hashing
-* CSRF token protection on all forms including password reset
-* Secure HTTP only cookies
+* TOTP two factor authentication (RFC 6238 compliant) **NEW 1.7**
+* Secure HTTP only cookies with proper autocomplete attributes
 * SameSite cookie policy
-* Production mode with HSTS
-* Content Security Policy headers on all pages
+* HSTS headers on all responses
 * WebSocket session tokens
 * WebSocket connection rate limiting per IP
 * IP based rate limiting
 * Email rate limiting
-* Configurable trusted proxy support
+* Configurable trusted proxy support with environment variable overrides **NEW 1.7**
 * Custom admin path (security through obscurity but not everyone likes the default)
 * Constant time token comparison with length padding
 * SSRF protection on webhook URLs
@@ -143,6 +147,9 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * STARTTLS downgrade protection
 * File upload size limits
 * Generic error messages to prevent user enumeration
+
+#### Responsive & Mobile **NEW 1.7**
+* Full responsive design across all pages (landing, auth, admin dashboard)
 
 #### Rate Limiting **NEW 1.5**
 * Endpoint rate limiting (configurable window and max attempts)
@@ -174,4 +181,4 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 3. All edits sync in realtime via WebSocket.
 4. Data can be saved in the room and can be export into a fully editable and portable version of The One File.
 5. Or data can be exported in all popular editing formats.
-6. Bring it back later and import the HTML, CSV, JSON, or MD right back into your room.
+6. Bring it back later and import the HTML, CSV, JSON, or MD right back into your TheOneFile_Verse room.

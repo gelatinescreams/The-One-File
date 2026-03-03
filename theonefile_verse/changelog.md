@@ -1,5 +1,55 @@
 ### TheOneFile_Verse changelog
 
+**3/2/26 Theonefile_verse 1.7.0** *2FA, responsive overhaul, email change, path to stable, further security improvements*
+  * Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.
+* **Two Factor Authentication (TOTP)**
+  * Full TOTP implementation (RFC 6238, HMAC SHA1, 30 second window with ±1 tolerance)
+  * QR code setup flow with manual secret entry fallback
+  * 10 encrypted backup codes generated on enable
+  * 2FA verification on login for both user and admin login pages
+  * Backup code login as fallback (single use)
+  * Password required to disable 2FA
+  * AES 256 GCM encrypted secret and backup code storage
+  * 5 minute expiry on pending 2FA tokens with replay prevention
+
+* **Email Change**
+  * Request email change with password confirmation
+  * Verification email sent to new address
+  * Token hash verification pattern (raw token to user, SHA 256 hash stored)
+  * Uniqueness check on both request and confirmation
+  * 24 hour token expiry
+
+* **Responsive & Mobile Overhaul**
+  * Full responsive design on landing page, all 9 auth page templates, and admin dashboard
+
+* **User Settings Modal**
+  * New account settings modal accessible from user menu
+  * 2FA setup and disable UI with QR code display
+  * Backup codes display after 2FA enable
+  * Email change form with password confirmation
+  * Verification status feedback
+
+* **Security Hardening**
+  * Per token 2FA attempt limit (3 maximum) prevents brute force on TOTP codes
+  * PBKDF2 key derivation iterations increased from 100,000 to 600,000
+  * OIDC email matching defaults to disabled (requires explicit opt in)
+  * typeof input validation on all authentication API endpoints
+  * typeof validation on profile update fields
+  * CSRF validation added to all authenticated endpoints
+  * OIDC token values redacted from debug logs
+  * Proper autocomplete attributes on all auth inputs (email, current password, new password, one time code)
+  * HSTS header now sent unconditionally (removed production mode guard)
+  * WebSocket per message deflate compression enabled
+  * Trusted proxy count and trusted proxy list configurable via TRUSTED_PROXY_COUNT and TRUSTED_PROXIES env vars
+
+* **Bug Fixes**
+  * Fixed registration failing with "Invalid security token" in some instances. (CSRF token was never fetched on landing page)
+  * Fixed closeModal throwing error on modals without error elements (settings modal)
+  * Fixed error text elements not showing when set via textContent (added not empty CSS rule)
+  * Chat input alignment changed from flex end to center
+  * Chat emoji changed from text entity to actual emoji character
+  * Room creator_id database index added for search optimization
+
 **2/15/26 Theonefile_verse 1.6.0** *Security hardening, chat overhaul, UX improvements*
 * **Security Hardening**
   * Timing safe comparison for legacy password hashes using crypto.timingSafeEqual

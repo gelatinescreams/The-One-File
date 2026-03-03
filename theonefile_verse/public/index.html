@@ -6,6 +6,7 @@
   <title>TheOneFile_Verse</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a,.btn,.user-btn,.theme-toggle,.modal-close,.tab,.oidc-btn{-webkit-tap-highlight-color:transparent}
 
     :root{
       --bg:#0d0d0d;
@@ -47,8 +48,8 @@
 
     .theme-toggle{
       position:fixed;
-      top:20px;
-      right:20px;
+      top:max(20px,env(safe-area-inset-top,20px));
+      right:max(20px,env(safe-area-inset-right,20px));
       background:var(--surface);
       border:1px solid var(--border);
       color:var(--text);
@@ -56,6 +57,11 @@
       border-radius:6px;
       cursor:pointer;
       font-size:14px;
+      min-height:44px;
+      min-width:44px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
     .theme-toggle:hover{background:var(--bg-alt)}
 
@@ -116,6 +122,7 @@
       align-items:center;
       justify-content:center;
       padding:20px;
+      padding-bottom:max(20px,env(safe-area-inset-bottom,20px));
       z-index:100;
     }
     .modal-overlay.active{display:flex}
@@ -145,6 +152,11 @@
       cursor:pointer;
       line-height:1;
       padding:0;
+      min-width:44px;
+      min-height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
     .modal-close:hover{color:var(--text)}
 
@@ -164,7 +176,7 @@
       border:1px solid var(--border);
       border-radius:6px;
       color:var(--text);
-      font-size:14px;
+      font-size:16px;
     }
     .form-group input:focus,.form-group select:focus{
       outline:none;
@@ -207,11 +219,11 @@
       font-size:13px;
       display:none;
     }
-    .error-text.active{display:block}
+    .error-text.active,.error-text:not(:empty){display:block}
 
     .footer{
       position:fixed;
-      bottom:20px;
+      bottom:max(20px,env(safe-area-inset-bottom,20px));
       font-size:12px;
       color:var(--text-soft);
     }
@@ -220,8 +232,8 @@
 
     .user-menu{
       position:fixed;
-      top:20px;
-      left:20px;
+      top:max(20px,env(safe-area-inset-top,20px));
+      left:max(20px,env(safe-area-inset-left,20px));
       display:flex;
       align-items:center;
       gap:12px;
@@ -247,6 +259,9 @@
       border-radius:6px;
       cursor:pointer;
       font-size:13px;
+      min-height:44px;
+      display:inline-flex;
+      align-items:center;
     }
     .user-btn:hover{background:var(--bg-alt)}
 
@@ -254,10 +269,10 @@
       display:flex;
       gap:8px;
       position:fixed;
-      top:20px;
-      left:20px;
+      top:max(20px,env(safe-area-inset-top,20px));
+      left:max(20px,env(safe-area-inset-left,20px));
     }
-    .auth-buttons .btn{padding:8px 16px;font-size:13px;width:auto}
+    .auth-buttons .btn{padding:8px 16px;font-size:13px;width:auto;min-height:44px;display:inline-flex;align-items:center}
 
     .oidc-providers{
       display:flex;
@@ -277,6 +292,7 @@
       cursor:pointer;
       font-size:14px;
       width:100%;
+      min-height:44px;
     }
     .oidc-btn:hover{border-color:var(--accent)}
     .oidc-btn img{width:20px;height:20px}
@@ -309,6 +325,7 @@
       color:var(--text-soft);
       cursor:pointer;
       font-size:14px;
+      min-height:44px;
     }
     .tab.active{
       color:var(--accent);
@@ -328,35 +345,41 @@
     .guest-mode-toggle input{width:18px;height:18px}
     .guest-mode-toggle label{font-size:13px;color:var(--text-soft)}
 
-    @media(max-width:480px){
+    @media(max-width:640px){
       h1{font-size:24px}
       .tagline{font-size:14px;margin-bottom:32px}
-      .auth-buttons,.user-menu{
-        top:12px;
-        left:12px;
-        gap:8px;
-      }
-      .auth-buttons .btn{padding:6px 10px;font-size:12px}
+      .auth-buttons,.user-menu{top:max(12px,env(safe-area-inset-top,12px));left:max(12px,env(safe-area-inset-left,12px));gap:6px}
+      .auth-buttons{flex-wrap:wrap}
+      .auth-buttons .btn{padding:8px 12px;font-size:12px;min-height:44px}
       .user-avatar{width:32px;height:32px;font-size:12px}
-      .user-name{font-size:12px}
-      .user-btn{padding:4px 8px;font-size:11px}
+      .user-name{display:none}
+      .user-btn{padding:6px 10px;font-size:12px;min-height:44px}
+      .theme-toggle{top:max(12px,env(safe-area-inset-top,12px));right:max(12px,env(safe-area-inset-right,12px))}
+      .footer{bottom:max(12px,env(safe-area-inset-bottom,12px))}
+      .container{padding:0 4px}
+    }
+    @media(max-width:380px){
+      .container{max-width:100%}
+      .modal-body{padding:16px}
+      .modal-header,.modal-footer{padding:12px 16px}
     }
   </style>
 </head>
 <body>
-  <button class="theme-toggle" onclick="toggleTheme()">
-    <span id="theme-icon">☀</span>
+  <button class="theme-toggle">
+    <span id="theme-icon">&#9728;</span>
   </button>
 
   <div class="user-menu" id="user-menu" style="display:none">
     <div class="user-avatar" id="user-avatar"></div>
     <span class="user-name" id="user-name"></span>
-    <button class="user-btn" onclick="logout()">Logout</button>
+    <button class="user-btn" data-action="openSettings">Settings</button>
+    <button class="user-btn" data-action="logout">Logout</button>
   </div>
 
   <div class="auth-buttons" id="auth-buttons" style="display:none">
-    <button class="btn btn-secondary" onclick="openModal('login')">Sign In</button>
-    <button class="btn btn-primary" onclick="openModal('register')">Register</button>
+    <button class="btn btn-secondary" data-action="openLogin">Sign In</button>
+    <button class="btn btn-primary" data-action="openRegister">Register</button>
   </div>
 
   <div class="container">
@@ -364,8 +387,8 @@
     <p class="tagline">It turns out there CAN be more than one.</p>
 
     <div class="actions">
-      <button class="btn btn-primary" onclick="openModal('create')">Create Room</button>
-      <button class="btn btn-secondary" onclick="openModal('join')">Join Room</button>
+      <button class="btn btn-primary" data-action="openCreate">Create Room</button>
+      <button class="btn btn-secondary" data-action="openJoin">Join Room</button>
     </div>
   </div>
 
@@ -377,7 +400,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Create Room</h2>
-        <button class="modal-close" onclick="closeModal('create')">&times;</button>
+        <button class="modal-close" data-close-modal="create">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -404,7 +427,7 @@
           <input type="file" id="create-file-input" accept=".html,.json,.csv,.md,.markdown,.txt" hidden>
           <div class="file-selected" id="create-file-selected">
             <span class="file-selected-name" id="create-file-name"></span>
-            <button class="file-selected-clear" onclick="clearFile()">&times;</button>
+            <button class="file-selected-clear" data-action="clearFile">&times;</button>
           </div>
         </div>
         <div class="guest-mode-toggle" id="guest-toggle-container" style="display:none">
@@ -414,7 +437,7 @@
         <div class="error-text" id="create-error"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="createRoom()">Create</button>
+        <button class="btn btn-primary" data-action="createRoom">Create</button>
       </div>
     </div>
   </div>
@@ -423,7 +446,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Join Room</h2>
-        <button class="modal-close" onclick="closeModal('join')">&times;</button>
+        <button class="modal-close" data-close-modal="join">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -437,7 +460,7 @@
         <div class="error-text" id="join-error"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="joinRoom()">Join</button>
+        <button class="btn btn-primary" data-action="joinRoom">Join</button>
       </div>
     </div>
   </div>
@@ -446,27 +469,27 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Sign In</h2>
-        <button class="modal-close" onclick="closeModal('login')">&times;</button>
+        <button class="modal-close" data-close-modal="login">&times;</button>
       </div>
       <div class="modal-body">
         <div class="oidc-providers" id="login-oidc-providers"></div>
         <div class="divider" id="login-divider" style="display:none">or</div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="login-email" placeholder="you@example.com">
+          <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="login-password" placeholder="Your password">
+          <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
         </div>
         <div class="error-text" id="login-error"></div>
         <div style="display:flex;justify-content:space-between;margin-top:8px">
-          <a href="#" onclick="openModal('forgot');closeModal('login');return false" style="font-size:13px;color:var(--accent)">Forgot password?</a>
-          <a href="#" onclick="openModal('magic');closeModal('login');return false" style="font-size:13px;color:var(--accent)">Email me a link</a>
+          <a href="#" data-action="openForgot" style="font-size:13px;color:var(--accent)">Forgot password?</a>
+          <a href="#" data-action="openMagic" style="font-size:13px;color:var(--accent)">Email me a link</a>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="loginWithPassword()">Sign In</button>
+        <button class="btn btn-primary" data-action="loginWithPassword">Sign In</button>
       </div>
     </div>
   </div>
@@ -475,7 +498,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Create Account</h2>
-        <button class="modal-close" onclick="closeModal('register')">&times;</button>
+        <button class="modal-close" data-close-modal="register">&times;</button>
       </div>
       <div class="modal-body">
         <div class="oidc-providers" id="register-oidc-providers"></div>
@@ -486,16 +509,16 @@
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="register-email" placeholder="you@example.com">
+          <input type="email" id="register-email" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="form-group">
           <label>Password</label>
-          <input type="password" id="register-password" placeholder="At least 8 characters">
+          <input type="password" id="register-password" placeholder="At least 8 characters" autocomplete="new-password">
         </div>
         <div class="error-text" id="register-error"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="registerUser()">Create Account</button>
+        <button class="btn btn-primary" data-action="registerUser">Create Account</button>
       </div>
     </div>
   </div>
@@ -504,19 +527,19 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Reset Password</h2>
-        <button class="modal-close" onclick="closeModal('forgot')">&times;</button>
+        <button class="modal-close" data-close-modal="forgot">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">Enter your email and we'll send you a link to reset your password.</p>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="forgot-email" placeholder="you@example.com">
+          <input type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="error-text" id="forgot-error"></div>
         <div class="error-text" id="forgot-success" style="color:#22c55e"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="requestPasswordReset()">Send Reset Link</button>
+        <button class="btn btn-primary" data-action="requestPasswordReset">Send Reset Link</button>
       </div>
     </div>
   </div>
@@ -525,474 +548,72 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Passwordless Login</h2>
-        <button class="modal-close" onclick="closeModal('magic')">&times;</button>
+        <button class="modal-close" data-close-modal="magic">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">We'll email you a magic link that logs you in instantly.</p>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="magic-email" placeholder="you@example.com">
+          <input type="email" id="magic-email" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="error-text" id="magic-error"></div>
         <div class="error-text" id="magic-success" style="color:#22c55e"></div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="requestMagicLink()">Send Magic Link</button>
+        <button class="btn btn-primary" data-action="requestMagicLink">Send Magic Link</button>
       </div>
     </div>
   </div>
 
-  <script>
-    let forcedTheme = null;
+  <div class="modal-overlay" id="2fa-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Two Factor Authentication</h2>
+        <button class="modal-close" data-close-modal="2fa">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">Enter the 6 digit code from your authenticator app, or use a backup code.</p>
+        <div class="form-group">
+          <label>Code</label>
+          <input type="text" id="2fa-code" placeholder="000000" maxlength="8" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;font-size:24px;letter-spacing:8px">
+        </div>
+        <div class="error-text" id="2fa-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-action="verify2FA">Verify</button>
+      </div>
+    </div>
+  </div>
 
-    function getTheme() {
-      if (forcedTheme && forcedTheme !== 'user') return forcedTheme;
-      return localStorage.getItem('theme') || 'dark';
-    }
-    function setTheme(theme) {
-      if (!forcedTheme || forcedTheme === 'user') {
-        localStorage.setItem('theme', theme);
-      }
-      document.documentElement.setAttribute('data-theme', theme);
-      document.getElementById('theme-icon').textContent = theme === 'dark' ? '☀' : '☾';
-    }
-    function toggleTheme() {
-      if (forcedTheme && forcedTheme !== 'user') return;
-      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
-    }
-    function updateThemeToggleVisibility() {
-      const btn = document.querySelector('.theme-toggle');
-      if (forcedTheme && forcedTheme !== 'user') {
-        btn.style.display = 'none';
-      } else {
-        btn.style.display = 'block';
-      }
-    }
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Account Settings</h2>
+        <button class="modal-close" data-close-modal="settings">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="settings-2fa-section">
+          <h3 style="font-size:16px;margin-bottom:12px">Two Factor Authentication</h3>
+          <div id="2fa-status"></div>
+        </div>
+        <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+          <h3 style="font-size:16px;margin-bottom:12px">Change Email</h3>
+          <div class="form-group">
+            <label>New Email</label>
+            <input type="email" id="settings-new-email" placeholder="new@example.com">
+          </div>
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="settings-email-password" placeholder="Confirm your password" autocomplete="current-password">
+          </div>
+          <div class="error-text" id="email-change-error"></div>
+          <div class="error-text" id="email-change-success" style="color:#22c55e"></div>
+          <button class="btn btn-secondary" data-action="requestEmailChange" style="margin-top:8px">Change Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    setTheme(getTheme());
-
-    fetch('/api/theme').then(r => r.json()).then(data => {
-      if (data.forcedTheme && data.forcedTheme !== 'user') {
-        forcedTheme = data.forcedTheme;
-        setTheme(forcedTheme);
-      }
-      updateThemeToggleVisibility();
-    }).catch(() => { updateThemeToggleVisibility(); });
-
-    let selectedFile = null;
-    let selectedFileContent = null;
-
-    function generateUUID() {
-      if (crypto.randomUUID) return crypto.randomUUID();
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        const r = Math.random() * 16 | 0;
-        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-      });
-    }
-
-    function getOrCreateUserId(roomId) {
-      const key = 'collab-user-' + roomId;
-      let id = localStorage.getItem(key);
-      if (!id) { id = generateUUID(); localStorage.setItem(key, id); }
-      return id;
-    }
-
-    function openModal(type) { document.getElementById(type + '-modal').classList.add('active'); }
-    function closeModal(type) {
-      document.getElementById(type + '-modal').classList.remove('active');
-      document.getElementById(type + '-error').classList.remove('active');
-    }
-
-    function showError(type, msg) {
-      const el = document.getElementById(type + '-error');
-      el.textContent = msg;
-      el.classList.add('active');
-    }
-
-    const fileDrop = document.getElementById('create-file-drop');
-    const fileInput = document.getElementById('create-file-input');
-
-    fileDrop.addEventListener('click', () => fileInput.click());
-    fileDrop.addEventListener('dragover', e => { e.preventDefault(); });
-    fileDrop.addEventListener('drop', e => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); });
-    fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-
-    const MAX_FILE_SIZE_MB = 10;
-    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
-
-    async function handleFile(file) {
-      if (!file) return;
-
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        showError('create', `File too large. Maximum size is ${MAX_FILE_SIZE_MB}MB`);
-        return;
-      }
-
-      const ext = file.name.split('.').pop().toLowerCase();
-      if (!['html', 'json', 'csv', 'md', 'markdown', 'txt'].includes(ext)) {
-        showError('create', 'Invalid file type');
-        return;
-      }
-      selectedFile = file;
-      selectedFileContent = await file.text();
-      document.getElementById('create-file-drop').style.display = 'none';
-      document.getElementById('create-file-selected').classList.add('active');
-      document.getElementById('create-file-name').textContent = file.name + ` (${(file.size / 1024).toFixed(1)}KB)`;
-    }
-
-    function clearFile() {
-      selectedFile = null;
-      selectedFileContent = null;
-      document.getElementById('create-file-drop').style.display = 'block';
-      document.getElementById('create-file-selected').classList.remove('active');
-      fileInput.value = '';
-    }
-
-    function parseTopologyFile(content, filename) {
-      const ext = filename.split('.').pop().toLowerCase();
-      if (ext === 'json') { try { return JSON.parse(content); } catch { return null; } }
-      if (ext === 'html') {
-        const match = content.match(/<script[^>]*id="topology-state"[^>]*>([\s\S]*?)<\/script>/i);
-        if (match) { try { return JSON.parse(match[1]); } catch {} }
-        return null;
-      }
-      if (ext === 'csv') {
-        const m = content.match(/#THEONEFILE_CONFIG:(.+)/);
-        if (m) { try { return JSON.parse(m[1]); } catch {} }
-        return null;
-      }
-      if (['md', 'markdown', 'txt'].includes(ext)) {
-        const m = content.match(/<!--THEONEFILE_CONFIG\s*([\s\S]*?)\s*THEONEFILE_CONFIG-->/);
-        if (m) { try { return JSON.parse(m[1].trim()); } catch {} }
-        return null;
-      }
-      return null;
-    }
-
-    async function createRoom() {
-      const password = document.getElementById('create-password').value;
-      const destructVal = document.getElementById('create-destruct').value;
-      const allowGuestsCheckbox = document.getElementById('create-allow-guests');
-      const allowGuests = allowGuestsCheckbox ? allowGuestsCheckbox.checked : true;
-
-      let destructMode = 'time', destructMs = parseInt(destructVal);
-      if (destructVal === 'empty') { destructMode = 'empty'; destructMs = 0; }
-      else if (destructVal === 'never') { destructMode = 'never'; destructMs = 0; }
-
-      let topology = null;
-      if (selectedFileContent) topology = parseTopologyFile(selectedFileContent, selectedFile.name);
-
-      const tempId = generateUUID();
-      const creatorId = getOrCreateUserId(tempId);
-
-      try {
-        const res = await fetch('/api/room', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: password || null, destructMode, destructValue: destructMs, topology, creatorId, allowGuests })
-        });
-        const data = await res.json();
-        if (data.error) { showError('create', data.error); return; }
-        localStorage.setItem('collab-user-' + data.id, creatorId);
-        window.location.href = data.url;
-      } catch { showError('create', 'Failed to create room'); }
-    }
-
-    const joinInput = document.getElementById('join-room-id');
-    let checking = false;
-
-    joinInput.addEventListener('input', async () => {
-      let id = joinInput.value.trim();
-      if (id.includes('/s/')) { id = id.split('/s/')[1].split('?')[0]; joinInput.value = id; }
-      if (id.length < 36 || checking) return;
-      checking = true;
-      try {
-        const res = await fetch('/api/room/' + id + '/exists');
-        const data = await res.json();
-        document.getElementById('join-password-group').style.display = data.hasPassword ? 'block' : 'none';
-        if (!data.exists) showError('join', 'Room not found');
-        else document.getElementById('join-error').classList.remove('active');
-      } catch {}
-      checking = false;
-    });
-
-    async function joinRoom() {
-      let id = document.getElementById('join-room-id').value.trim();
-      if (id.includes('/s/')) id = id.split('/s/')[1].split('?')[0];
-      const password = document.getElementById('join-password').value;
-      if (!id) { showError('join', 'Enter a room ID'); return; }
-
-      try {
-        const existsRes = await fetch('/api/room/' + id + '/exists');
-        const exists = await existsRes.json();
-        if (!exists.exists) { showError('join', 'Room not found'); return; }
-
-        if (exists.hasPassword) {
-          const verifyRes = await fetch('/api/room/' + id + '/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
-          });
-          if (!(await verifyRes.json()).valid) { showError('join', 'Invalid password'); return; }
-        }
-
-        if (password) sessionStorage.setItem('room-' + id + '-pwd', password);
-        window.location.href = '/s/' + id;
-      } catch { showError('join', 'Failed to join room'); }
-    }
-
-    document.querySelectorAll('.modal-overlay').forEach(el => {
-      el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
-    });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
-    });
-
-    let currentUser = null;
-    let authSettings = null;
-    let oidcProviders = [];
-
-    async function loadAuthState() {
-      try {
-        const settingsRes = await fetch('/api/auth/settings', { credentials: 'include' });
-        const settingsData = await settingsRes.json();
-        authSettings = settingsData.settings;
-        oidcProviders = settingsData.providers || [];
-        const userRes = await fetch('/api/auth/me', { credentials: 'include' });
-        const userData = await userRes.json();
-        currentUser = userData.user;
-        updateAuthUI();
-      } catch (e) {
-        console.error('Failed to load auth state:', e);
-      }
-    }
-
-    function updateAuthUI() {
-      const userMenu = document.getElementById('user-menu');
-      const authButtons = document.getElementById('auth-buttons');
-      const guestToggle = document.getElementById('guest-toggle-container');
-
-      if (currentUser) {
-        userMenu.style.display = 'flex';
-        authButtons.style.display = 'none';
-        document.getElementById('user-avatar').textContent = (currentUser.displayName || currentUser.email || 'U')[0].toUpperCase();
-        document.getElementById('user-name').textContent = currentUser.displayName || currentUser.email?.split('@')[0] || 'User';
-      } else if (authSettings) {
-        userMenu.style.display = 'none';
-        const hasOidc = oidcProviders && oidcProviders.length > 0;
-        const registrationOpen = authSettings.authMode === 'open' || authSettings.authMode === 'registration';
-        if (registrationOpen || hasOidc) {
-          authButtons.style.display = 'flex';
-        }
-      }
-
-      if (authSettings && authSettings.allowRoomCreatorGuestSetting) {
-        if (currentUser || authSettings.allowGuestRoomCreation) {
-          guestToggle.style.display = 'flex';
-        } else {
-          guestToggle.style.display = 'none';
-        }
-      } else {
-        guestToggle.style.display = 'none';
-      }
-      renderOidcProviders('login-oidc-providers', 'login');
-      renderOidcProviders('register-oidc-providers', 'register');
-    }
-
-    function renderOidcProviders(containerId, mode) {
-      const container = document.getElementById(containerId);
-      const divider = document.getElementById(mode + '-divider');
-      container.innerHTML = '';
-
-      if (oidcProviders.length === 0) {
-        container.style.display = 'none';
-        divider.style.display = 'none';
-        return;
-      }
-
-      container.style.display = 'flex';
-      divider.style.display = 'flex';
-
-      oidcProviders.forEach(provider => {
-        const btn = document.createElement('button');
-        btn.className = 'oidc-btn';
-        const safeUrl = provider.iconUrl && /^https?:\/\//i.test(provider.iconUrl) ? provider.iconUrl : null;
-        const safeName = document.createElement('span');
-        safeName.textContent = 'Continue with ' + (provider.name || 'SSO');
-        if (safeUrl) {
-          const img = document.createElement('img');
-          img.src = safeUrl;
-          img.alt = provider.name || 'SSO';
-          btn.appendChild(img);
-        }
-        btn.appendChild(safeName);
-        btn.onclick = () => startOidcLogin(provider.id);
-        container.appendChild(btn);
-      });
-    }
-
-    async function startOidcLogin(providerId) {
-      try {
-        const res = await fetch('/api/auth/oidc/' + providerId);
-        const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          showError('login', data.error || 'Failed to start SSO');
-        }
-      } catch {
-        showError('login', 'Failed to start SSO');
-      }
-    }
-
-    async function loginWithPassword() {
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-
-      if (!email || !password) {
-        showError('login', 'Please enter email and password');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          window.location.reload();
-        } else {
-          showError('login', data.error || 'Login failed');
-        }
-      } catch {
-        showError('login', 'Connection error');
-      }
-    }
-
-    async function registerUser() {
-      const displayName = document.getElementById('register-name').value.trim();
-      const email = document.getElementById('register-email').value.trim();
-      const password = document.getElementById('register-password').value;
-
-      if (!email || !password) {
-        showError('register', 'Please enter email and password');
-        return;
-      }
-      if (password.length < 8) {
-        showError('register', 'Password must be at least 8 characters');
-        return;
-      }
-      if (!/[a-zA-Z]/.test(password)) {
-        showError('register', 'Password must contain at least one letter');
-        return;
-      }
-      if (!/[0-9!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/.test(password)) {
-        showError('register', 'Password must contain a number or special character');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email, password, displayName })
-        });
-        const data = await res.json();
-        if (data.success) {
-          if (data.requiresVerification) {
-            closeModal('register');
-            alert('Please check your email to verify your account.');
-          } else {
-            window.location.reload();
-          }
-        } else {
-          showError('register', data.error || 'Registration failed');
-        }
-      } catch {
-        showError('register', 'Connection error');
-      }
-    }
-
-    async function requestPasswordReset() {
-      const email = document.getElementById('forgot-email').value.trim();
-      if (!email) {
-        showError('forgot', 'Please enter your email');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/auth/forgot-password', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        document.getElementById('forgot-error').classList.remove('active');
-        const success = document.getElementById('forgot-success');
-        success.textContent = 'If an account exists, we\'ve sent a reset link.';
-        success.classList.add('active');
-      } catch {
-        showError('forgot', 'Connection error');
-      }
-    }
-
-    async function requestMagicLink() {
-      const email = document.getElementById('magic-email').value.trim();
-      if (!email) {
-        showError('magic', 'Please enter your email');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/auth/magic-link', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        document.getElementById('magic-error').classList.remove('active');
-        const success = document.getElementById('magic-success');
-        success.textContent = 'If an account exists, we\'ve sent a magic link.';
-        success.classList.add('active');
-      } catch {
-        showError('magic', 'Connection error');
-      }
-    }
-
-    async function logout() {
-      try {
-        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-        localStorage.removeItem('collab_token');
-        localStorage.removeItem('user_token');
-        currentUser = null;
-        updateAuthUI();
-        window.location.reload();
-      } catch {
-        window.location.reload();
-      }
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('auth_error')) {
-      alert('Authentication error: ' + urlParams.get('auth_error'));
-      history.replaceState({}, '', '/');
-    }
-    if (urlParams.get('verified') === 'true') {
-      alert('Email verified! You can now sign in.');
-      history.replaceState({}, '', '/');
-    }
-    if (urlParams.get('welcome') === 'true') {
-      alert('Welcome! Your account has been created.');
-      history.replaceState({}, '', '/');
-    }
-
-    loadAuthState();
-  </script>
+  <script src="/landing.js"></script>
 </body>
 </html>

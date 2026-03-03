@@ -705,7 +705,7 @@ body.collab-active {
   display: flex;
   gap: 8px;
   padding: 8px 12px;
-  align-items: flex-end;
+  align-items: center;
 }
 
 .collab-chat-input-inner {
@@ -717,7 +717,7 @@ body.collab-active {
 
 .collab-chat-input-wrap input {
   flex: 1;
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: #0a0e14;
   border: 1px solid #1e2530;
   border-radius: 8px;
@@ -725,7 +725,8 @@ body.collab-active {
   font-size: 13px;
   outline: none;
   font-family: inherit;
-  min-height: 44px;
+  height: 40px;
+  box-sizing: border-box;
 }
 
 .collab-chat-input-wrap input:focus { border-color: #3b82f6; }
@@ -743,9 +744,9 @@ body.collab-active {
 .collab-chat-char-count.warning { color: #f59e0b; }
 .collab-chat-char-count.danger { color: #ef4444; }
 
-.collab-chat-input-wrap button {
+#collab-chat-send {
   padding: 10px 16px;
-  min-height: 44px;
+  min-height: 40px;
   background: #3b82f6;
   border: none;
   border-radius: 8px;
@@ -755,9 +756,10 @@ body.collab-active {
   cursor: pointer;
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
-.collab-chat-input-wrap button:hover { background: #2563eb; }
+#collab-chat-send:hover { background: #2563eb; }
 
 .collab-typing-indicator {
   display: none;
@@ -972,21 +974,24 @@ body.collab-active {
 .collab-emoji-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
 .collab-emoji-toggle {
-  background: none;
+  background: none !important;
   border: none;
   color: #8892a0;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   padding: 4px;
-  min-width: 36px;
-  min-height: 44px;
+  width: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
+  border-radius: 8px;
+  transition: background 0.15s;
 }
 
-.collab-emoji-toggle:hover { color: #e2e8f0; }
+.collab-emoji-toggle:hover { background: rgba(255, 255, 255, 0.08) !important; color: #e2e8f0; }
 
 @media (max-width: 640px) {
   #collab-chat-panel {

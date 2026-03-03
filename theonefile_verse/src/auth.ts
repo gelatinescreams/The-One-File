@@ -1,6 +1,7 @@
 import * as db from "./database";
 import * as oidc from "./oidc";
 import * as mailer from "./mailer";
+import { createHmac, randomBytes } from "crypto";
 
 export async function hashPassword(password: string): Promise<string> {
   return await Bun.password.hash(password, {
@@ -123,7 +124,12 @@ export async function registerUser(
     lastLogin: now,
     isActive: true,
     failedLoginAttempts: 0,
-    lockedUntil: null
+    lockedUntil: null,
+    totpSecret: null,
+    totpEnabled: false,
+    totpBackupCodes: null,
+    pendingEmail: null,
+    pendingEmailToken: null
   };
 
   db.createUser(user);
@@ -147,7 +153,7 @@ export async function loginWithPassword(
   password: string,
   ipAddress: string,
   userAgent: string
-): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string }> {
+): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string; requires2FA?: boolean; pendingToken?: string }> {
   const normalizedEmail = normalizeEmail(email);
   const user = db.getUserByEmail(normalizedEmail);
   if (!user) {
@@ -198,6 +204,22 @@ export async function loginWithPassword(
   const authSettings = oidc.getAuthSettings();
   if (authSettings.requireEmailVerification && !user.emailVerified) {
     return { success: false, error: "Please verify your email first" };
+  }
+
+  if (user.totpEnabled) {
+    const pendingToken = oidc.generateSecureToken(32);
+    const tokenHash = await oidc.hashToken(pendingToken);
+    db.deleteUserTokensByType(user.id, 'totp_pending');
+    db.createUserToken({
+      id: crypto.randomUUID(),
+      userId: user.id,
+      type: 'totp_pending',
+      tokenHash,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      usedAt: null,
+      createdAt: new Date().toISOString()
+    });
+    return { success: false, requires2FA: true, pendingToken, error: undefined };
   }
 
   user.lastLogin = new Date().toISOString();
@@ -537,9 +559,11 @@ export function updateProfile(
   }
 
   if (updates.displayName !== undefined) {
+    if (typeof updates.displayName !== 'string') return { success: false, error: "Invalid display name" };
     user.displayName = updates.displayName.substring(0, 100);
   }
   if (updates.avatarUrl !== undefined) {
+    if (typeof updates.avatarUrl !== 'string') return { success: false, error: "Invalid avatar URL" };
     user.avatarUrl = updates.avatarUrl.substring(0, 500);
   }
 
@@ -683,7 +707,14 @@ export async function adminCreateUser(
     createdAt: now,
     updatedAt: now,
     lastLogin: null,
-    isActive: true
+    isActive: true,
+    failedLoginAttempts: 0,
+    lockedUntil: null,
+    totpSecret: null,
+    totpEnabled: false,
+    totpBackupCodes: null,
+    pendingEmail: null,
+    pendingEmailToken: null
   };
 
   db.createUser(user);
@@ -762,6 +793,375 @@ export function cleanupExpiredTokens(): { sessions: number; tokens: number } {
     sessions: db.cleanupExpiredSessions(),
     tokens: db.cleanupExpiredUserTokens()
   };
+}
+
+function base32Encode(buffer: Uint8Array): string {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let result = '';
+  let bits = 0;
+  let value = 0;
+  for (const byte of buffer) {
+    value = (value << 8) | byte;
+    bits += 8;
+    while (bits >= 5) {
+      result += alphabet[(value >>> (bits - 5)) & 31];
+      bits -= 5;
+    }
+  }
+  if (bits > 0) {
+    result += alphabet[(value << (5 - bits)) & 31];
+  }
+  return result;
+}
+
+function base32Decode(encoded: string): Uint8Array {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const cleanInput = encoded.toUpperCase().replace(/=+$/, '');
+  const result: number[] = [];
+  let bits = 0;
+  let value = 0;
+  for (const char of cleanInput) {
+    const index = alphabet.indexOf(char);
+    if (index === -1) continue;
+    value = (value << 5) | index;
+    bits += 5;
+    if (bits >= 8) {
+      result.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return new Uint8Array(result);
+}
+
+function generateTOTPCode(secret: Uint8Array, counter: number): string {
+  const buffer = Buffer.alloc(8);
+  buffer.writeUInt32BE(0, 0);
+  buffer.writeUInt32BE(counter, 4);
+
+  const hmac = createHmac('sha1', Buffer.from(secret));
+  hmac.update(buffer);
+  const hash = hmac.digest();
+
+  const offset = hash[hash.length - 1] & 0x0f;
+  const code = ((hash[offset] & 0x7f) << 24) |
+               ((hash[offset + 1] & 0xff) << 16) |
+               ((hash[offset + 2] & 0xff) << 8) |
+               (hash[offset + 3] & 0xff);
+
+  return (code % Math.pow(10, 6)).toString().padStart(6, '0');
+}
+
+export function verifyTOTPCode(secret: string, code: string): boolean {
+  const secretBytes = base32Decode(secret);
+  const timeStep = Math.floor(Date.now() / 1000 / 30);
+
+  for (let i = -1; i <= 1; i++) {
+    if (generateTOTPCode(secretBytes, timeStep + i) === code) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export async function setupTOTP(userId: string): Promise<{ success: boolean; secret?: string; otpauthUrl?: string; error?: string }> {
+  const user = db.getUserById(userId);
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (user.totpEnabled) {
+    return { success: false, error: "2FA is already enabled" };
+  }
+
+  const secretBytes = randomBytes(20);
+  const base32secret = base32Encode(new Uint8Array(secretBytes));
+
+  const encryptedSecret = await oidc.encryptSecret(base32secret);
+  user.totpSecret = encryptedSecret;
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  const otpauthUrl = `otpauth://totp/TheOneFileVerse:${user.email}?secret=${base32secret}&issuer=TheOneFileVerse&algorithm=SHA1&digits=6&period=30`;
+
+  db.logAuthEvent('totp_setup_started', userId, null, {});
+
+  return { success: true, secret: base32secret, otpauthUrl };
+}
+
+export async function verifyAndEnableTOTP(userId: string, code: string): Promise<{ success: boolean; backupCodes?: string[]; error?: string }> {
+  const user = db.getUserById(userId);
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (user.totpEnabled) {
+    return { success: false, error: "2FA is already enabled" };
+  }
+
+  if (!user.totpSecret) {
+    return { success: false, error: "2FA setup not started" };
+  }
+
+  const decryptedSecret = await oidc.decryptSecret(user.totpSecret);
+
+  if (!verifyTOTPCode(decryptedSecret, code)) {
+    return { success: false, error: "Invalid verification code" };
+  }
+
+  const backupCodes: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    backupCodes.push(randomBytes(8).toString('hex'));
+  }
+
+  const encryptedBackupCodes = await oidc.encryptSecret(JSON.stringify(backupCodes));
+
+  user.totpEnabled = true;
+  user.totpBackupCodes = encryptedBackupCodes;
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  db.logAuthEvent('totp_enabled', userId, null, {});
+
+  return { success: true, backupCodes };
+}
+
+export async function disableTOTP(userId: string, password: string): Promise<{ success: boolean; error?: string }> {
+  const user = db.getUserById(userId);
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (!user.totpEnabled) {
+    return { success: false, error: "2FA is not enabled" };
+  }
+
+  if (!user.passwordHash) {
+    return { success: false, error: "Account uses SSO only" };
+  }
+
+  const valid = await verifyPassword(password, user.passwordHash);
+  if (!valid) {
+    return { success: false, error: "Invalid password" };
+  }
+
+  user.totpSecret = null;
+  user.totpEnabled = false;
+  user.totpBackupCodes = null;
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  db.logAuthEvent('totp_disabled', userId, null, {});
+
+  return { success: true };
+}
+
+export async function verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  const user = db.getUserById(userId);
+  if (!user || !user.totpBackupCodes) {
+    return false;
+  }
+
+  let backupCodes: string[];
+  try {
+    const decrypted = await oidc.decryptSecret(user.totpBackupCodes);
+    backupCodes = JSON.parse(decrypted);
+  } catch {
+    return false;
+  }
+
+  const normalizedCode = code.toLowerCase().trim();
+  const index = backupCodes.findIndex(c => c.toLowerCase() === normalizedCode);
+  if (index === -1) {
+    return false;
+  }
+
+  backupCodes.splice(index, 1);
+  user.totpBackupCodes = await oidc.encryptSecret(JSON.stringify(backupCodes));
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  db.logAuthEvent('backup_code_used', userId, null, { remainingCodes: backupCodes.length });
+
+  return true;
+}
+
+export async function loginWith2FA(
+  pendingToken: string,
+  totpCode: string,
+  ipAddress: string,
+  userAgent: string
+): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string }> {
+  const tokenHash = await oidc.hashToken(pendingToken);
+  const userToken = db.getUserTokenByHash(tokenHash);
+
+  if (!userToken) {
+    return { success: false, error: "Invalid or expired 2FA session" };
+  }
+
+  if (userToken.type !== 'totp_pending') {
+    return { success: false, error: "Invalid token type" };
+  }
+
+  if (userToken.usedAt) {
+    return { success: false, error: "Token already used" };
+  }
+
+  if (new Date(userToken.expiresAt) < new Date()) {
+    db.deleteUserToken(userToken.id);
+    return { success: false, error: "2FA session expired" };
+  }
+
+  if (userToken.failedAttempts >= 3) {
+    db.deleteUserToken(userToken.id);
+    return { success: false, error: "Too many failed attempts. Please log in again." };
+  }
+
+  const user = db.getUserById(userToken.userId);
+  if (!user || !user.isActive) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (!user.totpSecret) {
+    return { success: false, error: "2FA is not configured" };
+  }
+
+  const decryptedSecret = await oidc.decryptSecret(user.totpSecret);
+  let codeValid = verifyTOTPCode(decryptedSecret, totpCode);
+
+  if (!codeValid) {
+    codeValid = await verifyBackupCode(user.id, totpCode);
+  }
+
+  if (!codeValid) {
+    const attempts = db.incrementTokenFailedAttempts(userToken.id);
+    db.logAuthEvent('login_failed', user.id, ipAddress, { reason: 'invalid_2fa_code', attempts });
+    if (attempts >= 3) {
+      db.deleteUserToken(userToken.id);
+      return { success: false, error: "Too many failed attempts. Please log in again." };
+    }
+    return { success: false, error: "Invalid 2FA code" };
+  }
+
+  db.markUserTokenUsed(userToken.id);
+
+  user.lastLogin = new Date().toISOString();
+  user.updatedAt = new Date().toISOString();
+  user.failedLoginAttempts = 0;
+  user.lockedUntil = null;
+  db.updateUser(user);
+
+  const sessionToken = await createSessionToken(user.id, ipAddress, userAgent);
+
+  db.logAuthEvent('login_success', user.id, ipAddress, { method: 'password_2fa' });
+
+  return { success: true, userId: user.id, sessionToken };
+}
+
+export async function requestEmailChange(
+  userId: string,
+  newEmail: string,
+  password: string,
+  baseUrl: string
+): Promise<{ success: boolean; error?: string }> {
+  const user = db.getUserById(userId);
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  const emailValidation = validateEmail(newEmail);
+  if (!emailValidation.valid) {
+    return { success: false, error: emailValidation.error };
+  }
+
+  if (!user.passwordHash) {
+    return { success: false, error: "Account uses SSO only" };
+  }
+
+  const valid = await verifyPassword(password, user.passwordHash);
+  if (!valid) {
+    return { success: false, error: "Invalid password" };
+  }
+
+  const normalizedNewEmail = newEmail.toLowerCase().trim();
+  const existing = db.getUserByEmail(normalizedNewEmail);
+  if (existing) {
+    return { success: false, error: "Email is already in use" };
+  }
+
+  const token = oidc.generateSecureToken(32);
+  const tokenHash = await oidc.hashToken(token);
+
+  db.deleteUserTokensByType(user.id, 'email_change');
+
+  db.createUserToken({
+    id: crypto.randomUUID(),
+    userId: user.id,
+    type: 'email_change',
+    tokenHash,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    usedAt: null,
+    createdAt: new Date().toISOString()
+  });
+
+  user.pendingEmail = normalizedNewEmail;
+  user.pendingEmailToken = tokenHash;
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  const verifyUrl = `${baseUrl}/auth/verify-email-change?token=${token}`;
+  await mailer.sendVerificationEmail(normalizedNewEmail, user.displayName || 'User', verifyUrl);
+
+  db.logAuthEvent('email_change_requested', userId, null, { newEmail: normalizedNewEmail });
+
+  return { success: true };
+}
+
+export async function confirmEmailChange(token: string): Promise<{ success: boolean; error?: string }> {
+  const tokenHash = await oidc.hashToken(token);
+  const userToken = db.getUserTokenByHash(tokenHash);
+
+  if (!userToken) {
+    return { success: false, error: "Invalid or expired token" };
+  }
+
+  if (userToken.type !== 'email_change') {
+    return { success: false, error: "Invalid token type" };
+  }
+
+  if (userToken.usedAt) {
+    return { success: false, error: "Token already used" };
+  }
+
+  if (new Date(userToken.expiresAt) < new Date()) {
+    return { success: false, error: "Token expired" };
+  }
+
+  const user = db.getUserById(userToken.userId);
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  if (!user.pendingEmail) {
+    return { success: false, error: "No email change pending" };
+  }
+
+  const existing = db.getUserByEmail(user.pendingEmail);
+  if (existing) {
+    return { success: false, error: "Email is already in use" };
+  }
+
+  const oldEmail = user.email;
+  user.email = user.pendingEmail;
+  user.pendingEmail = null;
+  user.pendingEmailToken = null;
+  user.updatedAt = new Date().toISOString();
+  db.updateUser(user);
+
+  db.markUserTokenUsed(userToken.id);
+
+  db.logAuthEvent('email_changed', user.id, null, { oldEmail, newEmail: user.email });
+
+  return { success: true };
 }
 
 setInterval(() => {

@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+*.md
+data
+.env
+.env.*
+docker-compose.yml
+.dockerignore
+demo-admin.html

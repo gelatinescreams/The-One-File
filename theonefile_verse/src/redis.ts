@@ -64,8 +64,8 @@ export async function checkRateLimitRedis(
 
     return current <= maxAttempts;
   } catch (err: any) {
-    console.error("[Redis] Rate limit check failed:", err.message);
-    return true;
+    console.error("[Redis] Rate limit check failed, denying request (fail-secure):", err.message);
+    return false;
   }
 }
 
