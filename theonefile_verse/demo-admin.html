@@ -6,6 +6,7 @@
   <title>Admin Demo | TheOneFile_Verse</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
+    button,a{-webkit-tap-highlight-color:transparent}
     :root{
       --bg:#0d0d0d;
       --bg-alt:#1a1a1a;
@@ -17,6 +18,7 @@
       --accent-hover:#d4b23a;
       --accent-bg:rgba(201,162,39,0.1);
       --accent-bg-hover:rgba(201,162,39,0.15);
+      --card-bg:#1a1f2e;
     }
     [data-theme="light"]{
       --bg:#f5f3ef;
@@ -29,24 +31,26 @@
       --accent-hover:#7a5518;
       --accent-bg:rgba(153,107,31,0.1);
       --accent-bg-hover:rgba(153,107,31,0.15);
+      --card-bg:#e8e5de;
     }
-    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px;padding-bottom:80px}
+    body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px;padding-bottom:80px;padding-left:max(20px,env(safe-area-inset-left,20px));padding-right:max(20px,env(safe-area-inset-right,20px));padding-bottom:max(80px,env(safe-area-inset-bottom,80px))}
     .container{max-width:1200px;margin:0 auto}
     header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
     h1{font-size:24px;display:flex;align-items:center;gap:12px}
     .demo-badge{background:linear-gradient(135deg,#c9a227,#f59e0b);color:#000;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
     .header-actions{display:flex;gap:8px;flex-wrap:wrap}
-    .theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px}
+    .theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;cursor:pointer;font-size:14px;min-height:44px}
     .theme-toggle:hover{background:var(--bg-alt)}
-    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px}
     .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-hover)}
     .btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--bg-alt)}
     .btn-danger{background:#dc2626;color:white}.btn-danger:hover{background:#b91c1c}
     .btn-success{background:#22c55e;color:white}.btn-success:hover{background:#16a34a}
-    .btn-sm{padding:6px 12px;font-size:12px}
+    .btn-sm{padding:6px 12px;font-size:12px;min-height:36px}
     .btn:disabled{opacity:0.5;cursor:not-allowed}
-    .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0}
-    .tab{padding:12px 20px;background:transparent;border:none;color:var(--text-soft);font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+    .tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{padding:12px 20px;background:transparent;border:none;color:var(--text-soft);font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;min-height:44px}
     .tab:hover{color:var(--text)}
     .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     .tab-content{display:none}
@@ -74,6 +78,7 @@
     .badge-yellow{background:rgba(201,162,39,0.15);color:#c9a227}
     .badge-gray{background:rgba(100,116,139,0.15);color:#94a3b8}
     .badge-red{background:rgba(239,68,68,0.15);color:#ef4444}
+    .badge-blue{background:rgba(59,130,246,0.15);color:#3b82f6}
     .room-actions{display:flex;gap:6px;flex-wrap:wrap}
     #user-list .room-header,#user-list .room-row{grid-template-columns:1fr 100px 120px 100px 140px}
     .empty-state{text-align:center;padding:60px 20px;color:var(--text-soft)}
@@ -90,14 +95,14 @@
     .toggle.active{background:var(--accent)}
     .toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:var(--text);border-radius:50%;transition:transform 0.2s}
     .toggle.active::after{transform:translateX(22px)}
-    input[type="text"],input[type="password"],input[type="number"],input[type="email"],select{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;min-width:120px}
-    input:focus,select:focus{outline:none;border-color:var(--accent)}
-    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px}
+    input[type="text"],input[type="password"],input[type="number"],input[type="email"],select,textarea{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;min-width:120px}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:20px;padding-bottom:max(20px,env(safe-area-inset-bottom,20px))}
     .modal-overlay.active{display:flex}
-    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
     .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
     .modal-header h3{font-size:18px}
-    .modal-close{background:none;border:none;color:var(--text-soft);font-size:24px;cursor:pointer;padding:4px}
+    .modal-close{background:none;border:none;color:var(--text-soft);font-size:24px;cursor:pointer;padding:4px;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center}
     .modal-body{padding:20px}
     .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
     .info-row:last-child{border-bottom:none}
@@ -107,6 +112,8 @@
     .status-msg.success{background:rgba(34,197,94,0.15);color:#22c55e}
     .status-msg.error{background:rgba(239,68,68,0.15);color:#ef4444}
     .status-msg.info{background:rgba(59,130,246,0.15);color:#3b82f6}
+    .new-key-display{background:var(--bg-alt);border:1px solid var(--accent);border-radius:8px;padding:16px;margin-top:12px}
+    .new-key-display code{background:var(--bg);padding:8px 12px;border-radius:6px;display:block;margin:8px 0;font-size:13px;word-break:break-all;color:var(--accent)}
     @media(max-width:900px){.room-header,.room-row{grid-template-columns:32px 1fr 80px 100px}.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 80px 100px}#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}}
     @media(max-width:600px){body{padding:12px;padding-bottom:80px}header{flex-direction:column;align-items:flex-start}h1{font-size:20px}.stats{grid-template-columns:repeat(2,1fr);gap:8px}.stat-card{padding:12px}.stat-value{font-size:22px}.stat-label{font-size:11px}.room-header,.room-row{grid-template-columns:32px 1fr 90px}.room-header>*:nth-child(3),.room-header>*:nth-child(4),.room-header>*:nth-child(5),.room-row>*:nth-child(3),.room-row>*:nth-child(4),.room-row>*:nth-child(5){display:none}#user-list .room-header,#user-list .room-row{grid-template-columns:1fr 90px}#user-list .room-header>*:nth-child(2),#user-list .room-header>*:nth-child(3),#user-list .room-header>*:nth-child(4),#user-list .room-row>*:nth-child(2),#user-list .room-row>*:nth-child(3),#user-list .room-row>*:nth-child(4){display:none}.room-actions{justify-content:flex-end}.btn{padding:8px 12px;font-size:12px}.btn-sm{padding:6px 10px;font-size:11px}.section-header{flex-direction:column;align-items:flex-start}.bulk-actions{width:100%;justify-content:flex-start}.tabs{overflow-x:auto}.setting-row{flex-direction:column;align-items:flex-start}.setting-control{width:100%}}
   </style>
@@ -135,6 +142,7 @@
       <button class="tab" onclick="showTab('backups')">Backups</button>
       <button class="tab" onclick="showTab('apikeys')">API Keys</button>
     </div>
+
 
     <div id="tab-rooms" class="tab-content active">
       <div class="stats">
@@ -170,7 +178,7 @@
           <div>Jan 15, 2026</div>
           <div><span class="badge badge-yellow">Yes</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('a1b2c3d4-e5f6-7890-abcd-ef1234567890', 'Jan 15, 2026', 'Jan 26, 2026 11:45 AM', 4, true, 'time', 24)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -182,7 +190,7 @@
           <div>Jan 18, 2026</div>
           <div><span class="badge badge-yellow">Yes</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('b208667b-7a9e-4a18-ac98-5cb6e73bb669', 'Jan 18, 2026', 'Jan 26, 2026 11:30 AM', 7, true, 'empty', 0)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -194,7 +202,7 @@
           <div>Jan 20, 2026</div>
           <div><span class="badge badge-gray">No</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('c3d4e5f6-7890-abcd-ef12-345678901234', 'Jan 20, 2026', 'Jan 26, 2026 10:15 AM', 2, false, 'never', 0)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -206,7 +214,7 @@
           <div>Jan 22, 2026</div>
           <div><span class="badge badge-yellow">Yes</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('d4e5f678-90ab-cdef-1234-567890123456', 'Jan 22, 2026', 'Jan 26, 2026 9:00 AM', 5, true, 'time', 48)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -218,7 +226,7 @@
           <div>Jan 24, 2026</div>
           <div><span class="badge badge-yellow">Yes</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('e5f67890-abcd-ef12-3456-789012345678', 'Jan 24, 2026', 'Jan 25, 2026 4:00 PM', 5, true, 'time', 24)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -230,7 +238,7 @@
           <div>Jan 25, 2026</div>
           <div><span class="badge badge-yellow">Yes</span></div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('View Room')">View</button>
+            <button class="btn btn-secondary btn-sm" onclick="showRoomModal('f6789012-cdef-3456-7890-abcdef123456', 'Jan 25, 2026', 'Jan 25, 2026 2:00 PM', 0, true, 'empty', 0)">View</button>
             <button class="btn btn-primary btn-sm" onclick="demoAlert('Join Room')">Join</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Room')">Del</button>
           </div>
@@ -238,13 +246,14 @@
       </div>
     </div>
 
+
     <div id="tab-users" class="tab-content">
       <div class="section-header">
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <h2 class="section-title">User Management</h2>
           <input type="text" placeholder="Search users..." style="padding:8px 12px;width:200px">
         </div>
-        <button class="btn btn-primary" onclick="demoAlert('Create User')">Create User</button>
+        <button class="btn btn-primary" onclick="showModal('user-modal')">Create User</button>
       </div>
       <div class="room-list" id="user-list">
         <div class="room-header">
@@ -260,7 +269,7 @@
           <div><span class="badge badge-green">Active</span></div>
           <div>Jan 1, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('admin@example.com', 'Administrator', 'admin', true, true)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
@@ -270,7 +279,7 @@
           <div><span class="badge badge-green">Active</span></div>
           <div>Jan 5, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('john.doe@company.com', 'John Doe', 'user', true, true)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
@@ -280,7 +289,7 @@
           <div><span class="badge badge-green">Active</span></div>
           <div>Jan 8, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('jane.smith@company.com', 'Jane Smith', 'user', true, true)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
@@ -290,7 +299,7 @@
           <div><span class="badge badge-green">Active</span> <span class="badge badge-yellow">Unverified</span></div>
           <div>Jan 12, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('bob.wilson@external.org', 'Bob Wilson', 'user', true, false)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
@@ -300,7 +309,7 @@
           <div><span class="badge badge-green">Active</span></div>
           <div>Jan 15, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('sarah@skynet.io', 'Sarah Connor', 'admin', true, true)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
@@ -310,12 +319,13 @@
           <div><span class="badge badge-gray">Inactive</span></div>
           <div>Jan 18, 2026</div>
           <div class="room-actions">
-            <button class="btn btn-secondary btn-sm" onclick="demoAlert('Edit User')">Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal('mike.chen@startup.co', 'Mike Chen', 'user', false, true)">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="demoAlert('Delete User')">Del</button>
           </div>
         </div>
       </div>
     </div>
+
 
     <div id="tab-auth" class="tab-content">
       <div class="settings-section">
@@ -390,7 +400,7 @@
         <h3>OIDC Providers</h3>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <p style="color:var(--text-soft);font-size:13px">Configure OpenID Connect providers for SSO</p>
-          <button class="btn btn-primary btn-sm" onclick="demoAlert('Add OIDC Provider')">Add Provider</button>
+          <button class="btn btn-primary btn-sm" onclick="showOidcModal()">Add Provider</button>
         </div>
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
@@ -399,7 +409,7 @@
               <div style="font-size:12px;color:var(--text-soft)">generic | <span style="color:#22c55e">Active</span></div>
             </div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Google Provider')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="showOidcModal('Google', 'generic', 'google-client-id-xxx', '', 'https://accounts.google.com', 'https://accounts.google.com/o/oauth2/v2/auth', 'https://oauth2.googleapis.com/token', 'https://openidconnect.googleapis.com/v1/userinfo', 'openid email profile', true)">Edit</button>
               <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Google Provider')">Delete</button>
             </div>
           </div>
@@ -409,7 +419,7 @@
               <div style="font-size:12px;color:var(--text-soft)">authentik | <span style="color:#22c55e">Active</span></div>
             </div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Authentik Provider')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="showOidcModal('Authentik (Internal)', 'authentik', 'authentik-client-xxx', '', 'https://auth.internal.lan', '', '', '', 'openid email profile', true)">Edit</button>
               <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Authentik Provider')">Delete</button>
             </div>
           </div>
@@ -419,7 +429,7 @@
               <div style="font-size:12px;color:var(--text-soft)">generic | <span style="color:#94a3b8">Inactive</span></div>
             </div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit GitHub Provider')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="showOidcModal('GitHub', 'generic', 'github-client-xxx', '', 'https://github.com', 'https://github.com/login/oauth/authorize', 'https://github.com/login/oauth/access_token', 'https://api.github.com/user', 'read:user user:email', false)">Edit</button>
               <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete GitHub Provider')">Delete</button>
             </div>
           </div>
@@ -430,7 +440,7 @@
         <h3>SMTP Configuration</h3>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <p style="color:var(--text-soft);font-size:13px">Configure email delivery for verification and notifications</p>
-          <button class="btn btn-primary btn-sm" onclick="demoAlert('Add SMTP Config')">Add SMTP</button>
+          <button class="btn btn-primary btn-sm" onclick="showSmtpModal()">Add SMTP</button>
         </div>
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
@@ -439,7 +449,7 @@
               <div style="font-size:12px;color:var(--text-soft)">smtp.sendgrid.net:587 (starttls) | <span style="color:#22c55e">Active</span></div>
             </div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Primary SMTP')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="showSmtpModal('Primary SMTP', 'smtp.sendgrid.net', 587, 'starttls', 'apikey', '', 'noreply@example.com', 'TheOneFile_Verse', true, true)">Edit</button>
               <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Primary SMTP')">Delete</button>
             </div>
           </div>
@@ -449,7 +459,7 @@
               <div style="font-size:12px;color:var(--text-soft)">smtp.mailgun.org:465 (tls) | <span style="color:#22c55e">Active</span></div>
             </div>
             <div style="display:flex;gap:6px">
-              <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Backup SMTP')">Edit</button>
+              <button class="btn btn-sm btn-secondary" onclick="showSmtpModal('Backup SMTP', 'smtp.mailgun.org', 465, 'tls', 'postmaster@mg.example.com', '', 'noreply@mg.example.com', 'TheOneFile_Verse', false, true)">Edit</button>
               <button class="btn btn-sm btn-danger" onclick="demoAlert('Delete Backup SMTP')">Delete</button>
             </div>
           </div>
@@ -464,28 +474,28 @@
               <div style="font-weight:500">Email Verification</div>
               <div style="font-size:12px;color:var(--text-soft)">Subject: Verify your email | TheOneFile_Verse</div>
             </div>
-            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Email Verification Template')">Edit</button>
+            <button class="btn btn-sm btn-secondary" onclick="showTemplateModal('Email Verification', 'Verify your email | {{appName}}')">Edit</button>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
             <div>
               <div style="font-weight:500">Password Reset</div>
               <div style="font-size:12px;color:var(--text-soft)">Subject: Reset your password | TheOneFile_Verse</div>
             </div>
-            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Password Reset Template')">Edit</button>
+            <button class="btn btn-sm btn-secondary" onclick="showTemplateModal('Password Reset', 'Reset your password | {{appName}}')">Edit</button>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
             <div>
               <div style="font-weight:500">Magic Link</div>
               <div style="font-size:12px;color:var(--text-soft)">Subject: Your login link | TheOneFile_Verse</div>
             </div>
-            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Magic Link Template')">Edit</button>
+            <button class="btn btn-sm btn-secondary" onclick="showTemplateModal('Magic Link', 'Your login link | {{appName}}')">Edit</button>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0">
             <div>
               <div style="font-weight:500">Room Invitation</div>
               <div style="font-size:12px;color:var(--text-soft)">Subject: You've been invited to collaborate | TheOneFile_Verse</div>
             </div>
-            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Edit Room Invitation Template')">Edit</button>
+            <button class="btn btn-sm btn-secondary" onclick="showTemplateModal('Room Invitation', 'You\\\'ve been invited to collaborate | {{appName}}')">Edit</button>
           </div>
         </div>
       </div>
@@ -496,7 +506,7 @@
           <input type="text" placeholder="Filter by email..." style="width:250px">
           <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Email Logs')">Clear All</button>
         </div>
-        <div style="max-height:200px;overflow-y:auto">
+        <div style="max-height:200px;overflow-y:auto;scrollbar-width:none">
           <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
             <span style="color:var(--text-soft)">1/26/2026, 10:32 AM</span> <span class="badge badge-green">sent</span> john.doe@company.com <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span>
           </div>
@@ -507,7 +517,7 @@
             <span style="color:var(--text-soft)">1/25/2026, 4:45 PM</span> <span class="badge badge-green">sent</span> bob.wilson@external.org <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span>
           </div>
           <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
-            <span style="color:var(--text-soft)">1/25/2026, 2:20 PM</span> <span class="badge badge-gray">failed</span> invalid@nowhere.xyz <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span> <span style="color:#ef4444">Recipient rejected</span>
+            <span style="color:var(--text-soft)">1/25/2026, 2:20 PM</span> <span class="badge badge-red">failed</span> invalid@nowhere.xyz <span style="color:var(--text-soft)">Verify your email | TheOneFile_Verse</span> <span style="color:#ef4444">Recipient rejected</span>
           </div>
           <div style="padding:8px 0;font-size:13px">
             <span style="color:var(--text-soft)">1/24/2026, 11:00 AM</span> <span class="badge badge-green">sent</span> sarah@skynet.io <span style="color:var(--text-soft)">You've been invited to collaborate | TheOneFile_Verse</span>
@@ -516,12 +526,20 @@
       </div>
     </div>
 
+
     <div id="tab-settings" class="tab-content">
       <div class="settings-section">
         <h3>Instance Access</h3>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Password Lock</div><div class="setting-desc">Require password to access the entire instance</div></div>
           <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Password Lock')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Instance Password</div><div class="setting-desc">Set a password for instance access</div></div>
+          <div class="setting-control">
+            <input type="password" placeholder="New password" style="width:180px">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Set Instance Password')">Set</button>
+          </div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Admin Panel Path</div><div class="setting-desc">Custom URL path for the admin panel (default: admin)</div></div>
@@ -533,6 +551,10 @@
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label"></div><div class="setting-desc" style="color:#4ade80">Current path: /admin</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Show Admin Link</div><div class="setting-desc">Show admin panel link in the landing page footer</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Show Admin Link')"></div></div>
         </div>
       </div>
 
@@ -554,12 +576,29 @@
             <button class="btn btn-sm btn-primary" onclick="demoAlert('Save Update Interval')">Save</button>
           </div>
         </div>
-        <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Fetch from GitHub</div><div class="setting-desc">Download latest version now</div></div>
-          <div class="setting-control"><button class="btn btn-sm btn-success" onclick="demoAlert('Update Now')">Update Now</button></div>
+        <div class="setting-row" id="upload-row">
+          <div class="setting-info"><div class="setting-label">Upload Local File</div><div class="setting-desc">Upload your own TheOneFile HTML</div></div>
+          <div class="setting-control">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Choose File')">Choose File</button>
+          </div>
         </div>
-        <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Current File</div><div class="setting-desc">245KB, networkening edition (GitHub)</div></div>
+        <div style="padding:12px;background:var(--card-bg);border-radius:8px;margin-top:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div>
+              <span style="font-size:18px;font-weight:700;color:var(--accent);">v2.4.1</span>
+              <span style="font-size:12px;color:#8892a0;margin-left:8px;">networkening edition</span>
+            </div>
+            <span style="font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;background:rgba(34,197,94,0.15);color:#22c55e;">Up to date</span>
+          </div>
+          <div style="font-size:12px;color:#8892a0;margin-bottom:10px;">
+            <span>Last updated: Jan 26, 2026, 11:00 AM</span>
+            <span style="margin-left:12px;">245 KB</span>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-success" onclick="demoAlert('Update Now')">Update Now</button>
+            <button class="btn btn-sm" onclick="demoAlert('Check for Updates')" style="background:#2a3040;color:#c8cdd5;">Check for Updates</button>
+            <a href="https://github.com/gelatinescreams/The-One-File/releases" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);align-self:center;margin-left:auto;text-decoration:none;">Changelog</a>
+          </div>
         </div>
       </div>
 
@@ -594,6 +633,18 @@
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Max Rooms</div><div class="setting-desc">Maximum rooms allowed (0 = unlimited)</div></div>
           <div class="setting-control"><input type="number" value="100" min="0" max="1000" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Default Room Theme</div><div class="setting-desc">Theme preset for new rooms (from loaded file)</div></div>
+          <div class="setting-control">
+            <select onchange="demoAlert('Change Default Room Theme')">
+              <option value="">Default (from file)</option>
+              <option value="monokai">Monokai</option>
+              <option value="solarized">Solarized</option>
+              <option value="dracula">Dracula</option>
+              <option value="nord">Nord</option>
+            </select>
+          </div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Public Room Creation</div><div class="setting-desc">Allow anyone to create rooms</div></div>
@@ -634,6 +685,10 @@
           <div class="setting-info"><div class="setting-label">Name Changes</div><div class="setting-desc">Allow users to change name after joining</div></div>
           <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Name Changes')"></div></div>
         </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Welcome Modal</div><div class="setting-desc">Always show welcome setup when joining rooms</div></div>
+          <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Welcome Modal')"></div></div>
+        </div>
       </div>
 
       <div class="settings-section">
@@ -671,6 +726,7 @@
       </div>
     </div>
 
+
     <div id="tab-logs" class="tab-content">
       <div class="settings-section">
         <h3>Activity Log</h3>
@@ -678,7 +734,7 @@
           <input type="text" placeholder="Filter by room ID..." style="width:250px">
           <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Activity Logs')">Clear All</button>
         </div>
-        <div style="max-height:300px;overflow-y:auto">
+        <div style="max-height:300px;overflow-y:auto;scrollbar-width:none">
           <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
             <span style="color:var(--text-soft)">1/26/2026, 11:45 AM</span> <span class="badge badge-green">join</span> John Doe <span style="color:var(--text-soft);font-size:11px">a1b2c3d4</span>
           </div>
@@ -706,7 +762,7 @@
           <input type="text" placeholder="Search..." style="width:250px">
           <button class="btn btn-sm btn-secondary" onclick="demoAlert('Clear Audit Logs')">Clear All</button>
         </div>
-        <div style="max-height:300px;overflow-y:auto">
+        <div style="max-height:300px;overflow-y:auto;scrollbar-width:none">
           <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
             <span style="color:var(--text-soft)">1/26/2026, 11:30 AM</span> <span class="badge badge-yellow">settings_update</span> admin@example.com
           </div>
@@ -725,6 +781,7 @@
         </div>
       </div>
     </div>
+
 
     <div id="tab-backups" class="tab-content">
       <div class="settings-section">
@@ -784,11 +841,21 @@
       </div>
     </div>
 
+
     <div id="tab-apikeys" class="tab-content">
       <div class="settings-section">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <h3 style="margin:0;border:none;padding:0">API Keys</h3>
-          <button class="btn btn-primary btn-sm" onclick="demoAlert('Create API Key')">Create API Key</button>
+          <button class="btn btn-primary btn-sm" onclick="showModal('apikey-modal')">Create API Key</button>
+        </div>
+        <div id="apikey-new-key" style="display:none" class="new-key-display">
+          <div style="font-weight:600;color:#f59e0b;margin-bottom:4px">New API Key Created</div>
+          <div style="font-size:12px;color:var(--text-soft);margin-bottom:8px">Copy this key now. You won't be able to see it again.</div>
+          <code id="apikey-value">tofv_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0</code>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn btn-sm btn-primary" onclick="demoAlert('Copy to Clipboard')">Copy</button>
+            <button class="btn btn-sm btn-secondary" onclick="document.getElementById('apikey-new-key').style.display='none'">Dismiss</button>
+          </div>
         </div>
         <div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
@@ -812,6 +879,218 @@
             </div>
             <button class="btn btn-sm btn-danger" onclick="demoAlert('Revoke API Key')">Revoke</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="room-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Room Details</h3><button class="modal-close" onclick="closeModal('room-modal')">&times;</button></div>
+      <div class="modal-body" id="room-modal-body">
+        <div class="info-row"><span class="info-label">Room ID</span><span class="info-value" id="rm-id">-</span></div>
+        <div class="info-row"><span class="info-label">Created</span><span class="info-value" id="rm-created">-</span></div>
+        <div class="info-row"><span class="info-label">Last Activity</span><span class="info-value" id="rm-activity">-</span></div>
+        <div class="info-row"><span class="info-label">Connected Users</span><span class="info-value" id="rm-users">-</span></div>
+        <div class="info-row"><span class="info-label">Password Protected</span><span class="info-value" id="rm-password">-</span></div>
+        <div class="info-row"><span class="info-label">Self-Destruct</span><span class="info-value" id="rm-destruct">-</span></div>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button class="btn btn-primary" style="flex:1" onclick="demoAlert('Join Room')">Join Room</button>
+          <button class="btn btn-danger" style="flex:1" onclick="demoAlert('Delete Room')">Delete Room</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="user-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Create User</h3><button class="modal-close" onclick="closeModal('user-modal')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Email</label><input type="email" placeholder="user@example.com" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Display Name</label><input type="text" placeholder="John Doe" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Password (leave blank for invite email)</label><input type="password" placeholder="Optional" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Role</label>
+          <select style="width:100%"><option value="user">User</option><option value="admin">Admin</option></select>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="demoAlert('Create User')">Create User</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="edit-user-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Edit User</h3><button class="modal-close" onclick="closeModal('edit-user-modal')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Email</label><input type="email" id="eu-email" style="width:100%;background:var(--bg-alt)" readonly></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Display Name</label><input type="text" id="eu-name" placeholder="Display Name" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">New Password (leave blank to keep current)</label><input type="password" placeholder="Optional" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Role</label>
+          <select id="eu-role" style="width:100%"><option value="user">User</option><option value="admin">Admin</option></select>
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="eu-active"> Active</label>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="eu-verified"> Email Verified</label>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" style="flex:1" onclick="demoAlert('Send Password Reset')">Send Password Reset</button>
+          <button class="btn btn-primary" style="flex:1" onclick="demoAlert('Save User')">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="apikey-modal">
+    <div class="modal">
+      <div class="modal-header"><h3>Create API Key</h3><button class="modal-close" onclick="closeModal('apikey-modal')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" placeholder="My API Key" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Expires In (days, 0=never)</label><input type="number" value="0" min="0" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Permissions</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" checked> Read rooms</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Write rooms</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Admin access</label>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="closeModal('apikey-modal');document.getElementById('apikey-new-key').style.display='block';demoAlert('Create Key')">Create Key</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="oidc-modal">
+    <div class="modal" style="max-width:550px">
+      <div class="modal-header"><h3 id="oidc-modal-title">Add OIDC Provider</h3><button class="modal-close" onclick="closeModal('oidc-modal')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="oidc-name" placeholder="My Provider" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Provider Type</label>
+          <select id="oidc-type" style="width:100%"><option value="generic">Generic OIDC</option><option value="authentik">Authentik</option><option value="keycloak">Keycloak</option><option value="auth0">Auth0</option><option value="okta">Okta</option></select>
+        </div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Client ID</label><input type="text" id="oidc-client-id" placeholder="client-id" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Client Secret</label><input type="password" id="oidc-client-secret" placeholder="client-secret" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Issuer URL</label><input type="text" id="oidc-issuer" placeholder="https://auth.example.com" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Authorization URL</label><input type="text" id="oidc-auth-url" placeholder="https://auth.example.com/authorize" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Token URL</label><input type="text" id="oidc-token-url" placeholder="https://auth.example.com/token" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Userinfo URL</label><input type="text" id="oidc-userinfo-url" placeholder="https://auth.example.com/userinfo" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Scopes</label><input type="text" id="oidc-scopes" value="openid email profile" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="oidc-active" checked> Active</label></div>
+        <button class="btn btn-primary" style="width:100%" onclick="demoAlert('Save OIDC Provider')">Save Provider</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="smtp-modal">
+    <div class="modal" style="max-width:550px">
+      <div class="modal-header"><h3 id="smtp-modal-title">Add SMTP Configuration</h3><button class="modal-close" onclick="closeModal('smtp-modal')">&times;</button></div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="smtp-name" placeholder="Primary SMTP" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Host</label><input type="text" id="smtp-host" placeholder="smtp.example.com" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Port</label><input type="number" id="smtp-port" value="587" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Security Mode</label>
+          <select id="smtp-secure" style="width:100%"><option value="starttls">STARTTLS (587)</option><option value="tls">TLS/SSL (465)</option><option value="none">None (25)</option></select>
+        </div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Username</label><input type="text" id="smtp-username" placeholder="user@example.com" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Password</label><input type="password" id="smtp-password" placeholder="password" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">From Email</label><input type="email" id="smtp-from-email" placeholder="noreply@example.com" style="width:100%"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">From Name</label><input type="text" id="smtp-from-name" placeholder="TheOneFile_Verse" style="width:100%"></div>
+        <div style="margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="smtp-default"> Set as default</label>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="smtp-active" checked> Active</label>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" style="flex:1" onclick="demoAlert('Test SMTP')">Test</button>
+          <button class="btn btn-primary" style="flex:1" onclick="demoAlert('Save SMTP')">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="template-modal">
+    <div class="modal" style="max-width:900px;max-height:90vh;display:flex;flex-direction:column">
+      <div class="modal-header"><h3 id="template-modal-title">Edit Email Template</h3><button class="modal-close" onclick="closeModal('template-modal')">&times;</button></div>
+      <div class="modal-body" style="flex:1;overflow:auto;display:flex;flex-direction:column">
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Template Name</label><input type="text" id="tpl-name" readonly style="width:100%;background:var(--bg-alt)"></div>
+        <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Subject</label><input type="text" id="tpl-subject" placeholder="Email subject with {{variables}}" style="width:100%"></div>
+        <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+          <label style="font-size:14px">HTML Body</label>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Insert {{displayName}}')">{{displayName}}</button>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Insert {{actionUrl}}')">{{actionUrl}}</button>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Insert {{appName}}')">{{appName}}</button>
+            <button class="btn btn-sm btn-secondary" onclick="demoAlert('Toggle HTML/Preview')">Toggle HTML/Preview</button>
+          </div>
+        </div>
+        <div style="flex:1;min-height:300px">
+          <div style="background:var(--bg-alt);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0;padding:8px;display:flex;gap:4px;flex-wrap:wrap">
+            <button type="button" class="btn btn-sm btn-secondary" title="Bold"><b>B</b></button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Italic"><i>I</i></button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Underline"><u>U</u></button>
+            <span style="border-left:1px solid var(--border);margin:0 4px"></span>
+            <button type="button" class="btn btn-sm btn-secondary" title="Align Left">&#8676;</button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Center">&#8596;</button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Align Right">&#8677;</button>
+            <span style="border-left:1px solid var(--border);margin:0 4px"></span>
+            <button type="button" class="btn btn-sm btn-secondary" title="Bullet List">&#8226;</button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Numbered List">1.</button>
+            <span style="border-left:1px solid var(--border);margin:0 4px"></span>
+            <select style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;min-width:auto">
+              <option value="">Heading</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="p">Paragraph</option>
+            </select>
+            <select style="padding:4px 8px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px;min-width:auto">
+              <option value="">Size</option>
+              <option value="1">Small</option>
+              <option value="3">Normal</option>
+              <option value="5">Large</option>
+              <option value="7">Huge</option>
+            </select>
+            <input type="color" title="Text Color" style="width:30px;height:26px;padding:0;border:1px solid var(--border);border-radius:4px;cursor:pointer;min-width:auto">
+            <span style="border-left:1px solid var(--border);margin:0 4px"></span>
+            <button type="button" class="btn btn-sm btn-secondary" title="Insert Link">&#128279;</button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Insert Image">&#128247;</button>
+            <button type="button" class="btn btn-sm btn-secondary" title="Insert Button">&#9634; Btn</button>
+          </div>
+          <div contenteditable="false" style="min-height:250px;background:var(--surface);border:1px solid var(--border);border-radius:0 0 8px 8px;padding:16px;overflow-y:auto;font-family:system-ui;line-height:1.6;color:var(--text-soft)">
+            <h2 style="color:var(--accent)">Hello {{displayName}},</h2>
+            <p>Thank you for signing up. Please verify your email address by clicking the button below.</p>
+            <p style="text-align:center;margin:24px 0"><a style="display:inline-block;padding:12px 24px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Verify Email</a></p>
+            <p style="font-size:13px;color:var(--text-soft)">If you didn't create an account, you can safely ignore this email.</p>
+          </div>
+        </div>
+        <div style="margin-top:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Plain Text Body (fallback)</label><textarea placeholder="Plain text version for email clients that don't support HTML" style="width:100%;height:100px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:13px;color:var(--text);resize:vertical">Hello {{displayName}},
+
+Thank you for signing up. Please verify your email by visiting: {{actionUrl}}
+
+If you didn't create an account, you can safely ignore this email.</textarea></div>
+        <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-secondary" onclick="showModal('template-preview-modal')">Preview</button>
+          <button class="btn btn-primary" onclick="demoAlert('Save Template')">Save Template</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-overlay" id="template-preview-modal">
+    <div class="modal" style="max-width:700px;max-height:80vh">
+      <div class="modal-header"><h3>Email Preview</h3><button class="modal-close" onclick="closeModal('template-preview-modal')">&times;</button></div>
+      <div class="modal-body" style="padding:0">
+        <div style="padding:12px 16px;background:var(--bg-alt);border-bottom:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--text-soft)">Subject:</div>
+          <div style="font-weight:500">Verify your email | TheOneFile_Verse</div>
+        </div>
+        <div style="padding:24px;background:#fff;color:#333;min-height:300px">
+          <h2 style="color:#c9a227;margin-bottom:16px">Hello John Doe,</h2>
+          <p style="margin-bottom:16px">Thank you for signing up. Please verify your email address by clicking the button below.</p>
+          <p style="text-align:center;margin:24px 0"><span style="display:inline-block;padding:12px 24px;background:#c9a227;color:#fff;border-radius:8px;font-weight:600">Verify Email</span></p>
+          <p style="font-size:13px;color:#999">If you didn't create an account, you can safely ignore this email.</p>
         </div>
       </div>
     </div>
@@ -843,6 +1122,85 @@
 
     function demoAlert(action) {
       alert('Demo Mode: "' + action + '" action is disabled.\n\nThis is a demonstration of the admin interface with sample data.');
+    }
+
+    function showModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(function(m) { m.classList.remove('active'); });
+      }
+    });
+
+    function showRoomModal(id, created, activity, users, hasPassword, destructMode, destructHours) {
+      document.getElementById('rm-id').textContent = id;
+      document.getElementById('rm-created').textContent = created;
+      document.getElementById('rm-activity').textContent = activity;
+      document.getElementById('rm-users').textContent = users;
+      document.getElementById('rm-password').innerHTML = hasPassword ? '<span class="badge badge-yellow">Yes</span>' : '<span class="badge badge-gray">No</span>';
+      var destruct = destructMode === 'never' ? 'Never' : destructMode === 'empty' ? 'When empty' : 'After ' + destructHours + ' hours';
+      document.getElementById('rm-destruct').textContent = destruct;
+      showModal('room-modal');
+    }
+
+    function showEditUserModal(email, name, role, active, verified) {
+      document.getElementById('eu-email').value = email;
+      document.getElementById('eu-name').value = name;
+      document.getElementById('eu-role').value = role;
+      document.getElementById('eu-active').checked = active;
+      document.getElementById('eu-verified').checked = verified;
+      showModal('edit-user-modal');
+    }
+
+    function showOidcModal(name, type, clientId, clientSecret, issuer, authUrl, tokenUrl, userinfoUrl, scopes, active) {
+      var isEdit = !!name;
+      document.getElementById('oidc-modal-title').textContent = isEdit ? 'Edit OIDC Provider' : 'Add OIDC Provider';
+      document.getElementById('oidc-name').value = name || '';
+      document.getElementById('oidc-type').value = type || 'generic';
+      document.getElementById('oidc-client-id').value = clientId || '';
+      document.getElementById('oidc-client-secret').value = clientSecret || '';
+      document.getElementById('oidc-issuer').value = issuer || '';
+      document.getElementById('oidc-auth-url').value = authUrl || '';
+      document.getElementById('oidc-token-url').value = tokenUrl || '';
+      document.getElementById('oidc-userinfo-url').value = userinfoUrl || '';
+      document.getElementById('oidc-scopes').value = scopes || 'openid email profile';
+      document.getElementById('oidc-active').checked = active !== false;
+      showModal('oidc-modal');
+    }
+
+    function showSmtpModal(name, host, port, secure, username, password, fromEmail, fromName, isDefault, active) {
+      var isEdit = !!name;
+      document.getElementById('smtp-modal-title').textContent = isEdit ? 'Edit SMTP Configuration' : 'Add SMTP Configuration';
+      document.getElementById('smtp-name').value = name || '';
+      document.getElementById('smtp-host').value = host || '';
+      document.getElementById('smtp-port').value = port || 587;
+      document.getElementById('smtp-secure').value = secure || 'starttls';
+      document.getElementById('smtp-username').value = username || '';
+      document.getElementById('smtp-password').value = password || '';
+      document.getElementById('smtp-from-email').value = fromEmail || '';
+      document.getElementById('smtp-from-name').value = fromName || '';
+      document.getElementById('smtp-default').checked = !!isDefault;
+      document.getElementById('smtp-active').checked = active !== false;
+      showModal('smtp-modal');
+    }
+
+    function showTemplateModal(name, subject) {
+      document.getElementById('template-modal-title').textContent = 'Edit Email Template';
+      document.getElementById('tpl-name').value = name;
+      document.getElementById('tpl-subject').value = subject;
+      showModal('template-modal');
     }
   </script>
 </body>
