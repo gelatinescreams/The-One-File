@@ -3,12 +3,16 @@
   var pageData = JSON.parse((document.getElementById('page-data') || {}).textContent || '{}');
   var ADMIN_PATH = pageData.adminPath || 'admin';
   var csrfToken = '';
-  fetch('/api/auth/csrf').then(function(r) { return r.json(); }).then(function(d) {
-    if (d.token) csrfToken = d.token;
-  }).catch(function() {});
+  function refreshCsrf() {
+    return fetch('/api/auth/csrf').then(function(r) { return r.json(); }).then(function(d) {
+      if (d.token) csrfToken = d.token;
+    }).catch(function() {});
+  }
+  refreshCsrf();
   function csrfHeaders(extra) {
     var h = { 'x-csrf-token': csrfToken };
     if (extra) { for (var k in extra) { if (extra.hasOwnProperty(k)) h[k] = extra[k]; } }
+    setTimeout(refreshCsrf, 0);
     return h;
   }
   var forcedTheme = null;
