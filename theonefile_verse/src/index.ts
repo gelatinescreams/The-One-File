@@ -587,17 +587,26 @@ function getUserTokenFromRequest(req: Request): string | null {
   return null;
 }
 
+function getExternalOrigin(req: Request): string {
+  const fwdProto = req.headers.get("x-forwarded-proto");
+  const fwdHost = req.headers.get("x-forwarded-host");
+  if (fwdProto && fwdHost) {
+    return `${fwdProto.split(",")[0].trim()}://${fwdHost.split(",")[0].trim()}`;
+  }
+  return new URL(req.url).origin;
+}
+
 function validateRequestCsrf(req: Request, body?: any): boolean {
   const headerToken = req.headers.get("x-csrf-token");
   const bodyToken = body?.csrfToken;
   const token = headerToken || bodyToken;
   if (token && oidc.validateCsrfToken(token)) return true;
   const origin = req.headers.get("origin");
-  const reqUrl = new URL(req.url);
-  if (origin) return origin === reqUrl.origin;
+  const externalOrigin = getExternalOrigin(req);
+  if (origin) return origin === externalOrigin;
   const referer = req.headers.get("referer");
   if (referer) {
-    try { return new URL(referer).origin === reqUrl.origin; } catch { return false; }
+    try { return new URL(referer).origin === externalOrigin; } catch { return false; }
   }
   return false;
 }
