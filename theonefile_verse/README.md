@@ -20,7 +20,7 @@ When you're done collaborating, each person can save their own portable copy. Th
 
 Rooms auto save your work, no manual exports required. Admins can run as many rooms as needed, a multiOneFileverse of parallel diagrams. Host it privately or open it to the internet (use tons of caution and a secure reverse proxy).
 
-* [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/33e3425c-922e-4dfd-8ebe-56c93367d1da)
+* [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/2ab95062-9d96-4e32-b373-d1994c210d82)
 * *join from different browsers to see real time changes*
 * [TheOneFile_Verse landing page](https://multiverse.therecanonlybe.one)
 * [TheOneFile_Verse admin demo](https://therecanonlybe.one/theonefile_verse/demo-admin.html)

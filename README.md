@@ -33,15 +33,15 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
   * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/?version=networkening&demo=corporate)
   * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/?version=networkening&demo=homelab)
 * **TheOneFile_Verse Edition** 
-  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/33e3425c-922e-4dfd-8ebe-56c93367d1da)
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/2ab95062-9d96-4e32-b373-d1994c210d82)
   * *join from different browsers to see real time changes*
   * [TheOneFile_Verse landing page](https://multiverse.therecanonlybe.one) 
   * [TheOneFile_Verse admin demo](https://therecanonlybe.one/theonefile_verse/demo-admin.html) 
 
 ### Download
 
-* [the-one-file.html](https://github.com/user-attachments/files/25329920/the-one-file.html)
-* [theonefile-networkening.html](https://github.com/user-attachments/files/25329922/theonefile-networkening.html)
+* [the-one-file.html](https://github.com/user-attachments/files/25752908/the-one-file.html)
+* [theonefile-networkening.html](https://github.com/user-attachments/files/25752909/theonefile-networkening.html)
   
 ### Core vs Networkening vs TheOneFile_Verse
 
