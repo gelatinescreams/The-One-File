@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.7.0-blue" alt="TheOneFile_Verse Docker Version 1.7.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.0-blue" alt="TheOneFile_Verse Docker Version 1.8.0">
   </a>
 </p>
 
@@ -16,15 +16,13 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-### TheOneFile_Verse /\ 1.7.0 3-2-26 : 2FA, responsive overhaul, email change, path to stable, further security improvements
-  * Very close to a stable 2.0
-  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 1.7.0 list
-
-### Version 4.1.3 /\ 2-14-26 : Styles, bugs and TheOneFile_Verse 1.5.2
-* **The One File Core + Networkening 4.1.3** Mobile style fixes and a few bugs squashed
+### Version 4.1.4 /\ 3-4-26 : Testers finding the stragglers. Thank you to everyone!
+* **The One File Core + Networkening 4.1.4**
   * See [Changelog](changelog.md) for full update details
-* **TheOneFile_Verse 1.5.2** Auth flow fixes, error logging, version tracking
-  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full details
+  
+### TheOneFile_Verse /\ 1.8.0 3-4-26 : Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure
+  * Very close to a stable 2.0
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 1.8.0 list
 
 ### Demos
 

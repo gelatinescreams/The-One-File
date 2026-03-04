@@ -465,7 +465,7 @@ function stripCRLF(str: string): string {
 }
 
 function buildMessage(message: EmailMessage, config: db.SmtpConfig): string {
-  const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const boundary = `----=_Part_${Date.now()}_${crypto.randomUUID().replace(/-/g, '')}`;
   const messageId = `<${crypto.randomUUID()}@${config.host}>`;
   const date = new Date().toUTCString();
 

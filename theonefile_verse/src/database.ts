@@ -2,6 +2,11 @@ import { Database } from "bun:sqlite";
 import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from "fs";
 import { join } from "path";
 
+function sanitizeSearchQuery(query: string): string | null {
+  if (query.length > 100) return null;
+  return query.replace(/[%_\\]/g, '\\$&');
+}
+
 const DATA_DIR = process.env.DATA_DIR || "./data";
 const DB_PATH = join(DATA_DIR, "theonefile.db");
 const ROOMS_DIR = join(DATA_DIR, "rooms");
@@ -121,6 +126,7 @@ db.exec(`
     active INTEGER NOT NULL DEFAULT 1
   )
 `);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash)`);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS backups (
@@ -551,8 +557,12 @@ const stmtListRooms = db.prepare(`
   SELECT * FROM rooms ORDER BY created DESC
 `);
 
+const stmtListRoomsPaginated = db.prepare(`
+  SELECT * FROM rooms ORDER BY created DESC LIMIT ? OFFSET ?
+`);
+
 const stmtSearchRooms = db.prepare(`
-  SELECT * FROM rooms WHERE id LIKE ? OR creator_id LIKE ? ORDER BY created DESC LIMIT ? OFFSET ?
+  SELECT * FROM rooms WHERE id LIKE ? ESCAPE '\\' OR creator_id LIKE ? ESCAPE '\\' ORDER BY created DESC LIMIT ? OFFSET ?
 `);
 
 const stmtCountRooms = db.prepare(`
@@ -585,7 +595,7 @@ const stmtGetAuditLogs = db.prepare(`
 `);
 
 const stmtSearchAuditLogs = db.prepare(`
-  SELECT * FROM audit_logs WHERE action LIKE ? OR actor LIKE ? OR target_id LIKE ? ORDER BY timestamp DESC LIMIT ? OFFSET ?
+  SELECT * FROM audit_logs WHERE action LIKE ? ESCAPE '\\' OR actor LIKE ? ESCAPE '\\' OR target_id LIKE ? ESCAPE '\\' ORDER BY timestamp DESC LIMIT ? OFFSET ?
 `);
 
 const stmtInsertActivityLog = db.prepare(`
@@ -690,12 +700,17 @@ export function deleteRoom(id: string): boolean {
   return result.changes > 0;
 }
 
-export function listRooms(): Room[] {
+export function listRooms(limit?: number, offset?: number): Room[] {
+  if (limit !== undefined) {
+    return (stmtListRoomsPaginated.all(limit, offset || 0) as any[]).map(rowToRoom).filter(r => r !== null) as Room[];
+  }
   return (stmtListRooms.all() as any[]).map(rowToRoom).filter(r => r !== null) as Room[];
 }
 
 export function searchRooms(query: string, limit: number = 50, offset: number = 0): Room[] {
-  const searchPattern = `%${query}%`;
+  const sanitized = sanitizeSearchQuery(query);
+  if (!sanitized) return [];
+  const searchPattern = `%${sanitized}%`;
   return (stmtSearchRooms.all(searchPattern, searchPattern, limit, offset) as any[])
     .map(rowToRoom)
     .filter(r => r !== null) as Room[];
@@ -754,7 +769,9 @@ export function getAuditLogs(limit: number = 100, offset: number = 0): AuditLog[
 }
 
 export function searchAuditLogs(query: string, limit: number = 100, offset: number = 0): AuditLog[] {
-  const searchPattern = `%${query}%`;
+  const sanitized = sanitizeSearchQuery(query);
+  if (!sanitized) return [];
+  const searchPattern = `%${sanitized}%`;
   return (stmtSearchAuditLogs.all(searchPattern, searchPattern, searchPattern, limit, offset) as any[]).map(row => ({
     id: row.id,
     timestamp: row.timestamp,
@@ -824,7 +841,7 @@ export function getApiKeyById(id: string): ApiKey | null {
     id: row.id,
     name: row.name,
     keyHash: row.key_hash,
-    permissions: JSON.parse(row.permissions),
+    permissions: (() => { try { return row.permissions ? JSON.parse(row.permissions) : []; } catch { return []; } })(),
     createdAt: row.created_at,
     lastUsed: row.last_used,
     expiresAt: row.expires_at,
@@ -839,7 +856,7 @@ export function getApiKeyByHash(hash: string): ApiKey | null {
     id: row.id,
     name: row.name,
     keyHash: row.key_hash,
-    permissions: JSON.parse(row.permissions),
+    permissions: (() => { try { return row.permissions ? JSON.parse(row.permissions) : []; } catch { return []; } })(),
     createdAt: row.created_at,
     lastUsed: row.last_used,
     expiresAt: row.expires_at,
@@ -855,7 +872,7 @@ export function listApiKeys(): Omit<ApiKey, "keyHash">[] {
   return (stmtListApiKeys.all() as any[]).map(row => ({
     id: row.id,
     name: row.name,
-    permissions: JSON.parse(row.permissions),
+    permissions: (() => { try { return row.permissions ? JSON.parse(row.permissions) : []; } catch { return []; } })(),
     createdAt: row.created_at,
     lastUsed: row.last_used,
     expiresAt: row.expires_at,
@@ -1007,7 +1024,7 @@ const stmtLockUser = db.prepare(`UPDATE users SET locked_until = ?, updated_at =
 const stmtDeleteUser = db.prepare(`DELETE FROM users WHERE id = ?`);
 const stmtListUsers = db.prepare(`SELECT * FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?`);
 const stmtListUsersByRole = db.prepare(`SELECT * FROM users WHERE role = ? ORDER BY created_at DESC`);
-const stmtSearchUsers = db.prepare(`SELECT * FROM users WHERE email LIKE ? OR display_name LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?`);
+const stmtSearchUsers = db.prepare(`SELECT * FROM users WHERE email LIKE ? ESCAPE '\\' OR display_name LIKE ? ESCAPE '\\' ORDER BY created_at DESC LIMIT ? OFFSET ?`);
 const stmtCountUsers = db.prepare(`SELECT COUNT(*) as count FROM users`);
 const stmtCountUsersByRole = db.prepare(`SELECT COUNT(*) as count FROM users WHERE role = ?`);
 
@@ -1040,6 +1057,24 @@ export function createUser(user: User): void {
     user.id, user.email, user.emailVerified ? 1 : 0, user.displayName, user.avatarUrl,
     user.passwordHash, user.role, user.createdAt, user.updatedAt, user.lastLogin, user.isActive ? 1 : 0
   );
+}
+
+export function createUserAtomic(user: User): { created: boolean; wasFirst: boolean } {
+  db.run('BEGIN IMMEDIATE');
+  try {
+    const count = countUsers();
+    const wasFirst = count === 0;
+    if (wasFirst) {
+      user.role = 'admin';
+      user.emailVerified = true;
+    }
+    createUser(user);
+    db.run('COMMIT');
+    return { created: true, wasFirst };
+  } catch (e) {
+    db.run('ROLLBACK');
+    throw e;
+  }
 }
 
 export function getUserById(id: string): User | null {
@@ -1082,7 +1117,9 @@ export function listUsers(limit: number = 100, offset: number = 0): User[] {
 }
 
 export function searchUsers(query: string, limit: number = 100, offset: number = 0): User[] {
-  const pattern = `%${query}%`;
+  const sanitized = sanitizeSearchQuery(query);
+  if (!sanitized) return [];
+  const pattern = `%${sanitized}%`;
   return (stmtSearchUsers.all(pattern, pattern, limit, offset) as any[]).map(rowToUser).filter(u => u !== null) as User[];
 }
 

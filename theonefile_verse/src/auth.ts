@@ -107,18 +107,14 @@ export async function registerUser(
   const now = new Date().toISOString();
   const passwordHash = await hashPassword(password);
 
-  const userCount = db.countUsers();
-  const isFirstUser = userCount === 0;
-  const role = isFirstUser ? 'admin' : 'user';
-
   const user: db.User = {
     id: userId,
     email: normalizedEmail,
-    emailVerified: isFirstUser || !authSettings.requireEmailVerification,
+    emailVerified: !authSettings.requireEmailVerification,
     displayName: displayName || normalizedEmail.split('@')[0],
     avatarUrl: null,
     passwordHash,
-    role,
+    role: 'user',
     createdAt: now,
     updatedAt: now,
     lastLogin: now,
@@ -132,8 +128,8 @@ export async function registerUser(
     pendingEmailToken: null
   };
 
-  db.createUser(user);
-  db.logAuthEvent('register', userId, null, { role, isFirstUser });
+  const { wasFirst: isFirstUser } = db.createUserAtomic(user);
+  db.logAuthEvent('register', user.id, null, { role: user.role, isFirstUser });
 
   if (!isFirstUser && authSettings.requireEmailVerification && baseUrl) {
     const token = await createVerificationToken(userId);
@@ -235,6 +231,8 @@ export async function loginWithPassword(
   return { success: true, userId: user.id, sessionToken };
 }
 
+const MAX_SESSIONS_PER_USER = 10;
+
 async function createSessionToken(
   userId: string,
   ipAddress: string,
@@ -244,6 +242,12 @@ async function createSessionToken(
   const tokenHash = await oidc.hashToken(token);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const existing = db.getSessionsByUserId(userId);
+  if (existing.length >= MAX_SESSIONS_PER_USER) {
+    const oldest = existing.slice(MAX_SESSIONS_PER_USER - 1);
+    for (const s of oldest) db.deleteSession(s.id);
+  }
 
   db.createUserSession({
     id: crypto.randomUUID(),

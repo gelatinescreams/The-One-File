@@ -1816,6 +1816,13 @@ header {
 		stroke: none !important;
 	  }
 
+	  #map .port-label rect {
+		fill: white !important;
+		stroke: #000 !important;
+		stroke-width: 1px !important;
+		stroke-opacity: 1 !important;
+	  }
+
 	  #map .edge,
 	  #map polyline,
 	  #map line:not([class*="grid"]) {
@@ -2523,6 +2530,10 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
                 <option value="4" data-lang="ui.options.verySlow">Very Slow</option>
               </select>
             </div>
+            <div class="style-row">
+              <label data-lang="ui.labels.showPortLabels">Show Port Labels</label>
+              <label class="toggle-switch"><input type="checkbox" id="show-port-labels-toggle" checked><span class="toggle-slider"></span></label>
+            </div>
             <div class="style-row" style="grid-column: 1 / -1;">
               <button id="apply-routing-all" style="width:100%;padding:8px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;" data-lang="ui.buttons.applyRoutingAll">Apply Routing to All Connections</button>
             </div>
@@ -2689,6 +2700,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
             <input type="file" id="import-data-file" accept=".json" style="display:none">
           </div>
         </details>
+        <div style="text-align:center;padding:10px 0 2px;font-size:11px;color:var(--text-soft);opacity:0.6;">The One File v<span id="version-display"></span></div>
         <div class="modal-buttons">
           <button class="btn-cancel" id="settings-close" data-lang="ui.buttons.close">Close</button>
         </div>
@@ -3588,9 +3600,8 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
               </div>
             </div>
           </details>
-          <details id="node-connections-section"...
           <details id="node-connections-section" style="margin-top: 12px; margin-bottom: 12px; padding: 10px; background: var(--panel-alt); border-radius: 6px;">
-            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;" data-lang="nodePanel.connections">Connections (<span id="node-connections-count">0</span>)</summary>
+            <summary style="color: var(--accent); font-weight: 600; font-size: 14px; cursor: pointer;"><span data-lang="nodePanel.connections">Connections</span> (<span id="node-connections-count">0</span>)</summary>
             <div id="node-connections-list" style="max-height: 200px; overflow-y: auto; margin-top: 8px;"></div>
           </details>
           <div class="badge-row" id="node-tags"></div>
@@ -4235,7 +4246,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       "subtitleColor": "Subtitle Color", "subtitleSize": "Subtitle Size", "font": "Font",
       "defaultColor": "Default Color", "defaultRouting": "Default Routing",
       "animationStyle": "Animation Style", "animateDirections": "Animate Directions",
-      "animationSpeed": "Animation Speed", "allAnimations": "All Animations",
+      "animationSpeed": "Animation Speed", "showPortLabels": "Show Port Labels", "allAnimations": "All Animations",
       "sweepPan": "Sweep (Pan)", "pulseBreathe": "Pulse (Breathe)", "ringsEmanate": "Rings (Emanate)",
       "spinRotate": "Spin (Rotate)", "connectionsFlow": "Connections (Flow)",
       "cameras": "Cameras", "doorbells": "Doorbells", "motionSensors": "Motion Sensors",
@@ -6061,6 +6072,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
       }
        }
       }
+      const THE_ONE_FILE_VERSION = "4.1.4";
       const DEFAULT_CANVAS_HINT = document.getElementById("canvas-hint")?.innerHTML || "";
       const DEFAULT_PAGE_STATE = {
        title: "The One File",
@@ -6132,6 +6144,7 @@ html.rtl .lang-string-row { flex-direction: row-reverse; }
 	   motionTrailLength: 8,
 	   motionTrailStyle: "solid",
 	   motionTrailArrow: true,
+	   showPortLabels: true,
       };
       let PAGE_STATE = Object.assign({}, DEFAULT_PAGE_STATE);
 	  const FOV_ANIMATION_START = Date.now();
@@ -10649,6 +10662,8 @@ else if (rect.lineStyle === "wall") {
          return gaps;
        })();
 
+       const _placedPortLabels = [];
+
        EDGE_DATA.list.forEach((edge) => {
         const fromNode = NODE_DATA[edge.from];
         const toNode = NODE_DATA[edge.to];
@@ -11280,33 +11295,122 @@ if (lineStyle === "dashed") {
         }
         svg.appendChild(path);
         svg.appendChild(pathHit);
-        if (edge.fromPort || edge.toPort) {
-         const ns = "http://www.w3.org/2000/svg";
+        if (PAGE_STATE.showPortLabels && (edge.fromPort || edge.toPort)) {
+         const plNs = "http://www.w3.org/2000/svg";
+         const plWaypoints = edge.waypoints || [];
+         const plPad = { x: 5, y: 3 };
+         function plHitsAny(px, py, halfW, halfH) {
+          for (const nid in positions) {
+           const np = positions[nid];
+           if (!np) continue;
+           const nr = (savedSizes[nid] || 55) + 8;
+           const nd = NODE_DATA[nid];
+           const tFs = PAGE_STATE.nodeTitleSize || 18;
+           const sFs = PAGE_STATE.nodeSubSize || 13;
+           if (px + halfW > np.x - nr && px - halfW < np.x + nr && py + halfH > np.y - nr && py - halfH < np.y + nr) return true;
+           if (nd && nd.name) {
+            const tw = (nd.name.length * tFs * 0.38) + 6;
+            const ty = np.y - nr - 5 - tFs / 2;
+            const th = tFs / 2 + 6;
+            if (px + halfW > np.x - tw && px - halfW < np.x + tw && py + halfH > ty - th && py - halfH < ty + th) return true;
+           }
+           if (nd && nd.subtitle) {
+            const sw = (nd.subtitle.length * sFs * 0.38) + 6;
+            const sy = np.y + nr + 5 + sFs / 2;
+            const sh = sFs / 2 + 6;
+            if (px + halfW > np.x - sw && px - halfW < np.x + sw && py + halfH > sy - sh && py - halfH < sy + sh) return true;
+           }
+          }
+          for (const pl of _placedPortLabels) {
+           if (Math.abs(px - pl.x) < (halfW + pl.hw + 4) && Math.abs(py - pl.y) < (halfH + pl.hh + 4)) return true;
+          }
+          return false;
+         }
+         function plFindClear(origin, target, nodeId, fromEnd) {
+          const wps = fromEnd ? plWaypoints : [...plWaypoints].reverse();
+          const pts = [origin, ...wps, target];
+          const estW = 40, estH = 12;
+          for (let t = 0.12; t <= 0.5; t += 0.04) {
+           const totalLen = pts.reduce((s, pt, i) => i === 0 ? 0 : s + Math.sqrt((pt.x - pts[i-1].x)**2 + (pt.y - pts[i-1].y)**2), 0);
+           let target_d = totalLen * t, accum = 0;
+           for (let i = 1; i < pts.length; i++) {
+            const dx = pts[i].x - pts[i-1].x, dy = pts[i].y - pts[i-1].y;
+            const segLen = Math.sqrt(dx*dx + dy*dy);
+            if (segLen === 0) continue;
+            if (accum + segLen >= target_d) {
+             const frac = (target_d - accum) / segLen;
+             const cx = pts[i-1].x + dx * frac, cy = pts[i-1].y + dy * frac;
+             const fHitsOnPath = plHitsAny(cx, cy, estW, estH);
+             if (!fHitsOnPath) return { x: cx, y: cy };
+             const nx = -dy / segLen, ny = dx / segLen;
+             for (const off of [22, -22, 36, -36]) {
+              const ox = cx + nx * off, oy = cy + ny * off;
+              if (!plHitsAny(ox, oy, estW, estH)) return { x: ox, y: oy };
+             }
+            }
+            accum += segLen;
+           }
+          }
+          const mx = (origin.x + target.x) / 2, my = (origin.y + target.y) / 2;
+          const dx = target.x - origin.x, dy = target.y - origin.y;
+          const fLen = Math.sqrt(dx*dx + dy*dy) || 1;
+          const perpX = -dy / fLen, perpY = dx / fLen;
+          for (const fo of [0, 20, -20, 40, -40]) {
+           const fx = mx + perpX * fo, fy = my - 15 + perpY * fo;
+           if (!plHitsAny(fx, fy, 40, 12)) return { x: fx, y: fy };
+          }
+          return { x: mx, y: my - 15 };
+         }
+         function plRenderLabel(text, pos) {
+          const g = document.createElementNS(plNs, "g");
+          g.classList.add("port-label");
+          g.style.pointerEvents = "none";
+          const tmp = document.createElementNS(plNs, "text");
+          tmp.textContent = text;
+          tmp.setAttribute("x", pos.x);
+          tmp.setAttribute("y", pos.y);
+          tmp.setAttribute("text-anchor", "middle");
+          tmp.setAttribute("dominant-baseline", "central");
+          tmp.style.fontSize = "13px";
+          tmp.style.fontFamily = "Inter, system-ui, sans-serif";
+          tmp.style.fontWeight = "600";
+          svg.appendChild(tmp);
+          const bbox = tmp.getBBox();
+          tmp.remove();
+          const bg = document.createElementNS(plNs, "rect");
+          bg.setAttribute("x", bbox.x - plPad.x);
+          bg.setAttribute("y", bbox.y - plPad.y);
+          bg.setAttribute("width", bbox.width + plPad.x * 2);
+          bg.setAttribute("height", bbox.height + plPad.y * 2);
+          bg.setAttribute("rx", 4);
+          bg.setAttribute("ry", 4);
+          bg.style.fill = "rgba(15, 23, 42, 0.88)";
+          bg.style.stroke = edge.color || PAGE_STATE.defaultEdge || "#475569";
+          bg.style.strokeWidth = "1";
+          bg.style.strokeOpacity = "0.5";
+          g.appendChild(bg);
+          const label = document.createElementNS(plNs, "text");
+          label.textContent = text;
+          label.setAttribute("x", pos.x);
+          label.setAttribute("y", pos.y);
+          label.setAttribute("text-anchor", "middle");
+          label.setAttribute("dominant-baseline", "central");
+          label.style.fill = "#e2e8f0";
+          label.style.fontSize = "13px";
+          label.style.fontFamily = "Inter, system-ui, sans-serif";
+          label.style.fontWeight = "600";
+          label.style.pointerEvents = "none";
+          g.appendChild(label);
+          svg.appendChild(g);
+          _placedPortLabels.push({ x: pos.x, y: pos.y, hw: (bbox.width / 2) + plPad.x, hh: (bbox.height / 2) + plPad.y });
+         }
          if (edge.fromPort) {
-          const fromLabel = document.createElementNS(ns, "text");
-          fromLabel.textContent = edge.fromPort;
-          fromLabel.setAttribute("x", p1.x);
-          fromLabel.setAttribute("y", p1.y - 10);
-          fromLabel.setAttribute("text-anchor", "middle");
-          fromLabel.style.fill = "#94a3b8";
-          fromLabel.style.fontSize = "12px";
-          fromLabel.style.fontWeight = "600";
-          fromLabel.style.pointerEvents = "none";
-          fromLabel.classList.add("port-label");
-          svg.appendChild(fromLabel);
+          const fromPos = plFindClear(p1, p2, edge.from, true);
+          plRenderLabel(edge.fromPort, fromPos);
          }
          if (edge.toPort) {
-          const toLabel = document.createElementNS(ns, "text");
-          toLabel.textContent = edge.toPort;
-          toLabel.setAttribute("x", p2.x);
-          toLabel.setAttribute("y", p2.y - 10);
-          toLabel.setAttribute("text-anchor", "middle");
-          toLabel.style.fill = "#94a3b8";
-          toLabel.style.fontSize = "12px";
-          toLabel.style.fontWeight = "600";
-          toLabel.style.pointerEvents = "none";
-          toLabel.classList.add("port-label");
-          svg.appendChild(toLabel);
+          const toPos = plFindClear(p2, p1, edge.to, false);
+          plRenderLabel(edge.toPort, toPos);
          }
         }
         if (currentEdgeId === edge.id && !isViewOnly()) {
@@ -15559,6 +15663,8 @@ document.getElementById("zone-cat-sprinkler").addEventListener("change", e => { 
 	   document.getElementById("rack-grid-enabled").checked = PAGE_STATE.rackGridEnabled !== false;
        document.getElementById("rack-text-color").value = PAGE_STATE.rackTextColor || "#4fd1c5";
 	   document.getElementById("view-only-mode").checked = PAGE_STATE.viewOnly === true;
+	   document.getElementById("show-port-labels-toggle").checked = PAGE_STATE.showPortLabels !== false;
+	   document.getElementById("version-display").textContent = THE_ONE_FILE_VERSION;
        rebuildThemeDropdown();
        updateDeleteButton();
        settingsModal.classList.add("active");
@@ -15842,6 +15948,10 @@ document.querySelectorAll('#settings-modal .style-content input, #settings-modal
       });
       document.getElementById("node-font-family").addEventListener("change", (e) => {
        PAGE_STATE.nodeFont = e.target.value;
+       forgeTheTopology();
+      });
+	  document.getElementById("show-port-labels-toggle").addEventListener("change", (e) => {
+       PAGE_STATE.showPortLabels = e.target.checked;
        forgeTheTopology();
       });
 	  document.getElementById("default-edge-routing").addEventListener("change", (e) => {

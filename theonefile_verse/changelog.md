@@ -1,7 +1,40 @@
 ### TheOneFile_Verse changelog
 
-**3/2/26 Theonefile_verse 1.7.0** *2FA, responsive overhaul, email change, path to stable, further security improvements*
-  * Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.
+**3/4/26 Theonefile_verse 1.8.0** : **Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure**
+
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
+
+* **New admin settings.**
+  * Added admin setting to set room themes as default. Custom themes from imported versions will also be able to set as default. Thanks to [ahmaddxb](https://github.com/ahmaddxb) [#45](https://github.com/gelatinescreams/The-One-File/issues/45)
+  * Added admin setting to show hide admin login link on homepage
+  * Added admin setting to force welcome modal to all users even if custom data present
+
+* **Changes + Bug Fixes** 
+  * Fixed an issue where custom styles were not being applied after leaving the room
+  * Changed QR code library to local library
+  * Changed crypto.randomUUID() to oidc.generateSecureToken(32) for room ID creation
+  * Backup code login as fallback (single use)
+  * Password required to disable 2FA
+  * AES 256 GCM encrypted secret and backup code storage
+  * Removed all remaining innerHTML references
+  * XSS audit passed
+  * Added futher error logging to docker logs
+  * Tons of security + performance fixes
+  
+* **OIDC Fixes**
+  * Fixed an admin promotion issue when OIDC is the first user registered
+
+* **Redis Fixes**
+  * Changed Redis KEYS to SCAN.
+  * Added redis.conf with safe limits
+
+* **Docker Fixes** 
+  * Added docker resource limits to default compose file
+
+**3/2/26 Theonefile_verse 1.7.0** : *2FA, responsive overhaul, email change, path to stable, further security improvements*
+
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
+
 * **Two Factor Authentication (TOTP)**
   * Full TOTP implementation (RFC 6238, HMAC SHA1, 30 second window with ±1 tolerance)
   * QR code setup flow with manual secret entry fallback
@@ -50,7 +83,7 @@
   * Chat emoji changed from text entity to actual emoji character
   * Room creator_id database index added for search optimization
 
-**2/15/26 Theonefile_verse 1.6.0** *Security hardening, chat overhaul, UX improvements*
+**2/15/26 Theonefile_verse 1.6.0** : **Security hardening, chat overhaul, UX improvements**
 * **Security Hardening**
   * Timing safe comparison for legacy password hashes using crypto.timingSafeEqual
   * Length padded admin password comparison to prevent length oracle attacks
@@ -87,7 +120,7 @@
   * Typing message type with dedicated rate limit (5 bucket, 1/sec refill)
   * Chat history cleanup on room deletion
 
-**2/14/26 Theonefile_verse 1.5.2** *Auth flow fixes, error logging, version tracking*
+**2/14/26 Theonefile_verse 1.5.2** : **Auth flow fixes, error logging, version tracking**
 * **Auth Flow Fixes**
   * Fixed setup page JavaScript SyntaxError that prevented form submission
   * Fixed missing SetCookie header on /api/setup route
@@ -103,7 +136,7 @@
   * Version displayed in startup logs
   * CSRF cookie now includes HttpOnly flag
 
-**2/14/26 Theonefile_verse 1.5.1** *Fixes and further security hardening*
+**2/14/26 Theonefile_verse 1.5.1** : **Fixes and further security hardening**
 * **OIDC/SSO**
   * JWT signature verification now correctly maps hash algorithms (SHA 256/384/512) per token header
   * Discovery document validation ensures authorization and token endpoints exist and issuer matches

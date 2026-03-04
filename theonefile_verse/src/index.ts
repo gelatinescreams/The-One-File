@@ -32,6 +32,7 @@ interface WsData {
   connectionId?: string;
   userId?: string;
   verifiedUserId?: string;
+  authenticated?: boolean;
 }
 
 interface RateLimitEntry {
@@ -203,36 +204,45 @@ setInterval(() => {
       rateLimitStore.delete(key);
     }
   }
+  for (const [k, v] of ROOM_ACCESS_TOKENS) {
+    if (now > v.expiresAt) ROOM_ACCESS_TOKENS.delete(k);
+  }
   db.cleanupEmailRateLimits(3600);
 }, 60 * 1000);
 
 
 
-function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' = 'public'): Record<string, string> {
+function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' | 'api' = 'public'): Record<string, string> {
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+    "Referrer-Policy": "strict-origin-when-cross-origin"
   };
 
-  if (pageType === 'admin') {
+  headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
+
+  headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload";
+
+  if (pageType === 'api') {
+    headers["Cache-Control"] = "no-store";
+  } else if (pageType === 'admin') {
     headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
   } else if (pageType === 'room') {
-    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws: https://cdn.jsdelivr.net https://raw.githubusercontent.com; frame-ancestors 'none'; base-uri 'self'`;
   } else {
-    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
   }
 
   return headers;
 }
 
-const securityHeaders = {
+const securityHeaders: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
   "X-XSS-Protection": "1; mode=block",
   "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   "Cache-Control": "no-store"
 };
 
@@ -277,8 +287,11 @@ interface InstanceSettings {
   backupIntervalHours: number;
   backupRetentionCount: number;
   adminPath: string;
+  showAdminLink: boolean;
   trustedProxyCount: number;
   trustedProxies: string[];
+  defaultRoomTheme: string;
+  forceWelcomeModal: boolean;
 }
 
 const defaultSettings: InstanceSettings = {
@@ -303,8 +316,11 @@ const defaultSettings: InstanceSettings = {
   backupIntervalHours: 24,
   backupRetentionCount: 7,
   adminPath: "admin",
+  showAdminLink: true,
   trustedProxyCount: 1,
-  trustedProxies: []
+  trustedProxies: [],
+  defaultRoomTheme: "",
+  forceWelcomeModal: false
 };
 
 function loadSettings(): InstanceSettings {
@@ -369,13 +385,18 @@ function needsAdminMigration(): boolean {
 
 async function verifyAdminPassword(password: string): Promise<boolean> {
   if (ENV_ADMIN_PASSWORD) {
-    const maxLen = Math.max(password.length, ENV_ADMIN_PASSWORD.length);
+    const maxLen = Math.max(password.length, ENV_ADMIN_PASSWORD.length) + 4;
     const padded = Buffer.alloc(maxLen, 0);
     const expected = Buffer.alloc(maxLen, 0);
+    const lenBuf1 = Buffer.alloc(4);
+    const lenBuf2 = Buffer.alloc(4);
+    lenBuf1.writeUInt32BE(password.length);
+    lenBuf2.writeUInt32BE(ENV_ADMIN_PASSWORD.length);
     Buffer.from(password).copy(padded);
+    lenBuf1.copy(padded, maxLen - 4);
     Buffer.from(ENV_ADMIN_PASSWORD).copy(expected);
-    const match = crypto.timingSafeEqual(padded, expected);
-    return match && password.length === ENV_ADMIN_PASSWORD.length;
+    lenBuf2.copy(expected, maxLen - 4);
+    return crypto.timingSafeEqual(padded, expected);
   }
   const config = loadAdminConfig();
   if (!config) return false;
@@ -397,8 +418,11 @@ interface TokenEntry {
 }
 
 const ADMIN_TOKENS = new Map<string, TokenEntry>();
-const INSTANCE_TOKENS = new Set<string>();
+const INSTANCE_TOKENS = new Map<string, number>();
 const TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000;
+
+const ROOM_ACCESS_TOKENS = new Map<string, { roomId: string; expiresAt: number }>();
+const ROOM_ACCESS_EXPIRY = 24 * 60 * 60 * 1000;
 
 interface WsSessionToken {
   roomId: string;
@@ -468,6 +492,25 @@ setInterval(() => {
   }
 }, 60 * 1000);
 
+function generateRoomAccessToken(roomId: string): string {
+  const token = oidc.generateSecureToken(32);
+  ROOM_ACCESS_TOKENS.set(token, { roomId, expiresAt: Date.now() + ROOM_ACCESS_EXPIRY });
+  if (ROOM_ACCESS_TOKENS.size > 10000) {
+    const now = Date.now();
+    for (const [k, v] of ROOM_ACCESS_TOKENS) {
+      if (now > v.expiresAt) ROOM_ACCESS_TOKENS.delete(k);
+    }
+  }
+  return token;
+}
+
+function validateRoomAccessToken(token: string, roomId: string): boolean {
+  const data = ROOM_ACCESS_TOKENS.get(token);
+  if (!data) return false;
+  if (Date.now() > data.expiresAt) { ROOM_ACCESS_TOKENS.delete(token); return false; }
+  return data.roomId === roomId;
+}
+
 async function generateAdminToken(): Promise<string> {
   const token = oidc.generateSecureToken(32);
   const data = { type: "admin", createdAt: Date.now() };
@@ -513,9 +556,20 @@ setInterval(() => {
   }
 }, 10 * 60 * 1000);
 
+setInterval(() => {
+  const now = Date.now();
+  for (const [token, createdAt] of INSTANCE_TOKENS.entries()) {
+    if (now - createdAt > TOKEN_EXPIRY) INSTANCE_TOKENS.delete(token);
+  }
+  if (INSTANCE_TOKENS.size > 1000) {
+    const sorted = [...INSTANCE_TOKENS.entries()].sort((a, b) => a[1] - b[1]);
+    for (let i = 0; i < sorted.length - 500; i++) INSTANCE_TOKENS.delete(sorted[i][0]);
+  }
+}, 10 * 60 * 1000);
+
 function getTokenFromRequest(req: Request): string | null {
   const cookie = req.headers.get("cookie") || "";
-  const match = cookie.match(/collab_token=([^;]+)/);
+  const match = cookie.match(/(?:^|;\s*)collab_token=([^;]+)/);
   if (match) return match[1];
   const auth = req.headers.get("authorization") || "";
   if (auth.startsWith("Bearer ")) return auth.slice(7);
@@ -609,17 +663,30 @@ function isValidWebhookUrl(url: string): boolean {
   try {
     const parsed = new URL(url);
     if (!['http:', 'https:'].includes(parsed.protocol)) return false;
-    const hostname = parsed.hostname.toLowerCase();
-    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]') return false;
-    if (hostname === '169.254.169.254' || hostname === 'metadata.google.internal') return false;
-    if (/^10\./.test(hostname)) return false;
-    if (/^172\.(1[6-9]|2\d|3[01])\./.test(hostname)) return false;
-    if (/^192\.168\./.test(hostname)) return false;
-    if (/^0\./.test(hostname) || hostname === '0.0.0.0') return false;
+    let hostname = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '');
+    if (hostname === 'localhost' || hostname.endsWith('.localhost')) return false;
+    if (hostname === 'metadata.google.internal' || hostname.endsWith('.internal')) return false;
+    const mappedMatch = hostname.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+    if (mappedMatch) hostname = mappedMatch[1];
+    if (/^(0x[0-9a-f]+|\d{8,})$/i.test(hostname)) return false;
+    if (/^\d+\.\d+\.\d+\.\d+$/.test(hostname)) {
+      const parts = hostname.split('.').map(Number);
+      if (parts.some(p => p < 0 || p > 255)) return false;
+      if (parts[0] === 127 || parts[0] === 10 || parts[0] === 0) return false;
+      if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return false;
+      if (parts[0] === 192 && parts[1] === 168) return false;
+      if (parts[0] === 169 && parts[1] === 254) return false;
+      if (parts.every(p => p === 255)) return false;
+    }
+    if (hostname.includes(':')) {
+      if (hostname === '::1' || hostname === '::') return false;
+      if (/^fe80:/i.test(hostname)) return false;
+      if (/^f[cd][0-9a-f]{2}:/i.test(hostname)) return false;
+      if (/^::ffff:/i.test(hostname)) return false;
+      if (/^100::/i.test(hostname)) return false;
+    }
     return true;
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
 async function sendWebhook(event: string, data: any): Promise<void> {
@@ -681,6 +748,7 @@ async function restoreBackup(backupId: string): Promise<{ success: boolean; erro
     for (const room of data.rooms) {
       const existing = db.getRoom(room.id);
       if (!existing) {
+        if (room.topology) room.topology = sanitizeTopologyStrings(room.topology);
         db.createRoom(room);
         roomsRestored++;
       }
@@ -756,7 +824,7 @@ const setupPageHtml = `<!DOCTYPE html>
     <div class="error" id="error"></div>
     <div id="oidc-buttons"></div>
     <div class="divider" id="divider" style="display:none">or continue with email</div>
-    <form id="setup-form">
+    <form id="setup-form" novalidate>
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="admin@example.com" autocomplete="email" autofocus>
       <label for="password">Password</label>
@@ -804,7 +872,7 @@ const migrationPageHtml = `<!DOCTYPE html>
     <p class="subtitle">Convert your admin password to a user account</p>
     <div class="info">Enter your current admin password and a new email to create your admin user account. This is a one time migration.</div>
     <div class="error" id="error"></div>
-    <form id="migrate-form">
+    <form id="migrate-form" novalidate>
       <label for="old-password">Current Admin Password</label>
       <input type="password" id="old-password" placeholder="Your existing admin password" autocomplete="current-password" autofocus>
       <label for="email">Email for Admin Account</label>
@@ -849,7 +917,7 @@ const loginPageHtml = `<!DOCTYPE html>
     <h1>The One File Collab</h1>
     <p>This instance requires a password</p>
     <div class="error" id="error">Invalid password</div>
-    <form id="login-form">
+    <form id="login-form" novalidate>
       <input type="password" id="password" placeholder="Enter password" autofocus>
       <button type="submit">Login</button>
     </form>
@@ -889,7 +957,7 @@ const instanceLoginPageHtml = `<!DOCTYPE html>
     <h1>The One File Collab</h1>
     <p>This instance requires a password to access</p>
     <div class="error" id="error">Invalid password</div>
-    <form id="login-form">
+    <form id="login-form" novalidate>
       <input type="password" id="password" placeholder="Enter password" autofocus>
       <button type="submit">Access</button>
     </form>
@@ -941,7 +1009,7 @@ const userLoginHtml = `<!DOCTYPE html>
     <div class="error" id="error"></div>
     <div id="oidc-buttons"></div>
     <div class="divider" id="divider" style="display:none">or continue with email</div>
-    <form id="login-form">
+    <form id="login-form" novalidate>
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="you@example.com" autocomplete="email" autofocus>
       <label for="password">Password</label>
@@ -1012,7 +1080,7 @@ const userRegisterHtml = `<!DOCTYPE html>
     <div class="success" id="success"></div>
     <div id="oidc-buttons"></div>
     <div class="divider" id="divider" style="display:none">or register with email</div>
-    <form id="register-form">
+    <form id="register-form" novalidate>
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="you@example.com" autocomplete="email" autofocus>
       <label for="displayName">Display Name</label>
@@ -1071,7 +1139,7 @@ const userForgotPasswordHtml = `<!DOCTYPE html>
     <p>Enter your email to receive a reset link</p>
     <div class="error" id="error"></div>
     <div class="success" id="success"></div>
-    <form id="forgot-form">
+    <form id="forgot-form" novalidate>
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="you@example.com" autocomplete="email" autofocus>
       <button type="submit">Send Reset Link</button>
@@ -1355,6 +1423,10 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row" id="admin-path-info" style="display:none">
           <div class="setting-info"><div class="setting-label"></div><div class="setting-desc" id="admin-path-current" style="color:#4ade80">Current path: /admin</div></div>
         </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Show Admin Link</div><div class="setting-desc">Show admin panel link in the landing page footer</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-show-admin-link" data-action="toggleSetting" data-setting="showAdminLink"></div></div>
+        </div>
       </div>
       <div class="settings-section">
         <h3>TheOneFile Source</h3>
@@ -1368,10 +1440,6 @@ const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-info"><div class="setting-label">Update Interval</div><div class="setting-desc">Hours between auto updates (0 = manual only)</div></div>
           <div class="setting-control"><input type="number" id="update-interval" min="0" max="168" style="width:80px"><button class="btn btn-sm btn-primary" data-action="saveUpdateInterval">Save</button></div>
         </div>
-        <div class="setting-row" id="github-update-row">
-          <div class="setting-info"><div class="setting-label">Fetch from GitHub</div><div class="setting-desc">Download latest version now</div></div>
-          <div class="setting-control"><button class="btn btn-sm btn-success" id="update-btn" data-action="triggerUpdate">Update Now</button></div>
-        </div>
         <div class="setting-row" id="upload-row" style="display:none">
           <div class="setting-info"><div class="setting-label">Upload Local File</div><div class="setting-desc" id="upload-status">Upload your own TheOneFile HTML</div></div>
           <div class="setting-control">
@@ -1379,8 +1447,23 @@ const adminDashboardHtml = `<!DOCTYPE html>
             <button class="btn btn-sm btn-primary" data-action="uploadFileClick">Choose File</button>
           </div>
         </div>
-        <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Current File</div><div class="setting-desc" id="current-file-info">Loading...</div></div>
+        <div style="padding:12px;background:var(--card-bg,#1a1f2e);border-radius:8px;margin-top:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div>
+              <span id="current-version-badge" style="font-size:18px;font-weight:700;color:var(--accent,#f0b429);"></span>
+              <span id="current-edition-badge" style="font-size:12px;color:#8892a0;margin-left:8px;"></span>
+            </div>
+            <span id="version-status-badge" style="font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600;"></span>
+          </div>
+          <div style="font-size:12px;color:#8892a0;margin-bottom:10px;">
+            <span id="last-update-info"></span>
+            <span id="file-size-info" style="margin-left:12px;"></span>
+          </div>
+          <div id="github-update-row" style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-success" id="update-btn" data-action="triggerUpdate">Update Now</button>
+            <button class="btn btn-sm" id="check-update-btn" data-action="checkForUpdates" style="background:#2a3040;color:#c8cdd5;">Check for Updates</button>
+            <a href="https://github.com/gelatinescreams/The-One-File/releases" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent,#f0b429);align-self:center;margin-left:auto;text-decoration:none;">Changelog</a>
+          </div>
         </div>
       </div>
       <div class="settings-section">
@@ -1405,6 +1488,10 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Max Rooms</div><div class="setting-desc">Maximum rooms allowed (0 = unlimited)</div></div>
           <div class="setting-control"><input type="number" id="max-rooms" min="0" max="1000" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Default Room Theme</div><div class="setting-desc">Theme preset for new rooms (from loaded file)</div></div>
+          <div class="setting-control"><select id="default-room-theme"><option value="">Default (from file)</option></select></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Public Room Creation</div><div class="setting-desc">Allow anyone to create rooms</div></div>
@@ -1442,6 +1529,10 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Name Changes</div><div class="setting-desc">Allow users to change name after joining</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-namechange" data-action="toggleSetting" data-setting="nameChangeEnabled"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Welcome Modal</div><div class="setting-desc">Always show welcome setup when joining rooms</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-welcome-modal" data-action="toggleSetting" data-setting="forceWelcomeModal"></div></div>
         </div>
       </div>
       <div class="settings-section">
@@ -1733,7 +1824,7 @@ const adminLoginHtml = `<!DOCTYPE html>
     <div class="error" id="error"></div>
     <div id="oidc-buttons"></div>
     <div class="divider" id="divider" style="display:none">or continue with email</div>
-    <form id="login-form">
+    <form id="login-form" novalidate>
       <label for="email">Email</label>
       <input type="email" id="email" placeholder="admin@example.com" autocomplete="email" autofocus>
       <label for="password">Password</label>
@@ -1782,7 +1873,7 @@ function getPasswordResetHtml(token: string): string {
     <p>Enter your new password</p>
     <div class="error" id="error"></div>
     <div class="success" id="success">Password reset successfully! <a href="/" style="color:var(--accent)">Go to home</a></div>
-    <form id="form">
+    <form id="form" novalidate>
       <input type="password" id="password" placeholder="New password (min 8 characters)" minlength="8" required autocomplete="new-password">
       <input type="password" id="confirm" placeholder="Confirm password" required autocomplete="new-password">
       <button type="submit">Reset Password</button>
@@ -1836,7 +1927,10 @@ async function verifyPassword(password: string, hash: string): Promise<boolean> 
   const encoder = new TextEncoder();
   const data = encoder.encode(password + "theonefile-collab-salt-v1");
   const legacyHash = await crypto.subtle.digest("SHA-256", data);
-  return Buffer.from(legacyHash).toString("hex") === hash;
+  const computed = Buffer.from(Buffer.from(legacyHash).toString("hex"));
+  const stored = Buffer.from(hash);
+  if (computed.length !== stored.length) return false;
+  return crypto.timingSafeEqual(computed, stored);
 }
 
 function loadRoom(id: string): Room | null {
@@ -1892,6 +1986,30 @@ function resetDestructionTimer(roomId: string): void {
 
 let theOneFileHtml = "";
 const theOneFilePath = join(process.cwd(), "public", "theonefile.html");
+
+function extractThemePresets(): Array<{key: string, label: string}> {
+  if (!theOneFileHtml) return [];
+  const themes: Array<{key: string, label: string}> = [];
+  const selectMatch = theOneFileHtml.match(/id="welcome-theme-select"[^>]*>([\s\S]*?)<\/select>/);
+  if (selectMatch) {
+    const optionRegex = /<option\s+value="(\w+)"[^>]*>([^<]+)<\/option>/g;
+    let m;
+    while ((m = optionRegex.exec(selectMatch[1])) !== null) {
+      if (m[1]) themes.push({ key: m[1], label: m[2] });
+    }
+  }
+  if (themes.length === 0) {
+    const presetsMatch = theOneFileHtml.match(/THEME_PRESETS\s*=\s*\{([\s\S]*?)\n\};/);
+    if (presetsMatch) {
+      const keyRegex = /^\s+(\w+)\s*:/gm;
+      let km;
+      while ((km = keyRegex.exec(presetsMatch[1])) !== null) {
+        themes.push({ key: km[1], label: km[1] });
+      }
+    }
+  }
+  return themes;
+}
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/gelatinescreams/The-One-File/main/theonefile-networkening.html";
 
 interface ValidationResult {
@@ -1956,6 +2074,116 @@ function checkJsonDepthAndSize(obj: any, currentDepth: number = 0): { valid: boo
   return { valid: true };
 }
 
+const ALLOWED_TAGS = new Set([
+  'a', 'abbr', 'address', 'article', 'aside', 'b', 'bdi', 'bdo', 'blockquote',
+  'br', 'caption', 'cite', 'code', 'col', 'colgroup', 'dd', 'del', 'details',
+  'dfn', 'div', 'dl', 'dt', 'em', 'figcaption', 'figure', 'footer', 'h1', 'h2',
+  'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'i', 'img', 'ins', 'kbd', 'li',
+  'main', 'mark', 'nav', 'ol', 'p', 'picture', 'pre', 'q', 'rp', 'rt', 'ruby',
+  's', 'samp', 'section', 'small', 'source', 'span', 'strong', 'sub', 'summary',
+  'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'time', 'tr', 'u',
+  'ul', 'var', 'wbr', 'input', 'label', 'select', 'option', 'textarea', 'button',
+  'canvas', 'audio', 'video'
+]);
+
+const ALLOWED_ATTRS = new Set([
+  'id', 'class', 'title', 'lang', 'dir', 'role', 'tabindex', 'aria-label',
+  'aria-hidden', 'aria-expanded', 'aria-controls', 'aria-describedby',
+  'data-id', 'data-type', 'data-value', 'data-node-id', 'data-edge-id',
+  'data-tab-id', 'data-tab', 'data-color', 'data-size', 'data-x', 'data-y',
+  'data-width', 'data-height', 'data-source', 'data-target', 'data-label',
+  'data-index', 'data-selected', 'data-locked', 'data-visible', 'data-active',
+  'data-state', 'data-mode', 'data-theme', 'data-collapsed', 'data-position',
+  'data-group', 'data-parent', 'data-layer', 'data-order', 'data-shape',
+  'data-font-size', 'data-font-family', 'data-text-align', 'data-stroke',
+  'data-fill', 'data-opacity', 'data-rotation', 'data-style', 'data-content',
+  'href', 'src', 'alt', 'width', 'height', 'colspan', 'rowspan', 'target',
+  'rel', 'type', 'value', 'placeholder', 'name', 'for', 'checked', 'disabled',
+  'readonly', 'maxlength', 'min', 'max', 'step', 'rows', 'cols', 'wrap',
+  'autoplay', 'controls', 'loop', 'muted', 'preload', 'poster',
+  'contenteditable', 'spellcheck', 'draggable', 'hidden', 'open', 'start',
+  'reversed', 'datetime', 'cite', 'loading', 'decoding', 'crossorigin',
+  'referrerpolicy', 'sizes', 'srcset', 'media'
+]);
+
+function isAllowedDataAttr(name: string): boolean {
+  if (!name.startsWith('data-')) return false;
+  return /^data-[a-z][a-z0-9-]*$/.test(name);
+}
+
+function sanitizeUrl(url: string): string {
+  let decoded = url
+    .replace(/&#x([0-9a-f]+);?/gi, (_: string, h: string) => String.fromCharCode(parseInt(h, 16)))
+    .replace(/&#(\d+);?/gi, (_: string, d: string) => String.fromCharCode(parseInt(d, 10)))
+    .replace(/[\t\n\r\x00]/g, '');
+  const clean = decoded.replace(/\s/g, '').toLowerCase();
+  if (clean.startsWith('javascript:') || clean.startsWith('vbscript:')) return '';
+  if (clean.startsWith('data:') && !/^data:image\/(png|jpe?g|gif|webp|bmp|ico)/i.test(clean)) return 'data:blocked';
+  return url;
+}
+
+function sanitizeHtmlString(str: string): string {
+  if (typeof str !== 'string') return str;
+
+  return str.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)?\/?>/g, (match, tagName, attrsStr) => {
+    const tag = tagName.toLowerCase();
+    const isClosing = match.startsWith('</');
+
+    if (!ALLOWED_TAGS.has(tag)) return '';
+
+    if (isClosing) return `</${tag}>`;
+
+    const selfClosing = match.endsWith('/>') || ['br', 'hr', 'img', 'input', 'col', 'source', 'wbr'].includes(tag);
+    let safeAttrs = '';
+
+    if (attrsStr) {
+      const attrRegex = /([a-zA-Z][a-zA-Z0-9-]*)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s>"']+)))?/g;
+      let attrMatch;
+      while ((attrMatch = attrRegex.exec(attrsStr)) !== null) {
+        const attrName = attrMatch[1].toLowerCase();
+        const attrVal = attrMatch[2] ?? attrMatch[3] ?? attrMatch[4] ?? '';
+
+        if (/^on/i.test(attrName)) continue;
+        if (attrName === 'style') continue;
+        if (attrName === 'srcdoc') continue;
+        if (attrName === 'formaction') continue;
+
+        if (!ALLOWED_ATTRS.has(attrName) && !isAllowedDataAttr(attrName)) continue;
+
+        let safeVal = attrVal;
+        if (attrName === 'href' || attrName === 'src' || attrName === 'action' || attrName === 'poster') {
+          safeVal = sanitizeUrl(attrVal);
+        }
+        if (attrName === 'target') {
+          safeVal = '_blank';
+        }
+
+        safeAttrs += ` ${attrName}="${safeVal.replace(/"/g, '&quot;')}"`;
+
+        if (attrName === 'target') {
+          safeAttrs += ' rel="noopener noreferrer"';
+        }
+      }
+    }
+
+    return selfClosing ? `<${tag}${safeAttrs} />` : `<${tag}${safeAttrs}>`;
+  });
+}
+
+function sanitizeTopologyStrings(obj: any): any {
+  if (obj === null || obj === undefined) return obj;
+  if (typeof obj === 'string') return sanitizeHtmlString(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeTopologyStrings);
+  if (typeof obj === 'object') {
+    const result: any = {};
+    for (const key of Object.keys(obj)) {
+      result[key] = sanitizeTopologyStrings(obj[key]);
+    }
+    return result;
+  }
+  return obj;
+}
+
 function validateTopology(topology: any): TopologyValidationResult {
   if (topology === null || topology === undefined) {
     return { valid: true, sanitized: null };
@@ -2015,7 +2243,7 @@ function validateTopology(topology: any): TopologyValidationResult {
     }
   }
 
-  return { valid: true, sanitized: topology };
+  return { valid: true, sanitized: sanitizeTopologyStrings(topology) };
 }
 
 function validateTheOneFileHtml(html: string): ValidationResult {
@@ -2056,6 +2284,13 @@ async function computeSha256Hash(content: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
+function extractVersionFromHtml(html: string): string {
+  const match = html.match(/THE_ONE_FILE_VERSION\s*=\s*"([^"]+)"/);
+  return match ? match[1] : "unknown";
+}
+
+let currentFileVersion = "";
+
 function getExpectedTheOneFileHash(): string | null {
   return db.getSetting("theOneFileHash");
 }
@@ -2088,9 +2323,13 @@ async function fetchLatestFromGitHub(): Promise<boolean> {
       console.log(`[Update] Admin can set this hash in settings to enable integrity checking.`);
     }
 
+    const previousVersion = currentFileVersion;
     await Bun.write(theOneFilePath, html);
     theOneFileHtml = html;
-    console.log(`[Update] Downloaded (${(html.length / 1024).toFixed(1)}KB)`);
+    currentFileVersion = extractVersionFromHtml(html);
+    db.setSetting("lastUpdateTimestamp", new Date().toISOString());
+    db.setSetting("latestFetchedVersion", currentFileVersion);
+    console.log(`[Update] Downloaded v${currentFileVersion} (${(html.length / 1024).toFixed(1)}KB)${previousVersion && previousVersion !== currentFileVersion ? ` from v${previousVersion}` : ''}`);
     return true;
   } catch (e: any) { console.error("[Update]", e.message); return false; }
 }
@@ -2123,6 +2362,11 @@ if (instanceSettings.skipUpdates) {
   }
 }
 
+if (theOneFileHtml) {
+  currentFileVersion = extractVersionFromHtml(theOneFileHtml);
+  if (currentFileVersion !== "unknown") console.log(`[Update] Current version: v${currentFileVersion}`);
+}
+
 restartUpdateTimer();
 
 const wsConnectionCounts = new Map<string, { count: number; resetAt: number }>();
@@ -2139,6 +2383,15 @@ setInterval(() => {
 async function handleRequest(req: Request, server: any): Promise<Response | undefined> {
     const url = new URL(req.url);
     const path = url.pathname;
+
+    if (req.method === 'POST' || req.method === 'PUT') {
+      if (path !== '/api/admin/upload-html') {
+        const cl = parseInt(req.headers.get('content-length') || '0');
+        if (cl > 5 * 1024 * 1024) {
+          return new Response('Payload too large', { status: 413 });
+        }
+      }
+    }
 
     if (path.match(/^\/ws\/[\w-]+$/)) {
       const clientIp = getClientIP(req);
@@ -2165,23 +2418,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         if (!token || !INSTANCE_TOKENS.has(token)) return new Response("Unauthorized", { status: 401 });
       }
 
-      const wsToken = url.searchParams.get("token");
-      let verifiedUserId: string | undefined;
-
       const authSettings = oidc.getAuthSettings();
       const requireWsToken = authSettings.productionMode || process.env.REQUIRE_WS_TOKEN === 'true';
 
-      if (wsToken) {
-        const tokenValidation = await validateWsSessionToken(wsToken, roomId);
-        if (!tokenValidation.valid) {
-          return new Response("Invalid or expired WebSocket token", { status: 401 });
-        }
-        verifiedUserId = tokenValidation.collabUserId;
-      } else if (requireWsToken) {
-        return new Response("WebSocket token required", { status: 401 });
-      }
-
-      const upgraded = server.upgrade(req, { data: { roomId, verifiedUserId } });
+      const upgraded = server.upgrade(req, { data: { roomId, authenticated: !requireWsToken } });
       if (upgraded) return undefined;
       return new Response("WebSocket upgrade failed", { status: 400 });
     }
@@ -2199,7 +2439,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
     const corsHeaders = {
       "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization, x-csrf-token",
       "Access-Control-Allow-Credentials": "true",
       ...securityHeaders
     };
@@ -2254,7 +2494,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
     if (path === `/${adminPath}`) {
       if (needsAdminMigration()) {
-        const migrationWithPath = migrationPageHtml.replace(/\/admin/g, `/${adminPath}`);
+        const migrationWithPath = migrationPageHtml.replace(/\/admin\b(?!-)/g, `/${adminPath}`);
         return serveHtml(migrationWithPath, 'admin', req);
       }
       if (!hasAdminUser()) {
@@ -2266,8 +2506,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       }
       const dashboardWithPath = adminDashboardHtml
         .replace('ADMIN_PATH_PLACEHOLDER', adminPath)
-        .replace(/\/admin\/login/g, `/${adminPath}/login`)
-        .replace(/\/admin/g, `/${adminPath}`);
+        .replace(/\/admin\b(?!-)/g, `/${adminPath}`);
       return serveHtml(dashboardWithPath, 'admin', req);
     }
 
@@ -2278,7 +2517,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       if (!hasAdminUser()) {
         return Response.redirect(new URL("/", req.url).toString(), 302);
       }
-      const loginWithPath = adminLoginHtml.replace('ADMIN_PATH_PLACEHOLDER', adminPath).replace(/\/admin/g, `/${adminPath}`);
+      const loginWithPath = adminLoginHtml.replace('ADMIN_PATH_PLACEHOLDER', adminPath).replace(/\/admin\b(?!-)/g, `/${adminPath}`);
       return serveHtml(loginWithPath, 'admin', req);
     }
 
@@ -2368,7 +2607,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       const searchQuery = url.searchParams.get("q") || "";
       const limit = Math.min(parseInt(url.searchParams.get("limit") || "100") || 100, 1000);
       const offset = parseInt(url.searchParams.get("offset") || "0");
-      const dbRooms = searchQuery ? db.searchRooms(searchQuery, limit, offset) : db.listRooms();
+      const dbRooms = searchQuery ? db.searchRooms(searchQuery, limit, offset) : db.listRooms(limit, offset);
       const rooms = dbRooms.map(room => {
         const meta = roomMeta.get(room.id);
         return {
@@ -2429,20 +2668,12 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
 
     if (path === "/api/auth/settings" && req.method === "GET") {
-      const clientIP = getClientIP(req);
-      if (!(await checkRateLimit(clientIP, "auth-settings", instanceSettings))) {
-        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
-      }
       const authSettings = oidc.getAuthSettings();
       const providers = oidc.getActiveProviders();
       return Response.json({ settings: authSettings, providers }, { headers: corsHeaders });
     }
 
     if (path === "/api/auth/providers" && req.method === "GET") {
-      const clientIP = getClientIP(req);
-      if (!(await checkRateLimit(clientIP, "auth-providers", instanceSettings))) {
-        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
-      }
       const providers = oidc.getActiveProviders();
       return Response.json(providers, { headers: corsHeaders });
     }
@@ -2540,10 +2771,6 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
     }
 
     if (path === "/api/auth/me" && req.method === "GET") {
-      const clientIP = getClientIP(req);
-      if (!(await checkRateLimit(clientIP, "auth-me", instanceSettings))) {
-        return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
-      }
       const token = getUserTokenFromRequest(req);
       if (!token) {
         return Response.json({ user: null }, { headers: corsHeaders });
@@ -3475,7 +3702,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         }
         if (valid) {
           const token = crypto.randomUUID();
-          INSTANCE_TOKENS.add(token);
+          INSTANCE_TOKENS.set(token, Date.now());
           return new Response(JSON.stringify({ success: true }), {
             headers: { ...corsHeaders, "Content-Type": "application/json",
               "Set-Cookie": oidc.getSessionCookie("collab_token", token, 604800) }
@@ -3503,7 +3730,12 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         currentFileHash,
         expectedFileHash,
         integrityCheckEnabled: !!expectedFileHash,
-        integrityCheckPassed: expectedFileHash ? currentFileHash === expectedFileHash : null
+        integrityCheckPassed: expectedFileHash ? currentFileHash === expectedFileHash : null,
+        availableThemes: extractThemePresets(),
+        currentFileVersion: currentFileVersion || "unknown",
+        lastUpdateTimestamp: db.getSetting("lastUpdateTimestamp") || null,
+        latestGitHubVersion: db.getSetting("latestGitHubVersion") || null,
+        lastVersionCheck: db.getSetting("lastVersionCheck") || null
       }, { headers: corsHeaders });
     }
 
@@ -3548,6 +3780,12 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         }
         if (body.forcedTheme && ["user", "dark", "light"].includes(body.forcedTheme)) {
           instanceSettings.forcedTheme = body.forcedTheme;
+        }
+        if (typeof body.defaultRoomTheme === 'string') {
+          const validKeys = extractThemePresets().map(t => t.key);
+          if (body.defaultRoomTheme === '' || validKeys.includes(body.defaultRoomTheme)) {
+            instanceSettings.defaultRoomTheme = body.defaultRoomTheme;
+          }
         }
         if (typeof body.rateLimitEnabled === "boolean") {
           instanceSettings.rateLimitEnabled = body.rateLimitEnabled;
@@ -3594,6 +3832,9 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
           }
           instanceSettings.adminPath = body.adminPath;
         }
+        if (typeof body.showAdminLink === "boolean") {
+          instanceSettings.showAdminLink = body.showAdminLink;
+        }
 
         if (body.theOneFileHash !== undefined) {
           if (body.theOneFileHash === "" || body.theOneFileHash === null) {
@@ -3627,8 +3868,35 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       if (instanceSettings.skipUpdates) {
         return Response.json({ error: "Updates disabled" }, { status: 400, headers: corsHeaders });
       }
+      const previousVersion = currentFileVersion;
       const success = await fetchLatestFromGitHub();
-      return Response.json({ success, size: theOneFileHtml.length }, { headers: corsHeaders });
+      return Response.json({ success, size: theOneFileHtml.length, version: currentFileVersion, previousVersion }, { headers: corsHeaders });
+    }
+
+    if (path === "/api/admin/version-check" && req.method === "GET") {
+      const adminUser = await validateAdminUser(req);
+      if (!adminUser) {
+        return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+      }
+      try {
+        const res = await fetch(GITHUB_RAW_URL, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) {
+          return Response.json({ error: "GitHub unreachable" }, { status: 502, headers: corsHeaders });
+        }
+        const html = await res.text();
+        const latestVersion = extractVersionFromHtml(html);
+        const now = new Date().toISOString();
+        db.setSetting("latestGitHubVersion", latestVersion);
+        db.setSetting("lastVersionCheck", now);
+        return Response.json({
+          currentVersion: currentFileVersion || "unknown",
+          latestVersion,
+          updateAvailable: latestVersion !== "unknown" && currentFileVersion !== latestVersion,
+          lastChecked: now
+        }, { headers: corsHeaders });
+      } catch (e: any) {
+        return Response.json({ error: e.message || "Version check failed" }, { status: 500, headers: corsHeaders });
+      }
     }
 
     if (path === "/api/admin/upload-html" && req.method === "POST") {
@@ -3864,11 +4132,14 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         chatEnabled: instanceSettings.chatEnabled,
         cursorSharingEnabled: instanceSettings.cursorSharingEnabled,
         nameChangeEnabled: instanceSettings.nameChangeEnabled,
-        shareButtonEnabled: authSettings.shareButtonEnabled
+        shareButtonEnabled: authSettings.shareButtonEnabled,
+        showAdminLink: instanceSettings.showAdminLink,
+        ...(instanceSettings.showAdminLink ? { adminPath: getAdminPath() } : {})
       }, { headers: corsHeaders });
     }
 
     if (path === "/api/room" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
       const clientIP = getClientIP(req);
       if (!(await checkRateLimit(clientIP, "room-create", instanceSettings))) {
         return Response.json({ error: "Too many rooms created. Try again later." }, { status: 429, headers: corsHeaders });
@@ -3882,7 +4153,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         const destructValue = typeof body.destructValue === "number"
           ? Math.min(Math.max(0, body.destructValue), maxDestructValue)
           : 86400000;
-        const passwordHash = body.password && body.password.length >= 4
+        if (body.password && body.password.length > 0 && body.password.length < 8) {
+          return Response.json({ error: "Room password must be at least 8 characters" }, { status: 400, headers: corsHeaders });
+        }
+        const passwordHash = body.password && body.password.length >= 8
           ? await hashPassword(body.password)
           : null;
 
@@ -3898,6 +4172,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         const authSettings = oidc.getAuthSettings();
         if (!authSettings.allowGuestRoomCreation && !ownerUserId) {
           return Response.json({ error: "Please sign in to create a room" }, { status: 401, headers: corsHeaders });
+        }
+
+        if (instanceSettings.maxRoomsPerInstance > 0 && db.countRooms() >= instanceSettings.maxRoomsPerInstance) {
+          return Response.json({ error: "Maximum number of rooms reached" }, { status: 403, headers: corsHeaders });
         }
 
         const allowGuests = body.allowGuests !== false && authSettings.allowGuestRoomJoin;
@@ -3943,25 +4221,55 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       }
       try {
         const body = await req.json();
-        return Response.json({ valid: await verifyPassword(body.password || "", room.passwordHash) }, { headers: corsHeaders });
+        const valid = await verifyPassword(body.password || "", room.passwordHash);
+        if (valid) {
+          const accessToken = generateRoomAccessToken(id);
+          const prodMode = oidc.getAuthSettings().productionMode;
+          const cookieName = prodMode ? '__Host-room_access' : 'room_access';
+          const cookieFlags = prodMode ? '; HttpOnly; Secure; SameSite=Strict; Path=/; Partitioned' : '; HttpOnly; SameSite=Strict; Path=/';
+          const responseHeaders = { ...corsHeaders, 'Set-Cookie': `${cookieName}=${accessToken}; Max-Age=86400${cookieFlags}` };
+          return Response.json({ valid: true }, { headers: responseHeaders });
+        }
+        return Response.json({ valid: false }, { headers: corsHeaders });
       } catch (e: any) { console.error("[API]", e.message); return Response.json({ valid: false }, { headers: corsHeaders }); }
     }
-    
+
+    if (path.match(/^\/api\/room\/[\w-]+\/access$/) && req.method === "GET") {
+      const id = path.split("/")[3];
+      if (!isValidUUID(id)) return Response.json({ authorized: false }, { status: 400, headers: corsHeaders });
+      const room = loadRoom(id);
+      if (!room) return Response.json({ authorized: false }, { status: 404, headers: corsHeaders });
+      if (!room.passwordHash) return Response.json({ authorized: true }, { headers: corsHeaders });
+      const prodMode = oidc.getAuthSettings().productionMode;
+      const cookieName = prodMode ? '__Host-room_access' : 'room_access';
+      const cookies = req.headers.get('cookie') || '';
+      const match = cookies.match(new RegExp(`(?:^|;\\s*)${cookieName}=([^;]+)`));
+      const token = match ? match[1] : '';
+      return Response.json({ authorized: validateRoomAccessToken(token, id) }, { headers: corsHeaders });
+    }
+
     if (path.match(/^\/api\/room\/[\w-]+$/) && req.method === "DELETE") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
       const id = path.split("/")[3];
       if (!isValidUUID(id)) {
         return Response.json({ error: "Invalid room ID" }, { status: 400, headers: corsHeaders });
       }
       const room = loadRoom(id);
       if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
-      try {
-        const body = await req.json();
-        if (body.creatorId && isValidUUID(body.creatorId) && body.creatorId === room.creatorId) {
-          deleteRoomData(id);
-          return Response.json({ deleted: true }, { headers: corsHeaders });
+
+      const userToken = getUserTokenFromRequest(req);
+      if (userToken) {
+        const user = await oidc.validateUserSessionToken(userToken);
+        if (user) {
+          if (user.role === 'admin' || (room.ownerUserId && user.id === room.ownerUserId)) {
+            deleteRoomData(id);
+            db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_deleted", actor: user.id, actorIp: getClientIP(req), targetType: "room", targetId: id });
+            return Response.json({ deleted: true }, { headers: corsHeaders });
+          }
         }
-        return Response.json({ error: "Only room creator can delete" }, { status: 403, headers: corsHeaders });
-      } catch (e: any) { return apiError(e, corsHeaders); }
+      }
+
+      return Response.json({ error: "Only room owner or admin can delete" }, { status: 403, headers: corsHeaders });
     }
     
     if (path.match(/^\/api\/room\/[\w-]+\/exists$/) && req.method === "GET") {
@@ -3976,17 +4284,36 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       const room = loadRoom(id);
       if (!room) return Response.json({ exists: false }, { headers: corsHeaders });
       return Response.json({
-        exists: true, hasPassword: !!room.passwordHash, created: room.created, destruct: room.destruct
+        exists: true, hasPassword: !!room.passwordHash
       }, { headers: corsHeaders });
     }
 
     if (path.match(/^\/api\/room\/[\w-]+\/ws-token$/) && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
       const id = path.split("/")[3];
       if (!isValidUUID(id)) {
         return Response.json({ error: "Invalid room ID" }, { status: 400, headers: corsHeaders });
       }
       const room = loadRoom(id);
       if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
+
+      if (room.passwordHash) {
+        const prodMode = oidc.getAuthSettings().productionMode;
+        const cookieName = prodMode ? '__Host-room_access' : 'room_access';
+        const cookies = req.headers.get('cookie') || '';
+        const match = cookies.match(new RegExp(`(?:^|;\\s*)${cookieName}=([^;]+)`));
+        const accessToken = match ? match[1] : '';
+        if (!validateRoomAccessToken(accessToken, id)) {
+          return Response.json({ error: "Room password required" }, { status: 403, headers: corsHeaders });
+        }
+      }
+
+      if (room.allowGuests === false) {
+        const userToken = getUserTokenFromRequest(req);
+        if (!userToken) return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
+        const user = await oidc.validateUserSessionToken(userToken);
+        if (!user) return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
+      }
 
       const clientIP = getClientIP(req);
       if (!(await checkRateLimit(clientIP, `ws-token-${id}`, instanceSettings))) {
@@ -3995,11 +4322,18 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
       try {
         const body = await req.json();
-        const collabUserId = body.collabUserId && isValidUUID(body.collabUserId) ? body.collabUserId : crypto.randomUUID();
+        let collabUserId: string;
+        const userToken = getUserTokenFromRequest(req);
+        if (userToken) {
+          const user = await oidc.validateUserSessionToken(userToken);
+          collabUserId = user ? user.id : crypto.randomUUID();
+        } else {
+          collabUserId = crypto.randomUUID();
+        }
 
         const wsToken = await generateWsSessionToken(id, collabUserId);
 
-        return Response.json({ wsToken, expiresIn: WS_TOKEN_EXPIRY / 1000 }, { headers: corsHeaders });
+        return Response.json({ wsToken, expiresIn: WS_TOKEN_EXPIRY / 1000, collabUserId }, { headers: corsHeaders });
       } catch (e: any) { return apiError(e, corsHeaders); }
     }
     
@@ -4016,227 +4350,44 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
     if (path.match(/^\/s\/[\w-]+$/)) {
       const id = path.split("/")[2];
       if (!isValidUUID(id)) {
-        return new Response("Invalid room ID", { status: 400, headers: securityHeaders });
+        return Response.redirect(new URL("/?error=invalid_room", req.url).toString(), 302);
       }
       const room = loadRoom(id);
-      if (!room) return new Response("Room not found", { status: 404, headers: securityHeaders });
-      if (!theOneFileHtml) return new Response("TheOneFile not loaded", { status: 500, headers: securityHeaders });
+      if (!room) return Response.redirect(new URL("/?error=room_not_found", req.url).toString(), 302);
+      if (!theOneFileHtml) return Response.redirect(new URL("/?error=room_unavailable", req.url).toString(), 302);
 
-      const autosaveBlockerScript = `<script>
-(function(){
-  window.COLLAB_MODE = true;
-
-  var origGetItem = localStorage.getItem.bind(localStorage);
-  var origSetItem = localStorage.setItem.bind(localStorage);
-  var origRemoveItem = localStorage.removeItem.bind(localStorage);
-  var blockedKeys = ['topology', 'autosave', 'savedState', 'nodeData', 'edgeData', 'canvasState', 'lastState', 'PAGE_STATE', 'theonefile'];
-
-  function isBlockedKey(key) {
-    if (!key) return false;
-    var lk = key.toLowerCase();
-    for (var i = 0; i < blockedKeys.length; i++) {
-      if (lk.indexOf(blockedKeys[i].toLowerCase()) !== -1) return true;
-    }
-    return false;
-  }
-
-  localStorage.getItem = function(key) {
-    if (window.COLLAB_MODE && isBlockedKey(key)) {
-      return null;
-    }
-    return origGetItem(key);
-  };
-
-  localStorage.setItem = function(key, value) {
-    if (window.COLLAB_MODE && isBlockedKey(key)) {
-      return;
-    }
-    return origSetItem(key, value);
-  };
-
-  localStorage.removeItem = function(key) {
-    if (window.COLLAB_MODE && isBlockedKey(key)) return;
-    return origRemoveItem(key);
-  };
-
-  var origOpen = indexedDB.open.bind(indexedDB);
-  indexedDB.open = function(name) {
-    if (window.COLLAB_MODE && name && name.toLowerCase().indexOf('theonefile') !== -1) {
-      var fakeRequest = {
-        result: null,
-        error: null,
-        onsuccess: null,
-        onerror: null,
-        onupgradeneeded: null,
-        onblocked: null,
-        readyState: 'done',
-        transaction: null,
-        source: null
-      };
-      setTimeout(function() {
-        if (fakeRequest.onerror) fakeRequest.onerror(new Event('error'));
-      }, 0);
-      return fakeRequest;
-    }
-    return origOpen.apply(indexedDB, arguments);
-  };
-})();
-</` + `script>`;
-
-      const exposureScript = `<script>
-(function(){
-  var checkInterval = setInterval(function(){
-    if(typeof NODE_DATA !== 'undefined'){
-      clearInterval(checkInterval);
-      window.__collabGetVar = function(name) {
-        try {
-          switch(name) {
-            case 'NODE_DATA': return NODE_DATA;
-            case 'EDGE_DATA': return EDGE_DATA;
-            case 'RECT_DATA': return RECT_DATA;
-            case 'TEXT_DATA': return TEXT_DATA;
-            case 'EDGE_LEGEND': return EDGE_LEGEND;
-            case 'ZONE_LEGEND': return typeof ZONE_LEGEND !== 'undefined' ? ZONE_LEGEND : {};
-            case 'ZONE_PRESETS': return typeof ZONE_PRESETS !== 'undefined' ? ZONE_PRESETS : {};
-            case 'PAGE_STATE': return PAGE_STATE;
-            case 'savedPositions': return savedPositions;
-            case 'savedSizes': return savedSizes;
-            case 'savedStyles': return savedStyles;
-            case 'savedStyleSets': return typeof savedStyleSets !== 'undefined' ? savedStyleSets : {};
-            case 'canvasState': return canvasState;
-            case 'documentTabs': return documentTabs;
-            case 'currentTabIndex': return currentTabIndex;
-            case 'auditLog': return auditLog;
-            case 'autoPingEnabled': return typeof autoPingEnabled !== 'undefined' ? autoPingEnabled : false;
-            case 'autoPingInterval': return typeof autoPingInterval !== 'undefined' ? autoPingInterval : 5000;
-            case 'savedTopologyView': return typeof savedTopologyView !== 'undefined' ? savedTopologyView : null;
-            case 'encryptedSections': return typeof encryptedSections !== 'undefined' ? encryptedSections : {};
-            case 'iconCache': return typeof IconLibrary !== 'undefined' ? IconLibrary.iconCache : {};
-            case 'ANIM_SETTINGS': return typeof ANIM_SETTINGS !== 'undefined' ? ANIM_SETTINGS : null;
-            case 'rollbackVersions': return typeof rollbackVersions !== 'undefined' ? rollbackVersions : [];
-            case 'CUSTOM_LANG': return typeof CUSTOM_LANG !== 'undefined' ? CUSTOM_LANG : null;
-            case 'PAGE_STATE': return typeof PAGE_STATE !== 'undefined' ? PAGE_STATE : {};
-            case 'IMAGE_DATA': return typeof IMAGE_DATA !== 'undefined' ? IMAGE_DATA : { list: [] };
-            default: return undefined;
-          }
-        } catch(e) { return undefined; }
-      };
-      window.__collabSetVar = function(name, value) {
-        try {
-          switch(name) {
-            case 'NODE_DATA': NODE_DATA = value; return true;
-            case 'EDGE_DATA': EDGE_DATA = value; return true;
-            case 'RECT_DATA': RECT_DATA = value; return true;
-            case 'TEXT_DATA': TEXT_DATA = value; return true;
-            case 'EDGE_LEGEND': EDGE_LEGEND = value; return true;
-            case 'ZONE_LEGEND': if(typeof ZONE_LEGEND !== 'undefined') ZONE_LEGEND = value; return true;
-            case 'ZONE_PRESETS': if(typeof ZONE_PRESETS !== 'undefined') ZONE_PRESETS = value; return true;
-            case 'savedPositions': savedPositions = value; return true;
-            case 'savedSizes': savedSizes = value; return true;
-            case 'savedStyles': savedStyles = value; return true;
-            case 'savedStyleSets': if(typeof savedStyleSets !== 'undefined') savedStyleSets = value; return true;
-            case 'auditLog': auditLog = value; return true;
-            case 'documentTabs': documentTabs = value; return true;
-            case 'currentTabIndex': currentTabIndex = value; return true;
-            case 'autoPingEnabled': if(typeof autoPingEnabled !== 'undefined') autoPingEnabled = value; return true;
-            case 'autoPingInterval': if(typeof autoPingInterval !== 'undefined') autoPingInterval = value; return true;
-            case 'savedTopologyView': if(typeof savedTopologyView !== 'undefined') savedTopologyView = value; return true;
-            case 'encryptedSections': if(typeof encryptedSections !== 'undefined') encryptedSections = value; return true;
-            case 'iconCache': if(typeof IconLibrary !== 'undefined') IconLibrary.iconCache = value; return true;
-            case 'ANIM_SETTINGS': if(typeof ANIM_SETTINGS !== 'undefined') { Object.assign(ANIM_SETTINGS, value); return true; } return false;
-            case 'rollbackVersions': if(typeof rollbackVersions !== 'undefined') { rollbackVersions = value; return true; } return false;
-            case 'CUSTOM_LANG': CUSTOM_LANG = value; if(typeof LANG !== 'undefined' && typeof DEFAULT_LANG !== 'undefined' && value) { LANG = deepMerge(DEFAULT_LANG, value); } return true;
-            case 'PAGE_STATE': if(typeof PAGE_STATE !== 'undefined') { Object.assign(PAGE_STATE, value); return true; } return false;
-            case 'IMAGE_DATA': if(typeof IMAGE_DATA !== 'undefined') { IMAGE_DATA = value; if(typeof renderCanvasImages === 'function') renderCanvasImages(); return true; } return false;
-            default: return false;
-          }
-        } catch(e) { return false; }
-      };
-    }
-  }, 50);
-})();
-</` + `script>`;
-
-      let injectedHtml = theOneFileHtml.replace('<head>', '<head>' + autosaveBlockerScript);
-      injectedHtml = injectedHtml.replace('</head>', exposureScript + '</head>');
-
-      const saveHookScript = `<script>
-(function(){
-  var pendingHtmlBlobs = new Map();
-  var origCreateObjectURL = URL.createObjectURL;
-  var origRevokeObjectURL = URL.revokeObjectURL;
-
-  URL.createObjectURL = function(blob) {
-    var url = origCreateObjectURL.apply(URL, arguments);
-    if (blob && blob.type && blob.type.indexOf('text/html') !== -1) {
-      pendingHtmlBlobs.set(url, blob);
-    }
-    return url;
-  };
-
-  URL.revokeObjectURL = function(url) {
-    pendingHtmlBlobs.delete(url);
-    return origRevokeObjectURL.apply(URL, arguments);
-  };
-
-  document.addEventListener('click', function(e) {
-    var anchor = e.target;
-    if (!anchor.download) {
-      anchor = e.target.closest ? e.target.closest('a[download]') : null;
-    }
-    if (!anchor || !anchor.download || !anchor.href) return;
-    if (!anchor.download.endsWith('.html')) return;
-    if (!anchor.href.startsWith('blob:')) return;
-    if (typeof window.__collabStripHTML !== 'function') return;
-
-    var blob = pendingHtmlBlobs.get(anchor.href);
-    if (!blob) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-
-    var reader = new FileReader();
-    reader.onload = function() {
-      var cleanHtml = window.__collabStripHTML(reader.result);
-      var cleanBlob = new Blob([cleanHtml], {type: 'text/html'});
-      var cleanUrl = origCreateObjectURL.call(URL, cleanBlob);
-      var a = document.createElement('a');
-      a.href = cleanUrl;
-      a.download = anchor.download;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function() {
-        document.body.removeChild(a);
-        origRevokeObjectURL.call(URL, cleanUrl);
-      }, 100);
-    };
-    reader.readAsText(blob);
-  }, true);
-})();
-</` + `script>`;
+      let injectedHtml = theOneFileHtml.replace('<head>', '<head><script src="/collab-init.js"></script>');
 
       const adminUser = await validateAdminUser(req);
       const isAdmin = !!adminUser;
 
-      const configScript = `<script>
-window.ROOM_ID = "${id}";
-window.ROOM_HAS_PASSWORD = ${!!room.passwordHash && !isAdmin};
-window.ROOM_CREATOR_ID = "${room.creatorId}";
-window.WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + "/ws/${id}";
-window.ROOM_IS_ADMIN = ${isAdmin};
-window.ROOM_IS_CREATOR = (function(){
-  var uid = localStorage.getItem('collab-user-${id}');
-  return uid && uid === "${room.creatorId}";
-})();
-</` + `script>
+      let isOwner = false;
+      if (room.ownerUserId) {
+        const userToken = getUserTokenFromRequest(req);
+        if (userToken) {
+          const user = await oidc.validateUserSessionToken(userToken);
+          if (user && user.id === room.ownerUserId) isOwner = true;
+        }
+      }
+
+      const roomCsrfToken = oidc.generateCsrfToken();
+      const safeRoomConfig = JSON.stringify({
+        roomId: id,
+        roomHasPassword: !!room.passwordHash && !isAdmin,
+        isAdmin,
+        csrfToken: roomCsrfToken,
+        isCreator: isOwner || isAdmin,
+        defaultRoomTheme: instanceSettings.defaultRoomTheme || '',
+        forceWelcomeModal: instanceSettings.forceWelcomeModal || false
+      });
+
+      const configBlock = `<script type="application/json" id="room-config">${safeRoomConfig}</script>
 <link rel="stylesheet" href="/collab.css">
-<script src="/collab.js"></` + `script>
-${saveHookScript}
+<script src="/collab.js"></script>
+<script src="/collab-save-hook.js"></script>
 </body>`;
 
-      injectedHtml = injectedHtml.replace(/<\/body>\s*<\/html>\s*$/i, configScript + "\n</html>");
+      injectedHtml = injectedHtml.replace(/<\/body>\s*<\/html>\s*$/i, configBlock + "\n</html>");
 
       return serveHtml(injectedHtml, 'room', req);
     }
@@ -4248,6 +4399,16 @@ ${saveHookScript}
 
     if (path === "/collab.js") {
       const file = Bun.file(join(process.cwd(), "public", "collab.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders } });
+    }
+
+    if (path === "/collab-init.js") {
+      const file = Bun.file(join(process.cwd(), "public", "collab-init.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders } });
+    }
+
+    if (path === "/collab-save-hook.js") {
+      const file = Bun.file(join(process.cwd(), "public", "collab-save-hook.js"));
       if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders } });
     }
 
@@ -4276,11 +4437,16 @@ ${saveHookScript}
       if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=3600" } });
     }
 
+    if (path === "/qrcode.min.js") {
+      const file = Bun.file(join(process.cwd(), "public", "qrcode.min.js"));
+      if (await file.exists()) return new Response(file, { headers: { "Content-Type": "application/javascript", ...securityHeaders, "Cache-Control": "public, max-age=86400" } });
+    }
+
     if (path === "/favicon.ico") {
       return new Response(null, { status: 204 });
     }
 
-    return new Response("Not found", { status: 404, headers: securityHeaders });
+    return Response.redirect(new URL("/?error=not_found", req.url).toString(), 302);
 }
 
 const server = Bun.serve({
@@ -4298,6 +4464,7 @@ const server = Bun.serve({
   },
   websocket: {
     perMessageDeflate: true,
+    maxPayloadLength: 5 * 1024 * 1024,
     open(ws) {
       const roomId = (ws.data as WsData)?.roomId;
       if (!roomId) return;
@@ -4312,12 +4479,41 @@ const server = Bun.serve({
       if (meta.destructTimer) { clearTimeout(meta.destructTimer); meta.destructTimer = undefined; }
       roomMeta.set(roomId, meta);
     },
-    message(ws, message) {
+    async message(ws, message) {
       const roomId = (ws.data as WsData)?.roomId;
       const connectionId = (ws.data as WsData)?.connectionId;
       if (!roomId || !connectionId) return;
       let msg;
       try { msg = JSON.parse(message.toString()); } catch { return; }
+
+      if (msg.type === 'auth') {
+        if ((ws.data as WsData).authenticated) {
+          ws.send(JSON.stringify({ type: 'auth-ok' }));
+          return;
+        }
+        const token = msg.token;
+        if (!token || typeof token !== 'string') {
+          ws.send(JSON.stringify({ type: 'auth-error', error: 'Token required' }));
+          ws.close(4001, 'Authentication failed');
+          return;
+        }
+        const tokenValidation = await validateWsSessionToken(token, roomId);
+        if (!tokenValidation.valid) {
+          ws.send(JSON.stringify({ type: 'auth-error', error: 'Invalid or expired token' }));
+          ws.close(4001, 'Authentication failed');
+          return;
+        }
+        (ws.data as WsData).authenticated = true;
+        (ws.data as WsData).verifiedUserId = tokenValidation.collabUserId;
+        ws.send(JSON.stringify({ type: 'auth-ok' }));
+        return;
+      }
+
+      if (!(ws.data as WsData).authenticated) {
+        ws.send(JSON.stringify({ type: 'auth-error', error: 'Authenticate first' }));
+        ws.close(4001, 'Not authenticated');
+        return;
+      }
 
       const validTypes = ['join', 'leave', 'presence', 'state', 'patch', 'chat', 'cursor', 'typing'];
       if (!msg.type || !validTypes.includes(msg.type)) return;
@@ -4339,6 +4535,9 @@ const server = Bun.serve({
         const history = roomChatHistory.get(roomId)!;
         history.push({ ...msg, timestamp: Date.now() });
         if (history.length > 100) history.splice(0, history.length - 100);
+        ws.publish(roomId, JSON.stringify(msg));
+        resetDestructionTimer(roomId);
+        return;
       }
 
       if (msg.type === 'join' && msg.user) {
@@ -4356,8 +4555,8 @@ const server = Bun.serve({
         let rawName = msg.user.name;
         if (rawName && typeof rawName === 'string') {
           rawName = rawName.substring(0, 30).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').trim();
-          msg.user.name = rawName;
         }
+        msg.user = { id: userId, name: rawName || '', color: msg.user.color || '' };
         const userName = rawName?.toLowerCase().trim();
         const users = roomUsers.get(roomId)!;
 
@@ -4389,7 +4588,7 @@ const server = Bun.serve({
         if (isNewUser) {
           const room = loadRoom(roomId);
           if (room && room.topology) {
-            ws.send(JSON.stringify({ type: 'initial-state', state: room.topology }));
+            ws.send(JSON.stringify({ type: 'initial-state', state: sanitizeTopologyStrings(room.topology) }));
           } else {
             ws.send(JSON.stringify({ type: 'initial-state', state: null }));
           }
@@ -4409,12 +4608,25 @@ const server = Bun.serve({
           connections.forEach(client => { if (client !== ws && client.readyState === 1) client.send(joinMsg); });
         }
       } else if (msg.type === 'presence') {
+        const wsUserId = (ws.data as WsData)?.userId;
+        if (!wsUserId) return;
+        msg.userId = wsUserId;
         const users = roomUsers.get(roomId);
-        if (users && msg.userId) {
-          const user = users.get(msg.userId);
-          if (user) { user.selectedNodes = msg.selectedNodes; user.editingNode = msg.editingNode; }
+        if (users) {
+          const user = users.get(wsUserId);
+          if (user) {
+            if (Array.isArray(msg.selectedNodes)) {
+              user.selectedNodes = msg.selectedNodes.filter((id: unknown) => typeof id === 'string' && /^[\w-]+$/.test(id)).slice(0, 50);
+              msg.selectedNodes = user.selectedNodes;
+            }
+            if (typeof msg.editingNode === 'string' && /^[\w-]+$/.test(msg.editingNode)) {
+              user.editingNode = msg.editingNode;
+            } else if (msg.editingNode === null) {
+              user.editingNode = null;
+            }
+          }
         }
-        ws.publish(roomId, message);
+        ws.publish(roomId, JSON.stringify(msg));
       } else if (msg.type === 'state') {
         if (msg.state) {
           const topologyValidation = validateTopology(msg.state);
@@ -4422,14 +4634,21 @@ const server = Bun.serve({
             ws.send(JSON.stringify({ type: 'error', error: topologyValidation.error || 'Invalid state data' }));
             return;
           }
-          ws.publish(roomId, message);
+          ws.publish(roomId, JSON.stringify({ type: 'state', state: topologyValidation.sanitized }));
           const room = loadRoom(roomId);
           if (room) { room.topology = topologyValidation.sanitized; room.lastActivity = new Date().toISOString(); saveRoom(room); }
         } else {
           ws.publish(roomId, message);
         }
+      } else if (msg.type === 'patch') {
+        if (msg.patch) {
+          msg.patch = sanitizeTopologyStrings(msg.patch);
+        }
+        ws.publish(roomId, JSON.stringify(msg));
       } else {
-        ws.publish(roomId, message);
+        const wsUserId = (ws.data as WsData)?.userId;
+        if (wsUserId && msg.userId) msg.userId = wsUserId;
+        ws.publish(roomId, JSON.stringify(msg));
       }
       resetDestructionTimer(roomId);
     },

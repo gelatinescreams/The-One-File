@@ -32,6 +32,7 @@ const CSRF_TOKEN_TTL_MS = 60 * 60 * 1000;
 const MAX_CSRF_TOKENS = 10000;
 
 function cleanupOldestOidcStates(): void {
+  db.cleanupExpiredOidcStates();
   const count = db.countOidcStates();
   if (count <= MAX_OIDC_STATES) return;
   db.deleteOldestOidcStates(count - MAX_OIDC_STATES + 100);
@@ -102,6 +103,11 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
   const envKey = process.env.ENCRYPTION_KEY;
 
   if (envKey) {
+    if (envKey.length < 32 || !/^[0-9a-fA-F]+$/.test(envKey)) {
+      console.error('[FATAL] ENCRYPTION_KEY must be a hex string of at least 32 characters.');
+      console.error('[FATAL] Generate one with: openssl rand -hex 32');
+      process.exit(1);
+    }
     const encoder = new TextEncoder();
     const hash = await crypto.subtle.digest('SHA-256', encoder.encode(envKey));
     return new Uint8Array(hash);
@@ -472,7 +478,8 @@ async function fetchJwks(jwksUri: string): Promise<JsonWebKey[]> {
       const res = await fetch(jwksUri);
       if (!res.ok) {
         if (attempt < maxRetries - 1) {
-          const delay = baseDelayMs * Math.pow(2, attempt) + Math.random() * 100;
+          const jitter = new Uint32Array(1); crypto.getRandomValues(jitter);
+          const delay = baseDelayMs * Math.pow(2, attempt) + (jitter[0] % 100);
           await sleep(delay);
           continue;
         }
@@ -485,7 +492,8 @@ async function fetchJwks(jwksUri: string): Promise<JsonWebKey[]> {
       return keys;
     } catch {
       if (attempt < maxRetries - 1) {
-        const delay = baseDelayMs * Math.pow(2, attempt) + Math.random() * 100;
+        const jitter = new Uint32Array(1); crypto.getRandomValues(jitter);
+        const delay = baseDelayMs * Math.pow(2, attempt) + (jitter[0] % 100);
         await sleep(delay);
         continue;
       }
@@ -501,9 +509,10 @@ function getHashAlgorithm(alg: string): string {
   return 'SHA-256';
 }
 
-async function importJwkForVerify(jwk: JsonWebKey): Promise<CryptoKey | null> {
+async function importJwkForVerify(jwk: JsonWebKey, headerAlg?: string): Promise<CryptoKey | null> {
   try {
-    const alg = jwk.alg || 'RS256';
+    const alg = jwk.alg || headerAlg;
+    if (!alg) return null;
     let algorithm: RsaHashedImportParams | EcKeyImportParams;
 
     if (alg.startsWith('RS')) {
@@ -534,10 +543,11 @@ async function verifyJwtSignature(token: string, jwks: JsonWebKey[]): Promise<bo
       : jwks;
 
     for (const jwk of matchingKeys) {
-      const key = await importJwkForVerify(jwk);
+      const key = await importJwkForVerify(jwk, header.alg);
       if (!key) continue;
 
-      const alg = jwk.alg || header.alg || 'RS256';
+      const alg = jwk.alg || header.alg;
+      if (!alg) continue;
       let verifyAlg: AlgorithmIdentifier | RsaPssParams | EcdsaParams;
 
       if (alg.startsWith('RS')) {
@@ -608,7 +618,9 @@ async function parseIdToken(
       }
     }
 
-    if (payload.nonce !== expectedNonce) {
+    if (typeof payload.nonce !== 'string' || typeof expectedNonce !== 'string' ||
+        payload.nonce.length !== expectedNonce.length ||
+        !crypto.timingSafeEqual(Buffer.from(payload.nonce), Buffer.from(expectedNonce))) {
       logOidcError('Nonce mismatch');
       return null;
     }
@@ -744,7 +756,8 @@ export async function processOidcCallback(
   let existingUser: db.User | null = null;
 
   if (authSettings.oidcEmailMatching && userInfo.email && userInfo.email_verified) {
-    existingUser = db.getUserByEmail(userInfo.email);
+    const candidate = db.getUserByEmail(userInfo.email);
+    if (candidate && candidate.emailVerified) existingUser = candidate;
   }
 
   if (existingUser) {
@@ -775,21 +788,24 @@ export async function processOidcCallback(
     return { success: true, userId: existingUser.id, sessionToken, isNewUser: false, postLoginRedirect };
   }
 
+  if (authSettings.authMode === 'closed') {
+    return { success: false, error: 'Registration is currently closed', postLoginRedirect };
+  }
+  if (authSettings.authMode === 'invite_only') {
+    return { success: false, error: 'Registration requires an invitation', postLoginRedirect };
+  }
+
   const userId = crypto.randomUUID();
   const now = new Date().toISOString();
-
-  const userCount = db.countUsers();
-  const isFirstUser = userCount === 0;
-  const role = isFirstUser ? 'admin' : 'user';
 
   const newUser: db.User = {
     id: userId,
     email: userInfo.email || null,
-    emailVerified: isFirstUser || userInfo.email_verified || false,
+    emailVerified: userInfo.email_verified || false,
     displayName: userInfo.name || userInfo.preferred_username || null,
     avatarUrl: userInfo.picture || null,
     passwordHash: null,
-    role,
+    role: 'user',
     createdAt: now,
     updatedAt: now,
     lastLogin: now,
@@ -803,7 +819,12 @@ export async function processOidcCallback(
     pendingEmailToken: null
   };
 
-  db.createUser(newUser);
+  const { wasFirst } = db.createUserAtomic(newUser);
+  if (wasFirst) {
+    newUser.role = 'admin';
+    newUser.emailVerified = true;
+    db.updateUser(newUser);
+  }
 
   const encryptedAccess = tokens.access_token ? await encryptSecret(tokens.access_token) : null;
   const encryptedRefresh = tokens.refresh_token ? await encryptSecret(tokens.refresh_token) : null;
@@ -825,9 +846,11 @@ export async function processOidcCallback(
 
   const sessionToken = await createUserSessionToken(userId, ipAddress, userAgent);
 
-  db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role, isFirstUser });
+  db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role: newUser.role, isFirstUser: wasFirst });
   return { success: true, userId, sessionToken, isNewUser: true, postLoginRedirect };
 }
+
+const MAX_SESSIONS_PER_USER = 10;
 
 async function createUserSessionToken(
   userId: string,
@@ -838,6 +861,12 @@ async function createUserSessionToken(
   const tokenHash = await hashToken(token);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  const existing = db.getSessionsByUserId(userId);
+  if (existing.length >= MAX_SESSIONS_PER_USER) {
+    const oldest = existing.slice(MAX_SESSIONS_PER_USER - 1);
+    for (const s of oldest) db.deleteSession(s.id);
+  }
 
   db.createUserSession({
     id: crypto.randomUUID(),
@@ -1063,7 +1092,7 @@ export function getAuthSettings(): AuthSettings {
     allowMagicLinkLogin: true,
     shareButtonEnabled: true,
     productionMode: false,
-    idTokenMaxAgeHours: 2,
+    idTokenMaxAgeHours: 0.167,
     emailRateLimitWindowSeconds: 300,
     emailRateLimitMaxAttempts: 3
   };

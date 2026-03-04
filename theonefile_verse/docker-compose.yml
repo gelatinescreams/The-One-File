@@ -9,7 +9,7 @@ services:
       - PORT=10101
       - DATA_DIR=/app/data
       - UPDATE_INTERVAL=24
-      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
+      - REDIS_URL=redis://redis:6379
     depends_on:
       redis:
         condition: service_healthy
@@ -19,27 +19,58 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 30s
     deploy:
       resources:
         limits:
+          cpus: "2"
           memory: 512M
+          pids: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    networks:
+      - internal
 
   redis:
     image: redis:7-alpine
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 30s
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
       timeout: 5s
       retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 512M
+          pids: 64
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - internal
 
 volumes:
   redis_data:
+
+networks:
+  internal:
+    driver: bridge

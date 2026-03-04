@@ -1,15 +1,57 @@
 (function() {
   'use strict';
 
-  if (!window.ROOM_ID) return;
+  const roomConfigEl = document.getElementById('room-config');
+  if (!roomConfigEl) return;
+  let _rc;
+  try { _rc = JSON.parse(roomConfigEl.textContent); } catch { return; }
+  if (!_rc.roomId) return;
 
-  const ROOM_ID = window.ROOM_ID;
-  const WS_URL = window.WS_URL;
-  const HAS_PASSWORD = window.ROOM_HAS_PASSWORD;
-  const IS_ADMIN = window.ROOM_IS_ADMIN || false;
-  const IS_CREATOR = window.ROOM_IS_CREATOR || IS_ADMIN;
+  const ROOM_ID = _rc.roomId;
+  const WS_URL = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws/' + _rc.roomId;
+  const HAS_PASSWORD = _rc.roomHasPassword;
+  const IS_ADMIN = _rc.isAdmin || false;
+  const IS_CREATOR = _rc.isCreator || IS_ADMIN;
+  if (_rc.csrfToken) window.CSRF_TOKEN = _rc.csrfToken;
+  if (_rc.defaultRoomTheme) window.DEFAULT_ROOM_THEME = _rc.defaultRoomTheme;
 
   let shareButtonEnabled = true;
+
+  function h(tag, props, ...children) {
+    const node = document.createElement(tag);
+    if (props) {
+      for (const key of Object.keys(props)) {
+        if (key === 'className') node.className = props[key];
+        else if (key === 'style') node.setAttribute('style', props[key]);
+        else if (key === 'textContent') node.textContent = props[key];
+        else if (key.startsWith('data-')) node.setAttribute(key, props[key]);
+        else if (key === 'checked') { if (props[key]) node.checked = true; }
+        else if (key === 'readonly') { if (props[key]) node.readOnly = true; }
+        else node[key] = props[key];
+      }
+    }
+    for (const child of children) _append(node, child);
+    return node;
+  }
+  function _append(parent, child) {
+    if (child == null || child === false) return;
+    if (typeof child === 'string' || typeof child === 'number') {
+      parent.appendChild(document.createTextNode(String(child)));
+    } else if (Array.isArray(child)) {
+      for (const c of child) _append(parent, c);
+    } else {
+      parent.appendChild(child);
+    }
+  }
+  function clearNode(el) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+  }
+  function setContent(container, children) {
+    clearNode(container);
+    const frag = document.createDocumentFragment();
+    _append(frag, Array.isArray(children) ? children : [children]);
+    container.appendChild(frag);
+  }
 
   function generateUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -88,14 +130,14 @@
     if (document.getElementById('collab-sync-overlay')) return;
     const overlay = document.createElement('div');
     overlay.id = 'collab-sync-overlay';
-    overlay.innerHTML = `
-      <div class="collab-sync-content">
-        <div class="collab-sync-sword"></div>
-        <div class="collab-sync-lightning"></div>
-        <div class="collab-sync-text">${getRandomSyncQuote()}</div>
-        <div class="collab-sync-subtext">Synchronizing with the realm...</div>
-      </div>
-    `;
+    overlay.appendChild(
+      h('div', {className: 'collab-sync-content'},
+        h('div', {className: 'collab-sync-sword'}),
+        h('div', {className: 'collab-sync-lightning'}),
+        h('div', {className: 'collab-sync-text'}, getRandomSyncQuote()),
+        h('div', {className: 'collab-sync-subtext'}, 'Synchronizing with the realm...')
+      )
+    );
     document.body.appendChild(overlay);
     syncOverlayTimeout = setTimeout(() => {
       hideSyncingOverlay();
@@ -124,7 +166,6 @@
 
     localStorage.removeItem(`collab-name-${ROOM_ID}`);
     localStorage.removeItem(`collab-color-${ROOM_ID}`);
-    sessionStorage.removeItem(`room-${ROOM_ID}-pwd`);
 
     window.location.href = '/';
   }
@@ -201,11 +242,14 @@
     try {
       const res = await fetch(`/api/room/${ROOM_ID}/ws-token`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN || '' },
         body: JSON.stringify({ collabUserId: window.COLLAB_USER.id })
       });
       if (!res.ok) return null;
       const data = await res.json();
+      if (data.collabUserId && data.collabUserId !== window.COLLAB_USER.id) {
+        window.COLLAB_USER.id = data.collabUserId;
+      }
       return data.wsToken;
     } catch (e) {
       console.warn('[Collab] Failed to fetch WS token:', e);
@@ -240,20 +284,19 @@
     setConnectionState('reconnecting');
     currentWsToken = await fetchWsToken();
 
-    let wsUrl = WS_URL;
-    if (currentWsToken) {
-      wsUrl += (WS_URL.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(currentWsToken);
-    }
-
-    ws = new WebSocket(wsUrl);
+    ws = new WebSocket(WS_URL);
 
     ws.onopen = () => {
-      reconnectAttempts = 0;
-      setConnectionState('connected');
-      window.COLLAB_USER.color = getOrCreateUserColor();
-      hasReceivedInitialState = false;
-      showSyncingOverlay();
-      sendMessage('join', { user: window.COLLAB_USER });
+      if (currentWsToken) {
+        ws.send(JSON.stringify({ type: 'auth', token: currentWsToken }));
+      } else {
+        reconnectAttempts = 0;
+        setConnectionState('connected');
+        window.COLLAB_USER.color = getOrCreateUserColor();
+        hasReceivedInitialState = false;
+        showSyncingOverlay();
+        sendMessage('join', { user: window.COLLAB_USER });
+      }
     };
 
     ws.onmessage = (event) => {
@@ -295,6 +338,17 @@
 
   function handleMessage(msg) {
     switch (msg.type) {
+      case 'auth-ok':
+        reconnectAttempts = 0;
+        setConnectionState('connected');
+        window.COLLAB_USER.color = getOrCreateUserColor();
+        hasReceivedInitialState = false;
+        showSyncingOverlay();
+        sendMessage('join', { user: window.COLLAB_USER });
+        return;
+      case 'auth-error':
+        console.error('[Collab] Auth failed:', msg.error);
+        return;
       case 'join':
         users.set(msg.user.id, sanitizeUser(msg.user));
         renderUsers();
@@ -333,8 +387,36 @@
         hasReceivedInitialState = true;
         if (msg.state) {
           applyRemoteState(msg.state);
+          if (!msg.state.themeState && window.DEFAULT_ROOM_THEME) {
+            var dPresets = typeof THEME_PRESETS !== 'undefined' ? THEME_PRESETS : null;
+            if (dPresets && dPresets[window.DEFAULT_ROOM_THEME]) {
+              setGlobal('PAGE_STATE', dPresets[window.DEFAULT_ROOM_THEME]);
+              if (typeof wieldThePower === 'function') try { wieldThePower(); } catch(e) {}
+              var dSel = document.getElementById('welcome-theme-select');
+              if (dSel) dSel.value = window.DEFAULT_ROOM_THEME;
+            }
+          }
         } else {
+          if (window.DEFAULT_ROOM_THEME) {
+            var dPresets2 = typeof THEME_PRESETS !== 'undefined' ? THEME_PRESETS : null;
+            if (dPresets2 && dPresets2[window.DEFAULT_ROOM_THEME]) {
+              setGlobal('PAGE_STATE', dPresets2[window.DEFAULT_ROOM_THEME]);
+              if (typeof wieldThePower === 'function') try { wieldThePower(); } catch(e) {}
+              var dSel2 = document.getElementById('welcome-theme-select');
+              if (dSel2) dSel2.value = window.DEFAULT_ROOM_THEME;
+            }
+          }
           sendFullState();
+        }
+        window.__collabSuppressWelcome = false;
+        var _nd = getGlobal('NODE_DATA');
+        var _ed = getGlobal('EDGE_DATA');
+        var _roomEmpty = (!_nd || Object.keys(_nd).length === 0) && (!_ed || !_ed.list || _ed.list.length === 0);
+        if (_roomEmpty || _rc.forceWelcomeModal) {
+          if (typeof showWelcomeModal === 'function') showWelcomeModal();
+        } else {
+          var _wm = document.getElementById('welcome-modal');
+          if (_wm) _wm.classList.remove('active');
         }
         break;
       case 'state':
@@ -536,14 +618,20 @@
   function highlightMentions(text) {
     const allNames = [window.COLLAB_USER.name];
     users.forEach(u => { if (u.name) allNames.push(u.name); });
-    let result = text;
-    allNames.forEach(name => {
-      if (!name) return;
-      const escapedName = escapeHtml(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp('@' + escapedName, 'gi');
-      result = result.replace(regex, '<span class="collab-chat-mention">@' + escapeHtml(name) + '</span>');
-    });
-    return result;
+    const validNames = allNames.filter(n => n);
+    if (validNames.length === 0) return [text];
+    const escaped = validNames.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const regex = new RegExp('@(?:' + escaped.join('|') + ')', 'gi');
+    const children = [];
+    let lastIndex = 0;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) children.push(text.slice(lastIndex, match.index));
+      children.push(h('span', {className: 'collab-chat-mention'}, match[0]));
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < text.length) children.push(text.slice(lastIndex));
+    return children.length > 0 ? children : [text];
   }
 
   function formatTimeAgo(timestamp) {
@@ -557,34 +645,28 @@
   function renderChatMessages() {
     const container = document.getElementById('collab-chat-messages');
     if (!container) return;
-    container.innerHTML = chatMessages.map(msg => {
+    clearNode(container);
+    chatMessages.forEach(msg => {
       const time = formatTimeAgo(msg.timestamp);
       const safeColor = sanitizeColor(msg.userColor);
       const isMentioned = msg.text && window.COLLAB_USER.name &&
         msg.text.toLowerCase().includes('@' + window.COLLAB_USER.name.toLowerCase());
-      const mentionClass = isMentioned ? ' mentioned' : '';
-      let replyHtml = '';
+      const msgDiv = h('div', {className: 'collab-chat-msg' + (isMentioned ? ' mentioned' : ''), 'data-msg-id': msg.id});
       if (msg.replyTo) {
-        replyHtml = `<div class="collab-chat-reply-ref">${escapeHtml(msg.replyTo.userName)}: ${escapeHtml(msg.replyTo.text)}</div>`;
+        msgDiv.appendChild(h('div', {className: 'collab-chat-reply-ref'}, msg.replyTo.userName + ': ' + msg.replyTo.text));
       }
-      const textWithMentions = highlightMentions(escapeHtml(msg.text));
-      return `<div class="collab-chat-msg${mentionClass}" data-msg-id="${escapeHtml(msg.id)}">
-        ${replyHtml}
-        <span class="collab-chat-name" style="color: ${safeColor}">${escapeHtml(msg.userName)}</span>
-        <span class="collab-chat-time">${time}</span>
-        <button class="collab-chat-reply-btn" data-reply-id="${escapeHtml(msg.id)}">Reply</button>
-        <div class="collab-chat-text">${textWithMentions}</div>
-      </div>`;
-    }).join('');
-    container.scrollTop = container.scrollHeight;
-
-    container.querySelectorAll('.collab-chat-reply-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const msgId = e.target.dataset.replyId;
-        const msg = chatMessages.find(m => m.id === msgId);
-        if (msg) setReplyTo(msg);
+      msgDiv.appendChild(h('span', {className: 'collab-chat-name', style: 'color: ' + safeColor}, msg.userName));
+      msgDiv.appendChild(h('span', {className: 'collab-chat-time'}, time));
+      const replyBtn = h('button', {className: 'collab-chat-reply-btn', 'data-reply-id': msg.id}, 'Reply');
+      replyBtn.addEventListener('click', () => {
+        const m = chatMessages.find(x => x.id === msg.id);
+        if (m) setReplyTo(m);
       });
+      msgDiv.appendChild(replyBtn);
+      msgDiv.appendChild(h('div', {className: 'collab-chat-text'}, highlightMentions(msg.text)));
+      container.appendChild(msgDiv);
     });
+    container.scrollTop = container.scrollHeight;
   }
 
   const CANVAS_WIDTH = 4000;
@@ -645,7 +727,16 @@
       cursor.id = `collab-cursor-${safeId}`;
       cursor.className = 'collab-remote-cursor';
       const safeColor = sanitizeColor(user.color);
-      cursor.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16"><path d="M0 0L16 12L8 12L4 16L0 0Z" fill="${safeColor}"/></svg><span class="collab-cursor-name" style="background:${safeColor}">${escapeHtml(user.name)}</span>`;
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('viewBox', '0 0 16 16');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M0 0L16 12L8 12L4 16L0 0Z');
+      path.setAttribute('fill', safeColor);
+      svg.appendChild(path);
+      cursor.appendChild(svg);
+      cursor.appendChild(h('span', {className: 'collab-cursor-name', style: 'background:' + safeColor}, user.name));
       document.body.appendChild(cursor);
     }
     if (cursor && user.cursorX !== undefined) {
@@ -802,6 +893,18 @@
     state.rollbackVersions = getGlobal('rollbackVersions');
     state.customLang = getGlobal('CUSTOM_LANG');
 
+    const pageState = getGlobal('PAGE_STATE');
+    if (pageState) {
+      state.themeState = {};
+      const themeKeys = ['panel','panelAlt','accent','danger','textMain','textSoft',
+        'background','canvasGrid','tagFill','tagText','tagBorder','sidebarBg',
+        'btnBg','btnText','inputBg','inputText','inputBorder','toolbarBg',
+        'toolbarBorder','toolbarText','toolbarBtnBg','toolbarBtnText'];
+      for (const k of themeKeys) {
+        if (pageState[k] !== undefined) state.themeState[k] = pageState[k];
+      }
+    }
+
     if (window.COLLAB_DEBUG) {
       console.log('[Collab] Captured state keys:', Object.keys(state));
       console.log('[Collab] nodeStyles count:', state.nodeStyles ? Object.keys(state.nodeStyles).length : 0);
@@ -897,6 +1000,12 @@
 
       if (typeof forgeTheTopology === 'function') {
         try { forgeTheTopology(); } catch (e) {}
+      }
+      if (state.themeState) {
+        setGlobal('PAGE_STATE', state.themeState);
+        if (typeof wieldThePower === 'function') {
+          try { wieldThePower(); } catch (e) {}
+        }
       }
     } finally {
       setTimeout(() => { syncPaused = false; }, 200);
@@ -1015,21 +1124,23 @@
     if (!container) return;
     const myTab = getCurrentTabName();
     const allUsers = [window.COLLAB_USER, ...users.values()];
-    container.innerHTML = allUsers.map(user => {
+    clearNode(container);
+    allUsers.forEach(user => {
       const isMe = user.id === window.COLLAB_USER.id;
-      const editingText = user.editingNode ? `<span class="collab-user-editing">editing</span>` : '';
       const tabName = isMe ? myTab : (user.currentTab || 'Main');
-      const tabDisplay = `<span class="collab-user-tab">${escapeHtml(tabName)}</span>`;
       const safeColor = sanitizeColor(user.color);
       const initials = getInitials(user.name);
-      return `<div class="collab-user ${isMe ? 'me' : ''}" data-user-id="${escapeHtml(user.id)}">
-        <div class="collab-user-avatar" style="background: ${safeColor}">${escapeHtml(initials)}</div>
-        <div class="collab-user-info">
-          <span class="collab-user-name">${escapeHtml(user.name)}</span>${editingText}
-          ${tabDisplay}
-        </div>
-      </div>`;
-    }).join('');
+      container.appendChild(
+        h('div', {className: 'collab-user' + (isMe ? ' me' : ''), 'data-user-id': user.id},
+          h('div', {className: 'collab-user-avatar', style: 'background: ' + safeColor}, initials),
+          h('div', {className: 'collab-user-info'},
+            h('span', {className: 'collab-user-name'}, user.name),
+            user.editingNode ? h('span', {className: 'collab-user-editing'}, 'editing') : null,
+            h('span', {className: 'collab-user-tab'}, tabName)
+          )
+        )
+      );
+    });
   }
 
   function renderUserIndicators() {
@@ -1037,6 +1148,7 @@
     users.forEach(user => {
       if (!user.selectedNodes) return;
       user.selectedNodes.forEach(nodeId => {
+        if (typeof nodeId !== 'string' || !/^[\w-]+$/.test(nodeId)) return;
         const nodeEl = document.querySelector(`[data-id="${nodeId}"]`);
         if (!nodeEl) return;
         const ring = document.createElement('div');
@@ -1059,13 +1171,6 @@
 
   function removeUserIndicators(userId) {
     document.querySelectorAll(`[data-collab-user-id="${userId}"]`).forEach(el => el.remove());
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   function updateCharCount() {
@@ -1136,20 +1241,34 @@
 
     const bar = document.createElement('div');
     bar.id = 'collab-bar';
-    bar.innerHTML = `<div id="collab-conn-dot" class="collab-conn-status connected"></div>
-      <div class="collab-users"></div>
-      <div id="collab-expiry" class="collab-room-expiry" style="display:none"></div>
-      <div class="collab-actions">
-        <button class="collab-btn" id="collab-chat-btn"><span class="collab-btn-icon">&#9993;</span><span>Chat</span><span class="collab-chat-badge" id="collab-chat-badge"></span></button>
-        <button class="collab-btn" id="collab-share-btn" style="${shareButtonEnabled ? '' : 'display:none'}"><span class="collab-btn-icon">+</span><span>Share</span></button>
-        <button class="collab-btn" id="collab-menu-btn"><span class="collab-btn-icon">=</span></button>
-      </div>`;
+    _append(bar, [
+      h('div', {id: 'collab-conn-dot', className: 'collab-conn-status connected'}),
+      h('div', {className: 'collab-users'}),
+      h('div', {id: 'collab-expiry', className: 'collab-room-expiry', style: 'display:none'}),
+      h('div', {className: 'collab-actions'},
+        h('button', {className: 'collab-btn', id: 'collab-chat-btn'},
+          h('span', {className: 'collab-btn-icon'}, '\u2709'),
+          h('span', null, 'Chat'),
+          h('span', {className: 'collab-chat-badge', id: 'collab-chat-badge'})
+        ),
+        h('button', {className: 'collab-btn', id: 'collab-share-btn', style: shareButtonEnabled ? '' : 'display:none'},
+          h('span', {className: 'collab-btn-icon'}, '+'),
+          h('span', null, 'Share')
+        ),
+        h('button', {className: 'collab-btn', id: 'collab-menu-btn'},
+          h('span', {className: 'collab-btn-icon'}, '=')
+        )
+      )
+    ]);
     document.body.prepend(bar);
 
     const reconnectBanner = document.createElement('div');
     reconnectBanner.id = 'collab-reconnect-banner';
     reconnectBanner.className = 'collab-reconnect-banner';
-    reconnectBanner.innerHTML = `<span>Reconnecting...</span><button class="collab-reconnect-btn" id="collab-reconnect-btn">Reconnect</button>`;
+    _append(reconnectBanner, [
+      h('span', null, 'Reconnecting...'),
+      h('button', {className: 'collab-reconnect-btn', id: 'collab-reconnect-btn'}, 'Reconnect')
+    ]);
     document.body.appendChild(reconnectBanner);
 
     document.getElementById('collab-reconnect-btn').addEventListener('click', () => {
@@ -1159,75 +1278,83 @@
 
     const chatPanel = document.createElement('div');
     chatPanel.id = 'collab-chat-panel';
-    chatPanel.innerHTML = `
-      <div class="collab-chat-header">
-        <span>Chat</span>
-        <button class="collab-chat-close" id="collab-chat-close">&times;</button>
-      </div>
-      <div class="collab-chat-messages" id="collab-chat-messages"></div>
-      <div id="collab-typing" class="collab-typing-indicator"></div>
-      <div class="collab-chat-input-area" style="position:relative">
-        <div id="collab-reply-preview" class="collab-chat-reply-preview">
-          <span></span>
-          <button class="collab-chat-reply-cancel" id="collab-reply-cancel">&times;</button>
-        </div>
-        <div id="collab-emoji-picker" class="collab-emoji-picker">
-          <div class="collab-emoji-grid">
-            ${EMOJI_LIST.map(e => `<button class="collab-emoji-btn" data-emoji="${e}">${e}</button>`).join('')}
-          </div>
-        </div>
-        <div class="collab-chat-input-wrap">
-          <button class="collab-emoji-toggle" id="collab-emoji-toggle">😊</button>
-          <div class="collab-chat-input-inner">
-            <input type="text" id="collab-chat-input" placeholder="Type a message..." maxlength="500" autocomplete="off">
-            <div class="collab-chat-char-count" id="collab-char-count"></div>
-          </div>
-          <button id="collab-chat-send">Send</button>
-        </div>
-      </div>
-    `;
+    _append(chatPanel, [
+      h('div', {className: 'collab-chat-header'},
+        h('span', null, 'Chat'),
+        h('button', {className: 'collab-chat-close', id: 'collab-chat-close'}, '\u00d7')
+      ),
+      h('div', {className: 'collab-chat-messages', id: 'collab-chat-messages'}),
+      h('div', {id: 'collab-typing', className: 'collab-typing-indicator'}),
+      h('div', {className: 'collab-chat-input-area', style: 'position:relative'},
+        h('div', {id: 'collab-reply-preview', className: 'collab-chat-reply-preview'},
+          h('span', null, ''),
+          h('button', {className: 'collab-chat-reply-cancel', id: 'collab-reply-cancel'}, '\u00d7')
+        ),
+        h('div', {id: 'collab-emoji-picker', className: 'collab-emoji-picker'},
+          h('div', {className: 'collab-emoji-grid'},
+            EMOJI_LIST.map(e => h('button', {className: 'collab-emoji-btn', 'data-emoji': e}, e))
+          )
+        ),
+        h('div', {className: 'collab-chat-input-wrap'},
+          h('button', {className: 'collab-emoji-toggle', id: 'collab-emoji-toggle'}, '\ud83d\ude0a'),
+          h('div', {className: 'collab-chat-input-inner'},
+            h('input', {type: 'text', id: 'collab-chat-input', placeholder: 'Type a message...', maxLength: 500, autocomplete: 'off'}),
+            h('div', {className: 'collab-chat-char-count', id: 'collab-char-count'})
+          ),
+          h('button', {id: 'collab-chat-send'}, 'Send')
+        )
+      )
+    ]);
     document.body.appendChild(chatPanel);
 
     const shareModal = document.createElement('div');
     shareModal.id = 'collab-share-modal';
     shareModal.className = 'collab-modal-overlay';
-    shareModal.innerHTML = `<div class="collab-modal">
-      <div class="collab-modal-header"><h3>Share Room</h3><button class="collab-modal-close">&times;</button></div>
-      <div class="collab-modal-body">
-        <div class="collab-share-url">
-          <input type="text" readonly value="${window.location.href}" id="collab-share-input">
-          <button id="collab-copy-btn">Copy</button>
-        </div>
-        <div class="collab-qr" id="collab-qr"></div>
-        <p class="collab-share-note">${HAS_PASSWORD ? 'Password protected. Share password separately.' : 'Anyone with this link can join.'}</p>
-      </div>
-    </div>`;
+    shareModal.appendChild(
+      h('div', {className: 'collab-modal'},
+        h('div', {className: 'collab-modal-header'},
+          h('h3', null, 'Share Room'),
+          h('button', {className: 'collab-modal-close'}, '\u00d7')
+        ),
+        h('div', {className: 'collab-modal-body'},
+          h('div', {className: 'collab-share-url'},
+            h('input', {type: 'text', readonly: true, value: window.location.href, id: 'collab-share-input'}),
+            h('button', {id: 'collab-copy-btn'}, 'Copy')
+          ),
+          h('div', {className: 'collab-qr', id: 'collab-qr'}),
+          h('p', {className: 'collab-share-note'}, HAS_PASSWORD ? 'Password protected. Share password separately.' : 'Anyone with this link can join.')
+        )
+      )
+    );
     document.body.appendChild(shareModal);
 
     const infoModal = document.createElement('div');
     infoModal.id = 'collab-info-modal';
     infoModal.className = 'collab-modal-overlay';
-    infoModal.innerHTML = `<div class="collab-modal">
-      <div class="collab-modal-header"><h3>Room Info</h3><button class="collab-modal-close">&times;</button></div>
-      <div class="collab-modal-body"><div id="collab-info-content"></div></div>
-    </div>`;
+    infoModal.appendChild(
+      h('div', {className: 'collab-modal'},
+        h('div', {className: 'collab-modal-header'},
+          h('h3', null, 'Room Info'),
+          h('button', {className: 'collab-modal-close'}, '\u00d7')
+        ),
+        h('div', {className: 'collab-modal-body'},
+          h('div', {id: 'collab-info-content'})
+        )
+      )
+    );
     document.body.appendChild(infoModal);
 
     const menuDropdown = document.createElement('div');
     menuDropdown.id = 'collab-menu-dropdown';
-    let menuHtml = '';
-    if (shareButtonEnabled) {
-      menuHtml += `<button class="collab-menu-item" id="collab-menu-copy">Copy Link</button>`;
-    }
-    menuHtml += `<button class="collab-menu-item" id="collab-menu-info">Room Info</button>
-      <button class="collab-menu-item" id="collab-menu-name">Change Name</button>
-      <button class="collab-menu-item" id="collab-menu-sound">${chatSoundEnabled ? 'Mute Sounds' : 'Unmute Sounds'}</button>
-      <div class="collab-menu-divider"></div>
-      <button class="collab-menu-item" id="collab-menu-leave">Leave Room</button>`;
-    if (IS_CREATOR) {
-      menuHtml += `<button class="collab-menu-item danger" id="collab-menu-delete">Delete Room</button>`;
-    }
-    menuDropdown.innerHTML = menuHtml;
+    _append(menuDropdown, [
+      shareButtonEnabled ? h('button', {className: 'collab-menu-item', id: 'collab-menu-copy'}, 'Copy Link') : null,
+      h('button', {className: 'collab-menu-item', id: 'collab-menu-info'}, 'Room Info'),
+      h('button', {className: 'collab-menu-item', id: 'collab-menu-name'}, 'Change Name'),
+      h('button', {className: 'collab-menu-item', id: 'collab-menu-sound'}, chatSoundEnabled ? 'Mute Sounds' : 'Unmute Sounds'),
+      h('div', {className: 'collab-menu-divider'}),
+      h('button', {className: 'collab-menu-item', id: 'collab-menu-leave'}, 'Leave Room'),
+      IS_CREATOR ? h('button', {className: 'collab-menu-item danger', id: 'collab-menu-delete'}, 'Delete Room') : null
+    ]);
     document.body.appendChild(menuDropdown);
 
     document.getElementById('collab-chat-btn').addEventListener('click', () => {
@@ -1349,16 +1476,23 @@
             destructText = 'When everyone leaves';
           }
         }
-        document.getElementById('collab-info-content').innerHTML = `
-          <div class="collab-info-row"><span class="collab-info-label">Room ID</span><span class="collab-info-value collab-info-id">${escapeHtml(ROOM_ID)}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Created</span><span class="collab-info-value">${escapeHtml(new Date(data.created).toLocaleString())}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Self Destruct</span><span class="collab-info-value">${escapeHtml(destructText)}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Password</span><span class="collab-info-value">${data.hasPassword ? 'Yes' : 'No'}</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">Connected</span><span class="collab-info-value">${users.size + 1} users</span></div>
-          <div class="collab-info-row"><span class="collab-info-label">You are</span><span class="collab-info-value">${IS_CREATOR ? 'Room Creator' : 'Participant'}</span></div>`;
+        function infoRow(label, value, extraClass) {
+          return h('div', {className: 'collab-info-row'},
+            h('span', {className: 'collab-info-label'}, label),
+            h('span', {className: 'collab-info-value' + (extraClass ? ' ' + extraClass : '')}, value)
+          );
+        }
+        setContent(document.getElementById('collab-info-content'), [
+          infoRow('Room ID', ROOM_ID, 'collab-info-id'),
+          infoRow('Created', new Date(data.created).toLocaleString()),
+          infoRow('Self Destruct', destructText),
+          infoRow('Password', data.hasPassword ? 'Yes' : 'No'),
+          infoRow('Connected', (users.size + 1) + ' users'),
+          infoRow('You are', IS_CREATOR ? 'Room Creator' : 'Participant')
+        ]);
         infoModal.classList.add('active');
       } catch {
-        document.getElementById('collab-info-content').innerHTML = '<p>Failed to load room info</p>';
+        setContent(document.getElementById('collab-info-content'), h('p', null, 'Failed to load room info'));
         infoModal.classList.add('active');
       }
     });
@@ -1377,12 +1511,12 @@
         try {
           const res = await fetch(`/api/room/${ROOM_ID}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ creatorId: window.COLLAB_USER.id })
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN || '' },
+            body: JSON.stringify({ creatorId: localStorage.getItem('collab-user-' + ROOM_ID) })
           });
           if (res.ok) window.location.href = '/';
-          else alert((await res.json()).error || 'Failed to delete');
-        } catch { alert('Failed to delete room'); }
+          else showToast((await res.json()).error || 'Failed to delete');
+        } catch { showToast('Failed to delete room'); }
       });
     }
 
@@ -1414,11 +1548,11 @@
     const container = document.getElementById('collab-qr');
     const url = window.location.href;
 
-    if (!window.QRCode) {
+    if (typeof qrcode === 'undefined') {
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+      script.src = '/qrcode.min.js';
       script.onload = () => renderQR(container, url);
-      script.onerror = () => { container.innerHTML = '<p style="color:#888;font-size:12px;">QR unavailable</p>'; };
+      script.onerror = () => { setContent(container, h('p', {style: 'color:#888;font-size:12px'}, 'QR unavailable')); };
       document.head.appendChild(script);
     } else {
       renderQR(container, url);
@@ -1430,9 +1564,12 @@
       const qr = qrcode(0, 'M');
       qr.addData(url);
       qr.make();
-      container.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 4 });
+      const svgHtml = qr.createSvgTag({ cellSize: 4, margin: 4 });
+      const parsed = new DOMParser().parseFromString(svgHtml, 'image/svg+xml');
+      clearNode(container);
+      container.appendChild(document.importNode(parsed.documentElement, true));
     } catch {
-      container.innerHTML = '<p style="color:#888;font-size:12px;">QR unavailable</p>';
+      setContent(container, h('p', {style: 'color:#888;font-size:12px'}, 'QR unavailable'));
     }
   }
 
@@ -1443,21 +1580,22 @@
     const modal = document.createElement('div');
     modal.id = 'collab-name-modal';
     modal.className = 'collab-modal-overlay active';
-    const safeErrorMsg = errorMsg ? escapeHtml(errorMsg) : '';
-    modal.innerHTML = `<div class="collab-modal">
-      <div class="collab-modal-header">
-        <h3>${isChange ? 'Change Name' : 'Enter Your Name'}</h3>
-        ${isChange ? '<button class="collab-modal-close">&times;</button>' : ''}
-      </div>
-      <div class="collab-modal-body">
-        <input type="text" id="collab-name-input" class="collab-input" placeholder="Your name" maxlength="30">
-        <div class="collab-name-error" id="collab-name-error">${safeErrorMsg}</div>
-        <div class="collab-name-actions">
-          <button id="collab-name-random" class="collab-btn-secondary">Random</button>
-          <button id="collab-name-submit" class="collab-btn-primary">${isChange ? 'Update' : 'Join'}</button>
-        </div>
-      </div>
-    </div>`;
+    modal.appendChild(
+      h('div', {className: 'collab-modal'},
+        h('div', {className: 'collab-modal-header'},
+          h('h3', null, isChange ? 'Change Name' : 'Enter Your Name'),
+          isChange ? h('button', {className: 'collab-modal-close'}, '\u00d7') : null
+        ),
+        h('div', {className: 'collab-modal-body'},
+          h('input', {type: 'text', id: 'collab-name-input', className: 'collab-input', placeholder: 'Your name', maxLength: 30}),
+          h('div', {className: 'collab-name-error', id: 'collab-name-error'}, errorMsg || ''),
+          h('div', {className: 'collab-name-actions'},
+            h('button', {id: 'collab-name-random', className: 'collab-btn-secondary'}, 'Random'),
+            h('button', {id: 'collab-name-submit', className: 'collab-btn-primary'}, isChange ? 'Update' : 'Join')
+          )
+        )
+      )
+    );
     document.body.appendChild(modal);
 
     const errorEl = document.getElementById('collab-name-error');
@@ -1500,41 +1638,38 @@
 
   async function checkPassword() {
     if (!HAS_PASSWORD) return true;
-    const storedPwd = sessionStorage.getItem(`room-${ROOM_ID}-pwd`);
-    if (storedPwd) {
-      const res = await fetch(`/api/room/${ROOM_ID}/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: storedPwd })
-      });
-      if ((await res.json()).valid) return true;
-    }
+    try {
+      const res = await fetch(`/api/room/${ROOM_ID}/access`, { credentials: 'include' });
+      if (res.ok && (await res.json()).authorized) return true;
+    } catch {}
     return new Promise((resolve) => {
       const modal = document.createElement('div');
       modal.id = 'collab-password-modal';
       modal.className = 'collab-modal-overlay active';
-      modal.innerHTML = `<div class="collab-modal">
-        <div class="collab-modal-header"><h3>Password Required</h3></div>
-        <div class="collab-modal-body">
-          <input type="password" id="collab-pwd-input" class="collab-input" placeholder="Room password">
-          <div class="collab-pwd-error" id="collab-pwd-error">Invalid password</div>
-          <button id="collab-pwd-submit" class="collab-btn-primary" style="width:100%;margin-top:12px;">Enter</button>
-        </div>
-      </div>`;
+      modal.appendChild(
+        h('div', {className: 'collab-modal'},
+          h('div', {className: 'collab-modal-header'},
+            h('h3', null, 'Password Required')
+          ),
+          h('div', {className: 'collab-modal-body'},
+            h('input', {type: 'password', id: 'collab-pwd-input', className: 'collab-input', placeholder: 'Room password'}),
+            h('div', {className: 'collab-pwd-error', id: 'collab-pwd-error'}, 'Invalid password'),
+            h('button', {id: 'collab-pwd-submit', className: 'collab-btn-primary', style: 'width:100%;margin-top:12px'}, 'Enter')
+          )
+        )
+      );
       document.body.appendChild(modal);
-
       const input = document.getElementById('collab-pwd-input');
       const error = document.getElementById('collab-pwd-error');
       input.focus();
-
       async function tryPwd() {
         const res = await fetch(`/api/room/${ROOM_ID}/verify`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ password: input.value })
         });
         if ((await res.json()).valid) {
-          sessionStorage.setItem(`room-${ROOM_ID}-pwd`, input.value);
           modal.remove();
           resolve(true);
         } else {
@@ -1543,7 +1678,6 @@
           input.focus();
         }
       }
-
       document.getElementById('collab-pwd-submit').addEventListener('click', tryPwd);
       input.addEventListener('keypress', (e) => { if (e.key === 'Enter') tryPwd(); });
     });
@@ -1575,6 +1709,15 @@
           window.COLLAB_USER.name = storedName;
           startCollab();
         } else {
+          if (window.DEFAULT_ROOM_THEME) {
+            var drt = typeof THEME_PRESETS !== 'undefined' ? THEME_PRESETS : null;
+            if (drt && drt[window.DEFAULT_ROOM_THEME]) {
+              setGlobal('PAGE_STATE', drt[window.DEFAULT_ROOM_THEME]);
+              if (typeof wieldThePower === 'function') try { wieldThePower(); } catch(e) {}
+              var tsel = document.getElementById('welcome-theme-select');
+              if (tsel) tsel.value = window.DEFAULT_ROOM_THEME;
+            }
+          }
           showNameModal(false);
         }
       } else {
@@ -1612,19 +1755,7 @@
       body.classList.remove('collab-active');
     }
 
-    doc.querySelectorAll('script[src*="collab.js"], link[href*="collab.css"]').forEach(el => el.remove());
-
-    doc.querySelectorAll('script').forEach(script => {
-      const text = script.textContent || '';
-      if (text.includes('window.ROOM_ID') ||
-          text.includes('window.__collabGetVar') ||
-          text.includes('window.__collabSetVar') ||
-          text.includes('origCreateObjectURL') ||
-          text.includes('window.COLLAB_MODE') ||
-          text.includes('isBlockedKey')) {
-        script.remove();
-      }
-    });
+    doc.querySelectorAll('script[src*="collab"], link[href*="collab.css"], #room-config').forEach(el => el.remove());
 
     return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
   }

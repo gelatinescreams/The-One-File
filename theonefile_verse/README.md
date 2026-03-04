@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?style=for-the-badge&labelColor=01284b&color=576169&logo=github" alt="GitHub Release Version">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.7.0-blue" alt="Docker Version 1.7.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.0-blue" alt="Docker Version 1.8.0">
   </a>
 </p>
 
@@ -70,9 +70,10 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 
 
 ### TheOneFile_Verse Features
-* **Current Version 1.7.0 BETA** **2FA, responsive overhaul, email change, path to stable, further security improvements** 
-  * Very close to a stable 2.0
-  * See [changelog](changelog.md) for full 1.7.0 list
+* **Current Version 1.8.0 BETA** **Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure** 
+  * See [changelog](changelog.md) for full 1.8.0 list of changes
+  
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
 
 #### Core Collaboration
 * Realtime sync via WebSocket

@@ -230,6 +230,12 @@
     .footer a{color:var(--steel-light);text-decoration:none}
     .footer a:hover{color:var(--accent)}
 
+    .toast-stack{position:fixed;bottom:max(80px,calc(80px + env(safe-area-inset-bottom,0px)));left:50%;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+    .toast-item{background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;animation:toastIn 0.3s ease;pointer-events:auto}
+    .toast-item.error{background:#dc2626}
+    .toast-item.success{background:#16a34a}
+    @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
     .user-menu{
       position:fixed;
       top:max(20px,env(safe-area-inset-top,20px));
@@ -392,8 +398,8 @@
     </div>
   </div>
 
-  <div class="footer">
-    <a href="/admin">Admin</a>
+  <div class="footer" id="admin-footer" style="display:none">
+    <a href="/admin" id="admin-link">Admin</a>
   </div>
 
   <div class="modal-overlay" id="create-modal">

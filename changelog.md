@@ -1,5 +1,17 @@
 #### CHANGE LOG
 
+### Version 4.1.4 /\ 3-4-26 Testers finding the stragglers. Thank you to everyone!
+* Added custom port label logic to the canvas that allows port labels to find the next blank space automatically. (this is v1 and will likely be upgraded). Thanks to [jbr1989](https://github.com/jbr1989) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
+* Fixed an issue where port maps were not showing on the canvas. Thanks to [jbr1989](https://github.com/jbr1989) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
+* Fixed an issue where port maps were not displaying correctly in b&w print preview. Thanks to [jbr1989](https://github.com/jbr1989) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
+* Added version number to the bottom of settings modal for better versioning and TheOneFile_Verse tracking Thanks to [jbr1989](https://github.com/jbr1989) [#43](https://github.com/gelatinescreams/The-One-File/issues/43)
+
+* **Core Edition**
+  * Fixed an issue where connections dropdown were not displaying correctly in node and rack information panel(s)
+
+* **TheOneFile_Verse 1.8.0** Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full details
+  
 ### Version 4.1.3 /\ 2-14-26 Styles, bugs and TheOneFile_Verse 1.5.2
 * Fixed an issue where scrolling down on modals was not possible on some mobile environments
 * Fixed an issue where draw and add connection buttons would show at inverse times

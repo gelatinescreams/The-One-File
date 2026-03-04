@@ -1,6 +1,69 @@
 (function() {
   'use strict';
 
+  function withLoading(fn) {
+    return async function() {
+      var btn = this instanceof HTMLElement ? this : null;
+      if (btn) btn.disabled = true;
+      try { await fn.call(this); }
+      finally { if (btn) btn.disabled = false; }
+    };
+  }
+
+  function showToast(message, type) {
+    var stack = document.getElementById('toast-stack');
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.id = 'toast-stack';
+      stack.className = 'toast-stack';
+      document.body.appendChild(stack);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'toast-item' + (type ? ' ' + type : '');
+    toast.textContent = message;
+    stack.appendChild(toast);
+    setTimeout(function() {
+      toast.remove();
+      if (stack.children.length === 0) stack.remove();
+    }, 4000);
+  }
+
+  function h(tag, props) {
+    var node = document.createElement(tag);
+    if (props) {
+      for (var key in props) {
+        if (!props.hasOwnProperty(key)) continue;
+        if (key === 'className') node.className = props[key];
+        else if (key === 'style') node.setAttribute('style', props[key]);
+        else if (key === 'textContent') node.textContent = props[key];
+        else if (key.slice(0, 5) === 'data-') node.setAttribute(key, props[key]);
+        else if (key === 'checked') { if (props[key]) node.checked = true; }
+        else node[key] = props[key];
+      }
+    }
+    for (var i = 2; i < arguments.length; i++) _append(node, arguments[i]);
+    return node;
+  }
+  function _append(parent, child) {
+    if (child == null || child === false) return;
+    if (typeof child === 'string' || typeof child === 'number') {
+      parent.appendChild(document.createTextNode(String(child)));
+    } else if (Array.isArray(child)) {
+      for (var j = 0; j < child.length; j++) _append(parent, child[j]);
+    } else {
+      parent.appendChild(child);
+    }
+  }
+  function clearNode(el) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+  }
+  function setContent(container, children) {
+    clearNode(container);
+    var frag = document.createDocumentFragment();
+    _append(frag, children);
+    container.appendChild(frag);
+  }
+
   var forcedTheme = null;
 
   function getTheme() {
@@ -38,6 +101,14 @@
       setTheme(forcedTheme);
     }
     updateThemeToggleVisibility();
+    if (data.showAdminLink !== false) {
+      var footer = document.getElementById('admin-footer');
+      if (footer) footer.style.display = '';
+    }
+    if (data.adminPath) {
+      var link = document.getElementById('admin-link');
+      if (link) link.href = '/' + data.adminPath;
+    }
   }).catch(function() { updateThemeToggleVisibility(); });
 
   var selectedFile = null;
@@ -83,6 +154,7 @@
     var el = document.getElementById(type + '-error');
     el.textContent = msg;
     el.classList.add('active');
+    el.setAttribute('role', 'alert');
   }
 
   var fileDrop = document.getElementById('create-file-drop');
@@ -158,7 +230,7 @@
     try {
       var res = await fetch('/api/room', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ password: password || null, destructMode: destructMode, destructValue: destructMs, topology: topology, creatorId: creatorId, allowGuests: allowGuests })
       });
       var data = await res.json();
@@ -171,19 +243,24 @@
   var joinInput = document.getElementById('join-room-id');
   var checking = false;
 
-  joinInput.addEventListener('input', async function() {
+  var joinDebounceTimer = null;
+  joinInput.addEventListener('input', function() {
     var id = joinInput.value.trim();
     if (id.indexOf('/s/') !== -1) { id = id.split('/s/')[1].split('?')[0]; joinInput.value = id; }
-    if (id.length < 36 || checking) return;
-    checking = true;
-    try {
-      var res = await fetch('/api/room/' + id + '/exists');
-      var data = await res.json();
-      document.getElementById('join-password-group').style.display = data.hasPassword ? 'block' : 'none';
-      if (!data.exists) showError('join', 'Room not found');
-      else document.getElementById('join-error').classList.remove('active');
-    } catch(e) {}
-    checking = false;
+    if (id.length < 36) return;
+    if (joinDebounceTimer) clearTimeout(joinDebounceTimer);
+    joinDebounceTimer = setTimeout(async function() {
+      if (checking) return;
+      checking = true;
+      try {
+        var res = await fetch('/api/room/' + id + '/exists');
+        var data = await res.json();
+        document.getElementById('join-password-group').style.display = data.hasPassword ? 'block' : 'none';
+        if (!data.exists) showError('join', 'Room not found');
+        else document.getElementById('join-error').classList.remove('active');
+      } catch(e) {}
+      checking = false;
+    }, 300);
   });
 
   async function joinRoom() {
@@ -199,11 +276,11 @@
         var verifyRes = await fetch('/api/room/' + id + '/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ password: password })
         });
         if (!(await verifyRes.json()).valid) { showError('join', 'Invalid password'); return; }
       }
-      if (password) sessionStorage.setItem('room-' + id + '-pwd', password);
       window.location.href = '/s/' + id;
     } catch(e) { showError('join', 'Failed to join room'); }
   }
@@ -275,7 +352,7 @@
   function renderOidcProviders(containerId, mode) {
     var container = document.getElementById(containerId);
     var divider = document.getElementById(mode + '-divider');
-    container.innerHTML = '';
+    clearNode(container);
 
     if (oidcProviders.length === 0) {
       container.style.display = 'none';
@@ -382,14 +459,18 @@
       if (!data.user) return;
       currentUser = data.user;
       if (data.user.totpEnabled) {
-        container.innerHTML = '<p style="color:#22c55e;font-size:14px;margin-bottom:12px">\u2713 2FA is enabled</p>' +
-          '<div class="form-group"><label>Password to Disable</label><input type="password" id="2fa-disable-password" placeholder="Enter password"></div>' +
-          '<div class="error-text" id="2fa-setup-error"></div>' +
-          '<button class="btn btn-secondary" data-action="disable2FA" style="margin-top:8px">Disable 2FA</button>';
+        setContent(container, [
+          h('p', {style: 'color:#22c55e;font-size:14px;margin-bottom:12px'}, '\u2713 2FA is enabled'),
+          h('div', {className: 'form-group'}, h('label', null, 'Password to Disable'), h('input', {type: 'password', id: '2fa-disable-password', placeholder: 'Enter password'})),
+          h('div', {className: 'error-text', id: '2fa-setup-error'}),
+          h('button', {className: 'btn btn-secondary', 'data-action': 'disable2FA', style: 'margin-top:8px'}, 'Disable 2FA')
+        ]);
       } else {
-        container.innerHTML = '<p style="color:var(--text-soft);font-size:14px;margin-bottom:12px">2FA is not enabled</p>' +
-          '<div class="error-text" id="2fa-setup-error"></div>' +
-          '<button class="btn btn-secondary" data-action="setup2FA" style="margin-top:8px">Enable 2FA</button>';
+        setContent(container, [
+          h('p', {style: 'color:var(--text-soft);font-size:14px;margin-bottom:12px'}, '2FA is not enabled'),
+          h('div', {className: 'error-text', id: '2fa-setup-error'}),
+          h('button', {className: 'btn btn-secondary', 'data-action': 'setup2FA', style: 'margin-top:8px'}, 'Enable 2FA')
+        ]);
       }
     } catch(e) {}
   }
@@ -405,20 +486,31 @@
         return;
       }
       var container = document.getElementById('2fa-status');
-      container.innerHTML = '<p style="font-size:14px;color:var(--text-soft);margin-bottom:12px">Scan this QR code with your authenticator app, then enter the code below.</p>' +
-        '<div style="text-align:center;margin-bottom:16px"><div id="2fa-qr" style="display:inline-block;background:white;padding:16px;border-radius:8px"></div></div>' +
-        '<p style="font-size:12px;color:var(--text-soft);margin-bottom:16px;word-break:break-all;text-align:center">Manual entry: ' + data.secret + '</p>' +
-        '<div class="form-group"><label>Verification Code</label><input type="text" id="2fa-setup-code" placeholder="000000" maxlength="6" inputmode="numeric" style="text-align:center;font-size:20px;letter-spacing:6px"></div>' +
-        '<div class="error-text" id="2fa-setup-error"></div>' +
-        '<button class="btn btn-primary" data-action="verify2FASetup" style="margin-top:8px">Verify &amp; Enable</button>';
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(document.getElementById('2fa-qr'), { text: data.otpauthUrl, width: 200, height: 200, colorDark: '#000', colorLight: '#fff' });
+      setContent(container, [
+        h('p', {style: 'font-size:14px;color:var(--text-soft);margin-bottom:12px'}, 'Scan this QR code with your authenticator app, then enter the code below.'),
+        h('div', {style: 'text-align:center;margin-bottom:16px'}, h('div', {id: '2fa-qr', style: 'display:inline-block;background:white;padding:16px;border-radius:8px'})),
+        h('p', {style: 'font-size:12px;color:var(--text-soft);margin-bottom:16px;word-break:break-all;text-align:center'}, 'Manual entry: ', data.secret),
+        h('div', {className: 'form-group'}, h('label', null, 'Verification Code'), h('input', {type: 'text', id: '2fa-setup-code', placeholder: '000000', maxLength: '6', inputMode: 'numeric', style: 'text-align:center;font-size:20px;letter-spacing:6px'})),
+        h('div', {className: 'error-text', id: '2fa-setup-error'}),
+        h('button', {className: 'btn btn-primary', 'data-action': 'verify2FASetup', style: 'margin-top:8px'}, 'Verify & Enable')
+      ]);
+      var renderSetupQR = function() {
+        try {
+          var el = document.getElementById('2fa-qr');
+          var qr = qrcode(0, 'M');
+          qr.addData(data.otpauthUrl);
+          qr.make();
+          var svg = qr.createSvgTag({ cellSize: 4, margin: 4 });
+          var parsed = new DOMParser().parseFromString(svg, 'image/svg+xml');
+          el.appendChild(document.importNode(parsed.documentElement, true));
+        } catch(e) {}
+      };
+      if (typeof qrcode !== 'undefined') {
+        renderSetupQR();
       } else {
         var s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
-        s.integrity = 'sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU';
-        s.crossOrigin = 'anonymous';
-        s.onload = function() { new QRCode(document.getElementById('2fa-qr'), { text: data.otpauthUrl, width: 200, height: 200, colorDark: '#000', colorLight: '#fff' }); };
+        s.src = '/qrcode.min.js';
+        s.onload = renderSetupQR;
         document.head.appendChild(s);
       }
     } catch(e) {
@@ -443,11 +535,17 @@
       var data = await res.json();
       if (data.backupCodes) {
         var container = document.getElementById('2fa-status');
-        container.innerHTML = '<p style="color:#22c55e;font-size:14px;margin-bottom:12px">\u2713 2FA has been enabled!</p>' +
-          '<p style="font-size:14px;color:var(--text-soft);margin-bottom:12px">Save these backup codes in a safe place. Each can only be used once.</p>' +
-          '<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:monospace;font-size:14px;line-height:2">' +
-          data.backupCodes.join('<br>') + '</div>' +
-          '<button class="btn btn-secondary" data-action="load2FAStatus" style="margin-top:16px">Done</button>';
+        var codeElements = [];
+        data.backupCodes.forEach(function(code, i) {
+          if (i > 0) codeElements.push(h('br', null));
+          codeElements.push(code);
+        });
+        setContent(container, [
+          h('p', {style: 'color:#22c55e;font-size:14px;margin-bottom:12px'}, '\u2713 2FA has been enabled!'),
+          h('p', {style: 'font-size:14px;color:var(--text-soft);margin-bottom:12px'}, 'Save these backup codes in a safe place. Each can only be used once.'),
+          h('div', {style: 'background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:monospace;font-size:14px;line-height:2'}, codeElements),
+          h('button', {className: 'btn btn-secondary', 'data-action': 'load2FAStatus', style: 'margin-top:16px'}, 'Done')
+        ]);
       } else {
         if (errEl) errEl.textContent = data.error || 'Verification failed';
       }
@@ -525,7 +623,7 @@
       if (data.success) {
         if (data.requiresVerification) {
           closeModal('register');
-          alert('Please check your email to verify your account.');
+          showToast('Please check your email to verify your account.', 'success');
         } else {
           window.location.reload();
         }
@@ -592,15 +690,25 @@
 
   var urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('auth_error')) {
-    alert('Authentication error: ' + urlParams.get('auth_error'));
+    showToast('Authentication error: ' + urlParams.get('auth_error'), 'error');
     history.replaceState({}, '', '/');
   }
   if (urlParams.get('verified') === 'true') {
-    alert('Email verified! You can now sign in.');
+    showToast('Email verified! You can now sign in.', 'success');
     history.replaceState({}, '', '/');
   }
   if (urlParams.get('welcome') === 'true') {
-    alert('Welcome! Your account has been created.');
+    showToast('Welcome! Your account has been created.', 'success');
+    history.replaceState({}, '', '/');
+  }
+  if (urlParams.get('error')) {
+    var errorMessages = {
+      'invalid_room': 'That room link is invalid.',
+      'room_not_found': 'That room no longer exists.',
+      'room_unavailable': 'Room is temporarily unavailable.',
+      'not_found': 'Page not found.'
+    };
+    showToast(errorMessages[urlParams.get('error')] || 'Something went wrong.', 'error');
     history.replaceState({}, '', '/');
   }
 
@@ -621,14 +729,14 @@
     btn.addEventListener('click', function() { closeModal(btn.dataset.closeModal); });
   });
 
-  document.querySelector('[data-action="createRoom"]').addEventListener('click', createRoom);
-  document.querySelector('[data-action="joinRoom"]').addEventListener('click', joinRoom);
-  document.querySelector('[data-action="loginWithPassword"]').addEventListener('click', loginWithPassword);
-  document.querySelector('[data-action="registerUser"]').addEventListener('click', registerUser);
-  document.querySelector('[data-action="requestPasswordReset"]').addEventListener('click', requestPasswordReset);
-  document.querySelector('[data-action="requestMagicLink"]').addEventListener('click', requestMagicLink);
-  document.querySelector('[data-action="verify2FA"]').addEventListener('click', verify2FA);
-  document.querySelector('[data-action="requestEmailChange"]').addEventListener('click', requestEmailChange);
+  document.querySelector('[data-action="createRoom"]').addEventListener('click', withLoading(createRoom));
+  document.querySelector('[data-action="joinRoom"]').addEventListener('click', withLoading(joinRoom));
+  document.querySelector('[data-action="loginWithPassword"]').addEventListener('click', withLoading(loginWithPassword));
+  document.querySelector('[data-action="registerUser"]').addEventListener('click', withLoading(registerUser));
+  document.querySelector('[data-action="requestPasswordReset"]').addEventListener('click', withLoading(requestPasswordReset));
+  document.querySelector('[data-action="requestMagicLink"]').addEventListener('click', withLoading(requestMagicLink));
+  document.querySelector('[data-action="verify2FA"]').addEventListener('click', withLoading(verify2FA));
+  document.querySelector('[data-action="requestEmailChange"]').addEventListener('click', withLoading(requestEmailChange));
   document.querySelector('[data-action="clearFile"]').addEventListener('click', clearFile);
 
   document.querySelector('[data-action="openForgot"]').addEventListener('click', function(e) {
@@ -642,14 +750,17 @@
     closeModal('login');
   });
 
-  document.getElementById('2fa-status').addEventListener('click', function(e) {
+  document.getElementById('2fa-status').addEventListener('click', async function(e) {
     var target = e.target.closest('[data-action]');
     if (!target) return;
-    var action = target.dataset.action;
-    if (action === 'disable2FA') disable2FA();
-    else if (action === 'setup2FA') setup2FA();
-    else if (action === 'verify2FASetup') verify2FASetup();
-    else if (action === 'load2FAStatus') load2FAStatus();
+    target.disabled = true;
+    try {
+      var action = target.dataset.action;
+      if (action === 'disable2FA') await disable2FA();
+      else if (action === 'setup2FA') await setup2FA();
+      else if (action === 'verify2FASetup') await verify2FASetup();
+      else if (action === 'load2FAStatus') await load2FAStatus();
+    } finally { target.disabled = false; }
   });
 
 })();

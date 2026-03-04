@@ -45,10 +45,40 @@
     .catch(function() {
       updateThemeToggleVisibility();
     });
-  function esc(s) {
-    var d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+  function h(tag, props) {
+    var node = document.createElement(tag);
+    if (props) {
+      for (var key in props) {
+        if (!props.hasOwnProperty(key)) continue;
+        if (key === 'className') node.className = props[key];
+        else if (key === 'style') node.setAttribute('style', props[key]);
+        else if (key === 'textContent') node.textContent = props[key];
+        else if (key.slice(0, 5) === 'data-') node.setAttribute(key, props[key]);
+        else if (key === 'checked') { if (props[key]) node.checked = true; }
+        else node[key] = props[key];
+      }
+    }
+    for (var i = 2; i < arguments.length; i++) _append(node, arguments[i]);
+    return node;
+  }
+  function _append(parent, child) {
+    if (child == null || child === false) return;
+    if (typeof child === 'string' || typeof child === 'number') {
+      parent.appendChild(document.createTextNode(String(child)));
+    } else if (Array.isArray(child)) {
+      for (var j = 0; j < child.length; j++) _append(parent, child[j]);
+    } else {
+      parent.appendChild(child);
+    }
+  }
+  function clearNode(el) {
+    while (el.firstChild) el.removeChild(el.firstChild);
+  }
+  function setContent(container, children) {
+    clearNode(container);
+    var frag = document.createDocumentFragment();
+    _append(frag, children);
+    container.appendChild(frag);
   }
   var rooms = [];
   var selected = new Set();
@@ -136,6 +166,19 @@
     document.getElementById('default-destruct-hours').value = settings.defaultDestructHours || 24;
     document.getElementById('max-rooms').value = settings.maxRoomsPerInstance || 0;
     document.getElementById('forced-theme').value = settings.forcedTheme || 'user';
+    var themeSelect = document.getElementById('default-room-theme');
+    if (themeSelect) {
+      themeSelect.innerHTML = '<option value="">Default (from file)</option>';
+      if (settings.availableThemes) {
+        settings.availableThemes.forEach(function(t) {
+          var opt = document.createElement('option');
+          opt.value = t.key;
+          opt.textContent = t.label;
+          themeSelect.appendChild(opt);
+        });
+      }
+      themeSelect.value = settings.defaultRoomTheme || '';
+    }
     document.getElementById('rate-limit-attempts').value = settings.rateLimitMaxAttempts || 10;
     document.getElementById('rate-limit-window').value = settings.rateLimitWindow || 60;
     document.getElementById('rate-limit-options').style.display = settings.rateLimitEnabled !== false ? 'flex' : 'none';
@@ -150,6 +193,7 @@
     document.getElementById('toggle-chat').classList.toggle('active', settings.chatEnabled !== false);
     document.getElementById('toggle-cursor').classList.toggle('active', settings.cursorSharingEnabled !== false);
     document.getElementById('toggle-namechange').classList.toggle('active', settings.nameChangeEnabled !== false);
+    document.getElementById('toggle-welcome-modal').classList.toggle('active', settings.forceWelcomeModal);
     document.getElementById('toggle-webhook').classList.toggle('active', settings.webhookEnabled);
     document.getElementById('webhook-url').value = settings.webhookUrl || '';
     document.getElementById('webhook-url-row').style.display = settings.webhookEnabled ? 'flex' : 'none';
@@ -160,6 +204,7 @@
     document.getElementById('admin-path').value = settings.adminPath || 'admin';
     document.getElementById('admin-path-info').style.display = 'flex';
     document.getElementById('admin-path-current').textContent = 'Current path: /' + (settings.adminPath || 'admin');
+    document.getElementById('toggle-show-admin-link').classList.toggle('active', settings.showAdminLink !== false);
     updateSourceUI();
   }
 
@@ -270,7 +315,9 @@
       var res = await fetch('/api/admin/update', { method: 'POST' });
       var data = await res.json();
       if (data.success) {
-        showStatus('Updated successfully (' + Math.round(data.size / 1024) + 'KB)', 'success');
+        var msg = 'Updated to v' + (data.version || '?') + ' (' + Math.round(data.size / 1024) + 'KB)';
+        if (data.previousVersion && data.previousVersion !== data.version) msg = 'Updated v' + data.previousVersion + ' → v' + data.version + ' (' + Math.round(data.size / 1024) + 'KB)';
+        showStatus(msg, 'success');
         loadSettings();
       } else {
         showStatus(data.error || 'Update failed', 'error');
@@ -280,6 +327,32 @@
     }
     btn.disabled = false;
     btn.textContent = 'Update Now';
+  }
+
+  async function checkForUpdates() {
+    var btn = document.getElementById('check-update-btn');
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+    try {
+      var res = await fetch('/api/admin/version-check');
+      var data = await res.json();
+      if (data.error) {
+        showStatus(data.error, 'error');
+      } else if (data.updateAvailable) {
+        showStatus('Update available: v' + data.latestVersion + ' (current: v' + data.currentVersion + ')', 'success');
+        var updateBtn = document.getElementById('update-btn');
+        if (updateBtn) updateBtn.style.background = '#22c55e';
+      } else {
+        showStatus('Up to date (v' + data.currentVersion + ')', 'success');
+      }
+      settings.latestGitHubVersion = data.latestVersion;
+      settings.lastVersionCheck = data.lastChecked;
+      updateSourceUI();
+    } catch (e) {
+      showStatus('Version check failed', 'error');
+    }
+    btn.disabled = false;
+    btn.textContent = 'Check for Updates';
   }
 
   async function changeSourceMode() {
@@ -329,10 +402,41 @@
     document.getElementById('github-settings').style.display = isLocal ? 'none' : 'flex';
     document.getElementById('github-update-row').style.display = isLocal ? 'none' : 'flex';
     document.getElementById('upload-row').style.display = isLocal ? 'flex' : 'none';
-    var sizeKB = settings.currentFileSize ? Math.round(settings.currentFileSize / 1024) : 0;
+    var ver = settings.currentFileVersion || 'unknown';
     var edition = settings.currentFileEdition || 'unknown';
-    var source = isLocal ? 'Local upload' : 'GitHub';
-    document.getElementById('current-file-info').textContent = sizeKB + 'KB, ' + edition + ' edition (' + source + ')';
+    var sizeKB = settings.currentFileSize ? Math.round(settings.currentFileSize / 1024) : 0;
+    var versionEl = document.getElementById('current-version-badge');
+    var editionEl = document.getElementById('current-edition-badge');
+    var sizeEl = document.getElementById('file-size-info');
+    var lastUpdateEl = document.getElementById('last-update-info');
+    var statusBadge = document.getElementById('version-status-badge');
+    if (versionEl) versionEl.textContent = 'v' + ver;
+    if (editionEl) editionEl.textContent = edition.charAt(0).toUpperCase() + edition.slice(1) + ' edition';
+    if (sizeEl) sizeEl.textContent = sizeKB + 'KB';
+    if (lastUpdateEl) {
+      if (settings.lastUpdateTimestamp) {
+        var d = new Date(settings.lastUpdateTimestamp);
+        lastUpdateEl.textContent = 'Last updated: ' + d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + ' at ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+      } else {
+        lastUpdateEl.textContent = 'Never updated from GitHub';
+      }
+    }
+    if (statusBadge) {
+      var latest = settings.latestGitHubVersion;
+      if (latest && latest !== 'unknown' && ver !== 'unknown') {
+        if (latest === ver) {
+          statusBadge.textContent = 'Up to date';
+          statusBadge.style.background = '#166534';
+          statusBadge.style.color = '#4ade80';
+        } else {
+          statusBadge.textContent = 'v' + latest + ' available';
+          statusBadge.style.background = '#854d0e';
+          statusBadge.style.color = '#fbbf24';
+        }
+      } else {
+        statusBadge.textContent = '';
+      }
+    }
   }
 
   async function saveRoomDefaults() {
@@ -342,72 +446,78 @@
       body: JSON.stringify({
         defaultDestructMode: document.getElementById('default-destruct-mode').value,
         defaultDestructHours: parseInt(document.getElementById('default-destruct-hours').value) || 24,
-        maxRoomsPerInstance: parseInt(document.getElementById('max-rooms').value) || 0
+        maxRoomsPerInstance: parseInt(document.getElementById('max-rooms').value) || 0,
+        defaultRoomTheme: document.getElementById('default-room-theme').value
       })
     });
     showStatus('Room defaults saved', 'success');
   }
 
   function showStatus(msg, type) {
-    var el = document.getElementById('settings-status');
-    el.innerHTML = '<div class="status-msg ' + type + '">' + msg + '</div>';
-    setTimeout(function() { el.innerHTML = ''; }, 3000);
+    var container = document.getElementById('settings-status');
+    setContent(container, h('div', {className: 'status-msg ' + type}, msg));
+    setTimeout(function() { clearNode(container); }, 3000);
   }
 
   function showAuthStatus(msg, type) {
-    var el = document.getElementById('auth-status');
-    el.innerHTML = '<div class="status-msg ' + type + '">' + msg + '</div>';
-    setTimeout(function() { el.innerHTML = ''; }, 3000);
+    var container = document.getElementById('auth-status');
+    setContent(container, h('div', {className: 'status-msg ' + type}, msg));
+    setTimeout(function() { clearNode(container); }, 3000);
   }
 
   function renderStats() {
     var active = rooms.filter(function(r) { return r.connectedUsers > 0; }).length;
     var withPwd = rooms.filter(function(r) { return r.hasPassword; }).length;
     var totalUsers = rooms.reduce(function(a, r) { return a + r.connectedUsers; }, 0);
-    document.getElementById('stats').innerHTML =
-      '<div class="stat-card"><div class="stat-value">' + rooms.length + '</div><div class="stat-label">Total Rooms</div></div>' +
-      '<div class="stat-card"><div class="stat-value">' + active + '</div><div class="stat-label">Active</div></div>' +
-      '<div class="stat-card"><div class="stat-value">' + withPwd + '</div><div class="stat-label">Protected</div></div>' +
-      '<div class="stat-card"><div class="stat-value">' + totalUsers + '</div><div class="stat-label">Users Online</div></div>';
+    function statCard(value, label) {
+      return h('div', {className: 'stat-card'},
+        h('div', {className: 'stat-value'}, String(value)),
+        h('div', {className: 'stat-label'}, label)
+      );
+    }
+    setContent(document.getElementById('stats'), [
+      statCard(rooms.length, 'Total Rooms'),
+      statCard(active, 'Active'),
+      statCard(withPwd, 'Protected'),
+      statCard(totalUsers, 'Users Online')
+    ]);
   }
 
   function renderRooms() {
+    var container = document.getElementById('room-list');
     if (rooms.length === 0) {
-      document.getElementById('room-list').innerHTML =
-        '<div class="empty-state"><h3>No rooms yet</h3><p>Rooms will appear here when created</p></div>';
+      setContent(container, h('div', {className: 'empty-state'},
+        h('h3', null, 'No rooms yet'),
+        h('p', null, 'Rooms will appear here when created')
+      ));
       return;
     }
 
-    var html = '<div class="room-header">' +
-      '<input type="checkbox" class="room-checkbox" data-action="toggleAll" ' +
-      (selected.size === rooms.length && rooms.length > 0 ? 'checked' : '') + '>' +
-      '<span>Room</span><span>Users</span><span>Created</span><span>Password</span><span>Actions</span></div>';
+    var header = h('div', {className: 'room-header'},
+      h('input', {type: 'checkbox', className: 'room-checkbox', 'data-action': 'toggleAll', checked: selected.size === rooms.length && rooms.length > 0}),
+      h('span', null, 'Room'), h('span', null, 'Users'), h('span', null, 'Created'), h('span', null, 'Password'), h('span', null, 'Actions')
+    );
 
-    rooms.forEach(function(r) {
-      var created = new Date(r.created).toLocaleDateString();
-      var usersHtml = r.connectedUsers > 0
-        ? '<span class="badge badge-green">' + r.connectedUsers + '</span>'
-        : '<span class="badge badge-gray">0</span>';
-      var pwd = r.hasPassword
-        ? '<span class="badge badge-yellow">Yes</span>'
-        : '<span class="badge badge-gray">No</span>';
+    var rows = rooms.map(function(r) {
       var isSelected = selected.has(r.id);
-
-      html += '<div class="room-row' + (isSelected ? ' selected' : '') + '">' +
-        '<input type="checkbox" class="room-checkbox" ' + (isSelected ? 'checked' : '') +
-        ' data-action="toggleSelect" data-id="' + r.id + '">' +
-        '<div><div class="room-name">Room</div><div class="room-id">' + r.id + '</div></div>' +
-        '<div>' + usersHtml + '</div>' +
-        '<div>' + created + '</div>' +
-        '<div>' + pwd + '</div>' +
-        '<div class="room-actions">' +
-        '<button class="btn btn-secondary btn-sm" data-action="viewRoom" data-id="' + r.id + '">View</button>' +
-        '<button class="btn btn-primary btn-sm" data-action="joinRoom" data-id="' + r.id + '">Join</button>' +
-        '<button class="btn btn-danger btn-sm" data-action="deleteRoom" data-id="' + r.id + '">Del</button>' +
-        '</div></div>';
+      return h('div', {className: 'room-row' + (isSelected ? ' selected' : '')},
+        h('input', {type: 'checkbox', className: 'room-checkbox', checked: isSelected, 'data-action': 'toggleSelect', 'data-id': r.id}),
+        h('div', null,
+          h('div', {className: 'room-name'}, 'Room'),
+          h('div', {className: 'room-id'}, r.id)
+        ),
+        h('div', null, h('span', {className: 'badge badge-' + (r.connectedUsers > 0 ? 'green' : 'gray')}, String(r.connectedUsers))),
+        h('div', null, new Date(r.created).toLocaleDateString()),
+        h('div', null, h('span', {className: 'badge badge-' + (r.hasPassword ? 'yellow' : 'gray')}, r.hasPassword ? 'Yes' : 'No')),
+        h('div', {className: 'room-actions'},
+          h('button', {className: 'btn btn-secondary btn-sm', 'data-action': 'viewRoom', 'data-id': r.id}, 'View'),
+          h('button', {className: 'btn btn-primary btn-sm', 'data-action': 'joinRoom', 'data-id': r.id}, 'Join'),
+          h('button', {className: 'btn btn-danger btn-sm', 'data-action': 'deleteRoom', 'data-id': r.id}, 'Del')
+        )
+      );
     });
 
-    document.getElementById('room-list').innerHTML = html;
+    setContent(container, [header].concat(rows));
   }
 
   function toggleSelect(id, checked) {
@@ -466,34 +576,35 @@
 
     var destruct = 'Never';
     if (room.destruct.mode === 'time') {
-      var h = room.destruct.value / 3600000;
-      destruct = h < 1
-        ? Math.round(h * 60) + ' min'
-        : h < 24
-          ? h + ' hours'
-          : Math.round(h / 24) + ' days';
+      var hours = room.destruct.value / 3600000;
+      destruct = hours < 1
+        ? Math.round(hours * 60) + ' min'
+        : hours < 24
+          ? hours + ' hours'
+          : Math.round(hours / 24) + ' days';
     } else if (room.destruct.mode === 'empty') {
       destruct = 'When empty';
     }
 
     document.getElementById('modal-title').textContent = 'Room Details';
-    document.getElementById('modal-body').innerHTML =
-      '<div class="info-row"><span class="info-label">Room ID</span>' +
-      '<span class="info-value" style="font-family:monospace;font-size:12px">' + room.id + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Created</span>' +
-      '<span class="info-value">' + new Date(room.created).toLocaleString() + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Last Activity</span>' +
-      '<span class="info-value">' + new Date(room.lastActivity).toLocaleString() + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Connected Users</span>' +
-      '<span class="info-value">' + room.connectedUsers + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Password Protected</span>' +
-      '<span class="info-value">' + (room.hasPassword ? 'Yes' : 'No') + '</span></div>' +
-      '<div class="info-row"><span class="info-label">Self-Destruct</span>' +
-      '<span class="info-value">' + destruct + '</span></div>' +
-      '<div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">' +
-      '<button class="btn btn-primary" data-action="joinRoom" data-id="' + room.id + '">Join Room</button>' +
-      '<button class="btn btn-danger" data-action="deleteRoom" data-id="' + room.id + '">Delete Room</button>' +
-      '</div>';
+    function infoRow(label, value, extraStyle) {
+      return h('div', {className: 'info-row'},
+        h('span', {className: 'info-label'}, label),
+        h('span', {className: 'info-value', style: extraStyle || ''}, value)
+      );
+    }
+    setContent(document.getElementById('modal-body'), [
+      infoRow('Room ID', room.id, 'font-family:monospace;font-size:12px'),
+      infoRow('Created', new Date(room.created).toLocaleString()),
+      infoRow('Last Activity', new Date(room.lastActivity).toLocaleString()),
+      infoRow('Connected Users', String(room.connectedUsers)),
+      infoRow('Password Protected', room.hasPassword ? 'Yes' : 'No'),
+      infoRow('Self-Destruct', destruct),
+      h('div', {style: 'margin-top:20px;display:flex;gap:12px;flex-wrap:wrap'},
+        h('button', {className: 'btn btn-primary', 'data-action': 'joinRoom', 'data-id': room.id}, 'Join Room'),
+        h('button', {className: 'btn btn-danger', 'data-action': 'deleteRoom', 'data-id': room.id}, 'Delete Room')
+      )
+    ]);
 
     document.getElementById('room-modal').classList.add('active');
   }
@@ -514,10 +625,10 @@
         selected.delete(id);
         loadData();
       } else {
-        alert('Failed to delete room');
+        showStatus('Failed to delete room', 'error');
       }
     } catch (e) {
-      alert('Error deleting room');
+      showStatus('Error deleting room', 'error');
     }
   }
 
@@ -583,34 +694,35 @@
   }
 
   function renderActivityLogs(logs) {
-    var el = document.getElementById('activity-log-list');
+    var container = document.getElementById('activity-log-list');
     if (!logs || logs.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No activity logs</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No activity logs'));
       return;
     }
-    el.innerHTML = logs.map(function(l) {
-      return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">' +
-        '<span style="color:var(--text-soft)">' + new Date(l.timestamp).toLocaleString() + '</span> ' +
-        '<span class="badge badge-' + (l.eventType === 'join' ? 'green' : 'gray') + '">' + l.eventType + '</span> ' +
-        (l.userName || 'Unknown') +
-        ' <span style="color:var(--text-soft);font-size:11px">' + l.roomId.slice(0, 8) + '</span></div>';
-    }).join('');
+    setContent(container, logs.map(function(l) {
+      return h('div', {style: 'padding:8px 0;border-bottom:1px solid var(--border);font-size:13px'},
+        h('span', {style: 'color:var(--text-soft)'}, new Date(l.timestamp).toLocaleString()), ' ',
+        h('span', {className: 'badge badge-' + (l.eventType === 'join' ? 'green' : 'gray')}, l.eventType), ' ',
+        l.userName || 'Unknown', ' ',
+        h('span', {style: 'color:var(--text-soft);font-size:11px'}, l.roomId.slice(0, 8))
+      );
+    }));
   }
 
   function renderAuditLogs(logs) {
-    var el = document.getElementById('audit-log-list');
+    var container = document.getElementById('audit-log-list');
     if (!logs || logs.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No audit logs</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No audit logs'));
       return;
     }
-    el.innerHTML = logs.map(function(l) {
-      return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">' +
-        '<span style="color:var(--text-soft)">' + new Date(l.timestamp).toLocaleString() + '</span> ' +
-        '<span class="badge badge-yellow">' + l.action + '</span> ' +
-        (l.actor || 'system') +
-        (l.targetId ? ' <span style="color:var(--text-soft);font-size:11px">' + l.targetId.slice(0, 8) + '</span>' : '') +
-        '</div>';
-    }).join('');
+    setContent(container, logs.map(function(l) {
+      return h('div', {style: 'padding:8px 0;border-bottom:1px solid var(--border);font-size:13px'},
+        h('span', {style: 'color:var(--text-soft)'}, new Date(l.timestamp).toLocaleString()), ' ',
+        h('span', {className: 'badge badge-yellow'}, l.action), ' ',
+        l.actor || 'system',
+        l.targetId ? [' ', h('span', {style: 'color:var(--text-soft);font-size:11px'}, l.targetId.slice(0, 8))] : null
+      );
+    }));
   }
 
   async function loadBackups() {
@@ -624,26 +736,26 @@
   }
 
   function renderBackups(backups) {
-    var el = document.getElementById('backup-list');
+    var container = document.getElementById('backup-list');
     if (!backups || backups.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No backups</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No backups'));
       return;
     }
-    el.innerHTML = backups.map(function(b) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">' +
-        '<div><div style="font-weight:500">' + b.filename + '</div>' +
-        '<div style="font-size:12px;color:var(--text-soft)">' +
-        new Date(b.createdAt).toLocaleString() + ' | ' +
-        Math.round(b.sizeBytes / 1024) + 'KB | ' +
-        b.roomCount + ' rooms' +
-        (b.autoGenerated ? ' | Auto' : '') +
-        '</div></div>' +
-        '<div style="display:flex;gap:6px">' +
-        '<button class="btn btn-sm btn-secondary" data-action="downloadBackup" data-id="' + b.id + '">Download</button>' +
-        '<button class="btn btn-sm btn-success" data-action="restoreBackup" data-id="' + b.id + '">Restore</button>' +
-        '<button class="btn btn-sm btn-danger" data-action="deleteBackup" data-id="' + b.id + '">Delete</button>' +
-        '</div></div>';
-    }).join('');
+    setContent(container, backups.map(function(b) {
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500'}, b.filename),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'},
+            new Date(b.createdAt).toLocaleString() + ' | ' + Math.round(b.sizeBytes / 1024) + 'KB | ' + b.roomCount + ' rooms' + (b.autoGenerated ? ' | Auto' : '')
+          )
+        ),
+        h('div', {style: 'display:flex;gap:6px'},
+          h('button', {className: 'btn btn-sm btn-secondary', 'data-action': 'downloadBackup', 'data-id': b.id}, 'Download'),
+          h('button', {className: 'btn btn-sm btn-success', 'data-action': 'restoreBackup', 'data-id': b.id}, 'Restore'),
+          h('button', {className: 'btn btn-sm btn-danger', 'data-action': 'deleteBackup', 'data-id': b.id}, 'Delete')
+        )
+      );
+    }));
   }
 
   async function createBackup() {
@@ -705,21 +817,24 @@
   }
 
   function renderApiKeys(keys) {
-    var el = document.getElementById('apikey-list');
+    var container = document.getElementById('apikey-list');
     if (!keys || keys.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No API keys</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No API keys'));
       return;
     }
-    el.innerHTML = keys.map(function(k) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">' +
-        '<div><div style="font-weight:500">' + k.name + '</div>' +
-        '<div style="font-size:12px;color:var(--text-soft)">' +
-        k.permissions.join(', ') + ' | Created: ' + new Date(k.createdAt).toLocaleDateString() +
-        (k.lastUsed ? ' | Last used: ' + new Date(k.lastUsed).toLocaleDateString() : '') +
-        (k.expiresAt ? ' | Expires: ' + new Date(k.expiresAt).toLocaleDateString() : '') +
-        '</div></div>' +
-        '<button class="btn btn-sm btn-danger" data-action="revokeApiKey" data-id="' + k.id + '">Revoke</button></div>';
-    }).join('');
+    setContent(container, keys.map(function(k) {
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500'}, k.name),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'},
+            k.permissions.join(', ') + ' | Created: ' + new Date(k.createdAt).toLocaleDateString() +
+            (k.lastUsed ? ' | Last used: ' + new Date(k.lastUsed).toLocaleDateString() : '') +
+            (k.expiresAt ? ' | Expires: ' + new Date(k.expiresAt).toLocaleDateString() : '')
+          )
+        ),
+        h('button', {className: 'btn btn-sm btn-danger', 'data-action': 'revokeApiKey', 'data-id': k.id}, 'Revoke')
+      );
+    }));
   }
 
   function showCreateApiKey() {
@@ -734,7 +849,7 @@
   async function createApiKey() {
     var name = document.getElementById('apikey-name').value;
     if (!name) {
-      alert('Name required');
+      showStatus('Name required', 'error');
       return;
     }
     var perms = [];
@@ -755,10 +870,10 @@
         document.getElementById('new-key-value').textContent = data.key;
         loadApiKeys();
       } else {
-        alert(data.error || 'Failed');
+        showStatus(data.error || 'Failed to create key', 'error');
       }
     } catch (e) {
-      alert('Failed to create key');
+      showStatus('Failed to create key', 'error');
     }
   }
 
@@ -792,36 +907,39 @@
   }
 
   function renderUsers() {
-    var el = document.getElementById('user-list');
+    var container = document.getElementById('user-list');
     if (!users || users.length === 0) {
-      el.innerHTML = '<div class="empty-state"><h3>No users yet</h3><p>Users will appear here when registered</p></div>';
+      setContent(container, h('div', {className: 'empty-state'},
+        h('h3', null, 'No users yet'),
+        h('p', null, 'Users will appear here when registered')
+      ));
       return;
     }
 
-    var html = '<div class="room-header"><span>User</span><span>Role</span><span>Status</span><span>Created</span><span>Actions</span></div>';
+    var header = h('div', {className: 'room-header'},
+      h('span', null, 'User'), h('span', null, 'Role'), h('span', null, 'Status'), h('span', null, 'Created'), h('span', null, 'Actions')
+    );
 
-    users.forEach(function(u) {
-      var role = u.role === 'admin'
-        ? '<span class="badge badge-yellow">Admin</span>'
-        : '<span class="badge badge-gray">User</span>';
-      var status = u.isActive
-        ? '<span class="badge badge-green">Active</span>'
-        : '<span class="badge badge-gray">Inactive</span>';
-      var verified = u.emailVerified ? '' : '<span class="badge badge-yellow">Unverified</span>';
-
-      html += '<div class="room-row">' +
-        '<div><div class="room-name">' + (u.displayName || 'No name') + '</div>' +
-        '<div class="room-id">' + u.email + '</div></div>' +
-        '<div>' + role + '</div>' +
-        '<div>' + status + verified + '</div>' +
-        '<div>' + new Date(u.createdAt).toLocaleDateString() + '</div>' +
-        '<div class="room-actions">' +
-        '<button class="btn btn-secondary btn-sm" data-action="editUser" data-id="' + u.id + '">Edit</button>' +
-        '<button class="btn btn-danger btn-sm" data-action="deleteUser" data-id="' + u.id + '">Del</button>' +
-        '</div></div>';
+    var rows = users.map(function(u) {
+      return h('div', {className: 'room-row'},
+        h('div', null,
+          h('div', {className: 'room-name'}, u.displayName || 'No name'),
+          h('div', {className: 'room-id'}, u.email)
+        ),
+        h('div', null, h('span', {className: 'badge badge-' + (u.role === 'admin' ? 'yellow' : 'gray')}, u.role === 'admin' ? 'Admin' : 'User')),
+        h('div', null,
+          h('span', {className: 'badge badge-' + (u.isActive ? 'green' : 'gray')}, u.isActive ? 'Active' : 'Inactive'),
+          u.emailVerified ? null : h('span', {className: 'badge badge-yellow'}, 'Unverified')
+        ),
+        h('div', null, new Date(u.createdAt).toLocaleDateString()),
+        h('div', {className: 'room-actions'},
+          h('button', {className: 'btn btn-secondary btn-sm', 'data-action': 'editUser', 'data-id': u.id}, 'Edit'),
+          h('button', {className: 'btn btn-danger btn-sm', 'data-action': 'deleteUser', 'data-id': u.id}, 'Del')
+        )
+      );
     });
 
-    el.innerHTML = html;
+    setContent(container, [header].concat(rows));
   }
 
   function showCreateUser() {
@@ -842,7 +960,7 @@
     var password = document.getElementById('user-password').value || null;
     var role = document.getElementById('user-role').value;
     if (!email) {
-      alert('Email required');
+      showAuthStatus('Email required', 'error');
       return;
     }
     try {
@@ -857,10 +975,10 @@
         loadUsers();
         showAuthStatus('User created', 'success');
       } else {
-        alert(data.error || 'Failed');
+        showAuthStatus(data.error || 'Failed to create user', 'error');
       }
     } catch (e) {
-      alert('Failed to create user');
+      showAuthStatus('Failed to create user', 'error');
     }
   }
 
@@ -870,7 +988,7 @@
       await fetch('/api/admin/users/' + id, { method: 'DELETE' });
       loadUsers();
     } catch (e) {
-      alert('Error deleting user');
+      showAuthStatus('Error deleting user', 'error');
     }
   }
 
@@ -913,10 +1031,10 @@
         loadUsers();
         showAuthStatus('User updated', 'success');
       } else {
-        alert(result.error || 'Failed to update user');
+        showAuthStatus(result.error || 'Failed to update user', 'error');
       }
     } catch (e) {
-      alert('Failed to update user');
+      showAuthStatus('Failed to update user', 'error');
     }
   }
 
@@ -928,12 +1046,12 @@
       var res = await fetch('/api/admin/users/' + id + '/reset-password', { method: 'POST' });
       var result = await res.json();
       if (result.success) {
-        alert('Password reset email sent!');
+        showAuthStatus('Password reset email sent!', 'success');
       } else {
-        alert(result.error || 'Failed to send reset email');
+        showAuthStatus(result.error || 'Failed to send reset email', 'error');
       }
     } catch (e) {
-      alert('Failed to send reset email');
+      showAuthStatus('Failed to send reset email', 'error');
     }
   }
 
@@ -1014,22 +1132,26 @@
   }
 
   function renderOidcProviders() {
-    var el = document.getElementById('oidc-provider-list');
+    var container = document.getElementById('oidc-provider-list');
     if (!oidcProviders || oidcProviders.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No OIDC providers configured</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No OIDC providers configured'));
       return;
     }
-    el.innerHTML = oidcProviders.map(function(p) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">' +
-        '<div><div style="font-weight:500">' + esc(p.name) + '</div>' +
-        '<div style="font-size:12px;color:var(--text-soft)">' + esc(p.providerType) + ' | ' +
-        (p.isActive ? '<span style="color:#22c55e">Active</span>' : '<span style="color:#94a3b8">Inactive</span>') +
-        '</div></div>' +
-        '<div style="display:flex;gap:6px">' +
-        '<button class="btn btn-sm btn-secondary" data-action="editOidcProvider" data-id="' + p.id + '">Edit</button>' +
-        '<button class="btn btn-sm btn-danger" data-action="deleteOidcProvider" data-id="' + p.id + '">Delete</button>' +
-        '</div></div>';
-    }).join('');
+    setContent(container, oidcProviders.map(function(p) {
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500'}, p.name),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'},
+            p.providerType, ' | ',
+            h('span', {style: 'color:' + (p.isActive ? '#22c55e' : '#94a3b8')}, p.isActive ? 'Active' : 'Inactive')
+          )
+        ),
+        h('div', {style: 'display:flex;gap:6px'},
+          h('button', {className: 'btn btn-sm btn-secondary', 'data-action': 'editOidcProvider', 'data-id': p.id}, 'Edit'),
+          h('button', {className: 'btn btn-sm btn-danger', 'data-action': 'deleteOidcProvider', 'data-id': p.id}, 'Delete')
+        )
+      );
+    }));
   }
 
   function showAddOidcProvider() {
@@ -1085,7 +1207,7 @@
       isActive: document.getElementById('oidc-active').checked
     };
     if (!data.name || !data.clientId) {
-      alert('Name and Client ID required');
+      showAuthStatus('Name and Client ID required', 'error');
       return;
     }
     try {
@@ -1102,10 +1224,10 @@
         loadOidcProviders();
         showAuthStatus('Provider saved', 'success');
       } else {
-        alert(result.error || 'Failed');
+        showAuthStatus(result.error || 'Failed to save provider', 'error');
       }
     } catch (e) {
-      alert('Failed to save provider');
+      showAuthStatus('Failed to save provider', 'error');
     }
   }
 
@@ -1134,24 +1256,29 @@
   }
 
   function renderSmtpConfigs() {
-    var el = document.getElementById('smtp-config-list');
+    var container = document.getElementById('smtp-config-list');
     if (!smtpConfigs || smtpConfigs.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No SMTP configurations</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No SMTP configurations'));
       return;
     }
-    el.innerHTML = smtpConfigs.map(function(s) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">' +
-        '<div><div style="font-weight:500">' + s.name +
-        (s.isDefault ? ' <span class="badge badge-green">Default</span>' : '') +
-        '</div>' +
-        '<div style="font-size:12px;color:var(--text-soft)">' + s.host + ':' + s.port + ' (' + s.secureMode + ') | ' +
-        (s.isActive ? '<span style="color:#22c55e">Active</span>' : '<span style="color:#94a3b8">Inactive</span>') +
-        '</div></div>' +
-        '<div style="display:flex;gap:6px">' +
-        '<button class="btn btn-sm btn-secondary" data-action="editSmtpConfig" data-id="' + s.id + '">Edit</button>' +
-        '<button class="btn btn-sm btn-danger" data-action="deleteSmtpConfig" data-id="' + s.id + '">Delete</button>' +
-        '</div></div>';
-    }).join('');
+    setContent(container, smtpConfigs.map(function(s) {
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500'},
+            s.name,
+            s.isDefault ? [' ', h('span', {className: 'badge badge-green'}, 'Default')] : null
+          ),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'},
+            s.host, ':', String(s.port), ' (', s.secureMode, ') | ',
+            h('span', {style: 'color:' + (s.isActive ? '#22c55e' : '#94a3b8')}, s.isActive ? 'Active' : 'Inactive')
+          )
+        ),
+        h('div', {style: 'display:flex;gap:6px'},
+          h('button', {className: 'btn btn-sm btn-secondary', 'data-action': 'editSmtpConfig', 'data-id': s.id}, 'Edit'),
+          h('button', {className: 'btn btn-sm btn-danger', 'data-action': 'deleteSmtpConfig', 'data-id': s.id}, 'Delete')
+        )
+      );
+    }));
   }
 
   function showAddSmtpConfig() {
@@ -1207,7 +1334,7 @@
       isActive: document.getElementById('smtp-active').checked
     };
     if (!data.name || !data.host) {
-      alert('Name and Host required');
+      showAuthStatus('Name and Host required', 'error');
       return;
     }
     try {
@@ -1224,10 +1351,10 @@
         loadSmtpConfigs();
         showAuthStatus('SMTP config saved', 'success');
       } else {
-        alert(result.error || 'Failed');
+        showAuthStatus(result.error || 'Failed to save config', 'error');
       }
     } catch (e) {
-      alert('Failed to save config');
+      showAuthStatus('Failed to save config', 'error');
     }
   }
 
@@ -1250,12 +1377,12 @@
       });
       var result = await res.json();
       if (result.success) {
-        alert('Test email sent successfully!');
+        showAuthStatus('Test email sent successfully!', 'success');
       } else {
-        alert('Test failed: ' + (result.error || 'Unknown error'));
+        showAuthStatus('Test failed: ' + (result.error || 'Unknown error'), 'error');
       }
     } catch (e) {
-      alert('Test failed');
+      showAuthStatus('Test failed', 'error');
     }
   }
 
@@ -1288,17 +1415,39 @@
   }
 
   function renderEmailTemplates(templates) {
-    var el = document.getElementById('email-template-list');
+    var container = document.getElementById('email-template-list');
     if (!templates || templates.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No email templates. Default templates will be used.</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No email templates. Default templates will be used.'));
       return;
     }
-    el.innerHTML = templates.map(function(t) {
-      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">' +
-        '<div><div style="font-weight:500">' + esc(t.name) + '</div>' +
-        '<div style="font-size:12px;color:var(--text-soft)">Subject: ' + esc(t.subject) + '</div></div>' +
-        '<button class="btn btn-sm btn-secondary" data-action="editTemplate" data-id="' + esc(t.id) + '">Edit</button></div>';
-    }).join('');
+    setContent(container, templates.map(function(t) {
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500'}, t.name),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'}, 'Subject: ', t.subject)
+        ),
+        h('button', {className: 'btn btn-sm btn-secondary', 'data-action': 'editTemplate', 'data-id': t.id}, 'Edit')
+      );
+    }));
+  }
+
+  function sanitizeTemplateHtml(html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('script,iframe,object,embed,form').forEach(function(el) { el.remove(); });
+    doc.querySelectorAll('*').forEach(function(el) {
+      Array.from(el.attributes).forEach(function(attr) {
+        if (attr.name.startsWith('on') || (typeof attr.value === 'string' && attr.value.trim().toLowerCase().startsWith('javascript:'))) {
+          el.removeAttribute(attr.name);
+        }
+      });
+      if (el.hasAttribute('href') && el.getAttribute('href').trim().toLowerCase().startsWith('javascript:')) {
+        el.removeAttribute('href');
+      }
+      if (el.hasAttribute('src') && el.getAttribute('src').trim().toLowerCase().startsWith('javascript:')) {
+        el.removeAttribute('src');
+      }
+    });
+    return doc.body.innerHTML;
   }
 
   function editTemplate(id) {
@@ -1308,7 +1457,8 @@
     document.getElementById('template-edit-id').value = id;
     document.getElementById('template-name').value = t.name;
     document.getElementById('template-subject').value = t.subject || '';
-    document.getElementById('template-editor').innerHTML = t.bodyHtml || '';
+    var safeHtml = sanitizeTemplateHtml(t.bodyHtml || '');
+    document.getElementById('template-editor').innerHTML = safeHtml;
     document.getElementById('template-html-source').value = t.bodyHtml || '';
     document.getElementById('template-text').value = t.bodyText || '';
     isHtmlSourceView = false;
@@ -1336,7 +1486,7 @@
 
   function toggleTemplateView() {
     if (isHtmlSourceView) {
-      document.getElementById('template-editor').innerHTML = document.getElementById('template-html-source').value;
+      document.getElementById('template-editor').innerHTML = sanitizeTemplateHtml(document.getElementById('template-html-source').value);
       showWysiwygView();
     } else {
       showHtmlSourceView();
@@ -1379,7 +1529,10 @@
     var url = prompt('Enter button URL:');
     var text = prompt('Enter button text:', 'Click Here');
     if (url && text) {
-      var btn = '<a href="' + url + '" style="display:inline-block;padding:12px 24px;background:#c9a227;color:#fff;text-decoration:none;border-radius:6px;font-weight:600">' + text + '</a>';
+      var safeUrl = url.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      var safeText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      if (/^javascript:/i.test(safeUrl.trim())) return;
+      var btn = '<a href="' + safeUrl + '" style="display:inline-block;padding:12px 24px;background:#c9a227;color:#fff;text-decoration:none;border-radius:6px;font-weight:600">' + safeText + '</a>';
       document.execCommand('insertHTML', false, btn);
     }
   }
@@ -1387,7 +1540,7 @@
   async function saveTemplate() {
     var id = document.getElementById('template-edit-id').value;
     if (!id) {
-      alert('No template selected');
+      showAuthStatus('No template selected', 'error');
       return;
     }
     var html = isHtmlSourceView
@@ -1410,10 +1563,10 @@
         loadEmailTemplates();
         showAuthStatus('Template saved', 'success');
       } else {
-        alert(result.error || 'Failed to save');
+        showAuthStatus(result.error || 'Failed to save template', 'error');
       }
     } catch (e) {
-      alert('Failed to save template');
+      showAuthStatus('Failed to save template', 'error');
     }
   }
 
@@ -1430,6 +1583,7 @@
       .replace(/\{\{appName\}\}/g, 'TheOneFile_Verse');
     document.getElementById('preview-subject').textContent = subject;
     var frame = document.getElementById('preview-frame');
+    frame.sandbox = '';
     frame.srcdoc = '<!DOCTYPE html><html><head><style>body{font-family:system-ui,sans-serif;padding:20px;line-height:1.6;color:#333}</style></head><body>' + html + '</body></html>';
     document.getElementById('template-preview-modal').classList.add('active');
   }
@@ -1461,20 +1615,20 @@
   }
 
   function renderEmailLogs() {
-    var el = document.getElementById('email-log-list');
+    var container = document.getElementById('email-log-list');
     if (!emailLogs || emailLogs.length === 0) {
-      el.innerHTML = '<p style="color:var(--text-soft);padding:12px">No email logs</p>';
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No email logs'));
       return;
     }
-    el.innerHTML = emailLogs.map(function(l) {
-      return '<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">' +
-        '<span style="color:var(--text-soft)">' + esc(new Date(l.sentAt).toLocaleString()) + '</span> ' +
-        '<span class="badge badge-' + (l.status === 'sent' ? 'green' : 'gray') + '">' + esc(l.status) + '</span> ' +
-        esc(l.toEmail) +
-        ' <span style="color:var(--text-soft)">' + esc(l.subject) + '</span>' +
-        (l.errorMessage ? ' <span style="color:#ef4444">' + esc(l.errorMessage) + '</span>' : '') +
-        '</div>';
-    }).join('');
+    setContent(container, emailLogs.map(function(l) {
+      return h('div', {style: 'padding:8px 0;border-bottom:1px solid var(--border);font-size:13px'},
+        h('span', {style: 'color:var(--text-soft)'}, new Date(l.sentAt).toLocaleString()), ' ',
+        h('span', {className: 'badge badge-' + (l.status === 'sent' ? 'green' : 'gray')}, l.status), ' ',
+        l.toEmail, ' ',
+        h('span', {style: 'color:var(--text-soft)'}, l.subject),
+        l.errorMessage ? [' ', h('span', {style: 'color:#ef4444'}, l.errorMessage)] : null
+      );
+    }));
   }
 
   async function clearEmailLogs() {
@@ -1559,6 +1713,7 @@
       saveAdminPath: saveAdminPath,
       saveUpdateInterval: saveUpdateInterval,
       triggerUpdate: triggerUpdate,
+      checkForUpdates: checkForUpdates,
       saveForcedTheme: saveForcedTheme,
       saveRoomDefaults: saveRoomDefaults,
       saveRateLimitSettings: saveRateLimitSettings,
