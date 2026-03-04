@@ -3,9 +3,9 @@
   var pageData = JSON.parse((document.getElementById('page-data') || {}).textContent || '{}');
   var ADMIN_PATH = pageData.adminPath || 'admin';
   var csrfToken = '';
-  if (window.__authCsrfRefresh) {
-    window.__authCsrfRefresh().then(function() { csrfToken = window.__authCsrfToken; });
-  }
+  fetch('/api/auth/csrf').then(function(r) { return r.json(); }).then(function(d) {
+    if (d.token) csrfToken = d.token;
+  }).catch(function() {});
   function csrfHeaders(extra) {
     var h = { 'x-csrf-token': csrfToken };
     if (extra) { for (var k in extra) { if (extra.hasOwnProperty(k)) h[k] = extra[k]; } }
