@@ -13,6 +13,12 @@
   const IS_ADMIN = _rc.isAdmin || false;
   const IS_CREATOR = _rc.isCreator || IS_ADMIN;
   if (_rc.csrfToken) window.CSRF_TOKEN = _rc.csrfToken;
+  function refreshCsrf() {
+    fetch('/api/auth/csrf').then(function(r) { return r.json(); }).then(function(d) {
+      if (d.token) window.CSRF_TOKEN = d.token;
+    }).catch(function() {});
+  }
+  refreshCsrf();
   if (_rc.defaultRoomTheme) window.DEFAULT_ROOM_THEME = _rc.defaultRoomTheme;
 
   let shareButtonEnabled = true;
@@ -245,6 +251,7 @@
         headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN || '' },
         body: JSON.stringify({ collabUserId: window.COLLAB_USER.id })
       });
+      refreshCsrf();
       if (!res.ok) return null;
       const data = await res.json();
       if (data.collabUserId && data.collabUserId !== window.COLLAB_USER.id) {
@@ -1532,6 +1539,7 @@
             headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN || '' },
             body: JSON.stringify({ creatorId: localStorage.getItem('collab-user-' + ROOM_ID) })
           });
+          refreshCsrf();
           if (res.ok) window.location.href = '/';
           else showToast((await res.json()).error || 'Failed to delete');
         } catch { showToast('Failed to delete room'); }
@@ -1877,6 +1885,7 @@
           headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
           body: JSON.stringify({ target: target, probes: probes, timeout: data.ping.timeout || 3000 })
         });
+        refreshCsrf();
         var result = await resp.json();
         if (resp.ok) {
           data.ping.status = result.status;
@@ -1925,6 +1934,7 @@
               headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
               body: JSON.stringify({ targets: batch })
             });
+            refreshCsrf();
             if (!resp.ok) { checked += batch.length; continue; }
             var result = await resp.json();
             var updateIndicator = window.__collabGetVar('updatePingIndicator');
@@ -2273,7 +2283,7 @@
     if (btn) { btn.textContent = 'Start Scan'; btn.disabled = false; }
     if (cancelBtn) cancelBtn.style.display = 'none';
     var text = document.getElementById('verse-discovery-progress-text');
-    if (text) text.textContent = 'Complete - ' + totalFound + ' hosts found';
+    if (text) text.textContent = 'Complete: ' + totalFound + ' hosts found';
     renderDiscoveryResults();
   }
 
@@ -2751,6 +2761,7 @@
             existingPorts: host.ports || []
           })
         }).then(function(resp) {
+          refreshCsrf();
           return resp.json().then(function(result) {
             if (!resp.ok) {
               btn.textContent = 'Deep Scan';
@@ -2777,7 +2788,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
           body: JSON.stringify({ scanId: active.scanId })
-        }).catch(function() {});
+        }).then(function() { refreshCsrf(); }).catch(function() { refreshCsrf(); });
         delete activeDeepScans[ip];
         renderDiscoveryResults();
       });
@@ -3360,6 +3371,7 @@
             headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
             body: JSON.stringify({ taskId: discoveryTaskId })
           });
+          refreshCsrf();
         } catch(e) {}
         discoveryTaskId = null;
       }
@@ -3396,6 +3408,7 @@
             }
           })
         });
+        refreshCsrf();
         var result = await resp.json();
         if (!resp.ok) {
           btn.textContent = 'Start Scan';
@@ -3423,6 +3436,7 @@
           headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
           body: JSON.stringify({ taskId: discoveryTaskId })
         });
+        refreshCsrf();
       } catch(e) {}
       finalizeDiscovery(discoveryResults.length);
     });
