@@ -207,6 +207,11 @@
     document.getElementById('toggle-cursor').classList.toggle('active', settings.cursorSharingEnabled !== false);
     document.getElementById('toggle-namechange').classList.toggle('active', settings.nameChangeEnabled !== false);
     document.getElementById('toggle-welcome-modal').classList.toggle('active', settings.forceWelcomeModal);
+    document.getElementById('toggle-probe').classList.toggle('active', settings.probeEnabled !== false);
+    document.getElementById('toggle-discovery').classList.toggle('active', settings.discoveryEnabled !== false);
+    document.getElementById('toggle-discovery-admin').classList.toggle('active', settings.discoveryAdminOnly !== false);
+    document.getElementById('toggle-discovery-public').classList.toggle('active', settings.discoveryAllowPublicRanges);
+    document.getElementById('discovery-max-prefix').value = settings.discoveryMaxPrefix || 20;
     document.getElementById('toggle-webhook').classList.toggle('active', settings.webhookEnabled);
     document.getElementById('webhook-url').value = settings.webhookUrl || '';
     document.getElementById('webhook-url-row').style.display = settings.webhookEnabled ? 'flex' : 'none';
@@ -665,6 +670,16 @@
       body: JSON.stringify({ webhookUrl: url })
     });
     showStatus('Webhook URL saved', 'success');
+  }
+
+  async function saveDiscoveryPrefix() {
+    var prefix = parseInt(document.getElementById('discovery-max-prefix').value) || 20;
+    await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ discoveryMaxPrefix: prefix })
+    });
+    showStatus('Discovery prefix saved', 'success');
   }
 
   async function saveBackupSettings() {
@@ -1730,6 +1745,7 @@
       saveForcedTheme: saveForcedTheme,
       saveRoomDefaults: saveRoomDefaults,
       saveRateLimitSettings: saveRateLimitSettings,
+      saveDiscoveryPrefix: saveDiscoveryPrefix,
       saveWebhookUrl: saveWebhookUrl,
       saveBackupSettings: saveBackupSettings,
       createBackup: createBackup,

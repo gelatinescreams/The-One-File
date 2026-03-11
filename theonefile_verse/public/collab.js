@@ -463,6 +463,24 @@
       case 'name-rejected':
         handleNameRejected(msg.reason);
         break;
+      case 'discovery-progress':
+        updateDiscoveryProgress(msg.percent, msg.scanned, msg.total, msg.rangeIndex, msg.totalRanges);
+        break;
+      case 'discovery-found':
+        addDiscoveryResult(msg.host);
+        break;
+      case 'discovery-complete':
+        finalizeDiscovery(msg.totalFound);
+        break;
+      case 'deepscan-progress':
+        handleDeepScanProgress(msg.scanId, msg.ip, msg.percent, msg.scanned, msg.total);
+        break;
+      case 'deepscan-update':
+        handleDeepScanUpdate(msg.scanId, msg.ip, msg.newPorts, msg.newServices, msg.containers, msg.newIcons);
+        break;
+      case 'deepscan-complete':
+        handleDeepScanComplete(msg.scanId, msg.ip);
+        break;
     }
   }
 
@@ -1744,7 +1762,11 @@
       '#collab-toast-stack',
       '.collab-node-indicator',
       '.collab-selection-ring',
-      '.collab-remote-cursor'
+      '.collab-remote-cursor',
+      '#verse-discovery-modal',
+      '#verse-disc-edit-modal',
+      '#verse-discover-btn',
+      '.verse-probe-ui'
     ];
     collabElements.forEach(sel => {
       doc.querySelectorAll(sel).forEach(el => el.remove());
@@ -1757,6 +1779,28 @@
 
     doc.querySelectorAll('script[src*="collab"], link[href*="collab.css"], #room-config').forEach(el => el.remove());
 
+    var topoState = doc.querySelector('#topology-state');
+    if (topoState && topoState.textContent) {
+      try {
+        var topo = JSON.parse(topoState.textContent);
+        function scrubProbeResults(nodeData) {
+          if (!nodeData || typeof nodeData !== 'object') return;
+          Object.keys(nodeData).forEach(function(nid) {
+            if (nodeData[nid] && nodeData[nid].ping) {
+              delete nodeData[nid].ping.probeResults;
+            }
+          });
+        }
+        if (topo.nodeData) scrubProbeResults(topo.nodeData);
+        if (topo.documentTabs && Array.isArray(topo.documentTabs)) {
+          topo.documentTabs.forEach(function(tab) {
+            if (tab && tab.nodes) scrubProbeResults(tab.nodes);
+          });
+        }
+        topoState.textContent = JSON.stringify(topo);
+      } catch(e) {}
+    }
+
     return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
   }
 
@@ -1764,10 +1808,1801 @@
     window.__collabStripHTML = stripCollabFromHTML;
   }
 
+  function buildProbeList(ping) {
+    if (ping.probeTypes && Array.isArray(ping.probeTypes) && ping.probeTypes.length > 0) {
+      return ping.probeTypes;
+    }
+    var probes = [{ type: 'icmp' }];
+    if (ping.protocol === 'custom' && ping.customUrl) {
+      probes.push({ type: 'http', url: ping.customUrl });
+    } else if (ping.protocol === 'https') {
+      probes.push({ type: 'http' });
+    } else {
+      probes.push({ type: 'http' });
+    }
+    return probes;
+  }
+
+  function updateProbeResultsPanel(nodeId) {
+    var panel = document.getElementById('verse-probe-results');
+    if (!panel) return;
+    var nd = getGlobal('NODE_DATA');
+    var data = nd[nodeId];
+    if (!data || !data.ping || !data.ping.probeResults || data.ping.probeResults.length === 0) {
+      panel.innerHTML = '';
+      return;
+    }
+    var html = '';
+    data.ping.probeResults.forEach(function(r) {
+      var color = r.status === 'online' ? 'var(--accent)' : r.status === 'offline' ? 'var(--danger)' : 'var(--text-soft)';
+      var label = r.type.toUpperCase();
+      if (r.port) label += ':' + r.port;
+      var detail = '';
+      if (r.responseTime !== null) detail = r.responseTime + 'ms';
+      if (r.detail) detail += (detail ? ' ' : '') + r.detail;
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px">';
+      html += '<span style="color:var(--text-soft)">' + label + '</span>';
+      html += '<span style="color:' + color + '">● ' + (detail || r.status) + '</span>';
+      html += '</div>';
+    });
+    panel.innerHTML = html;
+  }
+
+  function overridePingFunctions() {
+    if (!window.COLLAB_MODE || !_rc.probeEnabled) return;
+
+    window.checkNodeStatus = async function(nodeId) {
+      var nd = getGlobal('NODE_DATA');
+      var data = nd[nodeId];
+      if (!data || !data.ping || !data.ping.enabled) return;
+
+      data.ping.status = 'checking';
+      data.ping.lastCheck = new Date().toISOString();
+      data.ping.responseTime = null;
+      var updateIndicator = window.__collabGetVar('updatePingIndicator');
+      var updateDisplay = window.__collabGetVar('updatePingStatusDisplay');
+      if (updateIndicator) updateIndicator(nodeId);
+      var curId = window.__collabGetVar('currentNodeId');
+      if (curId === nodeId && updateDisplay) updateDisplay(nodeId);
+
+      var target = data.ip || '';
+      if (!target && data.ping.protocol === 'custom') target = data.ping.customUrl;
+      if (!target) { data.ping.status = 'unknown'; return; }
+
+      var probes = buildProbeList(data.ping);
+
+      try {
+        var resp = await fetch('/api/probe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+          body: JSON.stringify({ target: target, probes: probes, timeout: data.ping.timeout || 3000 })
+        });
+        var result = await resp.json();
+        if (resp.ok) {
+          data.ping.status = result.status;
+          data.ping.responseTime = result.rtt || null;
+          data.ping.probeResults = result.results || [];
+        } else {
+          data.ping.status = 'offline';
+          data.ping.responseTime = null;
+        }
+      } catch(e) {
+        data.ping.status = 'offline';
+        data.ping.responseTime = null;
+      }
+
+      data.ping.lastCheck = new Date().toISOString();
+      if (updateIndicator) updateIndicator(nodeId);
+      curId = window.__collabGetVar('currentNodeId');
+      if (curId === nodeId && updateDisplay) updateDisplay(nodeId);
+      updateProbeResultsPanel(nodeId);
+    };
+
+    window.checkAllNodesStatus = async function() {
+      var nd = getGlobal('NODE_DATA');
+      var targets = [];
+      Object.keys(nd).forEach(function(nid) {
+        if (nd[nid] && nd[nid].ping && nd[nid].ping.enabled) {
+          var t = nd[nid].ip || '';
+          if (!t && nd[nid].ping.protocol === 'custom') t = nd[nid].ping.customUrl;
+          if (t) targets.push({ nodeId: nid, target: t, probes: buildProbeList(nd[nid].ping), timeout: nd[nid].ping.timeout || 3000 });
+        }
+      });
+      if (!targets.length) return;
+      var btn = document.getElementById('check-all-ping-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Checking...';
+        btn.style.opacity = '0.7';
+      }
+      var checked = 0;
+      try {
+        for (var i = 0; i < targets.length; i += 50) {
+          var batch = targets.slice(i, i + 50);
+          try {
+            var resp = await fetch('/api/probe/batch', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+              body: JSON.stringify({ targets: batch })
+            });
+            if (!resp.ok) { checked += batch.length; continue; }
+            var result = await resp.json();
+            var updateIndicator = window.__collabGetVar('updatePingIndicator');
+            Object.keys(result.results).forEach(function(nid) {
+              var r = result.results[nid];
+              if (!nd[nid] || !nd[nid].ping) return;
+              nd[nid].ping.status = r.status;
+              nd[nid].ping.responseTime = r.rtt || null;
+              nd[nid].ping.probeResults = r.results || [];
+              nd[nid].ping.lastCheck = new Date().toISOString();
+              if (updateIndicator) updateIndicator(nid);
+            });
+            checked += batch.length;
+            if (btn) btn.textContent = 'Checking ' + Math.min(checked, targets.length) + '/' + targets.length;
+          } catch(e) { checked += batch.length; }
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Check Pings';
+          btn.style.opacity = '';
+        }
+      }
+    };
+
+    var checkAllBtn = document.getElementById('check-all-ping-btn');
+    if (checkAllBtn) {
+      var newBtn = checkAllBtn.cloneNode(true);
+      checkAllBtn.parentNode.replaceChild(newBtn, checkAllBtn);
+      newBtn.addEventListener('click', window.checkAllNodesStatus);
+    }
+  }
+
+  function injectProbeUI() {
+    if (!_rc.probeEnabled) return;
+
+    var observer = new MutationObserver(function() {
+      var pingSection = document.getElementById('node-ping-options');
+      if (!pingSection || document.getElementById('verse-probe-type')) return;
+
+      var protocolRow = document.getElementById('node-ping-protocol');
+      if (!protocolRow) return;
+      var insertAfter = protocolRow.closest('.style-row') || protocolRow.parentElement;
+
+      var probeRow = document.createElement('div');
+      probeRow.className = 'style-row verse-probe-ui';
+      probeRow.style.marginTop = '8px';
+      probeRow.innerHTML = '<label style="font-size:13px;color:var(--text-soft)">Probe Type:</label>' +
+        '<select id="verse-probe-type" style="flex:1">' +
+        '<option value="auto">Auto (ICMP + HTTP)</option>' +
+        '<option value="icmp">ICMP Ping Only</option>' +
+        '<option value="tcp">TCP Port Check</option>' +
+        '<option value="http">HTTP/HTTPS Only</option>' +
+        '<option value="multi">Multi Probe</option>' +
+        '</select>';
+      insertAfter.parentNode.insertBefore(probeRow, insertAfter.nextSibling);
+
+      var portsRow = document.createElement('div');
+      portsRow.className = 'verse-probe-ui';
+      portsRow.id = 'verse-tcp-ports-row';
+      portsRow.style.cssText = 'display:none;margin-top:8px';
+      portsRow.innerHTML = '<label style="display:block;margin-bottom:4px;font-size:13px;color:var(--text-soft)">TCP Ports (comma separated):</label>' +
+        '<input type="text" id="verse-tcp-ports" placeholder="22, 80, 443, 3389" style="width:100%">';
+      probeRow.parentNode.insertBefore(portsRow, probeRow.nextSibling);
+
+      var resultsPanel = document.createElement('div');
+      resultsPanel.className = 'verse-probe-ui';
+      resultsPanel.id = 'verse-probe-results';
+      resultsPanel.style.cssText = 'margin-top:8px;padding:8px;background:var(--panel);border-radius:6px;border:1px solid var(--edge-main)';
+      portsRow.parentNode.insertBefore(resultsPanel, portsRow.nextSibling);
+
+      var probeSelect = document.getElementById('verse-probe-type');
+      probeSelect.addEventListener('change', function() {
+        var val = probeSelect.value;
+        document.getElementById('verse-tcp-ports-row').style.display = (val === 'tcp' || val === 'multi') ? 'block' : 'none';
+        saveProbeConfig();
+      });
+
+      document.getElementById('verse-tcp-ports').addEventListener('change', function() {
+        saveProbeConfig();
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+    var origNodePingable = null;
+    document.addEventListener('change', function(e) {
+      if (e.target && e.target.id === 'node-pingable') {
+        setTimeout(loadProbeConfig, 50);
+      }
+    });
+
+    var lastSelectedNode = null;
+    setInterval(function() {
+      var curId = window.__collabGetVar('currentNodeId');
+      if (curId !== lastSelectedNode) {
+        lastSelectedNode = curId;
+        if (curId) setTimeout(function() { loadProbeConfig(); updateProbeResultsPanel(curId); }, 100);
+      }
+    }, 200);
+  }
+
+  function loadProbeConfig() {
+    var curId = window.__collabGetVar('currentNodeId');
+    if (!curId) return;
+    var nd = getGlobal('NODE_DATA');
+    var data = nd[curId];
+    if (!data || !data.ping) return;
+
+    var probeSelect = document.getElementById('verse-probe-type');
+    var portsInput = document.getElementById('verse-tcp-ports');
+    if (!probeSelect) return;
+
+    if (data.ping.probeTypes && data.ping.probeTypes.length > 0) {
+      var types = data.ping.probeTypes.map(function(p) { return p.type; });
+      var hasTcp = types.indexOf('tcp') !== -1;
+      var hasIcmp = types.indexOf('icmp') !== -1;
+      var hasHttp = types.indexOf('http') !== -1;
+
+      if (hasTcp && hasIcmp && hasHttp) probeSelect.value = 'multi';
+      else if (hasTcp && !hasHttp) probeSelect.value = 'tcp';
+      else if (hasIcmp && !hasHttp && !hasTcp) probeSelect.value = 'icmp';
+      else if (hasHttp && !hasTcp) probeSelect.value = 'http';
+      else probeSelect.value = 'auto';
+
+      if (hasTcp && portsInput) {
+        var ports = data.ping.probeTypes.filter(function(p) { return p.type === 'tcp'; }).map(function(p) { return p.port; });
+        portsInput.value = ports.join(', ');
+      }
+    } else {
+      probeSelect.value = 'auto';
+      if (portsInput) portsInput.value = '';
+    }
+
+    var portsRow = document.getElementById('verse-tcp-ports-row');
+    if (portsRow) portsRow.style.display = (probeSelect.value === 'tcp' || probeSelect.value === 'multi') ? 'block' : 'none';
+  }
+
+  function saveProbeConfig() {
+    var curId = window.__collabGetVar('currentNodeId');
+    if (!curId) return;
+    var nd = getGlobal('NODE_DATA');
+    var data = nd[curId];
+    if (!data || !data.ping) return;
+
+    var probeSelect = document.getElementById('verse-probe-type');
+    var portsInput = document.getElementById('verse-tcp-ports');
+    if (!probeSelect) return;
+
+    var val = probeSelect.value;
+    var probes = [];
+
+    if (val === 'auto') {
+      probes = [];
+    } else if (val === 'icmp') {
+      probes = [{ type: 'icmp' }];
+    } else if (val === 'tcp') {
+      probes = [{ type: 'icmp' }];
+      var ports = parsePorts(portsInput ? portsInput.value : '');
+      ports.forEach(function(p) { probes.push({ type: 'tcp', port: p }); });
+    } else if (val === 'http') {
+      probes = [{ type: 'http' }];
+    } else if (val === 'multi') {
+      probes = [{ type: 'icmp' }, { type: 'http' }];
+      var ports2 = parsePorts(portsInput ? portsInput.value : '');
+      ports2.forEach(function(p) { probes.push({ type: 'tcp', port: p }); });
+      probes.push({ type: 'dns' });
+    }
+
+    data.ping.probeTypes = probes.length > 0 ? probes : undefined;
+  }
+
+  function parsePorts(str) {
+    if (!str) return [];
+    return str.split(',').map(function(s) { return parseInt(s.trim(), 10); }).filter(function(p) { return p >= 1 && p <= 65535; });
+  }
+
+  var discoveryResults = [];
+  var discoveryTaskId = null;
+  var discoveryScanning = false;
+  var discoveryOverrides = {};
+  var _renderEditModal = null;
+
+  var DISC_SHAPES = {
+    basic: ['circle','square','rectangle','triangle','hexagon','diamond','star','stop-sign','octagon','pentagon','cross','rounded-square','pill','parallelogram','trapezoid'],
+    computers: ['server','pc','laptop','phone','printer','pi','sensor'],
+    network: ['router','switch','firewall','access-point','load-balancer','gateway','vpn','nas'],
+    cloud: ['cloud','database','docker','container','vm','kubernetes','api','queue','lambda','bucket'],
+    security: ['shield','camera','monitor'],
+    smarthome: ['thermostat','doorbell','smart-lock','smart-bulb','smart-plug','smart-speaker','smart-tv','hub','smoke-detector','motion-sensor','garage','sprinkler','vacuum'],
+    sports: ['basketball-ball','football-ball','soccer-ball','hockey-puck','baseball-ball','tennis-ball','volleyball','rugby-ball','golf-ball','frisbee','cricket-ball','lacrosse-stick','golf-flag','tactical-x','tactical-o','tactical-star'],
+    rack: ['patch-panel','ups','pdu','rack-shelf','blank-panel','cable-management','kvm']
+  };
+
+  var SHAPE_PREVIEW_SVGS = {
+    'circle': '<circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'square': '<rect x="5" y="5" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'rectangle': '<rect x="3" y="8" width="26" height="16" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'triangle': '<polygon points="16,4 28,28 4,28" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'hexagon': '<polygon points="16,3 27,9 27,22 16,28 5,22 5,9" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'diamond': '<polygon points="16,3 29,16 16,29 3,16" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'star': '<polygon points="16,3 19,12 29,12 21,18 24,28 16,22 8,28 11,18 3,12 13,12" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    'stop-sign': '<polygon points="11,3 21,3 29,11 29,21 21,29 11,29 3,21 3,11" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'octagon': '<polygon points="11,3 21,3 29,11 29,21 21,29 11,29 3,21 3,11" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'pentagon': '<polygon points="16,3 29,13 24,28 8,28 3,13" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'cross': '<path d="M12,4 h8 v8 h8 v8 h-8 v8 h-8 v-8 h-8 v-8 h8 z" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    'rounded-square': '<rect x="5" y="5" width="22" height="22" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'pill': '<rect x="4" y="10" width="24" height="12" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'parallelogram': '<polygon points="8,6 28,6 24,26 4,26" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'trapezoid': '<polygon points="8,6 24,6 28,26 4,26" fill="none" stroke="currentColor" stroke-width="2"/>',
+    'server': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="20" height="24" rx="2"/><line x1="6" y1="12" x2="26" y2="12"/><line x1="6" y1="20" x2="26" y2="20"/><circle cx="22" cy="8" r="1.5" fill="currentColor"/><circle cx="22" cy="16" r="1.5" fill="currentColor"/><circle cx="22" cy="24" r="1.5" fill="currentColor"/></g>',
+    'pc': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="4" width="22" height="16" rx="1"/><line x1="12" y1="24" x2="20" y2="24"/><line x1="16" y1="20" x2="16" y2="24"/></g>',
+    'laptop': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="6" width="20" height="14" rx="1"/><path d="M3,22 h26 l-2,4 h-22 z"/></g>',
+    'phone': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="3" width="14" height="26" rx="2"/><line x1="13" y1="25" x2="19" y2="25"/></g>',
+    'printer': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="12" width="16" height="10" rx="1"/><rect x="10" y="4" width="12" height="8"/><rect x="10" y="22" width="12" height="6"/></g>',
+    'pi': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="22" height="16" rx="2"/><circle cx="10" cy="13" r="1.5" fill="currentColor"/><rect x="18" y="11" width="6" height="4" rx="0.5"/><line x1="14" y1="20" x2="22" y2="20"/></g>',
+    'sensor': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="6"/><circle cx="16" cy="16" r="2" fill="currentColor"/><path d="M8,8 Q4,16 8,24"/><path d="M24,8 Q28,16 24,24"/></g>',
+    'router': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="14" width="24" height="12" rx="2"/><line x1="10" y1="14" x2="10" y2="8"/><line x1="16" y1="14" x2="16" y2="6"/><line x1="22" y1="14" x2="22" y2="8"/><circle cx="10" cy="7" r="1.5" fill="currentColor"/><circle cx="16" cy="5" r="1.5" fill="currentColor"/><circle cx="22" cy="7" r="1.5" fill="currentColor"/><circle cx="8" cy="22" r="1.5" fill="#4ade80"/><circle cx="13" cy="22" r="1.5" fill="#facc15"/></g>',
+    'switch': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="26" height="10" rx="2"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="13" cy="16" r="1.5" fill="currentColor"/><circle cx="18" cy="16" r="1.5" fill="currentColor"/><circle cx="23" cy="16" r="1.5" fill="currentColor"/></g>',
+    'firewall': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="22" height="22" rx="1"/><line x1="5" y1="11" x2="27" y2="11"/><line x1="5" y1="17" x2="27" y2="17"/><line x1="5" y1="23" x2="27" y2="23"/><line x1="11" y1="5" x2="11" y2="27"/><line x1="17" y1="5" x2="17" y2="27"/><line x1="23" y1="5" x2="23" y2="27"/></g>',
+    'access-point': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16,18 L10,26 h12 z"/><circle cx="16" cy="16" r="2" fill="currentColor"/><path d="M9,10 Q16,4 23,10" stroke-linecap="round"/><path d="M6,7 Q16,0 26,7" stroke-linecap="round"/></g>',
+    'load-balancer': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="12" width="20" height="8" rx="2"/><line x1="16" y1="8" x2="16" y2="12"/><line x1="16" y1="20" x2="8" y2="26"/><line x1="16" y1="20" x2="16" y2="26"/><line x1="16" y1="20" x2="24" y2="26"/><circle cx="16" cy="7" r="2" fill="currentColor"/></g>',
+    'gateway': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="24" height="12" rx="2"/><line x1="4" y1="16" x2="0" y2="16"/><line x1="28" y1="16" x2="32" y2="16"/><circle cx="16" cy="16" r="3"/></g>',
+    'vpn': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="22" height="16" rx="2"/><path d="M16,12 v6 M13,14 h6" stroke-width="2.5" stroke-linecap="round"/><circle cx="11" cy="20" r="1" fill="currentColor"/><circle cx="21" cy="20" r="1" fill="currentColor"/></g>',
+    'nas': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="20" height="24" rx="2"/><line x1="6" y1="10" x2="26" y2="10"/><line x1="6" y1="16" x2="26" y2="16"/><line x1="6" y1="22" x2="26" y2="22"/><circle cx="22" cy="7" r="1" fill="currentColor"/><circle cx="22" cy="13" r="1" fill="currentColor"/><circle cx="22" cy="19" r="1" fill="currentColor"/><circle cx="22" cy="25" r="1" fill="currentColor"/></g>',
+    'cloud': '<path d="M8,22 Q2,22 2,17 Q2,13 6,12 Q6,7 11,6 Q16,5 19,8 Q21,6 24,7 Q28,8 28,12 Q30,13 30,17 Q30,22 24,22 z" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    'database': '<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="8" rx="10" ry="4"/><path d="M6,8 v16 Q6,28 16,28 Q26,28 26,24 v-16"/><path d="M6,14 Q6,18 16,18 Q26,18 26,14"/></g>',
+    'docker': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2,16 h6 v-6 h4 v-4 h4 v4 h4 v-4 h4 v8 Q28,24 20,26 Q10,28 4,22 z"/><rect x="10" y="12" width="3" height="3"/><rect x="14" y="12" width="3" height="3"/><rect x="14" y="8" width="3" height="3"/></g>',
+    'container': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4,12 L16,6 L28,12 L16,18 z"/><path d="M4,12 v8 L16,26 v-8"/><path d="M28,12 v8 L16,26 v-8"/></g>',
+    'vm': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="24" height="24" rx="2"/><rect x="7" y="7" width="18" height="14" rx="1"/><line x1="12" y1="24" x2="20" y2="24"/></g>',
+    'kubernetes': '<g fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="16,2 28,9 28,23 16,30 4,23 4,9"/><circle cx="16" cy="16" r="4"/><line x1="16" y1="12" x2="16" y2="4"/><line x1="19" y1="14" x2="26" y2="10"/><line x1="19" y1="18" x2="26" y2="22"/><line x1="16" y1="20" x2="16" y2="28"/><line x1="13" y1="18" x2="6" y2="22"/><line x1="13" y1="14" x2="6" y2="10"/></g>',
+    'api': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="6" width="24" height="20" rx="2"/><path d="M10,16 l2,-6 2,6 M10.5,14 h3" stroke-linecap="round"/><path d="M17,10 h3 Q22,10 22,13 Q22,16 20,16 h-3 M17,16 v6" stroke-linecap="round"/><line x1="25" y1="10" x2="25" y2="22"/></g>',
+    'queue': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="24" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="24"/><line x1="20" y1="8" x2="20" y2="24"/><path d="M6,16 h3 M14,16 h4 M22,16 h4" stroke-linecap="round"/></g>',
+    'lambda': '<g fill="none" stroke="currentColor" stroke-width="2"><path d="M8,6 L16,26 L24,6" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="16" x2="12" y2="16" stroke-linecap="round"/></g>',
+    'bucket': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6,8 h20 l-2,18 h-16 z"/><ellipse cx="16" cy="8" rx="10" ry="3"/></g>',
+    'shield': '<path d="M16,3 L27,8 v10 Q27,26 16,29 Q5,26 5,18 v-10 z" fill="none" stroke="currentColor" stroke-width="1.5"/>',
+    'camera': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="10" width="24" height="16" rx="2"/><circle cx="16" cy="18" r="5"/><circle cx="16" cy="18" r="2" fill="currentColor"/><rect x="10" y="6" width="12" height="4" rx="1"/></g>',
+    'monitor': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="24" height="16" rx="2"/><line x1="12" y1="24" x2="20" y2="24"/><line x1="16" y1="20" x2="16" y2="24"/><path d="M8,8 h4 M8,11 h6 M8,14 h5 M18,8 Q20,8 20,14 Q20,16 18,16" stroke-width="1"/></g>',
+    'thermostat': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="7"/><line x1="16" y1="9" x2="16" y2="16" stroke-width="2" stroke-linecap="round"/></g>',
+    'doorbell': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="3" width="14" height="26" rx="4"/><circle cx="16" cy="14" r="4"/><circle cx="16" cy="22" r="1.5" fill="currentColor"/></g>',
+    'smart-lock': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="14" width="18" height="14" rx="2"/><path d="M11,14 v-4 Q11,4 16,4 Q21,4 21,10 v4"/><circle cx="16" cy="21" r="2" fill="currentColor"/></g>',
+    'smart-bulb': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11,18 Q6,12 8,7 Q10,3 16,3 Q22,3 24,7 Q26,12 21,18 z"/><rect x="11" y="18" width="10" height="4" rx="1"/><line x1="12" y1="24" x2="20" y2="24"/><line x1="13" y1="26" x2="19" y2="26"/></g>',
+    'smart-plug': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="8" width="20" height="16" rx="3"/><circle cx="12" cy="16" r="2" fill="currentColor"/><circle cx="20" cy="16" r="2" fill="currentColor"/><line x1="16" y1="24" x2="16" y2="28" stroke-width="2"/></g>',
+    'smart-speaker': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8,28 Q8,8 16,4 Q24,8 24,28 z"/><circle cx="16" cy="20" r="4"/><circle cx="16" cy="20" r="1.5" fill="currentColor"/></g>',
+    'smart-tv': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="26" height="18" rx="1"/><line x1="10" y1="27" x2="22" y2="27"/><line x1="12" y1="23" x2="12" y2="27"/><line x1="20" y1="23" x2="20" y2="27"/></g>',
+    'hub': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="5"/><circle cx="16" cy="16" r="2" fill="currentColor"/><line x1="16" y1="5" x2="16" y2="11"/><line x1="16" y1="21" x2="16" y2="27"/><line x1="5" y1="16" x2="11" y2="16"/><line x1="21" y1="16" x2="27" y2="16"/><line x1="8" y1="8" x2="12.5" y2="12.5"/><line x1="19.5" y1="19.5" x2="24" y2="24"/><line x1="8" y1="24" x2="12.5" y2="19.5"/><line x1="19.5" y1="12.5" x2="24" y2="8"/></g>',
+    'smoke-detector': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="3"/><line x1="16" y1="5" x2="16" y2="7"/><line x1="16" y1="25" x2="16" y2="27"/><line x1="5" y1="16" x2="7" y2="16"/><line x1="25" y1="16" x2="27" y2="16"/></g>',
+    'motion-sensor': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8,24 Q4,12 16,6 Q28,12 24,24" /><circle cx="16" cy="16" r="3" fill="currentColor"/><path d="M12,20 Q10,16 14,12"/><path d="M20,20 Q22,16 18,12"/></g>',
+    'garage': '<g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4,28 v-14 L16,4 L28,14 v14 z"/><rect x="8" y="16" width="16" height="12"/><line x1="8" y1="20" x2="24" y2="20"/><line x1="8" y1="24" x2="24" y2="24"/></g>',
+    'sprinkler': '<g fill="none" stroke="currentColor" stroke-width="1.5"><line x1="16" y1="4" x2="16" y2="14"/><path d="M10,14 h12 v3 Q16,22 10,17 z"/><path d="M8,20 Q6,24 4,26" stroke-linecap="round"/><path d="M16,22 v6" stroke-linecap="round"/><path d="M24,20 Q26,24 28,26" stroke-linecap="round"/></g>',
+    'vacuum': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="11"/><circle cx="16" cy="16" r="6"/><circle cx="16" cy="16" r="2" fill="currentColor"/><line x1="16" y1="5" x2="20" y2="3" stroke-linecap="round"/></g>',
+    'basketball-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="12"/><path d="M4,16 h24"/><path d="M16,4 v24"/><path d="M6,7 Q16,14 6,25"/><path d="M26,7 Q16,14 26,25"/></g>',
+    'football-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="16" rx="12" ry="8" transform="rotate(-30,16,16)"/><path d="M10,10 L22,22 M12,8 L24,20" stroke-linecap="round"/><line x1="14" y1="12" x2="18" y2="16" stroke-linecap="round"/><line x1="16" y1="14" x2="20" y2="18" stroke-linecap="round"/></g>',
+    'soccer-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="12"/><polygon points="16,8 20,12 18,17 14,17 12,12" fill="currentColor" stroke="none"/></g>',
+    'hockey-puck': '<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="14" rx="12" ry="5"/><path d="M4,14 v4 Q4,23 16,23 Q28,23 28,18 v-4"/></g>',
+    'baseball-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="12"/><path d="M8,6 Q14,12 8,26"/><path d="M24,6 Q18,12 24,26"/></g>',
+    'tennis-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="12"/><path d="M6,6 Q16,16 6,26"/><path d="M26,6 Q16,16 26,26"/></g>',
+    'volleyball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="12"/><path d="M16,4 Q12,16 16,28"/><path d="M5,10 Q16,14 27,10"/><path d="M5,22 Q16,18 27,22"/></g>',
+    'rugby-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="16" rx="13" ry="8" transform="rotate(-30,16,16)"/><path d="M10,10 L22,22"/></g>',
+    'golf-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="10"/><circle cx="14" cy="14" r="0.8" fill="currentColor"/><circle cx="18" cy="12" r="0.8" fill="currentColor"/><circle cx="16" cy="16" r="0.8" fill="currentColor"/><circle cx="12" cy="17" r="0.8" fill="currentColor"/><circle cx="19" cy="16" r="0.8" fill="currentColor"/></g>',
+    'frisbee': '<g fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="16" cy="16" rx="13" ry="5"/><ellipse cx="16" cy="15" rx="8" ry="3"/></g>',
+    'cricket-ball': '<g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="16" cy="16" r="11"/><path d="M10,6 Q16,16 10,26" stroke-dasharray="2,2"/></g>',
+    'lacrosse-stick': '<g fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="28" x2="20" y2="6" stroke-width="2"/><path d="M18,8 Q26,4 26,12 Q26,16 20,14"/><line x1="20" y1="9" x2="24" y2="13"/></g>',
+    'golf-flag': '<g fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="4" x2="10" y2="28" stroke-width="2"/><polygon points="10,4 26,10 10,16" fill="currentColor" opacity="0.3" stroke="currentColor"/><ellipse cx="16" cy="28" rx="10" ry="2"/></g>',
+    'tactical-x': '<g stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="6" y1="6" x2="26" y2="26"/><line x1="26" y1="6" x2="6" y2="26"/></g>',
+    'tactical-o': '<circle cx="16" cy="16" r="10" fill="none" stroke="currentColor" stroke-width="3"/>',
+    'tactical-star': '<polygon points="16,3 19,12 29,12 21,18 24,28 16,22 8,28 11,18 3,12 13,12" fill="currentColor" opacity="0.3" stroke="currentColor" stroke-width="1.5"/>',
+    'patch-panel': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="10" width="26" height="12" rx="1"/><circle cx="8" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/><circle cx="18" cy="14" r="1.5"/><circle cx="23" cy="14" r="1.5"/><circle cx="8" cy="19" r="1.5"/><circle cx="13" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/><circle cx="23" cy="19" r="1.5"/></g>',
+    'ups': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="4" width="20" height="24" rx="2"/><rect x="10" y="8" width="12" height="6" rx="1"/><circle cx="12" cy="20" r="1.5" fill="currentColor"/><circle cx="16" cy="20" r="1.5"/><circle cx="20" cy="20" r="1.5"/></g>',
+    'pdu': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="11" y="2" width="10" height="28" rx="1"/><circle cx="16" cy="7" r="2"/><circle cx="16" cy="13" r="2"/><circle cx="16" cy="19" r="2"/><circle cx="16" cy="25" r="2" fill="currentColor"/></g>',
+    'rack-shelf': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="12" width="26" height="8" rx="1"/><line x1="3" y1="17" x2="29" y2="17" stroke-dasharray="3,2"/><circle cx="7" cy="14.5" r="1" fill="currentColor"/></g>',
+    'blank-panel': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="12" width="26" height="8" rx="1"/><circle cx="6" cy="16" r="1"/><circle cx="26" cy="16" r="1"/></g>',
+    'cable-management': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="26" height="10" rx="1"/><path d="M7,14 Q10,18 13,14 Q16,10 19,14 Q22,18 25,14" stroke-linecap="round"/></g>',
+    'kvm': '<g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="24" height="16" rx="2"/><rect x="8" y="11" width="10" height="7" rx="1"/><circle cx="23" cy="14.5" r="2"/><line x1="12" y1="20" x2="20" y2="20"/></g>'
+  };
+
+  function getLayerName(val) {
+    var sel = document.getElementById('node-layer');
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === val) return sel.options[i].textContent;
+      }
+    }
+    var fallback = { layer1: 'Physical Layer', layer2: 'Logical Layer', layer3: 'Security Layer', layer4: 'Application Layer' };
+    return fallback[val] || val;
+  }
+
+  var _iconCache = {};
+  function fetchDiscoveryIcon(library, name, el, size) {
+    var sz = size || 20;
+    var key = library + '/' + name;
+    if (_iconCache[key] === false) return;
+    var url = '';
+    if (library === 'selfhst') url = 'https://cdn.jsdelivr.net/gh/selfhst/icons@master/png/' + encodeURIComponent(name) + '.png';
+    else if (library === 'mdi') url = 'https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/' + encodeURIComponent(name) + '.svg';
+    if (!url) return;
+    if (_iconCache[key]) {
+      el.innerHTML = '<img src="' + _iconCache[key] + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + name + '">';
+      return;
+    }
+    _iconCache[key] = url;
+    el.innerHTML = '<img src="' + url + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + name + '">';
+    var img = el.querySelector('img');
+    if (img) {
+      img.onerror = function() {
+        _iconCache[key] = false;
+        el.innerHTML = '';
+      };
+    }
+  }
+
+  function getShapePreviewSVG(shape) {
+    var svg = SHAPE_PREVIEW_SVGS[shape];
+    if (svg) return '<svg width="36" height="36" viewBox="0 0 32 32" style="color:var(--accent)">' + svg + '</svg>';
+    return '<span style="font-size:10px;color:var(--text-soft);text-align:center;line-height:1.2">' + escapeHtml(shape || 'circle') + '</span>';
+  }
+
+  function updateDiscoveryProgress(percent, scanned, total, rangeIndex, totalRanges) {
+    var bar = document.getElementById('verse-discovery-progress-fill');
+    var text = document.getElementById('verse-discovery-progress-text');
+    if (bar) bar.style.width = percent + '%';
+    if (text) {
+      var label = percent + '% (' + scanned + '/' + total + ')';
+      if (totalRanges > 1) label = 'Range ' + (rangeIndex + 1) + '/' + totalRanges + ' : ' + label;
+      text.textContent = label;
+    }
+  }
+
+  var _scanRenderInterval = null;
+  function addDiscoveryResult(host) {
+    discoveryResults.push(host);
+    var countEl = document.getElementById('verse-discovery-count');
+    if (countEl) countEl.textContent = discoveryResults.length + ' hosts found';
+    if (!_scanRenderInterval) {
+      _scanRenderInterval = setInterval(function() {
+        renderDiscoveryResults();
+      }, 2000);
+    }
+  }
+
+  function finalizeDiscovery(totalFound) {
+    discoveryScanning = false;
+    discoveryTaskId = null;
+    if (_scanRenderInterval) { clearInterval(_scanRenderInterval); _scanRenderInterval = null; }
+    var btn = document.getElementById('verse-discovery-start');
+    var cancelBtn = document.getElementById('verse-discovery-cancel');
+    if (btn) { btn.textContent = 'Start Scan'; btn.disabled = false; }
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    var text = document.getElementById('verse-discovery-progress-text');
+    if (text) text.textContent = 'Complete - ' + totalFound + ' hosts found';
+    renderDiscoveryResults();
+  }
+
+  var activeDeepScans = {};
+
+  function handleDeepScanProgress(scanId, ip, percent) {
+    activeDeepScans[ip] = { scanId: scanId, percent: percent };
+    var cell = document.querySelector('[data-deepscan-ip="' + ip + '"]');
+    if (cell) {
+      var bar = cell.querySelector('.deepscan-bar-fill');
+      var text = cell.querySelector('.deepscan-text');
+      if (bar) bar.style.width = percent + '%';
+      if (text) text.textContent = percent + '%';
+    }
+  }
+
+  function handleDeepScanUpdate(scanId, ip, newPorts, newServices, containers, newIcons) {
+    for (var i = 0; i < discoveryResults.length; i++) {
+      if (discoveryResults[i].ip === ip) {
+        var host = discoveryResults[i];
+        if (!host.ports) host.ports = [];
+        if (!host.services) host.services = {};
+        newPorts.forEach(function(p) {
+          if (host.ports.indexOf(p) === -1) host.ports.push(p);
+        });
+        Object.keys(newServices).forEach(function(portStr) {
+          host.services[parseInt(portStr, 10)] = newServices[portStr];
+        });
+        if (containers) host.dockerContainers = containers;
+        if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+        var ov = discoveryOverrides[ip];
+        var existing = ov.tags ? ov.tags.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; }) : [];
+        Object.values(newServices).forEach(function(s) {
+          if (s && s.indexOf('Port ') !== 0 && existing.indexOf(s) === -1) existing.push(s);
+        });
+        if (containers && containers.length > 0) {
+          containers.forEach(function(c) {
+            var label = c.name || '';
+            if (label && existing.indexOf(label) === -1) existing.push(label);
+          });
+        }
+        ov.tags = existing.join(', ');
+        ov._tagsSeeded = true;
+        if (newIcons && newIcons.length > 0) {
+          if (!ov.iconTags) ov.iconTags = [];
+          newIcons.forEach(function(icon) {
+            var exists = ov.iconTags.some(function(t) {
+              return t.library === icon.library && t.name === icon.name;
+            });
+            if (!exists) {
+              ov.iconTags.push({ type: 'icon', library: icon.library, name: icon.name, svg: '' });
+            }
+          });
+        }
+        break;
+      }
+    }
+  }
+
+  function handleDeepScanComplete(scanId, ip) {
+    delete activeDeepScans[ip];
+    renderDiscoveryResults();
+  }
+
+  var DOCKER_TRIGGER_PORTS = [2375, 2376, 9443, 5001];
+
+  function buildDeepScanCell(ip) {
+    var active = activeDeepScans[ip];
+    if (active) {
+      return '<div data-deepscan-ip="' + escapeHtml(ip) + '" style="display:inline-flex;align-items:center;gap:4px">' +
+        '<div style="width:48px;height:4px;background:var(--edge-main);border-radius:2px;overflow:hidden">' +
+          '<div class="deepscan-bar-fill" style="width:' + (active.percent || 0) + '%;height:100%;background:var(--accent);border-radius:2px;transition:width 0.3s"></div>' +
+        '</div>' +
+        '<span class="deepscan-text" style="font-size:9px;color:var(--text-soft)">' + (active.percent || 0) + '%</span>' +
+        '<button class="deepscan-cancel-btn" data-ip="' + escapeHtml(ip) + '" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:11px;padding:0 2px" title="Cancel deep scan">\u2715</button>' +
+      '</div>';
+    }
+    return '<button class="deepscan-start-btn" data-ip="' + escapeHtml(ip) + '" style="padding:2px 6px;font-size:10px;background:var(--panel);color:var(--text-soft);border:1px solid var(--edge-main);border-radius:4px;cursor:pointer" title="Scan for Docker container ports">Deep Scan</button>';
+  }
+
+  var discoveryRanges = [];
+
+  function getCurrentCIDR() {
+    var sel = document.getElementById('verse-disc-preset');
+    if (!sel) return '';
+    if (sel.value === 'custom') {
+      var custom = document.getElementById('verse-disc-custom-cidr');
+      return custom ? custom.value.trim() : '';
+    }
+    return sel.value || '';
+  }
+
+  function getDiscoveryCIDRs() {
+    if (discoveryRanges.length > 0) return discoveryRanges.slice();
+    var current = getCurrentCIDR();
+    return current ? [current] : [];
+  }
+
+  function renderRangePills() {
+    var container = document.getElementById('verse-disc-ranges');
+    if (!container) return;
+    container.innerHTML = '';
+    discoveryRanges.forEach(function(cidr, idx) {
+      var pill = document.createElement('span');
+      pill.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--accent);color:var(--bg);border-radius:16px;font-size:12px;font-family:monospace';
+      pill.textContent = cidr;
+      var x = document.createElement('button');
+      x.style.cssText = 'background:none;border:none;color:var(--bg);font-size:14px;cursor:pointer;padding:0 2px;line-height:1';
+      x.textContent = '\u2715';
+      x.addEventListener('click', function() {
+        discoveryRanges.splice(idx, 1);
+        renderRangePills();
+      });
+      pill.appendChild(x);
+      container.appendChild(pill);
+    });
+  }
+
+  function updateRackDropdowns() {
+    var nd = getGlobal('NODE_DATA') || {};
+    var canvasRacks = [];
+    Object.keys(nd).forEach(function(nid) {
+      if (nd[nid] && nd[nid].isRack) {
+        canvasRacks.push({ value: 'canvas:' + nid, label: (nd[nid].name || nid) + ' (on canvas)', capacity: parseInt(nd[nid].rackCapacity) || 42 });
+      }
+    });
+    var newRacks = [];
+    discoveryResults.forEach(function(host) {
+      var ov = discoveryOverrides[host.ip] || {};
+      if (ov.typeToggle === 'rack') {
+        var rackName = ov.name || host.hostname || host.ip;
+        var cap = parseInt(ov.rackCapacity) || 42;
+        newRacks.push({ value: 'new:' + host.ip, label: rackName + ' (new)', capacity: cap, ip: host.ip });
+      }
+    });
+
+    document.querySelectorAll('.disc-rack-cell').forEach(function(cell) {
+      var ip = cell.getAttribute('data-ip');
+      var ov = discoveryOverrides[ip] || {};
+      var isRack = ov.typeToggle === 'rack';
+
+      if (isRack) {
+        cell.innerHTML = '';
+        return;
+      }
+
+      var savedRef = ov.assignedRackRef || '';
+      var savedUnit = ov.rackUnit || '';
+      var savedUHeight = ov.uHeight || '1';
+
+      var opts = '<option value="">None</option>';
+      canvasRacks.forEach(function(r) {
+        opts += '<option value="' + escapeHtml(r.value) + '"' + (savedRef === r.value ? ' selected' : '') + '>' + escapeHtml(r.label) + '</option>';
+      });
+      newRacks.forEach(function(r) {
+        if (r.ip === ip) return;
+        opts += '<option value="' + escapeHtml(r.value) + '"' + (savedRef === r.value ? ' selected' : '') + '>' + escapeHtml(r.label) + '</option>';
+      });
+
+      var html = '<select class="disc-rack-select" data-ip="' + escapeHtml(ip) + '" style="width:100%;padding:3px 6px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:11px">' + opts + '</select>';
+
+      if (savedRef) {
+        var capacity = 42;
+        canvasRacks.forEach(function(r) { if (r.value === savedRef) capacity = r.capacity; });
+        newRacks.forEach(function(r) { if (r.value === savedRef) capacity = r.capacity; });
+
+        var unitOpts = '<option value="">U Pos</option>';
+        for (var u = 1; u <= capacity; u++) {
+          unitOpts += '<option value="' + u + '"' + (savedUnit === String(u) ? ' selected' : '') + '>U' + u + '</option>';
+        }
+
+        var uhOpts = '';
+        for (var h = 1; h <= 4; h++) {
+          uhOpts += '<option value="' + h + '"' + (savedUHeight === String(h) ? ' selected' : '') + '>' + h + 'U</option>';
+        }
+
+        html += '<div style="display:flex;gap:4px;margin-top:4px">' +
+          '<select class="disc-rack-unit" data-ip="' + escapeHtml(ip) + '" style="flex:1;padding:2px 4px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:10px">' + unitOpts + '</select>' +
+          '<select class="disc-rack-uheight" data-ip="' + escapeHtml(ip) + '" style="width:48px;padding:2px 4px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:10px">' + uhOpts + '</select>' +
+        '</div>';
+      }
+
+      cell.innerHTML = html;
+    });
+
+    document.querySelectorAll('.disc-rack-select').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var ip = sel.getAttribute('data-ip');
+        if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+        if (sel.value) {
+          discoveryOverrides[ip].assignedRackRef = sel.value;
+        } else {
+          delete discoveryOverrides[ip].assignedRackRef;
+          delete discoveryOverrides[ip].rackUnit;
+        }
+        updateRackDropdowns();
+      });
+    });
+
+    document.querySelectorAll('.disc-rack-unit').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var ip = sel.getAttribute('data-ip');
+        if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+        discoveryOverrides[ip].rackUnit = sel.value;
+      });
+    });
+
+    document.querySelectorAll('.disc-rack-uheight').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var ip = sel.getAttribute('data-ip');
+        if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+        discoveryOverrides[ip].uHeight = sel.value;
+      });
+    });
+  }
+
+  function renderDiscoveryResults() {
+    var tbody = document.getElementById('verse-discovery-tbody');
+    if (!tbody) return;
+    var count = document.getElementById('verse-discovery-count');
+    if (count) count.textContent = discoveryResults.length + ' hosts found';
+    var searchEl = document.getElementById('verse-disc-table-search');
+    var savedSearch = searchEl ? searchEl.value : '';
+    tbody.innerHTML = '';
+
+    var nd = getGlobal('NODE_DATA') || {};
+    var canvasIPs = {};
+    Object.keys(nd).forEach(function(nid) {
+      if (nd[nid] && nd[nid].ip) canvasIPs[nd[nid].ip] = nid;
+    });
+
+    discoveryResults.forEach(function(host) {
+      var nodeId = canvasIPs[host.ip];
+      if (!nodeId) return;
+      var node = nd[nodeId];
+      if (!node) return;
+      if (!discoveryOverrides[host.ip]) discoveryOverrides[host.ip] = {};
+      var ov = discoveryOverrides[host.ip];
+      if (ov.name === undefined && node.name) {
+        ov.name = node.name;
+      }
+      if (ov.layer === undefined && node.layer) {
+        ov.layer = node.layer;
+      }
+      if (ov.assignedRackRef === undefined && node.assignedRack && nd[node.assignedRack]) {
+        ov.assignedRackRef = 'canvas:' + node.assignedRack;
+        if (ov.rackUnit === undefined) ov.rackUnit = node.rackUnit || '';
+        if (ov.uHeight === undefined) ov.uHeight = node.uHeight || '1';
+      }
+      if (ov.typeToggle === undefined && node.isRack) {
+        ov.typeToggle = 'rack';
+      }
+      ov._seeded = true;
+    });
+
+    discoveryResults.forEach(function(host) {
+      if (!host.icon || host.icon.name === 'linux' || host.icon.name === 'terminal') return;
+      if (!discoveryOverrides[host.ip]) discoveryOverrides[host.ip] = {};
+      var ov = discoveryOverrides[host.ip];
+      if (ov.iconData === undefined) {
+        ov.iconData = { library: host.icon.library, name: host.icon.name };
+        if (!ov._seeded) ov._seeded = true;
+      }
+    });
+
+    discoveryResults.forEach(function(host) {
+      if (!host.services) return;
+      if (!discoveryOverrides[host.ip]) discoveryOverrides[host.ip] = {};
+      var ov = discoveryOverrides[host.ip];
+      if (ov._tagsSeeded) return;
+      var svcNames = Object.values(host.services).filter(function(s) { return s && s.indexOf('Port ') !== 0; });
+      if (svcNames.length > 0) {
+        var existing = ov.tags ? ov.tags.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; }) : [];
+        svcNames.forEach(function(s) {
+          if (existing.indexOf(s) === -1) existing.push(s);
+        });
+        ov.tags = existing.join(', ');
+        ov._tagsSeeded = true;
+        if (!ov._seeded) ov._seeded = true;
+      }
+    });
+
+    discoveryResults.forEach(function(host) {
+      if (!host.serviceIcons || host.serviceIcons.length === 0) return;
+      if (!discoveryOverrides[host.ip]) discoveryOverrides[host.ip] = {};
+      var ov = discoveryOverrides[host.ip];
+      if (ov._iconTagsSeeded) return;
+      if (!ov.iconTags) ov.iconTags = [];
+      host.serviceIcons.forEach(function(icon) {
+        if (ov.iconData && ov.iconData.library === icon.library && ov.iconData.name === icon.name) return;
+        var exists = ov.iconTags.some(function(t) {
+          return t.library === icon.library && t.name === icon.name;
+        });
+        if (!exists) {
+          ov.iconTags.push({ type: 'icon', library: icon.library, name: icon.name, svg: '' });
+        }
+      });
+      ov._iconTagsSeeded = true;
+      if (!ov._seeded) ov._seeded = true;
+    });
+
+    var editBtn = document.getElementById('verse-disc-edit-btn');
+    if (editBtn) editBtn.style.display = discoveryResults.length > 0 ? 'inline' : 'none';
+
+    var sortedResults = discoveryResults.slice().sort(function(a, b) {
+      var aOnCanvas = canvasIPs[a.ip] ? 1 : 0;
+      var bOnCanvas = canvasIPs[b.ip] ? 1 : 0;
+      return aOnCanvas - bOnCanvas;
+    });
+
+    sortedResults.forEach(function(host) {
+      var idx = discoveryResults.indexOf(host);
+      var svcValues = Object.values(host.services || {});
+      var serviceTags = svcValues.map(function(s) {
+        var isGeneric = s.indexOf('Port ') === 0;
+        var bg = isGeneric ? 'var(--panel)' : 'var(--panel-alt)';
+        var border = isGeneric ? 'var(--edge-main)' : 'var(--accent)';
+        var color = isGeneric ? 'var(--text-soft)' : 'var(--accent)';
+        return '<span style="display:inline-block;padding:1px 6px;margin:1px;font-size:10px;border-radius:3px;background:' + bg + ';border:1px solid ' + border + ';color:' + color + ';white-space:nowrap">' + escapeHtml(s) + '</span>';
+      }).join('');
+      if (host.dockerContainers && host.dockerContainers.length > 0) {
+        host.dockerContainers.forEach(function(c) {
+          var name = c.name || '';
+          if (!name) return;
+          serviceTags += '<span style="display:inline-block;padding:1px 6px;margin:1px;font-size:10px;border-radius:3px;background:var(--panel-alt);border:1px solid #2496ed;color:#2496ed;white-space:nowrap" title="Docker container">' + escapeHtml(name) + '</span>';
+        });
+      }
+      var hostname = host.hostname || '';
+      var nameDetails = [];
+      if (host.dnsName) nameDetails.push('DNS: ' + host.dnsName);
+      if (host.netbiosName) nameDetails.push('NetBIOS: ' + host.netbiosName);
+      if (host.mdnsName) nameDetails.push('mDNS: ' + host.mdnsName);
+      if (host.httpServer) nameDetails.push('HTTP: ' + host.httpServer);
+      if (host.snmpName) nameDetails.push('SNMP: ' + host.snmpName);
+      if (host.snmpDescr) nameDetails.push('Descr: ' + host.snmpDescr);
+      var detailTitle = nameDetails.length > 0 ? nameDetails.join('\n') : '';
+
+      var onCanvas = canvasIPs[host.ip];
+      var hasOverride = discoveryOverrides[host.ip];
+      var ov = hasOverride || {};
+      var displayName = ov.name || hostname;
+      var userEdited = hasOverride && !ov._seeded;
+      var overrideIndicator = userEdited ? ' <span style="color:var(--accent);font-size:11px" title="Edited">&#9998;</span>' : '';
+      var canvasBadge = onCanvas ? '<br><span style="font-size:9px;color:var(--accent);font-style:italic">on canvas</span>' : '';
+
+      var isRackOverride = ov.typeToggle === 'rack';
+      var isNodeOverride = !ov.typeToggle || ov.typeToggle === 'node';
+      var nodeActive = isNodeOverride ? 'active' : '';
+      var rackActive = isRackOverride ? 'active' : '';
+      var nodeBg = isNodeOverride ? 'var(--accent)' : 'var(--panel)';
+      var nodeColor = isNodeOverride ? 'var(--bg)' : 'var(--text-soft)';
+      var rackBg = isRackOverride ? 'var(--accent)' : 'var(--panel)';
+      var rackColor = isRackOverride ? 'var(--bg)' : 'var(--text-soft)';
+
+      var hasDocker = host.ports && DOCKER_TRIGGER_PORTS.some(function(p) { return host.ports.indexOf(p) !== -1; });
+      var deepScanHtml = hasDocker ? ' ' + buildDeepScanCell(host.ip) : '';
+
+      var tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--edge-main)';
+      if (onCanvas) tr.style.opacity = '0.5';
+      tr.setAttribute('data-ip', host.ip);
+      tr.innerHTML = '<td style="padding:6px 8px"><label class="toggle-switch"><input type="checkbox" data-idx="' + idx + '" class="verse-discovery-check"' + (onCanvas ? '' : ' checked') + '><span class="toggle-slider"></span></label></td>' +
+        '<td style="padding:6px 8px;font-family:monospace;font-size:12px">' + escapeHtml(host.ip) + canvasBadge + '</td>' +
+        '<td style="padding:6px 8px;font-size:12px" title="' + escapeHtml(detailTitle) + '">' + escapeHtml(displayName) + overrideIndicator + ' <span style="display:inline-flex;gap:4px;margin-left:4px;vertical-align:middle"><button class="disc-row-edit-btn" data-ip="' + escapeHtml(host.ip) + '" style="padding:2px 6px;font-size:10px;background:var(--panel);color:var(--text-soft);border:1px solid var(--edge-main);border-radius:4px;cursor:pointer" title="Edit this host">Editor</button>' + deepScanHtml + '</span></td>' +
+        '<td style="padding:6px 8px;font-size:12px"><div style="display:flex;flex-wrap:wrap;gap:0;align-items:center">' + serviceTags + '</div></td>' +
+        '<td style="padding:6px 4px;text-align:center"><span class="disc-icon-cell" data-icon-ip="' + escapeHtml(host.ip) + '" style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px" title="' + escapeHtml(ov.iconData && ov.iconData.name ? ov.iconData.library + '/' + ov.iconData.name : '') + '"></span></td>' +
+        '<td style="padding:6px 8px">' +
+          '<div class="verse-type-toggle" data-idx="' + idx + '" data-ip="' + escapeHtml(host.ip) + '" style="display:inline-flex;border-radius:4px;overflow:hidden;border:1px solid var(--edge-main)">' +
+            '<button data-type="node" class="verse-type-btn ' + nodeActive + '" style="padding:3px 10px;font-size:11px;border:none;cursor:pointer;background:' + nodeBg + ';color:' + nodeColor + '">Node</button>' +
+            '<button data-type="rack" class="verse-type-btn ' + rackActive + '" style="padding:3px 10px;font-size:11px;border:none;cursor:pointer;background:' + rackBg + ';color:' + rackColor + '">Rack</button>' +
+          '</div>' +
+        '</td>' +
+        '<td style="padding:6px 8px;min-width:120px" class="disc-rack-cell" data-ip="' + escapeHtml(host.ip) + '"></td>' +
+        '<td style="padding:6px 8px">' +
+          '<select class="disc-layer-select" data-ip="' + escapeHtml(host.ip) + '" style="width:100%;padding:3px 6px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:11px">' +
+            '<option value="layer1"' + ((ov.layer || 'layer1') === 'layer1' ? ' selected' : '') + '>' + escapeHtml(getLayerName('layer1')) + '</option>' +
+            '<option value="layer2"' + (ov.layer === 'layer2' ? ' selected' : '') + '>' + escapeHtml(getLayerName('layer2')) + '</option>' +
+            '<option value="layer3"' + (ov.layer === 'layer3' ? ' selected' : '') + '>' + escapeHtml(getLayerName('layer3')) + '</option>' +
+            '<option value="layer4"' + (ov.layer === 'layer4' ? ' selected' : '') + '>' + escapeHtml(getLayerName('layer4')) + '</option>' +
+          '</select>' +
+        '</td>';
+      tbody.appendChild(tr);
+    });
+
+    updateRackDropdowns();
+
+    document.querySelectorAll('.disc-icon-cell').forEach(function(el) {
+      var ip = el.getAttribute('data-icon-ip');
+      var ov = discoveryOverrides[ip] || {};
+      if (ov.iconData && ov.iconData.name) {
+        if (ov.iconData.svg) {
+          el.innerHTML = ov.iconData.svg;
+          var svgEl = el.querySelector('svg');
+          if (svgEl) { svgEl.style.width = '20px'; svgEl.style.height = '20px'; }
+        } else {
+          fetchDiscoveryIcon(ov.iconData.library, ov.iconData.name, el);
+        }
+      }
+    });
+
+    document.querySelectorAll('.disc-layer-select').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var ip = sel.getAttribute('data-ip');
+        if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+        discoveryOverrides[ip].layer = sel.value;
+      });
+    });
+
+    document.querySelectorAll('.verse-type-toggle').forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        var btn = e.target.closest('.verse-type-btn');
+        if (!btn) return;
+        var ip = toggle.getAttribute('data-ip');
+        toggle.querySelectorAll('.verse-type-btn').forEach(function(b) {
+          if (b === btn) {
+            b.classList.add('active');
+            b.style.background = 'var(--accent)';
+            b.style.color = 'var(--bg)';
+          } else {
+            b.classList.remove('active');
+            b.style.background = 'var(--panel)';
+            b.style.color = 'var(--text-soft)';
+          }
+        });
+        if (ip) {
+          if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+          var prevType = discoveryOverrides[ip].typeToggle || 'node';
+          discoveryOverrides[ip].typeToggle = btn.dataset.type;
+          if (btn.dataset.type === 'rack') {
+            delete discoveryOverrides[ip].assignedRackRef;
+            delete discoveryOverrides[ip].rackUnit;
+          }
+          if (prevType === 'rack' && btn.dataset.type === 'node') {
+            Object.keys(discoveryOverrides).forEach(function(otherIp) {
+              if (discoveryOverrides[otherIp].assignedRackRef === 'new:' + ip) {
+                delete discoveryOverrides[otherIp].assignedRackRef;
+                delete discoveryOverrides[otherIp].rackUnit;
+              }
+            });
+          }
+          updateRackDropdowns();
+        }
+      });
+    });
+
+    document.querySelectorAll('.disc-row-edit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var ip = btn.getAttribute('data-ip');
+        var editModalEl = document.getElementById('verse-disc-edit-modal');
+        if (editModalEl && _renderEditModal) {
+          _renderEditModal(ip);
+          editModalEl.classList.add('active');
+        }
+      });
+    });
+
+    document.querySelectorAll('.deepscan-start-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var ip = btn.getAttribute('data-ip');
+        var host = null;
+        for (var i = 0; i < discoveryResults.length; i++) {
+          if (discoveryResults[i].ip === ip) { host = discoveryResults[i]; break; }
+        }
+        if (!host) return;
+        btn.disabled = true;
+        btn.textContent = 'Starting...';
+        fetch('/api/discover/deepscan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+          body: JSON.stringify({
+            roomId: ROOM_ID,
+            ip: ip,
+            existingPorts: host.ports || []
+          })
+        }).then(function(resp) {
+          return resp.json().then(function(result) {
+            if (!resp.ok) {
+              btn.textContent = 'Deep Scan';
+              btn.disabled = false;
+              return;
+            }
+            activeDeepScans[ip] = { scanId: result.scanId, percent: 0 };
+            renderDiscoveryResults();
+          });
+        }).catch(function() {
+          btn.textContent = 'Deep Scan';
+          btn.disabled = false;
+        });
+      });
+    });
+
+    document.querySelectorAll('.deepscan-cancel-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var ip = btn.getAttribute('data-ip');
+        var active = activeDeepScans[ip];
+        if (!active) return;
+        fetch('/api/discover/deepscan/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+          body: JSON.stringify({ scanId: active.scanId })
+        }).catch(function() {});
+        delete activeDeepScans[ip];
+        renderDiscoveryResults();
+      });
+    });
+
+    var tableSearch = document.getElementById('verse-disc-table-search');
+    if (tableSearch) {
+      var filterRows = function() {
+        var q = tableSearch.value.toLowerCase().trim();
+        var rows = document.querySelectorAll('#verse-discovery-tbody tr');
+        rows.forEach(function(row) {
+          var ip = (row.getAttribute('data-ip') || '').toLowerCase();
+          var text = row.textContent.toLowerCase();
+          row.style.display = (!q || ip.indexOf(q) !== -1 || text.indexOf(q) !== -1) ? '' : 'none';
+        });
+      };
+      tableSearch.addEventListener('input', filterRows);
+      if (savedSearch) {
+        tableSearch.value = savedSearch;
+        filterRows();
+      }
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function injectDiscoveryUI() {
+    if (!_rc.discoveryAllowed) return;
+
+    var waitForPing = setInterval(function() {
+      var autoPingSection = document.getElementById('auto-ping-settings');
+      var checkAllBtn = document.getElementById('check-all-ping-btn');
+      var target = autoPingSection || checkAllBtn;
+      if (!target) return;
+      clearInterval(waitForPing);
+
+      var btn = document.createElement('button');
+      btn.id = 'verse-discover-btn';
+      btn.style.cssText = 'display:block;width:100%;padding:10px;margin-top:12px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600';
+      btn.textContent = 'Discover Network Hosts';
+      btn.addEventListener('click', function() {
+        var modal = document.getElementById('verse-discovery-modal');
+        if (modal) modal.classList.add('active');
+        var portRef = document.getElementById('verse-disc-port-ref-body');
+        if (portRef && !portRef.dataset.loaded) {
+          fetch('/api/discover/ports').then(function(r) { return r.json(); }).then(function(data) {
+            if (!data.ports) return;
+            portRef.dataset.loaded = '1';
+            var summary = portRef.parentElement.querySelector('summary');
+            if (summary) summary.textContent = 'Default Scan Ports (' + data.ports.length + ')';
+            var html = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+            data.ports.forEach(function(p) {
+              var iconHtml = p.icon ? '<span class="disc-port-ref-icon" data-icon-name="' + escapeHtml(p.icon) + '" style="display:inline-flex;width:14px;height:14px;margin-right:3px;vertical-align:middle"></span>' : '';
+              html += '<span style="display:inline-flex;align-items:center;padding:2px 8px;background:var(--panel);border:1px solid var(--edge-main);border-radius:4px;font-size:11px;color:var(--text-main)">' + iconHtml + '<strong>' + p.port + '</strong>&nbsp;<span style="color:var(--text-soft)">' + escapeHtml(p.service) + '</span></span>';
+            });
+            html += '</div>';
+            portRef.innerHTML = html;
+            portRef.querySelectorAll('.disc-port-ref-icon').forEach(function(el) {
+              fetchDiscoveryIcon('selfhst', el.dataset.iconName, el, 14);
+            });
+          }).catch(function() {});
+        }
+      });
+      var details = target.closest('details') || target.parentNode;
+      details.parentNode.insertBefore(btn, details.nextSibling);
+    }, 200);
+
+    var modal = document.createElement('div');
+    modal.id = 'verse-discovery-modal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000001;justify-content:center;align-items:center';
+    modal.innerHTML =
+      '<div style="background:var(--panel);border-radius:12px;width:80%;max-height:85vh;display:flex;flex-direction:column;border:1px solid var(--edge-main);overflow:hidden">' +
+        '<div style="padding:16px 20px;border-bottom:1px solid var(--edge-main);display:flex;justify-content:space-between;align-items:center">' +
+          '<h3 style="margin:0;font-size:16px;color:var(--text-main)">Network Discovery</h3>' +
+          '<button id="verse-discovery-close" style="background:none;border:none;color:var(--text-soft);font-size:20px;cursor:pointer;padding:0 4px">\u2715</button>' +
+        '</div>' +
+        '<div style="padding:20px;overflow-y:auto;flex:1">' +
+          '<div style="margin-bottom:12px">' +
+            '<label style="display:block;margin-bottom:4px;font-size:13px;color:var(--text-soft)">Subnet</label>' +
+            '<div style="display:flex;gap:8px;align-items:center">' +
+              '<select id="verse-disc-preset" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main)">' +
+                '<option value="192.168.1.0/24">192.168.1.0/24 Home Network (.1 Gateway)</option>' +
+                '<option value="192.168.0.0/24">192.168.0.0/24 Home Network (.0 Gateway)</option>' +
+                '<option value="10.0.0.0/24">10.0.0.0/24 Small Office / VPN</option>' +
+                '<option value="10.0.1.0/24">10.0.1.0/24 Enterprise VLAN 1</option>' +
+                '<option value="10.0.2.0/24">10.0.2.0/24 Enterprise VLAN 2</option>' +
+                '<option value="172.16.0.0/24">172.16.0.0/24 Enterprise Private</option>' +
+                '<option value="172.16.1.0/24">172.16.1.0/24 Enterprise Private 2</option>' +
+                '<option value="custom">Custom...</option>' +
+              '</select>' +
+              '<button id="verse-disc-add-range" style="padding:8px 12px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600;white-space:nowrap">+ Add Range</button>' +
+            '</div>' +
+          '</div>' +
+          '<div id="verse-disc-custom-row" style="display:none;margin-bottom:12px">' +
+            '<input type="text" id="verse-disc-custom-cidr" placeholder="e.g. 10.10.0.0/24" style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main)">' +
+          '</div>' +
+          '<div id="verse-disc-ranges" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>' +
+          '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;align-items:center">' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-icmp" checked><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">ICMP</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-tcp" checked><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">TCP Ports</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-dns" checked><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">DNS</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-netbios" checked><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">NetBIOS</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-mdns" checked><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">mDNS</span></div>' +
+            '<div style="display:flex;align-items:center;gap:6px"><label class="toggle-switch"><input type="checkbox" id="verse-disc-snmp"><span class="toggle-slider"></span></label><span style="font-size:13px;color:var(--text-soft)">SNMP</span></div>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">' +
+            '<div style="flex:1;min-width:200px">' +
+              '<label style="display:block;margin-bottom:4px;font-size:12px;color:var(--text-soft)">TCP Ports</label>' +
+              '<input type="text" id="verse-disc-ports" placeholder="Leave empty for all 50+ ports or enter custom" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main);font-size:12px">' +
+            '</div>' +
+            '<div id="verse-disc-snmp-row" style="display:none;min-width:140px">' +
+              '<label style="display:block;margin-bottom:4px;font-size:12px;color:var(--text-soft)">SNMP Community</label>' +
+              '<input type="text" id="verse-disc-snmp-community" value="public" style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main);font-size:12px">' +
+            '</div>' +
+          '</div>' +
+          '<details id="verse-disc-port-ref" style="margin-bottom:12px">' +
+            '<summary style="cursor:pointer;font-size:12px;color:var(--text-soft);user-select:none;padding:4px 0">Default Scan Ports (loading...)</summary>' +
+            '<div id="verse-disc-port-ref-body" style="max-height:200px;overflow-y:auto;margin-top:6px;padding:8px;background:var(--panel-alt);border-radius:6px;border:1px solid var(--edge-main)">' +
+            '</div>' +
+          '</details>' +
+          '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+            '<button id="verse-discovery-start" style="padding:8px 20px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600">Start Scan</button>' +
+            '<button id="verse-discovery-cancel" style="display:none;padding:8px 20px;background:var(--danger);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Cancel</button>' +
+          '</div>' +
+          '<div style="margin-bottom:12px;padding:8px 12px;background:var(--panel-alt);border-radius:6px;border:1px solid var(--edge-main)">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+              '<span id="verse-discovery-progress-text" style="font-size:12px;color:var(--text-soft)">Ready</span>' +
+              '<span id="verse-discovery-count" style="font-size:12px;color:var(--text-soft)"></span>' +
+            '</div>' +
+            '<div style="width:100%;height:6px;background:var(--edge-main);border-radius:3px;overflow:hidden">' +
+              '<div id="verse-discovery-progress-fill" style="width:0%;height:100%;background:var(--accent);border-radius:3px;transition:width 0.3s"></div>' +
+            '</div>' +
+          '</div>' +
+          '<input type="text" id="verse-disc-table-search" placeholder="Search by IP or name..." style="width:100%;padding:6px 10px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main);font-size:12px;margin-bottom:8px;box-sizing:border-box">' +
+          '<div style="overflow-x:auto">' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px">' +
+              '<thead><tr style="border-bottom:2px solid var(--edge-main)">' +
+                '<th style="padding:8px;text-align:left;width:50px"><label class="toggle-switch"><input type="checkbox" id="verse-discovery-select-all" checked><span class="toggle-slider"></span></label></th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">IP</th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">Hostname <button id="verse-disc-edit-btn" title="Edit host details before adding" style="padding:2px 6px;font-size:10px;background:var(--panel);color:var(--accent);border:1px solid var(--accent);border-radius:4px;cursor:pointer;vertical-align:middle;display:none">Edit All</button></th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">Services</th>' +
+                '<th style="padding:8px;text-align:center;color:var(--text-soft)">Icon</th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">Type</th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">Rack</th>' +
+                '<th style="padding:8px;text-align:left;color:var(--text-soft)">Layer</th>' +
+              '</tr></thead>' +
+              '<tbody id="verse-discovery-tbody"></tbody>' +
+            '</table>' +
+          '</div>' +
+        '</div>' +
+        '<div style="padding:12px 20px;border-top:1px solid var(--edge-main);display:flex;justify-content:flex-end">' +
+          '<button id="verse-discovery-add" style="padding:8px 20px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600">Add Selected to Canvas</button>' +
+        '</div>' +
+      '</div>';
+
+    document.body.appendChild(modal);
+
+    var editModal = document.createElement('div');
+    editModal.id = 'verse-disc-edit-modal';
+    editModal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:10000002;justify-content:center;align-items:center';
+    editModal.innerHTML =
+      '<div style="background:var(--panel);border-radius:12px;width:80%;max-height:85vh;display:flex;flex-direction:column;border:1px solid var(--edge-main);overflow:hidden">' +
+        '<div style="padding:16px 20px;border-bottom:1px solid var(--edge-main);display:flex;align-items:center;gap:12px">' +
+          '<h3 style="margin:0;font-size:16px;color:var(--text-main);white-space:nowrap">Edit Host Details</h3>' +
+          '<input type="text" id="verse-disc-edit-search" placeholder="Search by IP or name..." style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main);font-size:12px">' +
+          '<button id="verse-disc-edit-close" style="background:none;border:none;color:var(--text-soft);font-size:20px;cursor:pointer;padding:0 4px">\u2715</button>' +
+        '</div>' +
+        '<div id="verse-disc-edit-body" style="padding:20px;overflow-y:auto;flex:1"></div>' +
+        '<div style="padding:12px 20px;border-top:1px solid var(--edge-main);display:flex;justify-content:flex-end">' +
+          '<button id="verse-disc-edit-done" style="padding:8px 20px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;cursor:pointer;font-weight:600">Done</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(editModal);
+    _renderEditModal = renderEditModal;
+
+    function buildShapeOptions(category, selectedShape) {
+      var shapes = DISC_SHAPES[category] || DISC_SHAPES.basic;
+      return shapes.map(function(s) {
+        return '<option value="' + s + '"' + (s === selectedShape ? ' selected' : '') + '>' + s + '</option>';
+      }).join('');
+    }
+
+    function buildCategoryOptions(selected) {
+      var cats = Object.keys(DISC_SHAPES);
+      return cats.map(function(c) {
+        return '<option value="' + c + '"' + (c === selected ? ' selected' : '') + '>' + c + '</option>';
+      }).join('');
+    }
+
+    function renderIconTagBadges(container, ip) {
+      container.innerHTML = '';
+      var tags = (discoveryOverrides[ip] && discoveryOverrides[ip].iconTags) || [];
+      tags.forEach(function(tag, ti) {
+        var badge = document.createElement('span');
+        badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--panel);border:1px solid var(--edge-main);border-radius:12px;font-size:11px;color:var(--text-main)';
+        var svgSpan = '';
+        if (tag.svg) svgSpan = '<span style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center">' + tag.svg + '</span>';
+        badge.innerHTML = svgSpan + '<span>' + escapeHtml(tag.name) + '</span>';
+        var removeBtn = document.createElement('button');
+        removeBtn.style.cssText = 'background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;padding:0 2px;line-height:1';
+        removeBtn.textContent = '\u2715';
+        removeBtn.addEventListener('click', function() {
+          if (discoveryOverrides[ip] && discoveryOverrides[ip].iconTags) {
+            discoveryOverrides[ip].iconTags.splice(ti, 1);
+            renderIconTagBadges(container, ip);
+          }
+        });
+        badge.appendChild(removeBtn);
+        container.appendChild(badge);
+      });
+    }
+
+    function renderEditModal(scrollToIp) {
+      var body = document.getElementById('verse-disc-edit-body');
+      if (!body) return;
+      body.innerHTML = '';
+      var searchInput = document.getElementById('verse-disc-edit-search');
+      if (searchInput) searchInput.value = '';
+
+      var nd = getGlobal('NODE_DATA') || {};
+      var canvasIPs = {};
+      Object.keys(nd).forEach(function(nid) {
+        if (nd[nid] && nd[nid].ip) canvasIPs[nd[nid].ip] = true;
+      });
+
+      var hasCards = false;
+
+      discoveryResults.forEach(function(host, idx) {
+        if (!host) return;
+
+        hasCards = true;
+        var ov = discoveryOverrides[host.ip] || {};
+        var displayName = ov.name || host.hostname || host.ip;
+        var ipVal = ov.ip || host.ip;
+        var tagsVal = ov.tags || '';
+        var cat = ov.category || 'network';
+        var shp = ov.shape || 'circle';
+        var pingEnabled = ov.pingEnabled !== undefined ? ov.pingEnabled : true;
+        var probeType = ov.probeType || 'auto';
+        var tcpPorts = ov.tcpPorts || (host.ports && host.ports.length > 0 ? host.ports.join(', ') : '22, 80, 443');
+        var pingTimeout = ov.pingTimeout || 3000;
+        var rackCap = ov.rackCapacity || '42';
+        var iconPreview = '';
+        if (ov.iconData && ov.iconData.svg) {
+          iconPreview = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + ov.iconData.svg + '</span>' +
+            '<span style="font-size:11px;color:var(--accent)">' + escapeHtml(ov.iconData.library + '/' + ov.iconData.name) + '</span>';
+        } else if (ov.iconData && ov.iconData.name) {
+          iconPreview = '<span class="disc-edit-icon-fetch" data-lib="' + escapeHtml(ov.iconData.library) + '" data-name="' + escapeHtml(ov.iconData.name) + '" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center"></span>' +
+            '<span style="font-size:11px;color:var(--accent)">' + escapeHtml(ov.iconData.library + '/' + ov.iconData.name) + '</span>';
+        }
+
+        var toggle = document.querySelector('.verse-type-toggle[data-ip="' + host.ip + '"]');
+        var activeBtn = toggle ? toggle.querySelector('.verse-type-btn.active') : null;
+        var isRack = (ov.typeToggle === 'rack') || (activeBtn && activeBtn.dataset.type === 'rack');
+        var rackDisplay = isRack ? 'flex' : 'none';
+        var tcpDisplay = (probeType === 'tcp' || probeType === 'multi') ? 'block' : 'none';
+
+        var onCanvas = canvasIPs[host.ip];
+        var canvasTag = onCanvas ? ' <span style="font-size:10px;font-weight:400;color:var(--accent);font-style:italic;margin-left:6px">on canvas</span>' : '';
+
+        var card = document.createElement('div');
+        card.style.cssText = 'margin-bottom:16px;padding:14px;border:1px solid var(--edge-main);border-radius:8px;background:var(--panel-alt);transition:border-color 0.3s' + (onCanvas ? ';opacity:0.6' : '');
+        card.setAttribute('data-edit-ip', host.ip);
+        card.innerHTML =
+          '<div style="margin-bottom:10px;font-weight:600;font-size:13px;color:var(--text-main);font-family:monospace">' + escapeHtml(host.ip) + canvasTag + '</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Name</label>' +
+              '<input type="text" class="disc-edit-name" value="' + escapeHtml(displayName) + '" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+            '</div>' +
+            '<div>' +
+              '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">IP</label>' +
+              '<input type="text" class="disc-edit-ip" value="' + escapeHtml(ipVal) + '" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+            '</div>' +
+            '<div style="grid-column:1/-1">' +
+              '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Tags (comma separated)</label>' +
+              '<input type="text" class="disc-edit-tags" value="' + escapeHtml(tagsVal) + '" placeholder="e.g. Production, Core, VLAN10" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+            '</div>' +
+            '<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+              '<button class="disc-edit-icon-tag-btn" style="padding:4px 10px;background:var(--panel);color:var(--text-main);border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;font-size:11px">Add Web Icon Tag</button>' +
+              '<div class="disc-edit-icon-tags-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>' +
+            '</div>' +
+            '<div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 56px;gap:8px;align-items:end">' +
+              '<div>' +
+                '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Category</label>' +
+                '<select class="disc-edit-category" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' + buildCategoryOptions(cat) + '</select>' +
+              '</div>' +
+              '<div>' +
+                '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Shape</label>' +
+                '<select class="disc-edit-shape" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' + buildShapeOptions(cat, shp) + '</select>' +
+              '</div>' +
+              '<div class="disc-edit-shape-preview" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--edge-main);border-radius:6px;background:var(--panel)"' + (ov.iconData && ov.iconData.name && !ov.iconData.svg ? ' data-fetch-lib="' + escapeHtml(ov.iconData.library) + '" data-fetch-name="' + escapeHtml(ov.iconData.name) + '"' : '') + '>' +
+                (ov.iconData && ov.iconData.svg ? '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + ov.iconData.svg + '</span>' : getShapePreviewSVG(shp || 'circle')) +
+              '</div>' +
+            '</div>' +
+            '<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px">' +
+              '<button class="disc-edit-icon-btn" style="padding:6px 12px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600">Or Search Web Icons</button>' +
+              '<span class="disc-edit-icon-preview" style="display:inline-flex;align-items:center;gap:6px">' + iconPreview + '</span>' +
+            '</div>' +
+            '<div class="disc-edit-rack-section" style="grid-column:1/-1;display:' + rackDisplay + ';align-items:center;gap:8px;padding:8px;border:1px solid var(--edge-main);border-radius:4px;background:var(--panel)">' +
+              '<label style="font-size:11px;color:var(--text-soft);white-space:nowrap">Rack Capacity</label>' +
+              '<select class="disc-edit-rack-cap" style="flex:1;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel-alt);color:var(--text-main);font-size:12px">' +
+                '<option value="6"' + (rackCap === '6' ? ' selected' : '') + '>6U Mini Rack</option>' +
+                '<option value="12"' + (rackCap === '12' ? ' selected' : '') + '>12U Small Wall Mount</option>' +
+                '<option value="24"' + (rackCap === '24' ? ' selected' : '') + '>24U Half Rack</option>' +
+                '<option value="42"' + (rackCap === '42' ? ' selected' : '') + '>42U Standard Full Rack</option>' +
+                '<option value="48"' + (rackCap === '48' ? ' selected' : '') + '>48U Large Rack</option>' +
+              '</select>' +
+            '</div>' +
+            '<div style="grid-column:1/-1;border-top:1px solid var(--edge-main);padding-top:8px;margin-top:4px">' +
+              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+                '<span style="font-size:11px;color:var(--text-soft)">Probe Enabled</span>' +
+                '<label class="toggle-switch"><input type="checkbox" class="disc-edit-ping-enabled"' + (pingEnabled ? ' checked' : '') + '><span class="toggle-slider"></span></label>' +
+              '</div>' +
+              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+                '<div style="flex:1;min-width:140px">' +
+                  '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Probe Type</label>' +
+                  '<select class="disc-edit-probe-type" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+                    '<option value="auto"' + (probeType === 'auto' ? ' selected' : '') + '>Auto (ICMP + HTTP)</option>' +
+                    '<option value="icmp"' + (probeType === 'icmp' ? ' selected' : '') + '>ICMP Ping Only</option>' +
+                    '<option value="tcp"' + (probeType === 'tcp' ? ' selected' : '') + '>TCP Port Check</option>' +
+                    '<option value="http"' + (probeType === 'http' ? ' selected' : '') + '>HTTP/HTTPS Only</option>' +
+                    '<option value="multi"' + (probeType === 'multi' ? ' selected' : '') + '>Multi Probe</option>' +
+                  '</select>' +
+                '</div>' +
+                '<div style="min-width:80px">' +
+                  '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Timeout (ms)</label>' +
+                  '<input type="number" class="disc-edit-ping-timeout" value="' + pingTimeout + '" min="1000" max="10000" step="500" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+                '</div>' +
+              '</div>' +
+              '<div class="disc-edit-tcp-row" style="display:' + tcpDisplay + ';margin-top:6px">' +
+                '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">TCP Ports</label>' +
+                '<input type="text" class="disc-edit-tcp-ports" value="' + escapeHtml(tcpPorts) + '" placeholder="22, 80, 443, 3389" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+        body.appendChild(card);
+
+        var iconTagsList = card.querySelector('.disc-edit-icon-tags-list');
+        if (iconTagsList) renderIconTagBadges(iconTagsList, host.ip);
+      });
+
+      if (!hasCards) {
+        body.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-soft)">No editable hosts selected. Select hosts in the discovery table first, or all selected hosts are already on canvas.</div>';
+      }
+
+      body.querySelectorAll('.disc-edit-category').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          var card = sel.closest('[data-edit-ip]');
+          var ip = card.getAttribute('data-edit-ip');
+          var shapeSel = card.querySelector('.disc-edit-shape');
+          shapeSel.innerHTML = buildShapeOptions(sel.value, '');
+          var preview = card.querySelector('.disc-edit-shape-preview');
+          if (preview) preview.innerHTML = getShapePreviewSVG(shapeSel.value);
+          if (discoveryOverrides[ip]) delete discoveryOverrides[ip].iconData;
+          var iconPreviewEl = card.querySelector('.disc-edit-icon-preview');
+          if (iconPreviewEl) iconPreviewEl.innerHTML = '';
+          saveCardOverride(card, ip);
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-shape').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          var card = sel.closest('[data-edit-ip]');
+          var ip = card.getAttribute('data-edit-ip');
+          var preview = card.querySelector('.disc-edit-shape-preview');
+          if (preview) preview.innerHTML = getShapePreviewSVG(sel.value);
+          if (discoveryOverrides[ip]) delete discoveryOverrides[ip].iconData;
+          var iconPreviewEl = card.querySelector('.disc-edit-icon-preview');
+          if (iconPreviewEl) iconPreviewEl.innerHTML = '';
+          saveCardOverride(card, ip);
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-probe-type').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          var card = sel.closest('[data-edit-ip]');
+          var tcpRow = card.querySelector('.disc-edit-tcp-row');
+          if (tcpRow) tcpRow.style.display = (sel.value === 'tcp' || sel.value === 'multi') ? 'block' : 'none';
+          var ip = card.getAttribute('data-edit-ip');
+          saveCardOverride(card, ip);
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-icon-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var card = btn.closest('[data-edit-ip]');
+          var ip = card.getAttribute('data-edit-ip');
+          if (typeof window.openIconPicker === 'function') {
+            window.openIconPicker(function(iconData) {
+              if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+              discoveryOverrides[ip].iconData = iconData;
+              var preview = card.querySelector('.disc-edit-icon-preview');
+              if (preview && iconData && iconData.name) {
+                if (iconData.svg) {
+                  preview.innerHTML = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + iconData.svg + '</span>' +
+                    '<span style="font-size:11px;color:var(--accent)">' + escapeHtml(iconData.library + '/' + iconData.name) + '</span>';
+                } else {
+                  var fetchSpan = document.createElement('span');
+                  fetchSpan.style.cssText = 'width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center';
+                  preview.innerHTML = '';
+                  preview.appendChild(fetchSpan);
+                  fetchDiscoveryIcon(iconData.library, iconData.name, fetchSpan, 24);
+                  var label = document.createElement('span');
+                  label.style.cssText = 'font-size:11px;color:var(--accent)';
+                  label.textContent = iconData.library + '/' + iconData.name;
+                  preview.appendChild(label);
+                }
+              }
+              var shapePreview = card.querySelector('.disc-edit-shape-preview');
+              if (shapePreview && iconData && iconData.name) {
+                if (iconData.svg) {
+                  shapePreview.innerHTML = '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + iconData.svg + '</span>';
+                } else {
+                  fetchDiscoveryIcon(iconData.library, iconData.name, shapePreview, 36);
+                }
+              }
+            });
+          }
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-icon-tag-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var card = btn.closest('[data-edit-ip]');
+          var ip = card.getAttribute('data-edit-ip');
+          if (typeof window.openIconPicker === 'function') {
+            window.openIconPicker(function(iconData) {
+              if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+              if (!discoveryOverrides[ip].iconTags) discoveryOverrides[ip].iconTags = [];
+              discoveryOverrides[ip].iconTags.push({ type: 'icon', library: iconData.library, name: iconData.name, svg: iconData.svg || '' });
+              var list = card.querySelector('.disc-edit-icon-tags-list');
+              if (list) renderIconTagBadges(list, ip);
+            });
+          }
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-shape-preview[data-fetch-name]').forEach(function(el) {
+        fetchDiscoveryIcon(el.getAttribute('data-fetch-lib'), el.getAttribute('data-fetch-name'), el, 36);
+      });
+
+      body.querySelectorAll('.disc-edit-icon-fetch').forEach(function(el) {
+        fetchDiscoveryIcon(el.getAttribute('data-lib'), el.getAttribute('data-name'), el, 24);
+      });
+
+      body.querySelectorAll('input, select').forEach(function(el) {
+        el.addEventListener('change', function() {
+          var card = el.closest('[data-edit-ip]');
+          if (!card) return;
+          var ip = card.getAttribute('data-edit-ip');
+          saveCardOverride(card, ip);
+        });
+      });
+
+      if (scrollToIp) {
+        var target = body.querySelector('[data-edit-ip="' + scrollToIp + '"]');
+        if (target) {
+          setTimeout(function() {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.style.borderColor = 'var(--accent)';
+            setTimeout(function() { target.style.borderColor = ''; }, 2000);
+          }, 100);
+        }
+      }
+    }
+
+    function saveCardOverride(card, ip) {
+      if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+      var ov = discoveryOverrides[ip];
+      var nameEl = card.querySelector('.disc-edit-name');
+      var ipEl = card.querySelector('.disc-edit-ip');
+      var tagsEl = card.querySelector('.disc-edit-tags');
+      var catEl = card.querySelector('.disc-edit-category');
+      var shapeEl = card.querySelector('.disc-edit-shape');
+      var rackCapEl = card.querySelector('.disc-edit-rack-cap');
+      var pingEnabledEl = card.querySelector('.disc-edit-ping-enabled');
+      var probeTypeEl = card.querySelector('.disc-edit-probe-type');
+      var tcpPortsEl = card.querySelector('.disc-edit-tcp-ports');
+      var pingTimeoutEl = card.querySelector('.disc-edit-ping-timeout');
+      delete ov._seeded;
+      if (nameEl) ov.name = nameEl.value;
+      if (ipEl) ov.ip = ipEl.value;
+      if (tagsEl) ov.tags = tagsEl.value;
+      if (catEl) ov.category = catEl.value;
+      if (shapeEl) ov.shape = shapeEl.value;
+      if (rackCapEl) ov.rackCapacity = rackCapEl.value;
+      if (pingEnabledEl) ov.pingEnabled = pingEnabledEl.checked;
+      if (probeTypeEl) ov.probeType = probeTypeEl.value;
+      if (tcpPortsEl) ov.tcpPorts = tcpPortsEl.value;
+      if (pingTimeoutEl) ov.pingTimeout = parseInt(pingTimeoutEl.value, 10) || 3000;
+    }
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+
+    document.getElementById('verse-discovery-close').addEventListener('click', function() {
+      modal.classList.remove('active');
+    });
+
+    editModal.addEventListener('click', function(e) {
+      if (e.target === editModal) {
+        editModal.classList.remove('active');
+        renderDiscoveryResults();
+      }
+    });
+
+    document.getElementById('verse-disc-edit-close').addEventListener('click', function() {
+      editModal.classList.remove('active');
+      renderDiscoveryResults();
+    });
+
+    document.getElementById('verse-disc-edit-done').addEventListener('click', function() {
+      editModal.classList.remove('active');
+      renderDiscoveryResults();
+    });
+
+    document.getElementById('verse-disc-edit-btn').addEventListener('click', function() {
+      renderEditModal();
+      editModal.classList.add('active');
+    });
+
+    document.getElementById('verse-disc-edit-search').addEventListener('input', function() {
+      var q = this.value.toLowerCase().trim();
+      var body = document.getElementById('verse-disc-edit-body');
+      if (!body) return;
+      var cards = body.querySelectorAll('[data-edit-ip]');
+      var visibleCount = 0;
+      var lastVisible = null;
+      cards.forEach(function(card) {
+        var ip = card.getAttribute('data-edit-ip').toLowerCase();
+        var nameInput = card.querySelector('.disc-edit-name');
+        var name = nameInput ? nameInput.value.toLowerCase() : '';
+        if (!q || ip.indexOf(q) !== -1 || name.indexOf(q) !== -1) {
+          card.style.display = '';
+          visibleCount++;
+          lastVisible = card;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      if (visibleCount === 1 && lastVisible) {
+        lastVisible.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
+    document.getElementById('verse-disc-preset').addEventListener('change', function() {
+      document.getElementById('verse-disc-custom-row').style.display = this.value === 'custom' ? 'block' : 'none';
+    });
+
+    document.getElementById('verse-disc-snmp').addEventListener('change', function() {
+      document.getElementById('verse-disc-snmp-row').style.display = this.checked ? 'block' : 'none';
+    });
+
+    document.getElementById('verse-disc-add-range').addEventListener('click', function() {
+      var cidr = getCurrentCIDR();
+      if (cidr && discoveryRanges.indexOf(cidr) === -1) {
+        discoveryRanges.push(cidr);
+        renderRangePills();
+      }
+    });
+
+    document.getElementById('verse-discovery-select-all').addEventListener('change', function(e) {
+      var checks = document.querySelectorAll('.verse-discovery-check');
+      checks.forEach(function(cb) { cb.checked = e.target.checked; });
+    });
+
+    document.getElementById('verse-discovery-start').addEventListener('click', async function() {
+      var cidrs = discoveryRanges.length > 0 ? discoveryRanges.slice() : getDiscoveryCIDRs();
+      if (cidrs.length === 0) return;
+
+      if (discoveryTaskId) {
+        try {
+          await fetch('/api/discover/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+            body: JSON.stringify({ taskId: discoveryTaskId })
+          });
+        } catch(e) {}
+        discoveryTaskId = null;
+      }
+
+      discoveryResults = [];
+      discoveryScanning = true;
+      renderDiscoveryResults();
+      updateDiscoveryProgress(0, 0, 0);
+
+      var btn = document.getElementById('verse-discovery-start');
+      var cancelBtn = document.getElementById('verse-discovery-cancel');
+      btn.textContent = 'Scanning...';
+      btn.disabled = true;
+      cancelBtn.style.display = 'inline-block';
+
+      var ports = parsePorts(document.getElementById('verse-disc-ports').value);
+
+      try {
+        var resp = await fetch('/api/discover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+          body: JSON.stringify({
+            cidrs: cidrs,
+            roomId: ROOM_ID,
+            options: {
+              icmp: document.getElementById('verse-disc-icmp').checked,
+              tcp: document.getElementById('verse-disc-tcp').checked,
+              dns: document.getElementById('verse-disc-dns').checked,
+              netbios: document.getElementById('verse-disc-netbios').checked,
+              mdns: document.getElementById('verse-disc-mdns').checked,
+              snmp: document.getElementById('verse-disc-snmp').checked,
+              snmpCommunity: document.getElementById('verse-disc-snmp-community').value || 'public',
+              ports: ports
+            }
+          })
+        });
+        var result = await resp.json();
+        if (!resp.ok) {
+          btn.textContent = 'Start Scan';
+          btn.disabled = false;
+          cancelBtn.style.display = 'none';
+          discoveryScanning = false;
+          var progressText = document.getElementById('verse-discovery-progress-text');
+          if (progressText) progressText.textContent = 'Error: ' + (result.error || 'Scan failed');
+          return;
+        }
+        discoveryTaskId = result.taskId;
+      } catch(e) {
+        btn.textContent = 'Start Scan';
+        btn.disabled = false;
+        cancelBtn.style.display = 'none';
+        discoveryScanning = false;
+      }
+    });
+
+    document.getElementById('verse-discovery-cancel').addEventListener('click', async function() {
+      if (!discoveryTaskId) return;
+      try {
+        await fetch('/api/discover/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
+          body: JSON.stringify({ taskId: discoveryTaskId })
+        });
+      } catch(e) {}
+      finalizeDiscovery(discoveryResults.length);
+    });
+
+    document.getElementById('verse-discovery-add').addEventListener('click', function() {
+      var checks = document.querySelectorAll('.verse-discovery-check:checked');
+      if (checks.length === 0) return;
+
+      var nd = getGlobal('NODE_DATA');
+      var positions = getGlobal('savedPositions');
+      var sizes = getGlobal('savedSizes');
+      var styles = getGlobal('savedStyles');
+      var pushUndo = window.__collabGetVar('pushUndo');
+      if (pushUndo) pushUndo('add discovered nodes');
+
+      var existingIPs = {};
+      Object.keys(nd).forEach(function(nid) {
+        if (nd[nid] && nd[nid].ip) existingIPs[nd[nid].ip] = true;
+      });
+
+      var cols = Math.ceil(Math.sqrt(checks.length));
+      var spacing = 120;
+      var cs = getGlobal('canvasState') || { panX: 0, panY: 0, zoom: 1 };
+      var startX = (-cs.panX / cs.zoom) + 200;
+      var startY = (-cs.panY / cs.zoom) + 200;
+      var added = 0;
+
+      var entries = [];
+      checks.forEach(function(cb) {
+        var idx = parseInt(cb.dataset.idx, 10);
+        var host = discoveryResults[idx];
+        if (!host || existingIPs[host.ip]) return;
+        var ov = discoveryOverrides[host.ip] || {};
+        var toggle = document.querySelector('.verse-type-toggle[data-idx="' + idx + '"]');
+        var activeBtn = toggle ? toggle.querySelector('.verse-type-btn.active') : null;
+        var isRack = (ov.typeToggle === 'rack') || (activeBtn && activeBtn.dataset.type === 'rack');
+        entries.push({ host: host, ov: ov, isRack: isRack, idx: idx });
+      });
+
+      entries.sort(function(a, b) {
+        return (b.isRack ? 1 : 0) - (a.isRack ? 1 : 0);
+      });
+
+      var newRackIpToNodeId = {};
+
+      entries.forEach(function(entry) {
+        var host = entry.host;
+        var ov = entry.ov;
+        var isRack = entry.isRack;
+
+        var nodeName = ov.name || host.hostname || host.ip;
+        var nodeIp = ov.ip || host.ip;
+        var nodeShape = ov.shape || (isRack ? 'server' : 'circle');
+        var nodeTags = [];
+        if (ov.tags) {
+          nodeTags = ov.tags.split(',').map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+        }
+        if (ov.iconTags && ov.iconTags.length > 0) {
+          ov.iconTags.forEach(function(it) {
+            nodeTags.push({ type: 'icon', library: it.library, name: it.name });
+          });
+        }
+        var pingEnabled = ov.pingEnabled !== undefined ? ov.pingEnabled : true;
+        var pingTimeout = ov.pingTimeout || 3000;
+
+        var probeType = ov.probeType || 'auto';
+        var tcpPortsStr = ov.tcpPorts || (host.ports && host.ports.length > 0 ? host.ports.join(', ') : '');
+        var tcpPortsList = tcpPortsStr ? tcpPortsStr.split(',').map(function(s) { return parseInt(s.trim(), 10); }).filter(function(p) { return p >= 1 && p <= 65535; }) : [];
+        var probeTypes;
+        if (probeType === 'icmp') {
+          probeTypes = [{ type: 'icmp' }];
+        } else if (probeType === 'tcp') {
+          probeTypes = [{ type: 'icmp' }];
+          tcpPortsList.forEach(function(p) { probeTypes.push({ type: 'tcp', port: p }); });
+        } else if (probeType === 'http') {
+          probeTypes = [{ type: 'http' }];
+        } else if (probeType === 'multi') {
+          probeTypes = [{ type: 'icmp' }, { type: 'http' }];
+          tcpPortsList.forEach(function(p) { probeTypes.push({ type: 'tcp', port: p }); });
+          probeTypes.push({ type: 'dns' });
+        } else {
+          probeTypes = [{ type: 'icmp' }, { type: 'http' }];
+        }
+
+        var nodeId = generateUUID();
+        var col = added % cols;
+        var row = Math.floor(added / cols);
+
+        var resolvedRack = '';
+        var resolvedUnit = '';
+        var resolvedUHeight = '1';
+        if (!isRack && ov.assignedRackRef) {
+          var parts = ov.assignedRackRef.split(':');
+          var refType = parts[0];
+          var refId = parts.slice(1).join(':');
+          if (refType === 'canvas' && nd[refId]) {
+            resolvedRack = refId;
+          } else if (refType === 'new' && newRackIpToNodeId[refId]) {
+            resolvedRack = newRackIpToNodeId[refId];
+          }
+          if (resolvedRack) {
+            resolvedUnit = ov.rackUnit || '';
+            resolvedUHeight = ov.uHeight || '1';
+          }
+        }
+
+        nd[nodeId] = {
+          shape: nodeShape,
+          name: nodeName,
+          ip: nodeIp,
+          role: isRack ? 'Rack' : '',
+          tags: nodeTags,
+          notes: [],
+          mac: '',
+          rackUnit: resolvedUnit,
+          uHeight: resolvedUHeight,
+          layer: ov.layer || 'layer1',
+          assignedRack: resolvedRack,
+          hostedOn: '',
+          locked: false,
+          groupId: null,
+          ping: {
+            enabled: pingEnabled,
+            protocol: 'http',
+            customUrl: '',
+            timeout: pingTimeout,
+            status: 'unknown',
+            lastCheck: null,
+            probeTypes: probeTypes,
+            detectedServices: host.services || {},
+            dnsHostname: host.dnsName || '',
+            netbiosName: host.netbiosName || '',
+            mdnsName: host.mdnsName || '',
+            httpServer: host.httpServer || '',
+            snmpName: host.snmpName || ''
+          }
+        };
+
+        if (isRack) {
+          nd[nodeId].isRack = true;
+          nd[nodeId].rackCapacity = ov.rackCapacity || '42';
+          newRackIpToNodeId[host.ip] = nodeId;
+        }
+
+        positions[nodeId] = { x: startX + col * spacing, y: startY + row * spacing };
+        sizes[nodeId] = 50;
+        if (!styles[nodeId]) styles[nodeId] = {};
+        if (!styles[nodeId]['all']) styles[nodeId]['all'] = {};
+        if (ov.iconData && ov.iconData.name) {
+          styles[nodeId]['all'].icon = { library: ov.iconData.library, name: ov.iconData.name };
+        }
+
+        added++;
+        existingIPs[host.ip] = true;
+        delete discoveryOverrides[host.ip];
+      });
+
+      setGlobal('NODE_DATA', nd);
+      setGlobal('savedPositions', positions);
+      setGlobal('savedSizes', sizes);
+      setGlobal('savedStyles', styles);
+      var forge = window.__collabGetVar('forgeTheTopology');
+      if (forge) forge();
+
+      renderDiscoveryResults();
+      sendFullState();
+    });
+
+    var style = document.createElement('style');
+    style.textContent = '#verse-discovery-modal{display:none}#verse-discovery-modal.active{display:flex}#verse-disc-edit-modal{display:none}#verse-disc-edit-modal.active{display:flex}';
+    document.head.appendChild(style);
+  }
+
   function startCollab() {
     setupAuditLogInjection();
     injectCollabBar();
     hookSaveFunction();
+    overridePingFunctions();
+    injectProbeUI();
+    injectDiscoveryUI();
     connect();
     startStatePolling();
     setTimeout(trackSelection, 1000);

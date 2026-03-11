@@ -1,5 +1,52 @@
 ### TheOneFile_Verse changelog
 
+**3/11/26 Theonefile_verse 1.8.5** : **Real ping, mutli network host discovery with selfh.st/icons matching and various other tidbits**
+
+* **Real PING**
+  * Overrides built in TheOneFileNetworkening "HTTP PING" with real server side methods
+  * New probe types: ICMP ping, TCP port check, HTTP/HTTPS, DNS and Multi Probe (all combined)
+  * Custom user ports
+  
+* **Network Discovery**
+  * Added "Discover Network Hosts" button to settings panel under Auto Status Checking section (at the bottom)
+  * Full subnet discovery with CIDR range input and preset common ranges
+  * Multiple range support
+  * Port scanning on discovered hosts across 70+ common ports covering infrastructure and self hosted services (more soon)
+  * Custom user ports
+  * Export hosts to canvas as nodes and racks with all scanned and edited information
+  * Admin only mode and public range restrictions available in Admin settings
+
+* **Popular Service + selfh.st/icons Detection**
+  * Reverse DNS hostname resolution
+  * NetBIOS name resolution (Windows network names)
+  * mDNS / Avahi multicast DNS resolution
+  * HTTP server header detection (Server and X Powered By)
+  * SNMPv2c system name and description queries with configurable community string
+  * Automatic port to service mapping for 70+ common ports
+  * Automatic icon detection and assignment for 70+ services via selfh.st icons
+  * Smart icon tagging via popular ports
+  * Self hosted media: Plex, Jellyfin, Emby, Sonarr, Radarr, Lidarr, Prowlarr, Bazarr, Overseerr, Tautulli, Ombi, Navidrome, Audiobookshelf, Komga, Jackett, Calibre web
+  * Automation and IoT: Home Assistant, Node RED, ESPHome, n8n
+  * +tons more
+
+* **DNS Detection**
+  * Hosts running port 53 are probed further:) to identify the DNS software
+  * AdGuard Home detected via /control/status endpoint (should work with password protected instances)
+  * Pi-hole detected via /admin/api.php (v5) and /api/ (v6), (should work with password protected instances)
+  * Technitium detected via port 5380 presence
+
+* **Docker Detection**
+  * Looks for docker api, dockge, portainer etc
+  * "Deep Scan" button will popup next to host
+  * This will scan the host more indepth for containers running though docker IF api is not available
+  * Docker container names from "Deep Scan" are also added as tags
+  
+* **Automated Service Tagging**
+  * Services column in Network Discovery table shows tags that will be saved with the host
+  * Named services (Jellyfin, Grafana, Dockge, etc.) automatic detection
+  * Generic port detection (Port 3003, Port 8810, etc.)
+  * Docker container names from "Deep Scan" are also added as tags
+
 **3/4/26 Theonefile_verse 1.8.0** : **Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure**
 
 *Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*

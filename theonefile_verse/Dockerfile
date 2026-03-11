@@ -1,6 +1,6 @@
 FROM oven/bun:alpine
 WORKDIR /app
-RUN apk add --no-cache su-exec
+RUN apk add --no-cache su-exec iputils bind-tools samba-client avahi-tools net-snmp-tools
 COPY package.json ./
 RUN bun install --production
 COPY src ./src

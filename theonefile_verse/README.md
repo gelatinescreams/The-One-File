@@ -2,17 +2,17 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/github/v/release/gelatinescreams/The-One-File?logo=github" alt="GitHub Release Version">
+  <img src="https://img.shields.io/badge/TheOneFile-4.1.4-blue" alt="TheOneFile 4.1.4">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.0-blue" alt="Docker Version 1.8.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.5-blue" alt="Docker Version 1.8.5">
   </a>
 </p>
 
-*As it turns out, there can be more than one*
+*As it turns out, there can be more than one (in 3d soon :) )*
 
 ![The One File Verse Mutli User Collaboration](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/collab-preview.gif)
 
-An easily deployable, Docker based, real time collaboration server with user accounts, email authentication, SSO, and role based access control. All configurable via a robust admin panel.
+An easily deployable, Docker based, real time collaboration server with mutli network device discovery, auto service & selfh.st/icons tagging, user accounts, email authentication, SSO, role based access control and more. All configurable via a robust admin panel.
 
 When you're done collaborating, each person can save their own portable copy. That file works exactly like the original TheOneFile: fully offline, self contained, editable anywhere. Import it back into the TheOneFile_Verse anytime to continue collaborating.
 
@@ -70,8 +70,8 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 
 
 ### TheOneFile_Verse Features
-* **Current Version 1.8.0 BETA** **Added a few settings, fixed some bugs, annoyances, security and production friendly hierarchical structure** 
-  * See [changelog](changelog.md) for full 1.8.0 list of changes
+* **Current Version 1.8.5 BETA** **Real ping, mutli network host discovery with selfh.st/icons matching and various other tidbits** 
+  * See [changelog](changelog.md) for full 1.8.5 list of changes
   
 *Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
 
@@ -86,7 +86,7 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Guest access controls per room
 * All the functions of TheOneFile_Networkening
 
-#### Full User Account System **NEW 1.5** **Enhanced 1.7**
+#### Full User Account System
 * User registration with email verification
 * Secure password login with Argon2id hashing
 * Two factor authentication (TOTP) with backup codes **NEW 1.7**
@@ -96,7 +96,7 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Multiple active sessions per user
 * Account lockout protection
 
-#### Single Sign On (SSO/OIDC) **NEW 1.5** **Enhanced 1.6**
+#### Single Sign On (SSO/OIDC)
 * Sign in with Authentik, Google, GitHub, Microsoft, or any OIDC provider
 * Link multiple SSO providers to one account
 * Auto account linking by email
@@ -105,7 +105,52 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Post login redirect persistence across SSO flows
 * Secure account linking re verification
 
-#### Email System **NEW 1.5**
+#### Real PING
+* Overrides built in TheOneFileNetworkening "HTTP PING" with real server side methods
+* New probe types: ICMP ping, TCP port check, HTTP/HTTPS, DNS and Multi Probe (all combined)
+* Custom user ports
+  
+#### etwork Discovery
+* Added "Discover Network Hosts" button to settings panel under Auto Status Checking section (at the bottom)
+* Full subnet discovery with CIDR range input and preset common ranges
+* Multiple range support
+* Port scanning on discovered hosts across 70+ common ports covering infrastructure and self hosted services (more soon)
+* Custom user ports
+* Export hosts to canvas as nodes and racks with all scanned and edited information
+* Admin only mode and public range restrictions available in Admin settings
+
+#### Popular Service + selfh.st/icons Detection
+* Reverse DNS hostname resolution
+* NetBIOS name resolution (Windows network names)
+* mDNS / Avahi multicast DNS resolution
+* HTTP server header detection (Server and X Powered By)
+* SNMPv2c system name and description queries with configurable community string
+* Automatic port to service mapping for 70+ common ports
+* Automatic icon detection and assignment for 70+ services via selfh.st icons
+* Smart icon tagging via popular ports
+* Self hosted media: Plex, Jellyfin, Emby, Sonarr, Radarr, Lidarr, Prowlarr, Bazarr, Overseerr, Tautulli, Ombi, Navidrome, Audiobookshelf, Komga, Jackett, Calibre web
+* Automation and IoT: Home Assistant, Node RED, ESPHome, n8n
+* +tons more
+
+#### DNS Detection
+* Hosts running port 53 are probed further:) to identify the DNS software
+* AdGuard Home detected via /control/status endpoint (should work with password protected instances)
+* Pi-hole detected via /admin/api.php (v5) and /api/ (v6), (should work with password protected instances)
+* Technitium detected via port 5380 presence
+
+#### Docker Detection
+* Looks for docker api, dockge, portainer etc
+* "Deep Scan" button will popup next to host
+* This will scan the host more indepth for containers running though docker IF api is not available
+* Docker container names from "Deep Scan" are also added as tags
+  
+#### Automated Service Tagging
+* Services column in Network Discovery table shows tags that will be saved with the host
+* Named services (Jellyfin, Grafana, Dockge, etc.) automatic detection
+* Generic port detection (Port 3003, Port 8810, etc.)
+* Docker container names from "Deep Scan" are also added as tags
+
+#### Email System
 * SMTP configuration with TLS/STARTTLS support
 * Email verification on signup
 * Password reset via email
@@ -126,7 +171,7 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * Email delivery logs
 * System settings management
 
-#### Security & Protection **NEW 1.5** **Enhanced 1.7**
+#### Security & Protection
 * AES 256 GCM encryption for all secrets (including TOTP secrets and backup codes)
 * PBKDF2 key derivation (600,000 iterations) **Enhanced 1.7**
 * Argon2id password hashing
@@ -149,15 +194,15 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 * File upload size limits
 * Generic error messages to prevent user enumeration
 
-#### Responsive & Mobile **NEW 1.7**
+#### Responsive & Mobile
 * Full responsive design across all pages (landing, auth, admin dashboard)
 
-#### Rate Limiting **NEW 1.5**
+#### Rate Limiting
 * Endpoint rate limiting (configurable window and max attempts)
 * Email action rate limiting (signup, password reset, magic link)
 * WebSocket token bucket rate limiting per message type
 
-#### Authentication Modes **NEW 1.5**
+#### Authentication Modes
 * Open registration
 * Email verification required
 * OIDC only (SSO required)

@@ -100,6 +100,13 @@
             case 'rollbackVersions': return typeof rollbackVersions !== 'undefined' ? rollbackVersions : [];
             case 'CUSTOM_LANG': return typeof CUSTOM_LANG !== 'undefined' ? CUSTOM_LANG : null;
             case 'IMAGE_DATA': return typeof IMAGE_DATA !== 'undefined' ? IMAGE_DATA : { list: [] };
+            case 'checkNodeStatus': return typeof checkNodeStatus !== 'undefined' ? checkNodeStatus : undefined;
+            case 'checkAllNodesStatus': return typeof checkAllNodesStatus !== 'undefined' ? checkAllNodesStatus : undefined;
+            case 'updatePingIndicator': return typeof updatePingIndicator !== 'undefined' ? updatePingIndicator : undefined;
+            case 'updatePingStatusDisplay': return typeof updatePingStatusDisplay !== 'undefined' ? updatePingStatusDisplay : undefined;
+            case 'forgeTheTopology': return typeof forgeTheTopology !== 'undefined' ? forgeTheTopology : undefined;
+            case 'currentNodeId': return typeof currentNodeId !== 'undefined' ? currentNodeId : undefined;
+            case 'pushUndo': return typeof pushUndo !== 'undefined' ? pushUndo : undefined;
             default: return undefined;
           }
         } catch(e) { return undefined; }

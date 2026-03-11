@@ -39,6 +39,7 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+      - NET_RAW
     networks:
       - internal
 

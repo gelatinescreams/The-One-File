@@ -6,6 +6,7 @@ import * as redis from "./redis";
 import * as auth from "./auth";
 import * as oidc from "./oidc";
 import * as mailer from "./mailer";
+import * as network from "./network";
 import pkg from "../package.json";
 
 const APP_VERSION = pkg.version || "unknown";
@@ -98,13 +99,15 @@ setInterval(() => {
   }
 }, 30 * 1000);
 
-async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSettings): Promise<boolean> {
+async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSettings, maxOverride?: number, windowOverride?: number): Promise<boolean> {
   if (!settings.rateLimitEnabled) return true;
 
   const key = `${ip}:${endpoint}`;
+  const maxAttempts = maxOverride ?? settings.rateLimitMaxAttempts;
+  const windowSeconds = windowOverride ?? settings.rateLimitWindow;
 
   if (redis.isRedisConnected()) {
-    return await redis.checkRateLimitRedis(key, settings.rateLimitMaxAttempts, settings.rateLimitWindow);
+    return await redis.checkRateLimitRedis(key, maxAttempts, windowSeconds);
   }
 
   if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
@@ -121,8 +124,7 @@ async function checkRateLimit(ip: string, endpoint: string, settings: InstanceSe
 
   const now = Date.now();
   const entry = rateLimitStore.get(key);
-  const window = settings.rateLimitWindow * 1000;
-  const maxAttempts = settings.rateLimitMaxAttempts;
+  const window = windowSeconds * 1000;
 
   if (!entry || now > entry.resetAt) {
     rateLimitStore.set(key, { count: 1, resetAt: now + window });
@@ -292,6 +294,11 @@ interface InstanceSettings {
   trustedProxies: string[];
   defaultRoomTheme: string;
   forceWelcomeModal: boolean;
+  probeEnabled: boolean;
+  discoveryEnabled: boolean;
+  discoveryAdminOnly: boolean;
+  discoveryAllowPublicRanges: boolean;
+  discoveryMaxPrefix: number;
 }
 
 const defaultSettings: InstanceSettings = {
@@ -320,7 +327,12 @@ const defaultSettings: InstanceSettings = {
   trustedProxyCount: 1,
   trustedProxies: [],
   defaultRoomTheme: "",
-  forceWelcomeModal: false
+  forceWelcomeModal: false,
+  probeEnabled: true,
+  discoveryEnabled: true,
+  discoveryAdminOnly: true,
+  discoveryAllowPublicRanges: false,
+  discoveryMaxPrefix: 20
 };
 
 function loadSettings(): InstanceSettings {
@@ -1542,6 +1554,33 @@ const adminDashboardHtml = `<!DOCTYPE html>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Welcome Modal</div><div class="setting-desc">Always show welcome setup when joining rooms</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-welcome-modal" data-action="toggleSetting" data-setting="forceWelcomeModal"></div></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Network Probing</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Server-Side Probing</div><div class="setting-desc">Enable real ICMP/TCP/HTTP/DNS probes from server</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-probe" data-action="toggleSetting" data-setting="probeEnabled"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Network Discovery</div><div class="setting-desc">Allow subnet scanning to discover hosts</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-discovery" data-action="toggleSetting" data-setting="discoveryEnabled"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Discovery Admin Only</div><div class="setting-desc">Restrict network discovery to admin users</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-discovery-admin" data-action="toggleSetting" data-setting="discoveryAdminOnly"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning non-private (public) IP ranges</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-discovery-public" data-action="toggleSetting" data-setting="discoveryAllowPublicRanges"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Max Scan Size</div><div class="setting-desc">Minimum CIDR prefix (larger = smaller range)</div></div>
+          <div class="setting-control">
+            <span style="color:#8892a0;font-size:12px">/</span>
+            <input type="number" id="discovery-max-prefix" min="20" max="32" style="width:60px">
+            <button class="btn btn-sm btn-primary" data-action="saveDiscoveryPrefix">Save</button>
+          </div>
         </div>
       </div>
       <div class="settings-section">
@@ -3814,6 +3853,21 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         if (typeof body.nameChangeEnabled === "boolean") {
           instanceSettings.nameChangeEnabled = body.nameChangeEnabled;
         }
+        if (typeof body.probeEnabled === "boolean") {
+          instanceSettings.probeEnabled = body.probeEnabled;
+        }
+        if (typeof body.discoveryEnabled === "boolean") {
+          instanceSettings.discoveryEnabled = body.discoveryEnabled;
+        }
+        if (typeof body.discoveryAdminOnly === "boolean") {
+          instanceSettings.discoveryAdminOnly = body.discoveryAdminOnly;
+        }
+        if (typeof body.discoveryAllowPublicRanges === "boolean") {
+          instanceSettings.discoveryAllowPublicRanges = body.discoveryAllowPublicRanges;
+        }
+        if (typeof body.discoveryMaxPrefix === "number") {
+          instanceSettings.discoveryMaxPrefix = Math.max(20, Math.min(32, body.discoveryMaxPrefix));
+        }
         if (typeof body.webhookEnabled === "boolean") {
           instanceSettings.webhookEnabled = body.webhookEnabled;
         }
@@ -4345,7 +4399,239 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         return Response.json({ wsToken, expiresIn: WS_TOKEN_EXPIRY / 1000, collabUserId }, { headers: corsHeaders });
       } catch (e: any) { return apiError(e, corsHeaders); }
     }
-    
+
+    if (path === "/api/probe" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      if (!instanceSettings.probeEnabled) {
+        return Response.json({ error: "Probing is disabled" }, { status: 403, headers: corsHeaders });
+      }
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "probe", instanceSettings, 60))) {
+        return Response.json({ error: "Too many probe requests. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        const target = body.target;
+        const probes = body.probes;
+        const timeout = Math.min(Math.max(parseInt(body.timeout) || 3000, 1000), 10000);
+        if (!target || typeof target !== "string" || !network.validateTarget(target)) {
+          return Response.json({ error: "Invalid target" }, { status: 400, headers: corsHeaders });
+        }
+        if (!network.validateProbeConfig(probes)) {
+          return Response.json({ error: "Invalid probe configuration" }, { status: 400, headers: corsHeaders });
+        }
+        const result = await network.probeTarget(target, probes, timeout);
+        return Response.json(result, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/probe/batch" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      if (!instanceSettings.probeEnabled) {
+        return Response.json({ error: "Probing is disabled" }, { status: 403, headers: corsHeaders });
+      }
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "probe-batch", instanceSettings, 30))) {
+        return Response.json({ error: "Too many batch probe requests. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        if (!body.targets || !Array.isArray(body.targets) || body.targets.length === 0 || body.targets.length > 50) {
+          return Response.json({ error: "Invalid targets (1-50 required)" }, { status: 400, headers: corsHeaders });
+        }
+        const validTargets: network.BatchTarget[] = [];
+        for (const t of body.targets) {
+          if (!t.nodeId || typeof t.nodeId !== "string") continue;
+          if (!t.target || !network.validateTarget(t.target)) continue;
+          if (!network.validateProbeConfig(t.probes)) continue;
+          const timeout = Math.min(Math.max(parseInt(t.timeout) || 3000, 1000), 10000);
+          validTargets.push({ nodeId: t.nodeId, target: t.target, probes: t.probes, timeout });
+        }
+        if (validTargets.length === 0) {
+          return Response.json({ error: "No valid targets" }, { status: 400, headers: corsHeaders });
+        }
+        const results = await network.probeBatch(validTargets);
+        return Response.json({ results }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/discover/ports" && req.method === "GET") {
+      return Response.json({ ports: network.getDefaultPortList() }, { headers: corsHeaders });
+    }
+
+    if (path === "/api/discover" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      if (!instanceSettings.discoveryEnabled) {
+        return Response.json({ error: "Discovery is disabled" }, { status: 403, headers: corsHeaders });
+      }
+      if (instanceSettings.discoveryAdminOnly) {
+        const adminUser = await validateAdminUser(req);
+        if (!adminUser) {
+          return Response.json({ error: "Discovery requires admin access" }, { status: 401, headers: corsHeaders });
+        }
+      }
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "discover", instanceSettings))) {
+        return Response.json({ error: "Too many discovery requests. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        const roomId = body.roomId;
+        if (!roomId || !isValidUUID(roomId)) {
+          return Response.json({ error: "Valid room ID required" }, { status: 400, headers: corsHeaders });
+        }
+        let cidrs: string[] = [];
+        if (Array.isArray(body.cidrs) && body.cidrs.length > 0) {
+          cidrs = body.cidrs.filter((c: unknown) => typeof c === "string" && c.length > 0);
+        } else if (body.cidr && typeof body.cidr === "string") {
+          cidrs = [body.cidr];
+        }
+        if (cidrs.length === 0) {
+          return Response.json({ error: "At least one CIDR range required" }, { status: 400, headers: corsHeaders });
+        }
+        if (cidrs.length > 10) {
+          return Response.json({ error: "Maximum 10 ranges per scan" }, { status: 400, headers: corsHeaders });
+        }
+        let totalCount = 0;
+        for (const cidr of cidrs) {
+          const validation = network.validateCIDR(cidr, instanceSettings.discoveryAllowPublicRanges, instanceSettings.discoveryMaxPrefix);
+          if (!validation.valid) {
+            return Response.json({ error: `${cidr}: ${validation.error}` }, { status: 400, headers: corsHeaders });
+          }
+          totalCount += validation.count || 0;
+        }
+        const taskPrefix = `disc-${roomId}`;
+        if (network.hasActiveDiscoveryForRoom(roomId, taskPrefix)) {
+          return Response.json({ error: "A scan is already running for this room" }, { status: 409, headers: corsHeaders });
+        }
+        const taskId = `${taskPrefix}-${Date.now()}`;
+        const options: network.DiscoveryOptions = {
+          icmp: body.options?.icmp !== false,
+          tcp: body.options?.tcp !== false,
+          dns: body.options?.dns !== false,
+          netbios: body.options?.netbios !== false,
+          mdns: body.options?.mdns !== false,
+          snmp: body.options?.snmp === true,
+          snmpCommunity: (typeof body.options?.snmpCommunity === "string" && body.options.snmpCommunity.length <= 64) ? body.options.snmpCommunity : "public",
+          ports: Array.isArray(body.options?.ports) ? body.options.ports.filter((p: unknown) => typeof p === "number" && network.validatePort(p)) : [],
+        };
+        const connections = roomConnections.get(roomId);
+        await network.startDiscovery(
+          taskId,
+          roomId,
+          cidrs,
+          options,
+          (percent, scanned, total, rangeIndex, totalRanges) => {
+            if (connections) {
+              const msg = JSON.stringify({ type: "discovery-progress", taskId, percent, scanned, total, rangeIndex, totalRanges });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+          (host) => {
+            if (connections) {
+              const msg = JSON.stringify({ type: "discovery-found", taskId, host });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+          (totalFound) => {
+            if (connections) {
+              const msg = JSON.stringify({ type: "discovery-complete", taskId, totalFound });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+        );
+        return Response.json({ taskId, count: totalCount, ranges: cidrs.length }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/discover/cancel" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      try {
+        const body = await req.json();
+        if (!body.taskId || typeof body.taskId !== "string") {
+          return Response.json({ error: "Task ID required" }, { status: 400, headers: corsHeaders });
+        }
+        const cancelled = network.cancelDiscovery(body.taskId);
+        return Response.json({ cancelled }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/discover/deepscan" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      if (!instanceSettings.discoveryEnabled) {
+        return Response.json({ error: "Discovery is disabled" }, { status: 403, headers: corsHeaders });
+      }
+      if (instanceSettings.discoveryAdminOnly) {
+        const adminUser = await validateAdminUser(req);
+        if (!adminUser) {
+          return Response.json({ error: "Discovery requires admin access" }, { status: 401, headers: corsHeaders });
+        }
+      }
+      const clientIP = getClientIP(req);
+      if (!(await checkRateLimit(clientIP, "deepscan", instanceSettings, 10, 120))) {
+        return Response.json({ error: "Too many deep scan requests. Try again later." }, { status: 429, headers: corsHeaders });
+      }
+      try {
+        const body = await req.json();
+        const roomId = body.roomId;
+        if (!roomId || !isValidUUID(roomId)) {
+          return Response.json({ error: "Valid room ID required" }, { status: 400, headers: corsHeaders });
+        }
+        const ip = body.ip;
+        if (!ip || typeof ip !== "string" || !network.validateIPv4(ip)) {
+          return Response.json({ error: "Valid IP address required" }, { status: 400, headers: corsHeaders });
+        }
+        if (!network.isRFC1918(ip)) {
+          return Response.json({ error: "Only private IP addresses allowed for deep scan" }, { status: 400, headers: corsHeaders });
+        }
+        if (network.hasActiveDeepScan(ip)) {
+          return Response.json({ error: "A deep scan is already running for this host" }, { status: 409, headers: corsHeaders });
+        }
+        const existingPorts: number[] = Array.isArray(body.existingPorts)
+          ? body.existingPorts.filter((p: unknown) => typeof p === "number" && network.validatePort(p))
+          : [];
+        const scanId = `deepscan-${ip}-${Date.now()}`;
+        const connections = roomConnections.get(roomId);
+        await network.startDeepScan(
+          scanId,
+          ip,
+          existingPorts,
+          (percent, scanned, total) => {
+            if (connections) {
+              const msg = JSON.stringify({ type: "deepscan-progress", scanId, ip, percent, scanned, total });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+          (newPorts, newServices, containers) => {
+            if (connections) {
+              const newIcons = network.getServiceIcons(newPorts);
+              const msg = JSON.stringify({ type: "deepscan-update", scanId, ip, newPorts, newServices, containers, newIcons });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+          () => {
+            if (connections) {
+              const msg = JSON.stringify({ type: "deepscan-complete", scanId, ip });
+              for (const ws of connections) ws.send(msg);
+            }
+          },
+        );
+        return Response.json({ scanId, ip }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
+    if (path === "/api/discover/deepscan/cancel" && req.method === "POST") {
+      if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+      try {
+        const body = await req.json();
+        if (!body.scanId || typeof body.scanId !== "string") {
+          return Response.json({ error: "Scan ID required" }, { status: 400, headers: corsHeaders });
+        }
+        const cancelled = network.cancelDeepScan(body.scanId);
+        return Response.json({ cancelled }, { headers: corsHeaders });
+      } catch (e: any) { return apiError(e, corsHeaders); }
+    }
+
     if (path === "/api/refresh" && req.method === "POST") {
       const adminUser = await validateAdminUser(req);
       if (!adminUser) {
@@ -4387,7 +4673,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
         csrfToken: roomCsrfToken,
         isCreator: isOwner || isAdmin,
         defaultRoomTheme: instanceSettings.defaultRoomTheme || '',
-        forceWelcomeModal: instanceSettings.forceWelcomeModal || false
+        forceWelcomeModal: instanceSettings.forceWelcomeModal || false,
+        probeEnabled: instanceSettings.probeEnabled,
+        discoveryEnabled: instanceSettings.discoveryEnabled,
+        discoveryAllowed: instanceSettings.discoveryEnabled && (isAdmin || !instanceSettings.discoveryAdminOnly)
       });
 
       const configBlock = `<script type="application/json" id="room-config">${safeRoomConfig}</script>
