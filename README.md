@@ -49,8 +49,8 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ### Download
 
-* [the-one-file.html](https://github.com/user-attachments/files/25752908/the-one-file.html)
-* [theonefile-networkening.html](https://github.com/user-attachments/files/25752909/theonefile-networkening.html)
+* [the-one-file.html](https://github.com/user-attachments/files/26288480/the-one-file.html)
+* [theonefile-networkening.html](https://github.com/user-attachments/files/26288482/theonefile-networkening.html)
   
 ### Core vs Networkening vs TheOneFile_Verse
 
