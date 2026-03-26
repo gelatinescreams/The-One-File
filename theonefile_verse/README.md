@@ -2,9 +2,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/badge/TheOneFile-4.1.4-blue" alt="TheOneFile 4.1.4">
+  <img src="https://img.shields.io/badge/TheOneFile-4.1.5-blue" alt="TheOneFile 4.1.5">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.5-blue" alt="Docker Version 1.8.5">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.6-blue" alt="Docker Version 1.8.6">
   </a>
 </p>
 
@@ -70,8 +70,8 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 
 
 ### TheOneFile_Verse Features
-* **Current Version 1.8.5 BETA** **Real ping, mutli network host discovery with selfh.st/icons matching and various other tidbits** 
-  * See [changelog](changelog.md) for full 1.8.5 list of changes
+* **Current Version 1.8.6 BETA** **Further improvements to Network Auto Discovery scanner/editor one page setup**
+  * See [changelog](changelog.md) for full 1.8.6 list of changes
   
 *Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
 

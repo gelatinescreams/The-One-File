@@ -1,8 +1,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/badge/TheOneFile-4.1.4-blue" alt="TheOneFile 4.1.4">
+  <img src="https://img.shields.io/badge/TheOneFile-4.1.5-blue" alt="TheOneFile 4.1.5">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.5-blue" alt="TheOneFile_Verse Docker Version 1.8.5">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-1.8.6-blue" alt="TheOneFile_Verse Docker Version 1.8.6">
   </a>
 </p>
 
@@ -16,17 +16,22 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-### TheOneFile_Verse /\ 1.8.5 3-11-26 : Real ping, mutli network auto host discovery with selfh.st/icons matching and various other tidbits
+### Version 4.1.5 /\ 3-26-26 : Enhanced 'Create', UI polish and squashing a sneaky bug and TheOneFile_Verse 1.8.6
+* **Enhanced Create**
+  * Added more options to the Create New Node & Rack modals.
+  * Added icon preview box to the Create New Node & Rack modals.
+
+* **Bug Fixes**
+* **Core Edition & Networkening**
+  * Fixed Assigned Rack dropdown snapping back to "None" after changing in the edit Node and Rack sidebar/footer
+  * See [Changelog](changelog.md) for full update details
+
+### TheOneFile_Verse /\ 1.8.6 3-26-26 : Further improvements to Network Auto Discovery scanner/editor one page setup
   * Very close to a stable 2.0
-  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 1.8.5 list
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 1.8.6 list
 
 <img width="1525" height="770" alt="Screenshot 2026-03-11 094906" src="https://github.com/user-attachments/assets/43196f4e-f6c4-4d9d-aae0-d311b2bf94ec" />
-<img width="1521" height="770" alt="Screenshot 2026-03-11 094937" src="https://github.com/user-attachments/assets/c47e1cea-dd33-47ac-ac62-cef7fe92e3a3" />
-
-
-### Version 4.1.4 /\ 3-4-26 : Testers finding the stragglers. Thank you to everyone!
-* **The One File Core + Networkening 4.1.4**
-  * See [Changelog](changelog.md) for full update details
+<img width="1521" height="770" alt="Screenshot 2026-03-11 094937" src="https://github.com/user-attachments/assets/c47e1cea-dd33-47ac-ac62-cef7fe92e3a3" />  
 
 ### Demos
 

@@ -1,5 +1,16 @@
 ### TheOneFile_Verse changelog
 
+**3/26/26 Theonefile_verse 1.8.6** : **Further improvements to Network Auto Discovery scanner/editor one page setup**
+
+* **Network Discovery : Connections**
+  * Thanks to [ahmaddxb](https://github.com/ahmaddxb) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
+  * Added connections section to host editor cards
+  * Connect discovered hosts to each other or to existing canvas nodes
+  * From port and To port added to host editor cards
+  * Icon syling added to host editor cards
+  * Layer added to host editor cards
+  * Notes added to host editor cards
+
 **3/11/26 Theonefile_verse 1.8.5** : **Real ping, mutli network host discovery with selfh.st/icons matching and various other tidbits**
 
 * **Real PING**

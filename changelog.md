@@ -1,5 +1,17 @@
 #### CHANGE LOG
 
+### Version 4.1.5 /\ 3-26-26 Enhanced 'Create', UI polish and squashing a sneaky bug and TheOneFile_Verse 1.8.6
+* **Enhanced Create**
+  * Added more options to the Create New Node & Rack modals.
+  * Added icon preview box to the Create New Node & Rack modals.
+
+* **Bug Fixes**
+* **Core Edition & Networkening**
+  * Fixed Assigned Rack dropdown snapping back to "None" after changing in the edit Node and Rack sidebar/footer
+
+* **TheOneFile_Verse 1.8.6** Further improvements to Network Auto Discovery scanner/editor
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full details
+
 ### Version 4.1.4 /\ 3-4-26 Testers finding the stragglers. Thank you to everyone!
 * Added custom port label logic to the canvas that allows port labels to find the next blank space automatically. (this is v1 and will likely be upgraded). Thanks to [jbr1989](https://github.com/jbr1989) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
 * Fixed an issue where port maps were not showing on the canvas. Thanks to [jbr1989](https://github.com/jbr1989) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)

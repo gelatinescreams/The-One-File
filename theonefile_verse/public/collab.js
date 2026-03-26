@@ -3127,6 +3127,40 @@
                 '<input type="text" class="disc-edit-tcp-ports" value="' + escapeHtml(tcpPorts) + '" placeholder="22, 80, 443, 3389" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
               '</div>' +
             '</div>' +
+            '<div style="grid-column:1/-1;border-top:1px solid var(--edge-main);padding-top:8px;margin-top:4px">' +
+              '<div style="font-weight:600;font-size:11px;color:var(--text-main);margin-bottom:6px">Appearance</div>' +
+              '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
+                  '<label style="font-size:11px;color:var(--text-soft)">Fill</label>' +
+                  '<input type="color" class="disc-edit-fill-color" value="' + (ov.fillColor || '#1e293b') + '" style="width:30px;height:24px;border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;background:none;padding:0">' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
+                  '<label style="font-size:11px;color:var(--text-soft)">Border</label>' +
+                  '<input type="color" class="disc-edit-border-color" value="' + (ov.borderColor || '#475569') + '" style="width:30px;height:24px;border:1px solid var(--edge-main);border-radius:4px;cursor:pointer;background:none;padding:0">' +
+                '</div>' +
+                '<div style="display:flex;align-items:center;gap:4px;flex:1;min-width:120px">' +
+                  '<label style="font-size:11px;color:var(--text-soft)">Size</label>' +
+                  '<input type="range" class="disc-edit-size" min="20" max="200" value="' + (ov.nodeSize || 50) + '" style="flex:1;accent-color:var(--accent)">' +
+                  '<span class="disc-edit-size-value" style="font-size:11px;color:var(--text-soft);min-width:24px">' + (ov.nodeSize || 50) + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="grid-column:1/-1;border-top:1px solid var(--edge-main);padding-top:8px;margin-top:4px">' +
+              '<div style="font-weight:600;font-size:11px;color:var(--text-main);margin-bottom:6px">Connections</div>' +
+              '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">' +
+                '<select class="disc-edit-connect-to" style="flex:1;min-width:120px;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' +
+                  '<option value="">Connect to...</option>' +
+                '</select>' +
+                '<input type="text" class="disc-edit-from-port" placeholder="From port" style="width:80px;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:11px">' +
+                '<input type="text" class="disc-edit-to-port" placeholder="To port" style="width:80px;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:11px">' +
+                '<button class="disc-edit-add-conn-btn" style="padding:4px 10px;background:var(--accent);color:var(--bg);border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600">Add</button>' +
+              '</div>' +
+              '<div class="disc-edit-conn-list" style="display:flex;flex-direction:column;gap:4px"></div>' +
+            '</div>' +
+            '<div style="grid-column:1/-1;border-top:1px solid var(--edge-main);padding-top:8px;margin-top:4px">' +
+              '<label style="display:block;font-size:11px;color:var(--text-soft);margin-bottom:2px">Notes</label>' +
+              '<textarea class="disc-edit-notes" rows="2" placeholder="Add notes..." style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px;resize:vertical;font-family:inherit">' + escapeHtml(ov.notes || '') + '</textarea>' +
+            '</div>' +
           '</div>';
         body.appendChild(card);
 
@@ -3238,7 +3272,95 @@
         fetchDiscoveryIcon(el.getAttribute('data-lib'), el.getAttribute('data-name'), el, 24);
       });
 
-      body.querySelectorAll('input, select').forEach(function(el) {
+      body.querySelectorAll('.disc-edit-connect-to').forEach(function(sel) {
+        var card = sel.closest('[data-edit-ip]');
+        var cardIp = card.getAttribute('data-edit-ip');
+        discoveryResults.forEach(function(h) {
+          if (!h || h.ip === cardIp) return;
+          var hov = discoveryOverrides[h.ip] || {};
+          var opt = document.createElement('option');
+          opt.value = h.ip;
+          opt.textContent = (hov.name || h.hostname || h.ip) + ' (' + h.ip + ')';
+          sel.appendChild(opt);
+        });
+        var nd = getGlobal('NODE_DATA') || {};
+        Object.entries(nd).forEach(function(entry) {
+          var opt = document.createElement('option');
+          opt.value = 'canvas:' + entry[0];
+          opt.textContent = entry[1].name + ' (canvas)';
+          sel.appendChild(opt);
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-size').forEach(function(slider) {
+        slider.addEventListener('input', function() {
+          var card = slider.closest('[data-edit-ip]');
+          var valEl = card.querySelector('.disc-edit-size-value');
+          if (valEl) valEl.textContent = slider.value;
+          var ip = card.getAttribute('data-edit-ip');
+          saveCardOverride(card, ip);
+        });
+      });
+
+      body.querySelectorAll('.disc-edit-add-conn-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var card = btn.closest('[data-edit-ip]');
+          var ip = card.getAttribute('data-edit-ip');
+          var targetSel = card.querySelector('.disc-edit-connect-to');
+          var fromPort = card.querySelector('.disc-edit-from-port');
+          var toPort = card.querySelector('.disc-edit-to-port');
+          if (!targetSel.value) return;
+          if (!discoveryOverrides[ip]) discoveryOverrides[ip] = {};
+          if (!discoveryOverrides[ip].connections) discoveryOverrides[ip].connections = [];
+          discoveryOverrides[ip].connections.push({
+            target: targetSel.value,
+            fromPort: fromPort.value.trim(),
+            toPort: toPort.value.trim()
+          });
+          fromPort.value = '';
+          toPort.value = '';
+          targetSel.value = '';
+          renderConnList(card, ip);
+        });
+      });
+
+      function renderConnList(card, ip) {
+        var list = card.querySelector('.disc-edit-conn-list');
+        if (!list) return;
+        list.innerHTML = '';
+        var conns = (discoveryOverrides[ip] && discoveryOverrides[ip].connections) || [];
+        conns.forEach(function(conn, ci) {
+          var targetLabel = conn.target;
+          if (conn.target.indexOf('canvas:') === 0) {
+            var nid = conn.target.replace('canvas:', '');
+            var nd = getGlobal('NODE_DATA') || {};
+            if (nd[nid]) targetLabel = nd[nid].name + ' (canvas)';
+          } else {
+            var hov = discoveryOverrides[conn.target] || {};
+            var hst = discoveryResults.find(function(h) { return h && h.ip === conn.target; });
+            targetLabel = (hov.name || (hst && hst.hostname) || conn.target) + ' (' + conn.target + ')';
+          }
+          var row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--panel);border:1px solid var(--edge-main);border-radius:4px;font-size:11px;color:var(--text-main)';
+          row.innerHTML = '<span style="flex:1">' + escapeHtml(ip) + (conn.fromPort ? ':' + escapeHtml(conn.fromPort) : '') + ' \u2192 ' + escapeHtml(targetLabel) + (conn.toPort ? ':' + escapeHtml(conn.toPort) : '') + '</span>';
+          var removeBtn = document.createElement('button');
+          removeBtn.style.cssText = 'background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;padding:0 4px';
+          removeBtn.textContent = '\u2715';
+          removeBtn.addEventListener('click', function() {
+            discoveryOverrides[ip].connections.splice(ci, 1);
+            renderConnList(card, ip);
+          });
+          row.appendChild(removeBtn);
+          list.appendChild(row);
+        });
+      }
+
+      body.querySelectorAll('[data-edit-ip]').forEach(function(card) {
+        var ip = card.getAttribute('data-edit-ip');
+        renderConnList(card, ip);
+      });
+
+      body.querySelectorAll('input, select, textarea').forEach(function(el) {
         el.addEventListener('change', function() {
           var card = el.closest('[data-edit-ip]');
           if (!card) return;
@@ -3272,6 +3394,10 @@
       var probeTypeEl = card.querySelector('.disc-edit-probe-type');
       var tcpPortsEl = card.querySelector('.disc-edit-tcp-ports');
       var pingTimeoutEl = card.querySelector('.disc-edit-ping-timeout');
+      var fillColorEl = card.querySelector('.disc-edit-fill-color');
+      var borderColorEl = card.querySelector('.disc-edit-border-color');
+      var sizeEl = card.querySelector('.disc-edit-size');
+      var notesEl = card.querySelector('.disc-edit-notes');
       delete ov._seeded;
       if (nameEl) ov.name = nameEl.value;
       if (ipEl) ov.ip = ipEl.value;
@@ -3283,6 +3409,10 @@
       if (probeTypeEl) ov.probeType = probeTypeEl.value;
       if (tcpPortsEl) ov.tcpPorts = tcpPortsEl.value;
       if (pingTimeoutEl) ov.pingTimeout = parseInt(pingTimeoutEl.value, 10) || 3000;
+      if (fillColorEl) ov.fillColor = fillColorEl.value;
+      if (borderColorEl) ov.borderColor = borderColorEl.value;
+      if (sizeEl) ov.nodeSize = parseInt(sizeEl.value, 10);
+      if (notesEl) ov.notes = notesEl.value;
     }
 
     modal.addEventListener('click', function(e) {
@@ -3543,13 +3673,16 @@
           }
         }
 
+        var nodeNotes = [];
+        if (ov.notes && ov.notes.trim()) nodeNotes.push(ov.notes.trim());
+
         nd[nodeId] = {
           shape: nodeShape,
           name: nodeName,
           ip: nodeIp,
           role: isRack ? 'Rack' : '',
           tags: nodeTags,
-          notes: [],
+          notes: nodeNotes,
           mac: '',
           rackUnit: resolvedUnit,
           uHeight: resolvedUHeight,
@@ -3582,22 +3715,70 @@
         }
 
         positions[nodeId] = { x: startX + col * spacing, y: startY + row * spacing };
-        sizes[nodeId] = 50;
+        sizes[nodeId] = ov.nodeSize || 50;
         if (!styles[nodeId]) styles[nodeId] = {};
         if (!styles[nodeId]['all']) styles[nodeId]['all'] = {};
         if (ov.iconData && ov.iconData.name) {
           styles[nodeId]['all'].icon = { library: ov.iconData.library, name: ov.iconData.name };
         }
+        if (ov.fillColor && ov.fillColor !== '#1e293b') {
+          styles[nodeId]['all'].circleColor = ov.fillColor;
+        }
+        if (ov.borderColor && ov.borderColor !== '#475569') {
+          styles[nodeId]['all'].circleBorder = ov.borderColor;
+        }
 
         added++;
         existingIPs[host.ip] = true;
-        delete discoveryOverrides[host.ip];
+      });
+
+      var edgeData = getGlobal('EDGE_DATA');
+      var ipToNodeId = {};
+      Object.keys(nd).forEach(function(nid) {
+        if (nd[nid] && nd[nid].ip) ipToNodeId[nd[nid].ip] = nid;
+      });
+
+      entries.forEach(function(entry) {
+        var host = entry.host;
+        var ov = entry.ov;
+        if (!ov.connections || ov.connections.length === 0) return;
+        var fromNodeId = ipToNodeId[host.ip];
+        if (!fromNodeId) return;
+        ov.connections.forEach(function(conn) {
+          var toNodeId;
+          if (conn.target.indexOf('canvas:') === 0) {
+            toNodeId = conn.target.replace('canvas:', '');
+          } else {
+            toNodeId = ipToNodeId[conn.target];
+          }
+          if (!toNodeId || !nd[toNodeId]) return;
+          edgeData.list.push({
+            id: fromNodeId + '-' + toNodeId + '-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+            from: fromNodeId,
+            to: toNodeId,
+            width: 4,
+            color: '#475569',
+            direction: 'none',
+            routing: 'orthogonal',
+            type: 'main',
+            notes: [],
+            fromPort: conn.fromPort || '',
+            toPort: conn.toPort || '',
+            lineStyle: 'solid',
+            waypoints: []
+          });
+        });
+      });
+
+      entries.forEach(function(entry) {
+        delete discoveryOverrides[entry.host.ip];
       });
 
       setGlobal('NODE_DATA', nd);
       setGlobal('savedPositions', positions);
       setGlobal('savedSizes', sizes);
       setGlobal('savedStyles', styles);
+      setGlobal('EDGE_DATA', edgeData);
       var forge = window.__collabGetVar('forgeTheTopology');
       if (forge) forge();
 
