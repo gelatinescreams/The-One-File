@@ -1,7 +1,7 @@
 import * as db from "../database";
 import { getSettings, updateSettings, saveSettings, validateAdminPath, ENV_ADMIN_PASSWORD, APP_VERSION } from "../config";
 import { getClientIP, apiError, validateAdminUser, validateAdminOrApiKey } from "../security";
-import { hashPassword, theOneFileHtml, currentFileVersion, extractThemePresets, computeSha256Hash, validateTheOneFileHtml, fetchLatestFromGitHub, getExpectedTheOneFileHash, setExpectedTheOneFileHash, setTheOneFileHtml, getTheOneFilePath, restartUpdateTimer, clearUpdateTimer, isValidWebhookUrl, restartBackupTimer, extractVersionFromHtml } from "../rooms";
+import { hashPassword, theOneFileHtml, currentFileVersion, extractThemePresets, computeSha256Hash, validateTheOneFileHtml, fetchLatestFromGitHub, getExpectedTheOneFileHash, setExpectedTheOneFileHash, setTheOneFileHtml, getTheOneFilePath, restartUpdateTimer, clearUpdateTimer, isValidWebhookUrl, restartBackupTimer, extractVersionFromHtml, isNewerVersion } from "../rooms";
 
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/gelatinescreams/The-One-File/main/theonefile-networkening.html";
 
@@ -221,7 +221,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({
         currentVersion: currentFileVersion || "unknown",
         latestVersion,
-        updateAvailable: latestVersion !== "unknown" && currentFileVersion !== latestVersion,
+        updateAvailable: latestVersion !== "unknown" && currentFileVersion !== "unknown" && isNewerVersion(latestVersion, currentFileVersion),
         lastChecked: now
       }, { headers: corsHeaders });
     } catch (e: any) {

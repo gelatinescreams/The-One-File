@@ -441,15 +441,25 @@
     }
     if (statusBadge) {
       var latest = settings.latestGitHubVersion;
+      if (latest) latest = latest.replace(/^["']+|["']+$/g, '');
       if (latest && latest !== 'unknown' && ver !== 'unknown') {
-        if (latest === ver) {
-          statusBadge.textContent = 'Up to date';
-          statusBadge.style.background = '#166534';
-          statusBadge.style.color = '#4ade80';
-        } else {
+        var isNewer = (function(a, b) {
+          var pa = a.replace(/^v/i, '').split('.').map(Number);
+          var pb = b.replace(/^v/i, '').split('.').map(Number);
+          for (var i = 0; i < Math.max(pa.length, pb.length); i++) {
+            if ((pa[i] || 0) > (pb[i] || 0)) return true;
+            if ((pa[i] || 0) < (pb[i] || 0)) return false;
+          }
+          return false;
+        })(latest, ver);
+        if (isNewer) {
           statusBadge.textContent = 'v' + latest + ' available';
           statusBadge.style.background = '#854d0e';
           statusBadge.style.color = '#fbbf24';
+        } else {
+          statusBadge.textContent = 'Up to date';
+          statusBadge.style.background = '#166534';
+          statusBadge.style.color = '#4ade80';
         }
       } else {
         statusBadge.textContent = '';

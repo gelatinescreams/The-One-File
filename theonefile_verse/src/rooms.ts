@@ -131,8 +131,21 @@ export function setExpectedTheOneFileHash(hash: string): void {
 }
 
 export function extractVersionFromHtml(html: string): string {
-  const match = html.match(/THE_ONE_FILE_VERSION\s*=\s*"([^"]+)"/);
-  return match ? match[1] : "unknown";
+  const match = html.match(/THE_ONE_FILE_VERSION\s*=\s*["']([^"']+)["']/);
+  return match ? match[1].replace(/^["']+|["']+$/g, '') : "unknown";
+}
+
+export function isNewerVersion(latest: string, current: string): boolean {
+  const parse = (v: string) => v.replace(/^v/i, '').split('.').map(n => parseInt(n) || 0);
+  const l = parse(latest);
+  const c = parse(current);
+  for (let i = 0; i < Math.max(l.length, c.length); i++) {
+    const lv = l[i] || 0;
+    const cv = c[i] || 0;
+    if (lv > cv) return true;
+    if (lv < cv) return false;
+  }
+  return false;
 }
 
 export async function computeSha256Hash(content: string): Promise<string> {
