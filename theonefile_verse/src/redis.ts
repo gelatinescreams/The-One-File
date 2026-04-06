@@ -356,6 +356,16 @@ export async function deleteKey(key: string): Promise<boolean> {
   }
 }
 
+export async function ping(): Promise<boolean> {
+  if (!client || !isConnected) return false;
+  try {
+    const result = await client.ping();
+    return result === "PONG";
+  } catch {
+    return false;
+  }
+}
+
 export async function disconnectRedis(): Promise<void> {
   try {
     if (subscriber) {

@@ -2231,11 +2231,11 @@
     else if (library === 'mdi') url = 'https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/' + encodeURIComponent(name) + '.svg';
     if (!url) return;
     if (_iconCache[key]) {
-      el.innerHTML = '<img src="' + _iconCache[key] + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + name + '">';
+      el.innerHTML = '<img src="' + _iconCache[key] + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + escapeHtml(name) + '">';
       return;
     }
     _iconCache[key] = url;
-    el.innerHTML = '<img src="' + url + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + name + '">';
+    el.innerHTML = '<img src="' + url + '" style="width:' + sz + 'px;height:' + sz + 'px;object-fit:contain" alt="' + escapeHtml(name) + '">';
     var img = el.querySelector('img');
     if (img) {
       img.onerror = function() {

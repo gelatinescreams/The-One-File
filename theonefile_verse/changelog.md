@@ -1,6 +1,46 @@
 ### TheOneFile_Verse changelog
 
+**4/6/26 Theonefile_verse 1.9.0 Beta 2** : **Production ready hierarchical architecture + fixes**
+
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
+
+* **Complete index.ts Refactoring**
+  * Broke the monolithic index.ts into a hierarchical module structure
+  * 14 route handler files organized by domain (auth, admin, rooms, network, public)
+  * Dedicated WebSocket handler
+
+* **Further Production Hardening**
+  * Graceful shutdown with SIGTERM/SIGINT handlers
+  * Global error handling for uncaught exceptions and unhandled rejections
+  * Enhanced /api/health endpoint with database, Redis, and uptime status
+  * Database healthCheck() and Redis ping() for component level monitoring
+  * Proper cleanup of WebSocket connections, timers, and database on shutdown
+
+* **Reverse Proxy Fixes + Hardening**
+  * Fixed all OIDC callback, email verification, and password reset URLs
+  * Added a helper to prevent internal origin leakage behind reverse proxy
+  * CORS origins now parsed once at startup instead of per request
+  * Pre compiled cookie regex for room access checks
+
+* **API Key Authentication + fixes**
+  * Fixed validateApiKey() for programmatic access.
+  * Bearer token auth with tof_ prefix routes to API key validation, all other Bearer tokens route to session validation
+  * Permission enforcement: read, write, and admin permissions checked per endpoint
+  * CSRF validation are now skipped for API key requests
+  * Audit logs track API key identity for all actions
+
+* **Bug Fixes**
+  * Fixed a settings bug where partial settings changes were visible to concurrent requests before validation completed
+  * Fixed initializeTheOneFile() not being awaited on startup, which caused first room requests to fail with "room unavailable" before the HTML file finished loading
+  * Fixed XSS vulnerability in network discovery icon alt attributes where icon names were not escaped with escapeHtml()
+  * Fixed hardcoded /admin redirect in setup and migration pages that broke custom admin path configurations
+  * Fixed OIDC email matching not normalizing case before database lookup
+  * Static file serving simplified with lookup table
+  * All innerHTML usage audited and verified safe with escapeHtml()
+
 **3/26/26 Theonefile_verse 1.8.6** : **Further improvements to Network Auto Discovery scanner/editor one page setup**
+
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
 
 * **Network Discovery : Connections**
   * Thanks to [ahmaddxb](https://github.com/ahmaddxb) [#44](https://github.com/gelatinescreams/The-One-File/issues/44)
@@ -12,6 +52,8 @@
   * Notes added to host editor cards
 
 **3/11/26 Theonefile_verse 1.8.5** : **Real ping, mutli network host discovery with selfh.st/icons matching and various other tidbits**
+
+*Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*
 
 * **Real PING**
   * Overrides built in TheOneFileNetworkening "HTTP PING" with real server side methods

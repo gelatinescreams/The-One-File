@@ -53,7 +53,7 @@
       try {
         var res = await fetch('/api/setup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pwd }) });
         var d = await res.json();
-        if (res.ok && d.success) { window.location.href = '/admin'; }
+        if (res.ok && d.success) { window.location.href = '/' + (pageData.adminPath || 'admin'); }
         else { error.textContent = d.error || 'Setup failed'; error.setAttribute('role', 'alert'); error.classList.add('active'); }
       } catch(ex) { error.textContent = 'Connection error'; error.setAttribute('role', 'alert'); error.classList.add('active'); }
     }));
@@ -72,7 +72,7 @@
       try {
         var res = await fetch('/api/admin/migrate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oldPassword: oldPwd.value, email: email.value, newPassword: newPwd.value || null }) });
         var d = await res.json();
-        if (res.ok && d.success) { window.location.href = '/admin'; }
+        if (res.ok && d.success) { window.location.href = '/' + (pageData.adminPath || 'admin'); }
         else { error.textContent = d.error || 'Migration failed'; error.setAttribute('role', 'alert'); error.classList.add('active'); }
       } catch(ex) { error.textContent = 'Connection error'; error.setAttribute('role', 'alert'); error.classList.add('active'); }
     }));

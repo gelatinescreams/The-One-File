@@ -990,6 +990,15 @@ export function closeDatabase(): void {
   db.close();
 }
 
+export function healthCheck(): boolean {
+  try {
+    db.prepare("SELECT 1").get();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function logAuthEvent(
   action: string,
   userId: string | null,

@@ -756,7 +756,7 @@ export async function processOidcCallback(
   let existingUser: db.User | null = null;
 
   if (authSettings.oidcEmailMatching && userInfo.email && userInfo.email_verified) {
-    const candidate = db.getUserByEmail(userInfo.email);
+    const candidate = db.getUserByEmail(userInfo.email.toLowerCase().trim());
     if (candidate && candidate.emailVerified) existingUser = candidate;
   }
 
