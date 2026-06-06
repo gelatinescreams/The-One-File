@@ -13,22 +13,30 @@ export interface WsData {
   userId?: string;
   verifiedUserId?: string;
   authenticated?: boolean;
+  attached?: boolean;
+}
+
+function attachToRoom(ws: any) {
+  const data = ws.data as WsData;
+  const roomId = data?.roomId;
+  if (!roomId || data.attached) return;
+  data.attached = true;
+  if (!roomConnections.has(roomId)) roomConnections.set(roomId, new Set());
+  roomConnections.get(roomId)!.add(ws);
+  if (!roomUsers.has(roomId)) roomUsers.set(roomId, new Map());
+  ws.subscribe(roomId);
+  const meta = roomMeta.get(roomId) || { connectedUsers: 0 };
+  meta.connectedUsers++;
+  if (meta.destructTimer) { clearTimeout(meta.destructTimer); meta.destructTimer = undefined; }
+  roomMeta.set(roomId, meta);
 }
 
 export const websocketHandlers = {
   open(ws: any) {
-    const roomId = (ws.data as WsData)?.roomId;
-    if (!roomId) return;
-    const connectionId = crypto.randomUUID();
-    (ws.data as WsData).connectionId = connectionId;
-    if (!roomConnections.has(roomId)) roomConnections.set(roomId, new Set());
-    roomConnections.get(roomId)!.add(ws);
-    if (!roomUsers.has(roomId)) roomUsers.set(roomId, new Map());
-    ws.subscribe(roomId);
-    const meta = roomMeta.get(roomId) || { connectedUsers: 0 };
-    meta.connectedUsers++;
-    if (meta.destructTimer) { clearTimeout(meta.destructTimer); meta.destructTimer = undefined; }
-    roomMeta.set(roomId, meta);
+    const data = ws.data as WsData;
+    if (!data?.roomId) return;
+    data.connectionId = crypto.randomUUID();
+    if (data.authenticated) attachToRoom(ws);
   },
 
   async message(ws: any, message: any) {
@@ -57,6 +65,7 @@ export const websocketHandlers = {
       }
       (ws.data as WsData).authenticated = true;
       (ws.data as WsData).verifiedUserId = tokenValidation.collabUserId;
+      attachToRoom(ws);
       ws.send(JSON.stringify({ type: 'auth-ok' }));
       return;
     }
@@ -70,7 +79,8 @@ export const websocketHandlers = {
     const validTypes = ['join', 'leave', 'presence', 'state', 'patch', 'chat', 'cursor', 'typing'];
     if (!msg.type || !validTypes.includes(msg.type)) return;
 
-    if (!checkWsRateLimit(connectionId, msg.type)) {
+    const wsUserKey = (ws.data as WsData)?.verifiedUserId ? 'u:' + (ws.data as WsData).verifiedUserId : null;
+    if (!checkWsRateLimit(connectionId, msg.type) || (wsUserKey && !checkWsRateLimit(wsUserKey, msg.type))) {
       ws.send(JSON.stringify({ type: 'rate-limited', messageType: msg.type }));
       return;
     }
@@ -93,7 +103,7 @@ export const websocketHandlers = {
     }
 
     if (msg.type === 'join' && msg.user) {
-      let userId = msg.user.id;
+      const userId = msg.user.id;
       if (!userId || !isValidUUID(userId)) return;
 
       const verifiedUserId = (ws.data as WsData)?.verifiedUserId;
@@ -208,7 +218,7 @@ export const websocketHandlers = {
   close(ws: any) {
     const roomId = (ws.data as WsData)?.roomId;
     const userId = (ws.data as WsData)?.userId;
-    if (!roomId) return;
+    if (!roomId || !(ws.data as WsData)?.attached) return;
     const connections = roomConnections.get(roomId);
     if (connections) {
       connections.delete(ws);

@@ -2,7 +2,7 @@ import * as db from "./database";
 import * as redis from "./redis";
 import * as oidc from "./oidc";
 import { APP_VERSION, PORT, ENV_ADMIN_PASSWORD, getSettings, isAdminConfigured, isInstanceLocked, isValidUUID } from "./config";
-import { securityHeaders, getClientIP, getTokenFromRequest, relativeRedirect } from "./security";
+import { securityHeaders, getClientIP, getTokenFromRequest, relativeRedirect, setServerRef } from "./security";
 import { startTokenCleanupIntervals, validateInstanceToken } from "./tokens";
 import { startRateLimitCleanupIntervals, checkWsConnectionLimit } from "./rate-limit";
 import { loadRoom, restartBackupTimer, clearBackupTimer, clearUpdateTimer, deleteRoomData, scheduleDestruction, initializeTheOneFile } from "./rooms";
@@ -30,11 +30,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
   const path = url.pathname;
 
   if (req.method === 'POST' || req.method === 'PUT') {
-    if (path !== '/api/admin/upload-html') {
-      const cl = parseInt(req.headers.get('content-length') || '0');
-      if (cl > 5 * 1024 * 1024) {
-        return new Response('Payload too large', { status: 413 });
-      }
+    const cl = parseInt(req.headers.get('content-length') || '0');
+    const limit = path === '/api/admin/upload-html' ? 12 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (cl > limit) {
+      return new Response('Payload too large', { status: 413 });
     }
   }
 
@@ -57,7 +56,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
     }
 
     const authSettings = oidc.getAuthSettings();
-    const requireWsToken = authSettings.productionMode || process.env.REQUIRE_WS_TOKEN === 'true';
+    const requireWsToken = authSettings.productionMode || process.env.REQUIRE_WS_TOKEN !== 'false';
 
     const upgraded = server.upgrade(req, { data: { roomId, authenticated: !requireWsToken } });
     if (upgraded) return undefined;
@@ -149,6 +148,8 @@ const server = Bun.serve({
     ...websocketHandlers
   }
 });
+
+setServerRef(server);
 
 const migrationResult = db.migrateFromFlatFiles();
 if (migrationResult.rooms > 0 || migrationResult.settings || migrationResult.admin) {

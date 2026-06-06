@@ -126,6 +126,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   }
 
   if (path === "/api/auth/logout" && req.method === "POST") {
+    if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
     const token = getUserTokenFromRequest(req);
     if (token) {
       const user = await oidc.validateUserSessionToken(token);

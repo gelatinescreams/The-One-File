@@ -1,12 +1,22 @@
 {
   "name": "theonefile_verse",
-  "version": "1.9.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "bun test"
   },
   "dependencies": {
-    "redis": "^4.6.13"
+    "redis": "4.7.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.14",
+    "dompurify": "3.4.8",
+    "typescript": "^5.7.2",
+    "eslint": "^9.17.0",
+    "typescript-eslint": "^8.18.0"
   }
 }

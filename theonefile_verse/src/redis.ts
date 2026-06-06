@@ -9,18 +9,24 @@ let isConnected = false;
 const messageHandlers = new Map<string, Set<(message: string, channel: string) => void>>();
 
 export async function connectRedis(): Promise<boolean> {
+  if (!process.env.REDIS_URL) {
+    return false;
+  }
   try {
-    client = createClient({ url: REDIS_URL });
+    client = createClient({ url: REDIS_URL, socket: { reconnectStrategy: (retries) => Math.min(1000 + retries * 500, 15000) } });
     subscriber = client.duplicate();
 
+    let errorLogged = false;
     client.on("error", (err) => {
-      console.error("[Redis] Client error:", err.message);
       isConnected = false;
+      if (!errorLogged) {
+        console.error("[Redis] Client error:", err.message);
+        errorLogged = true;
+      }
     });
+    client.on("ready", () => { errorLogged = false; isConnected = true; });
 
-    subscriber.on("error", (err) => {
-      console.error("[Redis] Subscriber error:", err.message);
-    });
+    subscriber.on("error", () => {});
 
     await client.connect();
     await subscriber.connect();

@@ -1,5 +1,40 @@
 ### TheOneFile_Verse changelog
 
+**6/6/26 Theonefile_verse 2.0.0** : **That 2.0 glow**
+
+* **Thank you to everyone who has/will use. Thank you to everyone who has helped in every way**
+
+* **Security changes for 2.0**
+  * WebSocket session tokens are now required by default. A connection no longer joins the room until it has authenticated.
+  * **Set REQUIRE_WS_TOKEN=false only for trusted local testing.**
+  * NOTE: The encryption key is now written to a protected key file instead of the database. Any key already in the database is moved to the file on first start and removed from the database. ENCRYPTION_KEY still overrides, and production mode still requires it.
+  * X Forwarded For is ignored unless a reverse proxy is configured. The real socket address is used by default, so client IP and rate limit identity can no longer be spoofed on a directly exposed instance. Set TRUSTED_PROXY_COUNT or TRUSTED_PROXIES behind a proxy.
+
+* **Server Hardening**
+  * Added server side request protection on the probe endpoints. 
+  * Probes to loopback, link local metadata (169.254.0.0/16), 0.0.0.0, broadcast, and localhost names are rejected. Private range monitoring of your own network still works.
+  * Probe targets given as a hostname are resolved and checks against the block above.
+  * Account linking through single sign on now requires the provider verified email to match the account email.
+  * OIDC discovery and token endpoints must use https (loopback allowed for local testing).
+  * Two factor codes and backup codes are now compared in constant time.
+  * The mailer forces certificate verification in production even if insecure TLS was requested. 
+  * **The OIDC debug log should be off in production.**
+  * WebSockets are rate limited per user in addition to per connection.
+  * Email template hardening.
+  * Fixed an issue where Redis had repeated error logging when no Redis is configured.
+  * Added a security check to custom theonefile_networkening.html templates
+  
+* **Client Hardening**
+  * Bundled DOMPurify locally.
+
+* **Performance**
+  * Tuned SQLite for the collaboration workload (WAL with synchronous NORMAL, a busy timeout, a larger cache, and memory mapped reads) for faster writes and no lock contention under concurrent edits.
+  * Static scripts and styles are now served gzip compressed with an ETag, so a returning browser revalidates and gets a small 304 instead of re downloading the client each visit.
+
+* **Engineering Maturity**
+  * Added as many security checks as I could think of. If you have more, PR is welcome.
+  * Added a continuous workflow that runs type checking, lint, tests, plus CodeQL and a Trivy scan.
+
 **4/6/26 Theonefile_verse 1.9.0 Beta 2** : **Production ready hierarchical architecture + fixes**
 
 *Now that most of the core TheOneFile_Verse development is done, I have begun breaking the code into a more production friendly hierarchical structure. This will be completed by 2.0 Stable.*

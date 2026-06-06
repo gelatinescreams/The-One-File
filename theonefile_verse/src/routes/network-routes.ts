@@ -26,11 +26,14 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!target || typeof target !== "string" || !network.validateTarget(target)) {
         return Response.json({ error: "Invalid target" }, { status: 400, headers: corsHeaders });
       }
+      if (network.isBlockedProbeTarget(target)) {
+        return Response.json({ error: "Target not allowed" }, { status: 400, headers: corsHeaders });
+      }
       if (!network.validateProbeConfig(probes)) {
         return Response.json({ error: "Invalid probe configuration" }, { status: 400, headers: corsHeaders });
       }
       const result = await network.probeTarget(target, probes, timeout);
-      return Response.json(result, { headers: corsHeaders });
+      return Response.json(network.sanitizeScanText(result), { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 
@@ -52,6 +55,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       for (const t of body.targets) {
         if (!t.nodeId || typeof t.nodeId !== "string") continue;
         if (!t.target || !network.validateTarget(t.target)) continue;
+        if (network.isBlockedProbeTarget(t.target)) continue;
         if (!network.validateProbeConfig(t.probes)) continue;
         const timeout = Math.min(Math.max(parseInt(t.timeout) || 3000, 1000), 10000);
         validTargets.push({ nodeId: t.nodeId, target: t.target, probes: t.probes, timeout });
@@ -60,7 +64,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         return Response.json({ error: "No valid targets" }, { status: 400, headers: corsHeaders });
       }
       const results = await network.probeBatch(validTargets);
-      return Response.json({ results }, { headers: corsHeaders });
+      return Response.json({ results: network.sanitizeScanText(results) }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 
@@ -109,6 +113,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         }
         totalCount += validation.count || 0;
       }
+      const MAX_DISCOVERY_HOSTS = 8192;
+      if (totalCount > MAX_DISCOVERY_HOSTS) {
+        return Response.json({ error: `Scan too large (${totalCount} hosts). Maximum is ${MAX_DISCOVERY_HOSTS} per scan.` }, { status: 400, headers: corsHeaders });
+      }
       const taskPrefix = `disc-${roomId}`;
       if (network.hasActiveDiscoveryForRoom(roomId, taskPrefix)) {
         return Response.json({ error: "A scan is already running for this room" }, { status: 409, headers: corsHeaders });
@@ -121,8 +129,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         netbios: body.options?.netbios !== false,
         mdns: body.options?.mdns !== false,
         snmp: body.options?.snmp === true,
-        snmpCommunity: (typeof body.options?.snmpCommunity === "string" && body.options.snmpCommunity.length <= 64) ? body.options.snmpCommunity : "public",
-        ports: Array.isArray(body.options?.ports) ? body.options.ports.filter((p: unknown) => typeof p === "number" && network.validatePort(p)) : [],
+        snmpCommunity: (typeof body.options?.snmpCommunity === "string" && /^[a-zA-Z0-9._-]{1,64}$/.test(body.options.snmpCommunity)) ? body.options.snmpCommunity : "public",
+        ports: Array.isArray(body.options?.ports) ? body.options.ports.filter((p: unknown) => typeof p === "number" && network.validatePort(p)).slice(0, 256) : [],
       };
       const connections = roomConnections.get(roomId);
       await network.startDiscovery(
@@ -138,7 +146,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         },
         (host) => {
           if (connections) {
-            const msg = JSON.stringify({ type: "discovery-found", taskId, host });
+            const msg = JSON.stringify({ type: "discovery-found", taskId, host: network.sanitizeScanText(host) });
             for (const ws of connections) ws.send(msg);
           }
         },
@@ -214,7 +222,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         (newPorts, newServices, containers) => {
           if (connections) {
             const newIcons = network.getServiceIcons(newPorts);
-            const msg = JSON.stringify({ type: "deepscan-update", scanId, ip, newPorts, newServices, containers, newIcons });
+            const msg = JSON.stringify({ type: "deepscan-update", scanId, ip, newPorts, newServices: network.sanitizeScanText(newServices), containers: network.sanitizeScanText(containers), newIcons });
             for (const ws of connections) ws.send(msg);
           }
         },
@@ -247,7 +255,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     if (settings.skipUpdates) return Response.json({ error: "Updates disabled" }, { status: 400, headers: corsHeaders });
-    const success = await fetchLatestFromGitHub();
+    const success = await fetchLatestFromGitHub(true);
     return Response.json({ success, size: theOneFileHtml.length }, { headers: corsHeaders });
   }
 

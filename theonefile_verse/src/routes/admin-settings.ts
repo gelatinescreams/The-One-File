@@ -199,7 +199,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Updates disabled" }, { status: 400, headers: corsHeaders });
     }
     const previousVersion = currentFileVersion;
-    const success = await fetchLatestFromGitHub();
+    const success = await fetchLatestFromGitHub(true);
     return Response.json({ success, size: theOneFileHtml.length, version: currentFileVersion, previousVersion }, { headers: corsHeaders });
   }
 
@@ -240,8 +240,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!file) {
         return Response.json({ error: "No file provided" }, { status: 400, headers: corsHeaders });
       }
-      if (file.size > 50 * 1024 * 1024) {
-        return Response.json({ error: "File too large. Maximum size is 50MB." }, { status: 400, headers: corsHeaders });
+      if (file.type && !["text/html", "application/octet-stream"].includes(file.type)) {
+        return Response.json({ error: "Invalid file type. Upload an HTML file." }, { status: 400, headers: corsHeaders });
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        return Response.json({ error: "File too large. Maximum size is 10MB." }, { status: 400, headers: corsHeaders });
       }
       const html = await file.text();
       const validationResult = validateTheOneFileHtml(html);
@@ -251,6 +254,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       const theOneFilePath = getTheOneFilePath();
       await Bun.write(theOneFilePath, html);
       setTheOneFileHtml(html);
+      setExpectedTheOneFileHash(await computeSha256Hash(html));
       const settings = getSettings();
       settings.skipUpdates = true;
       updateSettings(settings);

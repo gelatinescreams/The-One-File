@@ -1,0 +1,9 @@
+node_modules/
+data/
+.env
+.env.local
+*.encryption_key
+.encryption_key
+.tofcheck/
+.tofkeytest/
+.testdata/

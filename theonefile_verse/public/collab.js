@@ -1849,8 +1849,8 @@
       if (r.responseTime !== null) detail = r.responseTime + 'ms';
       if (r.detail) detail += (detail ? ' ' : '') + r.detail;
       html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:12px">';
-      html += '<span style="color:var(--text-soft)">' + label + '</span>';
-      html += '<span style="color:' + color + '">● ' + (detail || r.status) + '</span>';
+      html += '<span style="color:var(--text-soft)">' + escapeHtml(label) + '</span>';
+      html += '<span style="color:' + color + '">● ' + escapeHtml(detail || r.status) + '</span>';
       html += '</div>';
     });
     panel.innerHTML = html;
@@ -2675,7 +2675,7 @@
       var ov = discoveryOverrides[ip] || {};
       if (ov.iconData && ov.iconData.name) {
         if (ov.iconData.svg) {
-          el.innerHTML = ov.iconData.svg;
+          el.innerHTML = sanitizeSvg(ov.iconData.svg);
           var svgEl = el.querySelector('svg');
           if (svgEl) { svgEl.style.width = '20px'; svgEl.style.height = '20px'; }
         } else {
@@ -2816,6 +2816,18 @@
   function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function sanitizeSvg(svg) {
+    if (!svg) return '';
+    if (window.DOMPurify) return DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true } });
+    return '';
+  }
+
+  function safeHTML(html) {
+    if (html == null) return '';
+    if (window.DOMPurify) return DOMPurify.sanitize(String(html), { ADD_ATTR: ['target'] });
+    return String(html);
   }
 
   function injectDiscoveryUI() {
@@ -2988,7 +3000,7 @@
         var badge = document.createElement('span');
         badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 8px;background:var(--panel);border:1px solid var(--edge-main);border-radius:12px;font-size:11px;color:var(--text-main)';
         var svgSpan = '';
-        if (tag.svg) svgSpan = '<span style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center">' + tag.svg + '</span>';
+        if (tag.svg) svgSpan = '<span style="width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center">' + sanitizeSvg(tag.svg) + '</span>';
         badge.innerHTML = svgSpan + '<span>' + escapeHtml(tag.name) + '</span>';
         var removeBtn = document.createElement('button');
         removeBtn.style.cssText = 'background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;padding:0 2px;line-height:1';
@@ -3036,7 +3048,7 @@
         var rackCap = ov.rackCapacity || '42';
         var iconPreview = '';
         if (ov.iconData && ov.iconData.svg) {
-          iconPreview = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + ov.iconData.svg + '</span>' +
+          iconPreview = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + sanitizeSvg(ov.iconData.svg) + '</span>' +
             '<span style="font-size:11px;color:var(--accent)">' + escapeHtml(ov.iconData.library + '/' + ov.iconData.name) + '</span>';
         } else if (ov.iconData && ov.iconData.name) {
           iconPreview = '<span class="disc-edit-icon-fetch" data-lib="' + escapeHtml(ov.iconData.library) + '" data-name="' + escapeHtml(ov.iconData.name) + '" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center"></span>' +
@@ -3084,7 +3096,7 @@
                 '<select class="disc-edit-shape" style="width:100%;padding:6px 8px;border-radius:4px;border:1px solid var(--edge-main);background:var(--panel);color:var(--text-main);font-size:12px">' + buildShapeOptions(cat, shp) + '</select>' +
               '</div>' +
               '<div class="disc-edit-shape-preview" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--edge-main);border-radius:6px;background:var(--panel)"' + (ov.iconData && ov.iconData.name && !ov.iconData.svg ? ' data-fetch-lib="' + escapeHtml(ov.iconData.library) + '" data-fetch-name="' + escapeHtml(ov.iconData.name) + '"' : '') + '>' +
-                (ov.iconData && ov.iconData.svg ? '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + ov.iconData.svg + '</span>' : getShapePreviewSVG(shp || 'circle')) +
+                (ov.iconData && ov.iconData.svg ? '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + sanitizeSvg(ov.iconData.svg) + '</span>' : getShapePreviewSVG(shp || 'circle')) +
               '</div>' +
             '</div>' +
             '<div style="grid-column:1/-1;display:flex;align-items:center;gap:8px">' +
@@ -3221,7 +3233,7 @@
               var preview = card.querySelector('.disc-edit-icon-preview');
               if (preview && iconData && iconData.name) {
                 if (iconData.svg) {
-                  preview.innerHTML = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + iconData.svg + '</span>' +
+                  preview.innerHTML = '<span style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center">' + sanitizeSvg(iconData.svg) + '</span>' +
                     '<span style="font-size:11px;color:var(--accent)">' + escapeHtml(iconData.library + '/' + iconData.name) + '</span>';
                 } else {
                   var fetchSpan = document.createElement('span');
@@ -3238,7 +3250,7 @@
               var shapePreview = card.querySelector('.disc-edit-shape-preview');
               if (shapePreview && iconData && iconData.name) {
                 if (iconData.svg) {
-                  shapePreview.innerHTML = '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + iconData.svg + '</span>';
+                  shapePreview.innerHTML = '<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center">' + sanitizeSvg(iconData.svg) + '</span>';
                 } else {
                   fetchDiscoveryIcon(iconData.library, iconData.name, shapePreview, 36);
                 }

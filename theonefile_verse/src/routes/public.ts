@@ -6,11 +6,27 @@ import { APP_VERSION, getSettings, isValidUUID, getAdminPath } from "../config";
 import { serveHtml, securityHeaders, getUserTokenFromRequest, validateAdminUser, relativeRedirect } from "../security";
 import { theOneFileHtml, loadRoom } from "../rooms";
 
+const staticCache = new Map<string, { etag: string; type: string; cache: string; raw: Uint8Array; gz: Uint8Array | null }>();
+
+async function getStaticAsset(p: string, entry: { path: string; type: string; cache: string }) {
+  const hit = staticCache.get(p);
+  if (hit) return hit;
+  const file = Bun.file(join(process.cwd(), entry.path));
+  if (!(await file.exists())) return null;
+  const raw = new Uint8Array(await file.arrayBuffer());
+  const etag = '"' + Bun.hash(raw).toString(16) + '"';
+  const compressible = entry.type.includes("javascript") || entry.type.includes("css");
+  const rec = { etag, type: entry.type, cache: entry.cache, raw, gz: compressible ? Bun.gzipSync(raw) : null };
+  staticCache.set(p, rec);
+  return rec;
+}
+
 const STATIC_FILES: Record<string, { path: string; type: string; cache: string }> = {
   "/collab.js": { path: "public/collab.js", type: "application/javascript", cache: "no-cache" },
   "/collab-init.js": { path: "public/collab-init.js", type: "application/javascript", cache: "no-cache" },
   "/collab-save-hook.js": { path: "public/collab-save-hook.js", type: "application/javascript", cache: "no-cache" },
   "/collab.css": { path: "public/collab.css", type: "text/css", cache: "no-cache" },
+  "/dompurify.min.js": { path: "public/dompurify.min.js", type: "application/javascript", cache: "public, max-age=86400" },
   "/landing.js": { path: "public/landing.js", type: "application/javascript", cache: "public, max-age=3600" },
   "/admin-dashboard.js": { path: "public/admin-dashboard.js", type: "application/javascript", cache: "public, max-age=3600" },
   "/admin-auth.js": { path: "public/admin-auth.js", type: "application/javascript", cache: "public, max-age=3600" },
@@ -63,8 +79,6 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!room) return relativeRedirect("/?error=room_not_found");
     if (!theOneFileHtml) return relativeRedirect("/?error=room_unavailable");
 
-    let injectedHtml = theOneFileHtml.replace('<head>', '<head><script src="/collab-init.js"></script>');
-
     const adminUser = await validateAdminUser(req);
     const isAdmin = !!adminUser;
 
@@ -93,11 +107,14 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
 
     const configBlock = `<script type="application/json" id="room-config">${safeRoomConfig}</script>
 <link rel="stylesheet" href="/collab.css">
+<script src="/dompurify.min.js"></script>
 <script src="/collab.js"></script>
 <script src="/collab-save-hook.js"></script>
 </body>`;
 
-    injectedHtml = injectedHtml.replace(/<\/body>\s*<\/html>\s*$/i, configBlock + "\n</html>");
+    const injectedHtml = theOneFileHtml
+      .replace('<head>', '<head><script src="/collab-init.js"></script>')
+      .replace(/<\/body>\s*<\/html>\s*$/i, configBlock + "\n</html>");
 
     return serveHtml(injectedHtml, 'room', req);
   }
@@ -109,11 +126,17 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
 
   const staticEntry = STATIC_FILES[path];
   if (staticEntry) {
-    const file = Bun.file(join(process.cwd(), staticEntry.path));
-    if (await file.exists()) {
-      return new Response(file, {
-        headers: { "Content-Type": staticEntry.type, ...securityHeaders, "Cache-Control": staticEntry.cache }
-      });
+    const rec = await getStaticAsset(path, staticEntry);
+    if (rec) {
+      if (req.headers.get('if-none-match') === rec.etag) {
+        return new Response(null, { status: 304, headers: { "ETag": rec.etag, "Cache-Control": rec.cache } });
+      }
+      const headers: Record<string, string> = { "Content-Type": rec.type, ...securityHeaders, "Cache-Control": rec.cache, "ETag": rec.etag, "Vary": "Accept-Encoding" };
+      if (rec.gz && (req.headers.get('accept-encoding') || '').includes('gzip')) {
+        headers["Content-Encoding"] = "gzip";
+        return new Response(rec.gz as BodyInit, { headers });
+      }
+      return new Response(rec.raw as BodyInit, { headers });
     }
   }
 

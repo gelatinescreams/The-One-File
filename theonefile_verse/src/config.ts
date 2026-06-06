@@ -85,7 +85,7 @@ export const defaultSettings: InstanceSettings = {
   backupRetentionCount: 7,
   adminPath: "admin",
   showAdminLink: true,
-  trustedProxyCount: 1,
+  trustedProxyCount: 0,
   trustedProxies: [],
   defaultRoomTheme: "",
   forceWelcomeModal: false,

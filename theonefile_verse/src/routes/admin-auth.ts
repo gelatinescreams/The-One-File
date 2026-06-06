@@ -3,9 +3,9 @@ import * as oidc from "../oidc";
 import * as db from "../database";
 import * as redis from "../redis";
 import { getSettings, getAdminPath, needsAdminMigration, hasAdminUser, verifyAdminPassword, getExternalOrigin } from "../config";
-import { getClientIP, serveHtml, apiError, validateAdminUser, getTokenFromRequest, getUserTokenFromRequest, relativeRedirect } from "../security";
+import { getClientIP, serveHtml, apiError, validateAdminUser, validateRequestCsrf, csrfReject, getTokenFromRequest, getUserTokenFromRequest, relativeRedirect } from "../security";
 import { checkRateLimit } from "../rate-limit";
-import { removeAdminToken, removeInstanceToken } from "../tokens";
+import { removeInstanceToken } from "../tokens";
 import { adminDashboardHtml, adminLoginHtml, migrationPageHtml } from "../templates";
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
@@ -120,9 +120,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   }
 
   if (path === "/api/logout" && req.method === "POST") {
+    if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
     const collabToken = getTokenFromRequest(req);
     if (collabToken) {
-      await removeAdminToken(collabToken);
       removeInstanceToken(collabToken);
       if (redis.isRedisConnected()) await redis.deleteSessionToken(collabToken);
     }

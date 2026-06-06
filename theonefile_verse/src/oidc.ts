@@ -1,14 +1,26 @@
 import * as db from "./database";
+import { readFileSync, writeFileSync, existsSync, chmodSync } from "fs";
+import { join } from "path";
+import { createHash } from "crypto";
 
-const DEBUG_OIDC = process.env.DEBUG_OIDC === 'true';
+export function hashTokenSync(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
 
-if (DEBUG_OIDC) {
-  const authSettings = db.getSetting('authSettings');
-  const isProduction = authSettings ? JSON.parse(authSettings).productionMode : false;
-  if (isProduction) {
-    console.warn('[Security] WARNING: DEBUG_OIDC is enabled in production mode!');
-    console.warn('[Security] This may expose sensitive information in logs. Disable DEBUG_OIDC for production.');
-  }
+const KEY_FILE_PATH = join(process.env.DATA_DIR || "./data", ".encryption_key");
+
+function isProductionModeAtBoot(): boolean {
+  try {
+    const authSettings = db.getSetting('authSettings');
+    return authSettings ? JSON.parse(authSettings).productionMode === true : false;
+  } catch { return false; }
+}
+
+const DEBUG_OIDC = process.env.DEBUG_OIDC === 'true' && !isProductionModeAtBoot();
+
+if (process.env.DEBUG_OIDC === 'true' && isProductionModeAtBoot()) {
+  console.warn('[Security] DEBUG_OIDC is ignored because production mode is enabled.');
+  console.warn('[Security] OIDC debug logging stays disabled to avoid exposing sensitive data in logs.');
 }
 
 function logOidcError(message: string, ...args: any[]): void {
@@ -73,7 +85,7 @@ function base64UrlEncode(buffer: Uint8Array): string {
 const ENCRYPTION_KEY_LENGTH = 32;
 const PBKDF2_ITERATIONS = 600000;
 const PBKDF2_SALT_LENGTH = 16;
-let encryptionKey: CryptoKey | null = null;
+const encryptionKey: CryptoKey | null = null;
 
 async function deriveKeyFromSecret(secret: string, salt: Uint8Array): Promise<CryptoKey> {
   const encoder = new TextEncoder();
@@ -88,7 +100,7 @@ async function deriveKeyFromSecret(secret: string, salt: Uint8Array): Promise<Cr
   return await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: salt,
+      salt: salt as BufferSource,
       iterations: PBKDF2_ITERATIONS,
       hash: 'SHA-256'
     },
@@ -125,22 +137,44 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
     process.exit(1);
   }
 
-  let keyHex = db.getSetting('encryption_key');
+  const keyHex = loadOrCreateKeyFile();
+  return new Uint8Array(keyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+}
 
-  if (!keyHex) {
-    const keyBytes = new Uint8Array(ENCRYPTION_KEY_LENGTH);
-    crypto.getRandomValues(keyBytes);
-    keyHex = Array.from(keyBytes, b => b.toString(16).padStart(2, '0')).join('');
-    db.setSetting('encryption_key', keyHex);
-    console.warn('='.repeat(70));
-    console.warn('[SECURITY WARNING] ENCRYPTION_KEY environment variable not set.');
-    console.warn('[SECURITY WARNING] A random key has been generated and stored in the database.');
-    console.warn('[SECURITY WARNING] This is acceptable for development but NOT for production.');
-    console.warn('[SECURITY WARNING] Enable productionMode and set ENCRYPTION_KEY for production.');
-    console.warn('='.repeat(70));
+function writeKeyFile(keyHex: string): void {
+  writeFileSync(KEY_FILE_PATH, keyHex, { mode: 0o600 });
+  try { chmodSync(KEY_FILE_PATH, 0o600); } catch {}
+}
+
+function loadOrCreateKeyFile(): string {
+  if (existsSync(KEY_FILE_PATH)) {
+    const existing = readFileSync(KEY_FILE_PATH, 'utf-8').trim();
+    if (/^[0-9a-fA-F]{64}$/.test(existing)) return existing;
   }
 
-  return new Uint8Array(keyHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+  const legacyKey = db.getSetting('encryption_key');
+  if (legacyKey && /^[0-9a-fA-F]{64}$/.test(legacyKey)) {
+    writeKeyFile(legacyKey);
+    db.deleteSetting('encryption_key');
+    console.warn('='.repeat(70));
+    console.warn('[SECURITY] Moved the encryption key out of the database into a protected key file.');
+    console.warn('[SECURITY] Location: ' + KEY_FILE_PATH);
+    console.warn('[SECURITY] The key is no longer included in backups. Set ENCRYPTION_KEY for production.');
+    console.warn('='.repeat(70));
+    return legacyKey;
+  }
+
+  const keyBytes = new Uint8Array(ENCRYPTION_KEY_LENGTH);
+  crypto.getRandomValues(keyBytes);
+  const keyHex = Array.from(keyBytes, b => b.toString(16).padStart(2, '0')).join('');
+  writeKeyFile(keyHex);
+  console.warn('='.repeat(70));
+  console.warn('[SECURITY] ENCRYPTION_KEY environment variable not set.');
+  console.warn('[SECURITY] A random key was generated and stored in a protected key file (mode 0600).');
+  console.warn('[SECURITY] Location: ' + KEY_FILE_PATH);
+  console.warn('[SECURITY] The key is excluded from backups. Set ENCRYPTION_KEY and enable production mode for production.');
+  console.warn('='.repeat(70));
+  return keyHex;
 }
 
 async function getEncryptionKey(salt: Uint8Array): Promise<CryptoKey> {
@@ -148,7 +182,7 @@ async function getEncryptionKey(salt: Uint8Array): Promise<CryptoKey> {
 
   const importedKey = await crypto.subtle.importKey(
     'raw',
-    keyMaterial,
+    keyMaterial as BufferSource,
     'PBKDF2',
     false,
     ['deriveBits', 'deriveKey']
@@ -157,7 +191,7 @@ async function getEncryptionKey(salt: Uint8Array): Promise<CryptoKey> {
   return await crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: salt,
+      salt: salt as BufferSource,
       iterations: PBKDF2_ITERATIONS,
       hash: 'SHA-256'
     },
@@ -233,13 +267,30 @@ interface OidcDiscovery {
   revocation_endpoint?: string;
 }
 
+function isAllowedOidcEndpoint(url: string): boolean {
+  try {
+    const u = new URL(url);
+    if (u.protocol === 'https:') return true;
+    if (u.protocol === 'http:' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1' || u.hostname === '::1')) return true;
+    return false;
+  } catch { return false; }
+}
+
 async function discoverOidcEndpoints(issuerUrl: string): Promise<OidcDiscovery | null> {
   try {
+    if (!isAllowedOidcEndpoint(issuerUrl)) {
+      logOidcError('Discovery issuer must use https', { issuer: issuerUrl });
+      return null;
+    }
     const wellKnownUrl = issuerUrl.replace(/\/$/, '') + '/.well-known/openid-configuration';
     const res = await fetch(wellKnownUrl);
     if (!res.ok) return null;
     const disc = await res.json();
     if (!disc.authorization_endpoint || !disc.token_endpoint) return null;
+    if (!isAllowedOidcEndpoint(disc.authorization_endpoint) || !isAllowedOidcEndpoint(disc.token_endpoint) || (disc.jwks_uri && !isAllowedOidcEndpoint(disc.jwks_uri))) {
+      logOidcError('Discovery endpoints must use https');
+      return null;
+    }
     const normExpected = issuerUrl.replace(/\/$/, '');
     const normActual = (disc.issuer || '').replace(/\/$/, '');
     if (normActual && normActual !== normExpected) {
@@ -539,7 +590,7 @@ async function verifyJwtSignature(token: string, jwks: JsonWebKey[]): Promise<bo
     const signedData = new TextEncoder().encode(parts[0] + '.' + parts[1]);
 
     const matchingKeys = header.kid
-      ? jwks.filter(k => k.kid === header.kid)
+      ? jwks.filter(k => (k as any).kid === header.kid)
       : jwks;
 
     for (const jwk of matchingKeys) {
@@ -716,13 +767,17 @@ export async function processOidcCallback(
   }
 
   if (linkUserId) {
-    if (currentUserToken) {
-      const currentUser = await validateUserSessionToken(currentUserToken);
-      if (!currentUser || currentUser.id !== linkUserId) {
-        return { success: false, error: 'Session expired or invalid for account linking' };
-      }
-    } else {
+    if (!currentUserToken) {
       return { success: false, error: 'Authentication required for account linking' };
+    }
+    const currentUser = await validateUserSessionToken(currentUserToken);
+    if (!currentUser || currentUser.id !== linkUserId) {
+      return { success: false, error: 'Session expired or invalid for account linking' };
+    }
+    if (userInfo.email_verified && userInfo.email && currentUser.email) {
+      if (userInfo.email.toLowerCase().trim() !== currentUser.email.toLowerCase().trim()) {
+        return { success: false, error: 'The provider email does not match your account email' };
+      }
     }
 
     const user = db.getUserById(linkUserId);
@@ -1174,7 +1229,7 @@ export function generateCsrfToken(): string {
   const expiresAt = new Date(now.getTime() + CSRF_TOKEN_TTL_MS);
 
   db.createCsrfToken({
-    token,
+    token: hashTokenSync(token),
     used: false,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString()
@@ -1186,20 +1241,21 @@ export function generateCsrfToken(): string {
 export function validateCsrfToken(token: string): boolean {
   if (!token) return false;
 
-  const data = db.getCsrfToken(token);
+  const tokenHash = hashTokenSync(token);
+  const data = db.getCsrfToken(tokenHash);
   if (!data) return false;
 
   if (new Date(data.expiresAt) < new Date()) {
-    db.deleteCsrfToken(token);
+    db.deleteCsrfToken(tokenHash);
     return false;
   }
 
   if (data.used) {
-    db.deleteCsrfToken(token);
+    db.deleteCsrfToken(tokenHash);
     return false;
   }
 
-  db.markCsrfTokenUsed(token);
+  db.markCsrfTokenUsed(tokenHash);
   return true;
 }
 
@@ -1229,6 +1285,9 @@ export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string)
     if (original.includes('..') || original.includes('\\')) {
       return '/';
     }
+    if (!isSafeRedirectPath(original)) {
+      return '/';
+    }
     return original;
   }
 
@@ -1238,10 +1297,19 @@ export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string)
 
     if (redirectOrigin === baseOrigin) {
       const url = new URL(original);
+      if (!isSafeRedirectPath(url.pathname)) {
+        return '/';
+      }
       return url.pathname + url.search + url.hash;
     }
   } catch {
   }
 
   return '/';
+}
+
+function isSafeRedirectPath(path: string): boolean {
+  const p = path.toLowerCase();
+  if (p.startsWith('/api/') || p === '/api' || p.startsWith('/ws/')) return false;
+  return true;
 }

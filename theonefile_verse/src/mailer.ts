@@ -3,6 +3,15 @@ import { decryptSecret } from "./oidc";
 import { connect as tlsConnect, TLSSocket } from "tls";
 import { Socket } from "net";
 
+function tlsVerificationDisabled(config: db.SmtpConfig): boolean {
+  if (!config.allowInsecureTls) return false;
+  try {
+    const s = db.getSetting('authSettings');
+    if (s && JSON.parse(s).productionMode === true) return false;
+  } catch {}
+  return true;
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -46,8 +55,10 @@ export async function sendEmailWithConfig(
 ): Promise<SendResult> {
   const logId = crypto.randomUUID();
 
-  if (config.allowInsecureTls) {
-    console.warn(`[Mailer] WARNING: Insecure TLS is enabled for SMTP config "${config.name}". This disables certificate verification and is NOT recommended for production use.`);
+  if (config.allowInsecureTls && tlsVerificationDisabled(config)) {
+    console.warn(`[Mailer] WARNING: Insecure TLS is enabled for SMTP config "${config.name}". This disables certificate verification and is NOT recommended.`);
+  } else if (config.allowInsecureTls) {
+    console.warn(`[Mailer] Insecure TLS requested for SMTP config "${config.name}" but production mode forces certificate verification.`);
   }
 
   try {
@@ -123,7 +134,7 @@ class SmtpClient {
         const tlsSocket = tlsConnect({
           host: host,
           port: port,
-          rejectUnauthorized: !this.config.allowInsecureTls,
+          rejectUnauthorized: !tlsVerificationDisabled(this.config),
           servername: host
         });
 
@@ -136,7 +147,7 @@ class SmtpClient {
             rawSocket: tlsSocket
           };
 
-          tlsSocket.on('data', (data) => this.handleData(data));
+          tlsSocket.on('data', (data) => this.handleData(data as Buffer));
           tlsSocket.on('error', (err) => this.handleError(err));
           tlsSocket.on('close', () => this.handleClose());
 
@@ -166,7 +177,7 @@ class SmtpClient {
             rawSocket: netSocket
           };
 
-          netSocket.on('data', (data) => this.handleData(data));
+          netSocket.on('data', (data) => this.handleData(data as Buffer));
           netSocket.on('error', (err) => this.handleError(err));
           netSocket.on('close', () => this.handleClose());
 
@@ -303,7 +314,7 @@ class SmtpClient {
         const tlsSocket = tlsConnect({
           socket: rawSocket,
           host: this.config.host!,
-          rejectUnauthorized: !this.config.allowInsecureTls,
+          rejectUnauthorized: !tlsVerificationDisabled(this.config),
           servername: this.config.host!
         });
 
@@ -319,7 +330,7 @@ class SmtpClient {
             rawSocket: tlsSocket
           };
 
-          tlsSocket.on('data', (data) => this.handleData(data));
+          tlsSocket.on('data', (data) => this.handleData(data as Buffer));
           tlsSocket.on('error', (err) => this.handleError(err));
           tlsSocket.on('close', () => this.handleClose());
 
@@ -588,9 +599,9 @@ export async function sendTemplatedEmail(
     const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
     const escapedValueForHtml = escapeHtml(value);
     const safeValue = value.replace(/[\r\n]/g, '');
-    subject = subject.replace(pattern, safeValue);
-    html = html.replace(pattern, escapedValueForHtml);
-    text = text.replace(pattern, value);
+    subject = subject.replace(pattern, () => safeValue);
+    html = html.replace(pattern, () => escapedValueForHtml);
+    text = text.replace(pattern, () => value);
   }
 
   return sendEmail({ to, subject, html, text });

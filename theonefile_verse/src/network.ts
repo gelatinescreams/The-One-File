@@ -275,6 +275,51 @@ export function isRFC1918(ip: string): boolean {
   return false;
 }
 
+export function isBlockedIPv4(ip: string): boolean {
+  const parts = ip.split(".").map(Number);
+  if (parts[0] === 0) return true;
+  if (parts[0] === 127) return true;
+  if (parts[0] === 169 && parts[1] === 254) return true;
+  if (parts.every(p => p === 255)) return true;
+  return false;
+}
+
+export function isBlockedProbeTarget(target: string): boolean {
+  if (validateIPv4(target)) return isBlockedIPv4(target);
+  const host = target.toLowerCase();
+  if (host === "localhost" || host.endsWith(".localhost")) return true;
+  if (host === "metadata.google.internal" || host.endsWith(".internal")) return true;
+  return false;
+}
+
+export async function resolveSafeProbeTarget(target: string): Promise<string | null> {
+  if (validateIPv4(target)) return isBlockedIPv4(target) ? null : target;
+  if (isBlockedProbeTarget(target)) return null;
+  try {
+    const results = await Bun.dns.lookup(target);
+    for (const r of results) {
+      const addr = (r as any).address;
+      if (validateIPv4(addr)) {
+        return isBlockedIPv4(addr) ? null : addr;
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function sanitizeScanText(value: any): any {
+  if (typeof value === "string") return value.replace(/[<>]/g, "").slice(0, 256);
+  if (Array.isArray(value)) return value.map(sanitizeScanText);
+  if (value && typeof value === "object") {
+    const out: any = {};
+    for (const k of Object.keys(value)) out[k] = sanitizeScanText(value[k]);
+    return out;
+  }
+  return value;
+}
+
 export function validatePort(port: number): boolean {
   return Number.isInteger(port) && port >= 1 && port <= 65535;
 }
@@ -365,7 +410,9 @@ async function probeTCP(target: string, port: number, timeoutMs: number): Promis
 }
 
 async function probeHTTP(target: string, config: ProbeConfig, timeoutMs: number): Promise<ProbeResult> {
-  const url = config.url || `http://${target}${config.path || "/"}`;
+  let path = typeof config.path === "string" ? config.path : "/";
+  if (!path.startsWith("/")) path = "/" + path;
+  const url = `http://${target}${path}`;
   const start = performance.now();
   try {
     const resp = await fetch(url, {
@@ -403,7 +450,7 @@ async function probeDNS(target: string, timeoutMs: number): Promise<ProbeResult>
       const hostname = nameMatch ? nameMatch[1].replace(/\.$/, "") : "";
       return { type: "dns", status: raceResult === 0 ? "online" : "offline", responseTime: elapsed, detail: hostname || undefined };
     } else {
-      const results = await Bun.dns.resolve(target);
+      const results = await Bun.dns.lookup(target);
       const elapsed = Math.round(performance.now() - start);
       const ip = results.length > 0 ? (results[0] as any).address || String(results[0]) : "";
       return { type: "dns", status: "online", responseTime: elapsed, detail: ip || undefined };
@@ -414,6 +461,10 @@ async function probeDNS(target: string, timeoutMs: number): Promise<ProbeResult>
 }
 
 export async function probeTarget(target: string, probes: ProbeConfig[], timeout: number): Promise<{ status: "online" | "offline" | "unknown"; rtt: number | null; results: ProbeResult[] }> {
+  const safeTarget = await resolveSafeProbeTarget(target);
+  if (!safeTarget) {
+    return { status: "unknown", rtt: null, results: [] };
+  }
   const cappedTimeout = Math.min(timeout, 10000);
   const results: ProbeResult[] = [];
 
@@ -421,17 +472,17 @@ export async function probeTarget(target: string, probes: ProbeConfig[], timeout
     let result: ProbeResult;
     switch (probe.type) {
       case "icmp":
-        result = await probeICMP(target, cappedTimeout);
+        result = await probeICMP(safeTarget, cappedTimeout);
         break;
       case "tcp":
         if (!probe.port || !validatePort(probe.port)) continue;
-        result = await probeTCP(target, probe.port, cappedTimeout);
+        result = await probeTCP(safeTarget, probe.port, cappedTimeout);
         break;
       case "http":
-        result = await probeHTTP(target, probe, cappedTimeout);
+        result = await probeHTTP(safeTarget, probe, cappedTimeout);
         break;
       case "dns":
-        result = await probeDNS(target, cappedTimeout);
+        result = await probeDNS(safeTarget, cappedTimeout);
         break;
       default:
         continue;
@@ -667,8 +718,8 @@ async function resolveSNMP(ip: string, community: string, timeoutMs: number): Pr
     for (const line of lines) {
       const valMatch = /STRING:\s*"?([^"]*)"?/i.exec(line);
       if (!valMatch) continue;
-      if (line.includes("1.3.6.1.2.1.1.5.0")) sysName = valMatch[1].trim();
-      else if (line.includes("1.3.6.1.2.1.1.1.0")) sysDescr = valMatch[1].trim();
+      if (line.includes("1.3.6.1.2.1.1.5.0")) sysName = valMatch[1].trim().slice(0, 256);
+      else if (line.includes("1.3.6.1.2.1.1.1.0")) sysDescr = valMatch[1].trim().slice(0, 256);
     }
     return { sysName, sysDescr };
   } catch {
@@ -905,18 +956,19 @@ async function queryDockerAPI(ip: string, timeoutMs: number): Promise<DockerCont
       if (!resp.ok) continue;
       const containers = await resp.json();
       if (!Array.isArray(containers)) continue;
-      return containers.map((c: any) => ({
-        name: Array.isArray(c.Names) && c.Names.length > 0 ? c.Names[0].replace(/^\//, "") : "unknown",
-        image: c.Image || "",
+      return containers.slice(0, 200).map((c: any) => ({
+        name: (Array.isArray(c.Names) && c.Names.length > 0 ? String(c.Names[0]).replace(/^\//, "") : "unknown").slice(0, 256),
+        image: String(c.Image || "").slice(0, 256),
         ports: Array.isArray(c.Ports)
           ? c.Ports.filter((p: any) => p.PublicPort)
+                   .slice(0, 100)
                    .map((p: any) => ({
                      hostPort: p.PublicPort,
                      containerPort: p.PrivatePort || p.PublicPort,
-                     protocol: p.Type || "tcp",
+                     protocol: String(p.Type || "tcp").slice(0, 16),
                    }))
           : [],
-        state: c.State || "",
+        state: String(c.State || "").slice(0, 64),
       }));
     } catch {
       continue;

@@ -1,7 +1,14 @@
 import * as db from "./database";
 import * as oidc from "./oidc";
 import * as mailer from "./mailer";
-import { createHmac, randomBytes } from "crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
+
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 export async function hashPassword(password: string): Promise<string> {
   return await Bun.password.hash(password, {
@@ -859,12 +866,13 @@ export function verifyTOTPCode(secret: string, code: string): boolean {
   const secretBytes = base32Decode(secret);
   const timeStep = Math.floor(Date.now() / 1000 / 30);
 
+  let match = false;
   for (let i = -1; i <= 1; i++) {
-    if (generateTOTPCode(secretBytes, timeStep + i) === code) {
-      return true;
+    if (timingSafeEqualStr(generateTOTPCode(secretBytes, timeStep + i), code)) {
+      match = true;
     }
   }
-  return false;
+  return match;
 }
 
 export async function setupTOTP(userId: string): Promise<{ success: boolean; secret?: string; otpauthUrl?: string; error?: string }> {
@@ -974,7 +982,12 @@ export async function verifyBackupCode(userId: string, code: string): Promise<bo
   }
 
   const normalizedCode = code.toLowerCase().trim();
-  const index = backupCodes.findIndex(c => c.toLowerCase() === normalizedCode);
+  let index = -1;
+  for (let i = 0; i < backupCodes.length; i++) {
+    if (timingSafeEqualStr(backupCodes[i].toLowerCase(), normalizedCode)) {
+      index = i;
+    }
+  }
   if (index === -1) {
     return false;
   }
@@ -1108,7 +1121,6 @@ export async function requestEmailChange(
   });
 
   user.pendingEmail = normalizedNewEmail;
-  user.pendingEmailToken = tokenHash;
   user.updatedAt = new Date().toISOString();
   db.updateUser(user);
 

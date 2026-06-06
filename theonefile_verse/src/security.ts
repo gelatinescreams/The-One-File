@@ -10,28 +10,44 @@ export function isValidIP(ip: string): boolean {
   return IPV4_REGEX.test(ip) || IPV6_REGEX.test(ip) || ip === '::1';
 }
 
+let serverRef: any = null;
+export function setServerRef(s: any): void { serverRef = s; }
+
+function peerIP(req: Request): string | null {
+  try {
+    const info = serverRef?.requestIP?.(req);
+    if (info && info.address) {
+      let addr = String(info.address);
+      const mapped = addr.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/);
+      if (mapped) addr = mapped[1];
+      if (isValidIP(addr)) return addr;
+    }
+  } catch {}
+  return null;
+}
+
 export function getClientIP(req: Request): string {
-  const xForwardedFor = req.headers.get("x-forwarded-for");
-  if (xForwardedFor) {
-    const ips = xForwardedFor.split(",").map(ip => ip.trim()).filter(isValidIP);
-    if (ips.length === 0) return "unknown";
-    const settings = getSettings();
-    if (settings.trustedProxies.length > 0) {
-      for (let i = ips.length - 1; i >= 0; i--) {
-        if (!settings.trustedProxies.includes(ips[i])) {
-          return ips[i];
+  const settings = getSettings();
+  const trustProxy = settings.trustedProxies.length > 0 || settings.trustedProxyCount > 0;
+  if (trustProxy) {
+    const xForwardedFor = req.headers.get("x-forwarded-for");
+    if (xForwardedFor) {
+      const ips = xForwardedFor.split(",").map(ip => ip.trim()).filter(isValidIP);
+      if (ips.length > 0) {
+        if (settings.trustedProxies.length > 0) {
+          for (let i = ips.length - 1; i >= 0; i--) {
+            if (!settings.trustedProxies.includes(ips[i])) return ips[i];
+          }
+          return peerIP(req) || ips[0];
         }
+        const index = Math.max(0, ips.length - settings.trustedProxyCount);
+        return ips[index] || ips[0];
       }
     }
-    if (settings.trustedProxyCount > 0) {
-      const index = Math.max(0, ips.length - settings.trustedProxyCount);
-      return ips[index] || ips[0];
-    }
-    return ips[0];
+    const realIp = req.headers.get("x-real-ip");
+    if (realIp && isValidIP(realIp.trim())) return realIp.trim();
   }
-  const realIp = req.headers.get("x-real-ip");
-  if (realIp && isValidIP(realIp.trim())) return realIp.trim();
-  return "unknown";
+  return peerIP(req) || "unknown";
 }
 
 export function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' | 'api' = 'public'): Record<string, string> {

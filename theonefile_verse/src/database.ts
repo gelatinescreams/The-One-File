@@ -18,6 +18,11 @@ if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 const db = new Database(DB_PATH);
 db.exec("PRAGMA journal_mode = WAL");
 db.exec("PRAGMA foreign_keys = ON");
+db.exec("PRAGMA synchronous = NORMAL");
+db.exec("PRAGMA busy_timeout = 5000");
+db.exec("PRAGMA cache_size = -16000");
+db.exec("PRAGMA mmap_size = 134217728");
+db.exec("PRAGMA temp_store = MEMORY");
 
 function migrateAddColumn(table: string, column: string, definition: string) {
   try {
@@ -463,7 +468,7 @@ export interface UserToken {
   expiresAt: string;
   usedAt: string | null;
   createdAt: string;
-  failedAttempts: number;
+  failedAttempts?: number;
 }
 
 export interface SmtpConfig {
@@ -943,7 +948,9 @@ export function migrateFromFlatFiles(): { rooms: number; settings: boolean; admi
             creatorId: roomData.creatorId,
             passwordHash: roomData.passwordHash,
             destruct: roomData.destruct,
-            topology: roomData.topology
+            topology: roomData.topology,
+            ownerUserId: roomData.ownerUserId ?? null,
+            allowGuests: roomData.allowGuests ?? true
           });
           roomsMigrated++;
         }

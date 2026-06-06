@@ -163,6 +163,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         fromName: body.fromName || null,
         isDefault: body.isDefault || false,
         isActive: body.isActive !== false,
+        allowInsecureTls: body.allowInsecureTls === true,
         createdAt: now,
         updatedAt: now
       };
@@ -232,6 +233,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         fromName: body.fromName || null,
         isDefault: false,
         isActive: true,
+        allowInsecureTls: body.allowInsecureTls === true,
         createdAt: now,
         updatedAt: now
       };

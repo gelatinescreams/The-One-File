@@ -54,6 +54,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     }
     const rooms = db.listRooms();
     const settings = db.getAllSettings();
+    delete settings['encryption_key'];
     const exportData = { version: 1, exportedAt: new Date().toISOString(), rooms, settings };
     const actor = user ? user.id : `apikey:${apiKey!.name}`;
     db.addAuditLog({ timestamp: new Date().toISOString(), action: "data_exported", actor, actorIp: getClientIP(req), details: { roomCount: rooms.length } });
