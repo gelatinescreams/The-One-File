@@ -98,7 +98,7 @@
 ### Version 4.0.0 /\ 1/6/26 Stable + TheOneFile_Verse
 * **4.0.0 Stable! Thank you to everyone!**
 * **TheOneFile_Verse launch** An easily deployable, Docker based, real time collaboration wrapper that enables multiple users to work together!
-  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/b208667b-7a9e-4a18-ac98-5cb6e73bb669)
+  * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/0388e827-e374-435a-bea1-8702db394e73)
   * *join from different browsers to see real time changes*
 * [More information on TheOneFile_Verse](https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse)
 * **Fixed an issue where nodes and racks did not display correctly in print export**
@@ -469,8 +469,8 @@
 - NEW 3.0 Total css rewrite for core the-one-file.html
 - NEW 3.0 : Ping/Live status for nodes added to theonefile-networkening.html
 - Click here for a full online demo of the theonefile-networkening.html
-- [Click here for a full online demo of the theonefile-networkening-corporate-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-corporate-demo.html)
-- [Click here for a full online demo of the theonefile-networkening-homelab-demo.html](https://gelatinescreams.github.io/The-One-File/demos/theonefile-networkening-homelab-demo.html)
+- [Click here for a full online demo of the theonefile-networkening-corporate-demo.html](https://therecanonlybe.one/demos/?version=networkening&demo=corporate)
+- [Click here for a full online demo of the theonefile-networkening-homelab-demo.html](https://therecanonlybe.one/demos/?version=networkening&demo=homelab)
 - NEW 2.8 : Icon SEARCH with live preview
 - Seperate online features version to include icons - OPTIONAL
 - Use theonefile-networkening.html for this version
