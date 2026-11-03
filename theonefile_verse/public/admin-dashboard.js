@@ -123,6 +123,7 @@
     if (name === 'users') loadUsers();
     if (name === 'auth') {
       loadAuthSettings();
+      loadInvites();
       loadOidcProviders();
       loadSmtpConfigs();
       loadEmailTemplates();
@@ -170,6 +171,12 @@
     }
   }
 
+  function setNumberField(id, value, fallback) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.value = (typeof value === 'number' && isFinite(value)) ? value : fallback;
+  }
+
   function renderSettings() {
     document.getElementById('toggle-instance-lock').classList.toggle('active', settings.instancePasswordEnabled);
     document.getElementById('toggle-public-rooms').classList.toggle('active', settings.allowPublicRoomCreation);
@@ -178,6 +185,7 @@
     document.getElementById('default-destruct-mode').value = settings.defaultDestructMode || 'time';
     document.getElementById('default-destruct-hours').value = settings.defaultDestructHours || 24;
     document.getElementById('max-rooms').value = settings.maxRoomsPerInstance || 0;
+    document.getElementById('max-room-size-mb').value = settings.maxRoomSizeMB || 50;
     document.getElementById('forced-theme').value = settings.forcedTheme || 'user';
     var themeSelect = document.getElementById('default-room-theme');
     if (themeSelect) {
@@ -193,6 +201,15 @@
       themeSelect.value = settings.defaultRoomTheme || '';
     }
     document.getElementById('rate-limit-attempts').value = settings.rateLimitMaxAttempts || 10;
+    var tpc = document.getElementById('trusted-proxy-count'), tpl = document.getElementById('trusted-proxies');
+    if (tpc && tpl) {
+      tpc.value = settings.trustedProxyCount || 0;
+      tpl.value = (settings.trustedProxies || []).join(', ');
+      tpc.disabled = !!settings.envTrustedProxyCountSet;
+      tpl.disabled = !!settings.envTrustedProxiesSet;
+      document.getElementById('trusted-proxy-env').style.display = (settings.envTrustedProxyCountSet || settings.envTrustedProxiesSet) ? 'block' : 'none';
+      document.getElementById('save-trusted-proxies').disabled = !!(settings.envTrustedProxyCountSet && settings.envTrustedProxiesSet);
+    }
     document.getElementById('rate-limit-window').value = settings.rateLimitWindow || 60;
     document.getElementById('rate-limit-options').style.display = settings.rateLimitEnabled !== false ? 'flex' : 'none';
     document.getElementById('instance-pwd-row').style.display = settings.instancePasswordEnabled ? 'flex' : 'none';
@@ -207,6 +224,11 @@
     document.getElementById('toggle-cursor').classList.toggle('active', settings.cursorSharingEnabled !== false);
     document.getElementById('toggle-namechange').classList.toggle('active', settings.nameChangeEnabled !== false);
     document.getElementById('toggle-welcome-modal').classList.toggle('active', settings.forceWelcomeModal);
+    document.getElementById('toggle-enable3d').classList.toggle('active', settings.enable3d !== false);
+    setNumberField('max-assets-per-room-mb', settings.maxAssetsPerRoomMB, 200);
+    setNumberField('max-assets-total-gb', settings.maxAssetsTotalGB, 5);
+    var publicUrlEl = document.getElementById('public-url');
+    if (publicUrlEl) publicUrlEl.value = settings.publicUrl || '';
     document.getElementById('toggle-probe').classList.toggle('active', settings.probeEnabled !== false);
     document.getElementById('toggle-discovery').classList.toggle('active', settings.discoveryEnabled !== false);
     document.getElementById('toggle-discovery-admin').classList.toggle('active', settings.discoveryAdminOnly !== false);
@@ -266,24 +288,25 @@
     }
   }
 
+  async function saveTrustedProxies() {
+    var payload = {};
+    if (!settings.envTrustedProxyCountSet) payload.trustedProxyCount = parseInt(document.getElementById('trusted-proxy-count').value, 10) || 0;
+    if (!settings.envTrustedProxiesSet) payload.trustedProxies = document.getElementById('trusted-proxies').value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+    if (!(await postSettings(payload))) return;
+    showStatus('Trusted proxies saved', 'success');
+    loadSettings();
+  }
+
   async function saveRateLimitSettings() {
     var attempts = parseInt(document.getElementById('rate-limit-attempts').value) || 10;
     var windowVal = parseInt(document.getElementById('rate-limit-window').value) || 60;
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ rateLimitMaxAttempts: attempts, rateLimitWindow: windowVal })
-    });
+    if (!(await postSettings({ rateLimitMaxAttempts: attempts, rateLimitWindow: windowVal }))) return;
     showStatus('Rate limit settings saved', 'success');
   }
 
   async function saveForcedTheme() {
     var val = document.getElementById('forced-theme').value;
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ forcedTheme: val })
-    });
+    if (!(await postSettings({ forcedTheme: val }))) return;
     showStatus('Theme setting saved', 'success');
   }
 
@@ -291,11 +314,7 @@
     if (key === 'instancePasswordEnabled' && settings.envAdminPasswordSet) return;
     settings[key] = !settings[key];
     renderSettings();
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ [key]: settings[key] })
-    });
+    if (!(await postSettings({ [key]: settings[key] }))) return;
     showStatus('Setting updated', 'success');
   }
 
@@ -305,11 +324,7 @@
       showStatus('Password must be at least 10 characters', 'error');
       return;
     }
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ instancePassword: pwd })
-    });
+    if (!(await postSettings({ instancePassword: pwd }))) return;
     document.getElementById('instance-password').value = '';
     showStatus('Password updated', 'success');
     loadSettings();
@@ -317,11 +332,7 @@
 
   async function saveUpdateInterval() {
     var val = parseInt(document.getElementById('update-interval').value) || 0;
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ updateIntervalHours: val })
-    });
+    if (!(await postSettings({ updateIntervalHours: val }))) return;
     showStatus('Update interval saved', 'success');
   }
 
@@ -468,29 +479,47 @@
   }
 
   async function saveRoomDefaults() {
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({
+    if (!(await postSettings({
         defaultDestructMode: document.getElementById('default-destruct-mode').value,
         defaultDestructHours: parseInt(document.getElementById('default-destruct-hours').value) || 24,
         maxRoomsPerInstance: parseInt(document.getElementById('max-rooms').value) || 0,
+        maxRoomSizeMB: parseInt(document.getElementById('max-room-size-mb').value) || 50,
         defaultRoomTheme: document.getElementById('default-room-theme').value
-      })
-    });
+      }))) return;
     showStatus('Room defaults saved', 'success');
   }
 
+  async function postSettings(payload) {
+    try {
+      var res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        var err = null; try { err = (await res.json()).error; } catch (e) {}
+        showStatus(err || 'Failed to save setting', 'error');
+        loadSettings();
+        return false;
+      }
+      return true;
+    } catch (e) { showStatus('Failed to save setting', 'error'); return false; }
+  }
+
+  var statusTimer = null;
   function showStatus(msg, type) {
-    var container = document.getElementById('settings-status');
+    var container = document.getElementById('floating-status');
+    if (!container) {
+      container = h('div', {id: 'floating-status', role: 'status', 'aria-live': 'polite', style: 'position:fixed;top:16px;right:16px;z-index:10000;max-width:360px'});
+      document.body.appendChild(container);
+    }
     setContent(container, h('div', {className: 'status-msg ' + type}, msg));
-    setTimeout(function() { clearNode(container); }, 3000);
+    if (statusTimer) clearTimeout(statusTimer);
+    statusTimer = setTimeout(function() { clearNode(container); }, type === 'error' ? 6000 : 3000);
   }
 
   function showAuthStatus(msg, type) {
-    var container = document.getElementById('auth-status');
-    setContent(container, h('div', {className: 'status-msg ' + type}, msg));
-    setTimeout(function() { clearNode(container); }, 3000);
+    showStatus(msg, type);
   }
 
   function renderStats() {
@@ -627,7 +656,7 @@
       infoRow('Last Activity', new Date(room.lastActivity).toLocaleString()),
       infoRow('Connected Users', String(room.connectedUsers)),
       infoRow('Password Protected', room.hasPassword ? 'Yes' : 'No'),
-      infoRow('Self-Destruct', destruct),
+      infoRow('Self Destruct', destruct),
       h('div', {style: 'margin-top:20px;display:flex;gap:12px;flex-wrap:wrap'},
         h('button', {className: 'btn btn-primary', 'data-action': 'joinRoom', 'data-id': room.id}, 'Join Room'),
         h('button', {className: 'btn btn-danger', 'data-action': 'deleteRoom', 'data-id': room.id}, 'Delete Room')
@@ -674,32 +703,89 @@
 
   async function saveWebhookUrl() {
     var url = document.getElementById('webhook-url').value;
-    await fetch('/api/admin/settings', {
+    if (!(await postSettings({ webhookUrl: url }))) return;
+    showStatus('Webhook URL saved', 'success');
+  }
+
+  function clampInt(raw, lo, hi, fallback) {
+    var n = parseInt(raw, 10);
+    if (!isFinite(n)) n = fallback;
+    return Math.max(lo, Math.min(hi, n));
+  }
+
+  async function saveAssetLimits() {
+    var perRoom = clampInt(document.getElementById('max-assets-per-room-mb').value, 0, 10000, 200);
+    var total = clampInt(document.getElementById('max-assets-total-gb').value, 0, 1000, 5);
+    document.getElementById('max-assets-per-room-mb').value = perRoom;
+    document.getElementById('max-assets-total-gb').value = total;
+    var res = await fetch('/api/admin/settings', {
       method: 'POST',
       headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ webhookUrl: url })
+      body: JSON.stringify({ maxAssetsPerRoomMB: perRoom, maxAssetsTotalGB: total })
     });
-    showStatus('Webhook URL saved', 'success');
+    if (!res.ok) {
+      var err = await res.json().catch(function() { return {}; });
+      showStatus(err.error || 'Failed to save asset limits', 'error');
+      return;
+    }
+    settings.maxAssetsPerRoomMB = perRoom;
+    settings.maxAssetsTotalGB = total;
+    showStatus('Asset limits saved', 'success');
+  }
+
+  async function savePublicUrl() {
+    var value = document.getElementById('public-url').value.trim();
+    var res = await fetch('/api/admin/settings', {
+      method: 'POST',
+      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ publicUrl: value })
+    });
+    var data = await res.json().catch(function() { return {}; });
+    if (!res.ok) {
+      showStatus(data.error || 'Failed to save public URL', 'error');
+      return;
+    }
+    settings.publicUrl = value;
+    if (data.warning) showStatus(data.warning, 'error');
+    else showStatus('Public URL saved', 'success');
+  }
+
+  async function runAssetSweep() {
+    var out = document.getElementById('asset-sweep-result');
+    if (out) out.textContent = 'Sweeping…';
+    try {
+      var res = await fetch('/api/admin/assets/sweep', {
+        method: 'POST',
+        headers: csrfHeaders({ 'Content-Type': 'application/json' })
+      });
+      var data = await res.json().catch(function() { return {}; });
+      if (!res.ok) {
+        if (out) out.textContent = '';
+        showStatus(data.error || 'Asset sweep failed', 'error');
+        return;
+      }
+      if (out) {
+        out.textContent = 'Scanned ' + (data.scanned || 0) + ', newly unreferenced ' + (data.stamped || 0) +
+          ', deleted ' + (data.deleted || 0) + ', kept for a 3D snapshot ' + (data.retainedBySnapshot || 0) +
+          ', errors ' + (data.errors || 0) + '.';
+      }
+      showStatus('Asset sweep complete', 'success');
+    } catch (e) {
+      if (out) out.textContent = '';
+      showStatus('Asset sweep failed', 'error');
+    }
   }
 
   async function saveDiscoveryPrefix() {
     var prefix = parseInt(document.getElementById('discovery-max-prefix').value) || 20;
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ discoveryMaxPrefix: prefix })
-    });
+    if (!(await postSettings({ discoveryMaxPrefix: prefix }))) return;
     showStatus('Discovery prefix saved', 'success');
   }
 
   async function saveBackupSettings() {
     var interval = parseInt(document.getElementById('backup-interval').value) || 24;
     var retention = parseInt(document.getElementById('backup-retention').value) || 7;
-    await fetch('/api/admin/settings', {
-      method: 'POST',
-      headers: csrfHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ backupIntervalHours: interval, backupRetentionCount: retention })
-    });
+    if (!(await postSettings({ backupIntervalHours: interval, backupRetentionCount: retention }))) return;
     showStatus('Backup settings saved', 'success');
   }
 
@@ -966,11 +1052,15 @@
         ),
         h('div', null, h('span', {className: 'badge badge-' + (u.role === 'admin' ? 'yellow' : 'gray')}, u.role === 'admin' ? 'Admin' : 'User')),
         h('div', null,
-          h('span', {className: 'badge badge-' + (u.isActive ? 'green' : 'gray')}, u.isActive ? 'Active' : 'Inactive'),
+          u.pendingApproval
+            ? h('span', {className: 'badge badge-yellow'}, 'Pending approval')
+            : h('span', {className: 'badge badge-' + (u.isActive ? 'green' : 'gray')}, u.isActive ? 'Active' : 'Inactive'),
           u.emailVerified ? null : h('span', {className: 'badge badge-yellow'}, 'Unverified')
         ),
         h('div', null, new Date(u.createdAt).toLocaleDateString()),
         h('div', {className: 'room-actions'},
+          u.pendingApproval ? h('button', {className: 'btn btn-primary btn-sm', 'data-action': 'approveUser', 'data-id': u.id}, 'Approve') : null,
+          u.pendingApproval ? h('button', {className: 'btn btn-danger btn-sm', 'data-action': 'rejectUser', 'data-id': u.id}, 'Reject') : null,
           h('button', {className: 'btn btn-secondary btn-sm', 'data-action': 'editUser', 'data-id': u.id}, 'Edit'),
           h('button', {className: 'btn btn-danger btn-sm', 'data-action': 'deleteUser', 'data-id': u.id}, 'Del')
         )
@@ -1020,6 +1110,17 @@
     }
   }
 
+  async function decideUser(id, decision) {
+    if (decision === 'reject' && !confirm('Reject and delete this sign up?')) return;
+    try {
+      var res = await fetch('/api/admin/users/' + id + '/' + decision, { method: 'POST', headers: csrfHeaders({ 'Content-Type': 'application/json' }), body: '{}' });
+      var data = await res.json().catch(function () { return {}; });
+      if (!res.ok || !data.success) { showAuthStatus(data.error || 'Failed to update the sign up', 'error'); return; }
+      showAuthStatus(decision === 'approve' ? 'User approved' : 'Sign up rejected', 'success');
+      loadUsers();
+    } catch (e) { showAuthStatus('Failed to update the sign up', 'error'); }
+  }
+
   async function deleteUser(id) {
     if (!confirm('Delete this user permanently?')) return;
     try {
@@ -1056,7 +1157,6 @@
       emailVerified: document.getElementById('edit-user-verified').checked
     };
     var password = document.getElementById('edit-user-password').value;
-    if (password) data.password = password;
     try {
       var res = await fetch('/api/admin/users/' + id, {
         method: 'PUT',
@@ -1064,6 +1164,15 @@
         body: JSON.stringify(data)
       });
       var result = await res.json();
+      if (result.success && password) {
+        var pres = await fetch('/api/admin/users/' + id + '/set-password', {
+          method: 'POST',
+          headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ password: password })
+        });
+        var presult = await pres.json().catch(function () { return {}; });
+        if (!pres.ok || !presult.success) { showAuthStatus(presult.error || 'User updated, but the new password was rejected', 'error'); return; }
+      }
       if (result.success) {
         closeEditUserModal();
         loadUsers();
@@ -1127,35 +1236,115 @@
 
   async function saveAuthSettings() {
     var mode = document.getElementById('auth-mode').value;
-    await fetch('/api/admin/auth-settings', {
+    var res = await fetch('/api/admin/auth-settings', {
       method: 'POST',
       headers: csrfHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ authMode: mode })
     });
+    if (!res.ok) { showAuthStatus('Failed to save auth mode', 'error'); return; }
     showAuthStatus('Auth mode saved', 'success');
   }
 
   async function toggleAuthSetting(key) {
     authSettings[key] = !authSettings[key];
     renderAuthSettings();
-    await fetch('/api/admin/auth-settings', {
+    var res = await fetch('/api/admin/auth-settings', {
       method: 'POST',
       headers: csrfHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ [key]: authSettings[key] })
     });
+    if (!res.ok) { authSettings[key] = !authSettings[key]; renderAuthSettings(); showAuthStatus('Failed to update setting', 'error'); return; }
     showAuthStatus('Setting updated', 'success');
   }
 
   async function updateAuthNumber(key, value) {
-    var num = parseInt(value);
-    if (isNaN(num)) return;
-    authSettings[key] = num;
-    await fetch('/api/admin/auth-settings', {
+    var num = parseFloat(value);
+    if (isNaN(num) || num < 0) return;
+    var res = await fetch('/api/admin/auth-settings', {
       method: 'POST',
       headers: csrfHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ [key]: num })
     });
+    if (!res.ok) { showAuthStatus('Failed to update setting', 'error'); return; }
+    authSettings[key] = num;
     showAuthStatus('Setting updated', 'success');
+  }
+
+
+  async function loadInvites() {
+    try {
+      var res = await fetch('/api/admin/invites');
+      if (!res.ok) return;
+      var data = await res.json();
+      renderInvites(data.invites || []);
+    } catch (e) {
+    }
+  }
+
+  function renderInvites(invites) {
+    var container = document.getElementById('invite-list');
+    if (!container) return;
+    if (!invites.length) {
+      setContent(container, h('p', {style: 'color:var(--text-soft);padding:12px'}, 'No invite codes'));
+      return;
+    }
+    var now = Date.now();
+    setContent(container, invites.map(function(inv) {
+      var expired = inv.expiresAt && new Date(inv.expiresAt).getTime() < now;
+      var state = inv.usedAt ? 'Used ' + new Date(inv.usedAt).toLocaleDateString()
+        : expired ? 'Expired'
+        : 'Unused';
+      var meta = state
+        + ' | Created: ' + new Date(inv.createdAt).toLocaleDateString()
+        + ' | Expires: ' + (inv.expiresAt ? new Date(inv.expiresAt).toLocaleDateString() : 'never')
+        + (inv.email ? ' | For: ' + inv.email : '');
+      return h('div', {style: 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)'},
+        h('div', null,
+          h('div', {style: 'font-weight:500;font-family:monospace'}, '•••••••• ' + String(inv.id).slice(0, 8)),
+          h('div', {style: 'font-size:12px;color:var(--text-soft)'}, meta)
+        ),
+        h('button', {className: 'btn btn-sm btn-danger', 'data-action': 'deleteInvite', 'data-id': inv.id}, 'Delete')
+      );
+    }));
+  }
+
+  async function createInvite() {
+    var raw = document.getElementById('invite-expires').value;
+    var days = parseInt(raw, 10);
+    if (raw && (!isFinite(days) || days < 1 || days > 365)) {
+      showStatus('Expiry must be between 1 and 365 days', 'error');
+      return;
+    }
+    try {
+      var res = await fetch('/api/admin/invites', {
+        method: 'POST',
+        headers: csrfHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ expiresInDays: raw ? days : null })
+      });
+      var data = await res.json();
+      if (res.ok && data.code) {
+        document.getElementById('new-invite-display').style.display = 'block';
+        document.getElementById('new-invite-value').textContent = data.code;
+        document.getElementById('invite-expires').value = '';
+        loadInvites();
+      } else {
+        showStatus(data.error || 'Failed to create invite', 'error');
+      }
+    } catch (e) {
+      showStatus('Failed to create invite', 'error');
+    }
+  }
+
+  async function deleteInvite(id) {
+    if (!confirm('Delete this invite code?')) return;
+    try {
+      var res = await fetch('/api/admin/invites/' + encodeURIComponent(id), {
+        method: 'DELETE', headers: csrfHeaders()
+      });
+      if (!res.ok) showStatus('Failed to delete invite', 'error');
+      loadInvites();
+    } catch (e) {
+    }
   }
 
   async function loadOidcProviders() {
@@ -1725,6 +1914,8 @@
       showAddSmtpConfig: showAddSmtpConfig,
       editOidcProvider: function() { editOidcProvider(target.dataset.id); },
       deleteOidcProvider: function() { deleteOidcProvider(target.dataset.id); },
+      createInvite: createInvite,
+      deleteInvite: function() { deleteInvite(target.dataset.id); },
       editSmtpConfig: function() { editSmtpConfig(target.dataset.id); },
       deleteSmtpConfig: function() { deleteSmtpConfig(target.dataset.id); },
       saveOidcProvider: saveOidcProvider,
@@ -1744,6 +1935,8 @@
       createUser: createUser,
       editUser: function() { editUser(target.dataset.id); },
       deleteUser: function() { deleteUser(target.dataset.id); },
+      approveUser: function() { decideUser(target.dataset.id, 'approve'); },
+      rejectUser: function() { decideUser(target.dataset.id, 'reject'); },
       saveUserEdit: saveUserEdit,
       resetUserPassword: resetUserPassword,
       revokeApiKey: function() { revokeApiKey(target.dataset.id); },
@@ -1755,8 +1948,12 @@
       saveForcedTheme: saveForcedTheme,
       saveRoomDefaults: saveRoomDefaults,
       saveRateLimitSettings: saveRateLimitSettings,
+      saveTrustedProxies: saveTrustedProxies,
       saveDiscoveryPrefix: saveDiscoveryPrefix,
       saveWebhookUrl: saveWebhookUrl,
+      saveAssetLimits: saveAssetLimits,
+      savePublicUrl: savePublicUrl,
+      runAssetSweep: runAssetSweep,
       saveBackupSettings: saveBackupSettings,
       createBackup: createBackup,
       exportAll: exportAll,

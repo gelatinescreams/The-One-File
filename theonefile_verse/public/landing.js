@@ -142,10 +142,12 @@
 
   function clearAllAuthForms() {
     ['login-email', 'login-password', 'register-name', 'register-email', 'register-password',
-     'forgot-email', 'magic-email', '2fa-code', 'settings-new-email', 'settings-email-password'
+     'forgot-email', 'magic-email', '2fa-code', 'settings-new-email', 'settings-email-password',
+     'settings-display-name', 'settings-avatar-url', 'settings-current-password', 'settings-new-password', 'settings-confirm-password'
     ].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ''; });
     ['login-error', 'register-error', 'forgot-error', 'forgot-success', 'magic-error',
-     'magic-success', '2fa-error', 'email-change-error', 'email-change-success'
+     'magic-success', '2fa-error', 'email-change-error', 'email-change-success',
+     'profile-error', 'profile-success', 'password-change-error', 'sessions-error'
     ].forEach(function(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.classList.remove('active'); } });
     pending2FAToken = null;
   }
@@ -329,11 +331,11 @@
       document.getElementById('user-name').textContent = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'User');
     } else if (authSettings) {
       userMenu.style.display = 'none';
-      var hasOidc = oidcProviders && oidcProviders.length > 0;
-      var registrationOpen = authSettings.authMode === 'open' || authSettings.authMode === 'registration';
-      if (registrationOpen || hasOidc) {
-        authButtonsEl.style.display = 'flex';
-      }
+      var mode = authSettings.authMode;
+      var canRegister = mode === 'open' || mode === 'approval' || mode === 'invite_only';
+      authButtonsEl.style.display = 'flex';
+      var regBtn = authButtonsEl.querySelector('[data-action="openRegister"]');
+      if (regBtn) regBtn.style.display = canRegister ? '' : 'none';
     }
 
     if (authSettings && authSettings.allowRoomCreatorGuestSetting) {
@@ -449,6 +451,122 @@
   async function openSettingsModal() {
     openModal('settings');
     await load2FAStatus();
+    fillProfile();
+    await loadSessions();
+  }
+
+  async function freshCsrf() {
+    try { var r = await fetch('/api/auth/csrf', { credentials: 'include' }); csrfToken = (await r.json()).token; } catch (e) {}
+    return csrfToken;
+  }
+  async function accountCall(method, url, body) {
+    var res = await fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'x-csrf-token': await freshCsrf() },
+      credentials: 'include',
+      body: body ? JSON.stringify(body) : undefined
+    });
+    var data = {}; try { data = await res.json(); } catch (e) {}
+    return { ok: res.ok && data.success !== false, data: data };
+  }
+
+  function fillProfile() {
+    if (!currentUser) return;
+    document.getElementById('settings-display-name').value = currentUser.displayName || '';
+    document.getElementById('settings-avatar-url').value = currentUser.avatarUrl || '';
+  }
+
+  async function saveProfile() {
+    var errEl = document.getElementById('profile-error'), okEl = document.getElementById('profile-success');
+    errEl.textContent = ''; okEl.textContent = '';
+    var name = document.getElementById('settings-display-name').value.trim();
+    var avatar = document.getElementById('settings-avatar-url').value.trim();
+    if (!name) { errEl.textContent = 'Display name cannot be empty'; return; }
+    try {
+      var r = await accountCall('PUT', '/api/auth/profile', { displayName: name, avatarUrl: avatar });
+      if (!r.ok) { errEl.textContent = r.data.error || 'Failed to save profile'; return; }
+      okEl.textContent = 'Profile saved';
+      await load2FAStatus();
+      fillProfile();
+      var userNameEl = document.getElementById('user-name');
+      if (userNameEl && currentUser) userNameEl.textContent = currentUser.displayName || currentUser.email;
+    } catch (e) { errEl.textContent = 'Connection error'; }
+  }
+
+  function onEnter(id, fn) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); fn(); } });
+  }
+
+  async function changePassword() {
+    var errEl = document.getElementById('password-change-error');
+    errEl.textContent = '';
+    errEl.style.color = '';
+    var cur = document.getElementById('settings-current-password').value;
+    var next = document.getElementById('settings-new-password').value;
+    var confirm = document.getElementById('settings-confirm-password').value;
+    if (!cur || !next) { errEl.textContent = 'Current and new password required'; return; }
+    if (next !== confirm) { errEl.textContent = 'New passwords do not match'; return; }
+    try {
+      var r = await accountCall('POST', '/api/auth/change-password', { currentPassword: cur, newPassword: next });
+      if (!r.ok) { errEl.textContent = r.data.error || 'Failed to change password'; return; }
+      errEl.style.color = '#22c55e';
+      errEl.textContent = 'Password changed. Signing you out so you can sign in again.';
+      setTimeout(function () { window.location.reload(); }, 1500);
+    } catch (e) { errEl.textContent = 'Connection error'; }
+  }
+
+  function sessionLabel(s) {
+    var parts = [s.browser, s.os].filter(function (x) { return x && x !== 'Unknown'; });
+    return (parts.join(' on ') || 'Unknown device') + (s.location ? ' \u00b7 ' + s.location : '');
+  }
+
+  async function loadSessions() {
+    var list = document.getElementById('sessions-list'), errEl = document.getElementById('sessions-error');
+    errEl.textContent = '';
+    try {
+      var res = await fetch('/api/auth/sessions', { credentials: 'include' });
+      if (!res.ok) { setContent(list, h('p', {style: 'font-size:14px;color:var(--text-soft)'}, 'Could not load sessions')); return; }
+      var sessions = (await res.json()).sessions || [];
+      sessions.sort(function (a, b) { return (b.current ? 1 : 0) - (a.current ? 1 : 0) || String(b.createdAt).localeCompare(String(a.createdAt)); });
+      setContent(list, sessions.map(function (s) {
+        var btn = h('button', {className: 'btn btn-secondary', style: 'padding:4px 10px;font-size:12px'}, s.current ? 'Sign out' : 'Revoke');
+        btn.addEventListener('click', withLoading(function () { return revokeSession(s.id, s.current); }));
+        return h('div', {className: 'session-row', style: 'display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)'},
+          h('div', {style: 'font-size:13px'},
+            h('div', null, sessionLabel(s), s.current ? h('span', {style: 'color:#22c55e;margin-left:6px'}, '(this device)') : null),
+            h('div', {style: 'color:var(--text-soft);font-size:12px'}, 'Signed in ' + new Date(s.createdAt).toLocaleString())),
+          btn);
+      }));
+    } catch (e) { errEl.textContent = 'Connection error'; }
+  }
+
+  async function revokeSession(id, isCurrent) {
+    var errEl = document.getElementById('sessions-error');
+    try {
+      var r = await accountCall('DELETE', '/api/auth/sessions/' + encodeURIComponent(id));
+      if (!r.ok) { errEl.textContent = r.data.error || 'Failed to revoke session'; return; }
+      if (isCurrent || r.data.current) { window.location.reload(); return; }
+      await loadSessions();
+    } catch (e) { errEl.textContent = 'Connection error'; }
+  }
+
+  var logoutArmedUntil = 0;
+  async function logoutEverywhere() {
+    var errEl = document.getElementById('sessions-error');
+    var btn = document.querySelector('[data-action="logoutEverywhere"]');
+    if (Date.now() > logoutArmedUntil) {
+      logoutArmedUntil = Date.now() + 5000;
+      if (btn) btn.textContent = 'Click again to sign out everywhere';
+      setTimeout(function () { if (btn && Date.now() > logoutArmedUntil) btn.textContent = 'Sign Out Everywhere'; }, 5100);
+      return;
+    }
+    logoutArmedUntil = 0;
+    try {
+      var r = await accountCall('DELETE', '/api/auth/sessions');
+      if (!r.ok) { errEl.textContent = r.data.error || 'Failed to sign out'; return; }
+      window.location.reload();
+    } catch (e) { errEl.textContent = 'Connection error'; }
   }
 
   async function load2FAStatus() {
@@ -621,7 +739,12 @@
       });
       var data = await res.json();
       if (data.success) {
-        if (data.requiresVerification) {
+        if (data.pendingApproval) {
+          closeModal('register');
+          showToast(data.requiresVerification
+            ? 'Account created. Verify your email, then an administrator needs to approve it before you can sign in.'
+            : 'Account created. An administrator needs to approve it before you can sign in.', 'success');
+        } else if (data.requiresVerification) {
           closeModal('register');
           showToast('Please check your email to verify your account.', 'success');
         } else {
@@ -732,11 +855,17 @@
   document.querySelector('[data-action="createRoom"]').addEventListener('click', withLoading(createRoom));
   document.querySelector('[data-action="joinRoom"]').addEventListener('click', withLoading(joinRoom));
   document.querySelector('[data-action="loginWithPassword"]').addEventListener('click', withLoading(loginWithPassword));
+  onEnter('login-password', loginWithPassword);
+  onEnter('login-email', loginWithPassword);
+  onEnter('settings-confirm-password', changePassword);
   document.querySelector('[data-action="registerUser"]').addEventListener('click', withLoading(registerUser));
   document.querySelector('[data-action="requestPasswordReset"]').addEventListener('click', withLoading(requestPasswordReset));
   document.querySelector('[data-action="requestMagicLink"]').addEventListener('click', withLoading(requestMagicLink));
   document.querySelector('[data-action="verify2FA"]').addEventListener('click', withLoading(verify2FA));
   document.querySelector('[data-action="requestEmailChange"]').addEventListener('click', withLoading(requestEmailChange));
+  document.querySelector('[data-action="saveProfile"]').addEventListener('click', withLoading(saveProfile));
+  document.querySelector('[data-action="changePassword"]').addEventListener('click', withLoading(changePassword));
+  document.querySelector('[data-action="logoutEverywhere"]').addEventListener('click', withLoading(logoutEverywhere));
   document.querySelector('[data-action="clearFile"]').addEventListener('click', clearFile);
 
   document.querySelector('[data-action="openForgot"]').addEventListener('click', function(e) {

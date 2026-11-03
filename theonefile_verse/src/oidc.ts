@@ -50,10 +50,19 @@ function cleanupOldestOidcStates(): void {
   db.deleteOldestOidcStates(count - MAX_OIDC_STATES + 100);
 }
 
-setInterval(() => {
+let oidcCleanupTimer: ReturnType<typeof setInterval> | null = setInterval(() => {
   db.cleanupExpiredOidcStates();
   db.cleanupExpiredCsrfTokens();
 }, 60 * 1000);
+if (typeof (oidcCleanupTimer as any).unref === 'function') (oidcCleanupTimer as any).unref();
+
+export function stopOidcCleanupInterval(): void {
+  if (oidcCleanupTimer) { clearInterval(oidcCleanupTimer); oidcCleanupTimer = null; }
+}
+
+export function oidcCleanupIntervalArmed(): boolean {
+  return oidcCleanupTimer !== null;
+}
 
 function generateRandomString(length: number): string {
   const array = new Uint8Array(length);
@@ -111,14 +120,39 @@ async function deriveKeyFromSecret(secret: string, salt: Uint8Array): Promise<Cr
   );
 }
 
+export function checkEncryptionConfig(): string | null {
+  const envKey = process.env.ENCRYPTION_KEY;
+  if (envKey) {
+    if (envKey.length < 32 || !/^[0-9a-fA-F]+$/.test(envKey)) {
+      return 'ENCRYPTION_KEY must be a hex string of at least 32 characters (generate: openssl rand -hex 32).';
+    }
+    return null;
+  }
+  let isProduction = false;
+  try {
+    const authSettings = db.getSetting('authSettings');
+    isProduction = authSettings ? JSON.parse(authSettings).productionMode === true : false;
+  } catch { isProduction = false; }
+  if (isProduction) {
+    return 'ENCRYPTION_KEY environment variable is required in production mode (generate: openssl rand -hex 32).';
+  }
+  return null;
+}
+
+const ENCRYPTION_CONFIG_ERROR = checkEncryptionConfig();
+if (ENCRYPTION_CONFIG_ERROR) {
+  console.error('='.repeat(70));
+  console.error('[FATAL]', ENCRYPTION_CONFIG_ERROR);
+  console.error('='.repeat(70));
+  throw new Error(`[FATAL] ${ENCRYPTION_CONFIG_ERROR}`);
+}
+
 async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
   const envKey = process.env.ENCRYPTION_KEY;
 
   if (envKey) {
     if (envKey.length < 32 || !/^[0-9a-fA-F]+$/.test(envKey)) {
-      console.error('[FATAL] ENCRYPTION_KEY must be a hex string of at least 32 characters.');
-      console.error('[FATAL] Generate one with: openssl rand -hex 32');
-      process.exit(1);
+      throw new Error('[FATAL] ENCRYPTION_KEY must be a hex string of at least 32 characters.');
     }
     const encoder = new TextEncoder();
     const hash = await crypto.subtle.digest('SHA-256', encoder.encode(envKey));
@@ -129,12 +163,7 @@ async function getEncryptionKeyMaterial(): Promise<Uint8Array> {
   const isProduction = authSettings ? JSON.parse(authSettings).productionMode : false;
 
   if (isProduction) {
-    console.error('='.repeat(70));
-    console.error('[FATAL] ENCRYPTION_KEY environment variable is required in production mode.');
-    console.error('[FATAL] Set ENCRYPTION_KEY in your environment before starting the server.');
-    console.error('[FATAL] Generate one with: openssl rand -hex 32');
-    console.error('='.repeat(70));
-    process.exit(1);
+    throw new Error('[FATAL] ENCRYPTION_KEY environment variable is required in production mode.');
   }
 
   const keyHex = loadOrCreateKeyFile();
@@ -642,6 +671,9 @@ async function parseIdToken(
         logOidcError('ID token signature verification failed');
         return null;
       }
+    } else if (!getAuthSettings().allowUnsignedIdToken) {
+      logOidcError('Provider has no jwksUri; refusing unverified ID token (set allowUnsignedIdToken to override)');
+      return null;
     }
 
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
@@ -664,7 +696,7 @@ async function parseIdToken(
       }
 
       if (audArray.length > 1 && payload.azp !== expectedAudience) {
-        logOidcError('Authorized party (azp) mismatch for multi-audience token');
+        logOidcError('Authorized party (azp) mismatch for a token with multiple audiences');
         return null;
       }
     }
@@ -874,11 +906,15 @@ export async function processOidcCallback(
     pendingEmailToken: null
   };
 
-  const { wasFirst } = db.createUserAtomic(newUser);
-  if (wasFirst) {
+  const { promoted } = db.createUserAtomic(newUser);
+  if (promoted) {
     newUser.role = 'admin';
     newUser.emailVerified = true;
     db.updateUser(newUser);
+  } else if (getAuthSettings().authMode === 'approval') {
+    newUser.isActive = false;
+    db.updateUser(newUser);
+    db.setPendingApproval(userId, true);
   }
 
   const encryptedAccess = tokens.access_token ? await encryptSecret(tokens.access_token) : null;
@@ -899,9 +935,13 @@ export async function processOidcCallback(
     createdAt: now
   });
 
+  if (db.isPendingApproval(userId)) {
+    db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role: newUser.role, promoted, pendingApproval: true });
+    return { success: false, error: "Your account was created and is waiting for administrator approval." } as any;
+  }
   const sessionToken = await createUserSessionToken(userId, ipAddress, userAgent);
 
-  db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role: newUser.role, isFirstUser: wasFirst });
+  db.logAuthEvent('oidc_register', userId, ipAddress, { provider: provider.name, providerUserId: userInfo.sub, role: newUser.role, promoted });
   return { success: true, userId, sessionToken, isNewUser: true, postLoginRedirect };
 }
 
@@ -1122,7 +1162,7 @@ export async function revokeUserOidcTokens(userId: string): Promise<void> {
 }
 
 export interface AuthSettings {
-  authMode: 'open' | 'registration' | 'oidc_only' | 'invite_only' | 'closed';
+  authMode: 'open' | 'approval' | 'oidc_only' | 'invite_only' | 'closed';
   allowGuestRoomCreation: boolean;
   allowGuestRoomJoin: boolean;
   allowRoomCreatorGuestSetting: boolean;
@@ -1134,6 +1174,7 @@ export interface AuthSettings {
   idTokenMaxAgeHours: number;
   emailRateLimitWindowSeconds: number;
   emailRateLimitMaxAttempts: number;
+  allowUnsignedIdToken: boolean;
 }
 
 export function getAuthSettings(): AuthSettings {
@@ -1149,13 +1190,16 @@ export function getAuthSettings(): AuthSettings {
     productionMode: false,
     idTokenMaxAgeHours: 0.167,
     emailRateLimitWindowSeconds: 300,
-    emailRateLimitMaxAttempts: 3
+    emailRateLimitMaxAttempts: 3,
+    allowUnsignedIdToken: false
   };
 
   try {
     const stored = db.getSetting('authSettings');
     if (stored) {
-      return { ...defaults, ...JSON.parse(stored) };
+      const merged = { ...defaults, ...JSON.parse(stored) };
+      if ((merged as any).authMode === 'registration') merged.authMode = 'open';
+      return merged;
     }
   } catch (e: any) {
     console.error('[OIDC] Failed to parse auth settings:', e.message);
@@ -1164,10 +1208,28 @@ export function getAuthSettings(): AuthSettings {
   return defaults;
 }
 
-export function saveAuthSettings(settings: Partial<AuthSettings>): void {
+const AUTH_MODES: AuthSettings['authMode'][] = ['open', 'approval', 'oidc_only', 'invite_only', 'closed'];
+
+export function saveAuthSettings(settings: Partial<AuthSettings>): { success: boolean; error?: string } {
   const current = getAuthSettings();
-  const merged = { ...current, ...settings };
-  db.setSetting('authSettings', JSON.stringify(merged));
+  const next: any = { ...current };
+  const input: any = settings && typeof settings === 'object' ? settings : {};
+  for (const key of Object.keys(current) as (keyof AuthSettings)[]) {
+    if (!(key in input)) continue;
+    const v = input[key];
+    if (key === 'authMode') {
+      if (!AUTH_MODES.includes(v)) return { success: false, error: "Invalid authMode" };
+      next.authMode = v;
+    } else if (typeof current[key] === 'boolean') {
+      if (typeof v !== 'boolean') return { success: false, error: `Invalid value for ${key}` };
+      next[key] = v;
+    } else if (typeof current[key] === 'number') {
+      if (typeof v !== 'number' || !Number.isFinite(v) || v < 0) return { success: false, error: `Invalid value for ${key}` };
+      next[key] = v;
+    }
+  }
+  db.setSetting('authSettings', JSON.stringify(next));
+  return { success: true };
 }
 
 function getIdTokenMaxAgeMs(): number {
@@ -1194,20 +1256,20 @@ export function getActiveProviders(): { id: string; name: string; iconUrl: strin
   }));
 }
 
-export function getSessionCookie(name: string, value: string, maxAge: number = 2592000): string {
+export function getSessionCookie(name: string, value: string, maxAge: number = 2592000, secure = false): string {
   const settings = getAuthSettings();
   if (settings.productionMode) {
     return `__Host-${name}=${value}; Path=/; HttpOnly; SameSite=Strict; Secure; Partitioned; Max-Age=${maxAge}`;
   }
-  return `${name}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}`;
+  return `${name}=${value}; Path=/; HttpOnly; SameSite=Strict${secure ? '; Secure' : ''}; Max-Age=${maxAge}`;
 }
 
-export function getClearCookie(name: string): string {
+export function getClearCookie(name: string, secure = false): string {
   const settings = getAuthSettings();
   if (settings.productionMode) {
     return `__Host-${name}=; Path=/; HttpOnly; SameSite=Strict; Secure; Partitioned; Max-Age=0`;
   }
-  return `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`;
+  return `${name}=; Path=/; HttpOnly; SameSite=Strict${secure ? '; Secure' : ''}; Max-Age=0`;
 }
 
 export function getSessionCookieName(baseName: string): string {
@@ -1221,7 +1283,7 @@ function cleanupOldestCsrfTokens(): void {
   db.deleteOldestCsrfTokens(count - MAX_CSRF_TOKENS + 100);
 }
 
-export function generateCsrfToken(): string {
+export function generateCsrfToken(bindTo?: string | null): string {
   cleanupOldestCsrfTokens();
 
   const token = generateSecureToken(32);
@@ -1232,13 +1294,28 @@ export function generateCsrfToken(): string {
     token: hashTokenSync(token),
     used: false,
     createdAt: now.toISOString(),
-    expiresAt: expiresAt.toISOString()
+    expiresAt: expiresAt.toISOString(),
+    boundTo: bindTo ? hashTokenSync(bindTo) : null
   });
 
   return token;
 }
 
-export function validateCsrfToken(token: string): boolean {
+export function generateBoundCsrfToken(): string {
+  const token = generateSecureToken(32);
+  cleanupOldestCsrfTokens();
+  const now = new Date();
+  db.createCsrfToken({
+    token: hashTokenSync(token),
+    used: false,
+    createdAt: now.toISOString(),
+    expiresAt: new Date(now.getTime() + CSRF_TOKEN_TTL_MS).toISOString(),
+    boundTo: hashTokenSync(token)
+  });
+  return token;
+}
+
+export function validateCsrfToken(token: string, cookieValue?: string | null): boolean {
   if (!token) return false;
 
   const tokenHash = hashTokenSync(token);
@@ -1250,19 +1327,26 @@ export function validateCsrfToken(token: string): boolean {
     return false;
   }
 
-  if (data.used) {
-    db.deleteCsrfToken(tokenHash);
-    return false;
+  if (data.boundTo) {
+    if (!cookieValue) return false;
+    const presented = Buffer.from(hashTokenSync(cookieValue));
+    const expected = Buffer.from(data.boundTo);
+    if (presented.length !== expected.length || !crypto.timingSafeEqual(presented, expected)) return false;
   }
 
-  db.markCsrfTokenUsed(tokenHash);
   return true;
 }
 
-export function getCsrfCookie(token: string): string {
+export function isCsrfTokenBound(token: string): boolean {
+  if (!token) return false;
+  const data = db.getCsrfToken(hashTokenSync(token));
+  return !!data && !!data.boundTo;
+}
+
+export function getCsrfCookie(token: string, secure = false): string {
   const settings = getAuthSettings();
-  const secure = settings.productionMode ? '; Secure' : '';
-  return `csrf_token=${token}; Path=/; HttpOnly; SameSite=Strict${secure}; Max-Age=3600`;
+  const isSecure = settings.productionMode || secure ? '; Secure' : '';
+  return `csrf_token=${token}; Path=/; HttpOnly; SameSite=Strict${isSecure}; Max-Age=3600`;
 }
 
 export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string): string {
@@ -1270,7 +1354,13 @@ export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string)
     return '/';
   }
 
-  const sanitized = redirectUrl.trim().toLowerCase();
+  for (let i = 0; i < redirectUrl.length; i++) {
+    const c = redirectUrl.charCodeAt(i);
+    if (c < 0x20 || c === 0x7f) return '/';
+  }
+
+  const original = redirectUrl.trim();
+  const sanitized = original.toLowerCase();
 
   const dangerousSchemes = ['javascript:', 'data:', 'vbscript:', 'file:', 'blob:'];
   for (const scheme of dangerousSchemes) {
@@ -1279,33 +1369,20 @@ export function validateRedirectUrl(redirectUrl: string | null, baseUrl: string)
     }
   }
 
-  const original = redirectUrl.trim();
+  if (original.includes('\\')) return '/';
 
-  if (original.startsWith('/') && !original.startsWith('//')) {
-    if (original.includes('..') || original.includes('\\')) {
-      return '/';
-    }
-    if (!isSafeRedirectPath(original)) {
-      return '/';
-    }
-    return original;
-  }
+  let base: URL;
+  try { base = new URL(baseUrl); } catch { return '/'; }
 
   try {
-    const redirectOrigin = new URL(original).origin;
-    const baseOrigin = new URL(baseUrl).origin;
-
-    if (redirectOrigin === baseOrigin) {
-      const url = new URL(original);
-      if (!isSafeRedirectPath(url.pathname)) {
-        return '/';
-      }
-      return url.pathname + url.search + url.hash;
-    }
+    const url = new URL(original, base);
+    if (url.origin !== base.origin) return '/';
+    if (url.pathname.includes('..')) return '/';
+    if (!isSafeRedirectPath(url.pathname)) return '/';
+    return url.pathname + url.search + url.hash;
   } catch {
+    return '/';
   }
-
-  return '/';
 }
 
 function isSafeRedirectPath(path: string): boolean {

@@ -264,6 +264,16 @@
           <span>Actions</span>
         </div>
         <div class="room-row">
+          <div><div class="room-name">New Teammate</div><div class="room-id">newteammate@example.com</div></div>
+          <div><span class="badge badge-gray">User</span></div>
+          <div><span class="badge badge-yellow">Pending approval</span></div>
+          <div>Nov 2, 2026</div>
+          <div class="room-actions">
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Approve User')">Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="demoAlert('Reject User')">Reject</button>
+          </div>
+        </div>
+        <div class="room-row">
           <div><div class="room-name">Administrator</div><div class="room-id">admin@example.com</div></div>
           <div><span class="badge badge-yellow">Admin</span></div>
           <div><span class="badge badge-green">Active</span></div>
@@ -335,9 +345,9 @@
           <div class="setting-control">
             <select onchange="demoAlert('Change Auth Mode')">
               <option value="open">Open (Anyone can register)</option>
-              <option value="registration" selected>Registration Required</option>
-              <option value="oidc_only">OIDC Only</option>
-              <option value="invite_only">Invite Only</option>
+              <option value="approval" selected>Approval Required (new accounts wait for an admin)</option>
+              <option value="oidc_only">SSO Only (admins can still use a password)</option>
+              <option value="invite_only">Invite Only (issue codes in Invite Codes below)</option>
               <option value="closed">Closed (No new users)</option>
             </select>
           </div>
@@ -373,6 +383,23 @@
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Email Rate Limit Max Attempts</div><div class="setting-desc">Maximum email requests per address within window</div></div>
           <div class="setting-control"><input type="number" value="3" min="1" max="20" style="width:80px" onchange="demoAlert('Update Max Attempts')"></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <h3 style="margin:0">Invite Codes</h3>
+            <p style="color:var(--text-soft);font-size:13px;margin:4px 0 0">Used when Auth Mode is "Invite Only". A code is shown once, at creation, and cannot be recovered afterwards.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+            <input type="number" min="1" max="365" placeholder="Days" title="Expires in N days (blank = never)" style="width:90px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff">
+            <button class="btn btn-primary btn-sm" onclick="demoAlert('Create Invite')">Create Invite</button>
+          </div>
+        </div>
+        <div class="room-list">
+          <div class="room-row" style="grid-template-columns:1fr 120px 140px 80px"><div><div class="room-name">Invite 3f9a2c</div><div class="room-id">Expires Dec 1, 2026</div></div><div><span class="badge badge-green">Unused</span></div><div>Created Nov 1, 2026</div><div class="room-actions"><button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Invite')">Del</button></div></div>
+          <div class="room-row" style="grid-template-columns:1fr 120px 140px 80px"><div><div class="room-name">Invite 81be07</div><div class="room-id">Never expires</div></div><div><span class="badge badge-gray">Used</span></div><div>Created Oct 20, 2026</div><div class="room-actions"><button class="btn btn-danger btn-sm" onclick="demoAlert('Delete Invite')">Del</button></div></div>
         </div>
       </div>
 
@@ -564,7 +591,7 @@
           <div class="setting-info"><div class="setting-label">Source Mode</div><div class="setting-desc">Choose where to load TheOneFile from</div></div>
           <div class="setting-control">
             <select onchange="demoAlert('Change Source Mode')">
-              <option value="github" selected>GitHub (Auto-Update)</option>
+              <option value="github" selected>GitHub (Auto Update)</option>
               <option value="local">Local (Manual Upload)</option>
             </select>
           </div>
@@ -635,6 +662,10 @@
           <div class="setting-control"><input type="number" value="100" min="0" max="1000" style="width:80px"></div>
         </div>
         <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Max Room Size (MB)</div><div class="setting-desc">Per room sync limit. Higher allows more images/recordings but makes every edit heavier. 1 to 64, default 50.</div></div>
+          <div class="setting-control"><input type="number" value="50" min="1" max="64" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Default Room Theme</div><div class="setting-desc">Theme preset for new rooms (from loaded file)</div></div>
           <div class="setting-control">
             <select onchange="demoAlert('Change Default Room Theme')">
@@ -654,10 +685,35 @@
       </div>
 
       <div class="settings-section">
+        <h3>3D Asset Storage</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Per Room Limit</div><div class="setting-desc">Max uploaded 3D assets per room, in MB (0 = unlimited)</div></div>
+          <div class="setting-control"><input type="number" value="200" min="0" max="10000" step="1" style="width:100px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Instance Limit</div><div class="setting-desc">Max uploaded 3D assets across the whole instance, in GB (0 = unlimited)</div></div>
+          <div class="setting-control"><input type="number" value="5" min="0" max="1000" step="1" style="width:100px"></div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-primary" onclick="demoAlert('Save Asset Limits')">Save Asset Limits</button></div>
+        <div class="setting-row" style="margin-top:16px">
+          <div class="setting-info"><div class="setting-label">Orphan Asset Sweep</div><div class="setting-desc">Delete blobs no room has referenced for over 24 h. Runs automatically every 6 h.</div></div>
+          <div class="setting-control"><button class="btn btn-sm btn-primary" onclick="demoAlert('Run asset sweep now')">Run asset sweep now</button></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Public URL</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Public Origin</div><div class="setting-desc">Absolute http(s) origin this instance is reached on, e.g. https://verse.example.com. No path or query. Used for email links and CSRF origin checks; overrides forwarded headers. Leave blank to derive it from each request.</div></div>
+          <div class="setting-control"><input type="text" placeholder="https://verse.example.com" style="width:100%;max-width:280px"><button class="btn btn-sm btn-primary" onclick="demoAlert('Save Public URL')">Save</button></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
         <h3>Network Probing</h3>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Server-Side Probing</div><div class="setting-desc">Enable real ICMP/TCP/HTTP/DNS probes from server</div></div>
-          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Server-Side Probing')"></div></div>
+          <div class="setting-info"><div class="setting-label">Server Side Probing</div><div class="setting-desc">Enable real ICMP/TCP/HTTP/DNS probes from server</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle Server Side Probing')"></div></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Network Discovery</div><div class="setting-desc">Allow subnet scanning to discover hosts</div></div>
@@ -668,7 +724,7 @@
           <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Discovery Admin Only')"></div></div>
         </div>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning non-private (public) IP ranges</div></div>
+          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning public IP ranges, not just private ones</div></div>
           <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Allow Public Ranges')"></div></div>
         </div>
         <div class="setting-row">
@@ -693,6 +749,14 @@
           </div>
         </div>
         <div style="margin-top:16px"><button class="btn btn-primary" onclick="demoAlert('Save Rate Limit Settings')">Save Rate Limit Settings</button></div>
+        <div class="setting-row" style="margin-top:16px">
+          <div class="setting-info"><div class="setting-label">Trusted Proxies</div><div class="setting-desc">Needed behind a reverse proxy so client IPs (rate limits, logs) are read correctly. Use a hop count or list the proxy IPs.</div></div>
+          <div class="setting-control" style="flex-direction:column;align-items:flex-end;gap:6px">
+            <div><span style="color:#8892a0;font-size:12px">Proxy hops</span> <input type="number" value="1" min="0" max="10" style="width:60px"></div>
+            <input type="text" placeholder="10.0.0.2, 172.18.0.1" style="width:220px">
+          </div>
+        </div>
+        <div style="margin-top:8px"><button class="btn btn-primary" onclick="demoAlert('Save Trusted Proxies')">Save Trusted Proxies</button></div>
       </div>
 
       <div class="settings-section">
@@ -712,6 +776,10 @@
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Welcome Modal</div><div class="setting-desc">Always show welcome setup when joining rooms</div></div>
           <div class="setting-control"><div class="toggle" onclick="demoAlert('Toggle Welcome Modal')"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">3D Mode</div><div class="setting-desc">Show the "Enter 3D" button and serve the 3D engine in rooms</div></div>
+          <div class="setting-control"><div class="toggle active" onclick="demoAlert('Toggle 3D Mode')"></div></div>
         </div>
       </div>
 
@@ -918,7 +986,7 @@
         <div class="info-row"><span class="info-label">Last Activity</span><span class="info-value" id="rm-activity">-</span></div>
         <div class="info-row"><span class="info-label">Connected Users</span><span class="info-value" id="rm-users">-</span></div>
         <div class="info-row"><span class="info-label">Password Protected</span><span class="info-value" id="rm-password">-</span></div>
-        <div class="info-row"><span class="info-label">Self-Destruct</span><span class="info-value" id="rm-destruct">-</span></div>
+        <div class="info-row"><span class="info-label">Self Destruct</span><span class="info-value" id="rm-destruct">-</span></div>
         <div style="display:flex;gap:8px;margin-top:16px">
           <button class="btn btn-primary" style="flex:1" onclick="demoAlert('Join Room')">Join Room</button>
           <button class="btn btn-danger" style="flex:1" onclick="demoAlert('Delete Room')">Delete Room</button>
@@ -974,9 +1042,9 @@
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" placeholder="My API Key" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Expires In (days, 0=never)</label><input type="number" value="0" min="0" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Permissions</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" checked> Read rooms</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Write rooms</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Admin access</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" checked> Read <span style="color:#8892a0;font-size:12px">(view rooms, settings, logs, backups, export)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Write <span style="color:#8892a0;font-size:12px">(create and delete rooms, set view only or a room password, create and restore backups, run the asset sweep)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox"> Admin <span style="color:#8892a0;font-size:12px">(everything above plus instance settings)</span></label>
         </div>
         <button class="btn btn-primary" style="width:100%" onclick="closeModal('apikey-modal');document.getElementById('apikey-new-key').style.display='block';demoAlert('Create Key')">Create Key</button>
       </div>

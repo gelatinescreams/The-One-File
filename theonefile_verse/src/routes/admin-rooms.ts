@@ -1,7 +1,10 @@
 import * as db from "../database";
-import { isValidUUID } from "../config";
-import { getClientIP, validateAdminOrApiKey } from "../security";
-import { roomMeta, deleteRoomData } from "../rooms";
+import { isValidUUID, getSettings } from "../config";
+import { getClientIP, validateAdminOrApiKey, readJsonLimited, apiError } from "../security";
+import { roomMeta, deleteRoomData, saveRoom, loadRoom, scheduleDestruction, setRoomViewOnly, isRoomViewOnly, hashPassword, clearTopologyCache, type Room } from "../rooms";
+
+const ROOM_BODY_CAP = 16 * 1024;
+const MAX_DESTRUCT_MS = 30 * 24 * 60 * 60 * 1000;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (path === "/api/admin/rooms" && req.method === "GET") {
@@ -27,8 +30,74 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     return Response.json({ rooms, total: db.countRooms() }, { headers: corsHeaders });
   }
 
+  if (path === "/api/admin/rooms" && req.method === "POST") {
+    const { user, apiKey } = await validateAdminOrApiKey(req, "write");
+    if (!user && !apiKey) return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    try {
+      const body = await readJsonLimited(req, ROOM_BODY_CAP);
+      const settings = getSettings();
+      if (settings.maxRoomsPerInstance > 0 && db.countRooms() >= settings.maxRoomsPerInstance) {
+        return Response.json({ error: "Maximum number of rooms reached" }, { status: 403, headers: corsHeaders });
+      }
+      const modes = ["time", "empty", "never"];
+      const mode = modes.includes(body.destructMode) ? body.destructMode : settings.defaultDestructMode;
+      const value = typeof body.destructValue === "number" ? Math.min(Math.max(0, body.destructValue), MAX_DESTRUCT_MS) : Math.min(Math.max(1, settings.defaultDestructHours || 24) * 3600000, MAX_DESTRUCT_MS);
+      if (body.password !== undefined && body.password !== null && (typeof body.password !== "string" || body.password.length < 8)) {
+        return Response.json({ error: "Room password must be at least 8 characters" }, { status: 400, headers: corsHeaders });
+      }
+      const id = crypto.randomUUID();
+      const now = new Date().toISOString();
+      const room: Room = {
+        id, created: now, lastActivity: now, creatorId: crypto.randomUUID(),
+        passwordHash: body.password ? await hashPassword(body.password) : null,
+        destruct: { mode, value }, topology: null, ownerUserId: user ? user.id : null,
+        allowGuests: body.allowGuests !== false
+      } as Room;
+      saveRoom(room);
+      if (mode === "time") scheduleDestruction(id, value);
+      const actor = user ? user.id : `apikey:${apiKey!.name}`;
+      db.addAuditLog({ timestamp: now, action: "room_created", actor, actorIp: getClientIP(req), targetType: "room", targetId: id });
+      return Response.json({ id, url: `/s/${id}`, hasPassword: !!room.passwordHash, destruct: room.destruct, allowGuests: room.allowGuests }, { headers: corsHeaders });
+    } catch (e: any) { return apiError(e, corsHeaders); }
+  }
+
+  const viewOnly = path.match(/^\/api\/admin\/rooms\/([\w-]+)\/view-only$/);
+  if (viewOnly && req.method === "PUT") {
+    const { user, apiKey } = await validateAdminOrApiKey(req, "write");
+    if (!user && !apiKey) return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    const id = viewOnly[1];
+    if (!isValidUUID(id) || !loadRoom(id)) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
+    try {
+      const body = await readJsonLimited(req, ROOM_BODY_CAP);
+      if (typeof body.viewOnly !== "boolean") return Response.json({ error: "viewOnly must be true or false" }, { status: 400, headers: corsHeaders });
+      setRoomViewOnly(id, body.viewOnly);
+      const actor = user ? user.id : `apikey:${apiKey!.name}`;
+      db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_view_only_changed", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { viewOnly: body.viewOnly } });
+      return Response.json({ success: true, viewOnly: isRoomViewOnly(id) }, { headers: corsHeaders });
+    } catch (e: any) { return apiError(e, corsHeaders); }
+  }
+
+  const pw = path.match(/^\/api\/admin\/rooms\/([\w-]+)\/password$/);
+  if (pw && req.method === "PUT") {
+    const { user, apiKey } = await validateAdminOrApiKey(req, "write");
+    if (!user && !apiKey) return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    const id = pw[1];
+    if (!isValidUUID(id) || !loadRoom(id)) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
+    try {
+      const body = await readJsonLimited(req, ROOM_BODY_CAP);
+      if (body.password !== null && (typeof body.password !== "string" || body.password.length < 8)) {
+        return Response.json({ error: "Room password must be at least 8 characters, or null to remove it" }, { status: 400, headers: corsHeaders });
+      }
+      db.updateRoomPassword(id, body.password ? await hashPassword(body.password) : null);
+      clearTopologyCache(id);
+      const actor = user ? user.id : `apikey:${apiKey!.name}`;
+      db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_password_changed", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { hasPassword: !!body.password } });
+      return Response.json({ success: true, hasPassword: !!body.password }, { headers: corsHeaders });
+    } catch (e: any) { return apiError(e, corsHeaders); }
+  }
+
   if (path.match(/^\/api\/admin\/rooms\/[\w-]+$/) && req.method === "DELETE") {
-    const { user, apiKey } = await validateAdminOrApiKey(req, "admin");
+    const { user, apiKey } = await validateAdminOrApiKey(req, "write");
     if (!user && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }

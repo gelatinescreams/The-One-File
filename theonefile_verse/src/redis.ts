@@ -34,12 +34,6 @@ export async function connectRedis(): Promise<boolean> {
     isConnected = true;
     console.log("[Redis] Connected to", REDIS_URL);
 
-    subscriber.on("message", (channel, message) => {
-      const handlers = messageHandlers.get(channel);
-      if (handlers) {
-        handlers.forEach((handler) => handler(message, channel));
-      }
-    });
 
     return true;
   } catch (err: any) {
@@ -104,6 +98,17 @@ export async function getSessionToken(token: string): Promise<{ type: string; cr
   }
 }
 
+export async function consumeSessionToken(token: string): Promise<any | null> {
+  if (!client || !isConnected) return null;
+  try {
+    const data = await client.getDel(`session:${token}`);
+    return data ? JSON.parse(data) : null;
+  } catch (err: any) {
+    console.error("[Redis] Consume session token failed:", err.message);
+    return null;
+  }
+}
+
 export async function deleteSessionToken(token: string): Promise<boolean> {
   if (!client || !isConnected) return false;
 
@@ -116,6 +121,14 @@ export async function deleteSessionToken(token: string): Promise<boolean> {
   }
 }
 
+const presenceIndexKey = (roomId: string) => `presence:idx:${roomId}`;
+
+const presenceIndexTtl = (ttlSeconds: number) => ttlSeconds * 2;
+
+function escapeGlob(s: string): string {
+  return s.replace(/[\\*?[\]]/g, (c) => `\\${c}`);
+}
+
 export async function setUserPresence(
   roomId: string,
   userId: string,
@@ -126,7 +139,12 @@ export async function setUserPresence(
 
   try {
     const userKey = `presence:${roomId}:${userId}`;
-    await client.setEx(userKey, ttlSeconds, JSON.stringify(userData));
+    const idxKey = presenceIndexKey(roomId);
+    await client.multi()
+      .setEx(userKey, ttlSeconds, JSON.stringify(userData))
+      .sAdd(idxKey, userId)
+      .expire(idxKey, presenceIndexTtl(ttlSeconds))
+      .exec();
     return true;
   } catch (err: any) {
     console.error("[Redis] Set user presence failed:", err.message);
@@ -146,27 +164,48 @@ export async function getUserPresence(roomId: string, userId: string): Promise<a
   }
 }
 
+async function scanPresenceKeys(roomId: string): Promise<string[]> {
+  const pattern = `presence:${escapeGlob(roomId)}:*`;
+  let cursor = 0;
+  const keys: string[] = [];
+  do {
+    const reply = await client!.scan(cursor, { MATCH: pattern, COUNT: 200 });
+    cursor = reply.cursor;
+    keys.push(...reply.keys);
+  } while (cursor !== 0);
+  return keys;
+}
+
+async function presenceKeysFor(roomId: string): Promise<string[]> {
+  const members = await client!.sMembers(presenceIndexKey(roomId));
+  if (members.length === 0) return await scanPresenceKeys(roomId);
+  return members.map((u) => `presence:${roomId}:${u}`);
+}
+
+function reapPresenceIndex(roomId: string, staleUserIds: string[]): void {
+  if (staleUserIds.length === 0) return;
+  client!.sRem(presenceIndexKey(roomId), staleUserIds)
+    .catch((e: any) => console.error("[Redis] Presence index reap failed:", e?.message));
+}
+
 export async function getAllUserPresence(roomId: string): Promise<Map<string, any>> {
   const result = new Map<string, any>();
   if (!client || !isConnected) return result;
 
   try {
-    const pattern = `presence:${roomId}:*`;
-    let cursor = 0;
-    const keys: string[] = [];
-    do {
-      const reply = await client.scan(cursor, { MATCH: pattern, COUNT: 100 });
-      cursor = reply.cursor;
-      keys.push(...reply.keys);
-    } while (cursor !== 0);
+    const keys = await presenceKeysFor(roomId);
     if (keys.length === 0) return result;
     const values = await client.mGet(keys);
+    const stale: string[] = [];
     for (let i = 0; i < keys.length; i++) {
       const userId = keys[i].split(':').slice(2).join(':');
       if (values[i]) {
         try { result.set(userId, JSON.parse(values[i])); } catch (e: any) { console.error("[Redis] Presence JSON parse failed:", e.message); }
+      } else {
+        stale.push(userId);
       }
     }
+    reapPresenceIndex(roomId, stale);
   } catch (err: any) {
     console.error("[Redis] Get all user presence failed:", err.message);
   }
@@ -174,11 +213,53 @@ export async function getAllUserPresence(roomId: string): Promise<Map<string, an
   return result;
 }
 
+export async function refreshUserPresence(
+  roomId: string,
+  userId: string,
+  ttlSeconds: number = 300
+): Promise<boolean> {
+  if (!client || !isConnected) return false;
+  try {
+    const alive = !!(await client.expire(`presence:${roomId}:${userId}`, ttlSeconds));
+    if (alive) {
+      client.expire(presenceIndexKey(roomId), presenceIndexTtl(ttlSeconds))
+        .catch((e: any) => console.error("[Redis] Presence index touch failed:", e?.message));
+    }
+    return alive;
+  } catch (err: any) {
+    console.error("[Redis] Refresh user presence failed:", err.message);
+    return false;
+  }
+}
+
+export async function getRoomPresenceCount(roomId: string): Promise<number | null> {
+  if (!client || !isConnected) return null;
+  try {
+    const keys = await presenceKeysFor(roomId);
+    if (keys.length === 0) return 0;
+    const values = await client.mGet(keys);
+    let count = 0;
+    const stale: string[] = [];
+    for (let i = 0; i < keys.length; i++) {
+      if (values[i]) count++;
+      else stale.push(keys[i].split(':').slice(2).join(':'));
+    }
+    reapPresenceIndex(roomId, stale);
+    return count;
+  } catch (err: any) {
+    console.error("[Redis] Room presence count failed:", err.message);
+    return null;
+  }
+}
+
 export async function removeUserPresence(roomId: string, userId: string): Promise<boolean> {
   if (!client || !isConnected) return false;
 
   try {
-    await client.del(`presence:${roomId}:${userId}`);
+    await client.multi()
+      .del(`presence:${roomId}:${userId}`)
+      .sRem(presenceIndexKey(roomId), userId)
+      .exec();
     return true;
   } catch (err: any) {
     console.error("[Redis] Remove user presence failed:", err.message);
@@ -281,8 +362,16 @@ export async function unsubscribeFromChannel(
   }
 }
 
-export async function publishToRoom(roomId: string, message: any): Promise<void> {
-  await publishMessage(`room:${roomId}`, JSON.stringify(message));
+export const INSTANCE_ID = `${process.pid}-${Math.random().toString(36).slice(2, 10)}`;
+
+export async function publishToRoom(roomId: string, message: any): Promise<boolean> {
+  if (!client || !isConnected) return false;
+  try {
+    return await publishMessage(`room:${roomId}`, JSON.stringify({ __from: INSTANCE_ID, payload: message }));
+  } catch (err: any) {
+    console.error("[Redis] publishToRoom failed:", err.message);
+    return false;
+  }
 }
 
 export async function subscribeToRoom(
@@ -291,7 +380,13 @@ export async function subscribeToRoom(
 ): Promise<() => Promise<void>> {
   const wrappedHandler = (msg: string) => {
     try {
-      handler(JSON.parse(msg));
+      const envelope = JSON.parse(msg);
+      if (envelope && typeof envelope === "object" && "__from" in envelope) {
+        if (envelope.__from === INSTANCE_ID) return;
+        handler(envelope.payload);
+      } else {
+        handler(envelope);
+      }
     } catch (err: any) {
       console.error("[Redis] Room message parse failed:", err.message);
     }

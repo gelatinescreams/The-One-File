@@ -1,10 +1,13 @@
 import * as network from "../network";
 import * as db from "../database";
 import { getSettings, isValidUUID } from "../config";
-import { getClientIP, apiError, validateRequestCsrf, csrfReject, validateAdminUser } from "../security";
+import { getClientIP, apiError, validateRequestCsrf, csrfReject, validateAdminUser, readJsonLimited, getUserTokenFromRequest } from "../security";
+import * as oidc from "../oidc";
 import { checkRateLimit } from "../rate-limit";
 import { roomConnections } from "../rooms";
 import { fetchLatestFromGitHub, theOneFileHtml } from "../rooms";
+
+const NETWORK_BODY_CAP = 256 * 1024;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   const settings = getSettings();
@@ -14,12 +17,16 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!settings.probeEnabled) {
       return Response.json({ error: "Probing is disabled" }, { status: 403, headers: corsHeaders });
     }
+    const probeToken = getUserTokenFromRequest(req);
+    if (!probeToken || !(await oidc.validateUserSessionToken(probeToken))) {
+      return Response.json({ error: "Probing requires login" }, { status: 401, headers: corsHeaders });
+    }
     const clientIP = getClientIP(req);
     if (!(await checkRateLimit(clientIP, "probe", settings, 60))) {
       return Response.json({ error: "Too many probe requests. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       const target = body.target;
       const probes = body.probes;
       const timeout = Math.min(Math.max(parseInt(body.timeout) || 3000, 1000), 10000);
@@ -42,12 +49,16 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!settings.probeEnabled) {
       return Response.json({ error: "Probing is disabled" }, { status: 403, headers: corsHeaders });
     }
+    const probeToken = getUserTokenFromRequest(req);
+    if (!probeToken || !(await oidc.validateUserSessionToken(probeToken))) {
+      return Response.json({ error: "Probing requires login" }, { status: 401, headers: corsHeaders });
+    }
     const clientIP = getClientIP(req);
     if (!(await checkRateLimit(clientIP, "probe-batch", settings, 30))) {
       return Response.json({ error: "Too many batch probe requests. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       if (!body.targets || !Array.isArray(body.targets) || body.targets.length === 0 || body.targets.length > 50) {
         return Response.json({ error: "Invalid targets (1-50 required)" }, { status: 400, headers: corsHeaders });
       }
@@ -88,7 +99,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many discovery requests. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       const roomId = body.roomId;
       if (!roomId || !isValidUUID(roomId)) {
         return Response.json({ error: "Valid room ID required" }, { status: 400, headers: corsHeaders });
@@ -164,7 +175,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   if (path === "/api/discover/cancel" && req.method === "POST") {
     if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       if (!body.taskId || typeof body.taskId !== "string") {
         return Response.json({ error: "Task ID required" }, { status: 400, headers: corsHeaders });
       }
@@ -189,7 +200,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many deep scan requests. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       const roomId = body.roomId;
       if (!roomId || !isValidUUID(roomId)) {
         return Response.json({ error: "Valid room ID required" }, { status: 400, headers: corsHeaders });
@@ -240,7 +251,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   if (path === "/api/discover/deepscan/cancel" && req.method === "POST") {
     if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, NETWORK_BODY_CAP);
       if (!body.scanId || typeof body.scanId !== "string") {
         return Response.json({ error: "Scan ID required" }, { status: 400, headers: corsHeaders });
       }

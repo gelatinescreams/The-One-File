@@ -1,8 +1,9 @@
+import * as db from "../database";
 import * as auth from "../auth";
 import * as oidc from "../oidc";
 import * as redis from "../redis";
-import { getSettings, getExternalOrigin } from "../config";
-import { getClientIP, apiError, validateRequestCsrf, csrfReject, getUserTokenFromRequest, serveHtml, relativeRedirect } from "../security";
+import { getSettings, getExternalOrigin, isHttpsRequest } from "../config";
+import { getClientIP, apiError, validateRequestCsrf, isSameOriginRequest, csrfReject, getUserTokenFromRequest, getCsrfCookieFromRequest, serveHtml, relativeRedirect, readJsonLimited } from "../security";
 import { checkRateLimit, checkEmailRateLimit } from "../rate-limit";
 import { userLoginHtml, userRegisterHtml, userForgotPasswordHtml, getPasswordResetHtml } from "../templates";
 
@@ -21,10 +22,15 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   }
 
   if (path === "/api/auth/csrf" && req.method === "GET") {
-    const csrfToken = oidc.generateCsrfToken();
-    return new Response(JSON.stringify({ token: csrfToken }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json", "Set-Cookie": oidc.getCsrfCookie(csrfToken) }
-    });
+    const existingCookie = getCsrfCookieFromRequest(req);
+    const cookieValue = existingCookie || oidc.generateSecureToken(32);
+    const csrfToken = oidc.generateCsrfToken(cookieValue);
+    const headers: Record<string, string> = {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      "Set-Cookie": oidc.getCsrfCookie(cookieValue, isHttpsRequest(req))
+    };
+    return new Response(JSON.stringify({ token: csrfToken }), { headers });
   }
 
   if (path === "/api/auth/register" && req.method === "POST") {
@@ -33,21 +39,25 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (typeof body.email !== "string" || typeof body.password !== "string" || (body.displayName !== undefined && body.displayName !== null && typeof body.displayName !== "string")) {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
       const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
-      if (!oidc.validateCsrfToken(csrfToken)) {
+      if (!oidc.validateCsrfToken(csrfToken, getCsrfCookieFromRequest(req))) {
         return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
       }
       if (body.email && !(await checkEmailRateLimit(body.email, "register", settings))) {
         return Response.json({ error: "Too many registration attempts for this email. Try again later." }, { status: 429, headers: corsHeaders });
       }
       const baseUrl = getExternalOrigin(req);
-      const result = await auth.registerUser(body.email, body.password, body.displayName, baseUrl);
+      const result = await auth.registerUser(body.email, body.password, body.displayName, baseUrl,
+        typeof body.inviteCode === "string" ? body.inviteCode : null);
       if (!result.success) {
         return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
+      }
+      if (result.pendingApproval) {
+        return Response.json({ success: true, pendingApproval: true, requiresVerification: !!result.requiresVerification }, { headers: corsHeaders });
       }
       if (result.requiresVerification) {
         return Response.json({ success: true, requiresVerification: true }, { headers: corsHeaders });
@@ -56,7 +66,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (loginResult.success) {
         return new Response(JSON.stringify({ success: true, userId: loginResult.userId }), {
           headers: { ...corsHeaders, "Content-Type": "application/json",
-            "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken!) }
+            "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken!, 2592000, isHttpsRequest(req)) }
         });
       }
       return Response.json({ success: true, userId: result.userId }, { headers: corsHeaders });
@@ -68,13 +78,14 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!(await checkRateLimit(clientIP, "user-login", settings))) {
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
+    if (!isSameOriginRequest(req)) return csrfReject(corsHeaders);
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (typeof body.email !== "string" || typeof body.password !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
       const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
-      if (!oidc.validateCsrfToken(csrfToken)) {
+      if (!oidc.validateCsrfToken(csrfToken, getCsrfCookieFromRequest(req))) {
         return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
       }
       const result = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
@@ -86,7 +97,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
       return new Response(JSON.stringify({ success: true, userId: result.userId }), {
         headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!) }
+          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)) }
       });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
@@ -97,7 +108,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!body.pendingToken || !body.code || typeof body.pendingToken !== "string" || typeof body.code !== "string") {
         return Response.json({ error: "Token and code required" }, { status: 400, headers: corsHeaders });
       }
@@ -107,7 +118,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
       return new Response(JSON.stringify({ success: true, userId: result.userId }), {
         headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!) }
+          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)) }
       });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
@@ -121,7 +132,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!user) {
       return Response.json({ user: null }, { headers: corsHeaders });
     }
-    const { passwordHash, totpSecret, totpBackupCodes, pendingEmailToken, ...safeUser } = user;
+    const { passwordHash, totpSecret, totpBackupCodes, pendingEmailToken, failedLoginAttempts, lockedUntil, totpLastStep, ...safeUser } = user as any;
     return Response.json({ user: safeUser }, { headers: corsHeaders });
   }
 
@@ -137,8 +148,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (redis.isRedisConnected()) await redis.deleteSessionToken(token);
     }
     const clearCookies = [
-      oidc.getClearCookie("collab_token"),
-      oidc.getClearCookie("user_token")
+      oidc.getClearCookie("collab_token", isHttpsRequest(req)),
+      oidc.getClearCookie("user_token", isHttpsRequest(req))
     ].join(", ");
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json", "Set-Cookie": clearCookies }
@@ -227,7 +238,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       status: 302,
       headers: {
         "Location": redirectTo,
-        "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!),
+        "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)),
         "X-Content-Type-Options": "nosniff",
         "Cache-Control": "no-store"
       }
@@ -264,7 +275,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (typeof body.email !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
@@ -291,12 +302,12 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (typeof body.token !== "string" || typeof body.password !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
       const csrfToken = body.csrfToken || req.headers.get("x-csrf-token");
-      if (!oidc.validateCsrfToken(csrfToken)) {
+      if (!oidc.validateCsrfToken(csrfToken, getCsrfCookieFromRequest(req))) {
         return Response.json({ error: "Invalid security token. Please refresh and try again." }, { status: 403, headers: corsHeaders });
       }
       const result = await auth.resetPassword(body.token, body.password);
@@ -313,7 +324,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (typeof body.email !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
@@ -343,7 +354,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       status: 302,
       headers: {
         "Location": "/",
-        "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!),
+        "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)),
         "X-Content-Type-Options": "nosniff",
         "Cache-Control": "no-store"
       }
@@ -364,7 +375,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!validateRequestCsrf(req, body)) return csrfReject(corsHeaders);
       if (typeof body !== "object" || body === null || Array.isArray(body)) {
         return Response.json({ error: "Invalid input" }, { status: 400, headers: corsHeaders });
@@ -391,7 +402,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!validateRequestCsrf(req, body)) return csrfReject(corsHeaders);
       if (typeof body.currentPassword !== "string" || typeof body.newPassword !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
@@ -413,8 +424,20 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
-    const sessions = auth.getUserSessions(user.id);
+    const sessions = auth.getUserSessions(user.id, await oidc.hashToken(token));
     return Response.json({ sessions }, { headers: corsHeaders });
+  }
+
+  const oneSession = path.match(/^\/api\/auth\/sessions\/([\w-]{1,64})$/);
+  if (oneSession && req.method === "DELETE") {
+    if (!validateRequestCsrf(req)) return csrfReject(corsHeaders);
+    const token = getUserTokenFromRequest(req);
+    const user = token ? await oidc.validateUserSessionToken(token) : null;
+    if (!user) return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    const target = db.getSessionsByUserId(user.id).find(s => s.id === oneSession[1]);
+    if (!target) return Response.json({ error: "Session not found" }, { status: 404, headers: corsHeaders });
+    db.deleteSession(target.id);
+    return Response.json({ success: true, current: target.tokenHash === await oidc.hashToken(token!) }, { headers: corsHeaders });
   }
 
   if (path === "/api/auth/sessions" && req.method === "DELETE") {
@@ -505,15 +528,23 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!body.code || typeof body.code !== "string" || body.code.length !== 6) {
         return Response.json({ error: "Valid 6 digit code required" }, { status: 400, headers: corsHeaders });
       }
-      const result = await auth.verifyAndEnableTOTP(user.id, body.code);
+      const result = await auth.verifyAndEnableTOTP(user.id, body.code, {
+        token,
+        ipAddress: getClientIP(req),
+        userAgent: req.headers.get("user-agent") || ""
+      });
       if (!result.success) {
         return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
       }
-      return Response.json({ success: true, backupCodes: result.backupCodes }, { headers: corsHeaders });
+      const headers: Record<string, string> = { ...corsHeaders, "Content-Type": "application/json" };
+      if (result.newSessionToken) {
+        headers["Set-Cookie"] = oidc.getSessionCookie("user_token", result.newSessionToken, 2592000, isHttpsRequest(req));
+      }
+      return new Response(JSON.stringify({ success: true, backupCodes: result.backupCodes }), { headers });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 
@@ -532,7 +563,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!body.password || typeof body.password !== "string") {
         return Response.json({ error: "Password required" }, { status: 400, headers: corsHeaders });
       }
@@ -559,7 +590,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!body.newEmail || !body.password || typeof body.newEmail !== "string" || typeof body.password !== "string") {
         return Response.json({ error: "New email and password required" }, { status: 400, headers: corsHeaders });
       }

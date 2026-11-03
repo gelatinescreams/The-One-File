@@ -2,8 +2,8 @@ import * as auth from "../auth";
 import * as oidc from "../oidc";
 import * as db from "../database";
 import * as redis from "../redis";
-import { getSettings, getAdminPath, needsAdminMigration, hasAdminUser, verifyAdminPassword, getExternalOrigin } from "../config";
-import { getClientIP, serveHtml, apiError, validateAdminUser, validateRequestCsrf, csrfReject, getTokenFromRequest, getUserTokenFromRequest, relativeRedirect } from "../security";
+import { getSettings, getAdminPath, needsAdminMigration, hasAdminUser, verifyAdminPassword, isHttpsRequest } from "../config";
+import { getClientIP, serveHtml, apiError, validateAdminUser, validateRequestCsrf, isSameOriginRequest, csrfReject, getTokenFromRequest, getUserTokenFromRequest, relativeRedirect, readJsonLimited } from "../security";
 import { checkRateLimit } from "../rate-limit";
 import { removeInstanceToken } from "../tokens";
 import { adminDashboardHtml, adminLoginHtml, migrationPageHtml } from "../templates";
@@ -49,14 +49,18 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!(await checkRateLimit(clientIP, "admin-login", settings))) {
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
+    if (!isSameOriginRequest(req)) {
+      return csrfReject(corsHeaders);
+    }
     try {
-      const body = await req.json();
-      if (!body.email || !body.password) {
+      const body = await readJsonLimited(req, 64 * 1024);
+      if (typeof body.email !== "string" || typeof body.password !== "string" || !body.email || !body.password) {
         return Response.json({ error: "Email and password required" }, { status: 400, headers: corsHeaders });
       }
-      const result = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
+      const email = body.email.toLowerCase().trim();
+      const result = await auth.loginWithPassword(email, body.password, clientIP, req.headers.get("user-agent") || "");
       if (result.requires2FA) {
-        const user = db.getUserByEmail(body.email);
+        const user = db.getUserByEmail(email);
         if (!user || user.role !== 'admin') {
           return Response.json({ error: "Not authorized as admin" }, { status: 403, headers: corsHeaders });
         }
@@ -65,13 +69,14 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!result.success || !result.sessionToken) {
         return Response.json({ error: result.error || "Invalid credentials" }, { status: 403, headers: corsHeaders });
       }
-      const user = db.getUserByEmail(body.email);
+      const user = db.getUserByEmail(email);
       if (!user || user.role !== 'admin') {
+        await auth.logout(result.sessionToken);
         return Response.json({ error: "Not authorized as admin" }, { status: 403, headers: corsHeaders });
       }
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken) }
+          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken, 2592000, isHttpsRequest(req)) }
       });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
@@ -84,8 +89,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!(await checkRateLimit(clientIP, "admin-migrate", settings))) {
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
+    if (!isSameOriginRequest(req)) {
+      return csrfReject(corsHeaders);
+    }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       if (!body.oldPassword || !body.email) {
         return Response.json({ error: "Current password and email required" }, { status: 400, headers: corsHeaders });
       }
@@ -101,8 +109,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!passwordValidation.valid) {
         return Response.json({ error: passwordValidation.error }, { status: 400, headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
-      const result = await auth.registerUser(body.email, newPassword, body.email.split('@')[0], baseUrl);
+      const result = await auth.createAdminFromLegacy(body.email, newPassword, body.email.split('@')[0]);
       if (!result.success) {
         return Response.json({ error: result.error || "Migration failed" }, { status: 400, headers: corsHeaders });
       }
@@ -114,7 +121,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken) }
+          "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken, 2592000, isHttpsRequest(req)) }
       });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
@@ -138,8 +145,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     }
 
     const clearCookies = [
-      oidc.getClearCookie("collab_token"),
-      oidc.getClearCookie("user_token")
+      oidc.getClearCookie("collab_token", isHttpsRequest(req)),
+      oidc.getClearCookie("user_token", isHttpsRequest(req))
     ].join(", ");
 
     return new Response(JSON.stringify({ success: true }), {

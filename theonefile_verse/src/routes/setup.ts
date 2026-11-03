@@ -1,10 +1,12 @@
 import * as auth from "../auth";
 import * as oidc from "../oidc";
 import * as db from "../database";
-import { isAdminConfigured, hasAdminUser, getSettings, getExternalOrigin } from "../config";
-import { getClientIP, serveHtml, apiError } from "../security";
+import { isAdminConfigured, getSettings, getExternalOrigin, isHttpsRequest } from "../config";
+import { getClientIP, serveHtml, apiError, readJsonLimited } from "../security";
 import { checkRateLimit } from "../rate-limit";
 import { setupPageHtml } from "../templates";
+
+const ROUTE_BODY_CAP = 64 * 1024;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (!isAdminConfigured() && (path === "/" || path === "/index.html")) {
@@ -12,8 +14,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   }
 
   if (path === "/api/setup" && req.method === "POST") {
-    if (hasAdminUser()) {
-      return Response.json({ error: "Admin already configured" }, { status: 400, headers: corsHeaders });
+    if (isAdminConfigured()) {
+      return Response.json({ error: "Admin already configured" }, { status: 403, headers: corsHeaders });
     }
     const clientIP = getClientIP(req);
     const settings = getSettings();
@@ -21,7 +23,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       if (!body.email || !body.email.includes('@')) {
         return Response.json({ error: "Valid email required" }, { status: 400, headers: corsHeaders });
       }
@@ -41,13 +43,18 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!result.success) {
         return Response.json({ error: result.error || "Registration failed" }, { status: 400, headers: corsHeaders });
       }
+      const created = result.userId ? db.getUserById(result.userId) : null;
+      if (!created || created.role !== 'admin') {
+        if (created) db.deleteUser(created.id);
+        return Response.json({ error: "Setup already completed by another request. Please sign in." }, { status: 409, headers: corsHeaders });
+      }
       const loginResult = await auth.loginWithPassword(body.email, body.password, clientIP, req.headers.get("user-agent") || "");
       if (!loginResult.success || !loginResult.sessionToken) {
         return Response.json({ error: "Account created but login failed" }, { status: 400, headers: corsHeaders });
       }
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken) }
+          "Set-Cookie": oidc.getSessionCookie("user_token", loginResult.sessionToken, 2592000, isHttpsRequest(req)) }
       });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }

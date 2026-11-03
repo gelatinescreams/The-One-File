@@ -1,10 +1,12 @@
 import { existsSync, mkdirSync } from "fs";
 import { unlink } from "fs/promises";
 import { join } from "path";
+import { parseFragment } from "parse5";
 import * as db from "./database";
 import * as redis from "./redis";
 import * as auth from "./auth";
-import { DATA_DIR, ROOMS_DIR, getSettings, updateSettings, isValidUUID, type InstanceSettings } from "./config";
+import { DATA_DIR, ROOMS_DIR, getSettings, updateSettings, getMaxRoomSizeBytes, isValidUUID, REDIS_FANOUT, type InstanceSettings } from "./config";
+import { sanitizeScene3d, SCENE3D_CODE_TTL_DAYS } from "./scene3d";
 
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 if (!existsSync(ROOMS_DIR)) mkdirSync(ROOMS_DIR, { recursive: true });
@@ -24,6 +26,10 @@ export interface Room {
 export interface RoomMeta {
   connectedUsers: number;
   destructTimer?: Timer;
+  emptyDestructTimer?: Timer;
+  idleCleanupTimer?: Timer;
+  ownerWasLast?: boolean;
+  lastLeaverWasUser?: boolean;
 }
 
 export const roomMeta: Map<string, RoomMeta> = new Map();
@@ -47,6 +53,7 @@ export function loadRoom(id: string): Room | null {
 
 export function saveRoom(room: Room): void {
   if (!isValidUUID(room.id)) return;
+  clearTopologyCache(room.id);
   const existing = db.getRoom(room.id);
   if (existing) {
     db.updateRoom(room.id, room.lastActivity, room.topology);
@@ -58,9 +65,116 @@ export function saveRoom(room: Room): void {
   }
 }
 
+
+export const ROOM_SAVE_DEBOUNCE_MS = 500;
+
+interface PendingWrite { json: string; topology: any; lastActivity: string; timer: Timer }
+
+const lastPersistedHash = new Map<string, string>();
+const pendingRoomWrites = new Map<string, PendingWrite>();
+
+export function hashTopologyString(str: string): string {
+  let h1 = 5381, h2 = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    h1 = (((h1 << 5) + h1) ^ c) >>> 0;
+    h2 = (c + (h2 << 6) + (h2 << 16) - h2) >>> 0;
+  }
+  return str.length.toString(36) + ':' + h1.toString(36) + ':' + h2.toString(36);
+}
+
+function commitRoomWrite(roomId: string): void {
+  const pending = pendingRoomWrites.get(roomId);
+  if (!pending) return;
+  pendingRoomWrites.delete(roomId);
+  clearTimeout(pending.timer);
+  try {
+    db.updateRoomTopologyJson(roomId, pending.lastActivity, pending.json);
+    if (redis.isRedisConnected() && pending.topology) {
+      redis.setRoomStateCache(roomId, pending.topology, 3600);
+    }
+  } catch (e: any) {
+    lastPersistedHash.delete(roomId);
+    console.error('[Room] persist failed:', e?.message);
+  }
+}
+
+export function persistTopology(roomId: string, topology: any, json: string, lastActivity: string): boolean {
+  if (!isValidUUID(roomId)) return false;
+  const hash = hashTopologyString(json);
+  if (lastPersistedHash.get(roomId) === hash) return false;
+  lastPersistedHash.set(roomId, hash);
+  const existing = pendingRoomWrites.get(roomId);
+  if (existing) clearTimeout(existing.timer);
+  const timer = setTimeout(() => commitRoomWrite(roomId), ROOM_SAVE_DEBOUNCE_MS);
+  if (typeof (timer as any).unref === 'function') (timer as any).unref();
+  pendingRoomWrites.set(roomId, { json, topology, lastActivity, timer });
+  return true;
+}
+
+export function currentTopology(roomId: string): any | null {
+  const pending = pendingRoomWrites.get(roomId);
+  if (pending) return pending.topology;
+  const room = loadRoom(roomId);
+  return room ? room.topology : null;
+}
+
+export function noteForeignPersist(roomId: string, json: string): boolean {
+  if (!isValidUUID(roomId)) return false;
+  if (typeof json !== 'string' || !json) return false;
+  if (pendingRoomWrites.has(roomId)) return false;
+  lastPersistedHash.set(roomId, hashTopologyString(json));
+  return true;
+}
+
+export function flushPendingRoomWrites(): void {
+  for (const roomId of [...pendingRoomWrites.keys()]) commitRoomWrite(roomId);
+}
+
+export function clearTopologyCache(roomId?: string): void {
+  if (roomId) {
+    const pending = pendingRoomWrites.get(roomId);
+    if (pending) clearTimeout(pending.timer);
+    pendingRoomWrites.delete(roomId);
+    lastPersistedHash.delete(roomId);
+  } else {
+    for (const p of pendingRoomWrites.values()) clearTimeout(p.timer);
+    pendingRoomWrites.clear();
+    lastPersistedHash.clear();
+  }
+}
+
+
+const VIEW_ONLY_TTL_MS = 5000;
+const viewOnlyCache = new Map<string, { value: boolean; expires: number }>();
+
+export function isRoomViewOnly(roomId: string): boolean {
+  const cached = viewOnlyCache.get(roomId);
+  const now = Date.now();
+  if (cached && cached.expires > now) return cached.value;
+  let value = false;
+  try { value = db.getSetting(`room:viewOnly:${roomId}`) === '1'; } catch { value = false; }
+  viewOnlyCache.set(roomId, { value, expires: now + VIEW_ONLY_TTL_MS });
+  return value;
+}
+
+export function setRoomViewOnly(roomId: string, viewOnly: boolean): void {
+  if (!isValidUUID(roomId)) return;
+  db.setSetting(`room:viewOnly:${roomId}`, viewOnly ? '1' : '0');
+  viewOnlyCache.set(roomId, { value: viewOnly, expires: Date.now() + VIEW_ONLY_TTL_MS });
+}
+
 export function deleteRoomData(id: string): boolean {
   const result = db.deleteRoom(id);
   if (result) {
+    clearTopologyCache(id);
+    viewOnlyCache.delete(id);
+    const meta = roomMeta.get(id);
+    if (meta) {
+      if (meta.destructTimer) clearTimeout(meta.destructTimer);
+      if (meta.emptyDestructTimer) clearTimeout(meta.emptyDestructTimer);
+      if (meta.idleCleanupTimer) clearTimeout(meta.idleCleanupTimer);
+    }
     roomMeta.delete(id);
     roomUsedNames.delete(id);
     roomChatHistory.delete(id);
@@ -71,17 +185,152 @@ export function deleteRoomData(id: string): boolean {
   return result;
 }
 
+const MAX_TIMER_MS = 2_000_000_000;
+
 export function scheduleDestruction(roomId: string, delayMs: number): void {
   const meta = roomMeta.get(roomId) || { connectedUsers: 0 };
   if (meta.destructTimer) clearTimeout(meta.destructTimer);
-  meta.destructTimer = setTimeout(() => {
-    const room = loadRoom(roomId);
-    if (room && room.destruct.mode === "time") {
-      console.log(`[Room] ${roomId} self destructed`);
-      deleteRoomData(roomId);
-    }
-  }, delayMs);
+  const deadline = Date.now() + Math.max(0, Number(delayMs) || 0);
+  const arm = () => {
+    const left = deadline - Date.now();
+    if (left > MAX_TIMER_MS) { meta.destructTimer = setTimeout(arm, MAX_TIMER_MS); return; }
+    meta.destructTimer = setTimeout(() => {
+      const room = loadRoom(roomId);
+      if (room && room.destruct.mode === "time") {
+        console.log(`[Room] ${roomId} self destructed`);
+        deleteRoomData(roomId);
+      }
+    }, Math.max(0, left));
+  };
+  arm();
   roomMeta.set(roomId, meta);
+}
+
+export const EMPTY_DESTRUCT_GRACE_MS = 60 * 1000;
+export const EMPTY_DESTRUCT_OWNERLESS_GRACE_MS = 10 * 60 * 1000;
+export const EMPTY_DESTRUCT_BOOT_GRACE_MS = 5 * 60 * 1000;
+
+export interface PresenceProvider {
+  enabled(): boolean;
+  count(roomId: string): Promise<number | null>;
+  list(roomId: string): Promise<Map<string, any> | null>;
+  set(roomId: string, userId: string, user: any, ttlSeconds?: number): Promise<void>;
+  touch(roomId: string, userId: string, ttlSeconds?: number): Promise<void>;
+  remove(roomId: string, userId: string): Promise<void>;
+}
+
+export const PRESENCE_TTL_SECONDS = 300;
+
+export const presence: PresenceProvider = {
+  enabled: () => REDIS_FANOUT,
+  count: (roomId) => redis.getRoomPresenceCount(roomId),
+  list: async (roomId) => (redis.isRedisConnected() ? await redis.getAllUserPresence(roomId) : null),
+  set: async (roomId, userId, user, ttl = PRESENCE_TTL_SECONDS) => { await redis.setUserPresence(roomId, userId, user, ttl); },
+  touch: async (roomId, userId, ttl = PRESENCE_TTL_SECONDS) => { await redis.refreshUserPresence(roomId, userId, ttl); },
+  remove: async (roomId, userId) => { await redis.removeUserPresence(roomId, userId); }
+};
+
+export type EmptyDestructVerdict = "allow" | "deny" | "unknown";
+
+export const EMPTY_DESTRUCT_RETRY_MS = 60 * 1000;
+
+async function emptyDestructVerdict(roomId: string): Promise<EmptyDestructVerdict> {
+  const meta = roomMeta.get(roomId);
+  if (meta && meta.connectedUsers > 0) return "deny";
+  if ((roomConnections.get(roomId)?.size || 0) > 0) return "deny";
+  if (!presence.enabled()) return "allow";
+  let remote: number | null = null;
+  try { remote = await presence.count(roomId); } catch { remote = null; }
+  if (remote === null) {
+    console.warn(`[Room] ${roomId} empty-destruct SKIPPED: cross-instance presence unavailable (failing safe)`);
+    return "unknown";
+  }
+  if (remote > 0) {
+    console.log(`[Room] ${roomId} empty-destruct skipped: ${remote} user(s) live on other instance(s)`);
+    return "deny";
+  }
+  return "allow";
+}
+
+export async function emptyDestructAllowed(roomId: string): Promise<boolean> {
+  return (await emptyDestructVerdict(roomId)) === "allow";
+}
+
+export function emptyDestructOwnerGate(room: Room, meta: RoomMeta | undefined): boolean {
+  if (room.ownerUserId) return !!meta?.ownerWasLast;
+  return meta?.lastLeaverWasUser === true;
+}
+
+export async function runEmptyDestruct(roomId: string): Promise<boolean> {
+  const current = roomMeta.get(roomId);
+  if (current?.emptyDestructTimer) clearTimeout(current.emptyDestructTimer);
+  if (current) current.emptyDestructTimer = undefined;
+  if (current && current.connectedUsers > 0) return false;
+  const room = loadRoom(roomId);
+  if (!room || room.destruct.mode !== "empty") return false;
+  if (!emptyDestructOwnerGate(room, current)) return false;
+  const verdict = await emptyDestructVerdict(roomId);
+  if (verdict === "unknown") {
+    scheduleEmptyDestruction(roomId, EMPTY_DESTRUCT_RETRY_MS);
+    return false;
+  }
+  if (verdict !== "allow") return false;
+  const after = roomMeta.get(roomId);
+  if (after && after.connectedUsers > 0) return false;
+  if ((roomConnections.get(roomId)?.size || 0) > 0) return false;
+  const fresh = loadRoom(roomId);
+  if (!fresh || fresh.destruct.mode !== "empty") return false;
+  if (!emptyDestructOwnerGate(fresh, roomMeta.get(roomId))) return false;
+  console.log(`[Room] ${roomId} destroyed (empty)`);
+  deleteRoomData(roomId);
+  return true;
+}
+
+export function scheduleEmptyDestruction(roomId: string, delayMs: number = EMPTY_DESTRUCT_GRACE_MS): void {
+  const meta = roomMeta.get(roomId) || { connectedUsers: 0 };
+  if (meta.emptyDestructTimer) clearTimeout(meta.emptyDestructTimer);
+  meta.emptyDestructTimer = setTimeout(() => { void runEmptyDestruct(roomId); }, delayMs);
+  if (presence.enabled()) {
+    const armed = meta.emptyDestructTimer;
+    void presence.count(roomId).then(n => {
+      if (n !== null && n > 0 && roomMeta.get(roomId)?.emptyDestructTimer === armed) {
+        console.log(`[Room] ${roomId} empty-destruct disarmed: ${n} user(s) live on other instance(s)`);
+        cancelEmptyDestruction(roomId);
+      }
+    }).catch(() => {  });
+  }
+  if (typeof (meta.emptyDestructTimer as any).unref === 'function') (meta.emptyDestructTimer as any).unref();
+  roomMeta.set(roomId, meta);
+}
+
+export function cancelEmptyDestruction(roomId: string): void {
+  const meta = roomMeta.get(roomId);
+  if (meta?.emptyDestructTimer) { clearTimeout(meta.emptyDestructTimer); meta.emptyDestructTimer = undefined; }
+}
+
+export const ROOM_IDLE_CLEANUP_MS = 5 * 60 * 1000;
+
+export function scheduleIdleCleanup(roomId: string, delayMs: number = ROOM_IDLE_CLEANUP_MS): void {
+  const meta = roomMeta.get(roomId) || { connectedUsers: 0 };
+  if (meta.idleCleanupTimer) clearTimeout(meta.idleCleanupTimer);
+  meta.idleCleanupTimer = setTimeout(() => {
+    const current = roomMeta.get(roomId);
+    if (current) current.idleCleanupTimer = undefined;
+    if (current && current.connectedUsers > 0) return;
+    roomUsedNames.delete(roomId);
+    roomChatHistory.delete(roomId);
+    commitRoomWrite(roomId);
+    lastPersistedHash.delete(roomId);
+    viewOnlyCache.delete(roomId);
+    if (current && !current.destructTimer && !current.emptyDestructTimer) roomMeta.delete(roomId);
+  }, delayMs);
+  if (typeof (meta.idleCleanupTimer as any).unref === 'function') (meta.idleCleanupTimer as any).unref();
+  roomMeta.set(roomId, meta);
+}
+
+export function cancelIdleCleanup(roomId: string): void {
+  const meta = roomMeta.get(roomId);
+  if (meta?.idleCleanupTimer) { clearTimeout(meta.idleCleanupTimer); meta.idleCleanupTimer = undefined; }
 }
 
 export function resetDestructionTimer(roomId: string): void {
@@ -205,6 +454,7 @@ export function restartUpdateTimer(): void {
   updateTimer = null;
   if (settings.updateIntervalHours > 0 && !settings.skipUpdates) {
     updateTimer = setInterval(() => { fetchLatestFromGitHub(); }, settings.updateIntervalHours * 60 * 60 * 1000);
+    if (typeof (updateTimer as any).unref === 'function') (updateTimer as any).unref();
     console.log(`[Update] Auto update every ${settings.updateIntervalHours} hours`);
   }
 }
@@ -344,14 +594,58 @@ function sanitizeUrl(url: string): string {
   return url;
 }
 
+const TAG_SENTINEL = '\u0001';
+
+const URL_ATTRS = new Set(['href', 'src', 'action', 'poster', 'xlink:href', 'formaction', 'background', 'cite', 'srcset']);
+
+function escapeAllHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function parsedNodeIsSafe(node: any): boolean {
+  const name = node.nodeName;
+  if (name === '#comment' || name === '#documentType') return false;
+  if (name !== '#text' && name !== '#document-fragment') {
+    if (node.namespaceURI && node.namespaceURI !== 'http://www.w3.org/1999/xhtml') return false;
+    if (!ALLOWED_TAGS.has(String(node.tagName).toLowerCase())) return false;
+    for (const attr of node.attrs || []) {
+      const an = String(attr.prefix ? attr.prefix + ':' + attr.name : attr.name).toLowerCase();
+      if (/^on/.test(an) || an === 'style' || an === 'srcdoc' || an === 'formaction') return false;
+      if (!ALLOWED_ATTRS.has(an) && !isAllowedDataAttr(an)) return false;
+      if (URL_ATTRS.has(an)) {
+        const v = String(attr.value || '');
+        if (sanitizeUrl(v) !== v) return false;
+        const compact = v.replace(/[\u0000-\u0020\u007f-\u009f]/g, '').toLowerCase();
+        if (/^(javascript|vbscript|data(?!:image\/(png|jpe?g|gif|webp|bmp|ico)))[:]/.test(compact)) return false;
+      }
+    }
+  }
+  const kids = (node.content && node.content.childNodes) ? node.content.childNodes.concat(node.childNodes || []) : (node.childNodes || []);
+  for (const k of kids) if (!parsedNodeIsSafe(k)) return false;
+  return true;
+}
+
 export function sanitizeHtmlString(str: string): string {
   if (typeof str !== 'string') return str;
+  const input = str.replace(/\u0001/g, '');
+  str = input;
+  let prev: string;
+  let rounds = 0;
+  do { prev = str; str = sanitizeHtmlPass(str); } while (str !== prev && ++rounds < 5);
+  const out = str.replace(/<(?=[A-Za-z\/!?])/g, '&lt;').replace(/\u0001/g, '<');
+  if (out.indexOf('<') === -1) return out;
+  let safe = false;
+  try { safe = parsedNodeIsSafe(parseFragment(out)); } catch { safe = false; }
+  return safe ? out : escapeAllHtml(input);
+}
+
+function sanitizeHtmlPass(str: string): string {
   str = str.replace(/<!--[\s\S]*?-->/g, '').replace(/<!\[CDATA\[[\s\S]*?\]\]>/gi, '');
   return str.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b([^>]*)?\/?>/g, (match, tagName, attrsStr) => {
     const tag = tagName.toLowerCase();
     const isClosing = match.startsWith('</');
     if (!ALLOWED_TAGS.has(tag)) return '';
-    if (isClosing) return `</${tag}>`;
+    if (isClosing) return `${TAG_SENTINEL}/${tag}>`;
     const selfClosing = match.endsWith('/>') || ['br', 'hr', 'img', 'input', 'col', 'source', 'wbr'].includes(tag);
     let safeAttrs = '';
     if (attrsStr) {
@@ -364,6 +658,7 @@ export function sanitizeHtmlString(str: string): string {
         if (attrName === 'style') continue;
         if (attrName === 'srcdoc') continue;
         if (attrName === 'formaction') continue;
+        if (attrName === 'rel') continue;
         if (!ALLOWED_ATTRS.has(attrName) && !isAllowedDataAttr(attrName)) continue;
         let safeVal = attrVal;
         if (attrName === 'href' || attrName === 'src' || attrName === 'action' || attrName === 'poster') {
@@ -378,7 +673,7 @@ export function sanitizeHtmlString(str: string): string {
         }
       }
     }
-    return selfClosing ? `<${tag}${safeAttrs} />` : `<${tag}${safeAttrs}>`;
+    return selfClosing ? `${TAG_SENTINEL}${tag}${safeAttrs} />` : `${TAG_SENTINEL}${tag}${safeAttrs}>`;
   });
 }
 
@@ -389,6 +684,7 @@ export function sanitizeTopologyStrings(obj: any): any {
   if (typeof obj === 'object') {
     const result: any = {};
     for (const key of Object.keys(obj)) {
+      if (key === '__proto__') continue;
       result[key] = sanitizeTopologyStrings(obj[key]);
     }
     return result;
@@ -406,8 +702,9 @@ export function validateTopology(topology: any): TopologyValidationResult {
   } catch {
     return { valid: false, error: "Topology is not valid JSON" };
   }
-  if (jsonStr.length > TOPOLOGY_LIMITS.maxSizeBytes) {
-    return { valid: false, error: `Topology exceeds maximum size of ${TOPOLOGY_LIMITS.maxSizeBytes / (1024 * 1024)}MB` };
+  const maxSizeBytes = getMaxRoomSizeBytes();
+  if (jsonStr.length > maxSizeBytes) {
+    return { valid: false, error: `Topology exceeds maximum size of ${Math.round(maxSizeBytes / (1024 * 1024))}MB` };
   }
   const depthCheck = checkJsonDepthAndSize(topology);
   if (!depthCheck.valid) {
@@ -429,6 +726,7 @@ export function validateTopology(topology: any): TopologyValidationResult {
     { key: 'edgeLegend', expectedType: 'object' },
     { key: 'zoneLegend', expectedType: 'object' },
     { key: 'currentTabIndex', expectedType: 'number' },
+    { key: 'tabVersions', expectedType: 'object' },
   ];
   for (const check of typeChecks) {
     if (topology[check.key] !== undefined && topology[check.key] !== null) {
@@ -447,7 +745,84 @@ export function validateTopology(topology: any): TopologyValidationResult {
       }
     }
   }
-  return { valid: true, sanitized: sanitizeTopologyStrings(topology) };
+  const sanitized = sanitizeTopologyStrings(topology);
+  capAuditLog(sanitized);
+  capTabVersions(sanitized);
+  normalizeTextData(sanitized);
+  return { valid: true, sanitized };
+}
+
+function normalizeTextList(td: any): void {
+  if (!td || typeof td !== 'object' || !Array.isArray(td.list)) return;
+  td.list = td.list.filter((it: any) => it && typeof it === 'object' && !Array.isArray(it));
+  for (const it of td.list) {
+    if (typeof it.content !== 'string') it.content = it.content == null ? '' : String(it.content);
+  }
+}
+
+export function normalizeTextData(topology: any): void {
+  if (!topology || typeof topology !== 'object') return;
+  normalizeTextList(topology.textData);
+  if (Array.isArray(topology.documentTabs)) {
+    for (const tab of topology.documentTabs) if (tab && typeof tab === 'object') normalizeTextList(tab.texts);
+  }
+}
+
+export const AUDIT_MAX_DETAILS_BYTES = 2 * 1024;
+export const AUDIT_MAX_TOTAL_BYTES = 512 * 1024;
+export const AUDIT_MAX_ENTRIES = 1000;
+
+export function capAuditLog(topology: any): void {
+  if (!topology || typeof topology !== 'object') return;
+  const log = topology.auditLog;
+  if (!Array.isArray(log)) return;
+  const out: any[] = [];
+  let total = 0;
+  for (const entry of log) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+    if (out.length >= AUDIT_MAX_ENTRIES) break;
+    if (entry.details !== undefined && entry.details !== null) {
+      let ser = '';
+      try { ser = JSON.stringify(entry.details) ?? ''; } catch { ser = ''; }
+      if (ser.length > AUDIT_MAX_DETAILS_BYTES) {
+        entry.details = { truncated: true, bytes: ser.length, preview: ser.slice(0, 256) };
+      }
+    }
+    let size = 0;
+    try { size = (JSON.stringify(entry) ?? '').length; } catch { size = 0; }
+    if (total + size > AUDIT_MAX_TOTAL_BYTES) break;
+    total += size;
+    out.push(entry);
+  }
+  topology.auditLog = out;
+}
+
+export const TAB_VERSIONS_MAX_ENTRIES = 64;
+export const TAB_VERSION_MAX_V = 1099511627776;
+export const TAB_VERSION_MAX_BY_LEN = 128;
+
+export function capTabVersions(topology: any): void {
+  if (!topology || typeof topology !== 'object') return;
+  const versions = topology.tabVersions;
+  if (versions === undefined || versions === null) return;
+  if (typeof versions !== 'object' || Array.isArray(versions)) {
+    delete topology.tabVersions;
+    return;
+  }
+  const out: Record<string, { v: number; by: string }> = {};
+  let count = 0;
+  for (const key of Object.keys(versions)) {
+    if (count >= TAB_VERSIONS_MAX_ENTRIES) break;
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+    const entry = (versions as any)[key];
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+    const v = entry.v;
+    if (typeof v !== 'number' || !Number.isInteger(v) || v < 0) continue;
+    const by = typeof entry.by === 'string' ? entry.by.slice(0, TAB_VERSION_MAX_BY_LEN) : '';
+    out[key] = { v: Math.min(v, TAB_VERSION_MAX_V), by };
+    count++;
+  }
+  topology.tabVersions = out;
 }
 
 export function validateTheOneFileHtml(html: string): ValidationResult {
@@ -539,8 +914,13 @@ export async function createBackup(autoGenerated: boolean = false): Promise<{ id
     const filename = `backup_${timestamp}_${id.slice(0, 8)}.json`;
     const rooms = db.listRooms();
     const dbSettings = db.getAllSettings();
-    delete dbSettings['encryption_key'];
-    const backupData = { version: 1, timestamp: new Date().toISOString(), rooms, settings: dbSettings };
+    for (const k of ['encryption_key', 'instancePasswordHash', 'admin_password_hash']) delete (dbSettings as any)[k];
+    const scene3d: Record<string, string> = {};
+    for (const r of rooms) {
+      const blob = db.exportScene3dForRoom((r as any).id);
+      if (blob) scene3d[(r as any).id] = blob;
+    }
+    const backupData = { version: 2, timestamp: new Date().toISOString(), rooms, scene3d, settings: dbSettings };
     const content = JSON.stringify(backupData, null, 2);
     await Bun.write(join(BACKUPS_DIR, filename), content);
     const size = content.length;
@@ -553,8 +933,20 @@ export async function createBackup(autoGenerated: boolean = false): Promise<{ id
         db.deleteBackupRecord(backup.id);
       }
     }
+    try {
+      const pruned = db.pruneOrphanSceneCodes(SCENE3D_CODE_TTL_DAYS);
+      if (pruned > 0) console.log(`[Backup] Pruned ${pruned} orphaned portable 3D scene code(s)`);
+    } catch {  }
     return { id, filename, size };
   } catch (e: any) { console.error("[Backup]", e.message); return null; }
+}
+
+export function shouldImportScene3d(roomId: string): boolean {
+  let raw: string | null = null;
+  try { raw = db.getScene3d(roomId); } catch { return false; }
+  if (!raw) return true;
+  const trimmed = raw.trim();
+  return trimmed === '' || trimmed === '{}';
 }
 
 export async function restoreBackup(backupId: string): Promise<{ success: boolean; error?: string; roomsRestored?: number }> {
@@ -569,6 +961,7 @@ export async function restoreBackup(backupId: string): Promise<{ success: boolea
     const data = JSON.parse(content);
     if (!data.rooms || !Array.isArray(data.rooms)) return { success: false, error: "Invalid backup format" };
     let roomsRestored = 0;
+    let scenesRestored = 0;
     for (const room of data.rooms) {
       const existing = db.getRoom(room.id);
       if (!existing) {
@@ -576,7 +969,20 @@ export async function restoreBackup(backupId: string): Promise<{ success: boolea
         db.createRoom(room);
         roomsRestored++;
       }
+      if (shouldImportScene3d(room.id)) {
+        const blob = data.scene3d && typeof data.scene3d === "object" ? data.scene3d[room.id] : null;
+        if (blob && typeof blob === "string") {
+          try {
+            const parsed = JSON.parse(blob);
+            const code = parsed && typeof parsed.code === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(parsed.code)
+              ? parsed.code : null;
+            const clean = sanitizeScene3d(parsed);
+            if (clean) { db.importScene3dForRoom(room.id, JSON.stringify(code ? { ...clean, code } : clean)); scenesRestored++; }
+          } catch {  }
+        }
+      }
     }
+    if (scenesRestored > 0) console.log(`[Backup] Restored ${scenesRestored} 3D scene(s)`);
     return { success: true, roomsRestored };
   } catch (e: any) { console.error("[Backup]", e.message); return { success: false, error: "Failed to parse backup" }; }
 }
@@ -593,6 +999,7 @@ export function restartBackupTimer(): void {
   backupTimer = null;
   if (settings.backupEnabled && settings.backupIntervalHours > 0) {
     backupTimer = setInterval(() => { createBackup(true); }, settings.backupIntervalHours * 60 * 60 * 1000);
+    if (typeof (backupTimer as any).unref === 'function') (backupTimer as any).unref();
     console.log(`[Backup] Auto backup every ${settings.backupIntervalHours} hours`);
   }
 }

@@ -1,14 +1,17 @@
 import { join } from "path";
+import { createHash } from "crypto";
 import * as oidc from "../oidc";
 import * as db from "../database";
 import * as redis from "../redis";
-import { APP_VERSION, getSettings, isValidUUID, getAdminPath } from "../config";
+import { APP_VERSION, getSettings, isValidUUID, getAdminPath, REDIS_FANOUT } from "../config";
 import { serveHtml, securityHeaders, getUserTokenFromRequest, validateAdminUser, relativeRedirect } from "../security";
 import { theOneFileHtml, loadRoom } from "../rooms";
 
-const staticCache = new Map<string, { etag: string; type: string; cache: string; raw: Uint8Array; gz: Uint8Array | null }>();
+interface StaticRec { etag: string; type: string; cache: string; raw: Uint8Array; gz: Uint8Array | null; sri?: string }
 
-async function getStaticAsset(p: string, entry: { path: string; type: string; cache: string }) {
+const staticCache = new Map<string, StaticRec>();
+
+async function getStaticAsset(p: string, entry: { path: string; type: string; cache: string }): Promise<StaticRec | null> {
   const hit = staticCache.get(p);
   if (hit) return hit;
   const file = Bun.file(join(process.cwd(), entry.path));
@@ -16,9 +19,25 @@ async function getStaticAsset(p: string, entry: { path: string; type: string; ca
   const raw = new Uint8Array(await file.arrayBuffer());
   const etag = '"' + Bun.hash(raw).toString(16) + '"';
   const compressible = entry.type.includes("javascript") || entry.type.includes("css");
-  const rec = { etag, type: entry.type, cache: entry.cache, raw, gz: compressible ? Bun.gzipSync(raw) : null };
+  const rec: StaticRec = { etag, type: entry.type, cache: entry.cache, raw, gz: compressible ? Bun.gzipSync(raw) : null };
   staticCache.set(p, rec);
   return rec;
+}
+
+export async function integrityFor(p: string): Promise<string> {
+  const entry = STATIC_FILES[p];
+  if (!entry) return "";
+  const rec = await getStaticAsset(p, entry);
+  if (!rec) return "";
+  if (!rec.sri) {
+    rec.sri = "sha384-" + createHash("sha384").update(rec.raw).digest("base64");
+  }
+  return rec.sri;
+}
+
+async function integrityAttr(p: string): Promise<string> {
+  const sri = await integrityFor(p);
+  return sri ? ` integrity="${sri}"` : "";
 }
 
 const STATIC_FILES: Record<string, { path: string; type: string; cache: string }> = {
@@ -31,7 +50,25 @@ const STATIC_FILES: Record<string, { path: string; type: string; cache: string }
   "/admin-dashboard.js": { path: "public/admin-dashboard.js", type: "application/javascript", cache: "public, max-age=3600" },
   "/admin-auth.js": { path: "public/admin-auth.js", type: "application/javascript", cache: "public, max-age=3600" },
   "/admin-pages.js": { path: "public/admin-pages.js", type: "application/javascript", cache: "public, max-age=3600" },
-  "/qrcode.min.js": { path: "public/qrcode.min.js", type: "application/javascript", cache: "public, max-age=86400" }
+  "/qrcode.min.js": { path: "public/qrcode.min.js", type: "application/javascript", cache: "public, max-age=86400" },
+  "/collab-3d.js": { path: "public/collab-3d.js", type: "application/javascript", cache: "no-cache" },
+  "/vendor/three/three.module.min.js": { path: "public/vendor/three/three.module.min.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/three.core.min.js": { path: "public/vendor/three/three.core.min.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/loaders/GLTFLoader.js": { path: "public/vendor/three/addons/loaders/GLTFLoader.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/loaders/SVGLoader.js": { path: "public/vendor/three/addons/loaders/SVGLoader.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/utils/BufferGeometryUtils.js": { path: "public/vendor/three/addons/utils/BufferGeometryUtils.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/utils/SkeletonUtils.js": { path: "public/vendor/three/addons/utils/SkeletonUtils.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/environments/RoomEnvironment.js": { path: "public/vendor/three/addons/environments/RoomEnvironment.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/EffectComposer.js": { path: "public/vendor/three/addons/postprocessing/EffectComposer.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/Pass.js": { path: "public/vendor/three/addons/postprocessing/Pass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/ShaderPass.js": { path: "public/vendor/three/addons/postprocessing/ShaderPass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/MaskPass.js": { path: "public/vendor/three/addons/postprocessing/MaskPass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/RenderPass.js": { path: "public/vendor/three/addons/postprocessing/RenderPass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/UnrealBloomPass.js": { path: "public/vendor/three/addons/postprocessing/UnrealBloomPass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/postprocessing/OutputPass.js": { path: "public/vendor/three/addons/postprocessing/OutputPass.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/shaders/CopyShader.js": { path: "public/vendor/three/addons/shaders/CopyShader.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/shaders/LuminosityHighPassShader.js": { path: "public/vendor/three/addons/shaders/LuminosityHighPassShader.js", type: "application/javascript", cache: "public, max-age=604800" },
+  "/vendor/three/addons/shaders/OutputShader.js": { path: "public/vendor/three/addons/shaders/OutputShader.js", type: "application/javascript", cache: "public, max-age=604800" }
 };
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
@@ -53,6 +90,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       version: APP_VERSION,
       uptime: Math.floor(uptime),
       components: { database: dbOk ? "ok" : "error", redis: redisOk ? "ok" : "unavailable" },
+      cluster: {
+        redisConnected: redis.isRedisConnected(),
+        fanout: REDIS_FANOUT,
+        instanceId: redis.INSTANCE_ID
+      },
       rooms: db.countRooms()
     }, { headers: corsHeaders });
   }
@@ -102,18 +144,29 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       forceWelcomeModal: settings.forceWelcomeModal || false,
       probeEnabled: settings.probeEnabled,
       discoveryEnabled: settings.discoveryEnabled,
-      discoveryAllowed: settings.discoveryEnabled && (isAdmin || !settings.discoveryAdminOnly)
+      discoveryAllowed: settings.discoveryEnabled && (isAdmin || !settings.discoveryAdminOnly),
+      maxRoomSizeMB: settings.maxRoomSizeMB,
+      enable3d: settings.enable3d !== false
     });
 
+    const [sriInit, sriPurify, sriCollab, sriSaveHook, sri3d] = await Promise.all([
+      integrityAttr("/collab-init.js"),
+      integrityAttr("/dompurify.min.js"),
+      integrityAttr("/collab.js"),
+      integrityAttr("/collab-save-hook.js"),
+      settings.enable3d !== false ? integrityAttr("/collab-3d.js") : Promise.resolve("")
+    ]);
+
+    const threeDTag = settings.enable3d !== false ? `<script type="module" src="/collab-3d.js"${sri3d}></script>\n` : '';
     const configBlock = `<script type="application/json" id="room-config">${safeRoomConfig}</script>
 <link rel="stylesheet" href="/collab.css">
-<script src="/dompurify.min.js"></script>
-<script src="/collab.js"></script>
-<script src="/collab-save-hook.js"></script>
-</body>`;
+<script src="/dompurify.min.js"${sriPurify}></script>
+<script src="/collab.js"${sriCollab}></script>
+<script src="/collab-save-hook.js"${sriSaveHook}></script>
+${threeDTag}</body>`;
 
     const injectedHtml = theOneFileHtml
-      .replace('<head>', '<head><script src="/collab-init.js"></script>')
+      .replace('<head>', `<head><script src="/collab-init.js"${sriInit}></script>`)
       .replace(/<\/body>\s*<\/html>\s*$/i, configBlock + "\n</html>");
 
     return serveHtml(injectedHtml, 'room', req);
@@ -122,6 +175,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   if (path === "/" || path === "/index.html") {
     const file = Bun.file(join(process.cwd(), "public", "index.html"));
     if (await file.exists()) return serveHtml(await file.text(), 'public', req);
+  }
+
+  if (settings.enable3d === false && (path === "/collab-3d.js" || path.startsWith("/vendor/three/"))) {
+    return new Response("Not found", { status: 404, headers: { ...corsHeaders, "Cache-Control": "no-store" } });
   }
 
   const staticEntry = STATIC_FILES[path];

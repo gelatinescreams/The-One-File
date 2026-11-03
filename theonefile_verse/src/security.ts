@@ -54,7 +54,6 @@ export function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' | 'api'
   const headers: Record<string, string> = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   };
   headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
@@ -62,11 +61,11 @@ export function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' | 'api'
   if (pageType === 'api') {
     headers["Cache-Control"] = "no-store";
   } else if (pageType === 'admin') {
-    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
   } else if (pageType === 'room') {
-    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws: https://cdn.jsdelivr.net https://raw.githubusercontent.com; frame-ancestors 'none'; base-uri 'self'`;
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://cdn.jsdelivr.net https://raw.githubusercontent.com; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
   } else {
-    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' wss: ws:; frame-ancestors 'none'; base-uri 'self'`;
+    headers["Content-Security-Policy"] = `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`;
   }
   return headers;
 }
@@ -74,7 +73,6 @@ export function getSecurityHeaders(pageType: 'admin' | 'public' | 'room' | 'api'
 export const securityHeaders: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
   "X-Frame-Options": "DENY",
-  "X-XSS-Protection": "1; mode=block",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
   "Cache-Control": "no-store"
@@ -89,24 +87,111 @@ export function serveHtml(html: string, pageType: 'admin' | 'public' | 'room' = 
   return new Response(html, { headers });
 }
 
+export class BodyTooLargeError extends Error {
+  readonly maxBytes: number;
+  constructor(maxBytes: number) {
+    super(`Request body exceeds ${maxBytes} bytes`);
+    this.name = "BodyTooLargeError";
+    this.maxBytes = maxBytes;
+  }
+}
+
+export async function readBodyLimited(req: Request, maxBytes: number): Promise<Uint8Array> {
+  const declared = parseInt(req.headers.get("content-length") || "", 10);
+  if (Number.isFinite(declared) && declared > maxBytes) throw new BodyTooLargeError(maxBytes);
+
+  const body = req.body;
+  if (!body) {
+    const buf = new Uint8Array(await req.arrayBuffer());
+    if (buf.byteLength > maxBytes) throw new BodyTooLargeError(maxBytes);
+    return buf;
+  }
+
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+      total += value.byteLength;
+      if (total > maxBytes) throw new BodyTooLargeError(maxBytes);
+      chunks.push(value);
+    }
+  } finally {
+    try { await reader.cancel(); } catch {  }
+    try { reader.releaseLock(); } catch {  }
+  }
+
+  const out = new Uint8Array(total);
+  let off = 0;
+  for (const c of chunks) { out.set(c, off); off += c.byteLength; }
+  return out;
+}
+
+export async function readTextLimited(req: Request, maxBytes: number): Promise<string> {
+  return new TextDecoder().decode(await readBodyLimited(req, maxBytes));
+}
+
+export async function readJsonLimited(req: Request, maxBytes: number): Promise<any> {
+  const text = await readTextLimited(req, maxBytes);
+  return JSON.parse(text);
+}
+
+export function tooLargeResponse(corsHeaders: Record<string, string>): Response {
+  return Response.json({ error: "Payload too large" }, { status: 413, headers: corsHeaders });
+}
+
 export function apiError(e: any, corsHeaders: Record<string, string>, message = "Invalid request", status = 400): Response {
+  if (e instanceof BodyTooLargeError) {
+    return Response.json({ error: "Payload too large" }, { status: 413, headers: corsHeaders });
+  }
   console.error("[API]", e.message);
   return Response.json({ error: message }, { status, headers: corsHeaders });
 }
 
-export function validateRequestCsrf(req: Request, body?: any): boolean {
-  const headerToken = req.headers.get("x-csrf-token");
-  const bodyToken = body?.csrfToken;
-  const token = headerToken || bodyToken;
-  if (token && oidc.validateCsrfToken(token)) return true;
-  const origin = req.headers.get("origin");
+export function getCsrfCookieFromRequest(req: Request): string | null {
+  const cookie = req.headers.get("cookie") || "";
+  const match = cookie.match(/(?:^|;\s*)csrf_token=([^;]+)/);
+  return match ? match[1] : null;
+}
+
+export function isSameOriginRequest(req: Request): boolean {
   const externalOrigin = getExternalOrigin(req);
+  const origin = req.headers.get("origin");
   if (origin) return origin === externalOrigin;
   const referer = req.headers.get("referer");
   if (referer) {
     try { return new URL(referer).origin === externalOrigin; } catch { return false; }
   }
   return false;
+}
+
+export function validateRequestCsrf(req: Request, body?: any): boolean {
+  const headerToken = req.headers.get("x-csrf-token");
+  const bodyToken = body?.csrfToken;
+  const token = headerToken || bodyToken;
+  const cookieValue = getCsrfCookieFromRequest(req);
+  if (token && cookieValue && oidc.validateCsrfToken(token, cookieValue)) {
+    if (oidc.isCsrfTokenBound(token)) return true;
+  }
+  return isSameOriginRequest(req);
+}
+
+export const SECRET_SETTING_KEYS = ['encryption_key', 'instancePasswordHash', 'admin_password_hash'];
+export function withoutSecretSettings<T extends Record<string, any>>(settings: T): T {
+  const out: any = { ...settings };
+  for (const k of SECRET_SETTING_KEYS) delete out[k];
+  return out;
+}
+export function redactForAudit(body: any): any {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const out: any = {};
+  for (const [k, v] of Object.entries(body)) {
+    out[k] = /pass(word)?|secret|token|hash|key$/i.test(k) && k !== 'apiKeyName' ? '[redacted]' : v;
+  }
+  return out;
 }
 
 export function csrfReject(corsHeaders: Record<string, string>): Response {

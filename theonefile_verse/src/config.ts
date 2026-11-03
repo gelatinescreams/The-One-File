@@ -15,7 +15,10 @@ export const ENV_UPDATE_INTERVAL = parseInt(process.env.UPDATE_INTERVAL || "0");
 export const ENV_SKIP_UPDATE = process.env.SKIP_UPDATE === "true";
 export const ENV_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
 export const ENV_TRUSTED_PROXY_COUNT = process.env.TRUSTED_PROXY_COUNT ? parseInt(process.env.TRUSTED_PROXY_COUNT) : null;
+export const ENV_PUBLIC_URL = process.env.PUBLIC_URL || "";
 export const ENV_TRUSTED_PROXIES = process.env.TRUSTED_PROXIES ? process.env.TRUSTED_PROXIES.split(",").map(s => s.trim()).filter(Boolean) : null;
+
+export const REDIS_FANOUT = process.env.REDIS_FANOUT === "true" && !!process.env.REDIS_URL;
 
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -35,6 +38,7 @@ export interface InstanceSettings {
   skipUpdates: boolean;
   allowPublicRoomCreation: boolean;
   maxRoomsPerInstance: number;
+  maxRoomSizeMB: number;
   defaultDestructMode: "time" | "empty" | "never";
   defaultDestructHours: number;
   forcedTheme: "user" | "dark" | "light";
@@ -60,6 +64,10 @@ export interface InstanceSettings {
   discoveryAdminOnly: boolean;
   discoveryAllowPublicRanges: boolean;
   discoveryMaxPrefix: number;
+  publicUrl: string;
+  enable3d: boolean;
+  maxAssetsPerRoomMB: number;
+  maxAssetsTotalGB: number;
 }
 
 export const defaultSettings: InstanceSettings = {
@@ -69,6 +77,7 @@ export const defaultSettings: InstanceSettings = {
   skipUpdates: false,
   allowPublicRoomCreation: true,
   maxRoomsPerInstance: 0,
+  maxRoomSizeMB: 50,
   defaultDestructMode: "time",
   defaultDestructHours: 24,
   forcedTheme: "user",
@@ -93,7 +102,11 @@ export const defaultSettings: InstanceSettings = {
   discoveryEnabled: true,
   discoveryAdminOnly: true,
   discoveryAllowPublicRanges: false,
-  discoveryMaxPrefix: 20
+  discoveryMaxPrefix: 20,
+  publicUrl: "",
+  enable3d: true,
+  maxAssetsPerRoomMB: 200,
+  maxAssetsTotalGB: 5
 };
 
 export function loadSettings(): InstanceSettings {
@@ -130,10 +143,37 @@ if (ENV_SKIP_UPDATE) instanceSettings.skipUpdates = true;
 if (ENV_UPDATE_INTERVAL > 0) instanceSettings.updateIntervalHours = ENV_UPDATE_INTERVAL;
 if (ENV_TRUSTED_PROXY_COUNT !== null) instanceSettings.trustedProxyCount = ENV_TRUSTED_PROXY_COUNT;
 if (ENV_TRUSTED_PROXIES !== null) instanceSettings.trustedProxies = ENV_TRUSTED_PROXIES;
+if (ENV_PUBLIC_URL) instanceSettings.publicUrl = ENV_PUBLIC_URL;
 
 export function getSettings(): InstanceSettings { return instanceSettings; }
 export function updateSettings(s: InstanceSettings): void { instanceSettings = s; }
-export function reloadSettings(): void { instanceSettings = loadSettings(); }
+
+export const MAX_ROOM_SIZE_MB_CEILING = 64;
+
+export function getMaxRoomSizeBytes(): number {
+  const mb = getSettings().maxRoomSizeMB;
+  const clamped = Math.max(1, Math.min(MAX_ROOM_SIZE_MB_CEILING, typeof mb === "number" && mb > 0 ? mb : 50));
+  return clamped * 1024 * 1024;
+}
+export function getMaxAssetsPerRoomBytes(): number {
+  const mb = getSettings().maxAssetsPerRoomMB;
+  if (typeof mb !== "number" || !(mb > 0)) return 0;
+  return Math.floor(mb) * 1024 * 1024;
+}
+
+export function getMaxAssetsTotalBytes(): number {
+  const gb = getSettings().maxAssetsTotalGB;
+  if (typeof gb !== "number" || !(gb > 0)) return 0;
+  return Math.floor(gb * 1024) * 1024 * 1024;
+}
+
+export function reloadSettings(): void {
+  instanceSettings = loadSettings();
+  if (ENV_SKIP_UPDATE) instanceSettings.skipUpdates = true;
+  if (ENV_TRUSTED_PROXY_COUNT !== null) instanceSettings.trustedProxyCount = ENV_TRUSTED_PROXY_COUNT;
+  if (ENV_TRUSTED_PROXIES !== null) instanceSettings.trustedProxies = ENV_TRUSTED_PROXIES;
+  if (ENV_PUBLIC_URL) instanceSettings.publicUrl = ENV_PUBLIC_URL;
+}
 
 export function loadAdminConfig(): AdminConfig | null {
   const hash = db.getSetting("admin_password_hash");
@@ -227,14 +267,58 @@ export function validateAdminPath(newPath: string): { valid: boolean; error?: st
 
 export function isAdminRoute(path: string): boolean {
   return path === "/" || path === "/index.html" || path.startsWith("/s/") ||
-         path.startsWith("/ws/") || path.startsWith("/api/room");
+         path.startsWith("/ws/") || path.startsWith("/api/room") ||
+         path === "/api/setup";
+}
+
+export function hasTrustedProxy(): boolean {
+  const s = getSettings();
+  return (s.trustedProxies?.length || 0) > 0 || (s.trustedProxyCount || 0) > 0;
+}
+
+const HOST_RE = /^[A-Za-z0-9.-]+(?::\d{1,5})?$|^\[[0-9A-Fa-f:.]+\](?::\d{1,5})?$/;
+
+export function normalizeOrigin(value: string): string | null {
+  try {
+    const u = new URL(value.trim());
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    return u.origin;
+  } catch { return null; }
+}
+
+let warnedBadPublicUrl = "";
+export function getConfiguredOrigin(): string | null {
+  const raw = getSettings().publicUrl;
+  if (!raw) return null;
+  const origin = normalizeOrigin(raw);
+  if (!origin && warnedBadPublicUrl !== raw) {
+    warnedBadPublicUrl = raw;
+    console.error(
+      `[Config] publicUrl ${JSON.stringify(raw)} is not a valid http(s) origin and is being IGNORED. ` +
+      `Expected e.g. "https://verse.example.com" (scheme required, no path). ` +
+      `Email links and the same-origin CSRF check are falling back to the request URL.`
+    );
+  }
+  return origin;
 }
 
 export function getExternalOrigin(req: Request): string {
-  const fwdProto = req.headers.get("x-forwarded-proto");
-  const fwdHost = req.headers.get("x-forwarded-host");
-  if (fwdProto && fwdHost) {
-    return `${fwdProto.split(",")[0].trim()}://${fwdHost.split(",")[0].trim()}`;
+  const configured = getConfiguredOrigin();
+  if (configured) return configured;
+  if (hasTrustedProxy()) {
+    const fwdProto = req.headers.get("x-forwarded-proto");
+    const fwdHost = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    if (fwdProto && fwdHost) {
+      const proto = fwdProto.split(",")[0].trim().toLowerCase();
+      const host = fwdHost.split(",")[0].trim();
+      if ((proto === "http" || proto === "https") && HOST_RE.test(host)) {
+        return `${proto}://${host}`;
+      }
+    }
   }
-  return new URL(req.url).origin;
+  try { return new URL(req.url).origin; } catch { return "http://localhost"; }
+}
+
+export function isHttpsRequest(req: Request): boolean {
+  return getExternalOrigin(req).startsWith("https:");
 }

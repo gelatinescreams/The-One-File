@@ -81,8 +81,10 @@ export async function registerUser(
   email: string,
   password: string,
   displayName?: string,
-  baseUrl?: string
-): Promise<{ success: boolean; userId?: string; error?: string; requiresVerification?: boolean }> {
+  baseUrl?: string,
+  inviteCode?: string | null,
+  options: { bypassRegistrationGate?: boolean } = {}
+): Promise<{ success: boolean; userId?: string; error?: string; requiresVerification?: boolean; pendingApproval?: boolean }> {
   const normalizedEmail = normalizeEmail(email);
   const emailValidation = validateEmail(normalizedEmail);
   if (!emailValidation.valid) {
@@ -100,14 +102,24 @@ export async function registerUser(
   }
 
   const authSettings = oidc.getAuthSettings();
-  if (authSettings.authMode === 'closed') {
-    return { success: false, error: "Registration is closed" };
-  }
-  if (authSettings.authMode === 'invite_only') {
-    return { success: false, error: "Registration requires an invitation" };
-  }
-  if (authSettings.authMode === 'oidc_only') {
-    return { success: false, error: "Please use SSO to register" };
+  let inviteHash: string | null = null;
+  if (!options.bypassRegistrationGate) {
+    if (authSettings.authMode === 'closed') {
+      return { success: false, error: "Registration is closed" };
+    }
+    if (authSettings.authMode === 'invite_only') {
+      const invite = checkInviteCode(inviteCode || null, normalizedEmail);
+      if (!invite.valid) {
+        return { success: false, error: "Registration requires a valid invitation code" };
+      }
+      inviteHash = invite.codeHash!;
+    }
+    if (authSettings.authMode === 'oidc_only') {
+      return { success: false, error: "Please use SSO to register" };
+    }
+    if (authSettings.requireEmailVerification && !db.getDefaultSmtpConfig() && db.listUsers(1, 0).length > 0) {
+      return { success: false, error: "Registration requires email verification, but email delivery is not configured. Please contact the administrator." };
+    }
   }
 
   const userId = crypto.randomUUID();
@@ -135,21 +147,222 @@ export async function registerUser(
     pendingEmailToken: null
   };
 
-  const { wasFirst: isFirstUser } = db.createUserAtomic(user);
-  db.logAuthEvent('register', user.id, null, { role: user.role, isFirstUser });
+  const { wasFirst: isFirstUser, promoted } = db.createUserAtomic(user);
+  if (inviteHash && !db.consumeInvite(inviteHash, user.id)) {
+    db.deleteUser(user.id);
+    return { success: false, error: "Registration requires a valid invitation code" };
+  }
+  db.logAuthEvent('register', user.id, null, { role: user.role, isFirstUser, promoted });
+  const needsApproval = !promoted && !options.bypassRegistrationGate && authSettings.authMode === 'approval';
+  if (needsApproval) {
+    user.isActive = false;
+    db.updateUser(user);
+    db.setPendingApproval(user.id, true);
+  }
 
-  if (!isFirstUser && authSettings.requireEmailVerification && baseUrl) {
+  if (!promoted && authSettings.requireEmailVerification && baseUrl) {
     const token = await createVerificationToken(userId);
     const verifyUrl = `${baseUrl}/auth/verify?token=${token}`;
     await mailer.sendVerificationEmail(normalizedEmail, user.displayName || 'User', verifyUrl);
-    return { success: true, userId, requiresVerification: true };
+    return { success: true, userId, requiresVerification: true, pendingApproval: needsApproval };
   }
 
-  return { success: true, userId };
+  return { success: true, userId, pendingApproval: needsApproval };
+}
+
+export async function createAdminFromLegacy(
+  email: string,
+  password: string,
+  displayName?: string
+): Promise<{ success: boolean; userId?: string; error?: string }> {
+  const result = await registerUser(email, password, displayName, undefined, null, {
+    bypassRegistrationGate: true
+  });
+  if (!result.success || !result.userId) {
+    return { success: false, error: result.error || "Migration failed" };
+  }
+  const user = db.getUserById(result.userId);
+  if (!user) return { success: false, error: "Migration failed" };
+  if (user.role !== 'admin' || !user.emailVerified) {
+    user.role = 'admin';
+    user.emailVerified = true;
+    user.updatedAt = new Date().toISOString();
+    db.updateUser(user);
+  }
+  db.logAuthEvent('admin_migrated', user.id, null, { from: 'legacy_admin_password_hash' });
+  return { success: true, userId: user.id };
+}
+
+
+export function createInvite(
+  createdBy: string | null,
+  options: { email?: string | null; expiresInDays?: number | null } = {}
+): { id: string; code: string; expiresAt: string | null } {
+  const code = oidc.generateSecureToken(24);
+  const id = crypto.randomUUID();
+  const expiresAt = options.expiresInDays
+    ? new Date(Date.now() + options.expiresInDays * 24 * 60 * 60 * 1000).toISOString()
+    : null;
+  db.createInvite({
+    id,
+    codeHash: oidc.hashTokenSync(code),
+    email: options.email ? normalizeEmail(options.email) : null,
+    createdBy,
+    createdAt: new Date().toISOString(),
+    expiresAt,
+    usedAt: null,
+    usedBy: null
+  });
+  return { id, code, expiresAt };
+}
+
+export function checkInviteCode(code: string | null, email: string): { valid: boolean; codeHash?: string } {
+  if (!code || typeof code !== 'string') return { valid: false };
+  const codeHash = oidc.hashTokenSync(code.trim());
+  const invite = db.getInviteByHash(codeHash);
+  if (!invite) return { valid: false };
+  if (invite.usedAt) return { valid: false };
+  if (invite.expiresAt && new Date(invite.expiresAt) < new Date()) return { valid: false };
+  if (invite.email && invite.email !== normalizeEmail(email)) return { valid: false };
+  return { valid: true, codeHash };
+}
+
+export function listInvites(): (Omit<db.Invite, 'codeHash'>)[] {
+  return db.listInvites().map(({ codeHash, ...rest }) => rest);
+}
+
+export function revokeInvite(id: string): boolean {
+  return db.deleteInvite(id);
 }
 
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MINUTES = 15;
+
+const GENERIC_LOGIN_ERROR = "Invalid email or password";
+const loginThrottle = new Map<string, { count: number; lockedUntil: number; lastSeen: number }>();
+const THROTTLE_MAX_ENTRIES = 50000;
+const THROTTLE_IDLE_MS = LOCKOUT_DURATION_MINUTES * 60 * 1000;
+
+function throttleKey(email: string, ip: string): string {
+  return `${email}|${ip || 'unknown'}`;
+}
+
+function throttleLocked(key: string): boolean {
+  const entry = loginThrottle.get(key);
+  if (!entry) return false;
+  if (entry.lockedUntil > Date.now()) return true;
+  if (entry.lockedUntil) loginThrottle.delete(key);
+  return false;
+}
+
+function throttleFail(key: string): number {
+  const now = Date.now();
+  const entry = loginThrottle.get(key) || { count: 0, lockedUntil: 0, lastSeen: now };
+  entry.count += 1;
+  entry.lastSeen = now;
+  if (entry.count >= MAX_FAILED_ATTEMPTS) {
+    entry.lockedUntil = now + LOCKOUT_DURATION_MINUTES * 60 * 1000;
+    entry.count = 0;
+  }
+  loginThrottle.set(key, entry);
+  if (loginThrottle.size > THROTTLE_MAX_ENTRIES) {
+    for (const [k, v] of loginThrottle) {
+      if (v.lockedUntil ? v.lockedUntil < now : now - v.lastSeen > THROTTLE_IDLE_MS) {
+        loginThrottle.delete(k);
+      }
+    }
+    if (loginThrottle.size > THROTTLE_MAX_ENTRIES) {
+      const oldest = [...loginThrottle.entries()].sort((a, b) => a[1].lastSeen - b[1].lastSeen);
+      for (let i = 0; i < oldest.length - THROTTLE_MAX_ENTRIES; i++) loginThrottle.delete(oldest[i][0]);
+    }
+  }
+  return entry.count;
+}
+
+function throttleReset(key: string): void {
+  loginThrottle.delete(key);
+}
+
+export const EMAIL_CEILING_MAX_FAILURES = 50;
+export const EMAIL_CEILING_WINDOW_MS = 15 * 60 * 1000;
+const EMAIL_CEILING_BUCKET_MS = EMAIL_CEILING_WINDOW_MS / 2;
+const EMAIL_CEILING_MAX_ENTRIES = 20000;
+
+interface EmailCeilingEntry { bucket: number; current: number; previous: number; }
+const emailFailureWindow = new Map<string, EmailCeilingEntry>();
+
+function currentBucket(now: number): number {
+  return Math.floor(now / EMAIL_CEILING_BUCKET_MS);
+}
+
+function rollEntry(entry: EmailCeilingEntry, bucket: number): void {
+  const delta = bucket - entry.bucket;
+  if (delta <= 0) return;
+  if (delta === 1) { entry.previous = entry.current; entry.current = 0; }
+  else { entry.previous = 0; entry.current = 0; }
+  entry.bucket = bucket;
+}
+
+function emailCeilingCount(entry: EmailCeilingEntry, now: number): number {
+  const elapsed = (now % EMAIL_CEILING_BUCKET_MS) / EMAIL_CEILING_BUCKET_MS;
+  return entry.current + entry.previous * (1 - elapsed);
+}
+
+function emailCeilingExceeded(email: string): boolean {
+  const entry = emailFailureWindow.get(email);
+  if (!entry) return false;
+  const now = Date.now();
+  rollEntry(entry, currentBucket(now));
+  if (entry.current === 0 && entry.previous === 0) {
+    emailFailureWindow.delete(email);
+    return false;
+  }
+  return emailCeilingCount(entry, now) >= EMAIL_CEILING_MAX_FAILURES;
+}
+
+function emailCeilingFail(email: string): number {
+  const now = Date.now();
+  const bucket = currentBucket(now);
+  let entry = emailFailureWindow.get(email);
+  if (!entry) {
+    entry = { bucket, current: 0, previous: 0 };
+    emailFailureWindow.set(email, entry);
+  } else {
+    rollEntry(entry, bucket);
+  }
+  entry.current += 1;
+
+  if (emailFailureWindow.size > EMAIL_CEILING_MAX_ENTRIES) {
+    const stale = bucket - 1;
+    for (const [k, v] of emailFailureWindow) {
+      if (v.bucket < stale) emailFailureWindow.delete(k);
+    }
+    if (emailFailureWindow.size > EMAIL_CEILING_MAX_ENTRIES) {
+      const oldest = [...emailFailureWindow.entries()].sort((a, b) => a[1].bucket - b[1].bucket);
+      for (let i = 0; i < oldest.length - EMAIL_CEILING_MAX_ENTRIES; i++) {
+        emailFailureWindow.delete(oldest[i][0]);
+      }
+    }
+  }
+  return Math.ceil(emailCeilingCount(entry, now));
+}
+
+function emailCeilingReset(email: string): void {
+  emailFailureWindow.delete(email);
+}
+
+export function getEmailFailureCount(email: string): number {
+  const entry = emailFailureWindow.get(normalizeEmail(email));
+  if (!entry) return 0;
+  const now = Date.now();
+  rollEntry(entry, currentBucket(now));
+  return Math.ceil(emailCeilingCount(entry, now));
+}
+
+export function resetLoginThrottle(): void {
+  loginThrottle.clear();
+  emailFailureWindow.clear();
+}
 
 export async function loginWithPassword(
   email: string,
@@ -158,46 +371,70 @@ export async function loginWithPassword(
   userAgent: string
 ): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string; requires2FA?: boolean; pendingToken?: string }> {
   const normalizedEmail = normalizeEmail(email);
+  const key = throttleKey(normalizedEmail, ipAddress);
+
+  if (throttleLocked(key)) {
+    return { success: false, error: GENERIC_LOGIN_ERROR };
+  }
+
+  if (emailCeilingExceeded(normalizedEmail)) {
+    return { success: false, error: GENERIC_LOGIN_ERROR };
+  }
+
+  const fail = (): void => { throttleFail(key); emailCeilingFail(normalizedEmail); };
+
   const user = db.getUserByEmail(normalizedEmail);
   if (!user) {
-    return { success: false, error: "Invalid email or password" };
+    fail();
+    return { success: false, error: GENERIC_LOGIN_ERROR };
   }
 
   if (!user.isActive) {
-    return { success: false, error: "Invalid email or password" };
+    if (db.isPendingApproval(user.id) && user.passwordHash && await verifyPassword(password, user.passwordHash)) {
+      return { success: false, error: "Your account is waiting for administrator approval." };
+    }
+    fail();
+    return { success: false, error: GENERIC_LOGIN_ERROR };
   }
 
   if (user.lockedUntil) {
     const lockExpiry = new Date(user.lockedUntil);
     if (lockExpiry > new Date()) {
-      const remainingMinutes = Math.ceil((lockExpiry.getTime() - Date.now()) / 60000);
-      return { success: false, error: `Account is temporarily locked. Try again in ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}.` };
+      return { success: false, error: GENERIC_LOGIN_ERROR };
     }
     db.resetFailedLogin(user.id);
   }
 
   if (!user.passwordHash) {
-    return { success: false, error: "Please use SSO to login" };
+    fail();
+    return { success: false, error: GENERIC_LOGIN_ERROR };
   }
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
     db.incrementFailedLogin(user.id);
-    const updatedUser = db.getUserById(user.id);
-    if (updatedUser && updatedUser.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
-      const lockUntil = new Date(Date.now() + LOCKOUT_DURATION_MINUTES * 60 * 1000);
-      db.lockUserAccount(user.id, lockUntil);
-      db.logAuthEvent('account_locked', user.id, ipAddress, { reason: 'too_many_failed_attempts' });
-      return { success: false, error: `Too many failed attempts. Account locked for ${LOCKOUT_DURATION_MINUTES} minutes.` };
+    const attempts = throttleFail(key);
+    const globalFailures = emailCeilingFail(normalizedEmail);
+    if (globalFailures >= EMAIL_CEILING_MAX_FAILURES) {
+      db.logAuthEvent('account_locked', user.id, ipAddress, {
+        reason: 'email_failure_ceiling', scope: 'email-global', failures: globalFailures,
+        windowMinutes: EMAIL_CEILING_WINDOW_MS / 60000
+      });
     }
-    db.logAuthEvent('login_failed', user.id, ipAddress, { reason: 'invalid_password', attempts: updatedUser?.failedLoginAttempts });
-    const attemptsRemaining = MAX_FAILED_ATTEMPTS - (updatedUser?.failedLoginAttempts || 0);
-    if (attemptsRemaining <= 2 && attemptsRemaining > 0) {
-      return { success: false, error: `Invalid email or password. ${attemptsRemaining} attempt${attemptsRemaining !== 1 ? 's' : ''} remaining.` };
+    if (attempts === 0) {
+      db.logAuthEvent('account_locked', user.id, ipAddress, { reason: 'too_many_failed_attempts', scope: 'email+ip' });
+    } else {
+      db.logAuthEvent('login_failed', user.id, ipAddress, { reason: 'invalid_password', attempts });
     }
-    return { success: false, error: "Invalid email or password" };
+    return { success: false, error: GENERIC_LOGIN_ERROR };
   }
 
+  if (oidc.getAuthSettings().authMode === 'oidc_only' && user.role !== 'admin') {
+    return { success: false, error: "Password sign in is disabled. Please use single sign on." };
+  }
+
+  throttleReset(key);
+  emailCeilingReset(normalizedEmail);
   db.resetFailedLogin(user.id);
 
   if (isLegacyHash(user.passwordHash)) {
@@ -361,7 +598,7 @@ export async function requestPasswordReset(
   baseUrl: string
 ): Promise<{ success: boolean; error?: string }> {
   const startTime = Date.now();
-  const user = db.getUserByEmail(email);
+  const user = db.getUserByEmail(normalizeEmail(email));
 
   if (!user || !user.isActive) {
     await normalizeResponseTime(startTime);
@@ -425,6 +662,11 @@ export async function resetPassword(
     return { success: false, error: "User not found" };
   }
 
+  if (!user.isActive) {
+    db.markUserTokenUsed(userToken.id);
+    return { success: false, error: "Invalid or expired token" };
+  }
+
   user.passwordHash = await hashPassword(newPassword);
   user.updatedAt = new Date().toISOString();
   db.updateUser(user);
@@ -446,7 +688,7 @@ export async function requestMagicLink(
     return { success: false, error: "Magic link login is disabled" };
   }
 
-  const user = db.getUserByEmail(email);
+  const user = db.getUserByEmail(normalizeEmail(email));
   if (!user || !user.isActive) {
     await normalizeResponseTime(startTime);
     return { success: true };
@@ -571,11 +813,19 @@ export function updateProfile(
 
   if (updates.displayName !== undefined) {
     if (typeof updates.displayName !== 'string') return { success: false, error: "Invalid display name" };
-    user.displayName = updates.displayName.substring(0, 100);
+    const name = updates.displayName.replace(/[\u0000-\u001f\u007f<>]/g, '').trim().substring(0, 100);
+    if (!name) return { success: false, error: "Display name cannot be empty" };
+    user.displayName = name;
   }
   if (updates.avatarUrl !== undefined) {
     if (typeof updates.avatarUrl !== 'string') return { success: false, error: "Invalid avatar URL" };
-    user.avatarUrl = updates.avatarUrl.substring(0, 500);
+    const url = updates.avatarUrl.trim();
+    if (url) {
+      let ok = false;
+      try { const u = new URL(url); ok = (u.protocol === 'https:' || u.protocol === 'http:') && url.length <= 500; } catch { ok = false; }
+      if (!ok) return { success: false, error: "Avatar URL must be an http(s) URL" };
+    }
+    user.avatarUrl = url;
   }
 
   user.updatedAt = new Date().toISOString();
@@ -602,7 +852,8 @@ export function deleteAccount(userId: string): { success: boolean; error?: strin
   return { success: true };
 }
 
-export interface ParsedSession extends db.UserSession {
+export interface ParsedSession extends Omit<db.UserSession, 'tokenHash'> {
+  current: boolean;
   browser: string;
   os: string;
   device: string;
@@ -641,12 +892,14 @@ function formatIPLocation(ip: string | null): string {
   return ip;
 }
 
-export function getUserSessions(userId: string): ParsedSession[] {
+export function getUserSessions(userId: string, currentTokenHash?: string): ParsedSession[] {
   const sessions = db.getSessionsByUserId(userId);
   return sessions.map(session => {
     const parsed = parseUserAgent(session.userAgent);
+    const { tokenHash: _omit, ...rest } = session as any;
     return {
-      ...session,
+      ...rest,
+      current: !!currentTokenHash && session.tokenHash === currentTokenHash,
       browser: parsed.browser,
       os: parsed.os,
       device: parsed.device,
@@ -686,9 +939,14 @@ export async function adminCreateUser(
   displayName: string | null,
   role: 'admin' | 'user'
 ): Promise<{ success: boolean; userId?: string; error?: string }> {
-  const emailValidation = validateEmail(email);
+  const normalizedEmail = normalizeEmail(email || "");
+  const emailValidation = validateEmail(normalizedEmail);
   if (!emailValidation.valid) {
     return { success: false, error: emailValidation.error };
+  }
+
+  if (!isValidRole(role)) {
+    return { success: false, error: "Invalid role" };
   }
 
   if (password) {
@@ -698,18 +956,18 @@ export async function adminCreateUser(
     }
   }
 
-  const existing = db.getUserByEmail(email);
+  const existing = db.getUserByEmail(normalizedEmail);
   if (existing) {
     return { success: false, error: "Registration failed. Please try again or use a different email." };
   }
 
   const userId = crypto.randomUUID();
   const now = new Date().toISOString();
-  const sanitizedDisplayName = displayName ? displayName.substring(0, 100) : email.split('@')[0];
+  const sanitizedDisplayName = displayName ? displayName.substring(0, 100) : normalizedEmail.split('@')[0];
 
   const user: db.User = {
     id: userId,
-    email,
+    email: normalizedEmail,
     emailVerified: true,
     displayName: sanitizedDisplayName,
     avatarUrl: null,
@@ -733,6 +991,12 @@ export async function adminCreateUser(
   return { success: true, userId };
 }
 
+export const ASSIGNABLE_ROLES = ['admin', 'user'] as const;
+
+export function isValidRole(role: any): role is 'admin' | 'user' {
+  return typeof role === 'string' && (ASSIGNABLE_ROLES as readonly string[]).includes(role);
+}
+
 export function adminUpdateUser(
   userId: string,
   updates: {
@@ -745,6 +1009,19 @@ export function adminUpdateUser(
   const user = db.getUserById(userId);
   if (!user) {
     return { success: false, error: "User not found" };
+  }
+
+  if (updates.role !== undefined && !isValidRole(updates.role)) {
+    return { success: false, error: "Invalid role" };
+  }
+  if (updates.displayName !== undefined && typeof updates.displayName !== 'string') {
+    return { success: false, error: "Invalid display name" };
+  }
+  if (updates.isActive !== undefined && typeof updates.isActive !== 'boolean') {
+    return { success: false, error: "Invalid isActive value" };
+  }
+  if (updates.emailVerified !== undefined && typeof updates.emailVerified !== 'boolean') {
+    return { success: false, error: "Invalid emailVerified value" };
   }
 
   if (updates.role === 'user' && user.role === 'admin') {
@@ -761,6 +1038,8 @@ export function adminUpdateUser(
     }
   }
 
+  const roleChanged = updates.role !== undefined && updates.role !== user.role;
+
   if (updates.displayName !== undefined) user.displayName = updates.displayName.substring(0, 100);
   if (updates.role !== undefined) user.role = updates.role;
   if (updates.isActive !== undefined) user.isActive = updates.isActive;
@@ -768,6 +1047,11 @@ export function adminUpdateUser(
 
   user.updatedAt = new Date().toISOString();
   db.updateUser(user);
+
+  if (roleChanged || updates.isActive === false) {
+    db.deleteAllUserSessions(userId);
+    db.logAuthEvent('sessions_revoked', userId, null, { reason: roleChanged ? 'role_change' : 'deactivated' });
+  }
 
   return { success: true };
 }
@@ -862,17 +1146,31 @@ function generateTOTPCode(secret: Uint8Array, counter: number): string {
   return (code % Math.pow(10, 6)).toString().padStart(6, '0');
 }
 
-export function verifyTOTPCode(secret: string, code: string): boolean {
+export function verifyTOTPCodeStep(secret: string, code: string): number | null {
   const secretBytes = base32Decode(secret);
   const timeStep = Math.floor(Date.now() / 1000 / 30);
 
-  let match = false;
+  let matched: number | null = null;
   for (let i = -1; i <= 1; i++) {
     if (timingSafeEqualStr(generateTOTPCode(secretBytes, timeStep + i), code)) {
-      match = true;
+      matched = timeStep + i;
     }
   }
-  return match;
+  return matched;
+}
+
+export function verifyTOTPCode(secret: string, code: string): boolean {
+  return verifyTOTPCodeStep(secret, code) !== null;
+}
+
+const HASHED_BACKUP_CODES_PREFIX = 'h1:';
+
+function hashBackupCode(code: string): string {
+  return oidc.hashTokenSync(code.toLowerCase().trim());
+}
+
+export function serializeHashedBackupCodes(codes: string[]): string {
+  return HASHED_BACKUP_CODES_PREFIX + JSON.stringify(codes.map(hashBackupCode));
 }
 
 export async function setupTOTP(userId: string): Promise<{ success: boolean; secret?: string; otpauthUrl?: string; error?: string }> {
@@ -900,7 +1198,11 @@ export async function setupTOTP(userId: string): Promise<{ success: boolean; sec
   return { success: true, secret: base32secret, otpauthUrl };
 }
 
-export async function verifyAndEnableTOTP(userId: string, code: string): Promise<{ success: boolean; backupCodes?: string[]; error?: string }> {
+export async function verifyAndEnableTOTP(
+  userId: string,
+  code: string,
+  session?: { token: string; ipAddress: string; userAgent: string }
+): Promise<{ success: boolean; backupCodes?: string[]; newSessionToken?: string; error?: string }> {
   const user = db.getUserById(userId);
   if (!user) {
     return { success: false, error: "User not found" };
@@ -916,25 +1218,31 @@ export async function verifyAndEnableTOTP(userId: string, code: string): Promise
 
   const decryptedSecret = await oidc.decryptSecret(user.totpSecret);
 
-  if (!verifyTOTPCode(decryptedSecret, code)) {
+  const matchedStep = verifyTOTPCodeStep(decryptedSecret, code);
+  if (matchedStep === null) {
     return { success: false, error: "Invalid verification code" };
   }
+  user.totpLastStep = matchedStep;
 
   const backupCodes: string[] = [];
   for (let i = 0; i < 10; i++) {
     backupCodes.push(randomBytes(8).toString('hex'));
   }
 
-  const encryptedBackupCodes = await oidc.encryptSecret(JSON.stringify(backupCodes));
-
   user.totpEnabled = true;
-  user.totpBackupCodes = encryptedBackupCodes;
+  user.totpBackupCodes = serializeHashedBackupCodes(backupCodes);
   user.updatedAt = new Date().toISOString();
   db.updateUser(user);
 
   db.logAuthEvent('totp_enabled', userId, null, {});
 
-  return { success: true, backupCodes };
+  let newSessionToken: string | undefined;
+  if (session?.token) {
+    const rotated = await rotateSessionToken(session.token, session.ipAddress, session.userAgent);
+    if (rotated.success) newSessionToken = rotated.newToken;
+  }
+
+  return { success: true, backupCodes, newSessionToken };
 }
 
 export async function disableTOTP(userId: string, password: string): Promise<{ success: boolean; error?: string }> {
@@ -973,31 +1281,43 @@ export async function verifyBackupCode(userId: string, code: string): Promise<bo
     return false;
   }
 
-  let backupCodes: string[];
-  try {
-    const decrypted = await oidc.decryptSecret(user.totpBackupCodes);
-    backupCodes = JSON.parse(decrypted);
-  } catch {
-    return false;
+  let hashes: string[];
+  const stored = user.totpBackupCodes;
+  if (stored.startsWith(HASHED_BACKUP_CODES_PREFIX)) {
+    try {
+      hashes = JSON.parse(stored.slice(HASHED_BACKUP_CODES_PREFIX.length));
+    } catch { return false; }
+  } else {
+    try {
+      const decrypted = await oidc.decryptSecret(stored);
+      hashes = (JSON.parse(decrypted) as string[]).map(hashBackupCode);
+    } catch {
+      return false;
+    }
   }
 
-  const normalizedCode = code.toLowerCase().trim();
+  const candidate = hashBackupCode(code);
   let index = -1;
-  for (let i = 0; i < backupCodes.length; i++) {
-    if (timingSafeEqualStr(backupCodes[i].toLowerCase(), normalizedCode)) {
+  for (let i = 0; i < hashes.length; i++) {
+    if (timingSafeEqualStr(hashes[i], candidate)) {
       index = i;
     }
   }
   if (index === -1) {
+    if (!stored.startsWith(HASHED_BACKUP_CODES_PREFIX)) {
+      user.totpBackupCodes = HASHED_BACKUP_CODES_PREFIX + JSON.stringify(hashes);
+      user.updatedAt = new Date().toISOString();
+      db.updateUser(user);
+    }
     return false;
   }
 
-  backupCodes.splice(index, 1);
-  user.totpBackupCodes = await oidc.encryptSecret(JSON.stringify(backupCodes));
+  hashes.splice(index, 1);
+  user.totpBackupCodes = HASHED_BACKUP_CODES_PREFIX + JSON.stringify(hashes);
   user.updatedAt = new Date().toISOString();
   db.updateUser(user);
 
-  db.logAuthEvent('backup_code_used', userId, null, { remainingCodes: backupCodes.length });
+  db.logAuthEvent('backup_code_used', userId, null, { remainingCodes: hashes.length });
 
   return true;
 }
@@ -1043,10 +1363,14 @@ export async function loginWith2FA(
   }
 
   const decryptedSecret = await oidc.decryptSecret(user.totpSecret);
-  let codeValid = verifyTOTPCode(decryptedSecret, totpCode);
+  const matchedStep = verifyTOTPCodeStep(decryptedSecret, totpCode);
+  const lastStep = user.totpLastStep ?? null;
+  let codeValid = matchedStep !== null && (lastStep === null || matchedStep > lastStep);
+  let usedStep: number | null = codeValid ? matchedStep : null;
 
   if (!codeValid) {
     codeValid = await verifyBackupCode(user.id, totpCode);
+    usedStep = null;
   }
 
   if (!codeValid) {
@@ -1061,11 +1385,13 @@ export async function loginWith2FA(
 
   db.markUserTokenUsed(userToken.id);
 
-  user.lastLogin = new Date().toISOString();
-  user.updatedAt = new Date().toISOString();
-  user.failedLoginAttempts = 0;
-  user.lockedUntil = null;
-  db.updateUser(user);
+  const fresh = db.getUserById(user.id) || user;
+  fresh.lastLogin = new Date().toISOString();
+  fresh.updatedAt = new Date().toISOString();
+  fresh.failedLoginAttempts = 0;
+  fresh.lockedUntil = null;
+  if (usedStep !== null) fresh.totpLastStep = usedStep;
+  db.updateUser(fresh);
 
   const sessionToken = await createSessionToken(user.id, ipAddress, userAgent);
 
@@ -1125,7 +1451,13 @@ export async function requestEmailChange(
   db.updateUser(user);
 
   const verifyUrl = `${baseUrl}/auth/verify-email-change?token=${token}`;
-  await mailer.sendVerificationEmail(normalizedNewEmail, user.displayName || 'User', verifyUrl);
+  const sent = await mailer.sendVerificationEmail(normalizedNewEmail, user.displayName || 'User', verifyUrl);
+  if (!sent || !sent.success) {
+    db.deleteUserTokensByType(user.id, 'email_change');
+    user.pendingEmail = null;
+    db.updateUser(user);
+    return { success: false, error: "Could not send the verification email. Email delivery may not be configured." };
+  }
 
   db.logAuthEvent('email_change_requested', userId, null, { newEmail: normalizedNewEmail });
 

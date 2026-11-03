@@ -534,9 +534,9 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-control">
             <select id="auth-mode" data-action="saveAuthSettings">
               <option value="open">Open (Anyone can register)</option>
-              <option value="registration">Registration Required</option>
-              <option value="oidc_only">OIDC Only</option>
-              <option value="invite_only">Invite Only</option>
+              <option value="approval">Approval Required (new accounts wait for an admin)</option>
+              <option value="oidc_only">SSO Only (admins can still use a password)</option>
+              <option value="invite_only">Invite Only (issue codes in Invite Codes below)</option>
               <option value="closed">Closed (No new users)</option>
             </select>
           </div>
@@ -572,6 +572,23 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-info"><div class="setting-label">Email Rate Limit Max Attempts</div><div class="setting-desc">Maximum email requests per address within window</div></div>
           <div class="setting-control"><input type="number" id="input-email-rate-max" min="1" max="20" style="width:80px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff" data-action="updateAuthNumber" data-setting="emailRateLimitMaxAttempts"></div>
         </div>
+      </div>
+      <div class="settings-section">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div>
+            <h3 style="margin:0">Invite Codes</h3>
+            <p style="color:var(--text-soft);font-size:13px;margin:4px 0 0">Used when Auth Mode is "Invite Only". A code is shown once, at creation, and cannot be recovered afterwards.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+            <input type="number" id="invite-expires" min="1" max="365" placeholder="Days" title="Expires in N days (blank = never)" style="width:90px;padding:8px;border:1px solid #374151;border-radius:4px;background:#1f2937;color:#fff">
+            <button class="btn btn-primary btn-sm" data-action="createInvite">Create Invite</button>
+          </div>
+        </div>
+        <div id="new-invite-display" style="display:none;margin-bottom:16px;padding:12px;border:1px solid var(--border);border-radius:4px">
+          <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px">Copy this code now: it will not be shown again.</div>
+          <code id="new-invite-value" style="word-break:break-all"></code>
+        </div>
+        <div id="invite-list"></div>
       </div>
       <div class="settings-section">
         <h3>Guest Access</h3>
@@ -704,6 +721,10 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-control"><input type="number" id="max-rooms" min="0" max="1000" style="width:80px"></div>
         </div>
         <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Max Room Size (MB)</div><div class="setting-desc">Per room sync limit. Higher allows more images/recordings but makes every edit heavier. 1 to 64, default 50.</div></div>
+          <div class="setting-control"><input type="number" id="max-room-size-mb" min="1" max="64" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Default Room Theme</div><div class="setting-desc">Theme preset for new rooms (from loaded file)</div></div>
           <div class="setting-control"><select id="default-room-theme"><option value="">Default (from file)</option></select></div>
         </div>
@@ -729,6 +750,15 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           </div>
         </div>
         <div style="margin-top:16px"><button class="btn btn-primary" data-action="saveRateLimitSettings">Save Rate Limit Settings</button></div>
+        <div class="setting-row" style="margin-top:16px">
+          <div class="setting-info"><div class="setting-label">Trusted Proxies</div><div class="setting-desc">Needed behind a reverse proxy so client IPs (rate limits, logs) are read correctly. Use a hop count or list the proxy IPs.</div></div>
+          <div class="setting-control" style="flex-direction:column;align-items:flex-end;gap:6px">
+            <div><span style="color:#8892a0;font-size:12px">Proxy hops</span> <input type="number" id="trusted-proxy-count" min="0" max="10" style="width:60px"></div>
+            <input type="text" id="trusted-proxies" placeholder="10.0.0.2, 172.18.0.1" style="width:220px">
+            <div id="trusted-proxy-env" style="color:#8892a0;font-size:12px;display:none">Set by environment variables</div>
+          </div>
+        </div>
+        <div style="margin-top:8px"><button class="btn btn-primary" id="save-trusted-proxies" data-action="saveTrustedProxies">Save Trusted Proxies</button></div>
       </div>
       <div class="settings-section">
         <h3>Collaboration Features</h3>
@@ -748,11 +778,39 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-info"><div class="setting-label">Welcome Modal</div><div class="setting-desc">Always show welcome setup when joining rooms</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-welcome-modal" data-action="toggleSetting" data-setting="forceWelcomeModal"></div></div>
         </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">3D Mode</div><div class="setting-desc">Show the "Enter 3D" button and serve the 3D engine in rooms</div></div>
+          <div class="setting-control"><div class="toggle" id="toggle-enable3d" data-action="toggleSetting" data-setting="enable3d"></div></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>3D Asset Storage</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Per Room Limit</div><div class="setting-desc">Max uploaded 3D assets per room, in MB (0 = unlimited)</div></div>
+          <div class="setting-control"><input type="number" id="max-assets-per-room-mb" min="0" max="10000" step="1" style="width:100px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Instance Limit</div><div class="setting-desc">Max uploaded 3D assets across the whole instance, in GB (0 = unlimited)</div></div>
+          <div class="setting-control"><input type="number" id="max-assets-total-gb" min="0" max="1000" step="1" style="width:100px"></div>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-primary" data-action="saveAssetLimits">Save Asset Limits</button></div>
+        <div class="setting-row" style="margin-top:16px">
+          <div class="setting-info"><div class="setting-label">Orphan Asset Sweep</div><div class="setting-desc">Delete blobs no room has referenced for over 24 h. Runs automatically every 6 h.</div></div>
+          <div class="setting-control"><button class="btn btn-sm btn-primary" data-action="runAssetSweep">Run asset sweep now</button></div>
+        </div>
+        <div id="asset-sweep-result" style="color:#8892a0;font-size:12px;margin-top:8px"></div>
+      </div>
+      <div class="settings-section">
+        <h3>Public URL</h3>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Public Origin</div><div class="setting-desc">Absolute http(s) origin this instance is reached on, e.g. https://verse.example.com. No path or query. Used for email links and CSRF origin checks; overrides X-Forwarded-* headers. Leave blank to derive it from each request.</div></div>
+          <div class="setting-control"><input type="text" id="public-url" placeholder="https://verse.example.com" style="width:100%;max-width:280px"><button class="btn btn-sm btn-primary" data-action="savePublicUrl">Save</button></div>
+        </div>
       </div>
       <div class="settings-section">
         <h3>Network Probing</h3>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Server-Side Probing</div><div class="setting-desc">Enable real ICMP/TCP/HTTP/DNS probes from server</div></div>
+          <div class="setting-info"><div class="setting-label">Server Side Probing</div><div class="setting-desc">Enable real ICMP/TCP/HTTP/DNS probes from server</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-probe" data-action="toggleSetting" data-setting="probeEnabled"></div></div>
         </div>
         <div class="setting-row">
@@ -764,7 +822,7 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-control"><div class="toggle" id="toggle-discovery-admin" data-action="toggleSetting" data-setting="discoveryAdminOnly"></div></div>
         </div>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning non-private (public) IP ranges</div></div>
+          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning public (not private) (public) IP ranges</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-discovery-public" data-action="toggleSetting" data-setting="discoveryAllowPublicRanges"></div></div>
         </div>
         <div class="setting-row">
@@ -858,9 +916,9 @@ export const adminDashboardHtml = `<!DOCTYPE html>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Name</label><input type="text" id="apikey-name" placeholder="My API Key" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Expires In (days, 0=never)</label><input type="number" id="apikey-expires" value="0" min="0" style="width:100%"></div>
         <div style="margin-bottom:16px"><label style="display:block;margin-bottom:4px;font-size:14px">Permissions</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-read" checked> Read rooms</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-write"> Write rooms</label>
-          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-admin"> Admin access</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-read" checked> Read <span style="color:#8892a0;font-size:12px">(view rooms, settings, logs, backups, export)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-write"> Write <span style="color:#8892a0;font-size:12px">(create and delete rooms, set view only or a room password, create and restore backups, run the asset sweep)</span></label>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0"><input type="checkbox" id="perm-admin"> Admin <span style="color:#8892a0;font-size:12px">(everything above plus instance settings)</span></label>
         </div>
         <button class="btn btn-primary" data-action="createApiKey" style="width:100%">Create Key</button>
       </div>

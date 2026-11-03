@@ -1,7 +1,9 @@
 import * as oidc from "../oidc";
 import * as db from "../database";
 import * as mailer from "../mailer";
-import { getClientIP, apiError, validateAdminUser } from "../security";
+import { getClientIP, apiError, validateAdminUser, readJsonLimited, redactForAudit } from "../security";
+
+const ROUTE_BODY_CAP = 64 * 1024;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (path === "/api/admin/auth-settings" && req.method === "GET") {
@@ -18,9 +20,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
-      oidc.saveAuthSettings(body);
-      db.addAuditLog({ timestamp: new Date().toISOString(), action: "auth_settings_changed", actor: adminUser.id, actorIp: getClientIP(req), details: body });
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
+      const saved = oidc.saveAuthSettings(body);
+      if (!saved.success) return Response.json({ error: saved.error }, { status: 400, headers: corsHeaders });
+      db.addAuditLog({ timestamp: new Date().toISOString(), action: "auth_settings_changed", actor: adminUser.id, actorIp: getClientIP(req), details: redactForAudit(body) });
       return Response.json({ success: true }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
@@ -45,7 +48,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       if (!body.name || !body.clientId || !body.clientSecret) {
         return Response.json({ error: "Name, client ID, and client secret are required" }, { status: 400, headers: corsHeaders });
       }
@@ -82,7 +85,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       const existing = db.getOidcProvider(providerId);
       if (!existing) {
         return Response.json({ error: "Provider not found" }, { status: 404, headers: corsHeaders });
@@ -143,7 +146,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       if (!body.name || !body.fromEmail) {
         return Response.json({ error: "Name and from email are required" }, { status: 400, headers: corsHeaders });
       }
@@ -180,7 +183,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       const existing = db.getSmtpConfig(configId);
       if (!existing) {
         return Response.json({ error: "Config not found" }, { status: 404, headers: corsHeaders });
@@ -213,7 +216,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       const now = new Date().toISOString();
       let passwordEncrypted: string | null = null;
       if (body.password) {
@@ -308,7 +311,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
       const existing = db.getEmailTemplate(templateId);
       if (!existing) {
         return Response.json({ error: "Template not found" }, { status: 404, headers: corsHeaders });

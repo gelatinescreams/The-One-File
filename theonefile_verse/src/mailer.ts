@@ -107,7 +107,8 @@ class SmtpClient {
   private responsePromise: { resolve: (r: SmtpResponse) => void; reject: (e: Error) => void } | null = null;
   private isSecure = false;
   private config: db.SmtpConfig;
-  private debug = true;
+  private debug = process.env.SMTP_DEBUG === "true";
+  private inAuth = false;
 
   constructor(config: db.SmtpConfig) {
     this.config = config;
@@ -268,7 +269,8 @@ class SmtpClient {
   }
 
   private async command(cmd: string, expectedCodes: number[] = [250]): Promise<SmtpResponse> {
-    this.log(">>>", cmd.startsWith("AUTH") || cmd.includes("@") ? cmd.split(" ")[0] + " ***" : cmd);
+    const masked = this.inAuth || cmd.startsWith("AUTH") || cmd.includes("@");
+    this.log(">>>", masked ? (cmd.startsWith("AUTH") ? cmd.split(" ")[0] : "") + " ***" : cmd);
 
     this.socket.write(cmd + "\r\n");
     const response = await this.readResponse();
@@ -353,15 +355,20 @@ class SmtpClient {
     const supportsLogin = capabilities.some(l => l.toUpperCase().includes('AUTH') && l.toUpperCase().includes('LOGIN'));
     const supportsPlain = capabilities.some(l => l.toUpperCase().includes('AUTH') && l.toUpperCase().includes('PLAIN'));
 
-    if (supportsLogin) {
-      await this.command("AUTH LOGIN", [334]);
-      await this.command(Buffer.from(username).toString('base64'), [334]);
-      await this.command(Buffer.from(password).toString('base64'), [235]);
-    } else if (supportsPlain) {
-      const credentials = Buffer.from(`\0${username}\0${password}`).toString('base64');
-      await this.command(`AUTH PLAIN ${credentials}`, [235]);
-    } else {
-      throw new Error("Server does not support LOGIN or PLAIN authentication");
+    this.inAuth = true;
+    try {
+      if (supportsLogin) {
+        await this.command("AUTH LOGIN", [334]);
+        await this.command(Buffer.from(username).toString('base64'), [334]);
+        await this.command(Buffer.from(password).toString('base64'), [235]);
+      } else if (supportsPlain) {
+        const credentials = Buffer.from(`\0${username}\0${password}`).toString('base64');
+        await this.command(`AUTH PLAIN ${credentials}`, [235]);
+      } else {
+        throw new Error("Server does not support LOGIN or PLAIN authentication");
+      }
+    } finally {
+      this.inAuth = false;
     }
     this.log("Authenticated successfully");
   }
@@ -444,7 +451,7 @@ async function sendViaSMTP(
     }
 
     if (config.username && password) {
-      console.log("[Mailer] Authenticating as:", config.username);
+      console.log("[Mailer] Authenticating with configured SMTP credentials");
       await client.authenticate(config.username, password, capabilities);
       console.log("[Mailer] Authentication successful");
     }
@@ -595,7 +602,12 @@ export async function sendTemplatedEmail(
   let html = template.bodyHtml;
   let text = template.bodyText;
 
-  for (const [key, value] of Object.entries(variables)) {
+  const vars: Record<string, string> = { appName: 'TheOneFile_Verse', ...variables };
+  if (!vars.actionUrl) {
+    const link = Object.entries(variables).find(([k, v]) => /url|link/i.test(k) && typeof v === 'string');
+    vars.actionUrl = link ? link[1] : '';
+  }
+  for (const [key, value] of Object.entries(vars)) {
     const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
     const escapedValueForHtml = escapeHtml(value);
     const safeValue = value.replace(/[\r\n]/g, '');

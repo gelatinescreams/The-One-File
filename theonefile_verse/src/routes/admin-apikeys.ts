@@ -1,7 +1,12 @@
 import * as db from "../database";
-import { getClientIP, apiError, validateAdminOrApiKey } from "../security";
+import { getClientIP, apiError, validateAdminOrApiKey, readJsonLimited, withoutSecretSettings } from "../security";
 import { securityHeaders } from "../security";
 import { hashApiKey } from "../tokens";
+import { generateSecureToken } from "../oidc";
+
+export const VALID_PERMISSIONS = ["read", "write", "admin"];
+
+const ROUTE_BODY_CAP = 64 * 1024;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (path === "/api/admin/api-keys" && req.method === "GET") {
@@ -19,12 +24,16 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
-      if (!body.name) return Response.json({ error: "Name required" }, { status: 400, headers: corsHeaders });
+      const body = await readJsonLimited(req, ROUTE_BODY_CAP);
+      if (!body.name || typeof body.name !== "string") return Response.json({ error: "Name required" }, { status: 400, headers: corsHeaders });
       const id = crypto.randomUUID();
-      const rawKey = `tof_${crypto.randomUUID().replace(/-/g, "")}`;
+      const rawKey = `tof_${generateSecureToken(32)}`;
       const keyHash = await hashApiKey(rawKey);
-      const permissions = body.permissions || ["read"];
+      const permissions = body.permissions === undefined ? ["read"] : body.permissions;
+      if (!Array.isArray(permissions) || permissions.length === 0 ||
+          !permissions.every((p: any) => typeof p === "string" && VALID_PERMISSIONS.includes(p))) {
+        return Response.json({ error: `permissions must include at least one of ${VALID_PERMISSIONS.join(", ")}` }, { status: 400, headers: corsHeaders });
+      }
       const expiresAt = body.expiresInDays ? new Date(Date.now() + body.expiresInDays * 24 * 60 * 60 * 1000).toISOString() : null;
       db.createApiKey({ id, name: body.name, keyHash, permissions, createdAt: new Date().toISOString(), expiresAt, active: true });
       const actor = user ? user.id : `apikey:${apiKey!.name}`;
@@ -53,8 +62,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
     const rooms = db.listRooms();
-    const settings = db.getAllSettings();
-    delete settings['encryption_key'];
+    const settings = withoutSecretSettings(db.getAllSettings());
     const exportData = { version: 1, exportedAt: new Date().toISOString(), rooms, settings };
     const actor = user ? user.id : `apikey:${apiKey!.name}`;
     db.addAuditLog({ timestamp: new Date().toISOString(), action: "data_exported", actor, actorIp: getClientIP(req), details: { roomCount: rooms.length } });

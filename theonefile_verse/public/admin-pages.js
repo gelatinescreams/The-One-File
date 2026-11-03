@@ -25,9 +25,8 @@
     input.type = 'text';
     input.id = '2fa-code';
     input.placeholder = '000000';
-    input.maxLength = 8;
+    input.maxLength = 16;
     input.autocomplete = 'one-time-code';
-    input.inputMode = 'numeric';
     input.setAttribute('style', 'text-align:center;font-size:24px;letter-spacing:8px');
     input.autofocus = true;
     var btn = document.createElement('button');

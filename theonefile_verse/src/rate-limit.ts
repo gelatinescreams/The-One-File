@@ -22,8 +22,16 @@ const WS_RATE_LIMITS = {
   cursor: { bucketSize: 30, refillRate: 15 },
   typing: { bucketSize: 5, refillRate: 1 },
   presence: { bucketSize: 20, refillRate: 5 },
+  furnOp: { bucketSize: 60, refillRate: 30 },
   default: { bucketSize: 20, refillRate: 5 }
 };
+
+export type WsRateBucket = keyof typeof WS_RATE_LIMITS;
+
+export function wsRateLimitRetryAfterMs(messageType: string): number {
+  const limits = WS_RATE_LIMITS[messageType as keyof typeof WS_RATE_LIMITS] || WS_RATE_LIMITS.default;
+  return Math.max(1, Math.ceil(1000 / limits.refillRate));
+}
 
 const MAX_WS_RATE_LIMIT_BUCKETS = 50000;
 const wsRateLimitBuckets = new Map<string, WsTokenBucket>();
@@ -116,8 +124,17 @@ export function checkWsConnectionLimit(clientIp: string): boolean {
   return true;
 }
 
+let wsBucketSweepTimer: ReturnType<typeof setInterval> | null = null;
+let httpBucketSweepTimer: ReturnType<typeof setInterval> | null = null;
+let wsConnCountSweepTimer: ReturnType<typeof setInterval> | null = null;
+
+function unrefTimer(t: any): void {
+  if (t && typeof t.unref === 'function') t.unref();
+}
+
 export function startRateLimitCleanupIntervals(): void {
-  setInterval(() => {
+  if (wsBucketSweepTimer || httpBucketSweepTimer || wsConnCountSweepTimer) return;
+  wsBucketSweepTimer = setInterval(() => {
     const now = Date.now();
     const staleThreshold = 60 * 1000;
     for (const [key, bucket] of wsRateLimitBuckets.entries()) {
@@ -131,8 +148,9 @@ export function startRateLimitCleanupIntervals(): void {
       for (let i = 0; i < toRemove; i++) wsRateLimitBuckets.delete(entries[i][0]);
     }
   }, 30 * 1000);
+  unrefTimer(wsBucketSweepTimer);
 
-  setInterval(() => {
+  httpBucketSweepTimer = setInterval(() => {
     const now = Date.now();
     for (const [key, entry] of rateLimitStore.entries()) {
       if (now > entry.resetAt) {
@@ -141,11 +159,23 @@ export function startRateLimitCleanupIntervals(): void {
     }
     db.cleanupEmailRateLimits(3600);
   }, 60 * 1000);
+  unrefTimer(httpBucketSweepTimer);
 
-  setInterval(() => {
+  wsConnCountSweepTimer = setInterval(() => {
     const now = Date.now();
     for (const [ip, entry] of wsConnectionCounts.entries()) {
       if (now > entry.resetAt) wsConnectionCounts.delete(ip);
     }
   }, 5 * 60 * 1000);
+  unrefTimer(wsConnCountSweepTimer);
+}
+
+export function stopRateLimitCleanupIntervals(): void {
+  if (wsBucketSweepTimer) { clearInterval(wsBucketSweepTimer); wsBucketSweepTimer = null; }
+  if (httpBucketSweepTimer) { clearInterval(httpBucketSweepTimer); httpBucketSweepTimer = null; }
+  if (wsConnCountSweepTimer) { clearInterval(wsConnCountSweepTimer); wsConnCountSweepTimer = null; }
+}
+
+export function rateLimitCleanupIntervalCount(): number {
+  return (wsBucketSweepTimer ? 1 : 0) + (httpBucketSweepTimer ? 1 : 0) + (wsConnCountSweepTimer ? 1 : 0);
 }

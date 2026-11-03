@@ -1,15 +1,15 @@
 import * as oidc from "../oidc";
-import { ENV_ADMIN_PASSWORD, isInstanceLocked, isAdminRoute, getSettings, verifyAdminPassword, verifyInstancePassword } from "../config";
-import { getClientIP, apiError, serveHtml, getTokenFromRequest, validateAdminUser } from "../security";
+import { ENV_ADMIN_PASSWORD, isInstanceLocked, isAdminRoute, getSettings, verifyAdminPassword, verifyInstancePassword, isHttpsRequest } from "../config";
+import { getClientIP, apiError, serveHtml, getTokenFromRequest, validateAdminUser, readJsonLimited } from "../security";
 import { checkRateLimit } from "../rate-limit";
-import { validateInstanceToken, storeInstanceToken } from "../tokens";
+import { validateInstanceTokenAsync, storeInstanceToken } from "../tokens";
 import { instanceLoginPageHtml } from "../templates";
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if ((ENV_ADMIN_PASSWORD || isInstanceLocked()) && isAdminRoute(path)) {
     const token = getTokenFromRequest(req);
     const adminUser = await validateAdminUser(req);
-    const hasInstanceAccess = (token && validateInstanceToken(token)) || adminUser;
+    const hasInstanceAccess = (token && await validateInstanceTokenAsync(token)) || adminUser;
     if (!hasInstanceAccess) {
       if (path === "/" || path === "/index.html" || path.startsWith("/s/")) {
         return serveHtml(instanceLoginPageHtml, 'public', req);
@@ -28,7 +28,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many attempts. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       let valid = false;
       if (ENV_ADMIN_PASSWORD) {
         valid = await verifyAdminPassword(body.password);
@@ -36,11 +36,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         valid = await verifyInstancePassword(body.password);
       }
       if (valid) {
-        const token = crypto.randomUUID();
+        const token = oidc.generateSecureToken(32);
         storeInstanceToken(token);
         return new Response(JSON.stringify({ success: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json",
-            "Set-Cookie": oidc.getSessionCookie("collab_token", token, 604800) }
+            "Set-Cookie": oidc.getSessionCookie("collab_token", token, 604800, isHttpsRequest(req)) }
         });
       }
       return Response.json({ error: "Invalid password" }, { status: 403, headers: corsHeaders });

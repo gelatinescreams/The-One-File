@@ -2,7 +2,7 @@
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
   <img src="https://img.shields.io/badge/TheOneFile-4.1.5-blue" alt="TheOneFile 4.1.5">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.0.0-blue" alt="TheOneFile_Verse Docker Version 2.0.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.0-blue" alt="TheOneFile_Verse Docker Version 2.1.0">
   </a>
 </p>
 
@@ -16,9 +16,9 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
 
-### TheOneFile_Verse /\ 2.0.0 6-6-26 : That 2.0 Glow
+### TheOneFile_Verse /\ 2.1.0 11-3-26 : 2d,3d,4d(VR) and much more
 * **Thank you to everyone who has/will use. Thank you to everyone who has helped in every way**
-  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 2.0.0 list
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 2.1.0 list
 
 ### Version 4.1.5 /\ 3-26-26 : Enhanced 'Create', UI polish and squashing a sneaky bug and TheOneFile_Verse 1.8.6
 * **Enhanced Create**

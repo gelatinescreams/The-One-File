@@ -1,5 +1,74 @@
 ### TheOneFile_Verse changelog
 
+**11/2/26 Theonefile_verse 2.1.0** : **2d,3d,4d(VR) and much more**
+
+* **Enter 3D (CURRENTLY IN BETA)**
+  * Every room has an Enter 3D button that turns the 2D map into a walkable, editable, multiplayer 3D space.
+  * Everything on the 2D map is in 3D and editable: nodes, racks with mounted devices, wires with the real 2D routing, walls, zones, text and images.
+  * Procedural device models by node type, plus the node's own icon extruded into real 3D.
+  * Multi select with shift click, shift drag box select and Ctrl/Cmd+A. Group move and group delete are one undo step.
+  * Hotbar and inventory for placing network elements and furniture.
+  * Each document tab gets its own 3D scene.
+  * 3D users show up in 2D as a labelled diamond.
+  * Uploadable images and .glb models with per room and instance wide storage limits.
+  * The 3D world travels with the exported One File and comes back when imported as long as its the same server.
+  * Touch, keyboard only and reduced motion support.
+  * Turn the whole feature off with the enable3d admin setting.
+
+* **VR (CURRENTLY IN ALPHA)**
+
+* **Multiplayer Sync Rebuilt Around Field Merging**
+  * Every change now tells the server exactly which fields it touched. The server merges only those and keeps its own copy of everything else, so a stale or echoed copy of the room can no longer revert or delete someone else's work.
+  * Fixed rapid edits to the same field being lost.
+  * Fixed a freshly placed rack (or anything else) vanishing for everyone when an older copy of the room came back around.
+  * Fixed edits made on another tab never reaching the other users.
+  * Fixed a client that had edited earlier no longer seeing other users newest edits until reload.
+  * Legends, style sets, snapshots, encrypted sections and page settings are merged the same way.
+  * New users joining a room now get the latest unsaved state.
+
+* **Undo & Redo Rebuilt for 2d,3d,4d(VR)**
+
+* **Approval Required Sign Up**
+  * New auth mode: new accounts wait for an admin to approve them before they can sign in.
+  * Pending accounts show a Pending approval badge with Approve and Reject on the Users tab.
+  * The old "Registration Required" mode always behaved exactly like Open, so it is moved to Open automatically.
+
+* **Account Settings**
+  * Added profile editing (display name and avatar).
+  * Added change password. It signs you out everywhere, including current device.
+  * Added an active sessions list with "(this device)", per session sign out and Sign Out Everywhere.
+
+* **Admin Panel**
+  * Added a Trusted Proxies control (hop count or proxy IPs). It is locked when set by environment variables.
+  * Chat, cursor sharing and name change switches are now enforced by the server and hidden in rooms when turned off.
+  * Public room creation and the default self destruct settings now apply when rooms are created.
+
+* **Fixes**
+  * Fixed an error where API keys write permission were not applied correctly.
+  * Fixed an error where backup codes did not fit in the 2fa box.
+  * Fixed an error in the admin panel where an error would falsly show as saved.
+  * Turning on the instance lock without a password, or webhooks without a URL, is refused.
+  * Discovery prefix values outside 20 to 32 are refused instead of silently changed.
+  * Email templates now fill in {{appName}} and {{actionUrl}}.
+  * Missing email (SMTP) setup is now reported on sign up and email change instead of silently dropping the email.
+  * Sign In is always visible, even when sign ups are closed.
+  * Fixed the ID token max age being rounded down to 0.
+  * Fixed rooms with a self destruct longer than about 25 days being deleted the moment they were made.
+  * Fixed links gaining a duplicate rel attribute on every save.
+  * Fixed the docker compose file failing to start on newer Docker versions.
+  * and many more.
+
+* **Security**
+  * The probe endpoints now require a signed in user.
+  * The HTML sanitizer now repeats until nothing changes, and any output containing markup is checked with a real HTML parser (parse5). If anything outside the allowlist survives, the whole string is shown as plain text.
+  * WebSocket connections from another site's page are refused.
+  * The instance password is no longer written to the audit log, and password hashes are no longer included in exports or backups.
+  * SSO only mode now blocks password sign in for everyone except admins.
+  * Display names cannot be empty and avatar URLs must be http(s).
+  * The sessions list no longer exposes token hashes.
+  * A malformed text item from one user can no longer break the canvas for everyone.
+  * and a few more
+
 **6/6/26 Theonefile_verse 2.0.0** : **That 2.0 glow**
 
 * **Thank you to everyone who has/will use. Thank you to everyone who has helped in every way**

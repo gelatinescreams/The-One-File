@@ -1,12 +1,14 @@
 import * as db from "./database";
 import * as redis from "./redis";
 import * as oidc from "./oidc";
-import { APP_VERSION, PORT, ENV_ADMIN_PASSWORD, getSettings, isAdminConfigured, isInstanceLocked, isValidUUID } from "./config";
-import { securityHeaders, getClientIP, getTokenFromRequest, relativeRedirect, setServerRef } from "./security";
-import { startTokenCleanupIntervals, validateInstanceToken } from "./tokens";
-import { startRateLimitCleanupIntervals, checkWsConnectionLimit } from "./rate-limit";
-import { loadRoom, restartBackupTimer, clearBackupTimer, clearUpdateTimer, deleteRoomData, scheduleDestruction, initializeTheOneFile } from "./rooms";
-import { websocketHandlers, type WsData } from "./websocket";
+import { APP_VERSION, PORT, ENV_ADMIN_PASSWORD, getSettings, isAdminConfigured, isInstanceLocked, isValidUUID, getExternalOrigin, MAX_ROOM_SIZE_MB_CEILING, getMaxRoomSizeBytes } from "./config";
+import { securityHeaders, getClientIP, getTokenFromRequest, getUserTokenFromRequest, relativeRedirect, setServerRef } from "./security";
+import { startTokenCleanupIntervals, stopTokenCleanupIntervals, validateInstanceTokenAsync } from "./tokens";
+import { startRateLimitCleanupIntervals, stopRateLimitCleanupIntervals, checkWsConnectionLimit } from "./rate-limit";
+import { startAssetSweepInterval, stopAssetSweepInterval } from "./assets";
+import { SCENE3D_CODE_TTL_DAYS } from "./scene3d";
+import { loadRoom, restartBackupTimer, clearBackupTimer, clearUpdateTimer, deleteRoomData, scheduleDestruction, initializeTheOneFile, roomMeta, roomConnections, flushPendingRoomWrites } from "./rooms";
+import { websocketHandlers, WS_IDLE_TIMEOUT_SECONDS, type WsData } from "./websocket";
 
 const CONFIGURED_ORIGINS = process.env.CORS_ORIGIN?.split(",").map(o => o.trim()).filter(Boolean) || null;
 
@@ -31,7 +33,10 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
   if (req.method === 'POST' || req.method === 'PUT') {
     const cl = parseInt(req.headers.get('content-length') || '0');
-    const limit = path === '/api/admin/upload-html' ? 12 * 1024 * 1024 : 5 * 1024 * 1024;
+    let limit = 5 * 1024 * 1024;
+    if (path === '/api/admin/upload-html') limit = 12 * 1024 * 1024;
+    else if (path === '/api/room') limit = getMaxRoomSizeBytes() + 1024 * 1024;
+    else if (/^\/api\/room\/[\w-]+\/asset$/.test(path)) limit = 13 * 1024 * 1024;
     if (cl > limit) {
       return new Response('Payload too large', { status: 413 });
     }
@@ -43,6 +48,11 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
       return new Response("Too many WebSocket connections", { status: 429 });
     }
 
+    const wsOrigin = req.headers.get("origin");
+    if (wsOrigin && wsOrigin !== getExternalOrigin(req) && !(CONFIGURED_ORIGINS && CONFIGURED_ORIGINS.includes(wsOrigin))) {
+      return new Response("Forbidden origin", { status: 403 });
+    }
+
     const roomId = path.split("/")[2];
     if (!isValidUUID(roomId)) {
       return new Response("Invalid room ID", { status: 400 });
@@ -52,13 +62,25 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
     if (ENV_ADMIN_PASSWORD || isInstanceLocked()) {
       const token = getTokenFromRequest(req);
-      if (!token || !validateInstanceToken(token)) return new Response("Unauthorized", { status: 401 });
+      if (!token || !(await validateInstanceTokenAsync(token))) return new Response("Unauthorized", { status: 401 });
     }
 
     const authSettings = oidc.getAuthSettings();
-    const requireWsToken = authSettings.productionMode || process.env.REQUIRE_WS_TOKEN !== 'false';
+    const roomGated = !!room.passwordHash || room.allowGuests === false || !authSettings.allowGuestRoomJoin;
+    const requireWsToken = roomGated || authSettings.productionMode || process.env.REQUIRE_WS_TOKEN !== 'false';
 
-    const upgraded = server.upgrade(req, { data: { roomId, authenticated: !requireWsToken } });
+    let sessionUserId: string | undefined;
+    if (!requireWsToken) {
+      try {
+        const userToken = getUserTokenFromRequest(req);
+        if (userToken) {
+          const sessionUser = await oidc.validateUserSessionToken(userToken);
+          if (sessionUser) sessionUserId = sessionUser.id;
+        }
+      } catch {  }
+    }
+
+    const upgraded = server.upgrade(req, { data: { roomId, authenticated: !requireWsToken, sessionUserId } });
     if (upgraded) return undefined;
     return new Response("WebSocket upgrade failed", { status: 400 });
   }
@@ -74,6 +96,7 @@ async function handleRequest(req: Request, server: any): Promise<Response | unde
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": allowedOrigin,
+    "Vary": "Origin",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization, x-csrf-token",
     "Access-Control-Allow-Credentials": "true",
@@ -144,7 +167,8 @@ const server = Bun.serve({
   },
   websocket: {
     perMessageDeflate: true,
-    maxPayloadLength: 5 * 1024 * 1024,
+    maxPayloadLength: (MAX_ROOM_SIZE_MB_CEILING + 1) * 1024 * 1024,
+    idleTimeout: WS_IDLE_TIMEOUT_SECONDS,
     ...websocketHandlers
   }
 });
@@ -168,6 +192,17 @@ await initializeTheOneFile();
 
 startTokenCleanupIntervals();
 startRateLimitCleanupIntervals();
+startAssetSweepInterval();
+
+export const SCENE_CODE_PRUNE_INTERVAL_MS = 24 * 60 * 60 * 1000;
+let sceneCodePruneTimer: ReturnType<typeof setInterval> | null = setInterval(() => {
+  try {
+    const pruned = db.pruneOrphanSceneCodes(SCENE3D_CODE_TTL_DAYS);
+    if (pruned > 0) console.log(`[Scene3D] Pruned ${pruned} orphaned portable 3D scene code(s)`);
+  } catch (e: any) { console.error("[Scene3D] prune failed:", e?.message); }
+}, SCENE_CODE_PRUNE_INTERVAL_MS);
+if (typeof (sceneCodePruneTimer as any).unref === 'function') (sceneCodePruneTimer as any).unref();
+if (!(SCENE3D_CODE_TTL_DAYS > 0)) console.log(`Portable 3D scene code GC: Disabled (SCENE3D_CODE_TTL_DAYS=0)`);
 
 const settings = getSettings();
 console.log(`TheOneFile Verse v${APP_VERSION} | http://localhost:${PORT}`);
@@ -185,14 +220,35 @@ for (const room of allRooms) {
     const remaining = room.destruct.value - elapsed;
     if (remaining <= 0) deleteRoomData(room.id);
     else scheduleDestruction(room.id, remaining);
+  } else if (room.destruct.mode === "empty") {
+    if (!roomMeta.has(room.id)) roomMeta.set(room.id, { connectedUsers: 0, ownerWasLast: !room.ownerUserId });
   }
 }
 
+let shuttingDown = false;
+
 function shutdown() {
+  if (shuttingDown) return;
+  shuttingDown = true;
   console.log("[Shutdown] Shutting down...");
-  server.stop();
+  try { server.stop(); } catch (e: any) { console.error("[Shutdown] server.stop failed:", e?.message); }
+  try { flushPendingRoomWrites(); } catch (e: any) { console.error("[Shutdown] flush failed:", e?.message); }
+  try {
+    let closed = 0;
+    for (const [, connections] of roomConnections) {
+      for (const ws of connections) {
+        try { ws.close(1001, "Server shutting down"); closed++; } catch {  }
+      }
+    }
+    if (closed > 0) console.log(`[Shutdown] Closed ${closed} room socket(s)`);
+  } catch (e: any) { console.error("[Shutdown] socket close failed:", e?.message); }
   clearUpdateTimer();
   clearBackupTimer();
+  stopAssetSweepInterval();
+  stopTokenCleanupIntervals();
+  stopRateLimitCleanupIntervals();
+  oidc.stopOidcCleanupInterval();
+  if (sceneCodePruneTimer) { clearInterval(sceneCodePruneTimer); sceneCodePruneTimer = null; }
   redis.disconnectRedis();
   db.closeDatabase();
   process.exit(0);
@@ -203,6 +259,12 @@ process.on("uncaughtException", (err) => {
   console.error("[Fatal]", err);
   shutdown();
 });
-process.on("unhandledRejection", (err) => {
-  console.error("[UnhandledRejection]", err);
+let unhandledRejectionCount = 0;
+export function getUnhandledRejectionCount(): number { return unhandledRejectionCount; }
+process.on("unhandledRejection", (err: any) => {
+  unhandledRejectionCount++;
+  const detail = err instanceof Error
+    ? (err.stack || `${err.name}: ${err.message}`)
+    : (() => { try { return JSON.stringify(err); } catch { return String(err); } })();
+  console.error(`[UnhandledRejection] #${unhandledRejectionCount} ${detail}`);
 });

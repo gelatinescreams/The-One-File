@@ -133,6 +133,8 @@
       border-radius:12px;
       width:100%;
       max-width:420px;
+      max-height:calc(100vh - 40px);
+      overflow-y:auto;
     }
 
     .modal-header{
@@ -581,7 +583,7 @@
         <p style="font-size:14px;color:var(--text-soft);margin-bottom:16px">Enter the 6 digit code from your authenticator app, or use a backup code.</p>
         <div class="form-group">
           <label>Code</label>
-          <input type="text" id="2fa-code" placeholder="000000" maxlength="8" autocomplete="one-time-code" inputmode="numeric" style="text-align:center;font-size:24px;letter-spacing:8px">
+          <input type="text" id="2fa-code" placeholder="000000 or backup code" maxlength="16" autocomplete="one-time-code" style="text-align:center;font-size:24px;letter-spacing:8px">
         </div>
         <div class="error-text" id="2fa-error"></div>
       </div>
@@ -598,6 +600,20 @@
         <button class="modal-close" data-close-modal="settings">&times;</button>
       </div>
       <div class="modal-body">
+        <div id="settings-profile-section" style="margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)">
+          <h3 style="font-size:16px;margin-bottom:12px">Profile</h3>
+          <div class="form-group">
+            <label for="settings-display-name">Display Name</label>
+            <input type="text" id="settings-display-name" maxlength="100" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="settings-avatar-url">Avatar URL (https)</label>
+            <input type="url" id="settings-avatar-url" maxlength="500" placeholder="https://example.com/me.png">
+          </div>
+          <div class="error-text" id="profile-error"></div>
+          <div class="error-text" id="profile-success" style="color:#22c55e"></div>
+          <button class="btn btn-secondary" data-action="saveProfile" style="margin-top:8px">Save Profile</button>
+        </div>
         <div id="settings-2fa-section">
           <h3 style="font-size:16px;margin-bottom:12px">Two Factor Authentication</h3>
           <div id="2fa-status"></div>
@@ -615,6 +631,30 @@
           <div class="error-text" id="email-change-error"></div>
           <div class="error-text" id="email-change-success" style="color:#22c55e"></div>
           <button class="btn btn-secondary" data-action="requestEmailChange" style="margin-top:8px">Change Email</button>
+        </div>
+        <div id="settings-password-section" style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+          <h3 style="font-size:16px;margin-bottom:12px">Change Password</h3>
+          <div class="form-group">
+            <label for="settings-current-password">Current Password</label>
+            <input type="password" id="settings-current-password" autocomplete="current-password">
+          </div>
+          <div class="form-group">
+            <label for="settings-new-password">New Password</label>
+            <input type="password" id="settings-new-password" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label for="settings-confirm-password">Confirm New Password</label>
+            <input type="password" id="settings-confirm-password" autocomplete="new-password">
+          </div>
+          <div class="error-text" id="password-change-error"></div>
+          <button class="btn btn-secondary" data-action="changePassword" style="margin-top:8px">Change Password</button>
+          <p style="font-size:12px;color:var(--text-soft);margin-top:8px">Changing your password signs you out on every device.</p>
+        </div>
+        <div id="settings-sessions-section" style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+          <h3 style="font-size:16px;margin-bottom:12px">Active Sessions</h3>
+          <div id="sessions-list"></div>
+          <div class="error-text" id="sessions-error"></div>
+          <button class="btn btn-secondary" data-action="logoutEverywhere" style="margin-top:8px">Sign Out Everywhere</button>
         </div>
       </div>
     </div>

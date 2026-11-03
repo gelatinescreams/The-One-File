@@ -4,11 +4,14 @@ RUN apk add --no-cache su-exec iputils bind-tools samba-client avahi-tools net-s
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 COPY src ./src
-COPY public/index.html public/theonefile.html public/collab.js public/collab.css public/collab-init.js public/collab-save-hook.js public/landing.js public/admin-dashboard.js public/admin-auth.js public/admin-pages.js public/qrcode.min.js public/dompurify.min.js ./public/
+COPY public/index.html public/theonefile.html public/collab.js public/collab.css public/collab-init.js public/collab-save-hook.js public/landing.js public/admin-dashboard.js public/admin-auth.js public/admin-pages.js public/qrcode.min.js public/dompurify.min.js public/collab-3d.js ./public/
+COPY public/vendor ./public/vendor
 COPY entrypoint.sh ./
 RUN mkdir -p /app/data/rooms /app/data/backups /app/public && \
     addgroup -S appgroup && adduser -S appuser -G appgroup && \
     chown -R appuser:appgroup /app && \
     chmod +x /app/entrypoint.sh
 EXPOSE 10101
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD wget --quiet --tries=1 --spider "http://127.0.0.1:${PORT:-10101}/api/health" || exit 1
 ENTRYPOINT ["/app/entrypoint.sh"]

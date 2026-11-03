@@ -1,6 +1,7 @@
 import { Database } from "bun:sqlite";
 import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from "fs";
 import { join } from "path";
+import { randomBytes } from "crypto";
 
 function sanitizeSearchQuery(query: string): string | null {
   if (query.length > 100) return null;
@@ -52,6 +53,308 @@ db.exec(`
 
 migrateAddColumn("rooms", "owner_user_id", "TEXT");
 migrateAddColumn("rooms", "allow_guests", "INTEGER NOT NULL DEFAULT 1");
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS assets (
+    hash TEXT PRIMARY KEY,
+    size_bytes INTEGER NOT NULL,
+    mime TEXT NOT NULL,
+    width INTEGER,
+    height INTEGER,
+    created_at TEXT NOT NULL
+  )
+`);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS room_assets (
+    room_id TEXT NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+    asset_hash TEXT NOT NULL REFERENCES assets(hash) ON DELETE CASCADE,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY (room_id, asset_hash)
+  )
+`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_room_assets_hash ON room_assets(asset_hash)`);
+migrateAddColumn("assets", "unref_since", "TEXT");
+db.exec(`CREATE INDEX IF NOT EXISTS idx_assets_unref_since ON assets(unref_since)`);
+
+export interface AssetRow {
+  hash: string;
+  size_bytes: number;
+  mime: string;
+  width: number | null;
+  height: number | null;
+  created_at: string;
+}
+
+export function insertAsset(a: AssetRow): void {
+  db.prepare(
+    `INSERT OR IGNORE INTO assets (hash, size_bytes, mime, width, height, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+  ).run(a.hash, a.size_bytes, a.mime, a.width, a.height, a.created_at);
+}
+
+export function getAsset(hash: string): AssetRow | null {
+  return (db.prepare(`SELECT * FROM assets WHERE hash = ?`).get(hash) as AssetRow) || null;
+}
+
+export function getRoomAssetHashes(roomId: string): string[] {
+  return (db.prepare(`SELECT asset_hash FROM room_assets WHERE room_id = ?`).all(roomId) as any[]).map(
+    (r) => r.asset_hash as string
+  );
+}
+
+export function linkRoomAsset(roomId: string, hash: string, createdAt: string): void {
+  db.prepare(`INSERT OR IGNORE INTO room_assets (room_id, asset_hash, created_at) VALUES (?, ?, ?)`).run(roomId, hash, createdAt);
+}
+
+export function reconcileRoomAssets(roomId: string, hashes: string[], createdAt: string): void {
+  const want = new Set(hashes);
+  const have = new Set(getRoomAssetHashes(roomId));
+  const toAdd = [...want].filter((h) => !have.has(h));
+  const toDel = [...have].filter((h) => !want.has(h));
+  if (toAdd.length === 0 && toDel.length === 0) return;
+  const tx = db.transaction(() => {
+    const del = db.prepare(`DELETE FROM room_assets WHERE room_id = ? AND asset_hash = ?`);
+    for (const h of toDel) del.run(roomId, h);
+    const ins = db.prepare(
+      `INSERT OR IGNORE INTO room_assets (room_id, asset_hash, created_at) VALUES (?, ?, ?)`
+    );
+    for (const h of toAdd) {
+      if (getAsset(h)) ins.run(roomId, h, createdAt);
+    }
+  });
+  tx();
+}
+
+export function getAssetRefCount(hash: string): number {
+  return (db.prepare(`SELECT COUNT(*) AS n FROM room_assets WHERE asset_hash = ?`).get(hash) as any).n as number;
+}
+
+export function deleteAssetRow(hash: string): void {
+  db.prepare(`DELETE FROM assets WHERE hash = ?`).run(hash);
+}
+
+export function getZeroRefAssets(olderThanIso: string): AssetRow[] {
+  return db
+    .prepare(
+      `SELECT a.* FROM assets a
+       WHERE a.created_at < ?
+         AND NOT EXISTS (SELECT 1 FROM room_assets ra WHERE ra.asset_hash = a.hash)`
+    )
+    .all(olderThanIso) as AssetRow[];
+}
+
+
+export function getRoomAssetBytes(roomId: string): number {
+  const row = db
+    .prepare(
+      `SELECT COALESCE(SUM(a.size_bytes), 0) AS n
+         FROM room_assets ra JOIN assets a ON a.hash = ra.asset_hash
+        WHERE ra.room_id = ?`
+    )
+    .get(roomId) as any;
+  return Number(row?.n || 0);
+}
+
+export function getTotalAssetBytes(): number {
+  const row = db.prepare(`SELECT COALESCE(SUM(size_bytes), 0) AS n FROM assets`).get() as any;
+  return Number(row?.n || 0);
+}
+
+
+export function markUnreferencedAssets(nowIso: string): number {
+  const tx = db.transaction(() => {
+    db.prepare(
+      `UPDATE assets SET unref_since = NULL
+        WHERE unref_since IS NOT NULL
+          AND EXISTS (SELECT 1 FROM room_assets ra WHERE ra.asset_hash = assets.hash)`
+    ).run();
+    return db
+      .prepare(
+        `UPDATE assets SET unref_since = ?
+          WHERE unref_since IS NULL
+            AND NOT EXISTS (SELECT 1 FROM room_assets ra WHERE ra.asset_hash = assets.hash)`
+      )
+      .run(nowIso).changes as number;
+  });
+  return tx() as number;
+}
+
+export function getSweepableAssets(unrefBeforeIso: string): AssetRow[] {
+  return db
+    .prepare(
+      `SELECT * FROM assets
+        WHERE unref_since IS NOT NULL AND unref_since <= ?
+          AND NOT EXISTS (SELECT 1 FROM room_assets ra WHERE ra.asset_hash = assets.hash)`
+    )
+    .all(unrefBeforeIso) as AssetRow[];
+}
+
+export function getSceneByCodeAssetHashes(): Set<string> {
+  const out = new Set<string>();
+  const rows = db.prepare(`SELECT data FROM scene_by_code`).all() as any[];
+  const re = /[0-9a-f]{64}/g;
+  for (const r of rows) {
+    const data = typeof r?.data === "string" ? r.data : "";
+    let m: RegExpExecArray | null;
+    re.lastIndex = 0;
+    while ((m = re.exec(data)) !== null) out.add(m[0]);
+  }
+  return out;
+}
+
+export function getScene3dAssetHashes(): Set<string> {
+  const out = new Set<string>();
+  const rows = db.prepare(`SELECT data FROM scene3d`).all() as any[];
+  const re = /[0-9a-f]{64}/g;
+  for (const r of rows) {
+    const data = typeof r?.data === "string" ? r.data : "";
+    let m: RegExpExecArray | null;
+    re.lastIndex = 0;
+    while ((m = re.exec(data)) !== null) out.add(m[0]);
+  }
+  return out;
+}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS scene3d (
+    room_id TEXT PRIMARY KEY REFERENCES rooms(id) ON DELETE CASCADE,
+    data TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  )
+`);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS scene_by_code (
+    code TEXT PRIMARY KEY,
+    data TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  )
+`);
+
+export function getScene3d(roomId: string): string | null {
+  const row = db.prepare(`SELECT data FROM scene3d WHERE room_id = ?`).get(roomId) as any;
+  return row ? (row.data as string) : null;
+}
+
+export function setScene3d(roomId: string, data: string): void {
+  db.prepare(
+    `INSERT INTO scene3d (room_id, data, updated_at) VALUES (?, ?, ?)
+     ON CONFLICT(room_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+  ).run(roomId, data, new Date().toISOString());
+}
+
+export function getSceneByCode(code: string): string | null {
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(code)) return null;
+  const row = db.prepare(`SELECT data FROM scene_by_code WHERE code = ?`).get(code) as any;
+  return row ? (row.data as string) : null;
+}
+
+export function listSceneCodes(): string[] {
+  try { return (db.prepare(`SELECT code FROM scene_by_code`).all() as any[]).map((r) => String(r.code)); }
+  catch { return []; }
+}
+
+export function deleteSceneByCode(code: string): void {
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(code)) return;
+  db.prepare(`DELETE FROM scene_by_code WHERE code = ?`).run(code);
+}
+
+export function persistScene3d(roomId: string, clean: any): string {
+  let code: string | null = null;
+  const existing = getScene3d(roomId);
+  if (existing) { try { const p = JSON.parse(existing); if (typeof p?.code === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(p.code)) code = p.code; } catch {  } }
+  if (!code) code = randomBytes(16).toString("base64url");
+  const withCode = { ...clean, code };
+  const s = JSON.stringify(withCode);
+  const now = new Date().toISOString();
+  setScene3d(roomId, s);
+  db.prepare(
+    `INSERT INTO scene_by_code (code, data, updated_at) VALUES (?, ?, ?)
+     ON CONFLICT(code) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+  ).run(code, s, now);
+  return code;
+}
+
+export function exportScene3dForRoom(roomId: string): string | null {
+  return getScene3d(roomId);
+}
+
+let _json1Available: boolean | null = null;
+export function hasJson1(): boolean {
+  if (_json1Available !== null) return _json1Available;
+  try {
+    const r = db.prepare(`SELECT json_extract('{"code":"ok"}', '$.code') AS v`).get() as any;
+    _json1Available = !!(r && r.v === "ok");
+  } catch { _json1Available = false; }
+  return _json1Available;
+}
+
+export interface ScenePruneResult {
+  disabled: boolean;
+  deleted: number;
+  engine: "json1" | "like" | "none";
+}
+
+export function pruneOrphanSceneCodesDetailed(days: number): ScenePruneResult {
+  if (!Number.isFinite(days) || days <= 0) return { disabled: true, deleted: 0, engine: "none" };
+  const cutoff = new Date(Date.now() - days * 86400000).toISOString();
+  if (hasJson1()) {
+    try {
+      const r = db.prepare(
+        `DELETE FROM scene_by_code
+          WHERE updated_at < ?
+            AND code NOT IN (
+              SELECT json_extract(s.data, '$.code') FROM scene3d s
+               WHERE json_valid(s.data) AND json_extract(s.data, '$.code') IS NOT NULL
+            )
+            -- A blob that is not valid JSON cannot be json_extract'ed, and a code missing from the
+            -- reference set above would be DELETED even though a live room still carries it. Fall
+            -- back to the old (over-matching, therefore safe) text test for those rows only.
+            AND NOT EXISTS (
+              SELECT 1 FROM scene3d s2
+               WHERE NOT json_valid(s2.data)
+                 AND s2.data LIKE '%"code":"' || scene_by_code.code || '"%'
+            )`
+      ).run(cutoff) as any;
+      return { disabled: false, deleted: Number(r && (r.changes ?? 0)), engine: "json1" };
+    } catch (e: any) {
+      _json1Available = false;
+      console.error("[DB] pruneOrphanSceneCodes (json1):", e.message);
+    }
+  }
+  try {
+    const r = db.prepare(
+      `DELETE FROM scene_by_code
+        WHERE updated_at < ?
+          AND code NOT IN (
+            SELECT sbc.code FROM scene_by_code sbc
+              JOIN scene3d s ON s.data LIKE '%"code":"' || sbc.code || '"%'
+          )`
+    ).run(cutoff) as any;
+    return { disabled: false, deleted: Number(r && (r.changes ?? 0)), engine: "like" };
+  } catch (e: any) {
+    console.error("[DB] pruneOrphanSceneCodes:", e.message);
+    return { disabled: false, deleted: 0, engine: "like" };
+  }
+}
+
+export function pruneOrphanSceneCodes(days: number): number {
+  return pruneOrphanSceneCodesDetailed(days).deleted;
+}
+
+export function importScene3dForRoom(roomId: string, data: string | null | undefined): boolean {
+  if (!data || typeof data !== "string") return false;
+  let parsed: any;
+  try { parsed = JSON.parse(data); } catch { return false; }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return false;
+  setScene3d(roomId, data);
+  const code = parsed.code;
+  if (typeof code === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(code)) {
+    db.prepare(
+      `INSERT INTO scene_by_code (code, data, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT(code) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
+    ).run(code, data, new Date().toISOString());
+  }
+  return true;
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS admin_settings (
@@ -172,6 +475,24 @@ migrateAddColumn("users", "totp_enabled", "INTEGER NOT NULL DEFAULT 0");
 migrateAddColumn("users", "totp_backup_codes", "TEXT");
 migrateAddColumn("users", "pending_email", "TEXT");
 migrateAddColumn("users", "pending_email_token", "TEXT");
+
+export function backfillRoomOwners(): number {
+  try {
+    const r = db.prepare(
+      `UPDATE rooms SET owner_user_id = creator_id
+         WHERE owner_user_id IS NULL
+           AND creator_id IN (SELECT id FROM users)`
+    ).run() as any;
+    return Number(r && (r.changes ?? 0));
+  } catch (e: any) {
+    console.error("Migration error (rooms.owner_user_id backfill):", e.message);
+    return 0;
+  }
+}
+{
+  const n = backfillRoomOwners();
+  if (n > 0) console.log(`[DB] Backfilled owner_user_id on ${n} legacy room(s)`);
+}
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS user_oidc_links (
@@ -332,6 +653,23 @@ db.exec(`
 `);
 
 db.exec(`CREATE INDEX IF NOT EXISTS idx_csrf_tokens_expires ON csrf_tokens(expires_at)`);
+migrateAddColumn("csrf_tokens", "bound_to", "TEXT");
+
+migrateAddColumn("users", "totp_last_step", "INTEGER");
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS invites (
+    id TEXT PRIMARY KEY,
+    code_hash TEXT NOT NULL UNIQUE,
+    email TEXT,
+    created_by TEXT,
+    created_at TEXT NOT NULL,
+    expires_at TEXT,
+    used_at TEXT,
+    used_by TEXT
+  )
+`);
+db.exec(`CREATE INDEX IF NOT EXISTS idx_invites_code ON invites(code_hash)`);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS email_rate_limits (
@@ -361,6 +699,18 @@ export interface CsrfToken {
   used: boolean;
   createdAt: string;
   expiresAt: string;
+  boundTo: string | null;
+}
+
+export interface Invite {
+  id: string;
+  codeHash: string;
+  email: string | null;
+  createdBy: string | null;
+  createdAt: string;
+  expiresAt: string | null;
+  usedAt: string | null;
+  usedBy: string | null;
 }
 
 export interface Room {
@@ -436,6 +786,7 @@ export interface User {
   totpBackupCodes: string | null;
   pendingEmail: string | null;
   pendingEmailToken: string | null;
+  totpLastStep?: number | null;
 }
 
 export interface UserOidcLink {
@@ -696,8 +1047,24 @@ export function updateRoom(id: string, lastActivity: string, topology: any): voi
   stmtUpdateRoom.run(lastActivity, topology ? JSON.stringify(topology) : null, id);
 }
 
+export function updateRoomTopologyJson(id: string, lastActivity: string, topologyJson: string | null): void {
+  stmtUpdateRoom.run(lastActivity, topologyJson, id);
+}
+
 export function updateRoomSettings(id: string, allowGuests: boolean, ownerUserId: string | null): void {
   stmtUpdateRoomSettings.run(allowGuests ? 1 : 0, ownerUserId, id);
+}
+
+export function isPendingApproval(userId: string): boolean {
+  return getSetting(`pendingApproval:${userId}`) === '1';
+}
+export function setPendingApproval(userId: string, pending: boolean): void {
+  if (pending) setSetting(`pendingApproval:${userId}`, '1'); else deleteSetting(`pendingApproval:${userId}`);
+}
+
+const stmtUpdateRoomPassword = db.prepare(`UPDATE rooms SET password_hash = ? WHERE id = ?`);
+export function updateRoomPassword(id: string, passwordHash: string | null): boolean {
+  return stmtUpdateRoomPassword.run(passwordHash, id).changes > 0;
 }
 
 export function deleteRoom(id: string): boolean {
@@ -1031,7 +1398,7 @@ const stmtInsertUser = db.prepare(`
 const stmtGetUserById = db.prepare(`SELECT * FROM users WHERE id = ?`);
 const stmtGetUserByEmail = db.prepare(`SELECT * FROM users WHERE email = ? COLLATE NOCASE`);
 const stmtUpdateUser = db.prepare(`
-  UPDATE users SET email = ?, email_verified = ?, display_name = ?, avatar_url = ?, password_hash = ?, role = ?, updated_at = ?, last_login = ?, is_active = ?, failed_login_attempts = ?, locked_until = ?, totp_secret = ?, totp_enabled = ?, totp_backup_codes = ?, pending_email = ?, pending_email_token = ?
+  UPDATE users SET email = ?, email_verified = ?, display_name = ?, avatar_url = ?, password_hash = ?, role = ?, updated_at = ?, last_login = ?, is_active = ?, failed_login_attempts = ?, locked_until = ?, totp_secret = ?, totp_enabled = ?, totp_backup_codes = ?, pending_email = ?, pending_email_token = ?, totp_last_step = ?
   WHERE id = ?
 `);
 const stmtIncrementFailedLogin = db.prepare(`UPDATE users SET failed_login_attempts = failed_login_attempts + 1, updated_at = ? WHERE id = ?`);
@@ -1064,7 +1431,8 @@ function rowToUser(row: any): User | null {
     totpEnabled: row.totp_enabled === 1,
     totpBackupCodes: row.totp_backup_codes || null,
     pendingEmail: row.pending_email || null,
-    pendingEmailToken: row.pending_email_token || null
+    pendingEmailToken: row.pending_email_token || null,
+    totpLastStep: row.totp_last_step ?? null
   };
 }
 
@@ -1075,22 +1443,67 @@ export function createUser(user: User): void {
   );
 }
 
-export function createUserAtomic(user: User): { created: boolean; wasFirst: boolean } {
+export function adminExternallyConfigured(): boolean {
+  return !!process.env.ADMIN_PASSWORD || getSetting('admin_password_hash') !== null;
+}
+
+export function createUserAtomic(user: User): { created: boolean; wasFirst: boolean; promoted: boolean } {
   db.run('BEGIN IMMEDIATE');
   try {
     const count = countUsers();
     const wasFirst = count === 0;
-    if (wasFirst) {
+    const promoted = wasFirst && !adminExternallyConfigured();
+    if (promoted) {
       user.role = 'admin';
       user.emailVerified = true;
     }
     createUser(user);
     db.run('COMMIT');
-    return { created: true, wasFirst };
+    return { created: true, wasFirst, promoted };
   } catch (e) {
     db.run('ROLLBACK');
     throw e;
   }
+}
+
+const stmtInsertInvite = db.prepare(`INSERT INTO invites (id, code_hash, email, created_by, created_at, expires_at, used_at, used_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+const stmtGetInviteByHash = db.prepare(`SELECT * FROM invites WHERE code_hash = ?`);
+const stmtListInvites = db.prepare(`SELECT * FROM invites ORDER BY created_at DESC LIMIT ?`);
+const stmtMarkInviteUsed = db.prepare(`UPDATE invites SET used_at = ?, used_by = ? WHERE code_hash = ? AND used_at IS NULL`);
+const stmtDeleteInvite = db.prepare(`DELETE FROM invites WHERE id = ?`);
+
+function rowToInvite(row: any): Invite | null {
+  if (!row) return null;
+  return {
+    id: row.id,
+    codeHash: row.code_hash,
+    email: row.email || null,
+    createdBy: row.created_by || null,
+    createdAt: row.created_at,
+    expiresAt: row.expires_at || null,
+    usedAt: row.used_at || null,
+    usedBy: row.used_by || null
+  };
+}
+
+export function createInvite(invite: Invite): void {
+  stmtInsertInvite.run(invite.id, invite.codeHash, invite.email, invite.createdBy, invite.createdAt, invite.expiresAt, invite.usedAt, invite.usedBy);
+}
+
+export function getInviteByHash(codeHash: string): Invite | null {
+  return rowToInvite(stmtGetInviteByHash.get(codeHash));
+}
+
+export function listInvites(limit = 200): Invite[] {
+  return (stmtListInvites.all(limit) as any[]).map(rowToInvite).filter(Boolean) as Invite[];
+}
+
+export function consumeInvite(codeHash: string, userId: string): boolean {
+  return stmtMarkInviteUsed.run(new Date().toISOString(), userId, codeHash).changes > 0;
+}
+
+export function deleteInvite(id: string): boolean {
+  return stmtDeleteInvite.run(id).changes > 0;
 }
 
 export function getUserById(id: string): User | null {
@@ -1108,6 +1521,7 @@ export function updateUser(user: User): void {
     user.failedLoginAttempts, user.lockedUntil,
     user.totpSecret, user.totpEnabled ? 1 : 0, user.totpBackupCodes,
     user.pendingEmail, user.pendingEmailToken,
+    user.totpLastStep ?? null,
     user.id
   );
 }
@@ -1738,8 +2152,8 @@ export function deleteOldestOidcStates(count: number): number {
 
 
 const stmtInsertCsrfToken = db.prepare(`
-  INSERT INTO csrf_tokens (token, used, created_at, expires_at)
-  VALUES (?, ?, ?, ?)
+  INSERT INTO csrf_tokens (token, used, created_at, expires_at, bound_to)
+  VALUES (?, ?, ?, ?, ?)
 `);
 const stmtGetCsrfToken = db.prepare(`SELECT * FROM csrf_tokens WHERE token = ?`);
 const stmtMarkCsrfTokenUsed = db.prepare(`UPDATE csrf_tokens SET used = 1 WHERE token = ?`);
@@ -1754,7 +2168,8 @@ function rowToCsrfToken(row: any): CsrfToken | null {
     token: row.token,
     used: row.used === 1,
     createdAt: row.created_at,
-    expiresAt: row.expires_at
+    expiresAt: row.expires_at,
+    boundTo: row.bound_to || null
   };
 }
 
@@ -1763,7 +2178,8 @@ export function createCsrfToken(csrfToken: CsrfToken): void {
     csrfToken.token,
     csrfToken.used ? 1 : 0,
     csrfToken.createdAt,
-    csrfToken.expiresAt
+    csrfToken.expiresAt,
+    csrfToken.boundTo ?? null
   );
 }
 

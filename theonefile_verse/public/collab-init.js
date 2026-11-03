@@ -88,6 +88,7 @@
             case 'savedStyles': return savedStyles;
             case 'savedStyleSets': return typeof savedStyleSets !== 'undefined' ? savedStyleSets : {};
             case 'canvasState': return canvasState;
+            case 'isDraggingSelection': return typeof isDraggingSelection !== 'undefined' ? isDraggingSelection : false;
             case 'documentTabs': return documentTabs;
             case 'currentTabIndex': return currentTabIndex;
             case 'auditLog': return auditLog;
@@ -107,6 +108,20 @@
             case 'forgeTheTopology': return typeof forgeTheTopology !== 'undefined' ? forgeTheTopology : undefined;
             case 'currentNodeId': return typeof currentNodeId !== 'undefined' ? currentNodeId : undefined;
             case 'pushUndo': return typeof pushUndo !== 'undefined' ? pushUndo : undefined;
+            case 'activeLayers': return typeof activeLayers !== 'undefined' && activeLayers ? Array.from(activeLayers) : [];
+            case 'applyLayerFilter': return typeof applyLayerFilter !== 'undefined' ? applyLayerFilter : undefined;
+            case 'isNodeVisible': return typeof isNodeVisible !== 'undefined' ? isNodeVisible : undefined;
+            case 'RECORDING_STATE': return typeof RECORDING_STATE !== 'undefined' ? RECORDING_STATE : null;
+            case 'startRecording': return typeof startRecording !== 'undefined' ? startRecording : undefined;
+            case 'stopRecording': return typeof stopRecording !== 'undefined' ? stopRecording : undefined;
+            case 'playRecording': return typeof playRecording !== 'undefined' ? playRecording : undefined;
+            case 'pauseRecording': return typeof pauseRecording !== 'undefined' ? pauseRecording : undefined;
+            case 'seekRecording': return typeof seekRecording !== 'undefined' ? seekRecording : undefined;
+            case 'startStepRecording': return typeof startStepRecording !== 'undefined' ? startStepRecording : undefined;
+            case 'stopStepRecording': return typeof stopStepRecording !== 'undefined' ? stopStepRecording : undefined;
+            case 'captureStepFrame': return typeof captureStepFrame !== 'undefined' ? captureStepFrame : undefined;
+            case 'selectRecording': return typeof selectRecording !== 'undefined' ? selectRecording : undefined;
+            case 'renderRecordingsList': return typeof renderRecordingsList !== 'undefined' ? renderRecordingsList : undefined;
             default: return undefined;
           }
         } catch(e) { return undefined; }
@@ -145,3 +160,127 @@
     }
   }, 50);
 })();
+
+'@collab-undo-helpers-start';
+var CU_SEP = '\u001f';
+var CU_UNDO_SCHEMA = { maps: ['nodes', 'positions', 'sizes', 'styles', 'legend'], lists: ['edges', 'rects', 'texts'] };
+var CU_SYNC_SCHEMA = { maps: ['nodeData', 'nodePositions', 'nodeSizes', 'nodeStyles', 'edgeLegend'], lists: ['edgeData', 'rectData', 'textData', 'imageData'] };
+function cuJ(v) { return v === undefined ? '\u0000' : JSON.stringify(v); }
+function cuIsObj(v) { return !!v && typeof v === 'object' && !Array.isArray(v); }
+function cuItems(state, coll, isList) {
+  var o = state && state[coll];
+  if (isList) {
+    var m = {};
+    ((o && Array.isArray(o.list)) ? o.list : []).forEach(function (it) { if (it && it.id != null) m[String(it.id)] = it; });
+    return m;
+  }
+  return cuIsObj(o) ? o : {};
+}
+function collabKeyDiff(a, b, schema, out) {
+  schema.maps.map(function (c) { return [c, false]; }).concat(schema.lists.map(function (c) { return [c, true]; })).forEach(function (cl) {
+    var c = cl[0], ia = cuItems(a, c, cl[1]), ib = cuItems(b, c, cl[1]), seen = {};
+    Object.keys(ia).concat(Object.keys(ib)).forEach(function (id) {
+      if (seen[id]) return; seen[id] = 1;
+      var x = ia[id], y = ib[id];
+      if ((x === undefined) !== (y === undefined)) { out.add(c + CU_SEP + id + CU_SEP); return; }
+      if (cuJ(x) === cuJ(y)) return;
+      if (!cuIsObj(x) || !cuIsObj(y)) { out.add(c + CU_SEP + id + CU_SEP + '*'); return; }
+      var fs = {};
+      Object.keys(x).concat(Object.keys(y)).forEach(function (f) {
+        if (fs[f]) return; fs[f] = 1;
+        if (cuJ(x[f]) !== cuJ(y[f])) out.add(c + CU_SEP + id + CU_SEP + f);
+      });
+    });
+  });
+  return out;
+}
+function collabKeyValue(state, key, schema) {
+  var p = key.split(CU_SEP), c = p[0], id = p[1], f = p[2];
+  var it = cuItems(state, c, schema.lists.indexOf(c) !== -1)[id];
+  if (f === '') return it === undefined ? '\u0000' : '1';
+  if (f === '*') return cuJ(it);
+  return cuIsObj(it) ? cuJ(it[f]) : '\u0000';
+}
+function collabKeyApply(live, target, keys, schema) {
+  var clone = function (o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); };
+  var out = clone(live) || {};
+  var setItem = function (c, isList, id, val) {
+    if (isList) {
+      if (!cuIsObj(out[c]) || !Array.isArray(out[c].list)) out[c] = Object.assign({}, out[c] || {}, { list: [] });
+      var list = out[c].list, idx = -1;
+      for (var i = 0; i < list.length; i++) if (list[i] && String(list[i].id) === id) { idx = i; break; }
+      if (val === undefined) { if (idx >= 0) list.splice(idx, 1); }
+      else if (idx >= 0) list[idx] = val; else list.push(val);
+    } else {
+      if (!cuIsObj(out[c])) out[c] = {};
+      if (val === undefined) delete out[c][id]; else out[c][id] = val;
+    }
+  };
+  var ks = Array.from(keys).sort(function (x, y) { return (x.split(CU_SEP)[2] === '' ? 0 : 1) - (y.split(CU_SEP)[2] === '' ? 0 : 1); });
+  ks.forEach(function (k) {
+    var p = k.split(CU_SEP), c = p[0], id = p[1], f = p[2];
+    var isList = schema.lists.indexOf(c) !== -1;
+    if (schema.maps.indexOf(c) === -1 && !isList) return;
+    var t = cuItems(target, c, isList)[id];
+    if (f === '' || f === '*') { setItem(c, isList, id, clone(t)); return; }
+    var l = cuItems(out, c, isList)[id];
+    if (!cuIsObj(l) || !cuIsObj(t)) return;
+    if (Object.prototype.hasOwnProperty.call(t, f)) l[f] = clone(t[f]); else delete l[f];
+  });
+  return out;
+}
+'@collab-undo-helpers-end';
+
+(function(){
+  var iv = setInterval(function(){
+    if (typeof NODE_DATA === 'undefined' || typeof restoreState !== 'function' || typeof pushUndo !== 'function' ||
+        typeof captureState !== 'function' || typeof undoStack === 'undefined') return;
+    clearInterval(iv);
+    var meta = new WeakMap();
+    var tabOf = new WeakMap();
+    var curTab = function () { try { return currentTabIndex; } catch (e) { return 0; } };
+    var lastSynced = captureState();
+    var lastTab = curTab();
+    var topOf = function (s) { return s.length ? s[s.length - 1] : null; };
+    var touchedOf = function (snap) { var t = meta.get(snap); if (!t) { t = new Set(); meta.set(snap, t); } return t; };
+    var seal = function () {
+      var top = topOf(undoStack);
+      var now = captureState();
+      if (top && curTab() === lastTab && tabOf.get(top) === lastTab) collabKeyDiff(lastSynced, now, CU_UNDO_SCHEMA, touchedOf(top));
+      lastSynced = now; lastTab = curTab();
+    };
+    window.__collabUndoSeal = function () { try { seal(); } catch (e) {} };
+    window.__collabUndoResync = function () { try { lastSynced = captureState(); lastTab = curTab(); } catch (e) {} };
+
+    var origPush = pushUndo;
+    pushUndo = function (action) {
+      try { seal(); } catch (e) {}
+      var before = undoStack.length ? undoStack[undoStack.length - 1] : null;
+      var r = origPush.apply(this, arguments);
+      var after = topOf(undoStack);
+      if (after && after !== before) { meta.set(after, new Set()); tabOf.set(after, curTab()); lastSynced = captureState(); lastTab = curTab(); }
+      return r;
+    };
+    window.pushUndo = pushUndo;
+
+    var origRestore = restoreState;
+    restoreState = function (target) {
+      try {
+        var sameTab = (tabOf.has(target) ? tabOf.get(target) : curTab()) === curTab();
+        if (sameTab && lastTab === curTab()) collabKeyDiff(lastSynced, captureState(), CU_UNDO_SCHEMA, touchedOf(target));
+        var touched = sameTab ? meta.get(target) : new Set();
+        if (!touched) touched = new Set();
+        var merged = collabKeyApply(captureState(), target, touched, CU_UNDO_SCHEMA);
+        [topOf(undoStack), topOf(redoStack)].forEach(function (s) { if (s && s !== target && !meta.get(s)) { meta.set(s, new Set(touched)); tabOf.set(s, curTab()); } });
+        origRestore.call(this, merged);
+        lastSynced = captureState(); lastTab = curTab();
+        return;
+      } catch (e) {
+        return origRestore.call(this, target);
+      }
+    };
+    window.restoreState = restoreState;
+  }, 50);
+})();
+
+window.__collabKeys = { diff: collabKeyDiff, value: collabKeyValue, apply: collabKeyApply, SYNC: CU_SYNC_SCHEMA };

@@ -229,6 +229,203 @@
   let lastStateHash = null;
   let syncPaused = false;
   let hasReceivedInitialState = false;
+  const tabHashMemo = new Map();
+  const tabSentHashes = new Map();
+  const tabSentVersions = new Map();
+  const tabSentAcked = new Map();
+  let localTabVersions = {};
+  let pendingRemoteState = null;
+  let pendingRemoteCapApplied = false;
+  let syncBase = null;
+  const pendingLocal = new Map();
+  const PENDING_LOCAL_TTL_MS = 15000;
+
+  const META_SEP = '\u001f';
+  const TAB_COLL_FIELDS = ['nodes', 'edges', 'positions', 'sizes', 'styles', 'legend', 'rects', 'texts', 'images'];
+  const META_SKIP = new Set(['documentTabs', 'currentTabIndex', 'tabVersions', 'nodeData', 'nodePositions', 'nodeSizes',
+    'nodeStyles', 'edgeLegend', 'edgeData', 'rectData', 'textData', 'imageData']);
+  function metaTabId(t, i) { return t && t.id != null ? String(t.id) : '#' + i; }
+  function metaTabs(st, stripId) {
+    const tabs = (st && Array.isArray(st.documentTabs)) ? st.documentTabs : [];
+    const m = new Map();
+    tabs.forEach((t, i) => {
+      const id = metaTabId(t, i);
+      let v = t;
+      if (id === stripId && t && typeof t === 'object') { v = Object.assign({}, t); TAB_COLL_FIELDS.forEach(f => { delete v[f]; }); }
+      m.set(id, JSON.stringify(v));
+    });
+    return { ids: tabs.map(metaTabId), m: m };
+  }
+  function metaCurId(st) {
+    const tabs = (st && Array.isArray(st.documentTabs)) ? st.documentTabs : [];
+    const i = (st && st.currentTabIndex) || 0;
+    return metaTabId(tabs[i], i);
+  }
+  function metaKeyDiff(a, b, out) {
+    const ks = new Set(Object.keys(a || {}).concat(Object.keys(b || {})));
+    ks.forEach(k => {
+      if (META_SKIP.has(k) || !/^[A-Za-z0-9_]+$/.test(k)) return;
+      if (JSON.stringify(a ? a[k] : undefined) !== JSON.stringify(b ? b[k] : undefined)) out.add('__top' + META_SEP + k + META_SEP + '*');
+    });
+    const cur = metaCurId(b);
+    const ta = metaTabs(a, cur), tb = metaTabs(b, cur);
+    if (JSON.stringify(ta.ids) !== JSON.stringify(tb.ids)) out.add('__tabs' + META_SEP + 'order' + META_SEP + '*');
+    new Set(ta.ids.concat(tb.ids)).forEach(id => {
+      if (ta.m.get(id) !== tb.m.get(id)) out.add('__tab' + META_SEP + id + META_SEP + '*');
+    });
+    return out;
+  }
+  const TOP_PREFIX = '__top' + META_SEP;
+  function topField(k) { return k.slice(TOP_PREFIX.length, k.length - 2); }
+  function topValue(st, k) { const f = topField(k); return st && Object.prototype.hasOwnProperty.call(st, f) ? JSON.stringify(st[f]) : '\u0000'; }
+  let renderDeferred = false;
+
+  const INTERACTION_SETTLE_MS = 50;
+  const INTERACTION_MAX_PAUSE_MS = 10000;
+  let pointerHeld = false;
+  let editFocusCount = 0;
+  let interactionStartedAt = 0;
+  let interactionSettleUntil = 0;
+
+  function is2dDragActive() {
+    try {
+      const cs = getGlobal('canvasState');
+      if (cs && cs.isPanning) return true;
+      if (getGlobal('isDraggingSelection') === true) return true;
+    } catch (e) {}
+    return false;
+  }
+
+  function interactionActive() {
+    return pointerHeld || editFocusCount > 0 || is2dDragActive();
+  }
+
+  function interactionBlocking() {
+    if (interactionActive()) {
+      if (!interactionStartedAt) interactionStartedAt = Date.now();
+      return true;
+    }
+    return !!(interactionSettleUntil && Date.now() < interactionSettleUntil);
+  }
+
+  function noteInteractionStart() {
+    if (!interactionStartedAt) interactionStartedAt = Date.now();
+    interactionSettleUntil = 0;
+  }
+
+  function noteInteractionEnd() {
+    if (interactionActive()) return;
+    interactionStartedAt = 0;
+    pendingRemoteCapApplied = false;
+    interactionSettleUntil = Date.now() + INTERACTION_SETTLE_MS;
+  }
+
+  function isEditableTarget(el) {
+    if (!el || el.nodeType !== 1) return false;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    return el.isContentEditable === true;
+  }
+
+  function isGuardedEditRegion(el) {
+    try {
+      return !!(el.closest && el.closest('#details-panel, .modal, .legend-container'));
+    } catch (e) { return false; }
+  }
+
+  function sanitizeInteractionState() {
+    if (editFocusCount <= 0) return;
+    var ae = null;
+    try { ae = document.activeElement; } catch (e) {}
+    if (ae && isEditableTarget(ae) && isGuardedEditRegion(ae)) return;
+    editFocusCount = 0;
+    noteInteractionEnd();
+  }
+
+  function setupInteractionGuard() {
+    document.addEventListener('pointerdown', function (e) {
+      try {
+        const t = e.target;
+        if (t && t.closest && t.closest('#minimap-container')) return;
+        const onCanvas = !!(t && t.closest && t.closest('#map'));
+        if (onCanvas || isGuardedEditRegion(t)) {
+          pointerHeld = true;
+          noteInteractionStart();
+        }
+      } catch (err) {}
+    }, true);
+    const release = function () {
+      if (!pointerHeld) return;
+      pointerHeld = false;
+      noteInteractionEnd();
+    };
+    document.addEventListener('pointerup', release, true);
+    document.addEventListener('pointercancel', release, true);
+    document.addEventListener('pointermove', function (e) {
+      if (!pointerHeld) return;
+      if (e.buttons === 0) release();
+    }, true);
+    document.addEventListener('focusin', function (e) {
+      if (isEditableTarget(e.target) && isGuardedEditRegion(e.target)) {
+        editFocusCount++;
+        noteInteractionStart();
+      }
+    }, true);
+    document.addEventListener('focusout', function (e) {
+      if (isEditableTarget(e.target) && isGuardedEditRegion(e.target)) {
+        editFocusCount = Math.max(0, editFocusCount - 1);
+        noteInteractionEnd();
+      }
+    }, true);
+    setInterval(flushPendingRemoteState, 100);
+  }
+
+  function flushPendingRemoteState() {
+    sanitizeInteractionState();
+    if (syncPaused) return;
+    if (!pendingRemoteState) { flushDeferredRender(); return; }
+    const now = Date.now();
+    if (interactionActive()) {
+      if (!interactionStartedAt) interactionStartedAt = now;
+      if ((now - interactionStartedAt) < INTERACTION_MAX_PAUSE_MS) return;
+      if (pointerHeld || is2dDragActive()) {
+        if (pendingRemoteCapApplied) return;
+        pendingRemoteCapApplied = true;
+        applyRemoteState(pendingRemoteState, false, { pinLocalTab: true });
+        return;
+      }
+    } else if (interactionSettleUntil && now < interactionSettleUntil) {
+      return;
+    }
+    const queued = pendingRemoteState;
+    pendingRemoteState = null;
+    pendingRemoteCapApplied = false;
+    applyRemoteState(queued);
+  }
+
+  function flushDeferredRender() {
+    if (!renderDeferred) return;
+    if (interactionBlocking()) return;
+    renderDeferred = false;
+    if (typeof forgeTheTopology === 'function') {
+      try { forgeTheTopology(); } catch (e) {}
+    }
+  }
+
+  function resetRemoteQueue() {
+    pendingRemoteState = null;
+    pendingRemoteCapApplied = false;
+    renderDeferred = false;
+    interactionStartedAt = 0;
+    interactionSettleUntil = 0;
+  }
+
+  function queueRemoteState(state) {
+    pendingRemoteState = state;
+    pendingRemoteCapApplied = false;
+  }
+  let pendingRecordings = null;
+  const seenRecordingIds = new Set();
   let chatMessages = [];
   let unreadCount = 0;
   let chatOpen = false;
@@ -301,6 +498,7 @@
         setConnectionState('connected');
         window.COLLAB_USER.color = getOrCreateUserColor();
         hasReceivedInitialState = false;
+        resetRemoteQueue();
         showSyncingOverlay();
         sendMessage('join', { user: window.COLLAB_USER });
       }
@@ -313,7 +511,13 @@
       } catch (e) {}
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      if (event && event.code === 4008) {
+        setConnectionState('disconnected');
+        showPersistentWarning('collab-forbidden-warning',
+          'This room has reached its connection limit. Use the Reconnect button to try again.');
+        return;
+      }
       setConnectionState('reconnecting');
       scheduleReconnect();
     };
@@ -336,6 +540,32 @@
     }
   }
 
+  const COLLAB_PING_FALLBACK_MS = 45000;
+  const COLLAB_PING_MIN_MS = 5000;
+  const COLLAB_PING_MAX_MS = 300000;
+  let collabPingIntervalMs = 0;
+  let collabPingTimer = null;
+
+  function startHeartbeat(ms) {
+    let next = COLLAB_PING_FALLBACK_MS;
+    if (typeof ms === 'number' && isFinite(ms) && ms >= COLLAB_PING_MIN_MS && ms <= COLLAB_PING_MAX_MS) {
+      next = Math.floor(ms);
+    }
+    if (collabPingTimer && next === collabPingIntervalMs) return;
+    collabPingIntervalMs = next;
+    if (collabPingTimer) clearInterval(collabPingTimer);
+    collabPingTimer = setInterval(function () {
+      if (ws && ws.readyState === WebSocket.OPEN) sendMessage('ping', {});
+    }, collabPingIntervalMs);
+  }
+  startHeartbeat();
+
+  window.__collab3d = {
+    send: function (type, data) { sendMessage(type, data); },
+    getUser: function (id) { try { return users.get(id); } catch (e) { return null; } },
+    me: function () { return window.COLLAB_USER; }
+  };
+
   function sanitizeUser(user) {
     if (user && user.color) {
       user.color = sanitizeColor(user.color);
@@ -344,17 +574,49 @@
   }
 
   function handleMessage(msg) {
+    if (typeof window.__collab3dOnMessage === 'function') { try { window.__collab3dOnMessage(msg); } catch (e) {} }
+    if (msg && msg.pingIntervalMs !== undefined) startHeartbeat(msg.pingIntervalMs);
     switch (msg.type) {
       case 'auth-ok':
         reconnectAttempts = 0;
         setConnectionState('connected');
         window.COLLAB_USER.color = getOrCreateUserColor();
         hasReceivedInitialState = false;
+        resetRemoteQueue();
         showSyncingOverlay();
         sendMessage('join', { user: window.COLLAB_USER });
         return;
       case 'auth-error':
         console.error('[Collab] Auth failed:', msg.error);
+        return;
+      case 'error': {
+        if (msg.code === 'rate-limited' && msg.channel === 'furnOp') {
+          try {
+            window.dispatchEvent(new CustomEvent('collab:furnop-dropped', {
+              detail: {
+                code: msg.code,
+                channel: msg.channel,
+                op: msg.op || null,
+                retryAfterMs: typeof msg.retryAfterMs === 'number' ? msg.retryAfterMs : 250
+              }
+            }));
+          } catch (e) {}
+          return;
+        }
+        const detail = msg.error || 'Unknown sync error';
+        if (msg.code === 'forbidden' || msg.code === 'join-required') {
+          showPersistentWarning('collab-forbidden-warning', detail);
+        } else if (/exceed|maximum size|too large|\bsize\b|depth|too many|limit/i.test(detail)) {
+          showPersistentWarning('collab-size-warning',
+            'A change was rejected by the server and did NOT save or sync: ' + detail +
+            '. Export a backup and reduce the room size (large images/recordings) to keep collaborating.');
+        } else {
+          showToast('Sync error: ' + detail);
+        }
+        return;
+      }
+      case 'rate-limited':
+        console.warn('[Collab] rate-limited:', msg.error || '');
         return;
       case 'join':
         users.set(msg.user.id, sanitizeUser(msg.user));
@@ -393,7 +655,7 @@
         hideSyncingOverlay();
         hasReceivedInitialState = true;
         if (msg.state) {
-          applyRemoteState(msg.state);
+          applyRemoteState(msg.state, true);
           if (!msg.state.themeState && window.DEFAULT_ROOM_THEME) {
             var dPresets = typeof THEME_PRESETS !== 'undefined' ? THEME_PRESETS : null;
             if (dPresets && dPresets[window.DEFAULT_ROOM_THEME]) {
@@ -427,10 +689,11 @@
         }
         break;
       case 'state':
-        if (!syncPaused && hasReceivedInitialState) applyRemoteState(msg.state);
+        if (!hasReceivedInitialState) break;
+        if (syncPaused || interactionBlocking()) queueRemoteState(msg.state);
+        else applyRemoteState(msg.state);
         break;
       case 'patch':
-        if (!syncPaused && hasReceivedInitialState) applyRemoteState(msg.patch);
         break;
       case 'chat':
         addChatMessage(msg);
@@ -454,6 +717,7 @@
         }
         break;
       case 'cursor':
+        if (msg.furnOp) break;
         if (msg.userId !== window.COLLAB_USER.id) {
           const user = users.get(msg.userId);
           if (user) {
@@ -461,11 +725,24 @@
             user.cursorY = msg.y;
             user.isRatio = msg.isRatio || false;
             user.isCanvasCoords = msg.isCanvasCoords || false;
+            const was3D = !!user.is3D;
+            user.is3D = !!msg.d3;
+            user.lastCursorAt = Date.now();
             users.set(msg.userId, user);
+            if (was3D !== user.is3D) removeRemoteCursor(msg.userId);
             updateRemoteCursor(msg.userId, user);
             renderUsers();
           }
         }
+        break;
+      case 'pong':
+        break;
+      case 'permissions':
+        window.COLLAB_PERMISSIONS = { role: msg.role, canWrite: msg.canWrite !== false, viewOnly: msg.viewOnly === true };
+        if (msg.canWrite !== false) clearPersistentWarning('collab-forbidden-warning');
+        else showPersistentWarning('collab-forbidden-warning',
+          'This room is view only for you, your edits will not be saved or shared.');
+        updateViewOnlyMenuItem();
         break;
       case 'name-rejected':
         handleNameRejected(msg.reason);
@@ -544,6 +821,7 @@
   }
 
   function sendChatMessage(text) {
+    if (chatDisabledByAdmin) return;
     if (!text.trim()) return;
     let trimmedText = text.trim();
     if (trimmedText.length > 500) {
@@ -581,7 +859,9 @@
     if (preview) preview.classList.remove('active');
   }
 
+  let chatDisabledByAdmin = false;
   function sendTypingIndicator() {
+    if (chatDisabledByAdmin) return;
     const now = Date.now();
     if (now - lastTypingSent < 2000) return;
     lastTypingSent = now;
@@ -626,6 +906,42 @@
       setTimeout(() => toast.remove(), 300);
     }, 3000);
     if (stack.children.length > 5) stack.firstChild.remove();
+  }
+
+  function showPersistentWarning(id, message) {
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = id;
+      el.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:2147483000;max-width:min(680px,92vw);background:#7f1d1d;color:#fff;border:1px solid #ef4444;border-radius:8px;padding:10px 34px 10px 14px;font:13px/1.45 system-ui,-apple-system,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.45);';
+      const text = document.createElement('span');
+      text.className = 'collab-warn-text';
+      el.appendChild(text);
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.textContent = '×';
+      close.setAttribute('aria-label', 'Dismiss');
+      close.style.cssText = 'position:absolute;top:4px;right:8px;background:none;border:none;color:#fff;font-size:18px;line-height:1;cursor:pointer;';
+      close.addEventListener('click', () => el.remove());
+      el.appendChild(close);
+      document.body.appendChild(el);
+    }
+    const text = el.querySelector('.collab-warn-text');
+    if (text) text.textContent = message; else el.textContent = message;
+  }
+
+  function clearPersistentWarning(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function updateViewOnlyMenuItem() {
+    const btn = document.getElementById('collab-menu-viewonly');
+    if (!btn) return;
+    const perms = window.COLLAB_PERMISSIONS || {};
+    const mayToggle = perms.role === 'owner' || perms.role === 'admin';
+    btn.style.display = mayToggle ? '' : 'none';
+    btn.textContent = perms.viewOnly ? 'Allow Editing' : 'Make View Only';
   }
 
   function updateChatBadge() {
@@ -752,16 +1068,19 @@
       cursor.id = `collab-cursor-${safeId}`;
       cursor.className = 'collab-remote-cursor';
       const safeColor = sanitizeColor(user.color);
+      cursor.dataset.d3 = user.is3D ? '1' : '0';
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('width', '16');
       svg.setAttribute('height', '16');
       svg.setAttribute('viewBox', '0 0 16 16');
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', 'M0 0L16 12L8 12L4 16L0 0Z');
+      path.setAttribute('d', user.is3D ? 'M8 0L16 8L8 16L0 8Z' : 'M0 0L16 12L8 12L4 16L0 0Z');
       path.setAttribute('fill', safeColor);
+      if (user.is3D) { path.setAttribute('stroke', '#fff'); path.setAttribute('stroke-width', '1.5'); }
       svg.appendChild(path);
       cursor.appendChild(svg);
-      cursor.appendChild(h('span', {className: 'collab-cursor-name', style: 'background:' + safeColor}, user.name));
+      cursor.appendChild(h('span', {className: 'collab-cursor-name', style: 'background:' + safeColor},
+        user.is3D ? user.name + ' · 3D' : user.name));
       document.body.appendChild(cursor);
     }
     if (cursor && user.cursorX !== undefined) {
@@ -815,6 +1134,22 @@
     const cursor = document.getElementById(`collab-cursor-${safeElementId(userId)}`);
     if (cursor) cursor.remove();
   }
+
+  const D3_CURSOR_TIMEOUT_MS = 8000;
+  setInterval(() => {
+    const now = Date.now();
+    let changed = false;
+    users.forEach((user, userId) => {
+      if (!user.is3D) return;
+      if (now - (user.lastCursorAt || 0) < D3_CURSOR_TIMEOUT_MS) return;
+      user.is3D = false;
+      user.cursorX = undefined;
+      user.cursorY = undefined;
+      removeRemoteCursor(userId);
+      changed = true;
+    });
+    if (changed) renderUsers();
+  }, 2000);
 
   function trackCursor() {
     let lastSent = 0;
@@ -878,10 +1213,14 @@
       try {
         state = captureTheQuickening();
         delete state.canvas;
+        delete state.customLanguage;
         if (state.documentTabs) {
           state.documentTabs = state.documentTabs.map(tab => {
-            const { pageState, ...rest } = tab;
-            return rest;
+            const copy = { ...tab };
+            copy.pageState = (tab.pageState === null || tab.pageState === undefined)
+              ? null
+              : (stripLocalPageKeys(tab.pageState) || {});
+            return copy;
           });
         }
       } catch (e) { console.error('captureTheQuickening error:', e); }
@@ -918,6 +1257,18 @@
     state.rollbackVersions = getGlobal('rollbackVersions');
     state.customLang = getGlobal('CUSTOM_LANG');
 
+    if (state.recordings === undefined) {
+      const recState = getGlobal('RECORDING_STATE');
+      if (recState && Array.isArray(recState.recordings)) state.recordings = recState.recordings;
+    }
+    if (pendingRecordings && Array.isArray(state.recordings)) {
+      state.recordings = mergeRemoteRecordings(pendingRecordings, state.recordings, seenRecordingIds);
+    }
+
+    if (Array.isArray(state.auditLog)) state.auditLog = clampAuditLog(state.auditLog);
+
+    if (state.page) state.page = stripLocalPageKeys(state.page);
+
     const pageState = getGlobal('PAGE_STATE');
     if (pageState) {
       state.themeState = {};
@@ -930,6 +1281,10 @@
       }
     }
 
+    state.tabVersions = nextTabVersions(
+      state.documentTabs, localTabVersions, tabHashMemo, localUserId()
+    );
+
     if (window.COLLAB_DEBUG) {
       console.log('[Collab] Captured state keys:', Object.keys(state));
       console.log('[Collab] nodeStyles count:', state.nodeStyles ? Object.keys(state.nodeStyles).length : 0);
@@ -939,55 +1294,478 @@
     return state;
   }
 
+
   function hashState(state) {
-    const str = JSON.stringify(state);
-    let hash = 5381;
-    for (let i = 0; i < str.length; i++) {
-      hash = ((hash << 5) + hash) + str.charCodeAt(i);
-      hash = hash & hash;
+    return hashString(JSON.stringify(state));
+  }
+
+  function localUserId() {
+    return (window.COLLAB_USER && window.COLLAB_USER.id) ? String(window.COLLAB_USER.id) : '';
+  }
+
+  function rememberTabHashes(state) {
+    if (!state || !Array.isArray(state.documentTabs)) return;
+    tabHashMemo.clear();
+    const prevSent = new Map(tabSentHashes);
+    const prevAcked = new Map(tabSentAcked);
+    tabSentHashes.clear();
+    tabSentVersions.clear();
+    tabSentAcked.clear();
+    for (let i = 0; i < state.documentTabs.length; i++) {
+      const tab = state.documentTabs[i];
+      const h = tabContentHash(tab);
+      tabHashMemo.set(i, h);
+      tabSentHashes.set(i, h);
+      const key = tabVersionKey(tab, i);
+      const ver = getOwnProp(state.tabVersions, key);
+      if (isTabVersion(ver)) tabSentVersions.set(i, ver.v);
+      tabSentAcked.set(i, prevSent.get(i) === h ? prevAcked.get(i) === true : false);
     }
-    return hash.toString(36);
+    if (state.tabVersions) localTabVersions = state.tabVersions;
+  }
+
+  function sentTabInfo() {
+    return { hashes: tabSentHashes, versions: tabSentVersions, acked: tabSentAcked };
   }
 
   function sendFullState() {
     const state = captureState();
     if (!state) return;
     lastStateHash = hashState(state);
+    rememberTabHashes(state);
+    try { syncBase = JSON.parse(JSON.stringify(state)); } catch (e) {}
     sendMessage('state', { state });
   }
 
-  function applyRemoteState(state) {
+  '@collab-sync-helpers:start';
+
+  var LOCAL_PAGE_KEYS = new Set([
+    'topbarHeight', 'sidebarWidth', 'mobileFooterHeight', 'sidebarCollapsed',
+    'viewOnly'
+  ]);
+
+  function hashString(str) {
+    var hash = 5381;
+    for (var i = 0; i < str.length; i++) {
+      hash = ((hash << 5) + hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return hash.toString(36);
+  }
+
+  function stripLocalPageKeys(page) {
+    if (!page || typeof page !== 'object') return page;
+    var out = {};
+    for (var k in page) {
+      if (!Object.prototype.hasOwnProperty.call(page, k)) continue;
+      if (LOCAL_PAGE_KEYS.has(k)) continue;
+      out[k] = page[k];
+    }
+    return out;
+  }
+
+  function mergeSharedPageState(localPage, remotePage) {
+    var out = {};
+    var k;
+    if (localPage && typeof localPage === 'object') {
+      for (k in localPage) {
+        if (Object.prototype.hasOwnProperty.call(localPage, k)) out[k] = localPage[k];
+      }
+    }
+    if (remotePage && typeof remotePage === 'object') {
+      for (k in remotePage) {
+        if (!Object.prototype.hasOwnProperty.call(remotePage, k)) continue;
+        if (LOCAL_PAGE_KEYS.has(k)) continue;
+        out[k] = remotePage[k];
+      }
+    }
+    return out;
+  }
+
+  function tabContentHash(tab) {
+    if (!tab || typeof tab !== 'object') return 'x';
+    try {
+      return hashString(JSON.stringify([
+        tab.name, tab.nodes, tab.edges, tab.positions, tab.sizes,
+        tab.styles, tab.legend, tab.rects, tab.texts, tab.images
+      ]));
+    } catch (e) { return 'x'; }
+  }
+
+
+  var TAB_VERSION_MAX_ENTRIES = 64;
+  var TAB_VERSION_MAX_V = 1099511627776;
+
+  function getOwnProp(obj, key) {
+    if (!obj || typeof obj !== 'object') return undefined;
+    return Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
+  }
+
+  function tabVersionKey(tab, index) {
+    if (tab && typeof tab === 'object' && tab.id !== undefined && tab.id !== null && tab.id !== '') {
+      var id = String(tab.id);
+      if (id !== '__proto__') return id;
+    }
+    return '#' + index;
+  }
+
+  function isTabVersion(entry) {
+    return !!entry && typeof entry === 'object' && !Array.isArray(entry) &&
+      typeof entry.v === 'number' && isFinite(entry.v) &&
+      Math.floor(entry.v) === entry.v && entry.v >= 0 && entry.v <= TAB_VERSION_MAX_V;
+  }
+
+  function clampTabV(v) {
+    if (typeof v !== 'number' || !isFinite(v) || v < 0) return 0;
+    v = Math.floor(v);
+    return v > TAB_VERSION_MAX_V ? TAB_VERSION_MAX_V : v;
+  }
+
+  function nextTabVersions(tabs, prevVersions, memo, userId) {
+    var out = {};
+    var me = typeof userId === 'string' ? userId : '';
+    if (!Array.isArray(tabs)) return out;
+    for (var i = 0; i < tabs.length && i < TAB_VERSION_MAX_ENTRIES; i++) {
+      var tab = tabs[i];
+      var key = tabVersionKey(tab, i);
+      var prev = getOwnProp(prevVersions, key);
+      var pv = isTabVersion(prev) ? prev.v : 0;
+      var pby = isTabVersion(prev) && typeof prev.by === 'string' ? prev.by : me;
+      var memoH = memo && typeof memo.get === 'function' ? memo.get(i) : undefined;
+      var changed = memoH !== undefined && tabContentHash(tab) !== memoH;
+      out[key] = changed
+        ? { v: clampTabV(pv + 1), by: me }
+        : { v: clampTabV(pv), by: pby };
+    }
+    return out;
+  }
+
+  function resolveTabVersion(remoteVer, localVer, unacked, userId) {
+    if (!isTabVersion(remoteVer)) return null;
+    var me = typeof userId === 'string' ? userId : '';
+    var hasLocal = isTabVersion(localVer);
+    var rV = remoteVer.v;
+    var rBy = typeof remoteVer.by === 'string' ? remoteVer.by : '';
+    var lV = hasLocal ? localVer.v : 0;
+    var lBy = hasLocal && typeof localVer.by === 'string' ? localVer.by : '';
+    var remoteWins = !hasLocal || rV > lV || (rV === lV && rBy > lBy);
+    if (remoteWins && unacked) {
+      return { takeRemote: false, version: { v: clampTabV(rV + 1), by: me } };
+    }
+    if (remoteWins) return { takeRemote: true, version: { v: clampTabV(rV), by: rBy } };
+    return { takeRemote: false, version: { v: clampTabV(lV), by: lBy } };
+  }
+
+  function isSentAcked(remoteVer, sentV, userId) {
+    if (typeof sentV !== 'number') return false;
+    if (!isTabVersion(remoteVer)) return false;
+    if (remoteVer.v > sentV) return true;
+    return remoteVer.v === sentV && remoteVer.by === userId;
+  }
+
+  function computeTabUnacked(hasLocal, localH, remoteH, memoH, sentH, sentAcked) {
+    if (!hasLocal) return false;
+    if (remoteH === localH) return false;
+    if (sentH !== undefined) {
+      if (localH !== sentH) return true;
+      return sentAcked !== true;
+    }
+    return memoH !== undefined && localH !== memoH;
+  }
+
+  function mergeDocumentTabs(remoteTabs, localTabs, senderTabIndex, localTabIndex, memo,
+                             remoteVersions, localVersions, userId, sentInfo, pinnedIndex) {
+    var out = [];
+    var hashes = [];
+    var tookRemote = [];
+    var keptLocalTabs = [];
+    var ackedTabs = [];
+    var me = typeof userId === 'string' ? userId : '';
+    var pinned = typeof pinnedIndex === 'number' ? pinnedIndex : -1;
+    var versions = {};
+    var versionCount = 0;
+    var keptLocal = false;
+    remoteTabs = Array.isArray(remoteTabs) ? remoteTabs : [];
+    localTabs = Array.isArray(localTabs) ? localTabs : [];
+    for (var i = 0; i < remoteTabs.length; i++) {
+      var remoteTab = remoteTabs[i] || {};
+      var localTab = localTabs[i];
+      var rKey = tabVersionKey(remoteTab, i);
+      var lKey = tabVersionKey(localTab || remoteTab, i);
+      var remoteH = tabContentHash(remoteTab);
+      var localH = localTab ? tabContentHash(localTab) : null;
+      var memoH = memo && typeof memo.get === 'function' ? memo.get(i) : undefined;
+      var sentH = sentInfo && sentInfo.hashes && typeof sentInfo.hashes.get === 'function'
+        ? sentInfo.hashes.get(i) : undefined;
+      var sentAcked = false;
+      if (sentH !== undefined) {
+        sentAcked = !!(sentInfo.acked && typeof sentInfo.acked.get === 'function' &&
+                       sentInfo.acked.get(i) === true);
+        if (!sentAcked) {
+          var sentV = sentInfo.versions && typeof sentInfo.versions.get === 'function'
+            ? sentInfo.versions.get(i) : undefined;
+          sentAcked = isSentAcked(getOwnProp(remoteVersions, rKey), sentV, me);
+        }
+      }
+      ackedTabs.push(sentH !== undefined ? sentAcked : false);
+      var unacked = computeTabUnacked(!!localTab, localH, remoteH, memoH, sentH, sentAcked);
+      var takeRemote;
+      var ver = null;
+      if (!localTab) {
+        takeRemote = true;
+      } else if (i === pinned) {
+        takeRemote = false;
+      } else {
+        var res = resolveTabVersion(
+          getOwnProp(remoteVersions, rKey), getOwnProp(localVersions, lKey), unacked, userId
+        );
+        if (res) {
+          takeRemote = res.takeRemote;
+          ver = res.version;
+        } else if (i === senderTabIndex) {
+          takeRemote = true;
+        } else if (i === localTabIndex) {
+          takeRemote = false;
+        } else {
+          takeRemote = !unacked;
+        }
+      }
+      var keptLocalHere = !takeRemote && !!localTab && remoteH !== localH;
+      if (keptLocalHere) keptLocal = true;
+      var base = takeRemote ? remoteTab : localTab;
+      var merged = {};
+      for (var k in base) {
+        if (Object.prototype.hasOwnProperty.call(base, k)) merged[k] = base[k];
+      }
+      var lPage = localTab && localTab.pageState;
+      var rPage = remoteTab && remoteTab.pageState;
+      merged.pageState = (lPage === null || lPage === undefined) &&
+                         (rPage === null || rPage === undefined)
+        ? null
+        : mergeSharedPageState(lPage, rPage);
+      if (!ver) {
+        var carry = takeRemote ? getOwnProp(remoteVersions, rKey) : getOwnProp(localVersions, lKey);
+        if (isTabVersion(carry)) {
+          ver = { v: clampTabV(carry.v), by: typeof carry.by === 'string' ? carry.by : '' };
+        }
+      }
+      if (ver && versionCount < TAB_VERSION_MAX_ENTRIES) {
+        versions[takeRemote ? rKey : lKey] = ver;
+        versionCount++;
+      }
+      out.push(merged);
+      hashes.push(tabContentHash(merged));
+      tookRemote.push(!!takeRemote && !!localTab && remoteH !== localH);
+      keptLocalTabs.push(keptLocalHere);
+    }
+    return {
+      tabs: out, hashes: hashes, tookRemote: tookRemote,
+      keptLocalTabs: keptLocalTabs, ackedTabs: ackedTabs,
+      versions: versions, keptLocal: keptLocal
+    };
+  }
+
+  var AUDIT_MAX_DETAILS_BYTES = 2 * 1024;
+  var AUDIT_MAX_TOTAL_BYTES = 512 * 1024;
+
+  function clampAuditLog(log, maxDetailsBytes, maxTotalBytes) {
+    if (!Array.isArray(log)) return log;
+    var maxDetails = maxDetailsBytes || AUDIT_MAX_DETAILS_BYTES;
+    var maxTotal = maxTotalBytes || AUDIT_MAX_TOTAL_BYTES;
+    var out = [];
+    var total = 0;
+    for (var i = 0; i < log.length; i++) {
+      var entry = log[i];
+      if (!entry || typeof entry !== 'object') continue;
+      var copy = {};
+      for (var k in entry) {
+        if (Object.prototype.hasOwnProperty.call(entry, k)) copy[k] = entry[k];
+      }
+      if (copy.details !== undefined && copy.details !== null) {
+        var ser;
+        try { ser = JSON.stringify(copy.details); } catch (e) { ser = ''; }
+        if (typeof ser === 'string' && ser.length > maxDetails) {
+          copy.details = { truncated: true, bytes: ser.length, preview: ser.slice(0, 256) };
+        }
+      }
+      var size;
+      try { size = JSON.stringify(copy).length; } catch (e) { size = 0; }
+      if (total + size > maxTotal) break;
+      total += size;
+      out.push(copy);
+    }
+    return out;
+  }
+
+  function mergeRemoteRecordings(remoteList, localList, seenIds) {
+    if (!Array.isArray(remoteList)) return Array.isArray(localList) ? localList : [];
+    if (!Array.isArray(localList) || localList.length === 0) return remoteList;
+    var remoteIds = new Set();
+    for (var i = 0; i < remoteList.length; i++) {
+      var r = remoteList[i];
+      if (r && r.id !== undefined && r.id !== null) remoteIds.add(String(r.id));
+    }
+    var out = remoteList.slice();
+    for (var j = 0; j < localList.length; j++) {
+      var l = localList[j];
+      if (!l || l.id === undefined || l.id === null) continue;
+      var id = String(l.id);
+      if (remoteIds.has(id)) continue;
+      if (seenIds && seenIds.has && seenIds.has(id)) continue;
+      out.push(l);
+    }
+    return out;
+  }
+
+  function shouldDeferRender(pinLocalTab, pointerDragActive) {
+    return !!pinLocalTab && !!pointerDragActive;
+  }
+
+  '@collab-sync-helpers:end';
+
+  function applyRemoteState(state, isInitial, opts) {
     if (!state) return;
+    if (window.__collabUndoSeal) window.__collabUndoSeal();
+    try { return applyRemoteStateInner(state, isInitial, opts); }
+    finally { if (window.__collabUndoResync) window.__collabUndoResync(); }
+  }
+  function applyRemoteStateInner(state, isInitial, opts) {
+    let echoOverride = false;
+    const unsentKeys = new Set();
+    if (!isInitial && syncBase && window.__collabKeys) {
+      try {
+        const pre = JSON.parse(JSON.stringify(captureState()));
+        metaKeyDiff(syncBase, pre, window.__collabKeys.diff(syncBase, pre, window.__collabKeys.SYNC, new Set())).forEach(k => unsentKeys.add(k));
+      } catch (e) {}
+    }
+    function guardIncoming(st) {
+      if (isInitial) { pendingLocal.clear(); return st; }
+      if (!window.__collabKeys) return st;
+      {
+          const K = window.__collabKeys;
+          const now = Date.now();
+          const stale = new Set();
+          if (syncBase) {
+            try {
+              const cur = JSON.parse(JSON.stringify(captureState()));
+              K.diff(syncBase, cur, K.SYNC, new Set()).forEach(k => {
+                if (K.value(st, k, K.SYNC) === K.value(syncBase, k, K.SYNC)) { stale.add(k); unsentKeys.add(k); }
+              });
+            } catch (e) {}
+          }
+          pendingLocal.forEach((p, k) => {
+            if (k.startsWith('__')) return;
+            if (now - p.t > PENDING_LOCAL_TTL_MS) { pendingLocal.delete(k); return; }
+            const rv = K.value(st, k, K.SYNC);
+            if (rv === p.mine) return;
+            if (p.seen.has(rv)) stale.add(k);
+            else pendingLocal.delete(k);
+          });
+          if (stale.size) {
+            try {
+              const local = JSON.parse(JSON.stringify(captureState()));
+              const patched = K.apply(st, local, stale, K.SYNC);
+              st = Object.assign({}, st);
+              K.SYNC.maps.concat(K.SYNC.lists).forEach(c => { if (st[c] !== undefined || patched[c] !== undefined) st[c] = patched[c]; });
+              echoOverride = true;
+            } catch (e) {}
+          }
+        }
+      return st;
+    }
+
+    if (!isInitial && syncBase && window.__collabKeys) {
+      try {
+        const cur = JSON.parse(JSON.stringify(captureState()));
+        const keep = new Set();
+        metaKeyDiff(syncBase, cur, new Set()).forEach(k => {
+          if (k.startsWith(TOP_PREFIX) && topValue(state, k) === topValue(syncBase, k)) { keep.add(k); unsentKeys.add(k); }
+        });
+        const now = Date.now();
+        pendingLocal.forEach((p, k) => {
+          if (!k.startsWith(TOP_PREFIX)) return;
+          if (now - p.t > PENDING_LOCAL_TTL_MS) { pendingLocal.delete(k); return; }
+          const rv = topValue(state, k);
+          if (rv === p.mine) return;
+          if (p.seen.has(rv)) keep.add(k); else pendingLocal.delete(k);
+        });
+        if (keep.size) {
+          state = Object.assign({}, state);
+          keep.forEach(k => { const f = topField(k); if (Object.prototype.hasOwnProperty.call(cur, f)) state[f] = cur[f]; else delete state[f]; });
+          echoOverride = true;
+        }
+      } catch (e) {}
+    }
+    const pinLocalTab = !!(opts && opts.pinLocalTab);
     syncPaused = true;
+    let mergeResult = null;
     try {
       if (window.COLLAB_DEBUG) {
         console.log('[Collab] Applying remote state, keys:', Object.keys(state));
         console.log('[Collab] Incoming nodeStyles:', state.nodeStyles ? Object.keys(state.nodeStyles).length : 'none');
       }
 
-      const localTabIndex = getGlobal('currentTabIndex') || 0;
+      let localTabIndex = getGlobal('currentTabIndex') || 0;
       const senderTabIndex = state.currentTabIndex !== undefined ? state.currentTabIndex : 0;
 
       if (state.documentTabs) {
         const localTabs = getGlobal('documentTabs') || [];
-        const mergedTabs = state.documentTabs.map((remoteTab, i) => {
-          const localTab = localTabs[i];
-          return {
-            ...remoteTab,
-            pageState: localTab?.pageState || remoteTab.pageState || {}
-          };
-        });
-        setGlobal('documentTabs', mergedTabs);
+        const merged = mergeDocumentTabs(
+          state.documentTabs, localTabs, senderTabIndex, localTabIndex,
+          isInitial ? new Map() : tabHashMemo,
+          state.tabVersions,
+          isInitial ? {} : localTabVersions,
+          localUserId(),
+          isInitial ? null : sentTabInfo(),
+          pinLocalTab ? localTabIndex : -1
+        );
+        if (!isInitial && syncBase && window.__collabKeys && Array.isArray(state.documentTabs)) {
+          const hasUnsentOrder = Array.from(unsentKeys).some(k => k.startsWith('__tabs' + META_SEP));
+          const myId = metaTabId(localTabs[localTabIndex], localTabIndex);
+          const ri = state.documentTabs.findIndex((t, i) => metaTabId(t, i) === myId);
+          if (!hasUnsentOrder && ri >= 0) {
+            const tabs = JSON.parse(JSON.stringify(state.documentTabs));
+            unsentKeys.forEach(k => {
+              if (!k.startsWith('__tab' + META_SEP)) return;
+              const id = k.split(META_SEP)[1];
+              const ti = tabs.findIndex((t, i) => metaTabId(t, i) === id);
+              const lt = localTabs.find((t, i) => metaTabId(t, i) === id);
+              if (ti >= 0 && lt) tabs[ti] = JSON.parse(JSON.stringify(lt));
+            });
+            merged.tabs = tabs;
+            merged.hashes = tabs.map(t => tabContentHash(t));
+            merged.tookRemote = tabs.map((_, i) => i === ri);
+            merged.keptLocalTabs = tabs.map(() => false);
+            merged.keptLocal = false;
+            if (state.tabVersions) merged.versions = JSON.parse(JSON.stringify(state.tabVersions));
+            if (ri !== localTabIndex) { setGlobal('currentTabIndex', ri); localTabIndex = ri; }
+          }
+        }
+        mergeResult = merged;
+        setGlobal('documentTabs', merged.tabs);
+        tabHashMemo.clear();
+        for (let i = 0; i < merged.hashes.length; i++) tabHashMemo.set(i, merged.hashes[i]);
+        if (isInitial) {
+          tabSentHashes.clear();
+          tabSentVersions.clear();
+          tabSentAcked.clear();
+        } else if (Array.isArray(merged.ackedTabs)) {
+          for (let i = 0; i < merged.ackedTabs.length; i++) {
+            if (merged.ackedTabs[i] === true) tabSentAcked.set(i, true);
+          }
+        }
+        localTabVersions = merged.versions;
       }
 
       if (state.zoneLegend) setGlobal('ZONE_LEGEND', state.zoneLegend);
       if (state.zonePresets) setGlobal('ZONE_PRESETS', state.zonePresets);
 
-      const tabs = getGlobal('documentTabs') || [];
-      const myTab = tabs[localTabIndex];
-
-      if (localTabIndex === senderTabIndex) {
+      const keptLocalHere = !!mergeResult && Array.isArray(mergeResult.keptLocalTabs) &&
+        mergeResult.keptLocalTabs[localTabIndex] === true;
+      const fieldMerge = !!window.__collabKeys && !isInitial && !!syncBase;
+      if (localTabIndex === senderTabIndex && (!keptLocalHere || fieldMerge)) {
         if (window.COLLAB_DEBUG) console.log('[Collab] Same tab, applying directly');
+        state = guardIncoming(state);
         if (state.nodeData) setGlobal('NODE_DATA', state.nodeData);
         if (state.edgeData) setGlobal('EDGE_DATA', state.edgeData);
         if (state.rectData) setGlobal('RECT_DATA', state.rectData);
@@ -1000,16 +1778,36 @@
           setGlobal('savedStyles', state.nodeStyles);
         }
         if (state.edgeLegend) setGlobal('EDGE_LEGEND', state.edgeLegend);
-      } else if (myTab) {
-        if (myTab.nodes) setGlobal('NODE_DATA', myTab.nodes);
-        if (myTab.edges) setGlobal('EDGE_DATA', myTab.edges);
-        if (myTab.positions) setGlobal('savedPositions', myTab.positions);
-        if (myTab.sizes) setGlobal('savedSizes', myTab.sizes);
-        if (myTab.styles) setGlobal('savedStyles', myTab.styles);
-        if (myTab.legend) setGlobal('EDGE_LEGEND', myTab.legend);
-        if (myTab.rects) setGlobal('RECT_DATA', myTab.rects);
-        if (myTab.texts) setGlobal('TEXT_DATA', myTab.texts);
-        if (myTab.images) setGlobal('IMAGE_DATA', myTab.images);
+      }
+      else if (mergeResult && mergeResult.tookRemote[localTabIndex] === true) {
+        let adopted = mergeResult.tabs[localTabIndex];
+        if (adopted && fieldMerge) {
+          const TF = { nodeData: 'nodes', edgeData: 'edges', nodePositions: 'positions', nodeSizes: 'sizes', nodeStyles: 'styles',
+            edgeLegend: 'legend', rectData: 'rects', textData: 'texts', imageData: 'images' };
+          let st = {};
+          Object.keys(TF).forEach(c => { if (adopted[TF[c]] !== undefined) st[c] = adopted[TF[c]]; });
+          st = guardIncoming(st);
+          adopted = Object.assign({}, adopted);
+          Object.keys(TF).forEach(c => { if (st[c] !== undefined) adopted[TF[c]] = st[c]; });
+        }
+        if (adopted) {
+          if (adopted.nodes) setGlobal('NODE_DATA', adopted.nodes);
+          if (adopted.edges) setGlobal('EDGE_DATA', adopted.edges);
+          if (adopted.positions) setGlobal('savedPositions', adopted.positions);
+          if (adopted.sizes) setGlobal('savedSizes', adopted.sizes);
+          if (adopted.styles) setGlobal('savedStyles', adopted.styles);
+          if (adopted.legend) setGlobal('EDGE_LEGEND', adopted.legend);
+          if (adopted.rects) setGlobal('RECT_DATA', adopted.rects);
+          if (adopted.texts) setGlobal('TEXT_DATA', adopted.texts);
+          if (adopted.images) setGlobal('IMAGE_DATA', adopted.images);
+        }
+      }
+
+      let pageApplied = false;
+      if (localTabIndex !== senderTabIndex && mergeResult &&
+          mergeResult.tabs[localTabIndex] && mergeResult.tabs[localTabIndex].pageState) {
+        setGlobal('PAGE_STATE', stripLocalPageKeys(mergeResult.tabs[localTabIndex].pageState));
+        pageApplied = true;
       }
 
       if (state.iconCache) setGlobal('iconCache', state.iconCache);
@@ -1020,21 +1818,127 @@
       if (state.savedTopologyView) setGlobal('savedTopologyView', state.savedTopologyView);
       if (state.animSettings) setGlobal('ANIM_SETTINGS', state.animSettings);
       if (state.rollbackVersions) setGlobal('rollbackVersions', state.rollbackVersions);
-      if (state.customLang) setGlobal('CUSTOM_LANG', state.customLang);
+      const remoteLang = state.customLang || state.customLanguage;
+      if (remoteLang) setGlobal('CUSTOM_LANG', remoteLang);
       if (state.encryptedSections) setGlobal('encryptedSections', state.encryptedSections);
+      if (Array.isArray(state.recordings)) applyRemoteRecordings(state.recordings);
 
-      if (typeof forgeTheTopology === 'function') {
-        try { forgeTheTopology(); } catch (e) {}
+      const remotePage = state.page || state.themeState;
+      if (remotePage && localTabIndex === senderTabIndex) {
+        const sharedPage = {};
+        for (const k in remotePage) {
+          if (!LOCAL_PAGE_KEYS.has(k)) sharedPage[k] = remotePage[k];
+        }
+        setGlobal('PAGE_STATE', sharedPage);
       }
-      if (state.themeState) {
-        setGlobal('PAGE_STATE', state.themeState);
-        if (typeof wieldThePower === 'function') {
-          try { wieldThePower(); } catch (e) {}
+      if (shouldDeferRender(pinLocalTab, pointerHeld || is2dDragActive())) {
+        renderDeferred = true;
+      } else {
+        renderDeferred = false;
+        if (typeof forgeTheTopology === 'function') {
+          try { forgeTheTopology(); } catch (e) {}
+        }
+        if (pageApplied || (remotePage && localTabIndex === senderTabIndex)) {
+          if (typeof wieldThePower === 'function') {
+            try { wieldThePower(); } catch (e) {}
+          }
+          if (typeof applyMappingModeLabels === 'function') {
+            try { applyMappingModeLabels(); } catch (e) {}
+          }
         }
       }
+
+      if (!mergeResult || !mergeResult.keptLocal || fieldMerge) {
+        try {
+          const settled = captureState();
+          if (settled) {
+            lastStateHash = hashState(settled);
+            let base = JSON.parse(JSON.stringify(settled));
+            if (unsentKeys.size && syncBase && window.__collabKeys) {
+              const collKeys = new Set(), oldBase = syncBase;
+              const cl = (v) => v === undefined ? undefined : JSON.parse(JSON.stringify(v));
+              const oldTabs = Array.isArray(oldBase.documentTabs) ? oldBase.documentTabs : [];
+              unsentKeys.forEach(k => {
+                if (k.startsWith(TOP_PREFIX)) { const f = topField(k); if (Object.prototype.hasOwnProperty.call(oldBase, f)) base[f] = cl(oldBase[f]); else delete base[f]; }
+                else if (k.startsWith('__tabs' + META_SEP)) { base.documentTabs = cl(oldTabs); }
+                else if (k.startsWith('__tab' + META_SEP)) {
+                  const id = k.split(META_SEP)[1];
+                  const tabs = Array.isArray(base.documentTabs) ? base.documentTabs : (base.documentTabs = []);
+                  const bi = tabs.findIndex((t, i) => metaTabId(t, i) === id);
+                  const old = oldTabs.find((t, i) => metaTabId(t, i) === id);
+                  if (bi >= 0 && old) tabs[bi] = cl(old); else if (bi >= 0) tabs.splice(bi, 1);
+                }
+                else collKeys.add(k);
+              });
+              if (collKeys.size) base = window.__collabKeys.apply(base, oldBase, collKeys, window.__collabKeys.SYNC);
+            }
+            syncBase = base;
+            if (unsentKeys.size) lastStateHash = null;
+          }
+        } catch (e) {}
+      }
+      if (echoOverride) lastStateHash = null;
     } finally {
-      setTimeout(() => { syncPaused = false; }, 200);
+      setTimeout(() => {
+        syncPaused = false;
+        flushPendingRemoteState();
+      }, 200);
     }
+  }
+
+  function isRecordingBusy(rs) {
+    return !!(rs && (rs.isRecording || rs.isPlaying || rs.isPaused ||
+                     rs.isVideoRecording || rs.isStepRecording));
+  }
+
+  function recordingsSignature(list) {
+    if (!Array.isArray(list)) return '';
+    try {
+      return JSON.stringify(list.map(r => r
+        ? [r.id, r.name, r.duration, Array.isArray(r.frames) ? r.frames.length : 0]
+        : null));
+    } catch (e) { return String(list.length); }
+  }
+
+  function applyRemoteRecordings(list) {
+    const rs = getGlobal('RECORDING_STATE');
+    if (!rs) return;
+    if (isRecordingBusy(rs)) {
+      pendingRecordings = mergeRemoteRecordings(
+        list, pendingRecordings || rs.recordings, seenRecordingIds);
+      return;
+    }
+    if (Array.isArray(list)) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i] && list[i].id !== undefined && list[i].id !== null) {
+          seenRecordingIds.add(String(list[i].id));
+        }
+      }
+    }
+    list = mergeRemoteRecordings(list, rs.recordings, seenRecordingIds);
+    pendingRecordings = null;
+    if (recordingsSignature(rs.recordings) === recordingsSignature(list)) return;
+    rs.recordings = list;
+    if (rs.currentRecording && rs.currentRecording.id) {
+      const id = rs.currentRecording.id;
+      rs.currentRecording = list.find(r => r && r.id === id) || null;
+    }
+    const render = getGlobal('renderRecordingsList');
+    if (typeof render === 'function') {
+      const modal = document.getElementById('recordings-modal');
+      if (modal && modal.classList.contains('active')) {
+        try { render(); } catch (e) {}
+      }
+    }
+  }
+
+  function flushPendingRecordings() {
+    if (!pendingRecordings) return;
+    const rs = getGlobal('RECORDING_STATE');
+    if (!rs || isRecordingBusy(rs)) return;
+    const list = pendingRecordings;
+    pendingRecordings = null;
+    applyRemoteRecordings(list);
   }
 
   const STATE_SYNC_MIN_INTERVAL = 500;
@@ -1042,19 +1946,66 @@
   let lastStateSyncTime = 0;
   let stateSyncTimeout = null;
 
+  const CONFIGURED_MAX_MB = (_rc && typeof _rc.maxRoomSizeMB === 'number' && _rc.maxRoomSizeMB > 0) ? _rc.maxRoomSizeMB : 50;
+  const TOPOLOGY_MAX_BYTES = CONFIGURED_MAX_MB * 1024 * 1024;
+  const TOPOLOGY_WARN_BYTES = Math.floor(TOPOLOGY_MAX_BYTES * 0.9);
+
+  function checkTopologySize(bytes) {
+    const mb = (bytes / (1024 * 1024)).toFixed(1);
+    if (bytes > TOPOLOGY_MAX_BYTES) {
+      showPersistentWarning('collab-size-warning',
+        'Room is over the ' + CONFIGURED_MAX_MB + 'MB sync limit (' + mb + 'MB). Recent changes will NOT ' +
+        'save or reach others until you reduce the size. Remove large images/recordings and export a backup now.');
+    } else if (bytes > TOPOLOGY_WARN_BYTES) {
+      showPersistentWarning('collab-size-warning',
+        'Heads up: this room is at ' + mb + 'MB of the ' + CONFIGURED_MAX_MB + 'MB sync limit. Large images ' +
+        'and recordings count toward it, consider exporting a backup.');
+    } else {
+      clearPersistentWarning('collab-size-warning');
+    }
+  }
+
   function syncStateIfChanged() {
     const state = captureState();
     if (!state) return;
-    const currentHash = hashState(state);
+    const json = JSON.stringify(state);
+    const currentHash = hashString(json);
     if (currentHash === lastStateHash) return;
     lastStateHash = currentHash;
-    sendMessage('state', { state });
+    const K = window.__collabKeys;
+    let changed;
+    if (K) {
+      try {
+        const sent = JSON.parse(json);
+        if (syncBase) {
+          const now = Date.now();
+          const diff = K.diff(syncBase, sent, K.SYNC, new Set());
+          const all = metaKeyDiff(syncBase, sent, new Set(diff));
+          changed = Array.from(all);
+          all.forEach(k => {
+            const isTop = k.startsWith(TOP_PREFIX);
+            if (k.startsWith('__') && !isTop) return;
+            const val = (st) => isTop ? topValue(st, k) : K.value(st, k, K.SYNC);
+            const prior = pendingLocal.get(k);
+            const mine = val(sent);
+            const seen = prior ? prior.seen : new Set([val(syncBase)]);
+            seen.add(mine);
+            pendingLocal.set(k, { mine: mine, seen: seen, t: now });
+          });
+        }
+        syncBase = sent;
+      } catch (e) {}
+    }
+    rememberTabHashes(state);
+    checkTopologySize(json.length);
+    sendMessage('state', changed ? { state, changed } : { state });
     lastStateSyncTime = Date.now();
   }
 
   function startStatePolling() {
     setInterval(() => {
       if (syncPaused || !hasReceivedInitialState) return;
+      flushPendingRecordings();
 
       const now = Date.now();
       const timeSinceLastSync = now - lastStateSyncTime;
@@ -1161,6 +2112,12 @@
           h('div', {className: 'collab-user-info'},
             h('span', {className: 'collab-user-name'}, user.name),
             user.editingNode ? h('span', {className: 'collab-user-editing'}, 'editing') : null,
+            isMe ? null : h('span', {
+              className: 'collab-user-dim',
+              style: 'margin-left:6px;padding:0 4px;border-radius:3px;font-size:9px;' +
+                'font-weight:700;letter-spacing:.5px;vertical-align:middle;' +
+                (user.is3D ? 'background:#0ea5e9;color:#fff;' : 'background:rgba(127,127,127,.25);color:inherit;opacity:.7;')
+            }, user.is3D ? '3D' : '2D'),
             h('span', {className: 'collab-user-tab'}, tabName)
           )
         )
@@ -1376,11 +2333,13 @@
       h('button', {className: 'collab-menu-item', id: 'collab-menu-info'}, 'Room Info'),
       h('button', {className: 'collab-menu-item', id: 'collab-menu-name'}, 'Change Name'),
       h('button', {className: 'collab-menu-item', id: 'collab-menu-sound'}, chatSoundEnabled ? 'Mute Sounds' : 'Unmute Sounds'),
+      h('button', {className: 'collab-menu-item', id: 'collab-menu-viewonly', style: 'display:none'}, 'Make View Only'),
       h('div', {className: 'collab-menu-divider'}),
       h('button', {className: 'collab-menu-item', id: 'collab-menu-leave'}, 'Leave Room'),
       IS_CREATOR ? h('button', {className: 'collab-menu-item danger', id: 'collab-menu-delete'}, 'Delete Room') : null
     ]);
     document.body.appendChild(menuDropdown);
+    updateViewOnlyMenuItem();
 
     document.getElementById('collab-chat-btn').addEventListener('click', () => {
       chatOpen = !chatOpen;
@@ -1523,11 +2482,48 @@
     });
 
     document.getElementById('collab-menu-name').addEventListener('click', () => showNameModal(true));
+    fetch('/api/theme', { credentials: 'same-origin' }).then(r => r.json()).then(cfg => {
+      if (cfg && cfg.chatEnabled === false) {
+        chatDisabledByAdmin = true;
+        ['collab-chat-btn', 'collab-chat-panel'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+      }
+      if (cfg && cfg.nameChangeEnabled === false) {
+        const el = document.getElementById('collab-menu-name'); if (el) el.style.display = 'none';
+      }
+    }).catch(() => {});
     document.getElementById('collab-menu-leave').addEventListener('click', () => {
       if (confirm('Leave this room? You will need to enter your name again to rejoin.')) {
         leaveRoom();
       }
     });
+
+    const viewOnlyBtn = document.getElementById('collab-menu-viewonly');
+    if (viewOnlyBtn) {
+      viewOnlyBtn.addEventListener('click', async () => {
+        const perms = window.COLLAB_PERMISSIONS || {};
+        const next = !perms.viewOnly;
+        viewOnlyBtn.disabled = true;
+        try {
+          const res = await fetch(`/api/room/${ROOM_ID}/view-only`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN || '' },
+            body: JSON.stringify({ viewOnly: next })
+          });
+          refreshCsrf();
+          if (res.ok) {
+            window.COLLAB_PERMISSIONS = Object.assign({}, perms, { viewOnly: next });
+            updateViewOnlyMenuItem();
+            showToast(next ? 'Room is now view only' : 'Room is editable again');
+          } else {
+            showToast((await res.json()).error || 'Failed to change room lock');
+          }
+        } catch (e) {
+          showToast('Failed to change room lock');
+        } finally {
+          viewOnlyBtn.disabled = false;
+        }
+      });
+    }
 
     const deleteBtn = document.getElementById('collab-menu-delete');
     if (deleteBtn) {
@@ -1768,6 +2764,10 @@
       '#collab-chat-panel',
       '#collab-reconnect-banner',
       '#collab-toast-stack',
+      '#collab-size-warning',
+      '#collab-forbidden-warning',
+      '#enter-3d-btn',
+      '#threed-overlay',
       '.collab-node-indicator',
       '.collab-selection-ring',
       '.collab-remote-cursor',
@@ -1892,7 +2892,7 @@
           data.ping.responseTime = result.rtt || null;
           data.ping.probeResults = result.results || [];
         } else {
-          data.ping.status = 'offline';
+          data.ping.status = resp.status === 401 ? 'unknown' : 'offline';
           data.ping.responseTime = null;
         }
       } catch(e) {
@@ -3810,6 +4810,7 @@
     overridePingFunctions();
     injectProbeUI();
     injectDiscoveryUI();
+    setupInteractionGuard();
     connect();
     startStatePolling();
     setTimeout(trackSelection, 1000);

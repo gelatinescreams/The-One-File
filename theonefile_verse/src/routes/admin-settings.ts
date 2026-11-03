@@ -1,9 +1,12 @@
 import * as db from "../database";
-import { getSettings, updateSettings, saveSettings, validateAdminPath, ENV_ADMIN_PASSWORD, APP_VERSION } from "../config";
-import { getClientIP, apiError, validateAdminUser, validateAdminOrApiKey } from "../security";
+import { getSettings, updateSettings, saveSettings, validateAdminPath, ENV_ADMIN_PASSWORD, APP_VERSION, MAX_ROOM_SIZE_MB_CEILING, normalizeOrigin, ENV_TRUSTED_PROXY_COUNT, ENV_TRUSTED_PROXIES } from "../config";
+import { getClientIP, apiError, validateAdminUser, validateAdminOrApiKey, validateRequestCsrf, csrfReject, readJsonLimited, tooLargeResponse, redactForAudit } from "../security";
+import { runAssetSweepNow } from "../assets";
 import { hashPassword, theOneFileHtml, currentFileVersion, extractThemePresets, computeSha256Hash, validateTheOneFileHtml, fetchLatestFromGitHub, getExpectedTheOneFileHash, setExpectedTheOneFileHash, setTheOneFileHtml, getTheOneFilePath, restartUpdateTimer, clearUpdateTimer, isValidWebhookUrl, restartBackupTimer, extractVersionFromHtml, isNewerVersion } from "../rooms";
 
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/gelatinescreams/The-One-File/main/theonefile-networkening.html";
+
+const UPLOAD_HTML_BODY_CAP = 12 * 1024 * 1024;
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (path === "/api/admin/settings" && req.method === "GET") {
@@ -20,6 +23,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       ...safeSettings,
       instancePasswordSet: !!instancePasswordHash,
       envAdminPasswordSet: !!ENV_ADMIN_PASSWORD,
+      envTrustedProxyCountSet: ENV_TRUSTED_PROXY_COUNT !== null,
+      envTrustedProxiesSet: ENV_TRUSTED_PROXIES !== null,
       currentFileSize: theOneFileHtml.length,
       currentFileEdition: fileValidation.valid ? fileValidation.edition : "invalid",
       currentFileHash,
@@ -39,8 +44,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!adminUser && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
+    if (adminUser && !validateRequestCsrf(req)) return csrfReject(corsHeaders);
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
 
       if (body.instancePassword !== undefined && body.instancePassword !== "" && body.instancePassword.length < 10) {
         return Response.json({ error: "Password must be at least 10 characters" }, { status: 400, headers: corsHeaders });
@@ -60,6 +66,31 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         }
       }
 
+      let publicUrlOriginWarning: string | null = null;
+      if (body.publicUrl !== undefined) {
+        const raw = typeof body.publicUrl === "string" ? body.publicUrl.trim() : "";
+        if (raw === "") {
+        } else {
+          const origin = normalizeOrigin(raw);
+          if (!origin) {
+            return Response.json({
+              error: "Invalid public URL: must be an absolute http(s) origin, e.g. https://verse.example.com (no path, query, fragment or user:password)"
+            }, { status: 400, headers: corsHeaders });
+          }
+          if (origin.toLowerCase() !== raw.replace(/\/+$/, "").toLowerCase()) {
+            return Response.json({
+              error: `Invalid public URL: use the bare origin (${origin}), no path, query, fragment or credentials`
+            }, { status: 400, headers: corsHeaders });
+          }
+          let reqOrigin = "";
+          try { reqOrigin = new URL(req.url).origin; } catch { reqOrigin = ""; }
+          const hdrOrigin = req.headers.get("origin") || "";
+          if (reqOrigin && origin !== reqOrigin && (!hdrOrigin || origin !== hdrOrigin)) {
+            publicUrlOriginWarning = `Public URL is set to ${origin}, which differs from the origin you are using right now (${hdrOrigin || reqOrigin}). Email links and CSRF origin checks will use ${origin}.`;
+          }
+        }
+      }
+
       const settings = { ...getSettings() };
 
       if (typeof body.instancePasswordEnabled === "boolean") {
@@ -68,8 +99,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (body.instancePassword !== undefined) {
         if (body.instancePassword === "") {
           settings.instancePasswordHash = null;
-        } else if (body.instancePassword.length >= 10) {
+        } else if (typeof body.instancePassword === "string" && body.instancePassword.length >= 10) {
           settings.instancePasswordHash = await hashPassword(body.instancePassword);
+        } else {
+          return Response.json({ error: "Instance password must be at least 10 characters" }, { status: 400, headers: corsHeaders });
         }
       }
       if (typeof body.updateIntervalHours === "number") {
@@ -83,6 +116,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
       if (typeof body.maxRoomsPerInstance === "number") {
         settings.maxRoomsPerInstance = Math.max(0, body.maxRoomsPerInstance);
+      }
+      if (typeof body.maxRoomSizeMB === "number") {
+        settings.maxRoomSizeMB = Math.max(1, Math.min(MAX_ROOM_SIZE_MB_CEILING, Math.round(body.maxRoomSizeMB)));
       }
       if (body.defaultDestructMode && ["time", "empty", "never"].includes(body.defaultDestructMode)) {
         settings.defaultDestructMode = body.defaultDestructMode;
@@ -105,6 +141,18 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.rateLimitWindow === "number") {
         settings.rateLimitWindow = Math.max(10, Math.min(3600, body.rateLimitWindow));
       }
+      if (body.trustedProxyCount !== undefined) {
+        if (ENV_TRUSTED_PROXY_COUNT !== null) return Response.json({ error: "Trusted proxy count is set by the TRUSTED_PROXY_COUNT environment variable" }, { status: 400, headers: corsHeaders });
+        if (!Number.isInteger(body.trustedProxyCount) || body.trustedProxyCount < 0 || body.trustedProxyCount > 10) return Response.json({ error: "Trusted proxy count must be a whole number from 0 to 10" }, { status: 400, headers: corsHeaders });
+        settings.trustedProxyCount = body.trustedProxyCount;
+      }
+      if (body.trustedProxies !== undefined) {
+        if (ENV_TRUSTED_PROXIES !== null) return Response.json({ error: "Trusted proxies are set by the TRUSTED_PROXIES environment variable" }, { status: 400, headers: corsHeaders });
+        const list = Array.isArray(body.trustedProxies) ? body.trustedProxies.map((x: unknown) => typeof x === "string" ? x.trim() : "").filter(Boolean) : null;
+        const ipRe = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$|^[0-9a-fA-F:]{2,39}$/;
+        if (!list || list.length > 20 || list.some((ip: string) => !ipRe.test(ip))) return Response.json({ error: "Trusted proxies must be up to 20 IP addresses" }, { status: 400, headers: corsHeaders });
+        settings.trustedProxies = list;
+      }
       if (typeof body.rateLimitMaxAttempts === "number") {
         settings.rateLimitMaxAttempts = Math.max(1, Math.min(100, body.rateLimitMaxAttempts));
       }
@@ -120,6 +168,19 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.probeEnabled === "boolean") {
         settings.probeEnabled = body.probeEnabled;
       }
+      if (typeof body.enable3d === "boolean") {
+        settings.enable3d = body.enable3d;
+      }
+      if (typeof body.maxAssetsPerRoomMB === "number" && Number.isFinite(body.maxAssetsPerRoomMB)) {
+        settings.maxAssetsPerRoomMB = Math.max(0, Math.min(10000, Math.round(body.maxAssetsPerRoomMB)));
+      }
+      if (typeof body.maxAssetsTotalGB === "number" && Number.isFinite(body.maxAssetsTotalGB)) {
+        settings.maxAssetsTotalGB = Math.max(0, Math.min(1000, Math.round(body.maxAssetsTotalGB)));
+      }
+      if (body.publicUrl !== undefined) {
+        const raw = typeof body.publicUrl === "string" ? body.publicUrl.trim() : "";
+        settings.publicUrl = raw === "" ? "" : (normalizeOrigin(raw) || "");
+      }
       if (typeof body.discoveryEnabled === "boolean") {
         settings.discoveryEnabled = body.discoveryEnabled;
       }
@@ -129,8 +190,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.discoveryAllowPublicRanges === "boolean") {
         settings.discoveryAllowPublicRanges = body.discoveryAllowPublicRanges;
       }
-      if (typeof body.discoveryMaxPrefix === "number") {
-        settings.discoveryMaxPrefix = Math.max(20, Math.min(32, body.discoveryMaxPrefix));
+      if (body.discoveryMaxPrefix !== undefined) {
+        if (!Number.isInteger(body.discoveryMaxPrefix) || body.discoveryMaxPrefix < 20 || body.discoveryMaxPrefix > 32) {
+          return Response.json({ error: "Discovery max prefix must be a whole number from 20 to 32" }, { status: 400, headers: corsHeaders });
+        }
+        settings.discoveryMaxPrefix = body.discoveryMaxPrefix;
       }
       if (typeof body.webhookEnabled === "boolean") {
         settings.webhookEnabled = body.webhookEnabled;
@@ -173,6 +237,12 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         }
       }
 
+      if (settings.instancePasswordEnabled && !settings.instancePasswordHash && !ENV_ADMIN_PASSWORD) {
+        return Response.json({ error: "Set an instance password before turning on the instance lock" }, { status: 400, headers: corsHeaders });
+      }
+      if (settings.webhookEnabled && !settings.webhookUrl) {
+        return Response.json({ error: "Enter a webhook URL before turning webhooks on" }, { status: 400, headers: corsHeaders });
+      }
       updateSettings(settings);
       saveSettings(settings);
 
@@ -184,9 +254,24 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
 
       const actor = adminUser ? adminUser.id : `apikey:${apiKey!.name}`;
-      db.addAuditLog({ timestamp: new Date().toISOString(), action: "settings_changed", actor, actorIp: getClientIP(req), details: body });
-      return Response.json({ success: true }, { headers: corsHeaders });
+      db.addAuditLog({ timestamp: new Date().toISOString(), action: "settings_changed", actor, actorIp: getClientIP(req), details: redactForAudit(body) });
+      return Response.json({
+        success: true,
+        ...(publicUrlOriginWarning ? { warning: publicUrlOriginWarning } : {})
+      }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
+  }
+
+  if (path === "/api/admin/assets/sweep" && req.method === "POST") {
+    const { user: adminUser, apiKey } = await validateAdminOrApiKey(req, "write");
+    if (!adminUser && !apiKey) {
+      return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    }
+    if (adminUser && !validateRequestCsrf(req)) return csrfReject(corsHeaders);
+    const result = runAssetSweepNow();
+    const actor = adminUser ? adminUser.id : `apikey:${apiKey!.name}`;
+    db.addAuditLog({ timestamp: new Date().toISOString(), action: "asset_sweep", actor, actorIp: getClientIP(req), details: result });
+    return Response.json({ success: true, ...result }, { headers: corsHeaders });
   }
 
   if (path === "/api/admin/update" && req.method === "POST") {
@@ -194,6 +279,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!adminUser && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
+    if (adminUser && !validateRequestCsrf(req)) return csrfReject(corsHeaders);
     const settings = getSettings();
     if (settings.skipUpdates) {
       return Response.json({ error: "Updates disabled" }, { status: 400, headers: corsHeaders });
@@ -234,6 +320,14 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!adminUser && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
+    if (adminUser && !validateRequestCsrf(req)) return csrfReject(corsHeaders);
+    {
+      const declared = parseInt(req.headers.get("content-length") || "", 10);
+      if (!Number.isFinite(declared)) {
+        return Response.json({ error: "Content-Length required for uploads" }, { status: 411, headers: corsHeaders });
+      }
+      if (declared > UPLOAD_HTML_BODY_CAP) return tooLargeResponse(corsHeaders);
+    }
     try {
       const formData = await req.formData();
       const file = formData.get("file") as File | null;
@@ -272,8 +366,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!adminUser && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
+    if (adminUser && !validateRequestCsrf(req)) return csrfReject(corsHeaders);
     try {
-      const body = await req.json();
+      const body = await readJsonLimited(req, 64 * 1024);
       const settings = getSettings();
       if (body.mode === "github") {
         settings.skipUpdates = false;

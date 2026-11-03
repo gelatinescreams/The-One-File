@@ -61,6 +61,14 @@ services:
           cpus: "2"
           memory: 512M
           pids: 64
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
     logging:
       driver: json-file
       options:
