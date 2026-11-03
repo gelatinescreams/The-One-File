@@ -1,7 +1,8 @@
 import * as db from "../database";
-import { isValidUUID, getSettings } from "../config";
+import { isValidUUID, getSettings, getMaxRoomSizeBytes } from "../config";
 import { getClientIP, validateAdminOrApiKey, readJsonLimited, apiError } from "../security";
-import { roomMeta, deleteRoomData, saveRoom, loadRoom, scheduleDestruction, setRoomViewOnly, isRoomViewOnly, hashPassword, clearTopologyCache, type Room } from "../rooms";
+import { roomMeta, deleteRoomData, saveRoom, loadRoom, scheduleDestruction, setRoomViewOnly, isRoomViewOnly, hashPassword, clearTopologyCache, validateTopology, type Room } from "../rooms";
+import { pushRoomReset } from "../websocket";
 
 const ROOM_BODY_CAP = 16 * 1024;
 const MAX_DESTRUCT_MS = 30 * 24 * 60 * 60 * 1000;
@@ -74,6 +75,30 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       const actor = user ? user.id : `apikey:${apiKey!.name}`;
       db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_view_only_changed", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { viewOnly: body.viewOnly } });
       return Response.json({ success: true, viewOnly: isRoomViewOnly(id) }, { headers: corsHeaders });
+    } catch (e: any) { return apiError(e, corsHeaders); }
+  }
+
+  const topo = path.match(/^\/api\/admin\/rooms\/([\w-]+)\/topology$/);
+  if (topo && req.method === "PUT") {
+    const { user, apiKey } = await validateAdminOrApiKey(req, "write");
+    if (!user && !apiKey) return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    const id = topo[1];
+    const room = isValidUUID(id) ? loadRoom(id) : null;
+    if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
+    try {
+      const body = await readJsonLimited(req, getMaxRoomSizeBytes() + 1024 * 1024);
+      const v = validateTopology(body.topology);
+      if (!v.valid || !v.sanitized) return Response.json({ error: v.error || "Invalid topology" }, { status: 400, headers: corsHeaders });
+      clearTopologyCache(id);
+      room.topology = v.sanitized;
+      room.lastActivity = new Date().toISOString();
+      saveRoom(room);
+      if (body.resetScene3d === true) db.setScene3d(id, JSON.stringify({ version: 2, rev: 0, mpu: 0, wireMode: 0, tabs: {} }));
+      if (body.viewOnly === false || body.viewOnly === true) setRoomViewOnly(id, body.viewOnly);
+      const pushed = pushRoomReset(id, v.sanitized);
+      const actor = user ? user.id : `apikey:${apiKey!.name}`;
+      db.addAuditLog({ timestamp: room.lastActivity, action: "room_topology_replaced", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { resetScene3d: body.resetScene3d === true, pushed } });
+      return Response.json({ success: true, pushed }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 

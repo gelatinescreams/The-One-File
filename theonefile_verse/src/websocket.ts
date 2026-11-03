@@ -151,6 +151,18 @@ function releaseFanoutSubscription(roomId: string): void {
   if (entry.unsub) void entry.unsub().catch(() => {});
 }
 
+export function pushRoomReset(roomId: string, topology: any): number {
+  const connections = roomConnections.get(roomId);
+  if (!connections || connections.size === 0) return 0;
+  const payload = JSON.stringify({ type: 'initial-state', state: sanitizeTopologyStrings(topology) });
+  let sent = 0;
+  for (const client of connections) {
+    if (client.readyState !== 1 || !(client.data as WsData | undefined)?.joined) continue;
+    try { client.send(payload); sent++; } catch {}
+  }
+  return sent;
+}
+
 export function broadcastRoomPermissions(roomId: string): number {
   const connections = roomConnections.get(roomId);
   if (!connections || connections.size === 0) return 0;

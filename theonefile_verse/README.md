@@ -122,13 +122,13 @@ the proxy's address) and the origin used for password reset / magic link / email
 URLs.
 
 ### TheOneFile_Verse Features
-* **Current Version 2.0.2**
-  * See [changelog](changelog.md) for the full 2.0.2 and 2.0.1 list of changes
+* **Current Version 2.1.0**
+  * See [changelog](changelog.md) for the full 2.1.0 list of changes
 
 #### Core Collaboration
 * Realtime sync via WebSocket
-* Field level merging on the server, so two people editing at once never overwrite each other and a stale copy can never undo someone else's work **NEW 2.0.2**
-* Undo and redo only revert your own changes **NEW 2.0.2**
+* Field level merging on the server, so two people editing at once never overwrite each other and a stale copy can never undo someone else's work **NEW 2.1.0**
+* Undo and redo only revert your own changes **NEW 2.1.0**
 * Realtime chat per room with message persistence
 * Typing indicators, message replies, @mentions
 * Emoji picker and sound notifications
@@ -148,7 +148,7 @@ URLs.
 * **Per document tab 3D scenes** with optimistic concurrency, so two people with 3D open no longer overwrite each other
 * Uploadable images and `.glb` models via a content addressed asset store, with per room and instance wide quotas
 * **Portable `3d:<code>`**, the exported One File carries an inert token, and importing it back into a Verse re materialises the 3D world
-* **WebXR VR** tested on Quest 3: controller pointing and select, place items, squeeze to teleport, thumbstick movement **NEW 2.0.2**
+* **WebXR VR** tested on Quest 3: controller pointing and select, place items, squeeze to teleport, thumbstick movement **NEW 2.1.0**
 * Turn the whole feature off instance wide with the `enable3d` admin toggle
 
 #### Full User Account System
@@ -159,7 +159,7 @@ URLs.
 * Magic link login (passwordless authentication)
 * Session management with device tracking
 * Multiple active sessions per user
-* Account settings: edit your profile, change your password, see your active sessions and sign out one or all of them **NEW 2.0.2**
+* Account settings: edit your profile, change your password, see your active sessions and sign out one or all of them **NEW 2.1.0**
 * Account lockout protection
 
 #### Single Sign On (SSO/OIDC)
@@ -257,14 +257,14 @@ URLs.
 * WebSocket connection rate limiting per IP
 * IP based rate limiting
 * Email rate limiting
-* Configurable trusted proxy support with environment variable overrides, now also in the admin panel **Enhanced 2.0.2**
+* Configurable trusted proxy support with environment variable overrides, now also in the admin panel **Enhanced 2.1.0**
 * Custom admin path (security through obscurity but not everyone likes the default)
 * Constant time token comparison with length padding
 * SSRF protection on webhook URLs
 * Automatic admin token cleanup
 * Full HTML entity escaping on all user generated content
-* Shared map text is sanitized and then checked with a real HTML parser before anyone sees it **NEW 2.0.2**
-* Network probes require a signed in user **NEW 2.0.2**
+* Shared map text is sanitized and then checked with a real HTML parser before anyone sees it **NEW 2.1.0**
+* Network probes require a signed in user **NEW 2.1.0**
 * CRLF injection prevention in email headers
 * STARTTLS downgrade protection
 * File upload size limits
@@ -280,7 +280,7 @@ URLs.
 
 #### Authentication Modes
 * Open registration
-* Approval required (new accounts wait for an admin to approve them) **NEW 2.0.2**
+* Approval required (new accounts wait for an admin to approve them) **NEW 2.1.0**
 * Email verification required
 * OIDC only (SSO required, admins can still use a password)
 * Invite only, backed by a real invite mechanism: `GET`/`POST /api/admin/invites` and `DELETE /api/admin/invites/:id`. Codes are 192 bit, stored hashed, returned in the clear exactly once and consumed atomically. Manage them on the Authentication tab
@@ -289,7 +289,7 @@ URLs.
 
 #### Full Api System [api.md](api.md)
 * REST API with authentication
-* API key management with read, write (rooms, backups, asset sweep) and admin permissions **Enhanced 2.0.2**
+* API key management with read, write (rooms, backups, asset sweep) and admin permissions **Enhanced 2.1.0**
 * Webhook notifications for events
 * Invite management endpoints, a manual asset sweep, and 3D scene endpoints
 

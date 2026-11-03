@@ -386,6 +386,13 @@ PUT /api/admin/rooms/:id/password
 { "password": "newpassword" }   or   { "password": null }
 ```
 
+**Replace Room Content** (`write`)
+```
+PUT /api/admin/rooms/:id/topology
+{ "topology": { ...a One File JSON export... }, "resetScene3d": true, "viewOnly": false }
+```
+Replaces the room's map, optionally clears its 3D scene and view only lock, and pushes the new content to everyone connected. Useful for resetting a public demo room.
+
 **Delete Room** (`write`)
 ```
 DELETE /api/admin/rooms/:id

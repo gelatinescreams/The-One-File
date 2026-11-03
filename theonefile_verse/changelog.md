@@ -42,6 +42,7 @@
   * Added a Trusted Proxies control (hop count or proxy IPs). It is locked when set by environment variables.
   * Chat, cursor sharing and name change switches are now enforced by the server and hidden in rooms when turned off.
   * Public room creation and the default self destruct settings now apply when rooms are created.
+  * New replace room content endpoint for API keys, handy for resetting a public demo room every night. See [api.md](api.md).
 
 * **Fixes**
   * Fixed an error where API keys write permission were not applied correctly.

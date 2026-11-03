@@ -822,7 +822,7 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           <div class="setting-control"><div class="toggle" id="toggle-discovery-admin" data-action="toggleSetting" data-setting="discoveryAdminOnly"></div></div>
         </div>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning public (not private) (public) IP ranges</div></div>
+          <div class="setting-info"><div class="setting-label">Allow Public Ranges</div><div class="setting-desc">Allow scanning public IP ranges, not just private ones</div></div>
           <div class="setting-control"><div class="toggle" id="toggle-discovery-public" data-action="toggleSetting" data-setting="discoveryAllowPublicRanges"></div></div>
         </div>
         <div class="setting-row">
