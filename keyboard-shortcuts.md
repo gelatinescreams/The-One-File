@@ -5,10 +5,28 @@
 |----------|--------|
 | `Arrow Keys` | Move selected node(s) 1 pixel in arrow direction |
 | `Shift + Arrow Keys` | Move selected node(s) 10 pixels for faster positioning |
-| `Tab` | Cycle to next node in current view |
-| `Shift + Tab` | Cycle to previous node in current view |
+| `Tab` | Cycle to next node in current view (only when nothing else on the page has focus) |
+| `Shift + Tab` | Cycle to previous node in current view (only when nothing else on the page has focus) |
 | `F` | Focus camera on selected node(s) with auto zoom |
 | `Shift + Click/Drag` | Multiple Select (marquee selection) |
+
+## Keyboard Navigation
+| Shortcut | Action |
+|----------|--------|
+| `Tab` | Move focus into the canvas, then to the next item (nodes, zones, text labels, images and lines) in reading order |
+| `Shift + Tab` | Move focus to the previous canvas item |
+| `Home` / `End` | Jump to the first or last canvas item |
+| `Enter` / `Space` | Open the details panel for the focused item and move focus into it |
+| `Escape` | Close the details panel and return focus to the item that opened it |
+| `Alt + Arrow Keys` | Move the focused item by one grid step (undo with `Ctrl/Cmd + Z`, locked items stay put) |
+| `Delete` | Delete the focused item after confirmation, focus moves to the next item |
+| `Up` / `Down` | Move through the hidden item list used by screen readers |
+| `Home` / `End` | Jump to the first or last entry in the hidden item list |
+| `Enter` | Open details for the item chosen in the hidden item list |
+| `Tab` / `Shift + Tab` | Inside an open dialog, focus stays within the dialog until it closes |
+| `Escape` | Close the open dialog and return focus to where it was |
+
+Moving and deleting with the keyboard are disabled in view only mode.
 
 ## Node Management
 | Shortcut | Action |

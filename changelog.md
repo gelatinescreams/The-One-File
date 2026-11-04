@@ -1,5 +1,53 @@
 #### CHANGE LOG
 
+### Version 4.2.0 /\ 11-3-26 Accessibility, completion and squashing a pile of bugs
+* **Security**
+  * Notes are now cleaned before they show. Shared or imported files can no bad scripts
+  * Fixed an issue where global note names could run code from the View, Edit and Delete buttons
+  * Fixed an issue where a node name containing a closing script tag could break out of the saved file
+  * Fixed an issue where encrypted saves still kept the selected node details (name, IP, MAC, role) in plain text. Encrypted saves now get a generic title and filename too
+  * Fixed an issue where rollback history and autosave kept a plain text copy in your browser while encryption was on
+  * Fixed encrypted global notes never opening (always said wrong password)
+  * Stronger encryption: new files use 600,000 key iterations. The file now remembers its own settings so all of your older encrypted files still open
+  * Imported files can no longer tamper with built in objects
+
+* **Accessibility** The One File now works with a keyboard and screen readers (beta)
+  * Every button, toggle, dialog and form field has a been proper name
+  * Tab into the canvas and move between nodes, racks, connections, text labels, zones and images
+  * Enter opens details, Escape takes you back, Alt + Arrow moves an item one grid step (undo works), Delete removes
+  * Hidden list that mirrors your whole map for screen readers, plus spoken updates when things are added, moved, deleted or saved
+  * Better contrast on buttons, accent text and help text across all 13 themes.
+  * See [Keyboard Shortcuts](keyboard-shortcuts.md) for the full list
+
+* **Mapping tab types and their functions**
+  * Mind map, sports, smart home and floor plan modes no longer show network words like IP, ports, port map, racks or 42U
+  * Network only fields are hidden outside network mode. Layers, categories and placeholders now match the mode you are in
+  * Rack delete button now uses the right name (Delete Folder, not Delete Player)
+
+* **Bug Fixes**
+* **Core Edition & Networkening**
+  * Node Role can now be edited
+  * Fixed the grid toggle turning itself back on when changing canvas colors
+  * Added a heads up when you try to close with unsaved changes
+  * Rollback history now keeps the latest 10 (previous 50 failed in real world space of a single html file) and cleans up after itself when browser storage gets full
+  * Welcome screen "Top Bar Background" is now correctly labeled Page Background, and the welcome theme now matches settings
+  * Added missing language keys
+* **Core Edition**
+  * Images now stay on their own tab
+  * Edge animation style and text opacity controls now actually do something
+  * Rack contents count shows again
+* **Networkening Edition**
+  * Icons are now checked and cleaned before they hit the canvas
+  * Opening a file with auto ping on now asks before it starts pinging. Custom ping URLs are limited to http and https
+  * Fixed HTML import dropping images
+  * Added rack slot collision checks and drag to create from Core
+  * Fixed the mobile Import and Export help buttons being swapped
+
+* **TheOneFile_Verse**
+  * Rooms skip the unsaved changes warning (rooms save on their own) and never ask joiners about live status checks
+  * Remote edits no longer steal keyboard focus
+  * Synced icons are cleaned again after every sync
+
 ### Version 4.1.5 /\ 3-26-26 Enhanced 'Create', UI polish and squashing a sneaky bug and TheOneFile_Verse 1.8.6
 * **Enhanced Create**
   * Added more options to the Create New Node & Rack modals.

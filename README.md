@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/badge/TheOneFile-4.1.5-blue" alt="TheOneFile 4.1.5">
+  <img src="https://img.shields.io/badge/TheOneFile-4.2.0-blue" alt="TheOneFile 4.2.0">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
   <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.0-blue" alt="TheOneFile_Verse Docker Version 2.1.0">
   </a>
@@ -10,26 +10,24 @@
 
 There can only be One File. Map networks, smart homes, sports plays, mind maps, infrastructure or anything with nodes and connections. Animated zones, replay video export, enterprise encryption, full styling. Works offline, opens anywhere, saves into itself. 
 
-*The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/).* Still one file. 
+*The Networkening edition adds live status monitoring and icons from [selfh.st/icons](https://selfh.st/icons/), [MDI](https://pictogrammers.com/library/mdi/), and [Simple Icons](https://simpleicons.org/).* Still one file.
 
-*TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to create, edit and share together!
+*TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to create, edit and share together!*
 
 ![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
+
+### Version 4.2.0 /\ 11-3-26 : Accessibility, completion and squashing a pile of bugs
+* **Accessibility**
+  * Full keyboard support on the canvas and screen reader support across the whole file
+
+* **Bug & Security Fixes**
+* **Core Edition & Networkening**
+  * Tons fixes. Thank you to everyone testing!
+  * See [Changelog](changelog.md) for full update details
 
 ### TheOneFile_Verse /\ 2.1.0 11-3-26 : 2d,3d,4d(VR) and much more
 * **Thank you to everyone who has/will use. Thank you to everyone who has helped in every way**
   * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 2.1.0 list
-
-### Version 4.1.5 /\ 3-26-26 : Enhanced 'Create', UI polish and squashing a sneaky bug and TheOneFile_Verse 1.8.6
-* **Enhanced Create**
-  * Added more options to the Create New Node & Rack modals.
-  * Added icon preview box to the Create New Node & Rack modals.
-
-* **Bug Fixes**
-* **Core Edition & Networkening**
-  * Fixed Assigned Rack dropdown snapping back to "None" after changing in the edit Node and Rack sidebar/footer
-  * See [Changelog](changelog.md) for full update details
-
 
 <img width="1525" height="770" alt="Screenshot 2026-03-11 094906" src="https://github.com/user-attachments/assets/43196f4e-f6c4-4d9d-aae0-d311b2bf94ec" />
 <img width="1521" height="770" alt="Screenshot 2026-03-11 094937" src="https://github.com/user-attachments/assets/c47e1cea-dd33-47ac-ac62-cef7fe92e3a3" />  
@@ -67,6 +65,7 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 | **Draw rectangles/boxes** | ✓ | ✓ | ✓ |
 | **Free draw custom lines** | ✓ | ✓ | ✓ |
 | **Keyboard shortcuts** | ✓ | ✓ | ✓ |
+| **Keyboard and screen reader accessible** | ✓ | ✓ | ✓ |
 | Encryption, export | ✓ | ✓ | ✓ |
 | Bulk operations | ✓ | ✓ | ✓ |
 | Multi select | ✓ | ✓ | ✓ |
@@ -122,6 +121,7 @@ Open `http://localhost:10101`
 * Draw anywhere: add text labels, boxes, and custom lines to annotate your topology
 * Full keyboard shortcut support for power users
 * Advanced keyboard navigation with arrow keys, tab cycling, and focus controls
+* Screen reader support with a spoken map of every node and connection
 * Node locking to prevent accidental changes to positioned elements
 * Node grouping to move related components together
 * Touch optimized mobile interface with gesture support
