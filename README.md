@@ -139,8 +139,8 @@ Open `http://localhost:10101`
 
 ### Core + Networkening Editions Download:
 
-* Core [the-one-file.html](https://github.com/user-attachments/files/24578723/the-one-file.html)
-* Networkening [theonefile-networkening.html](https://github.com/user-attachments/files/24578724/theonefile-networkening.html)
+* Core [the-one-file.html](https://github.com/gelatinescreams/The-One-File/releases/latest/download/the-one-file.html)
+* Networkening [theonefile-networkening.html](https://github.com/gelatinescreams/The-One-File/releases/latest/download/theonefile-networkening.html)
 
 ### Features
 * Zero coding knowledge required    
