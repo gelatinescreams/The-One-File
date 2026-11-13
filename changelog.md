@@ -1,5 +1,66 @@
 #### CHANGE LOG
 
+### Version 4.2.1 /\ 11-12-26 Custom racks sizes, a few additions and bug fixes
+* **Custom Rack Sizes** ([#53](https://github.com/gelatinescreams/The-One-File/issues/53)) Thanks @Otterface 
+  * Racks can now be any size from 1U to 100U. Pick "Custom size" when adding a rack or in the rack's side panel
+  * Great for 20U racks, 8U 10 inch mini racks, 3D printed and LACK racks
+  * Connections to devices inside a rack are fixed. On the map they come out of the rack, and rack view shows a labelled stub for every connection leaving the rack
+  * Open Rack View button in the rack's side panel, and Enter on a selected rack opens it
+  * U numbering top down or bottom up, per rack
+  * Front and rear devices with a side by side front and rear view, plus full depth devices that use both sides
+  * 0U side rail devices like PDUs that don't use up any rack units
+  * Export a rack elevation as CSV or print it
+  * Rack Unit and U Height now check what you type, no more devices stacked on each other or hanging off the end
+  * Adding a device to a rack drops it in the lowest free slot and keeps its connections
+
+* **Security**
+  * Fixed a port map and recordings bug
+  * Fixed a language issue where imported files could sneak in a custom language that runs scripts
+  * Encrypted saves no longer leave the Port Map readable (Core)
+  * Images and backgrounds from other websites in a shared file no longer load on their own. Click Load remote image if you trust it
+  * Recordings and tab names from imported files are checked before they are used
+
+* **Networkening Edition**
+  * Status summary showing how many are up and down, a down count in the browser tab, plus optional sound and notifications
+  * Moved Web Icon Tag to a small "+ Add Icon Tag" button right next to "+ Add Tag"
+  * Status checks no longer pile up, pause when the tab is hidden, take a port per node, handle IPv6, and say "blocked by the browser" instead of offline when an https page can't reach an http device
+  * Added missing translation labels
+
+* **Bug Fixes**
+  * Fixed invisible ghost devices on rack delete.
+  * IP, Role and MAC can be cleared again
+  * View only mode no longer errors when you click a connection, and hides + Rack
+  * Ctrl+F, Ctrl+L and Ctrl+G no longer get eaten by shortcuts
+  * Rack view back button shows the right name in every mode
+  * Tabs window shows each tab's counts in that tab's own words
+  * Full CSV restore brings images back
+  * The header wraps on smaller screens instead of covering the draw toolbar
+  * Recordings list and bulk toolbar fit on smaller screens
+  * Much smoother dragging on big maps
+  * Files now open at their saved zoom and pan, and every tab remembers its own view
+  * Zone legend names are kept when you save, open or import
+  * Markdown export and import now keep everything: drawn lines, rack face and depth, coverage zones, images and legends
+  * Sports X and O markers take your colours
+  * Hosted On, duplicate IP marks and other network only settings stay hidden outside network mode
+  * Encryption explains itself when the file is opened from a plain http address instead of throwing an error
+  * Enhanced connection labels
+  * Snap to grid (hold Alt to drag freely)
+  * Custom canvas size for big maps
+  * Fixed a bug where adding a tag or an icon tag could not be undone  
+  * Tidy layout button lines everything up by its connections, one undo puts it all back
+  * Duplicate and reorder tabs
+  * Rename layers
+  * Copy and paste a whole selection with its connections, even into another tab. Clone keeps connections too
+  * Bulk Lock, Group and Edit (layer, tag, colour, rack) from the selection toolbar
+  * Duplicate IP warnings
+  * PNG export at 2x and 3x, the whole map, and transparent backgrounds
+  * CSV export and import keep ids and connections, so a hand edited spreadsheet comes back together. nmap XML import too
+  * Hosted On is now in Core as well, with a dashed line from a VM to its host
+  * Reduce Motion setting that follows your system by default
+  * Brand new demos: rebuilt Homelab and Corporate, plus Smart Home, Floor Plan, Mind Map and a Sports playbook with plays that replay. See [Demos](README.md#demos)
+  * Press ? for a keyboard shortcut sheet. Ctrl+S saves, Ctrl+F searches, Backspace deletes. See [Keyboard Shortcuts](keyboard-shortcuts.md)
+  * Core and Networkening brought in line on errant code
+  
 ### Version 4.2.0 /\ 11-3-26 Accessibility, completion and squashing a pile of bugs
 * **Security**
   * Notes are now cleaned before they show. Shared or imported files can no bad scripts

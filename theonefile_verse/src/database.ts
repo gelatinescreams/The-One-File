@@ -1093,6 +1093,21 @@ export function countRooms(): number {
   return result.count;
 }
 
+export function countGuestRooms(): number {
+  const result = db.prepare("SELECT COUNT(*) as count FROM rooms WHERE owner_user_id IS NULL").get() as { count: number };
+  return result.count;
+}
+
+export function totalRoomStorageBytes(): number {
+  const result = db.prepare("SELECT COALESCE(SUM(LENGTH(topology)), 0) as bytes FROM rooms").get() as { bytes: number };
+  return Number(result.bytes) || 0;
+}
+
+export function roomTopologyBytes(id: string): number {
+  const result = db.prepare("SELECT COALESCE(LENGTH(topology), 0) as bytes FROM rooms WHERE id = ?").get(id) as { bytes: number } | null;
+  return result ? Number(result.bytes) || 0 : 0;
+}
+
 export function getSetting(key: string): string | null {
   const row = stmtGetSetting.get(key) as { value: string } | undefined;
   return row?.value ?? null;

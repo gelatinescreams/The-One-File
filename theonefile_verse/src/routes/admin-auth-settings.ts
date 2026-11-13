@@ -2,8 +2,16 @@ import * as oidc from "../oidc";
 import * as db from "../database";
 import * as mailer from "../mailer";
 import { getClientIP, apiError, validateAdminUser, readJsonLimited, redactForAudit } from "../security";
+import { hostAvoidsLoopbackAndMetadata } from "../net-guard";
 
 const ROUTE_BODY_CAP = 64 * 1024;
+
+const SMTP_HOST_BLOCKED_ERROR = "SMTP host is not allowed for a test: it does not resolve, or resolves to a loopback or cloud metadata address";
+
+export async function smtpTestHostAllowed(host: unknown): Promise<boolean> {
+  if (typeof host !== "string" || !host.trim()) return false;
+  return await hostAvoidsLoopbackAndMetadata(host.trim(), process.env.SMTP_ALLOW_LOOPBACK === "true");
+}
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   if (path === "/api/admin/auth-settings" && req.method === "GET") {
@@ -240,6 +248,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         createdAt: now,
         updatedAt: now
       };
+      if (!(await smtpTestHostAllowed(testConfig.host))) {
+        return Response.json({ success: false, error: SMTP_HOST_BLOCKED_ERROR }, { status: 400, headers: corsHeaders });
+      }
       const result = await mailer.testSmtpConfig(testConfig);
       return Response.json(result, { headers: corsHeaders });
     } catch (e: any) {
@@ -256,6 +267,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     const config = db.getSmtpConfig(configId);
     if (!config) {
       return Response.json({ error: "Config not found" }, { status: 404, headers: corsHeaders });
+    }
+    if (!(await smtpTestHostAllowed(config.host))) {
+      return Response.json({ success: false, error: SMTP_HOST_BLOCKED_ERROR }, { status: 400, headers: corsHeaders });
     }
     const result = await mailer.testSmtpConfig(config);
     return Response.json(result, { headers: corsHeaders });

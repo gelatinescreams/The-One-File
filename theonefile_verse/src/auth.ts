@@ -120,6 +120,9 @@ export async function registerUser(
     if (authSettings.requireEmailVerification && !db.getDefaultSmtpConfig() && db.listUsers(1, 0).length > 0) {
       return { success: false, error: "Registration requires email verification, but email delivery is not configured. Please contact the administrator." };
     }
+    if (authSettings.requireEmailVerification && !baseUrl && db.listUsers(1, 0).length > 0) {
+      return { success: false, error: "Registration requires email verification, but the server public URL is not configured. Please contact the administrator." };
+    }
   }
 
   const userId = crypto.randomUUID();
@@ -364,6 +367,19 @@ export function resetLoginThrottle(): void {
   emailFailureWindow.clear();
 }
 
+let dummyPasswordHash: Promise<string> | null = null;
+let burnPasswordCheckEnabled = true;
+
+export function setBurnPasswordCheckEnabled(enabled: boolean): void {
+  burnPasswordCheckEnabled = enabled;
+}
+
+export async function burnPasswordCheck(password: string): Promise<void> {
+  if (!burnPasswordCheckEnabled) return;
+  if (!dummyPasswordHash) dummyPasswordHash = hashPassword(oidc.generateSecureToken(24));
+  try { await verifyPassword(typeof password === "string" ? password : "", await dummyPasswordHash); } catch {  }
+}
+
 export async function loginWithPassword(
   email: string,
   password: string,
@@ -385,13 +401,18 @@ export async function loginWithPassword(
 
   const user = db.getUserByEmail(normalizedEmail);
   if (!user) {
+    await burnPasswordCheck(password);
     fail();
     return { success: false, error: GENERIC_LOGIN_ERROR };
   }
 
   if (!user.isActive) {
-    if (db.isPendingApproval(user.id) && user.passwordHash && await verifyPassword(password, user.passwordHash)) {
-      return { success: false, error: "Your account is waiting for administrator approval." };
+    if (db.isPendingApproval(user.id) && user.passwordHash) {
+      if (await verifyPassword(password, user.passwordHash)) {
+        return { success: false, error: "Your account is waiting for administrator approval." };
+      }
+    } else {
+      await burnPasswordCheck(password);
     }
     fail();
     return { success: false, error: GENERIC_LOGIN_ERROR };
@@ -406,6 +427,7 @@ export async function loginWithPassword(
   }
 
   if (!user.passwordHash) {
+    await burnPasswordCheck(password);
     fail();
     return { success: false, error: GENERIC_LOGIN_ERROR };
   }
@@ -447,18 +469,7 @@ export async function loginWithPassword(
   }
 
   if (user.totpEnabled) {
-    const pendingToken = oidc.generateSecureToken(32);
-    const tokenHash = await oidc.hashToken(pendingToken);
-    db.deleteUserTokensByType(user.id, 'totp_pending');
-    db.createUserToken({
-      id: crypto.randomUUID(),
-      userId: user.id,
-      type: 'totp_pending',
-      tokenHash,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-      usedAt: null,
-      createdAt: new Date().toISOString()
-    });
+    const pendingToken = await createTotpPendingToken(user.id);
     return { success: false, requires2FA: true, pendingToken, error: undefined };
   }
 
@@ -473,6 +484,24 @@ export async function loginWithPassword(
   db.logAuthEvent('login_success', user.id, ipAddress, { method: 'password' });
 
   return { success: true, userId: user.id, sessionToken };
+}
+
+export const TOTP_PENDING_TTL_MS = 5 * 60 * 1000;
+
+export async function createTotpPendingToken(userId: string): Promise<string> {
+  const pendingToken = oidc.generateSecureToken(32);
+  const tokenHash = await oidc.hashToken(pendingToken);
+  db.deleteUserTokensByType(userId, 'totp_pending');
+  db.createUserToken({
+    id: crypto.randomUUID(),
+    userId,
+    type: 'totp_pending',
+    tokenHash,
+    expiresAt: new Date(Date.now() + TOTP_PENDING_TTL_MS).toISOString(),
+    usedAt: null,
+    createdAt: new Date().toISOString()
+  });
+  return pendingToken;
 }
 
 const MAX_SESSIONS_PER_USER = 10;
@@ -722,7 +751,7 @@ export async function loginWithMagicLink(
   token: string,
   ipAddress: string,
   userAgent: string
-): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string }> {
+): Promise<{ success: boolean; userId?: string; sessionToken?: string; error?: string; requires2FA?: boolean; pendingToken?: string }> {
   const tokenHash = await oidc.hashToken(token);
   const userToken = db.getUserTokenByHash(tokenHash);
 
@@ -749,12 +778,25 @@ export async function loginWithMagicLink(
 
   db.markUserTokenUsed(userToken.id);
 
+  if (!user.emailVerified) {
+    user.emailVerified = true;
+    user.updatedAt = new Date().toISOString();
+    db.updateUser(user);
+  }
+
+  if (user.totpEnabled) {
+    const pendingToken = await createTotpPendingToken(user.id);
+    db.logAuthEvent('login_2fa_required', user.id, ipAddress, { method: 'magic_link' });
+    return { success: false, requires2FA: true, pendingToken };
+  }
+
   user.lastLogin = new Date().toISOString();
   user.updatedAt = new Date().toISOString();
-  user.emailVerified = true;
   db.updateUser(user);
 
   const sessionToken = await createSessionToken(user.id, ipAddress, userAgent);
+
+  db.logAuthEvent('login_success', user.id, ipAddress, { method: 'magic_link' });
 
   return { success: true, userId: user.id, sessionToken };
 }

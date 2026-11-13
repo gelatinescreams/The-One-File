@@ -1,0 +1,7587 @@
+<!--THEONEFILE_CONFIG
+{
+  "nodeData": {
+    "hub": {
+      "shape": "hub",
+      "name": "Home Hub",
+      "ip": "Zigbee, Thread, Wi Fi",
+      "role": "Home Assistant",
+      "tags": [
+        "core"
+      ],
+      "notes": [
+        "<h3>Home Hub</h3><p>Runs Home Assistant with a built in Zigbee and Thread radio.</p><ul><li>94 devices</li><li>31 automations</li><li>Nightly backup to the NAS</li></ul>"
+      ],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "custom",
+        "customUrl": "http://192.168.20.10:8123",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-l1": {
+      "shape": "smart-bulb",
+      "name": "Ceiling 1",
+      "ip": "Zigbee bulb",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": "grp-living-lights",
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-l2": {
+      "shape": "smart-bulb",
+      "name": "Ceiling 2",
+      "ip": "Zigbee bulb",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": "grp-living-lights",
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-l3": {
+      "shape": "smart-bulb",
+      "name": "Ceiling 3",
+      "ip": "Zigbee bulb",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": "grp-living-lights",
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-tv": {
+      "shape": "smart-tv",
+      "name": "TV",
+      "ip": "Wi Fi",
+      "role": "",
+      "tags": [
+        "media"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-spk": {
+      "shape": "smart-speaker",
+      "name": "Soundbar",
+      "ip": "Wi Fi",
+      "role": "",
+      "tags": [
+        "media"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "lr-motion": {
+      "shape": "motion-sensor",
+      "name": "Living Motion",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 110,
+      "fovDistance": 200,
+      "fovRotation": 45,
+      "fovColor": "#10b981",
+      "fovOpacity": 15,
+      "fovAnimationType": "pulse",
+      "fovAnimate": true,
+      "fovSpeed": 3,
+      "fovBorderColor": "#10b981",
+      "fovBorderOpacity": 50
+    },
+    "k-plug": {
+      "shape": "smart-plug",
+      "name": "Coffee Plug",
+      "ip": "Zigbee router",
+      "role": "",
+      "tags": [
+        "energy"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "k-lights": {
+      "shape": "smart-bulb",
+      "name": "Kitchen Lights",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "k-smoke": {
+      "shape": "smoke-detector",
+      "name": "Smoke Alarm",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "safety"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 360,
+      "fovDistance": 110,
+      "fovColor": "#ef4444",
+      "fovOpacity": 12,
+      "fovAnimationType": "pulse",
+      "fovAnimate": false,
+      "fovBorderColor": "#ef4444",
+      "fovBorderOpacity": 40
+    },
+    "k-leak": {
+      "shape": "sensor",
+      "name": "Sink Leak",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "safety"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "k-speaker": {
+      "shape": "smart-speaker",
+      "name": "Kitchen Speaker",
+      "ip": "Thread border router",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "k-temp": {
+      "shape": "sensor",
+      "name": "Fridge Temp",
+      "ip": "Thread",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "e-bell": {
+      "shape": "doorbell",
+      "name": "Doorbell",
+      "ip": "Wi Fi, 2K",
+      "role": "",
+      "tags": [
+        "camera"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 85,
+      "fovDistance": 150,
+      "fovRotation": 0,
+      "fovColor": "#f59e0b",
+      "fovOpacity": 18,
+      "fovAnimationType": "sweep",
+      "fovAnimate": false,
+      "fovBorderColor": "#f59e0b",
+      "fovBorderOpacity": 60
+    },
+    "e-lock": {
+      "shape": "smart-lock",
+      "name": "Front Lock",
+      "ip": "Thread",
+      "role": "",
+      "tags": [
+        "security"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "e-motion": {
+      "shape": "motion-sensor",
+      "name": "Hall Motion",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 110,
+      "fovDistance": 200,
+      "fovRotation": 0,
+      "fovColor": "#10b981",
+      "fovOpacity": 15,
+      "fovAnimationType": "pulse",
+      "fovAnimate": true,
+      "fovSpeed": 3,
+      "fovBorderColor": "#10b981",
+      "fovBorderOpacity": 50
+    },
+    "g-door": {
+      "shape": "garage",
+      "name": "Garage Door",
+      "ip": "Wi Fi relay",
+      "role": "",
+      "tags": [
+        "security"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "g-ev": {
+      "shape": "smart-plug",
+      "name": "EV Charger",
+      "ip": "Wi Fi, 11 kW",
+      "role": "",
+      "tags": [
+        "energy"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "g-cam": {
+      "shape": "camera",
+      "name": "Garage Cam",
+      "ip": "PoE",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 85,
+      "fovDistance": 230,
+      "fovRotation": 315,
+      "fovColor": "#f59e0b",
+      "fovOpacity": 18,
+      "fovAnimationType": "sweep",
+      "fovAnimate": false,
+      "fovBorderColor": "#f59e0b",
+      "fovBorderOpacity": 60
+    },
+    "u-valve": {
+      "shape": "smart-plug",
+      "name": "Water Main Valve",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "safety"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "u-washer": {
+      "shape": "smart-plug",
+      "name": "Washer Plug",
+      "ip": "Zigbee router, power meter",
+      "role": "",
+      "tags": [
+        "energy"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "u-leak": {
+      "shape": "sensor",
+      "name": "Washer Leak",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "safety"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "u-vac": {
+      "shape": "vacuum",
+      "name": "Robot Vacuum",
+      "ip": "Wi Fi",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "o-lamp": {
+      "shape": "smart-bulb",
+      "name": "Desk Lamp",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "o-blinds": {
+      "shape": "smart-plug",
+      "name": "Office Blinds",
+      "ip": "Thread",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "o-air": {
+      "shape": "sensor",
+      "name": "Air Quality",
+      "ip": "Thread, CO2 and VOC",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "b-hum": {
+      "shape": "sensor",
+      "name": "Humidity",
+      "ip": "Zigbee",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "b-fan": {
+      "shape": "smart-plug",
+      "name": "Bath Fan",
+      "ip": "Zigbee switch",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "p-cam": {
+      "shape": "camera",
+      "name": "Patio Cam",
+      "ip": "PoE",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer2",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 85,
+      "fovDistance": 300,
+      "fovRotation": 135,
+      "fovColor": "#f59e0b",
+      "fovOpacity": 18,
+      "fovAnimationType": "sweep",
+      "fovAnimate": false,
+      "fovBorderColor": "#f59e0b",
+      "fovBorderOpacity": 60
+    },
+    "p-lights": {
+      "shape": "smart-plug",
+      "name": "String Lights",
+      "ip": "Outdoor plug",
+      "role": "",
+      "tags": [
+        "lights"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "p-sprinkler": {
+      "shape": "sprinkler",
+      "name": "Sprinkler Zone 1",
+      "ip": "Wi Fi controller",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      },
+      "fovEnabled": true,
+      "fovAngle": 180,
+      "fovDistance": 200,
+      "fovRotation": 270,
+      "fovColor": "#06b6d4",
+      "fovOpacity": 20,
+      "fovAnimationType": "spin",
+      "fovAnimate": true,
+      "fovSpeed": 6
+    }
+  },
+  "edgeData": {
+    "list": [
+      {
+        "id": "edge-ground-26",
+        "from": "hub",
+        "to": "lr-l1",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-27",
+        "from": "hub",
+        "to": "lr-l2",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-28",
+        "from": "hub",
+        "to": "lr-l3",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-29",
+        "from": "hub",
+        "to": "lr-motion",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-30",
+        "from": "hub",
+        "to": "lr-tv",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-31",
+        "from": "hub",
+        "to": "lr-spk",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-32",
+        "from": "hub",
+        "to": "k-plug",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-33",
+        "from": "k-plug",
+        "to": "k-lights",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-34",
+        "from": "k-plug",
+        "to": "k-leak",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-35",
+        "from": "k-lights",
+        "to": "k-smoke",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-36",
+        "from": "hub",
+        "to": "k-speaker",
+        "width": 3,
+        "color": "#c084fc",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-37",
+        "from": "k-speaker",
+        "to": "k-temp",
+        "width": 3,
+        "color": "#c084fc",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-38",
+        "from": "k-speaker",
+        "to": "o-blinds",
+        "width": 3,
+        "color": "#c084fc",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-39",
+        "from": "k-speaker",
+        "to": "o-air",
+        "width": 3,
+        "color": "#c084fc",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-40",
+        "from": "k-lights",
+        "to": "e-motion",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-41",
+        "from": "k-speaker",
+        "to": "e-lock",
+        "width": 3,
+        "color": "#c084fc",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-42",
+        "from": "e-lock",
+        "to": "e-bell",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-43",
+        "from": "g-door",
+        "to": "g-ev",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-44",
+        "from": "hub",
+        "to": "u-washer",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-45",
+        "from": "u-washer",
+        "to": "u-valve",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-46",
+        "from": "u-washer",
+        "to": "u-leak",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-47",
+        "from": "u-washer",
+        "to": "o-lamp",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-48",
+        "from": "o-lamp",
+        "to": "b-hum",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-49",
+        "from": "b-hum",
+        "to": "b-fan",
+        "width": 3,
+        "color": "#84cc16",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-50",
+        "from": "u-leak",
+        "to": "u-valve",
+        "width": 4,
+        "color": "#f59e0b",
+        "direction": "forward",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "Leak closes valve",
+        "animate": true,
+        "animationStyle": "arrows",
+        "animationSpeed": 1.5,
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-51",
+        "from": "e-bell",
+        "to": "lr-tv",
+        "width": 4,
+        "color": "#f59e0b",
+        "direction": "forward",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "label": "Doorbell on TV",
+        "waypoints": [
+          {
+            "x": 2160,
+            "y": 300
+          },
+          {
+            "x": 860,
+            "y": 300
+          }
+        ],
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-52",
+        "from": "p-cam",
+        "to": "p-lights",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-53",
+        "from": "p-lights",
+        "to": "p-sprinkler",
+        "width": 3,
+        "color": "#38bdf8",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dashed",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-ground-54",
+        "from": "p-cam",
+        "to": "g-cam",
+        "width": 4,
+        "color": "#3b82f6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "PoE to garage switch",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      }
+    ]
+  },
+  "rectData": {
+    "list": [
+      {
+        "id": "rect-ground-3",
+        "x": 100,
+        "y": 220,
+        "width": 900,
+        "height": 640,
+        "color": "#3b82f6",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-6",
+        "x": 1000,
+        "y": 220,
+        "width": 800,
+        "height": 640,
+        "color": "#f59e0b",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-9",
+        "x": 1800,
+        "y": 220,
+        "width": 450,
+        "height": 640,
+        "color": "#a855f7",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-12",
+        "x": 2250,
+        "y": 220,
+        "width": 450,
+        "height": 640,
+        "color": "#64748b",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-15",
+        "x": 100,
+        "y": 860,
+        "width": 600,
+        "height": 600,
+        "color": "#14b8a6",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-18",
+        "x": 700,
+        "y": 860,
+        "width": 700,
+        "height": 600,
+        "color": "#06b6d4",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-21",
+        "x": 1400,
+        "y": 860,
+        "width": 400,
+        "height": 600,
+        "color": "#ec4899",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-ground-23",
+        "x": 1800,
+        "y": 860,
+        "width": 900,
+        "height": 600,
+        "color": "#22c55e",
+        "style": "filled",
+        "lineStyle": "solid",
+        "fillOpacity": 0.1,
+        "borderWidth": 2,
+        "notes": []
+      }
+    ]
+  },
+  "textData": {
+    "list": [
+      {
+        "id": "text-ground-1",
+        "x": 60,
+        "y": 100,
+        "content": "Maple House: Ground Floor",
+        "fontSize": 44,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-2",
+        "x": 60,
+        "y": 148,
+        "content": "Rooms are zones, devices sit where they are mounted, lines show the radio mesh",
+        "fontSize": 19,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-4",
+        "x": 118,
+        "y": 254,
+        "content": "Living Room",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-5",
+        "x": 118,
+        "y": 284,
+        "content": "Movie scene, ceiling lights grouped",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-7",
+        "x": 1018,
+        "y": 254,
+        "content": "Kitchen",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-8",
+        "x": 1018,
+        "y": 284,
+        "content": "Leak and smoke protection",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-10",
+        "x": 1818,
+        "y": 254,
+        "content": "Entry",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-11",
+        "x": 1818,
+        "y": 284,
+        "content": "Front door",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-13",
+        "x": 2268,
+        "y": 254,
+        "content": "Garage",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-14",
+        "x": 2268,
+        "y": 284,
+        "content": "EV charging",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-16",
+        "x": 118,
+        "y": 894,
+        "content": "Utility",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-17",
+        "x": 118,
+        "y": 924,
+        "content": "Washer and water main",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-19",
+        "x": 718,
+        "y": 894,
+        "content": "Office",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-20",
+        "x": 718,
+        "y": 924,
+        "content": "Focus mode",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-22",
+        "x": 1418,
+        "y": 894,
+        "content": "Bath",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-24",
+        "x": 1818,
+        "y": 894,
+        "content": "Back Patio",
+        "fontSize": 24,
+        "color": "#e2e8f0",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-ground-25",
+        "x": 1818,
+        "y": 924,
+        "content": "Outdoor, irrigation zone 1",
+        "fontSize": 15,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      }
+    ]
+  },
+  "imageData": {
+    "list": []
+  },
+  "edgeLegend": {
+    "#84cc16": "Zigbee mesh",
+    "#c084fc": "Thread",
+    "#38bdf8": "Wi Fi",
+    "#3b82f6": "Ethernet",
+    "#f59e0b": "Automation link"
+  },
+  "zoneLegend": {
+    "#10b981": "Motion sensor",
+    "#ef4444": "Smoke alarm",
+    "#f59e0b": "Camera view",
+    "#06b6d4": "Sprinkler"
+  },
+  "zonePresets": {},
+  "nodePositions": {
+    "hub": {
+      "x": 560,
+      "y": 470
+    },
+    "lr-l1": {
+      "x": 260,
+      "y": 720
+    },
+    "lr-l2": {
+      "x": 480,
+      "y": 720
+    },
+    "lr-l3": {
+      "x": 700,
+      "y": 720
+    },
+    "lr-tv": {
+      "x": 860,
+      "y": 400
+    },
+    "lr-spk": {
+      "x": 860,
+      "y": 580
+    },
+    "lr-motion": {
+      "x": 160,
+      "y": 800
+    },
+    "k-plug": {
+      "x": 1150,
+      "y": 420
+    },
+    "k-lights": {
+      "x": 1400,
+      "y": 420
+    },
+    "k-smoke": {
+      "x": 1650,
+      "y": 420
+    },
+    "k-leak": {
+      "x": 1150,
+      "y": 720
+    },
+    "k-speaker": {
+      "x": 1400,
+      "y": 720
+    },
+    "k-temp": {
+      "x": 1650,
+      "y": 720
+    },
+    "e-bell": {
+      "x": 2160,
+      "y": 330
+    },
+    "e-lock": {
+      "x": 2020,
+      "y": 560
+    },
+    "e-motion": {
+      "x": 2020,
+      "y": 780
+    },
+    "g-door": {
+      "x": 2480,
+      "y": 400
+    },
+    "g-ev": {
+      "x": 2480,
+      "y": 600
+    },
+    "g-cam": {
+      "x": 2620,
+      "y": 790
+    },
+    "u-valve": {
+      "x": 260,
+      "y": 1080
+    },
+    "u-washer": {
+      "x": 520,
+      "y": 1080
+    },
+    "u-leak": {
+      "x": 520,
+      "y": 1300
+    },
+    "u-vac": {
+      "x": 260,
+      "y": 1300
+    },
+    "o-lamp": {
+      "x": 860,
+      "y": 1080
+    },
+    "o-blinds": {
+      "x": 1160,
+      "y": 1080
+    },
+    "o-air": {
+      "x": 1010,
+      "y": 1300
+    },
+    "b-hum": {
+      "x": 1600,
+      "y": 1080
+    },
+    "b-fan": {
+      "x": 1600,
+      "y": 1300
+    },
+    "p-cam": {
+      "x": 1880,
+      "y": 1020
+    },
+    "p-lights": {
+      "x": 2160,
+      "y": 1300
+    },
+    "p-sprinkler": {
+      "x": 2480,
+      "y": 1150
+    }
+  },
+  "nodeSizes": {
+    "hub": 56,
+    "lr-l1": 32,
+    "lr-l2": 32,
+    "lr-l3": 32,
+    "lr-tv": 40,
+    "lr-spk": 34,
+    "lr-motion": 28,
+    "k-plug": 32,
+    "k-lights": 34,
+    "k-smoke": 30,
+    "k-leak": 28,
+    "k-speaker": 34,
+    "k-temp": 28,
+    "e-bell": 32,
+    "e-lock": 32,
+    "e-motion": 28,
+    "g-door": 38,
+    "g-ev": 34,
+    "g-cam": 28,
+    "u-valve": 32,
+    "u-washer": 32,
+    "u-leak": 28,
+    "u-vac": 34,
+    "o-lamp": 30,
+    "o-blinds": 30,
+    "o-air": 28,
+    "b-hum": 28,
+    "b-fan": 30,
+    "p-cam": 28,
+    "p-lights": 30,
+    "p-sprinkler": 32
+  },
+  "nodeStyles": {
+    "hub": {
+      "all": {
+        "icon": {
+          "library": "selfhst",
+          "name": "home-assistant"
+        }
+      }
+    },
+    "lr-l1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "ceiling-light"
+        }
+      }
+    },
+    "lr-l2": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "ceiling-light"
+        }
+      }
+    },
+    "lr-l3": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "ceiling-light"
+        }
+      }
+    },
+    "lr-tv": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "television"
+        }
+      }
+    },
+    "lr-spk": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "soundbar"
+        }
+      }
+    },
+    "lr-motion": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "motion-sensor"
+        }
+      }
+    },
+    "k-plug": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "coffee-maker"
+        }
+      }
+    },
+    "k-lights": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "lightbulb-group"
+        }
+      }
+    },
+    "k-smoke": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "smoke-detector"
+        }
+      }
+    },
+    "k-leak": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "water-alert"
+        }
+      }
+    },
+    "k-speaker": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "speaker"
+        }
+      }
+    },
+    "k-temp": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "fridge"
+        }
+      }
+    },
+    "e-bell": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "doorbell-video"
+        }
+      }
+    },
+    "e-lock": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "lock-smart"
+        }
+      }
+    },
+    "e-motion": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "motion-sensor"
+        }
+      }
+    },
+    "g-door": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "garage"
+        }
+      }
+    },
+    "g-ev": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "ev-station"
+        }
+      }
+    },
+    "g-cam": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "cctv"
+        }
+      }
+    },
+    "u-valve": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "valve"
+        }
+      }
+    },
+    "u-washer": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "washing-machine"
+        }
+      }
+    },
+    "u-leak": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "water-alert"
+        }
+      }
+    },
+    "u-vac": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "robot-vacuum"
+        }
+      }
+    },
+    "o-lamp": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "desk-lamp"
+        }
+      }
+    },
+    "o-blinds": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "blinds"
+        }
+      }
+    },
+    "o-air": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "air-filter"
+        }
+      }
+    },
+    "b-hum": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "water-percent"
+        }
+      }
+    },
+    "b-fan": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "fan"
+        }
+      }
+    },
+    "p-cam": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "cctv"
+        }
+      }
+    },
+    "p-lights": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "string-lights"
+        }
+      }
+    },
+    "p-sprinkler": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "sprinkler-variant"
+        }
+      }
+    }
+  },
+  "iconCache": {
+    "selfhst-home-assistant": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" data-selfhst=\"home-assistant\"><path d=\"m512 473.3c0 17.6-14.4 32-32 32H32c-17.6 0-32-14.4-32-32v-192c0-17.6 10.2-42.2 22.6-54.6L233.4 16c12.4-12.4 32.8-12.4 45.2 0l210.8 210.8c12.4 12.4 22.6 37 22.6 54.6z\" fill=\"#f2f4f9\"/><path d=\"m489.4 226.7L278.6 16c-12.4-12.4-32.8-12.4-45.2 0L22.6 226.7C10.2 239.1 0 263.7 0 281.3v192c0 17.6 14.4 32 32 32h196.8l-86.7-86.7c-4.5 1.5-9.2 2.4-14.2 2.4-24.1 0-43.7-19.6-43.7-43.7s19.6-43.7 43.7-43.7 43.7 19.6 43.7 43.7c0 5-.9 9.7-2.4 14.2l67.5 67.5V211.8c-14.5-7.1-24.5-22-24.5-39.2 0-24.1 19.6-43.7 43.7-43.7s43.7 19.6 43.7 43.7c0 17.2-10 32.1-24.5 39.2v173.4l67.1-67.1c-1.3-4.2-2-8.6-2-13.2 0-24.1 19.6-43.7 43.7-43.7s43.7 19.6 43.7 43.7-19.6 43.7-43.7 43.7c-5.3 0-10.4-1-15.1-2.8l-93.7 93.7v65.9H480c17.6 0 32-14.4 32-32v-192c0-17.6-10.2-42.2-22.6-54.7\" fill=\"#18bcf2\"/></svg>",
+    "mdi-ceiling-light": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-ceiling-light\" viewBox=\"0 0 24 24\"><path d=\"M8,9H11V4H13V9H16L20,17H4L8,9M14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18H14Z\"/></svg>",
+    "mdi-television": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-television\" viewBox=\"0 0 24 24\"><path d=\"M21,17H3V5H21M21,3H3A2,2 0 0,0 1,5V17A2,2 0 0,0 3,19H8V21H16V19H21A2,2 0 0,0 23,17V5A2,2 0 0,0 21,3Z\"/></svg>",
+    "mdi-soundbar": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-soundbar\" viewBox=\"0 0 24 24\"><path d=\"M4 8C2.9 8 2 8.9 2 10V14C2 15.11 2.9 16 4 16H20C21.11 16 22 15.11 22 14V10C22 8.9 21.11 8 20 8M9 10C10.11 10 11 10.9 11 12C11 13.11 10.11 14 9 14C7.9 14 7 13.11 7 12C7 10.9 7.9 10 9 10M15 10C16.11 10 17 10.9 17 12C17 13.11 16.11 14 15 14C13.9 14 13 13.11 13 12C13 10.9 13.9 10 15 10M5 11C5.55 11 6 11.45 6 12C6 12.55 5.55 13 5 13C4.45 13 4 12.55 4 12C4 11.45 4.45 11 5 11M9 11C8.45 11 8 11.45 8 12C8 12.55 8.45 13 9 13C9.55 13 10 12.55 10 12C10 11.45 9.55 11 9 11M15 11C14.45 11 14 11.45 14 12C14 12.55 14.45 13 15 13C15.55 13 16 12.55 16 12C16 11.45 15.55 11 15 11M19 11C19.55 11 20 11.45 20 12C20 12.55 19.55 13 19 13C18.45 13 18 12.55 18 12C18 11.45 18.45 11 19 11Z\"/></svg>",
+    "mdi-motion-sensor": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-motion-sensor\" viewBox=\"0 0 24 24\"><path d=\"M10,0.2C9,0.2 8.2,1 8.2,2C8.2,3 9,3.8 10,3.8C11,3.8 11.8,3 11.8,2C11.8,1 11,0.2 10,0.2M15.67,1A7.33,7.33 0 0,0 23,8.33V7A6,6 0 0,1 17,1H15.67M18.33,1C18.33,3.58 20.42,5.67 23,5.67V4.33C21.16,4.33 19.67,2.84 19.67,1H18.33M21,1A2,2 0 0,0 23,3V1H21M7.92,4.03C7.75,4.03 7.58,4.06 7.42,4.11L2,5.8V11H3.8V7.33L5.91,6.67L2,22H3.8L6.67,13.89L9,17V22H10.8V15.59L8.31,11.05L9.04,8.18L10.12,10H15V8.2H11.38L9.38,4.87C9.08,4.37 8.54,4.03 7.92,4.03Z\"/></svg>",
+    "mdi-coffee-maker": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-coffee-maker\" viewBox=\"0 0 24 24\"><path d=\"M18 6V4H20V2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H20V20H15.97C17.2 19.09 18 17.64 18 16V11H8V16C8 17.64 8.81 19.09 10.03 20H6V4H8V6C8 6.55 8.45 7 9 7H17C17.55 7 18 6.55 18 6M13 8C13.55 8 14 8.45 14 9S13.55 10 13 10 12 9.55 12 9 12.45 8 13 8Z\"/></svg>",
+    "mdi-lightbulb-group": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-lightbulb-group\" viewBox=\"0 0 24 24\"><path d=\"M15 14V16A1 1 0 0 1 14 17H10A1 1 0 0 1 9 16V14A5 5 0 1 1 15 14M14 18H10V19A1 1 0 0 0 11 20H13A1 1 0 0 0 14 19M7 19V18H5V19A1 1 0 0 0 6 20H7.17A2.93 2.93 0 0 1 7 19M5 10A6.79 6.79 0 0 1 5.68 7A4 4 0 0 0 4 14.45V16A1 1 0 0 0 5 17H7V14.88A6.92 6.92 0 0 1 5 10M17 18V19A2.93 2.93 0 0 1 16.83 20H18A1 1 0 0 0 19 19V18M18.32 7A6.79 6.79 0 0 1 19 10A6.92 6.92 0 0 1 17 14.88V17H19A1 1 0 0 0 20 16V14.45A4 4 0 0 0 18.32 7Z\"/></svg>",
+    "mdi-smoke-detector": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-smoke-detector\" viewBox=\"0 0 24 24\"><path d=\"M12,18A6,6 0 0,0 18,12C18,8.68 15.31,6 12,6C8.68,6 6,8.68 6,12A6,6 0 0,0 12,18M19,3A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5C3.89,21 3,20.1 3,19V5C3,3.89 3.89,3 5,3H19M8,12A4,4 0 0,1 12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12Z\"/></svg>",
+    "mdi-water-alert": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-water-alert\" viewBox=\"0 0 24 24\"><path d=\"M10 3.25C10 3.25 16 10 16 14C16 17.31 13.31 20 10 20S4 17.31 4 14C4 10 10 3.25 10 3.25M20 7V13H18V7H20M18 17H20V15H18V17Z\"/></svg>",
+    "mdi-speaker": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-speaker\" viewBox=\"0 0 24 24\"><path d=\"M12,12A3,3 0 0,0 9,15A3,3 0 0,0 12,18A3,3 0 0,0 15,15A3,3 0 0,0 12,12M12,20A5,5 0 0,1 7,15A5,5 0 0,1 12,10A5,5 0 0,1 17,15A5,5 0 0,1 12,20M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8C10.89,8 10,7.1 10,6C10,4.89 10.89,4 12,4M17,2H7C5.89,2 5,2.89 5,4V20A2,2 0 0,0 7,22H17A2,2 0 0,0 19,20V4C19,2.89 18.1,2 17,2Z\"/></svg>",
+    "mdi-fridge": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-fridge\" viewBox=\"0 0 24 24\"><path d=\"M7,2H17A2,2 0 0,1 19,4V9H5V4A2,2 0 0,1 7,2M19,19A2,2 0 0,1 17,21V22H15V21H9V22H7V21A2,2 0 0,1 5,19V10H19V19M8,5V7H10V5H8M8,12V15H10V12H8Z\"/></svg>",
+    "mdi-doorbell-video": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-doorbell-video\" viewBox=\"0 0 24 24\"><path d=\"M14 15C14 16.11 13.11 17 12 17S10 16.11 10 15 10.9 13 12 13 14 13.9 14 15M18 4V20C18 21.1 17.11 22 16 22H8C6.9 22 6 21.11 6 20V4C6 2.9 6.9 2 8 2H16C17.11 2 18 2.9 18 4M10.5 7C10.5 7.83 11.17 8.5 12 8.5S13.5 7.83 13.5 7 12.83 5.5 12 5.5 10.5 6.17 10.5 7M16 10H8V20H16V10Z\"/></svg>",
+    "mdi-lock-smart": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-lock-smart\" viewBox=\"0 0 24 24\"><path d=\"M12,2A6,6 0 0,0 6,8V16A6,6 0 0,0 12,22A6,6 0 0,0 18,16V8A6,6 0 0,0 12,2M8,6H10V8H8V6M11,6H13V8H11V6M14,6H16V8H14V6M8,9H10V11H8V9M11,9H13V11H11V9M14,9H16V11H14V9M8,12H10V14H8V12M11,12H13V14H11V12M14,12H16V14H14V12M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16Z\"/></svg>",
+    "mdi-garage": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-garage\" viewBox=\"0 0 24 24\"><path d=\"M19,20H17V11H7V20H5V9L12,5L19,9V20M8,12H16V14H8V12M8,15H16V17H8V15M16,18V20H8V18H16Z\"/></svg>",
+    "mdi-ev-station": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-ev-station\" viewBox=\"0 0 24 24\"><path d=\"M19.77,7.23L19.78,7.22L16.06,3.5L15,4.56L17.11,6.67C16.17,7.03 15.5,7.93 15.5,9A2.5,2.5 0 0,0 18,11.5C18.36,11.5 18.69,11.42 19,11.29V18.5A1,1 0 0,1 18,19.5A1,1 0 0,1 17,18.5V14A2,2 0 0,0 15,12H14V5A2,2 0 0,0 12,3H6A2,2 0 0,0 4,5V21H14V13.5H15.5V18.5A2.5,2.5 0 0,0 18,21A2.5,2.5 0 0,0 20.5,18.5V9C20.5,8.31 20.22,7.68 19.77,7.23M18,10A1,1 0 0,1 17,9A1,1 0 0,1 18,8A1,1 0 0,1 19,9A1,1 0 0,1 18,10M8,18V13.5H6L10,6V11H12L8,18Z\"/></svg>",
+    "mdi-cctv": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-cctv\" viewBox=\"0 0 24 24\"><path d=\"M6.03 12.03L8.03 15.5L5.5 18.68L2 12.62L6.03 12.03M17 18V15.29C17.88 14.9 18.5 14.03 18.5 13C18.5 12.43 18.3 11.9 17.97 11.5L19.94 10.35C20.95 9.76 21.3 8.47 20.71 7.46L19.33 5.06C18.74 4.05 17.45 3.7 16.44 4.28L8.31 9C7.36 9.53 7.03 10.75 7.58 11.71L9.08 14.31C9.63 15.26 10.86 15.59 11.81 15.04L13.69 13.96C13.94 14.55 14.41 15.03 15 15.29V18C15 19.1 15.9 20 17 20H22V18H17Z\"/></svg>",
+    "mdi-valve": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-valve\" viewBox=\"0 0 24 24\"><path d=\"M4 22H2V2H4M22 2H20V22H22M17.24 5.34L13.24 9.34A3 3 0 0 0 9.24 13.34L5.24 17.34L6.66 18.76L10.66 14.76A3 3 0 0 0 14.66 10.76L18.66 6.76Z\"/></svg>",
+    "mdi-washing-machine": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-washing-machine\" viewBox=\"0 0 24 24\"><path d=\"M14.83,11.17C16.39,12.73 16.39,15.27 14.83,16.83C13.27,18.39 10.73,18.39 9.17,16.83L14.83,11.17M6,2H18A2,2 0 0,1 20,4V20A2,2 0 0,1 18,22H6A2,2 0 0,1 4,20V4A2,2 0 0,1 6,2M7,4A1,1 0 0,0 6,5A1,1 0 0,0 7,6A1,1 0 0,0 8,5A1,1 0 0,0 7,4M10,4A1,1 0 0,0 9,5A1,1 0 0,0 10,6A1,1 0 0,0 11,5A1,1 0 0,0 10,4M12,8A6,6 0 0,0 6,14A6,6 0 0,0 12,20A6,6 0 0,0 18,14A6,6 0 0,0 12,8Z\"/></svg>",
+    "mdi-robot-vacuum": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-robot-vacuum\" viewBox=\"0 0 24 24\"><path d=\"M12,2C14.65,2 17.19,3.06 19.07,4.93L17.65,6.35C16.15,4.85 14.12,4 12,4C9.88,4 7.84,4.84 6.35,6.35L4.93,4.93C6.81,3.06 9.35,2 12,2M3.66,6.5L5.11,7.94C4.39,9.17 4,10.57 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12C20,10.57 19.61,9.17 18.88,7.94L20.34,6.5C21.42,8.12 22,10.04 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12C2,10.04 2.58,8.12 3.66,6.5M12,6A6,6 0 0,1 18,12C18,13.59 17.37,15.12 16.24,16.24L14.83,14.83C14.08,15.58 13.06,16 12,16C10.94,16 9.92,15.58 9.17,14.83L7.76,16.24C6.63,15.12 6,13.59 6,12A6,6 0 0,1 12,6M12,8A1,1 0 0,0 11,9A1,1 0 0,0 12,10A1,1 0 0,0 13,9A1,1 0 0,0 12,8Z\"/></svg>",
+    "mdi-desk-lamp": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-desk-lamp\" viewBox=\"0 0 24 24\"><path d=\"M10.85,2L9.18,4.5L10.32,5.25L7.14,10C7.1,10 7.05,10 7,10A2,2 0 0,0 5,12C5,12.94 5.66,13.75 6.58,13.95L10.62,20H7V22H17V20H13L8.53,13.28C8.83,12.92 9,12.47 9,12C9,11.7 8.93,11.4 8.8,11.13L12,6.37C11.78,8.05 12.75,9.89 14.45,11L18.89,4.37C17.2,3.24 15.12,3.04 13.65,3.87L10.85,2M18.33,7L16.67,9.5C17.35,9.95 18.29,9.77 18.75,9.08C19.21,8.39 19,7.46 18.33,7Z\"/></svg>",
+    "mdi-blinds": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-blinds\" viewBox=\"0 0 24 24\"><path d=\"M3,2H21A1,1 0 0,1 22,3V5A1,1 0 0,1 21,6H20V13A1,1 0 0,1 19,14H13V16.17C14.17,16.58 15,17.69 15,19A3,3 0 0,1 12,22A3,3 0 0,1 9,19C9,17.69 9.83,16.58 11,16.17V14H5A1,1 0 0,1 4,13V6H3A1,1 0 0,1 2,5V3A1,1 0 0,1 3,2M12,18A1,1 0 0,0 11,19A1,1 0 0,0 12,20A1,1 0 0,0 13,19A1,1 0 0,0 12,18Z\"/></svg>",
+    "mdi-air-filter": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-air-filter\" viewBox=\"0 0 24 24\"><path d=\"M19,18.31V20A2,2 0 0,1 17,22H7A2,2 0 0,1 5,20V16.3C4.54,16.12 3.95,16 3,16A1,1 0 0,1 2,15A1,1 0 0,1 3,14C3.82,14 4.47,14.08 5,14.21V12.3C4.54,12.12 3.95,12 3,12A1,1 0 0,1 2,11A1,1 0 0,1 3,10C3.82,10 4.47,10.08 5,10.21V8.3C4.54,8.12 3.95,8 3,8A1,1 0 0,1 2,7A1,1 0 0,1 3,6C3.82,6 4.47,6.08 5,6.21V4A2,2 0 0,1 7,2H17A2,2 0 0,1 19,4V6.16C20.78,6.47 21.54,7.13 21.71,7.29C22.1,7.68 22.1,8.32 21.71,8.71C21.32,9.1 20.8,9.09 20.29,8.71V8.71C20.29,8.71 19.25,8 17,8C15.74,8 14.91,8.41 13.95,8.9C12.91,9.41 11.74,10 10,10C9.64,10 9.31,10 9,9.96V7.95C9.3,8 9.63,8 10,8C11.26,8 12.09,7.59 13.05,7.11C14.09,6.59 15.27,6 17,6V4H7V20H17V18C18.5,18 18.97,18.29 19,18.31M17,10C15.27,10 14.09,10.59 13.05,11.11C12.09,11.59 11.26,12 10,12C9.63,12 9.3,12 9,11.95V13.96C9.31,14 9.64,14 10,14C11.74,14 12.91,13.41 13.95,12.9C14.91,12.42 15.74,12 17,12C19.25,12 20.29,12.71 20.29,12.71V12.71C20.8,13.1 21.32,13.1 21.71,12.71C22.1,12.32 22.1,11.69 21.71,11.29C21.5,11.08 20.25,10 17,10M17,14C15.27,14 14.09,14.59 13.05,15.11C12.09,15.59 11.26,16 10,16C9.63,16 9.3,16 9,15.95V17.96C9.31,18 9.64,18 10,18C11.74,18 12.91,17.41 13.95,16.9C14.91,16.42 15.74,16 17,16C19.25,16 20.29,16.71 20.29,16.71V16.71C20.8,17.1 21.32,17.1 21.71,16.71C22.1,16.32 22.1,15.69 21.71,15.29C21.5,15.08 20.25,14 17,14Z\"/></svg>",
+    "mdi-water-percent": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-water-percent\" viewBox=\"0 0 24 24\"><path d=\"M12,3.25C12,3.25 6,10 6,14C6,17.32 8.69,20 12,20A6,6 0 0,0 18,14C18,10 12,3.25 12,3.25M14.47,9.97L15.53,11.03L9.53,17.03L8.47,15.97M9.75,10A1.25,1.25 0 0,1 11,11.25A1.25,1.25 0 0,1 9.75,12.5A1.25,1.25 0 0,1 8.5,11.25A1.25,1.25 0 0,1 9.75,10M14.25,14.5A1.25,1.25 0 0,1 15.5,15.75A1.25,1.25 0 0,1 14.25,17A1.25,1.25 0 0,1 13,15.75A1.25,1.25 0 0,1 14.25,14.5Z\"/></svg>",
+    "mdi-fan": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-fan\" viewBox=\"0 0 24 24\"><path d=\"M12,11A1,1 0 0,0 11,12A1,1 0 0,0 12,13A1,1 0 0,0 13,12A1,1 0 0,0 12,11M12.5,2C17,2 17.11,5.57 14.75,6.75C13.76,7.24 13.32,8.29 13.13,9.22C13.61,9.42 14.03,9.73 14.35,10.13C18.05,8.13 22.03,8.92 22.03,12.5C22.03,17 18.46,17.1 17.28,14.73C16.78,13.74 15.72,13.3 14.79,13.11C14.59,13.59 14.28,14 13.88,14.34C15.87,18.03 15.08,22 11.5,22C7,22 6.91,18.42 9.27,17.24C10.25,16.75 10.69,15.71 10.89,14.79C10.4,14.59 9.97,14.27 9.65,13.87C5.96,15.85 2,15.07 2,11.5C2,7 5.56,6.89 6.74,9.26C7.24,10.25 8.29,10.68 9.22,10.87C9.41,10.39 9.73,9.97 10.14,9.65C8.15,5.96 8.94,2 12.5,2Z\"/></svg>",
+    "mdi-string-lights": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-string-lights\" viewBox=\"0 0 24 24\"><path d=\"M22.56 11.39C22.36 10.59 21.82 9.85 21.05 9.44L20.63 7.74C21.11 7.58 21.57 7.41 22 7.23V5C20 6.07 16.53 7.03 12 7.03S4 6.07 2 5V7.23C2.43 7.41 2.89 7.58 3.37 7.74L2.95 9.44C2.18 9.85 1.64 10.59 1.44 11.39C.905 13.57 .385 17.31 2.92 17.93C4 18.2 6 17.89 7.27 12.82C7.46 12 7.33 11.12 6.84 10.39L7.26 8.67C8.14 8.81 9.05 8.9 10 8.96V10.74C9.35 11.33 9 12.17 9 13C9 15.24 9.39 19 12 19C13.12 19 15 18.22 15 13C15 12.17 14.65 11.33 14 10.74V8.96C14.95 8.9 15.86 8.81 16.74 8.67L17.16 10.39C16.67 11.12 16.54 12 16.73 12.82C18 17.89 20 18.2 21.08 17.93C23.61 17.31 23.09 13.57 22.56 11.39M5.81 12.47C5.81 12.47 4.74 16.84 3.28 16.5C1.82 16.12 2.9 11.75 2.9 11.75S3.26 10.29 4.71 10.65 5.81 12.47 5.81 12.47M12 17.5C10.5 17.5 10.5 13 10.5 13S10.5 11.5 12 11.5 13.5 13 13.5 13 13.5 17.5 12 17.5M20.72 16.5C19.27 16.84 18.19 12.47 18.19 12.47S17.83 11 19.29 10.65 21.1 11.75 21.1 11.75 22.18 16.12 20.72 16.5Z\"/></svg>",
+    "mdi-sprinkler-variant": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-sprinkler-variant\" viewBox=\"0 0 24 24\"><path d=\"M10 10H14V22H10V10M7 9H9V7H7V9M4 8H6V6H4V8M4 11H6V9H4V11M1 13H3V11H1V13M1 7H3V5H1V7M1 10H3V8H1V10M18 11H20V9H18V11M21 10H23V8H21V10M21 5V7H23V5H21M21 13H23V11H21V13M15 9H17V7H15V9M18 8H20V6H18V8M10 7H10.33L11 9H13L13.67 7H14V6H10V7Z\"/></svg>"
+  },
+  "page": {
+    "title": "Maple House Smart Home",
+    "background": "",
+    "topbarBg": "rgba(9, 12, 20, 0.9)",
+    "topbarBorder": "#1f2533",
+    "panel": "#0b0e13",
+    "panelAlt": "#10141b",
+    "accent": "#4fd1c5",
+    "sidebarBg": "#10141b",
+    "btnBg": "#0b0e13",
+    "btnText": "#e2e8f0",
+    "tagFill": "#1e293b",
+    "tagText": "#e2e8f0",
+    "tagBorder": "#475569",
+    "inputBg": "#0b0e13",
+    "inputText": "#e2e8f0",
+    "inputBorder": "#1f2937",
+    "inputFont": "Inter, system-ui, sans-serif",
+    "inputFontSize": 14,
+    "toolbarBg": "#0f172a",
+    "toolbarBorder": "#1f2937",
+    "toolbarText": "#94a3b8",
+    "toolbarBtnBg": "#0b0e13",
+    "toolbarBtnText": "#e2e8f0",
+    "minimapDots": "#94a3b8",
+    "canvasHintEnabled": true,
+    "canvasHintText": "",
+    "canvasHintBg": "#0f172a",
+    "canvasHintColor": "#94a3b8",
+    "danger": "#f56565",
+    "textMain": "#e2e8f0",
+    "textSoft": "#94a3b8",
+    "topbarHeight": 52,
+    "sidebarWidth": 350,
+    "mobileFooterHeight": 40,
+    "sidebarCollapsed": false,
+    "nodeFill": "#1e293b",
+    "nodeStroke": "#475569",
+    "nodeTitle": "#e2e8f0",
+    "nodeSub": "#94a3b8",
+    "nodeTitleSize": 18,
+    "nodeSubSize": 13,
+    "nodeFont": "Inter, system-ui, sans-serif",
+    "defaultEdge": "#475569",
+    "selectionHandle": "#f59e0b",
+    "selectionHandleSize": 8,
+    "groupIndicator": "#4fd1c5",
+    "canvasGradientTop": "#1e2532",
+    "canvasGradientBottom": "#050608",
+    "canvasBorder": "#475569",
+    "canvasGrid": "#475569",
+    "canvasGridSize": 50,
+    "canvasGridEnabled": true,
+    "rackFrameFill": "#0f172a",
+    "rackFrameStroke": "#4fd1c5",
+    "rackLineColor": "#475569",
+    "rackTextColor": "#4fd1c5",
+    "rackGridEnabled": true,
+    "viewOnly": false,
+    "defaultEdgeRouting": "straight",
+    "animateConnections": false,
+    "animationStyle": "arrows",
+    "animationDirection": "all",
+    "animationSpeed": 1.5,
+    "motionTrailsEnabled": true,
+    "motionTrailLength": 8,
+    "motionTrailStyle": "solid",
+    "motionTrailArrow": true,
+    "showPortLabels": true,
+    "snapToGrid": true,
+    "canvasWidth": 4000,
+    "canvasHeight": 3000,
+    "layerNames": {
+      "layer1": "Lighting",
+      "layer2": "Security",
+      "layer3": "Climate",
+      "layer4": "Media"
+    },
+    "markDuplicateIps": false,
+    "showHostedOnLinks": true,
+    "mappingMode": "smarthome",
+    "autoPingEnabled": false,
+    "autoPingInterval": 30,
+    "canvasTemplate": "blueprint"
+  },
+  "autoPingEnabled": false,
+  "autoPingInterval": 30,
+  "canvas": {
+    "zoom": 1.8457752255947495,
+    "panX": 296.44444444444434,
+    "panY": -42.666666666666856
+  },
+  "savedTopologyView": {
+    "zoom": 1.8457752255947495,
+    "panX": 296.44444444444434,
+    "panY": -42.666666666666856
+  },
+  "tabViews": {
+    "main": {
+      "zoom": 1.8457752255947495,
+      "panX": 296.44444444444434,
+      "panY": -42.666666666666856
+    }
+  },
+  "documentTabs": [
+    {
+      "id": "main",
+      "name": "Ground Floor",
+      "nodes": {
+        "hub": {
+          "shape": "hub",
+          "name": "Home Hub",
+          "ip": "Zigbee, Thread, Wi Fi",
+          "role": "Home Assistant",
+          "tags": [
+            "core"
+          ],
+          "notes": [
+            "<h3>Home Hub</h3><p>Runs Home Assistant with a built in Zigbee and Thread radio.</p><ul><li>94 devices</li><li>31 automations</li><li>Nightly backup to the NAS</li></ul>"
+          ],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "custom",
+            "customUrl": "http://192.168.20.10:8123",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-l1": {
+          "shape": "smart-bulb",
+          "name": "Ceiling 1",
+          "ip": "Zigbee bulb",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-living-lights",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-l2": {
+          "shape": "smart-bulb",
+          "name": "Ceiling 2",
+          "ip": "Zigbee bulb",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-living-lights",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-l3": {
+          "shape": "smart-bulb",
+          "name": "Ceiling 3",
+          "ip": "Zigbee bulb",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-living-lights",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-tv": {
+          "shape": "smart-tv",
+          "name": "TV",
+          "ip": "Wi Fi",
+          "role": "",
+          "tags": [
+            "media"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-spk": {
+          "shape": "smart-speaker",
+          "name": "Soundbar",
+          "ip": "Wi Fi",
+          "role": "",
+          "tags": [
+            "media"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "lr-motion": {
+          "shape": "motion-sensor",
+          "name": "Living Motion",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 110,
+          "fovDistance": 200,
+          "fovRotation": 45,
+          "fovColor": "#10b981",
+          "fovOpacity": 15,
+          "fovAnimationType": "pulse",
+          "fovAnimate": true,
+          "fovSpeed": 3,
+          "fovBorderColor": "#10b981",
+          "fovBorderOpacity": 50
+        },
+        "k-plug": {
+          "shape": "smart-plug",
+          "name": "Coffee Plug",
+          "ip": "Zigbee router",
+          "role": "",
+          "tags": [
+            "energy"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "k-lights": {
+          "shape": "smart-bulb",
+          "name": "Kitchen Lights",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "k-smoke": {
+          "shape": "smoke-detector",
+          "name": "Smoke Alarm",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "safety"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 110,
+          "fovColor": "#ef4444",
+          "fovOpacity": 12,
+          "fovAnimationType": "pulse",
+          "fovAnimate": false,
+          "fovBorderColor": "#ef4444",
+          "fovBorderOpacity": 40
+        },
+        "k-leak": {
+          "shape": "sensor",
+          "name": "Sink Leak",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "safety"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "k-speaker": {
+          "shape": "smart-speaker",
+          "name": "Kitchen Speaker",
+          "ip": "Thread border router",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "k-temp": {
+          "shape": "sensor",
+          "name": "Fridge Temp",
+          "ip": "Thread",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "e-bell": {
+          "shape": "doorbell",
+          "name": "Doorbell",
+          "ip": "Wi Fi, 2K",
+          "role": "",
+          "tags": [
+            "camera"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 85,
+          "fovDistance": 150,
+          "fovRotation": 0,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "e-lock": {
+          "shape": "smart-lock",
+          "name": "Front Lock",
+          "ip": "Thread",
+          "role": "",
+          "tags": [
+            "security"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "e-motion": {
+          "shape": "motion-sensor",
+          "name": "Hall Motion",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 110,
+          "fovDistance": 200,
+          "fovRotation": 0,
+          "fovColor": "#10b981",
+          "fovOpacity": 15,
+          "fovAnimationType": "pulse",
+          "fovAnimate": true,
+          "fovSpeed": 3,
+          "fovBorderColor": "#10b981",
+          "fovBorderOpacity": 50
+        },
+        "g-door": {
+          "shape": "garage",
+          "name": "Garage Door",
+          "ip": "Wi Fi relay",
+          "role": "",
+          "tags": [
+            "security"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "g-ev": {
+          "shape": "smart-plug",
+          "name": "EV Charger",
+          "ip": "Wi Fi, 11 kW",
+          "role": "",
+          "tags": [
+            "energy"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "g-cam": {
+          "shape": "camera",
+          "name": "Garage Cam",
+          "ip": "PoE",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 85,
+          "fovDistance": 230,
+          "fovRotation": 315,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "u-valve": {
+          "shape": "smart-plug",
+          "name": "Water Main Valve",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "safety"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "u-washer": {
+          "shape": "smart-plug",
+          "name": "Washer Plug",
+          "ip": "Zigbee router, power meter",
+          "role": "",
+          "tags": [
+            "energy"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "u-leak": {
+          "shape": "sensor",
+          "name": "Washer Leak",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "safety"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "u-vac": {
+          "shape": "vacuum",
+          "name": "Robot Vacuum",
+          "ip": "Wi Fi",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "o-lamp": {
+          "shape": "smart-bulb",
+          "name": "Desk Lamp",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "o-blinds": {
+          "shape": "smart-plug",
+          "name": "Office Blinds",
+          "ip": "Thread",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "o-air": {
+          "shape": "sensor",
+          "name": "Air Quality",
+          "ip": "Thread, CO2 and VOC",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-hum": {
+          "shape": "sensor",
+          "name": "Humidity",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-fan": {
+          "shape": "smart-plug",
+          "name": "Bath Fan",
+          "ip": "Zigbee switch",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "p-cam": {
+          "shape": "camera",
+          "name": "Patio Cam",
+          "ip": "PoE",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 85,
+          "fovDistance": 300,
+          "fovRotation": 135,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "p-lights": {
+          "shape": "smart-plug",
+          "name": "String Lights",
+          "ip": "Outdoor plug",
+          "role": "",
+          "tags": [
+            "lights"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "p-sprinkler": {
+          "shape": "sprinkler",
+          "name": "Sprinkler Zone 1",
+          "ip": "Wi Fi controller",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 180,
+          "fovDistance": 200,
+          "fovRotation": 270,
+          "fovColor": "#06b6d4",
+          "fovOpacity": 20,
+          "fovAnimationType": "spin",
+          "fovAnimate": true,
+          "fovSpeed": 6
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-ground-26",
+            "from": "hub",
+            "to": "lr-l1",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-27",
+            "from": "hub",
+            "to": "lr-l2",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-28",
+            "from": "hub",
+            "to": "lr-l3",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-29",
+            "from": "hub",
+            "to": "lr-motion",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-30",
+            "from": "hub",
+            "to": "lr-tv",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-31",
+            "from": "hub",
+            "to": "lr-spk",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-32",
+            "from": "hub",
+            "to": "k-plug",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-33",
+            "from": "k-plug",
+            "to": "k-lights",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-34",
+            "from": "k-plug",
+            "to": "k-leak",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-35",
+            "from": "k-lights",
+            "to": "k-smoke",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-36",
+            "from": "hub",
+            "to": "k-speaker",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-37",
+            "from": "k-speaker",
+            "to": "k-temp",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-38",
+            "from": "k-speaker",
+            "to": "o-blinds",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-39",
+            "from": "k-speaker",
+            "to": "o-air",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-40",
+            "from": "k-lights",
+            "to": "e-motion",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-41",
+            "from": "k-speaker",
+            "to": "e-lock",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-42",
+            "from": "e-lock",
+            "to": "e-bell",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-43",
+            "from": "g-door",
+            "to": "g-ev",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-44",
+            "from": "hub",
+            "to": "u-washer",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-45",
+            "from": "u-washer",
+            "to": "u-valve",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-46",
+            "from": "u-washer",
+            "to": "u-leak",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-47",
+            "from": "u-washer",
+            "to": "o-lamp",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-48",
+            "from": "o-lamp",
+            "to": "b-hum",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-49",
+            "from": "b-hum",
+            "to": "b-fan",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-50",
+            "from": "u-leak",
+            "to": "u-valve",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "forward",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "Leak closes valve",
+            "animate": true,
+            "animationStyle": "arrows",
+            "animationSpeed": 1.5,
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-51",
+            "from": "e-bell",
+            "to": "lr-tv",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "forward",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Doorbell on TV",
+            "waypoints": [
+              {
+                "x": 2160,
+                "y": 300
+              },
+              {
+                "x": 860,
+                "y": 300
+              }
+            ],
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-52",
+            "from": "p-cam",
+            "to": "p-lights",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-53",
+            "from": "p-lights",
+            "to": "p-sprinkler",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-ground-54",
+            "from": "p-cam",
+            "to": "g-cam",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "PoE to garage switch",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          }
+        ]
+      },
+      "positions": {
+        "hub": {
+          "x": 560,
+          "y": 470
+        },
+        "lr-l1": {
+          "x": 260,
+          "y": 720
+        },
+        "lr-l2": {
+          "x": 480,
+          "y": 720
+        },
+        "lr-l3": {
+          "x": 700,
+          "y": 720
+        },
+        "lr-tv": {
+          "x": 860,
+          "y": 400
+        },
+        "lr-spk": {
+          "x": 860,
+          "y": 580
+        },
+        "lr-motion": {
+          "x": 160,
+          "y": 800
+        },
+        "k-plug": {
+          "x": 1150,
+          "y": 420
+        },
+        "k-lights": {
+          "x": 1400,
+          "y": 420
+        },
+        "k-smoke": {
+          "x": 1650,
+          "y": 420
+        },
+        "k-leak": {
+          "x": 1150,
+          "y": 720
+        },
+        "k-speaker": {
+          "x": 1400,
+          "y": 720
+        },
+        "k-temp": {
+          "x": 1650,
+          "y": 720
+        },
+        "e-bell": {
+          "x": 2160,
+          "y": 330
+        },
+        "e-lock": {
+          "x": 2020,
+          "y": 560
+        },
+        "e-motion": {
+          "x": 2020,
+          "y": 780
+        },
+        "g-door": {
+          "x": 2480,
+          "y": 400
+        },
+        "g-ev": {
+          "x": 2480,
+          "y": 600
+        },
+        "g-cam": {
+          "x": 2620,
+          "y": 790
+        },
+        "u-valve": {
+          "x": 260,
+          "y": 1080
+        },
+        "u-washer": {
+          "x": 520,
+          "y": 1080
+        },
+        "u-leak": {
+          "x": 520,
+          "y": 1300
+        },
+        "u-vac": {
+          "x": 260,
+          "y": 1300
+        },
+        "o-lamp": {
+          "x": 860,
+          "y": 1080
+        },
+        "o-blinds": {
+          "x": 1160,
+          "y": 1080
+        },
+        "o-air": {
+          "x": 1010,
+          "y": 1300
+        },
+        "b-hum": {
+          "x": 1600,
+          "y": 1080
+        },
+        "b-fan": {
+          "x": 1600,
+          "y": 1300
+        },
+        "p-cam": {
+          "x": 1880,
+          "y": 1020
+        },
+        "p-lights": {
+          "x": 2160,
+          "y": 1300
+        },
+        "p-sprinkler": {
+          "x": 2480,
+          "y": 1150
+        }
+      },
+      "sizes": {
+        "hub": 56,
+        "lr-l1": 32,
+        "lr-l2": 32,
+        "lr-l3": 32,
+        "lr-tv": 40,
+        "lr-spk": 34,
+        "lr-motion": 28,
+        "k-plug": 32,
+        "k-lights": 34,
+        "k-smoke": 30,
+        "k-leak": 28,
+        "k-speaker": 34,
+        "k-temp": 28,
+        "e-bell": 32,
+        "e-lock": 32,
+        "e-motion": 28,
+        "g-door": 38,
+        "g-ev": 34,
+        "g-cam": 28,
+        "u-valve": 32,
+        "u-washer": 32,
+        "u-leak": 28,
+        "u-vac": 34,
+        "o-lamp": 30,
+        "o-blinds": 30,
+        "o-air": 28,
+        "b-hum": 28,
+        "b-fan": 30,
+        "p-cam": 28,
+        "p-lights": 30,
+        "p-sprinkler": 32
+      },
+      "styles": {
+        "hub": {
+          "all": {
+            "icon": {
+              "library": "selfhst",
+              "name": "home-assistant"
+            }
+          }
+        },
+        "lr-l1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "ceiling-light"
+            }
+          }
+        },
+        "lr-l2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "ceiling-light"
+            }
+          }
+        },
+        "lr-l3": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "ceiling-light"
+            }
+          }
+        },
+        "lr-tv": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "television"
+            }
+          }
+        },
+        "lr-spk": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "soundbar"
+            }
+          }
+        },
+        "lr-motion": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "motion-sensor"
+            }
+          }
+        },
+        "k-plug": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "coffee-maker"
+            }
+          }
+        },
+        "k-lights": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "lightbulb-group"
+            }
+          }
+        },
+        "k-smoke": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "smoke-detector"
+            }
+          }
+        },
+        "k-leak": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "water-alert"
+            }
+          }
+        },
+        "k-speaker": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "speaker"
+            }
+          }
+        },
+        "k-temp": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "fridge"
+            }
+          }
+        },
+        "e-bell": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "doorbell-video"
+            }
+          }
+        },
+        "e-lock": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "lock-smart"
+            }
+          }
+        },
+        "e-motion": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "motion-sensor"
+            }
+          }
+        },
+        "g-door": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "garage"
+            }
+          }
+        },
+        "g-ev": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "ev-station"
+            }
+          }
+        },
+        "g-cam": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "u-valve": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "valve"
+            }
+          }
+        },
+        "u-washer": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "washing-machine"
+            }
+          }
+        },
+        "u-leak": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "water-alert"
+            }
+          }
+        },
+        "u-vac": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "robot-vacuum"
+            }
+          }
+        },
+        "o-lamp": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "desk-lamp"
+            }
+          }
+        },
+        "o-blinds": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "blinds"
+            }
+          }
+        },
+        "o-air": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "air-filter"
+            }
+          }
+        },
+        "b-hum": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "water-percent"
+            }
+          }
+        },
+        "b-fan": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "fan"
+            }
+          }
+        },
+        "p-cam": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "p-lights": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "string-lights"
+            }
+          }
+        },
+        "p-sprinkler": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "sprinkler-variant"
+            }
+          }
+        }
+      },
+      "legend": {
+        "#84cc16": "Zigbee mesh",
+        "#c084fc": "Thread",
+        "#38bdf8": "Wi Fi",
+        "#3b82f6": "Ethernet",
+        "#f59e0b": "Automation link"
+      },
+      "rects": {
+        "list": [
+          {
+            "id": "rect-ground-3",
+            "x": 100,
+            "y": 220,
+            "width": 900,
+            "height": 640,
+            "color": "#3b82f6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-6",
+            "x": 1000,
+            "y": 220,
+            "width": 800,
+            "height": 640,
+            "color": "#f59e0b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-9",
+            "x": 1800,
+            "y": 220,
+            "width": 450,
+            "height": 640,
+            "color": "#a855f7",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-12",
+            "x": 2250,
+            "y": 220,
+            "width": 450,
+            "height": 640,
+            "color": "#64748b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-15",
+            "x": 100,
+            "y": 860,
+            "width": 600,
+            "height": 600,
+            "color": "#14b8a6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-18",
+            "x": 700,
+            "y": 860,
+            "width": 700,
+            "height": 600,
+            "color": "#06b6d4",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-21",
+            "x": 1400,
+            "y": 860,
+            "width": 400,
+            "height": 600,
+            "color": "#ec4899",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-ground-23",
+            "x": 1800,
+            "y": 860,
+            "width": 900,
+            "height": 600,
+            "color": "#22c55e",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          }
+        ]
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-ground-1",
+            "x": 60,
+            "y": 100,
+            "content": "Maple House: Ground Floor",
+            "fontSize": 44,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-2",
+            "x": 60,
+            "y": 148,
+            "content": "Rooms are zones, devices sit where they are mounted, lines show the radio mesh",
+            "fontSize": 19,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-4",
+            "x": 118,
+            "y": 254,
+            "content": "Living Room",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-5",
+            "x": 118,
+            "y": 284,
+            "content": "Movie scene, ceiling lights grouped",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-7",
+            "x": 1018,
+            "y": 254,
+            "content": "Kitchen",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-8",
+            "x": 1018,
+            "y": 284,
+            "content": "Leak and smoke protection",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-10",
+            "x": 1818,
+            "y": 254,
+            "content": "Entry",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-11",
+            "x": 1818,
+            "y": 284,
+            "content": "Front door",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-13",
+            "x": 2268,
+            "y": 254,
+            "content": "Garage",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-14",
+            "x": 2268,
+            "y": 284,
+            "content": "EV charging",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-16",
+            "x": 118,
+            "y": 894,
+            "content": "Utility",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-17",
+            "x": 118,
+            "y": 924,
+            "content": "Washer and water main",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-19",
+            "x": 718,
+            "y": 894,
+            "content": "Office",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-20",
+            "x": 718,
+            "y": 924,
+            "content": "Focus mode",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-22",
+            "x": 1418,
+            "y": 894,
+            "content": "Bath",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-24",
+            "x": 1818,
+            "y": 894,
+            "content": "Back Patio",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-ground-25",
+            "x": 1818,
+            "y": 924,
+            "content": "Outdoor, irrigation zone 1",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      },
+      "images": {
+        "list": []
+      },
+      "pageState": {
+        "title": "Maple House Smart Home",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 52,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "canvasGridEnabled": true,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
+        "viewOnly": false,
+        "defaultEdgeRouting": "straight",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {
+          "layer1": "Lighting",
+          "layer2": "Security",
+          "layer3": "Climate",
+          "layer4": "Media"
+        },
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "smarthome",
+        "autoPingEnabled": false,
+        "autoPingInterval": 30,
+        "canvasTemplate": "blueprint"
+      }
+    },
+    {
+      "id": "tab-smarthome-upstairs",
+      "name": "Upstairs and Garden",
+      "nodes": {
+        "up-thermo": {
+          "shape": "thermostat",
+          "name": "Thermostat",
+          "ip": "Thread, heat pump",
+          "role": "",
+          "tags": [
+            "climate"
+          ],
+          "notes": [
+            "<h3>Climate schedule</h3><table><thead><tr><th>Time</th><th>Heat</th><th>Cool</th></tr></thead><tbody><tr><td>06:30</td><td>20.5 C</td><td>25 C</td></tr><tr><td>09:00</td><td>18 C</td><td>27 C</td></tr><tr><td>17:00</td><td>20.5 C</td><td>25 C</td></tr><tr><td>22:30</td><td>18 C</td><td>24 C</td></tr></tbody></table>"
+          ],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "up-router": {
+          "shape": "router",
+          "name": "Upstairs Mesh Node",
+          "ip": "Wi Fi 6E",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pb-lamp1": {
+          "shape": "smart-bulb",
+          "name": "Bedside Left",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-bedside",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pb-lamp2": {
+          "shape": "smart-bulb",
+          "name": "Bedside Right",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-bedside",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pb-blinds": {
+          "shape": "smart-plug",
+          "name": "Bedroom Blinds",
+          "ip": "Thread",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pb-temp": {
+          "shape": "sensor",
+          "name": "Bedroom Temp",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pb-smoke": {
+          "shape": "smoke-detector",
+          "name": "Smoke Alarm",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 110,
+          "fovColor": "#ef4444",
+          "fovOpacity": 12,
+          "fovAnimationType": "pulse",
+          "fovAnimate": false,
+          "fovBorderColor": "#ef4444",
+          "fovBorderOpacity": 40
+        },
+        "kr-night": {
+          "shape": "smart-bulb",
+          "name": "Night Light",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "kr-speaker": {
+          "shape": "smart-speaker",
+          "name": "Kids Speaker",
+          "ip": "Wi Fi",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "kr-window": {
+          "shape": "sensor",
+          "name": "Window Contact",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "gr-plug": {
+          "shape": "smart-plug",
+          "name": "Heater Plug",
+          "ip": "Zigbee router",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "gr-window": {
+          "shape": "sensor",
+          "name": "Guest Window",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "ba-fan": {
+          "shape": "smart-plug",
+          "name": "Bath Fan",
+          "ip": "Zigbee switch",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "ba-hum": {
+          "shape": "sensor",
+          "name": "Humidity",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "la-motion": {
+          "shape": "motion-sensor",
+          "name": "Landing Motion",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 110,
+          "fovDistance": 200,
+          "fovRotation": 45,
+          "fovColor": "#10b981",
+          "fovOpacity": 15,
+          "fovAnimationType": "pulse",
+          "fovAnimate": true,
+          "fovSpeed": 3,
+          "fovBorderColor": "#10b981",
+          "fovBorderOpacity": 50
+        },
+        "la-lights": {
+          "shape": "smart-bulb",
+          "name": "Stair Lights",
+          "ip": "Zigbee",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "gd-weather": {
+          "shape": "sensor",
+          "name": "Weather Station",
+          "ip": "Wi Fi, rain and wind",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "gd-sprk2": {
+          "shape": "sprinkler",
+          "name": "Zone 2 Beds",
+          "ip": "Drip",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 120,
+          "fovDistance": 160,
+          "fovRotation": 270,
+          "fovColor": "#06b6d4",
+          "fovOpacity": 20,
+          "fovAnimationType": "spin",
+          "fovAnimate": true,
+          "fovSpeed": 6
+        },
+        "gd-sprk3": {
+          "shape": "sprinkler",
+          "name": "Zone 3 Lawn",
+          "ip": "Rotor",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 270,
+          "fovDistance": 130,
+          "fovRotation": 270,
+          "fovColor": "#06b6d4",
+          "fovOpacity": 18,
+          "fovAnimationType": "spin",
+          "fovAnimate": true,
+          "fovSpeed": 8
+        },
+        "gd-shedcam": {
+          "shape": "camera",
+          "name": "Shed Cam",
+          "ip": "Wi Fi",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 85,
+          "fovDistance": 260,
+          "fovRotation": 315,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "gd-ap": {
+          "shape": "access-point",
+          "name": "Garden AP",
+          "ip": "Outdoor, Wi Fi 6",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "gd-lights": {
+          "shape": "smart-plug",
+          "name": "Path Lights",
+          "ip": "Zigbee outdoor",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-upstairs-19",
+            "from": "gr-plug",
+            "to": "gr-window",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-20",
+            "from": "gr-plug",
+            "to": "kr-night",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-21",
+            "from": "kr-night",
+            "to": "kr-window",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-22",
+            "from": "kr-night",
+            "to": "pb-lamp2",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-23",
+            "from": "pb-lamp2",
+            "to": "pb-lamp1",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-24",
+            "from": "pb-lamp2",
+            "to": "pb-smoke",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-25",
+            "from": "pb-lamp1",
+            "to": "pb-temp",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-26",
+            "from": "up-thermo",
+            "to": "pb-blinds",
+            "width": 3,
+            "color": "#c084fc",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-27",
+            "from": "la-lights",
+            "to": "gr-plug",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-28",
+            "from": "la-lights",
+            "to": "la-motion",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-29",
+            "from": "la-motion",
+            "to": "ba-hum",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-30",
+            "from": "ba-hum",
+            "to": "ba-fan",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 2
+          },
+          {
+            "id": "edge-upstairs-31",
+            "from": "up-router",
+            "to": "kr-speaker",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-32",
+            "from": "up-router",
+            "to": "gd-ap",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-33",
+            "from": "gd-ap",
+            "to": "gd-weather",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-34",
+            "from": "gd-ap",
+            "to": "gd-shedcam",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-35",
+            "from": "la-lights",
+            "to": "gd-lights",
+            "width": 3,
+            "color": "#84cc16",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-36",
+            "from": "gd-ap",
+            "to": "gd-sprk2",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-37",
+            "from": "gd-ap",
+            "to": "gd-sprk3",
+            "width": 3,
+            "color": "#38bdf8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-upstairs-38",
+            "from": "ba-hum",
+            "to": "ba-fan",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "forward",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "Over 70 percent: fan on",
+            "_pairIndex": 1,
+            "_pairTotal": 2
+          },
+          {
+            "id": "edge-upstairs-39",
+            "from": "gd-weather",
+            "to": "gd-sprk3",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "forward",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Rain skips watering",
+            "waypoints": [
+              {
+                "x": 2640,
+                "y": 360
+              },
+              {
+                "x": 2640,
+                "y": 800
+              }
+            ],
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          }
+        ]
+      },
+      "positions": {
+        "up-thermo": {
+          "x": 1350,
+          "y": 1050
+        },
+        "up-router": {
+          "x": 1000,
+          "y": 1050
+        },
+        "pb-lamp1": {
+          "x": 260,
+          "y": 420
+        },
+        "pb-lamp2": {
+          "x": 740,
+          "y": 420
+        },
+        "pb-blinds": {
+          "x": 500,
+          "y": 330
+        },
+        "pb-temp": {
+          "x": 500,
+          "y": 640
+        },
+        "pb-smoke": {
+          "x": 780,
+          "y": 720
+        },
+        "kr-night": {
+          "x": 1050,
+          "y": 420
+        },
+        "kr-speaker": {
+          "x": 1350,
+          "y": 420
+        },
+        "kr-window": {
+          "x": 1200,
+          "y": 680
+        },
+        "gr-plug": {
+          "x": 1750,
+          "y": 420
+        },
+        "gr-window": {
+          "x": 1750,
+          "y": 680
+        },
+        "ba-fan": {
+          "x": 260,
+          "y": 1060
+        },
+        "ba-hum": {
+          "x": 520,
+          "y": 1060
+        },
+        "la-motion": {
+          "x": 760,
+          "y": 1180
+        },
+        "la-lights": {
+          "x": 1700,
+          "y": 1050
+        },
+        "gd-weather": {
+          "x": 2380,
+          "y": 360
+        },
+        "gd-sprk2": {
+          "x": 2220,
+          "y": 640
+        },
+        "gd-sprk3": {
+          "x": 2540,
+          "y": 800
+        },
+        "gd-shedcam": {
+          "x": 2600,
+          "y": 1300
+        },
+        "gd-ap": {
+          "x": 2200,
+          "y": 940
+        },
+        "gd-lights": {
+          "x": 2300,
+          "y": 1250
+        }
+      },
+      "sizes": {
+        "up-thermo": 40,
+        "up-router": 36,
+        "pb-lamp1": 28,
+        "pb-lamp2": 28,
+        "pb-blinds": 30,
+        "pb-temp": 26,
+        "pb-smoke": 26,
+        "kr-night": 28,
+        "kr-speaker": 30,
+        "kr-window": 26,
+        "gr-plug": 30,
+        "gr-window": 26,
+        "ba-fan": 28,
+        "ba-hum": 26,
+        "la-motion": 26,
+        "la-lights": 30,
+        "gd-weather": 32,
+        "gd-sprk2": 28,
+        "gd-sprk3": 28,
+        "gd-shedcam": 28,
+        "gd-ap": 30,
+        "gd-lights": 28
+      },
+      "styles": {
+        "up-thermo": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "thermostat"
+            }
+          }
+        },
+        "up-router": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "router-wireless"
+            }
+          }
+        },
+        "pb-lamp1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "lamp"
+            }
+          }
+        },
+        "pb-lamp2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "lamp"
+            }
+          }
+        },
+        "pb-blinds": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "blinds"
+            }
+          }
+        },
+        "pb-temp": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "thermometer"
+            }
+          }
+        },
+        "pb-smoke": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "smoke-detector"
+            }
+          }
+        },
+        "kr-night": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "lightbulb-night"
+            }
+          }
+        },
+        "kr-speaker": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "speaker"
+            }
+          }
+        },
+        "kr-window": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "window-closed-variant"
+            }
+          }
+        },
+        "gr-plug": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "radiator"
+            }
+          }
+        },
+        "gr-window": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "window-closed-variant"
+            }
+          }
+        },
+        "ba-fan": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "fan"
+            }
+          }
+        },
+        "ba-hum": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "water-percent"
+            }
+          }
+        },
+        "la-motion": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "motion-sensor"
+            }
+          }
+        },
+        "la-lights": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "stairs"
+            }
+          }
+        },
+        "gd-weather": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "weather-partly-rainy"
+            }
+          }
+        },
+        "gd-sprk2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "sprinkler"
+            }
+          }
+        },
+        "gd-sprk3": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "sprinkler-variant"
+            }
+          }
+        },
+        "gd-shedcam": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "gd-ap": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "gd-lights": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "outdoor-lamp"
+            }
+          }
+        }
+      },
+      "legend": {
+        "#84cc16": "Zigbee mesh",
+        "#c084fc": "Thread",
+        "#38bdf8": "Wi Fi",
+        "#f59e0b": "Automation link"
+      },
+      "rects": {
+        "list": [
+          {
+            "id": "rect-upstairs-3",
+            "x": 100,
+            "y": 220,
+            "width": 800,
+            "height": 620,
+            "color": "#8b5cf6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-upstairs-6",
+            "x": 900,
+            "y": 220,
+            "width": 600,
+            "height": 620,
+            "color": "#ec4899",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-upstairs-9",
+            "x": 1500,
+            "y": 220,
+            "width": 500,
+            "height": 620,
+            "color": "#14b8a6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-upstairs-11",
+            "x": 100,
+            "y": 840,
+            "width": 600,
+            "height": 420,
+            "color": "#06b6d4",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-upstairs-13",
+            "x": 700,
+            "y": 840,
+            "width": 1300,
+            "height": 420,
+            "color": "#64748b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-upstairs-16",
+            "x": 2060,
+            "y": 220,
+            "width": 640,
+            "height": 1240,
+            "color": "#22c55e",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.1,
+            "borderWidth": 2,
+            "notes": []
+          }
+        ]
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-upstairs-1",
+            "x": 60,
+            "y": 100,
+            "content": "Maple House: Upstairs and Garden",
+            "fontSize": 44,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-2",
+            "x": 60,
+            "y": 148,
+            "content": "Bedrooms, climate and the garden",
+            "fontSize": 19,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-4",
+            "x": 118,
+            "y": 254,
+            "content": "Primary Bedroom",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-5",
+            "x": 118,
+            "y": 284,
+            "content": "Sleep scene at 22:30",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-7",
+            "x": 918,
+            "y": 254,
+            "content": "Kids Room",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-8",
+            "x": 918,
+            "y": 284,
+            "content": "Night light, quiet hours",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-10",
+            "x": 1518,
+            "y": 254,
+            "content": "Guest Room",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-12",
+            "x": 118,
+            "y": 874,
+            "content": "Primary Bath",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-14",
+            "x": 718,
+            "y": 874,
+            "content": "Landing",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-15",
+            "x": 718,
+            "y": 904,
+            "content": "Stairs and linen closet",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-17",
+            "x": 2078,
+            "y": 254,
+            "content": "Garden",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-18",
+            "x": 2078,
+            "y": 284,
+            "content": "Irrigation zones 2 to 4, shed",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-40",
+            "x": 100,
+            "y": 1340,
+            "content": "Scenes",
+            "fontSize": 24,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-upstairs-41",
+            "x": 100,
+            "y": 1380,
+            "content": "Good morning: blinds open, heat to 20.5 C, kitchen speaker plays the news\nSleep: bedside lamps fade over 10 minutes, doors locked, cameras armed\nAway: everything off, vacuum runs, thermostat to eco",
+            "fontSize": 18,
+            "color": "#cbd5e1",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      },
+      "images": {
+        "list": []
+      },
+      "pageState": {
+        "title": "Maple House Smart Home",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 52,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "canvasGridEnabled": true,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
+        "viewOnly": false,
+        "defaultEdgeRouting": "straight",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {
+          "layer1": "Lighting",
+          "layer2": "Security",
+          "layer3": "Climate",
+          "layer4": "Media"
+        },
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "smarthome",
+        "autoPingEnabled": false,
+        "autoPingInterval": 60,
+        "canvasTemplate": "blueprint"
+      }
+    }
+  ],
+  "currentTabIndex": 0,
+  "encryptedSections": {},
+  "auditLog": [
+    {
+      "timestamp": 1794457279257,
+      "type": "export",
+      "description": "Exported CSV: maple-house-smart-home.csv",
+      "details": {},
+      "tab": "Ground Floor"
+    },
+    {
+      "timestamp": 1794457277787,
+      "type": "import",
+      "description": "Imported JSON: theonefile-networkening-smarthome-demo.json (31 nodes, 29 connections)",
+      "details": {},
+      "tab": "Ground Floor"
+    }
+  ],
+  "savedStyleSets": [],
+  "recordings": [],
+  "customLanguage": null
+}
+THEONEFILE_CONFIG-->
+
+# Maple House Smart Home
+
+> Exported from The One File on 2026-11-12T04:21:19.265Z
+
+## Legend
+
+- #84cc16: Zigbee mesh
+- #c084fc: Thread
+- #38bdf8: Wi Fi
+- #3b82f6: Ethernet
+- #f59e0b: Automation link
+
+## Zone Legend
+
+- #10b981: Motion sensor
+- #ef4444: Smoke alarm
+- #f59e0b: Camera view
+- #06b6d4: Sprinkler
+
+## Layers
+
+- layer1: Lighting
+- layer2: Security
+- layer3: Climate
+- layer4: Media
+
+## Nodes
+
+### hub
+- **Name:** Home Hub
+- **IP:** Zigbee, Thread, Wi Fi
+- **Role:** Home Assistant
+- **Shape:** hub
+- **Tags:** core
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"custom","customUrl":"http://192.168.20.10:8123","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 560, 470
+- **Size:** 56
+- **Notes:**
+  - <h3>Home Hub</h3><p>Runs Home Assistant with a built in Zigbee and Thread radio.</p><ul><li>94 devices</li><li>31 automations</li><li>Nightly backup to the NAS</li></ul>
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"home-assistant"}}}`
+
+### lr-l1
+- **Name:** Ceiling 1
+- **IP:** Zigbee bulb
+- **Role:** 
+- **Shape:** smart-bulb
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** grp-living-lights
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 260, 720
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"ceiling-light"}}}`
+
+### lr-l2
+- **Name:** Ceiling 2
+- **IP:** Zigbee bulb
+- **Role:** 
+- **Shape:** smart-bulb
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** grp-living-lights
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 480, 720
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"ceiling-light"}}}`
+
+### lr-l3
+- **Name:** Ceiling 3
+- **IP:** Zigbee bulb
+- **Role:** 
+- **Shape:** smart-bulb
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** grp-living-lights
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 700, 720
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"ceiling-light"}}}`
+
+### lr-tv
+- **Name:** TV
+- **IP:** Wi Fi
+- **Role:** 
+- **Shape:** smart-tv
+- **Tags:** media
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 860, 400
+- **Size:** 40
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"television"}}}`
+
+### lr-spk
+- **Name:** Soundbar
+- **IP:** Wi Fi
+- **Role:** 
+- **Shape:** smart-speaker
+- **Tags:** media
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 860, 580
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"soundbar"}}}`
+
+### lr-motion
+- **Name:** Living Motion
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** motion-sensor
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 110
+- **Coverage Distance:** 200
+- **Coverage Rotation:** 45
+- **Coverage Color:** #10b981
+- **Coverage Opacity:** 15
+- **Coverage Animation Type:** pulse
+- **Coverage Animate:** true
+- **Coverage Speed:** 3
+- **Coverage Border Color:** #10b981
+- **Coverage Border Opacity:** 50
+- **Position:** 160, 800
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"motion-sensor"}}}`
+
+### k-plug
+- **Name:** Coffee Plug
+- **IP:** Zigbee router
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** energy
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1150, 420
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"coffee-maker"}}}`
+
+### k-lights
+- **Name:** Kitchen Lights
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** smart-bulb
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1400, 420
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"lightbulb-group"}}}`
+
+### k-smoke
+- **Name:** Smoke Alarm
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** smoke-detector
+- **Tags:** safety
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 360
+- **Coverage Distance:** 110
+- **Coverage Color:** #ef4444
+- **Coverage Opacity:** 12
+- **Coverage Animation Type:** pulse
+- **Coverage Animate:** false
+- **Coverage Border Color:** #ef4444
+- **Coverage Border Opacity:** 40
+- **Position:** 1650, 420
+- **Size:** 30
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"smoke-detector"}}}`
+
+### k-leak
+- **Name:** Sink Leak
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** sensor
+- **Tags:** safety
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1150, 720
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"water-alert"}}}`
+
+### k-speaker
+- **Name:** Kitchen Speaker
+- **IP:** Thread border router
+- **Role:** 
+- **Shape:** smart-speaker
+- **Tags:** _none_
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1400, 720
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"speaker"}}}`
+
+### k-temp
+- **Name:** Fridge Temp
+- **IP:** Thread
+- **Role:** 
+- **Shape:** sensor
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1650, 720
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"fridge"}}}`
+
+### e-bell
+- **Name:** Doorbell
+- **IP:** Wi Fi, 2K
+- **Role:** 
+- **Shape:** doorbell
+- **Tags:** camera
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 85
+- **Coverage Distance:** 150
+- **Coverage Rotation:** 0
+- **Coverage Color:** #f59e0b
+- **Coverage Opacity:** 18
+- **Coverage Animation Type:** sweep
+- **Coverage Animate:** false
+- **Coverage Border Color:** #f59e0b
+- **Coverage Border Opacity:** 60
+- **Position:** 2160, 330
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"doorbell-video"}}}`
+
+### e-lock
+- **Name:** Front Lock
+- **IP:** Thread
+- **Role:** 
+- **Shape:** smart-lock
+- **Tags:** security
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2020, 560
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"lock-smart"}}}`
+
+### e-motion
+- **Name:** Hall Motion
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** motion-sensor
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 110
+- **Coverage Distance:** 200
+- **Coverage Rotation:** 0
+- **Coverage Color:** #10b981
+- **Coverage Opacity:** 15
+- **Coverage Animation Type:** pulse
+- **Coverage Animate:** true
+- **Coverage Speed:** 3
+- **Coverage Border Color:** #10b981
+- **Coverage Border Opacity:** 50
+- **Position:** 2020, 780
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"motion-sensor"}}}`
+
+### g-door
+- **Name:** Garage Door
+- **IP:** Wi Fi relay
+- **Role:** 
+- **Shape:** garage
+- **Tags:** security
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2480, 400
+- **Size:** 38
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"garage"}}}`
+
+### g-ev
+- **Name:** EV Charger
+- **IP:** Wi Fi, 11 kW
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** energy
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2480, 600
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"ev-station"}}}`
+
+### g-cam
+- **Name:** Garage Cam
+- **IP:** PoE
+- **Role:** 
+- **Shape:** camera
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 85
+- **Coverage Distance:** 230
+- **Coverage Rotation:** 315
+- **Coverage Color:** #f59e0b
+- **Coverage Opacity:** 18
+- **Coverage Animation Type:** sweep
+- **Coverage Animate:** false
+- **Coverage Border Color:** #f59e0b
+- **Coverage Border Opacity:** 60
+- **Position:** 2620, 790
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"cctv"}}}`
+
+### u-valve
+- **Name:** Water Main Valve
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** safety
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 260, 1080
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"valve"}}}`
+
+### u-washer
+- **Name:** Washer Plug
+- **IP:** Zigbee router, power meter
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** energy
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 520, 1080
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"washing-machine"}}}`
+
+### u-leak
+- **Name:** Washer Leak
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** sensor
+- **Tags:** safety
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 520, 1300
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"water-alert"}}}`
+
+### u-vac
+- **Name:** Robot Vacuum
+- **IP:** Wi Fi
+- **Role:** 
+- **Shape:** vacuum
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 260, 1300
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"robot-vacuum"}}}`
+
+### o-lamp
+- **Name:** Desk Lamp
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** smart-bulb
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 860, 1080
+- **Size:** 30
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"desk-lamp"}}}`
+
+### o-blinds
+- **Name:** Office Blinds
+- **IP:** Thread
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1160, 1080
+- **Size:** 30
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"blinds"}}}`
+
+### o-air
+- **Name:** Air Quality
+- **IP:** Thread, CO2 and VOC
+- **Role:** 
+- **Shape:** sensor
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1010, 1300
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"air-filter"}}}`
+
+### b-hum
+- **Name:** Humidity
+- **IP:** Zigbee
+- **Role:** 
+- **Shape:** sensor
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1600, 1080
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"water-percent"}}}`
+
+### b-fan
+- **Name:** Bath Fan
+- **IP:** Zigbee switch
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1600, 1300
+- **Size:** 30
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"fan"}}}`
+
+### p-cam
+- **Name:** Patio Cam
+- **IP:** PoE
+- **Role:** 
+- **Shape:** camera
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 85
+- **Coverage Distance:** 300
+- **Coverage Rotation:** 135
+- **Coverage Color:** #f59e0b
+- **Coverage Opacity:** 18
+- **Coverage Animation Type:** sweep
+- **Coverage Animate:** false
+- **Coverage Border Color:** #f59e0b
+- **Coverage Border Opacity:** 60
+- **Position:** 1880, 1020
+- **Size:** 28
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"cctv"}}}`
+
+### p-lights
+- **Name:** String Lights
+- **IP:** Outdoor plug
+- **Role:** 
+- **Shape:** smart-plug
+- **Tags:** lights
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2160, 1300
+- **Size:** 30
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"string-lights"}}}`
+
+### p-sprinkler
+- **Name:** Sprinkler Zone 1
+- **IP:** Wi Fi controller
+- **Role:** 
+- **Shape:** sprinkler
+- **Tags:** _none_
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Coverage Enabled:** true
+- **Coverage Angle:** 180
+- **Coverage Distance:** 200
+- **Coverage Rotation:** 270
+- **Coverage Color:** #06b6d4
+- **Coverage Opacity:** 20
+- **Coverage Animation Type:** spin
+- **Coverage Animate:** true
+- **Coverage Speed:** 6
+- **Position:** 2480, 1150
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"sprinkler-variant"}}}`
+
+## Connections
+
+- hub --> lr-l1
+  - **ID:** edge-ground-26
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- hub --> lr-l2
+  - **ID:** edge-ground-27
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- hub --> lr-l3
+  - **ID:** edge-ground-28
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- hub --> lr-motion
+  - **ID:** edge-ground-29
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- hub --> lr-tv
+  - **ID:** edge-ground-30
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- hub --> lr-spk
+  - **ID:** edge-ground-31
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- hub --> k-plug
+  - **ID:** edge-ground-32
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-plug --> k-lights
+  - **ID:** edge-ground-33
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-plug --> k-leak
+  - **ID:** edge-ground-34
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-lights --> k-smoke
+  - **ID:** edge-ground-35
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- hub --> k-speaker
+  - **ID:** edge-ground-36
+  - **Label:** 
+  - **Color:** #c084fc
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-speaker --> k-temp
+  - **ID:** edge-ground-37
+  - **Label:** 
+  - **Color:** #c084fc
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-speaker --> o-blinds
+  - **ID:** edge-ground-38
+  - **Label:** 
+  - **Color:** #c084fc
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-speaker --> o-air
+  - **ID:** edge-ground-39
+  - **Label:** 
+  - **Color:** #c084fc
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-lights --> e-motion
+  - **ID:** edge-ground-40
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- k-speaker --> e-lock
+  - **ID:** edge-ground-41
+  - **Label:** 
+  - **Color:** #c084fc
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- e-lock --> e-bell
+  - **ID:** edge-ground-42
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- g-door --> g-ev
+  - **ID:** edge-ground-43
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- hub --> u-washer
+  - **ID:** edge-ground-44
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- u-washer --> u-valve
+  - **ID:** edge-ground-45
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- u-washer --> u-leak
+  - **ID:** edge-ground-46
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- u-washer --> o-lamp
+  - **ID:** edge-ground-47
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- o-lamp --> b-hum
+  - **ID:** edge-ground-48
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- b-hum --> b-fan
+  - **ID:** edge-ground-49
+  - **Label:** 
+  - **Color:** #84cc16
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
+  - **Group ID:** 
+
+- u-leak --> u-valve
+  - **ID:** edge-ground-50
+  - **Label:** Leak closes valve
+  - **Color:** #f59e0b
+  - **Width:** 4
+  - **Direction:** forward
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+  - **Animate:** true
+  - **Animation Style:** arrows
+  - **Animation Speed:** 1.5
+
+- e-bell --> lr-tv
+  - **ID:** edge-ground-51
+  - **Label:** Doorbell on TV
+  - **Color:** #f59e0b
+  - **Width:** 4
+  - **Direction:** forward
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+  - **Waypoints:** 2160,300 860,300
+
+- p-cam --> p-lights
+  - **ID:** edge-ground-52
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- p-lights --> p-sprinkler
+  - **ID:** edge-ground-53
+  - **Label:** 
+  - **Color:** #38bdf8
+  - **Width:** 3
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dashed
+  - **Group ID:** 
+
+- p-cam --> g-cam
+  - **ID:** edge-ground-54
+  - **Label:** PoE to garage switch
+  - **Color:** #3b82f6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+## Zones
+
+### rect-ground-3
+- **Position:** 100, 220
+- **Size:** 900 x 640
+- **Color:** #3b82f6
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-6
+- **Position:** 1000, 220
+- **Size:** 800 x 640
+- **Color:** #f59e0b
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-9
+- **Position:** 1800, 220
+- **Size:** 450 x 640
+- **Color:** #a855f7
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-12
+- **Position:** 2250, 220
+- **Size:** 450 x 640
+- **Color:** #64748b
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-15
+- **Position:** 100, 860
+- **Size:** 600 x 600
+- **Color:** #14b8a6
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-18
+- **Position:** 700, 860
+- **Size:** 700 x 600
+- **Color:** #06b6d4
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-21
+- **Position:** 1400, 860
+- **Size:** 400 x 600
+- **Color:** #ec4899
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+### rect-ground-23
+- **Position:** 1800, 860
+- **Size:** 900 x 600
+- **Color:** #22c55e
+- **Style:** filled
+- **Line Style:** solid
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.1
+
+## Text Labels
+
+### text-ground-1
+- **Position:** 60, 100
+- **Content:** Maple House: Ground Floor
+- **Font Size:** 44
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-2
+- **Position:** 60, 148
+- **Content:** Rooms are zones, devices sit where they are mounted, lines show the radio mesh
+- **Font Size:** 19
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-4
+- **Position:** 118, 254
+- **Content:** Living Room
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-5
+- **Position:** 118, 284
+- **Content:** Movie scene, ceiling lights grouped
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-7
+- **Position:** 1018, 254
+- **Content:** Kitchen
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-8
+- **Position:** 1018, 284
+- **Content:** Leak and smoke protection
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-10
+- **Position:** 1818, 254
+- **Content:** Entry
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-11
+- **Position:** 1818, 284
+- **Content:** Front door
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-13
+- **Position:** 2268, 254
+- **Content:** Garage
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-14
+- **Position:** 2268, 284
+- **Content:** EV charging
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-16
+- **Position:** 118, 894
+- **Content:** Utility
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-17
+- **Position:** 118, 924
+- **Content:** Washer and water main
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-19
+- **Position:** 718, 894
+- **Content:** Office
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-20
+- **Position:** 718, 924
+- **Content:** Focus mode
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-22
+- **Position:** 1418, 894
+- **Content:** Bath
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-24
+- **Position:** 1818, 894
+- **Content:** Back Patio
+- **Font Size:** 24
+- **Color:** #e2e8f0
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-ground-25
+- **Position:** 1818, 924
+- **Content:** Outdoor, irrigation zone 1
+- **Font Size:** 15
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+

@@ -2,10 +2,27 @@ import * as db from "../database";
 import * as auth from "../auth";
 import * as oidc from "../oidc";
 import * as redis from "../redis";
-import { getSettings, getExternalOrigin, isHttpsRequest } from "../config";
-import { getClientIP, apiError, validateRequestCsrf, isSameOriginRequest, csrfReject, getUserTokenFromRequest, getCsrfCookieFromRequest, serveHtml, relativeRedirect, readJsonLimited } from "../security";
+import { getSettings, getExternalOrigin, getEmailLinkOrigin, EMAIL_LINK_ORIGIN_ERROR, isHttpsRequest } from "../config";
+import { getClientIP, apiError, validateRequestCsrf, isSameOriginRequest, csrfReject, getUserTokenFromRequest, getCsrfCookieFromRequest, getPrefixedCookie, serveHtml, relativeRedirect, readJsonLimited } from "../security";
 import { checkRateLimit, checkEmailRateLimit } from "../rate-limit";
 import { userLoginHtml, userRegisterHtml, userForgotPasswordHtml, getPasswordResetHtml } from "../templates";
+
+const MFA_PENDING_COOKIE = "mfa_pending";
+
+function mfaPendingRedirect(req: Request, pendingToken: string, redirectTo: string): Response {
+  const target = redirectTo && redirectTo !== "/" && redirectTo.startsWith("/") && !redirectTo.startsWith("//")
+    ? `/auth/login?mfa=1&redirect=${encodeURIComponent(redirectTo)}`
+    : "/auth/login?mfa=1";
+  return new Response(null, {
+    status: 302,
+    headers: {
+      "Location": target,
+      "Set-Cookie": oidc.getSessionCookie(MFA_PENDING_COOKIE, pendingToken, Math.floor(auth.TOTP_PENDING_TTL_MS / 1000), isHttpsRequest(req)),
+      "X-Content-Type-Options": "nosniff",
+      "Cache-Control": "no-store"
+    }
+  });
+}
 
 export async function handle(req: Request, path: string, url: URL, corsHeaders: Record<string, string>): Promise<Response | null> {
   const settings = getSettings();
@@ -50,7 +67,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (body.email && !(await checkEmailRateLimit(body.email, "register", settings))) {
         return Response.json({ error: "Too many registration attempts for this email. Try again later." }, { status: 429, headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
+      const baseUrl = oidc.getAuthSettings().requireEmailVerification ? (getEmailLinkOrigin("verification") || undefined) : undefined;
       const result = await auth.registerUser(body.email, body.password, body.displayName, baseUrl,
         typeof body.inviteCode === "string" ? body.inviteCode : null);
       if (!result.success) {
@@ -109,17 +126,20 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     }
     try {
       const body = await readJsonLimited(req, 64 * 1024);
-      if (!body.pendingToken || !body.code || typeof body.pendingToken !== "string" || typeof body.code !== "string") {
+      const fromCookie = !body.pendingToken;
+      if (fromCookie && !isSameOriginRequest(req)) return csrfReject(corsHeaders);
+      const pendingToken = body.pendingToken || getPrefixedCookie(req, MFA_PENDING_COOKIE);
+      if (!pendingToken || !body.code || typeof pendingToken !== "string" || typeof body.code !== "string") {
         return Response.json({ error: "Token and code required" }, { status: 400, headers: corsHeaders });
       }
-      const result = await auth.loginWith2FA(body.pendingToken, body.code, clientIP, req.headers.get("user-agent") || "");
+      const result = await auth.loginWith2FA(pendingToken, body.code, clientIP, req.headers.get("user-agent") || "");
       if (!result.success) {
         return Response.json({ error: result.error }, { status: 401, headers: corsHeaders });
       }
-      return new Response(JSON.stringify({ success: true, userId: result.userId }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json",
-          "Set-Cookie": oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)) }
-      });
+      const headers = new Headers({ ...corsHeaders, "Content-Type": "application/json" });
+      headers.append("Set-Cookie", oidc.getSessionCookie("user_token", result.sessionToken!, 2592000, isHttpsRequest(req)));
+      if (fromCookie) headers.append("Set-Cookie", oidc.getClearCookie(MFA_PENDING_COOKIE, isHttpsRequest(req)));
+      return new Response(JSON.stringify({ success: true, userId: result.userId }), { headers });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 
@@ -234,6 +254,16 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       redirectTo = result.postLoginRedirect;
     }
 
+    if (result.sessionToken && result.userId) {
+      const oidcUser = db.getUserById(result.userId);
+      if (oidcUser && oidcUser.totpEnabled) {
+        await auth.logout(result.sessionToken);
+        const pendingToken = await auth.createTotpPendingToken(oidcUser.id);
+        db.logAuthEvent('login_2fa_required', oidcUser.id, clientIP, { method: 'oidc' });
+        return mfaPendingRedirect(req, pendingToken, redirectTo);
+      }
+    }
+
     return new Response(null, {
       status: 302,
       headers: {
@@ -279,10 +309,13 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.email !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
+      const baseUrl = getEmailLinkOrigin("password reset");
+      if (!baseUrl) {
+        return Response.json({ error: EMAIL_LINK_ORIGIN_ERROR }, { status: 503, headers: corsHeaders });
+      }
       if (body.email && !(await checkEmailRateLimit(body.email, "password-reset", settings))) {
         return Response.json({ success: true }, { headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
       await auth.requestPasswordReset(body.email, baseUrl);
       return Response.json({ success: true }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
@@ -328,10 +361,13 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.email !== "string") {
         return Response.json({ error: "Invalid input types" }, { status: 400, headers: corsHeaders });
       }
+      const baseUrl = getEmailLinkOrigin("magic link");
+      if (!baseUrl) {
+        return Response.json({ error: EMAIL_LINK_ORIGIN_ERROR }, { status: 503, headers: corsHeaders });
+      }
       if (body.email && !(await checkEmailRateLimit(body.email, "magic-link", settings))) {
         return Response.json({ success: true }, { headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
       await auth.requestMagicLink(body.email, baseUrl);
       return Response.json({ success: true }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
@@ -347,6 +383,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return relativeRedirect("/?magic_error=rate_limited");
     }
     const result = await auth.loginWithMagicLink(token, clientIP, req.headers.get("user-agent") || "");
+    if (result.requires2FA && result.pendingToken) {
+      return mfaPendingRedirect(req, result.pendingToken, "/");
+    }
     if (!result.success) {
       return relativeRedirect(`/?magic_error=${encodeURIComponent(result.error || "unknown")}`);
     }
@@ -594,7 +633,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!body.newEmail || !body.password || typeof body.newEmail !== "string" || typeof body.password !== "string") {
         return Response.json({ error: "New email and password required" }, { status: 400, headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
+      const baseUrl = getEmailLinkOrigin("email change");
+      if (!baseUrl) {
+        return Response.json({ error: EMAIL_LINK_ORIGIN_ERROR }, { status: 503, headers: corsHeaders });
+      }
       const result = await auth.requestEmailChange(user.id, body.newEmail, body.password, baseUrl);
       if (!result.success) {
         return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });

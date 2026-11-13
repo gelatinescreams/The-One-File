@@ -1,5 +1,14 @@
 # Keyboard Shortcuts
 
+Press `?` anywhere outside a text field to open this list inside the app.
+
+## General
+| Shortcut | Action |
+|----------|--------|
+| `?` | Open the keyboard shortcuts sheet |
+| `Ctrl/Cmd + F` | Focus the node search box |
+| `Ctrl/Cmd + S` | Save HTML (same as the Save HTML button) |
+
 ## Navigation & Movement
 | Shortcut | Action |
 |----------|--------|
@@ -17,9 +26,10 @@
 | `Shift + Tab` | Move focus to the previous canvas item |
 | `Home` / `End` | Jump to the first or last canvas item |
 | `Enter` / `Space` | Open the details panel for the focused item and move focus into it |
+| `Enter` on a rack | Open the rack view for the focused rack (`Space` opens its details panel) |
 | `Escape` | Close the details panel and return focus to the item that opened it |
 | `Alt + Arrow Keys` | Move the focused item by one grid step (undo with `Ctrl/Cmd + Z`, locked items stay put) |
-| `Delete` | Delete the focused item after confirmation, focus moves to the next item |
+| `Delete` / `Backspace` | Delete the focused item after confirmation, focus moves to the next item |
 | `Up` / `Down` | Move through the hidden item list used by screen readers |
 | `Home` / `End` | Jump to the first or last entry in the hidden item list |
 | `Enter` | Open details for the item chosen in the hidden item list |
@@ -37,7 +47,7 @@ Moving and deleting with the keyboard are disabled in view only mode.
 | `Ctrl/Cmd + V` | Paste node at center of view |
 | `Ctrl/Cmd + D` | Duplicate selected node |
 | `Ctrl/Cmd + A` | Select all nodes in current view |
-| `Delete` | Delete selected item(s) |
+| `Delete` / `Backspace` | Delete selected item(s) |
 | `Escape` | Clear selection |
 
 ## Editing
@@ -61,6 +71,6 @@ Moving and deleting with the keyboard are disabled in view only mode.
 | Key | Action |
 |-----|--------|
 | R | Start/stop real time recording |
-| Shift+R | Start/stop step by step recording |
+| Shift + R | Start/stop step by step recording |
 | Space | Add step (step recording) / Play/Pause (playback) |
 | P | Play recording |

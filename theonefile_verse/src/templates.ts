@@ -717,12 +717,24 @@ export const adminDashboardHtml = `<!DOCTYPE html>
           </div>
         </div>
         <div class="setting-row">
-          <div class="setting-info"><div class="setting-label">Max Rooms</div><div class="setting-desc">Maximum rooms allowed (0 = unlimited)</div></div>
-          <div class="setting-control"><input type="number" id="max-rooms" min="0" max="1000" style="width:80px"></div>
+          <div class="setting-info"><div class="setting-label">Max Rooms</div><div class="setting-desc">Maximum rooms allowed (0 = unlimited). Default 1000.</div></div>
+          <div class="setting-control"><input type="number" id="max-rooms" min="0" max="100000" style="width:80px"></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Max Room Size (MB)</div><div class="setting-desc">Per room sync limit. Higher allows more images/recordings but makes every edit heavier. 1 to 64, default 50.</div></div>
           <div class="setting-control"><input type="number" id="max-room-size-mb" min="1" max="64" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Max Guest Rooms</div><div class="setting-desc">Rooms that people may create without signing in (0 = no separate limit). Default 300.</div></div>
+          <div class="setting-control"><input type="number" id="max-guest-rooms" min="0" max="100000" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Guest Room Size (MB)</div><div class="setting-desc">Size limit when a guest creates a room or grows one. Signed in users keep the full room size. Default 5.</div></div>
+          <div class="setting-control"><input type="number" id="max-guest-room-size-mb" min="1" max="64" style="width:80px"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-label">Room Storage Limit (MB)</div><div class="setting-desc">Total size of all saved rooms. New rooms and growing edits are refused once it is reached (0 = unlimited). Default 4096.</div></div>
+          <div class="setting-control"><input type="number" id="max-total-room-storage-mb" min="0" max="1048576" style="width:90px"></div>
         </div>
         <div class="setting-row">
           <div class="setting-info"><div class="setting-label">Default Room Theme</div><div class="setting-desc">Theme preset for new rooms (from loaded file)</div></div>

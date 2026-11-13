@@ -89,8 +89,11 @@
     <div class="form-row">
       <label>Demo:</label>
       <select id="demo-select">
-        <option value="corporate">Corporate</option>
         <option value="homelab">Homelab</option>
+        <option value="corporate">Corporate</option>
+        <option value="smarthome">Smart Home</option>
+        <option value="floorplan">Floor Plan</option>
+        <option value="mindmap">Mind Map</option>
         <option value="sports">Sports</option>
       </select>
     </div>
@@ -106,35 +109,31 @@
   </div>
 
   <script>
-    var DEMOS = {
-      core: {
-        corporate: 'json-exports/the-one-file-corporate-demo.json',
-        homelab: 'json-exports/the-one-file-homelab-demo.json'
-      },
-      networkening: {
-        corporate: 'json-exports/theonefile-networkening-corporate-demo.json',
-        homelab: 'json-exports/theonefile-networkening-homelab-demo.json',
-        sports: 'json-exports/theonefile-networkening-sports-demo.json'
-      }
+    var DEMO_KEYS = ['homelab', 'corporate', 'smarthome', 'floorplan', 'mindmap', 'sports'];
+
+    var DEMO_NAMES = {
+      homelab: 'Homelab',
+      corporate: 'Corporate',
+      smarthome: 'Smart Home',
+      floorplan: 'Floor Plan',
+      mindmap: 'Mind Map',
+      sports: 'Sports'
     };
+
+    var DEMOS = { core: {}, networkening: {} };
+    var DEMO_LABELS = { core: {}, networkening: {} };
+    DEMO_KEYS.forEach(function (key) {
+      DEMOS.core[key] = 'json-exports/the-one-file-' + key + '-demo.json';
+      DEMOS.networkening[key] = 'json-exports/theonefile-networkening-' + key + '-demo.json';
+      DEMO_LABELS.core[key] = 'Core / ' + DEMO_NAMES[key];
+      DEMO_LABELS.networkening[key] = 'Networkening / ' + DEMO_NAMES[key];
+    });
 
     var BASE_HTML = {
       core: '../the-one-file.html',
       networkening: '../theonefile-networkening.html'
     };
 
-    var DEMO_LABELS = {
-      core: { corporate: 'Core / Corporate', homelab: 'Core / Homelab' },
-      networkening: { corporate: 'Networkening / Corporate', homelab: 'Networkening / Homelab', sports: 'Networkening / Sports' }
-    };
-
-    var DEMO_NAMES = {
-      corporate: 'Corporate',
-      homelab: 'Homelab',
-      sports: 'Sports'
-    };
-
-    var PAGE_BASE_URL = window.location.href.replace(/[?#].*$/, '').replace(/[^/]*$/, '');
     var PAGE_ORIGIN = window.location.origin + window.location.pathname;
 
     var versionSelect = document.getElementById('version-select');
@@ -147,6 +146,12 @@
     if (params.get('demo') && DEMOS[versionSelect.value][params.get('demo')]) {
       demoSelect.value = params.get('demo');
     }
+
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      document.getElementById('load-btn').disabled = false;
+      document.getElementById('loading').classList.remove('active');
+    });
 
     if (params.get('autoload') === '1') {
       loadDemo();
@@ -183,25 +188,19 @@
         var demoData = await responses[1].json();
 
         var versionDemos = DEMOS[version];
-        var versionLabels = {};
-        for (var k in versionDemos) {
-          versionLabels[k] = DEMO_NAMES[k] || k;
-        }
-
         var demoLabel = (DEMO_LABELS[version] && DEMO_LABELS[version][demo]) || (version + ' / ' + demo);
 
         var selectOptions = '';
         for (var demoKey in versionDemos) {
           var sel = demoKey === demo ? ' selected' : '';
-          selectOptions += '<option value="' + demoKey + '"' + sel + '>' + (versionLabels[demoKey] || demoKey) + '</option>';
-        }
-
-        var absoluteDemoUrls = {};
-        for (var dk in versionDemos) {
-          absoluteDemoUrls[dk] = PAGE_BASE_URL + versionDemos[dk];
+          selectOptions += '<option value="' + demoKey + '"' + sel + '>' + (DEMO_NAMES[demoKey] || demoKey) + '</option>';
         }
 
         var selectorUrl = PAGE_ORIGIN;
+        var switchUrls = {};
+        for (var dk in versionDemos) {
+          switchUrls[dk] = PAGE_ORIGIN + '?version=' + encodeURIComponent(version) + '&demo=' + encodeURIComponent(dk) + '&autoload=1';
+        }
 
         var toolbarHtml = '<div id="demo-toolbar" style="' +
           'position:fixed;top:0;left:0;right:0;height:44px;' +
@@ -211,7 +210,7 @@
           'z-index:999999;box-shadow:0 2px 10px rgba(0,0,0,0.5);font-family:system-ui,sans-serif;' +
           '">' +
           '<span id="demo-version-label" style="color:#e5e5e5;font-size:14px;font-weight:700;white-space:nowrap">' + (version === 'core' ? 'Core' : 'Networkening') + '</span>' +
-          '<select id="demo-switcher" style="' +
+          '<select id="demo-switcher" aria-label="Switch demo" title="' + demoLabel + '" style="' +
           'padding:5px 10px;background:#0f3460;color:#eee;border:1px solid #e94560;' +
           'border-radius:5px;font-size:13px;cursor:pointer;outline:none;' +
           '">' + selectOptions + '</select>' +
@@ -248,100 +247,36 @@
           '</scr' + 'ipt>';
 
         var switcherScript = '<scr' + 'ipt>' +
-          'window.__DEMO_URLS=' + JSON.stringify(absoluteDemoUrls) + ';' +
-          '(function(){' +
-          'function applyDemoData(d){' +
-          'NODE_DATA=d.nodeData||{};' +
-          'EDGE_DATA=d.edgeData||{list:[]};' +
-          'EDGE_LEGEND=d.edgeLegend||{};' +
-          'if(typeof RECT_DATA!=="undefined")RECT_DATA=d.rectData||{list:[]};' +
-          'if(typeof TEXT_DATA!=="undefined")TEXT_DATA=d.textData||{list:[]};' +
-          'savedPositions=d.nodePositions||{};' +
-          'savedSizes=d.nodeSizes||{};' +
-          'savedStyles=d.nodeStyles||{};' +
-          'if(d.page&&typeof PAGE_STATE!=="undefined"&&typeof DEFAULT_PAGE_STATE!=="undefined"){' +
-          'PAGE_STATE=Object.assign({},DEFAULT_PAGE_STATE,d.page);' +
-          'if(typeof wieldThePower==="function")wieldThePower();}' +
-          'if(d.canvas&&typeof canvasState!=="undefined"){' +
-          'canvasState.zoom=d.canvas.zoom||1;canvasState.panX=d.canvas.panX||0;canvasState.panY=d.canvas.panY||0;}' +
-          'if(d.documentTabs&&typeof documentTabs!=="undefined"){documentTabs=d.documentTabs;currentTabIndex=d.currentTabIndex||0;}' +
-          'if(d.page&&d.page.title){document.title=d.page.title;' +
-          'var te=document.querySelector(".editable-page-title");if(te)te.textContent=d.page.title;}' +
-          'var lm={"physical":"layer1","logical":"layer2","security":"layer3","application":"layer4"};' +
-          'Object.values(NODE_DATA).forEach(function(n){if(!n.tags)n.tags=[];if(!n.notes)n.notes=[];if(!n.layer||lm[n.layer])n.layer=lm[n.layer]||"layer1";});' +
-          'forgeTheTopology();' +
-          'if(typeof updateViewBox==="function")updateViewBox();' +
-          '}' +
-          'function waitForReady(cb){' +
-          'if(typeof NODE_DATA!=="undefined"&&typeof forgeTheTopology==="function"){cb();return;}' +
-          'setTimeout(function(){waitForReady(cb);},50);' +
-          '}' +
-          'waitForReady(function(){' +
+          'window.__DEMO_URLS=' + JSON.stringify(switchUrls).replace(/</g, '\\u003c') + ';' +
+          'document.addEventListener("DOMContentLoaded",function(){' +
           'var sel=document.getElementById("demo-switcher");' +
           'if(!sel)return;' +
           'sel.addEventListener("change",function(){' +
-          'var key=sel.value;var url=window.__DEMO_URLS[key];' +
+          'var url=window.__DEMO_URLS[sel.value];' +
           'if(!url)return;' +
           'var indicator=document.getElementById("demo-loading-indicator");' +
           'if(indicator)indicator.style.display="inline";' +
           'sel.disabled=true;' +
-          'fetch(url).then(function(r){' +
-          'if(!r.ok)throw new Error("Failed to load");return r.json();' +
-          '}).then(function(d){' +
-          'applyDemoData(d);' +
-          'if(indicator)indicator.style.display="none";' +
-          'sel.disabled=false;' +
-          '}).catch(function(e){' +
-          'console.error("Demo switch error:",e);' +
-          'if(indicator){indicator.style.display="inline";indicator.textContent="Error loading";}' +
-          'sel.disabled=false;' +
-          'setTimeout(function(){if(indicator){indicator.style.display="none";indicator.textContent="Loading...";}},3000);' +
+          'window.location.href=url;' +
           '});' +
           '});' +
-          '});' +
-          '})();' +
           '</scr' + 'ipt>';
 
-        var dataLoaderScript = '<scr' + 'ipt>' +
-          'window.__DEMO_DATA=' + JSON.stringify(demoData) + ';' +
-          '(function(){' +
-          'function applyData(){' +
-          'if(typeof NODE_DATA==="undefined"||typeof forgeTheTopology==="undefined"){setTimeout(applyData,50);return;}' +
-          'var d=window.__DEMO_DATA;' +
-          'NODE_DATA=d.nodeData||{};' +
-          'EDGE_DATA=d.edgeData||{list:[]};' +
-          'EDGE_LEGEND=d.edgeLegend||{};' +
-          'if(typeof RECT_DATA!=="undefined")RECT_DATA=d.rectData||{list:[]};' +
-          'if(typeof TEXT_DATA!=="undefined")TEXT_DATA=d.textData||{list:[]};' +
-          'savedPositions=d.nodePositions||{};' +
-          'savedSizes=d.nodeSizes||{};' +
-          'savedStyles=d.nodeStyles||{};' +
-          'if(d.page&&typeof PAGE_STATE!=="undefined"&&typeof DEFAULT_PAGE_STATE!=="undefined"){' +
-          'PAGE_STATE=Object.assign({},DEFAULT_PAGE_STATE,d.page);' +
-          'if(typeof wieldThePower==="function")wieldThePower();}' +
-          'if(d.canvas&&typeof canvasState!=="undefined"){' +
-          'canvasState.zoom=d.canvas.zoom||1;canvasState.panX=d.canvas.panX||0;canvasState.panY=d.canvas.panY||0;}' +
-          'if(d.documentTabs&&typeof documentTabs!=="undefined"){documentTabs=d.documentTabs;currentTabIndex=d.currentTabIndex||0;}' +
-          'if(d.page&&d.page.title){document.title=d.page.title;' +
-          'var te=document.querySelector(".editable-page-title");if(te)te.textContent=d.page.title;}' +
-          'var lm={"physical":"layer1","logical":"layer2","security":"layer3","application":"layer4"};' +
-          'Object.values(NODE_DATA).forEach(function(n){if(!n.tags)n.tags=[];if(!n.notes)n.notes=[];if(!n.layer||lm[n.layer])n.layer=lm[n.layer]||"layer1";});' +
-          'forgeTheTopology();' +
-          'if(typeof updateViewBox==="function")updateViewBox();' +
-          'if(typeof showWelcomeModal==="function")showWelcomeModal();' +
-          'delete window.__DEMO_DATA;' +
-          '}' +
-          'applyData();' +
-          '})();' +
-          '</scr' + 'ipt>';
+        var stateJson = JSON.stringify(demoData).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+        var statePattern = /(<script id="topology-state" type="application\/json">)[\s\S]*?(<\/script>)/i;
+        if (!statePattern.test(html)) throw new Error('No state block in base file');
+        html = html.replace(statePattern, function (m, open, close) { return open + stateJson + close; });
+        if (demoData.page && demoData.page.title) {
+          html = html.replace(/<title>[\s\S]*?<\/title>/i, function () { return '<title>' + demoData.page.title.replace(/[<>&]/g, '') + '</title>'; });
+        }
 
-        html = html.replace(/<head[^>]*>/i, '$&' + autosaveBlocker + toolbarPadding);
-        html = html.replace(/<\/head>/i, switcherScript + dataLoaderScript + '</head>');
-        html = html.replace(/<body[^>]*>/i, '$&' + toolbarHtml);
+        html = html.replace(/<head[^>]*>/i, function (m) { return m + autosaveBlocker + toolbarPadding; });
+        html = html.replace(/<\/head>/i, function (m) { return switcherScript + m; });
+        html = html.replace(/<body[^>]*>/i, function (m) { return m + toolbarHtml; });
 
         var blob = new Blob([html], { type: 'text/html' });
         var blobUrl = URL.createObjectURL(blob);
-        window.location.href = blobUrl;
+        window.location.replace(blobUrl);
 
       } catch (error) {
         console.error('Error loading demo:', error);

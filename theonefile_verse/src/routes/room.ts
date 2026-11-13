@@ -1,10 +1,10 @@
 import * as oidc from "../oidc";
 import * as db from "../database";
-import { getSettings, isValidUUID, getMaxRoomSizeBytes } from "../config";
+import { getSettings, isValidUUID, getMaxRoomSizeBytes, getMaxGuestRoomSizeBytes } from "../config";
 import { getClientIP, apiError, validateRequestCsrf, csrfReject, getUserTokenFromRequest, validateAdminUser, readJsonLimited, readTextLimited, readBodyLimited } from "../security";
 import { checkRateLimit } from "../rate-limit";
 import { generateWsSessionToken, generateRoomAccessToken, validateRoomAccessTokenAsync, WS_TOKEN_EXPIRY } from "../tokens";
-import { loadRoom, saveRoom, deleteRoomData, scheduleDestruction, hashPassword, verifyPassword, validateTopology, sendWebhook, type Room } from "../rooms";
+import { loadRoom, saveRoom, deleteRoomData, scheduleDestruction, hashPassword, verifyPassword, validateTopology, sendWebhook, storageQuotaAllows, STORAGE_QUOTA_ERROR, type Room } from "../rooms";
 import { writeBlob, readBlob, checkAssetQuota } from "../assets";
 import { createHash } from "crypto";
 import { resolveRoomRole, canWrite, broadcastRoomPermissions } from "../websocket";
@@ -33,6 +33,27 @@ async function identifyRoomCaller(req: Request, _roomId: string): Promise<RoomCa
     if (user) return { userId: user.id, via: 'session' };
   }
   return { via: 'anon' };
+}
+
+export interface RoomAccessResult { ok: boolean; caller?: RoomCaller; status?: number; error?: string }
+
+export function roomRequiresSignIn(room: Room): boolean {
+  return room.allowGuests === false || !oidc.getAuthSettings().allowGuestRoomJoin;
+}
+
+export async function checkRoomAccess(req: Request, room: Room): Promise<RoomAccessResult> {
+  if (room.passwordHash) {
+    const prodMode = oidc.getAuthSettings().productionMode;
+    const accessToken = extractRoomAccessCookie(req.headers.get('cookie') || '', prodMode);
+    if (!(await validateRoomAccessTokenAsync(accessToken, room.id, room.passwordHash))) {
+      return { ok: false, status: 403, error: "Room password required" };
+    }
+  }
+  const caller = await identifyRoomCaller(req, room.id);
+  if (roomRequiresSignIn(room) && !caller.userId) {
+    return { ok: false, status: 401, error: "Authentication required" };
+  }
+  return { ok: true, caller };
 }
 
 function rateKeyFor(req: Request, caller: RoomCaller): string {
@@ -69,7 +90,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       return Response.json({ error: "Too many rooms created. Try again later." }, { status: 429, headers: corsHeaders });
     }
     try {
-      const body = await readJsonLimited(req, getMaxRoomSizeBytes() + 1024 * 1024);
+      const earlyToken = getUserTokenFromRequest(req);
+      const earlyUser = earlyToken ? await oidc.validateUserSessionToken(earlyToken) : null;
+      const bodyCap = (earlyUser ? getMaxRoomSizeBytes() : getMaxGuestRoomSizeBytes()) + 1024 * 1024;
+      const body = await readJsonLimited(req, bodyCap);
       let creatorId = body.creatorId && isValidUUID(body.creatorId) ? body.creatorId : crypto.randomUUID();
       const validDestructModes = ["time", "empty", "never"];
       const destructMode = validDestructModes.includes(body.destructMode) ? body.destructMode
@@ -114,16 +138,22 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (settings.maxRoomsPerInstance > 0 && db.countRooms() >= settings.maxRoomsPerInstance) {
         return Response.json({ error: "Maximum number of rooms reached" }, { status: 403, headers: corsHeaders });
       }
+      if (!ownerUserId && settings.maxGuestRooms > 0 && db.countGuestRooms() >= settings.maxGuestRooms) {
+        return Response.json({ error: "This server has reached its limit for rooms created without signing in. Please sign in to create a room." }, { status: 403, headers: corsHeaders });
+      }
 
       const allowGuests = body.allowGuests !== false && authSettings.allowGuestRoomJoin;
 
       let validatedTopology = null;
       if (body.topology) {
-        const topologyValidation = validateTopology(body.topology);
+        const topologyValidation = validateTopology(body.topology, ownerUserId ? undefined : getMaxGuestRoomSizeBytes());
         if (!topologyValidation.valid) {
-          return Response.json({ error: topologyValidation.error || "Invalid topology data" }, { status: 400, headers: corsHeaders });
+          return Response.json({ error: topologyValidation.error || "Invalid topology data" }, { status: ownerUserId ? 400 : 413, headers: corsHeaders });
         }
         validatedTopology = topologyValidation.sanitized;
+        if (!storageQuotaAllows(JSON.stringify(validatedTopology).length)) {
+          return Response.json({ error: STORAGE_QUOTA_ERROR }, { status: 507, headers: corsHeaders });
+        }
       }
 
       const room: Room = {
@@ -185,7 +215,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       const body = await readJsonLimited(req, JSON_BODY_CAP);
       const valid = await verifyPassword(body.password || "", room.passwordHash);
       if (valid) {
-        const accessToken = generateRoomAccessToken(id);
+        const accessToken = generateRoomAccessToken(id, room.passwordHash);
         const prodMode = oidc.getAuthSettings().productionMode;
         const cookieName = prodMode ? '__Host-room_access' : 'room_access';
         const cookieFlags = prodMode ? '; HttpOnly; Secure; SameSite=Strict; Path=/; Partitioned' : '; HttpOnly; SameSite=Strict; Path=/';
@@ -205,7 +235,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     const prodMode = oidc.getAuthSettings().productionMode;
     const cookies = req.headers.get('cookie') || '';
     const token = extractRoomAccessCookie(cookies, prodMode);
-    return Response.json({ authorized: await validateRoomAccessTokenAsync(token, id) }, { headers: corsHeaders });
+    return Response.json({ authorized: await validateRoomAccessTokenAsync(token, id, room.passwordHash) }, { headers: corsHeaders });
   }
 
   if (path.match(/^\/api\/room\/[\w-]+$/) && req.method === "DELETE") {
@@ -297,21 +327,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     const room = loadRoom(id);
     if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
 
-    if (room.passwordHash) {
-      const prodMode = oidc.getAuthSettings().productionMode;
-      const cookies = req.headers.get('cookie') || '';
-      const accessToken = extractRoomAccessCookie(cookies, prodMode);
-      if (!(await validateRoomAccessTokenAsync(accessToken, id))) {
-        return Response.json({ error: "Room password required" }, { status: 403, headers: corsHeaders });
-      }
-    }
-
-    if (room.allowGuests === false || !oidc.getAuthSettings().allowGuestRoomJoin) {
-      const userToken = getUserTokenFromRequest(req);
-      if (!userToken) return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
-      const user = await oidc.validateUserSessionToken(userToken);
-      if (!user) return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
-    }
+    const wsAccess = await checkRoomAccess(req, room);
+    if (!wsAccess.ok) return Response.json({ error: wsAccess.error }, { status: wsAccess.status, headers: corsHeaders });
 
     const clientIP = getClientIP(req);
     if (!(await checkRateLimit(clientIP, `ws-token-${id}`, settings))) {
@@ -344,15 +361,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     const room = loadRoom(id);
     if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
 
-    if (room.passwordHash) {
-      const prodMode = oidc.getAuthSettings().productionMode;
-      const accessToken = extractRoomAccessCookie(req.headers.get('cookie') || '', prodMode);
-      if (!(await validateRoomAccessTokenAsync(accessToken, id))) return Response.json({ error: "Room password required" }, { status: 403, headers: corsHeaders });
-    }
-    const caller = await identifyRoomCaller(req, id);
-    if (room.allowGuests === false && !caller.userId) {
-      return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
-    }
+    const access = await checkRoomAccess(req, room);
+    if (!access.ok) return Response.json({ error: access.error }, { status: access.status, headers: corsHeaders });
+    const caller = access.caller!;
 
     if (req.method === "GET") {
       if (byCode) {
@@ -419,15 +430,9 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!isValidUUID(id)) return Response.json({ error: "Invalid room ID" }, { status: 400, headers: corsHeaders });
     const room = loadRoom(id);
     if (!room) return Response.json({ error: "Room not found" }, { status: 404, headers: corsHeaders });
-    if (room.passwordHash) {
-      const prodMode = oidc.getAuthSettings().productionMode;
-      const accessToken = extractRoomAccessCookie(req.headers.get('cookie') || '', prodMode);
-      if (!(await validateRoomAccessTokenAsync(accessToken, id))) return Response.json({ error: "Room password required" }, { status: 403, headers: corsHeaders });
-    }
-    const caller = await identifyRoomCaller(req, id);
-    if (room.allowGuests === false && !caller.userId) {
-      return Response.json({ error: "Authentication required" }, { status: 401, headers: corsHeaders });
-    }
+    const access = await checkRoomAccess(req, room);
+    if (!access.ok) return Response.json({ error: access.error }, { status: access.status, headers: corsHeaders });
+    const caller = access.caller!;
     if (!canWrite(resolveRoomRole(room, caller.userId), isRoomViewOnly(id))) {
       return Response.json({ error: "This room is view only" }, { status: 403, headers: corsHeaders });
     }

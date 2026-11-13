@@ -1,2569 +1,825 @@
 <!--THEONEFILE_CONFIG
 {
   "nodeData": {
-    "core-router-1": {
-      "shape": "router",
-      "name": "Core Router 1",
-      "ip": "10.0.0.1",
-      "role": "Core Routing",
+    "ispa": {
+      "shape": "cloud",
+      "name": "ISP A",
+      "ip": "",
+      "role": "",
       "tags": [
-        "core",
-        "tier-1",
-        "redundant"
+        "wan"
       ],
-      "notes": [
-        "Primary core router",
-        "BGP peering enabled"
-      ],
-      "mac": "00:1A:2B:3C:4D:01",
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
+      "uHeight": "1",
+      "layer": "layer1",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "core-router-2": {
-      "shape": "router",
-      "name": "Core Router 2",
-      "ip": "10.0.0.2",
-      "role": "Core Routing",
+    "ispb": {
+      "shape": "cloud",
+      "name": "ISP B",
+      "ip": "",
+      "role": "",
       "tags": [
-        "core",
-        "tier-1",
-        "redundant"
+        "wan"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "fw1": {
+      "shape": "firewall",
+      "name": "FW 1 Active",
+      "ip": "10.20.0.2",
+      "role": "Edge firewall",
+      "tags": [
+        "edge",
+        "ha"
       ],
       "notes": [
-        "Secondary core router",
-        "HSRP standby"
+        "<h3>Edge firewall cluster</h3><p>Active and passive pair. State sync over a dedicated 10G link, both WAN circuits on each node.</p><table><thead><tr><th>Circuit</th><th>Block</th><th>Speed</th></tr></thead><tbody><tr><td>ISP A fiber</td><td>203.0.113.0/29</td><td>1 Gbps</td></tr><tr><td>ISP B coax</td><td>198.51.100.0/29</td><td>500 Mbps</td></tr></tbody></table><ul><li>SD WAN hub for every branch</li><li>DMZ on VLAN 100</li><li>IPS on, TLS inspection for user VLANs only</li></ul>"
       ],
-      "mac": "00:1A:2B:3C:4D:02",
+      "mac": "02:00:5E:20:00:02",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
+      "uHeight": "1",
+      "layer": "layer3",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
       "groupId": null,
       "ping": {
         "enabled": true,
-        "protocol": "custom",
-        "customUrl": "https://google.com",
+        "protocol": "https",
+        "customUrl": "",
         "timeout": 3000,
-        "status": "online",
-        "lastCheck": "2025-12-09T00:15:04.343Z"
+        "status": "unknown",
+        "lastCheck": null
       }
     },
-    "fw-external-1": {
+    "fw2": {
       "shape": "firewall",
-      "name": "External FW 1",
-      "ip": "10.0.1.1",
-      "role": "Perimeter Security",
+      "name": "FW 2 Passive",
+      "ip": "10.20.0.3",
+      "role": "Edge firewall",
       "tags": [
-        "security",
-        "perimeter",
-        "ha-pair"
+        "edge",
+        "ha"
       ],
-      "notes": [
-        "Palo Alto PA-5250",
-        "Active node"
-      ],
-      "mac": "00:1A:2B:3C:4D:10",
+      "notes": [],
+      "mac": "02:00:5E:20:00:03",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "security",
+      "uHeight": "1",
+      "layer": "layer3",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "https",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "fw-external-2": {
-      "shape": "firewall",
-      "name": "External FW 2",
-      "ip": "10.0.1.2",
-      "role": "Perimeter Security",
-      "tags": [
-        "security",
-        "perimeter",
-        "ha-pair"
-      ],
-      "notes": [
-        "Palo Alto PA-5250",
-        "Passive node"
-      ],
-      "mac": "00:1A:2B:3C:4D:11",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "security",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "fw-internal": {
-      "shape": "firewall",
-      "name": "Internal FW",
-      "ip": "10.0.2.1",
-      "role": "Internal Segmentation",
-      "tags": [
-        "security",
-        "internal"
-      ],
-      "notes": [
-        "East-West traffic inspection"
-      ],
-      "mac": "00:1A:2B:3C:4D:12",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "security",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "core-switch-1": {
+    "core1": {
       "shape": "switch",
-      "name": "Core Switch 1",
-      "ip": "10.0.10.1",
-      "role": "Core Switching",
+      "name": "Core 1",
+      "ip": "10.20.0.11",
+      "role": "Core switch, stack member 1",
       "tags": [
-        "core",
-        "layer3",
-        "redundant"
+        "core"
       ],
-      "notes": [
-        "Cisco Nexus 9000",
-        "VPC Domain 1"
-      ],
-      "mac": "00:1A:2B:3C:4D:20",
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
+      "uHeight": "1",
+      "layer": "layer2",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "core-switch-2": {
+    "core2": {
       "shape": "switch",
-      "name": "Core Switch 2",
-      "ip": "10.0.10.2",
-      "role": "Core Switching",
+      "name": "Core 2",
+      "ip": "10.20.0.12",
+      "role": "Core switch, stack member 2",
       "tags": [
-        "core",
-        "layer3",
-        "redundant"
+        "core"
       ],
-      "notes": [
-        "Cisco Nexus 9000",
-        "VPC Domain 1"
-      ],
-      "mac": "00:1A:2B:3C:4D:21",
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
+      "uHeight": "1",
+      "layer": "layer2",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "dc-rack-a1": {
-      "shape": "server",
-      "name": "DC Rack A1",
-      "ip": "10.10.0.0/24",
-      "role": "Data Center Rack",
-      "tags": [
-        "datacenter",
-        "row-a",
-        "production"
-      ],
-      "notes": [
-        "Row A, Position 1",
-        "Primary compute"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "dc-rack-a2": {
-      "shape": "server",
-      "name": "DC Rack A2",
-      "ip": "10.10.1.0/24",
-      "role": "Data Center Rack",
-      "tags": [
-        "datacenter",
-        "row-a",
-        "production"
-      ],
-      "notes": [
-        "Row A, Position 2",
-        "Primary compute"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "dc-rack-b1": {
-      "shape": "server",
-      "name": "DC Rack B1",
-      "ip": "10.10.2.0/24",
-      "role": "Data Center Rack",
-      "tags": [
-        "datacenter",
-        "row-b",
-        "storage"
-      ],
-      "notes": [
-        "Row B, Position 1",
-        "Storage systems"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "dc-rack-b2": {
-      "shape": "server",
-      "name": "DC Rack B2",
-      "ip": "10.10.3.0/24",
-      "role": "Data Center Rack",
-      "tags": [
-        "datacenter",
-        "row-b",
-        "storage"
-      ],
-      "notes": [
-        "Row B, Position 2",
-        "Storage systems"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "dmz-rack": {
-      "shape": "server",
-      "name": "DMZ Rack",
-      "ip": "172.16.0.0/24",
-      "role": "DMZ Infrastructure",
-      "tags": [
-        "dmz",
-        "security",
-        "public-facing",
-        {
-          "type": "icon",
-          "library": "selfhst",
-          "name": "booklogr"
-        },
-        {
-          "type": "icon",
-          "library": "simple",
-          "name": "gmail"
-        }
-      ],
-      "notes": [
-        "Isolated DMZ zone",
-        "Public-facing services"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "",
-      "rackCapacity": "24",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "mgmt-rack": {
-      "shape": "server",
-      "name": "Management Rack",
-      "ip": "192.168.100.0/24",
-      "role": "Management Infrastructure",
-      "tags": [
-        "management",
-        "oob",
-        "noc"
-      ],
-      "notes": [
-        "Out-of-band management",
-        "NOC equipment"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "",
-      "rackCapacity": "24",
-      "isRack": true,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-01": {
-      "shape": "server",
-      "name": "ESXi Host 01",
-      "ip": "10.10.0.11",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-a"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "512GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:01:01",
-      "rackUnit": 38,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-02": {
-      "shape": "server",
-      "name": "ESXi Host 02",
-      "ip": "10.10.0.12",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-a"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "512GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:01:02",
-      "rackUnit": 35,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-03": {
-      "shape": "server",
-      "name": "ESXi Host 03",
-      "ip": "10.10.0.13",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-a"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "512GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:01:03",
-      "rackUnit": 32,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-04": {
-      "shape": "server",
-      "name": "ESXi Host 04",
-      "ip": "10.10.0.14",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-a"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "512GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:01:04",
-      "rackUnit": 29,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "tor-switch-a1": {
+    "dmzsw": {
       "shape": "switch",
-      "name": "ToR Switch A1",
-      "ip": "10.10.0.1",
-      "role": "Top of Rack",
-      "tags": [
-        "tor",
-        "access",
-        "rack-a1"
-      ],
-      "notes": [
-        "Cisco Nexus 93180YC-FX",
-        "48x25G ports"
-      ],
-      "mac": "00:1A:2B:3C:5D:01",
-      "rackUnit": 42,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-05": {
-      "shape": "server",
-      "name": "ESXi Host 05",
-      "ip": "10.10.1.11",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-b"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "768GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:02:01",
-      "rackUnit": 38,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-06": {
-      "shape": "server",
-      "name": "ESXi Host 06",
-      "ip": "10.10.1.12",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-b"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "768GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:02:02",
-      "rackUnit": 35,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-07": {
-      "shape": "server",
-      "name": "ESXi Host 07",
-      "ip": "10.10.1.13",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-b"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "768GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:02:03",
-      "rackUnit": 32,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "esxi-host-08": {
-      "shape": "server",
-      "name": "ESXi Host 08",
-      "ip": "10.10.1.14",
-      "role": "Hypervisor",
-      "tags": [
-        "vmware",
-        "compute",
-        "cluster-b"
-      ],
-      "notes": [
-        "Dell PowerEdge R750",
-        "768GB RAM",
-        "vSphere 8.0"
-      ],
-      "mac": "00:50:56:AA:02:04",
-      "rackUnit": 29,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "tor-switch-a2": {
-      "shape": "switch",
-      "name": "ToR Switch A2",
-      "ip": "10.10.1.1",
-      "role": "Top of Rack",
-      "tags": [
-        "tor",
-        "access",
-        "rack-a2"
-      ],
-      "notes": [
-        "Cisco Nexus 93180YC-FX",
-        "48x25G ports"
-      ],
-      "mac": "00:1A:2B:3C:5D:02",
-      "rackUnit": 42,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "san-primary": {
-      "shape": "database",
-      "name": "SAN Primary",
-      "ip": "10.10.2.10",
-      "role": "Primary Storage",
-      "tags": [
-        "storage",
-        "san",
-        "netapp"
-      ],
-      "notes": [
-        "NetApp AFF A400",
-        "500TB Raw",
-        "FC 32Gb"
-      ],
-      "mac": "00:A0:98:AA:01:01",
-      "rackUnit": 36,
-      "uHeight": "6",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "san-secondary": {
-      "shape": "database",
-      "name": "SAN Secondary",
-      "ip": "10.10.2.11",
-      "role": "Secondary Storage",
-      "tags": [
-        "storage",
-        "san",
-        "netapp"
-      ],
-      "notes": [
-        "NetApp AFF A400",
-        "500TB Raw",
-        "FC 32Gb"
-      ],
-      "mac": "00:A0:98:AA:01:02",
-      "rackUnit": 28,
-      "uHeight": "6",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "fc-switch-1": {
-      "shape": "switch",
-      "name": "FC Switch 1",
-      "ip": "10.10.2.1",
-      "role": "Fibre Channel",
-      "tags": [
-        "storage",
-        "fc",
-        "fabric-a"
-      ],
-      "notes": [
-        "Brocade G620",
-        "Fabric A"
-      ],
-      "mac": "00:1A:2B:FC:01:01",
-      "rackUnit": 42,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "fc-switch-2": {
-      "shape": "switch",
-      "name": "FC Switch 2",
-      "ip": "10.10.2.2",
-      "role": "Fibre Channel",
-      "tags": [
-        "storage",
-        "fc",
-        "fabric-b"
-      ],
-      "notes": [
-        "Brocade G620",
-        "Fabric B"
-      ],
-      "mac": "00:1A:2B:FC:01:02",
-      "rackUnit": 41,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "backup-server-1": {
-      "shape": "server",
-      "name": "Backup Server 1",
-      "ip": "10.10.3.10",
-      "role": "Backup Infrastructure",
-      "tags": [
-        "backup",
-        "veeam",
-        "protection"
-      ],
-      "notes": [
-        "Veeam Backup Server",
-        "Dell R740xd",
-        "200TB"
-      ],
-      "mac": "00:50:56:BB:01:01",
-      "rackUnit": 36,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "backup-server-2": {
-      "shape": "server",
-      "name": "Backup Server 2",
-      "ip": "10.10.3.11",
-      "role": "Backup Infrastructure",
-      "tags": [
-        "backup",
-        "veeam",
-        "protection"
-      ],
-      "notes": [
-        "Veeam Backup Server",
-        "Dell R740xd",
-        "200TB"
-      ],
-      "mac": "00:50:56:BB:01:02",
-      "rackUnit": 33,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "tape-library": {
-      "shape": "database",
-      "name": "Tape Library",
-      "ip": "10.10.3.20",
-      "role": "Archival Storage",
-      "tags": [
-        "backup",
-        "tape",
-        "lto9"
-      ],
-      "notes": [
-        "IBM TS4500",
-        "LTO-9",
-        "Long-term archive"
-      ],
-      "mac": "00:50:56:BB:02:01",
-      "rackUnit": 20,
-      "uHeight": "10",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "tor-switch-b1": {
-      "shape": "switch",
-      "name": "ToR Switch B1",
-      "ip": "10.10.2.3",
-      "role": "Top of Rack",
-      "tags": [
-        "tor",
-        "access",
-        "rack-b1"
-      ],
-      "notes": [
-        "Cisco Nexus 93180YC-FX"
-      ],
-      "mac": "00:1A:2B:3C:5D:03",
-      "rackUnit": 40,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "tor-switch-b2": {
-      "shape": "switch",
-      "name": "ToR Switch B2",
-      "ip": "10.10.3.1",
-      "role": "Top of Rack",
-      "tags": [
-        "tor",
-        "access",
-        "rack-b2"
-      ],
-      "notes": [
-        "Cisco Nexus 93180YC-FX"
-      ],
-      "mac": "00:1A:2B:3C:5D:04",
-      "rackUnit": 42,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "web-server-1": {
-      "shape": "server",
-      "name": "Web Server 1",
-      "ip": "172.16.0.11",
-      "role": "Web Frontend",
-      "tags": [
-        "dmz",
-        "web",
-        "nginx"
-      ],
-      "notes": [
-        "NGINX reverse proxy",
-        "Public facing"
-      ],
-      "mac": "00:50:56:CC:01:01",
-      "rackUnit": 20,
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "web-server-2": {
-      "shape": "server",
-      "name": "Web Server 2",
-      "ip": "172.16.0.12",
-      "role": "Web Frontend",
-      "tags": [
-        "dmz",
-        "web",
-        "nginx"
-      ],
-      "notes": [
-        "NGINX reverse proxy",
-        "Public facing"
-      ],
-      "mac": "00:50:56:CC:01:02",
-      "rackUnit": 18,
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "waf-1": {
-      "shape": "firewall",
-      "name": "WAF Appliance",
-      "ip": "172.16.0.5",
-      "role": "Web Application Firewall",
-      "tags": [
-        "dmz",
-        "security",
-        "waf"
-      ],
-      "notes": [
-        "F5 BIG-IP ASM",
-        "OWASP protection"
-      ],
-      "mac": "00:50:56:CC:02:01",
-      "rackUnit": 22,
-      "uHeight": "2",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "load-balancer-dmz": {
-      "shape": "switch",
-      "name": "DMZ Load Balancer",
-      "ip": "172.16.0.3",
-      "role": "Load Balancing",
-      "tags": [
-        "dmz",
-        "lb",
-        "f5"
-      ],
-      "notes": [
-        "F5 BIG-IP LTM",
-        "VIP: 172.16.0.100"
-      ],
-      "mac": "00:50:56:CC:03:01",
-      "rackUnit": 16,
-      "uHeight": "2",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "mail-gateway": {
-      "shape": "server",
-      "name": "Mail Gateway",
-      "ip": "172.16.0.25",
-      "role": "Email Security",
-      "tags": [
-        "dmz",
-        "email",
-        "security"
-      ],
-      "notes": [
-        "Proofpoint Email Gateway",
-        "Spam/malware filtering"
-      ],
-      "mac": "00:50:56:CC:04:01",
-      "rackUnit": 14,
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dns-external-1": {
-      "shape": "circle",
-      "name": "External DNS 1",
-      "ip": "172.16.0.53",
-      "role": "External DNS",
-      "tags": [
-        "dmz",
-        "dns",
-        "public"
-      ],
-      "notes": [
-        "BIND DNS",
-        "Authoritative for corp.com"
-      ],
-      "mac": "00:50:56:CC:05:01",
-      "rackUnit": 12,
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dns-external-2": {
-      "shape": "circle",
-      "name": "External DNS 2",
-      "ip": "172.16.0.54",
-      "role": "External DNS",
-      "tags": [
-        "dmz",
-        "dns",
-        "public"
-      ],
-      "notes": [
-        "BIND DNS",
-        "Secondary for corp.com"
-      ],
-      "mac": "00:50:56:CC:05:02",
-      "rackUnit": 10,
-      "uHeight": "1",
-      "layer": "security",
-      "assignedRack": "dmz-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "vcenter": {
-      "shape": "server",
-      "name": "vCenter Server",
-      "ip": "192.168.100.10",
-      "role": "Virtualization Management",
-      "tags": [
-        "management",
-        "vmware",
-        "vcsa"
-      ],
-      "notes": [
-        "vCenter Server Appliance 8.0",
-        "Single SSO domain"
-      ],
-      "mac": "00:50:56:DD:01:01",
-      "rackUnit": 20,
-      "uHeight": "2",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "nsx-manager": {
-      "shape": "server",
-      "name": "NSX Manager",
-      "ip": "192.168.100.15",
-      "role": "Network Virtualization",
-      "tags": [
-        "management",
-        "vmware",
-        "nsx"
-      ],
-      "notes": [
-        "NSX-T 4.1 Manager Cluster"
-      ],
-      "mac": "00:50:56:DD:02:01",
-      "rackUnit": 17,
-      "uHeight": "2",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "siem-server": {
-      "shape": "server",
-      "name": "SIEM Server",
-      "ip": "192.168.100.50",
-      "role": "Security Monitoring",
-      "tags": [
-        "management",
-        "security",
-        "splunk"
-      ],
-      "notes": [
-        "Splunk Enterprise",
-        "Security monitoring"
-      ],
-      "mac": "00:50:56:DD:03:01",
-      "rackUnit": 14,
-      "uHeight": "2",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "nms-server": {
-      "shape": "server",
-      "name": "Network Monitoring",
-      "ip": "192.168.100.60",
-      "role": "Network Management",
-      "tags": [
-        "management",
-        "monitoring",
-        "prtg"
-      ],
-      "notes": [
-        "PRTG Network Monitor",
-        "5000 sensors"
-      ],
-      "mac": "00:50:56:DD:04:01",
-      "rackUnit": 11,
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "jump-server": {
-      "shape": "server",
-      "name": "Jump Server",
-      "ip": "192.168.100.100",
-      "role": "Bastion Host",
-      "tags": [
-        "management",
-        "security",
-        "bastion"
-      ],
-      "notes": [
-        "Windows Server 2022",
-        "MFA enabled"
-      ],
-      "mac": "00:50:56:DD:05:01",
-      "rackUnit": 9,
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ipam-server": {
-      "shape": "server",
-      "name": "IPAM/DDI",
-      "ip": "192.168.100.70",
-      "role": "IP Management",
-      "tags": [
-        "management",
-        "dns",
-        "dhcp"
-      ],
-      "notes": [
-        "Infoblox DDI",
-        "DNS/DHCP/IPAM"
-      ],
-      "mac": "00:50:56:DD:06:01",
-      "rackUnit": 7,
-      "uHeight": "2",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "wlc-primary": {
-      "shape": "wifi",
-      "name": "WLC Primary",
-      "ip": "10.20.0.1",
-      "role": "Wireless Controller",
-      "tags": [
-        "wireless",
-        "cisco",
-        "9800"
-      ],
-      "notes": [
-        "Cisco C9800-40",
-        "Primary controller"
-      ],
-      "mac": "00:1A:2B:WL:01:01",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "wlc-secondary": {
-      "shape": "wifi",
-      "name": "WLC Secondary",
-      "ip": "10.20.0.2",
-      "role": "Wireless Controller",
-      "tags": [
-        "wireless",
-        "cisco",
-        "9800"
-      ],
-      "notes": [
-        "Cisco C9800-40",
-        "HA Secondary"
-      ],
-      "mac": "00:1A:2B:WL:01:02",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "mobile-zone-hq": {
-      "shape": "phone",
-      "name": "HQ Mobile Zone",
-      "ip": "10.20.10.0/24",
-      "role": "Mobile Device Zone",
-      "tags": [
-        "wireless",
-        "byod",
-        "mobile"
-      ],
-      "notes": [
-        "Corporate BYOD",
-        "MDM enrolled devices"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "mobile-zone-guest": {
-      "shape": "phone",
-      "name": "Guest WiFi Zone",
-      "ip": "10.30.0.0/24",
-      "role": "Guest Network",
-      "tags": [
-        "wireless",
-        "guest",
-        "isolated"
-      ],
-      "notes": [
-        "Captive portal",
-        "Internet only"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "mobile-zone-iot": {
-      "shape": "phone",
-      "name": "IoT Device Zone",
-      "ip": "10.40.0.0/24",
-      "role": "IoT Network",
-      "tags": [
-        "wireless",
-        "iot",
-        "building"
-      ],
-      "notes": [
-        "Building automation",
-        "Smart devices"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "branch-router-ny": {
-      "shape": "router",
-      "name": "NYC Branch Router",
-      "ip": "10.100.0.1",
-      "role": "Branch Gateway",
-      "tags": [
-        "branch",
-        "nyc",
-        "sd-wan"
-      ],
-      "notes": [
-        "Cisco Viptela vEdge",
-        "SD-WAN enabled"
-      ],
-      "mac": "00:1A:2B:BR:01:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "branch-router-la": {
-      "shape": "router",
-      "name": "LA Branch Router",
-      "ip": "10.101.0.1",
-      "role": "Branch Gateway",
-      "tags": [
-        "branch",
-        "la",
-        "sd-wan"
-      ],
-      "notes": [
-        "Cisco Viptela vEdge",
-        "SD-WAN enabled"
-      ],
-      "mac": "00:1A:2B:BR:02:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "branch-router-chi": {
-      "shape": "router",
-      "name": "Chicago Branch Router",
-      "ip": "10.102.0.1",
-      "role": "Branch Gateway",
-      "tags": [
-        "branch",
-        "chicago",
-        "sd-wan"
-      ],
-      "notes": [
-        "Cisco Viptela vEdge",
-        "SD-WAN enabled"
-      ],
-      "mac": "00:1A:2B:BR:03:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "branch-router-lon": {
-      "shape": "router",
-      "name": "London Branch Router",
-      "ip": "10.200.0.1",
-      "role": "Branch Gateway",
-      "tags": [
-        "branch",
-        "london",
-        "sd-wan"
-      ],
-      "notes": [
-        "Cisco Viptela vEdge",
-        "EMEA region"
-      ],
-      "mac": "00:1A:2B:BR:04:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "branch-router-tokyo": {
-      "shape": "router",
-      "name": "Tokyo Branch Router",
-      "ip": "10.201.0.1",
-      "role": "Branch Gateway",
-      "tags": [
-        "branch",
-        "tokyo",
-        "sd-wan"
-      ],
-      "notes": [
-        "Cisco Viptela vEdge",
-        "APAC region"
-      ],
-      "mac": "00:1A:2B:BR:05:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "cloud-aws": {
-      "shape": "cloud",
-      "name": "AWS Cloud",
-      "ip": "vpc-0a1b2c3d",
-      "role": "Public Cloud",
-      "tags": [
-        "cloud",
-        "aws",
-        "hybrid"
-      ],
-      "notes": [
-        "AWS US-East-1",
-        "VPC peering to HQ"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "cloud-azure": {
-      "shape": "cloud",
-      "name": "Azure Cloud",
-      "ip": "vnet-corp-prod",
-      "role": "Public Cloud",
-      "tags": [
-        "cloud",
-        "azure",
-        "hybrid"
-      ],
-      "notes": [
-        "Azure East US 2",
-        "ExpressRoute"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "cloud-gcp": {
-      "shape": "cloud",
-      "name": "GCP Cloud",
-      "ip": "vpc-gcp-corp",
-      "role": "Public Cloud",
-      "tags": [
-        "cloud",
-        "gcp",
-        "dev"
-      ],
-      "notes": [
-        "GCP us-central1",
-        "Dev/Test workloads"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "isp-primary": {
-      "shape": "globe",
-      "name": "ISP Primary",
+      "name": "DMZ Switch",
       "ip": "203.0.113.1",
-      "role": "Internet Uplink",
+      "role": "",
       "tags": [
-        "wan",
-        "internet",
-        "primary"
+        "dmz"
       ],
-      "notes": [
-        "AT&T MPLS",
-        "1 Gbps dedicated"
-      ],
+      "notes": [],
       "mac": "",
       "rackUnit": "",
       "uHeight": "1",
-      "layer": "physical",
+      "layer": "layer1",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "isp-secondary": {
-      "shape": "globe",
-      "name": "ISP Secondary",
-      "ip": "198.51.100.1",
-      "role": "Internet Uplink",
+    "web": {
+      "shape": "server",
+      "name": "Web Server",
+      "ip": "203.0.113.3",
+      "role": "Customer portal",
       "tags": [
-        "wan",
-        "internet",
+        "dmz",
+        "web"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "https",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "mail": {
+      "shape": "server",
+      "name": "Mail Relay",
+      "ip": "203.0.113.4",
+      "role": "SMTP relay",
+      "tags": [
+        "dmz",
+        "mail"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "rproxy": {
+      "shape": "load-balancer",
+      "name": "Reverse Proxy",
+      "ip": "203.0.113.5",
+      "role": "TLS offload",
+      "tags": [
+        "dmz"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "vpn": {
+      "shape": "vpn",
+      "name": "Remote Access",
+      "ip": "203.0.113.6",
+      "role": "Client VPN",
+      "tags": [
+        "dmz",
+        "vpn"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer3",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "hv1": {
+      "shape": "server",
+      "name": "HV 01",
+      "ip": "10.20.20.11",
+      "role": "Hypervisor",
+      "tags": [
+        "cluster"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "https",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "hv2": {
+      "shape": "server",
+      "name": "HV 02",
+      "ip": "10.20.20.12",
+      "role": "Hypervisor",
+      "tags": [
+        "cluster"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "https",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "hv3": {
+      "shape": "server",
+      "name": "HV 03",
+      "ip": "10.20.20.13",
+      "role": "Hypervisor",
+      "tags": [
+        "cluster"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": true,
+        "protocol": "https",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "dc01": {
+      "shape": "vm",
+      "name": "DC01",
+      "ip": "10.20.20.21",
+      "role": "Domain controller, DNS",
+      "tags": [
+        "identity"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "hv1",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "fs01": {
+      "shape": "vm",
+      "name": "FS01",
+      "ip": "10.20.20.22",
+      "role": "File server",
+      "tags": [
+        "files"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "hv2",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "erp01": {
+      "shape": "vm",
+      "name": "ERP01",
+      "ip": "10.20.20.23",
+      "role": "ERP application",
+      "tags": [
+        "erp"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer4",
+      "assignedRack": "",
+      "hostedOn": "hv3",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "srvsw": {
+      "shape": "switch",
+      "name": "Server Switch",
+      "ip": "10.20.0.21",
+      "role": "25G leaf",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "san": {
+      "shape": "database",
+      "name": "SAN",
+      "ip": "10.20.21.10",
+      "role": "iSCSI, 120 TB",
+      "tags": [
+        "storage"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "bkp": {
+      "shape": "nas",
+      "name": "Backup Appliance",
+      "ip": "10.20.21.20",
+      "role": "Immutable backups",
+      "tags": [
         "backup"
       ],
-      "notes": [
-        "Verizon Business",
-        "500 Mbps backup"
-      ],
+      "notes": [],
       "mac": "",
       "rackUnit": "",
       "uHeight": "1",
-      "layer": "physical",
+      "layer": "layer1",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "dc-internal-1": {
-      "shape": "circle",
-      "name": "DC1 Int DNS",
-      "ip": "10.10.0.53",
-      "role": "Internal DNS/AD",
-      "tags": [
-        "dns",
-        "ad",
-        "dc1"
-      ],
-      "notes": [
-        "Windows Server 2022",
-        "Primary DC"
-      ],
-      "mac": "00:50:56:AD:01:01",
-      "rackUnit": 26,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dc-internal-2": {
-      "shape": "circle",
-      "name": "DC2 Int DNS",
-      "ip": "10.10.1.53",
-      "role": "Internal DNS/AD",
-      "tags": [
-        "dns",
-        "ad",
-        "dc2"
-      ],
-      "notes": [
-        "Windows Server 2022",
-        "Secondary DC"
-      ],
-      "mac": "00:50:56:AD:01:02",
-      "rackUnit": 26,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "app-server-1": {
-      "shape": "server",
-      "name": "App Server 01",
-      "ip": "10.10.0.101",
-      "role": "Application",
-      "tags": [
-        "app",
-        "iis",
-        "web"
-      ],
-      "notes": [
-        "Windows Server 2022",
-        "IIS Application"
-      ],
-      "mac": "00:50:56:AP:01:01",
-      "rackUnit": 24,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "app-server-2": {
-      "shape": "server",
-      "name": "App Server 02",
-      "ip": "10.10.0.102",
-      "role": "Application",
-      "tags": [
-        "app",
-        "iis",
-        "web"
-      ],
-      "notes": [
-        "Windows Server 2022",
-        "IIS Application"
-      ],
-      "mac": "00:50:56:AP:01:02",
-      "rackUnit": 22,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "db-server-1": {
-      "shape": "database",
-      "name": "SQL Server 01",
-      "ip": "10.10.0.201",
-      "role": "Database",
-      "tags": [
-        "db",
-        "sql",
-        "primary"
-      ],
-      "notes": [
-        "SQL Server 2022 Enterprise",
-        "AlwaysOn Primary"
-      ],
-      "mac": "00:50:56:DB:01:01",
-      "rackUnit": 20,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "db-server-2": {
-      "shape": "database",
-      "name": "SQL Server 02",
-      "ip": "10.10.1.201",
-      "role": "Database",
-      "tags": [
-        "db",
-        "sql",
-        "secondary"
-      ],
-      "notes": [
-        "SQL Server 2022 Enterprise",
-        "AlwaysOn Secondary"
-      ],
-      "mac": "00:50:56:DB:01:02",
-      "rackUnit": 24,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-master-1": {
-      "shape": "hexagon",
-      "name": "K8s Master 1",
-      "ip": "10.10.1.50",
-      "role": "Container Orchestration",
-      "tags": [
-        "kubernetes",
-        "master",
-        "container"
-      ],
-      "notes": [
-        "K8s Control Plane",
-        "etcd member"
-      ],
-      "mac": "00:50:56:K8:01:01",
-      "rackUnit": 21,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-master-2": {
-      "shape": "hexagon",
-      "name": "K8s Master 2",
-      "ip": "10.10.1.51",
-      "role": "Container Orchestration",
-      "tags": [
-        "kubernetes",
-        "master",
-        "container"
-      ],
-      "notes": [
-        "K8s Control Plane",
-        "etcd member"
-      ],
-      "mac": "00:50:56:K8:01:02",
-      "rackUnit": 19,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-master-3": {
-      "shape": "hexagon",
-      "name": "K8s Master 3",
-      "ip": "10.10.1.52",
-      "role": "Container Orchestration",
-      "tags": [
-        "kubernetes",
-        "master",
-        "container"
-      ],
-      "notes": [
-        "K8s Control Plane",
-        "etcd member"
-      ],
-      "mac": "00:50:56:K8:01:03",
-      "rackUnit": 17,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-worker-1": {
-      "shape": "server",
-      "name": "K8s Worker 1",
-      "ip": "10.10.1.60",
-      "role": "Container Workload",
-      "tags": [
-        "kubernetes",
-        "worker",
-        "container"
-      ],
-      "notes": [
-        "K8s Worker Node",
-        "64GB RAM"
-      ],
-      "mac": "00:50:56:K8:02:01",
-      "rackUnit": 15,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-worker-2": {
-      "shape": "server",
-      "name": "K8s Worker 2",
-      "ip": "10.10.1.61",
-      "role": "Container Workload",
-      "tags": [
-        "kubernetes",
-        "worker",
-        "container"
-      ],
-      "notes": [
-        "K8s Worker Node",
-        "64GB RAM"
-      ],
-      "mac": "00:50:56:K8:02:02",
-      "rackUnit": 13,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-worker-3": {
-      "shape": "server",
-      "name": "K8s Worker 3",
-      "ip": "10.10.1.62",
-      "role": "Container Workload",
-      "tags": [
-        "kubernetes",
-        "worker",
-        "container"
-      ],
-      "notes": [
-        "K8s Worker Node",
-        "64GB RAM"
-      ],
-      "mac": "00:50:56:K8:02:03",
-      "rackUnit": 11,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "k8s-worker-4": {
-      "shape": "server",
-      "name": "K8s Worker 4",
-      "ip": "10.10.1.63",
-      "role": "Container Workload",
-      "tags": [
-        "kubernetes",
-        "worker",
-        "container"
-      ],
-      "notes": [
-        "K8s Worker Node",
-        "64GB RAM"
-      ],
-      "mac": "00:50:56:K8:02:04",
-      "rackUnit": 9,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "proxy-server-1": {
-      "shape": "server",
-      "name": "Proxy Server 1",
-      "ip": "10.5.0.10",
-      "role": "Web Proxy",
-      "tags": [
-        "proxy",
-        "squid",
-        "filtering"
-      ],
-      "notes": [
-        "Squid Proxy",
-        "Content filtering"
-      ],
-      "mac": "00:50:56:PX:01:01",
+    "dist1": {
+      "shape": "switch",
+      "name": "Dist Floor 1",
+      "ip": "10.20.0.31",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
       "uHeight": "1",
-      "layer": "security",
+      "layer": "layer2",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "proxy-server-2": {
-      "shape": "server",
-      "name": "Proxy Server 2",
-      "ip": "10.5.0.11",
-      "role": "Web Proxy",
-      "tags": [
-        "proxy",
-        "squid",
-        "filtering"
-      ],
-      "notes": [
-        "Squid Proxy",
-        "HA pair"
-      ],
-      "mac": "00:50:56:PX:01:02",
+    "dist2": {
+      "shape": "switch",
+      "name": "Dist Floor 2",
+      "ip": "10.20.0.32",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
       "uHeight": "1",
-      "layer": "security",
+      "layer": "layer2",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "vpn-concentrator": {
-      "shape": "firewall",
-      "name": "VPN Concentrator",
-      "ip": "10.0.5.1",
-      "role": "Remote Access VPN",
+    "wlc": {
+      "shape": "router",
+      "name": "Wi Fi Controller",
+      "ip": "10.20.10.5",
+      "role": "Manages 18 APs",
       "tags": [
-        "vpn",
-        "remote",
-        "security"
+        "wifi"
       ],
-      "notes": [
-        "Cisco ASA 5555-X",
-        "AnyConnect SSL VPN"
-      ],
-      "mac": "00:1A:2B:VP:01:01",
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "security",
+      "uHeight": "1",
+      "layer": "layer2",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "nac-server": {
+    "pbx": {
       "shape": "server",
-      "name": "NAC Server",
-      "ip": "10.5.5.10",
-      "role": "Network Access Control",
+      "name": "Call Manager",
+      "ip": "10.20.40.5",
+      "role": "SIP and voicemail",
       "tags": [
-        "nac",
-        "ise",
-        "802.1x"
+        "voice"
       ],
-      "notes": [
-        "Cisco ISE 3.1",
-        "RADIUS/TACACS+"
-      ],
-      "mac": "00:50:56:NA:01:01",
+      "notes": [],
+      "mac": "",
       "rackUnit": "",
-      "uHeight": "2",
-      "layer": "security",
+      "uHeight": "1",
+      "layer": "layer4",
       "assignedRack": "",
-      "rackCapacity": "42",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "print-server": {
-      "shape": "server",
-      "name": "Print Server",
-      "ip": "10.10.0.150",
-      "role": "Print Services",
+    "sip": {
+      "shape": "cloud",
+      "name": "SIP Trunk",
+      "ip": "",
+      "role": "30 channels",
       "tags": [
-        "print",
-        "windows",
-        "services"
+        "voice"
       ],
-      "notes": [
-        "Windows Print Server",
-        "50+ printers"
-      ],
-      "mac": "00:50:56:PR:01:01",
-      "rackUnit": 18,
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
       "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "file-server": {
-      "shape": "database",
-      "name": "File Server",
-      "ip": "10.10.0.160",
-      "role": "File Services",
-      "tags": [
-        "file",
-        "smb",
-        "dfs"
-      ],
-      "notes": [
-        "Windows File Server",
-        "DFS namespace"
-      ],
-      "mac": "00:50:56:FS:01:01",
-      "rackUnit": 16,
-      "uHeight": "2",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ca-server": {
-      "shape": "server",
-      "name": "Certificate Authority",
-      "ip": "192.168.100.80",
-      "role": "PKI Infrastructure",
-      "tags": [
-        "pki",
-        "ca",
-        "security"
-      ],
-      "notes": [
-        "Windows CA",
-        "Enterprise Root CA"
-      ],
-      "mac": "00:50:56:CA:01:01",
-      "rackUnit": 5,
+    "acc1a": {
+      "shape": "switch",
+      "name": "Access 1A",
+      "ip": "10.20.0.41",
+      "role": "48 port PoE",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
       "uHeight": "1",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "sccm-server": {
-      "shape": "server",
-      "name": "SCCM Server",
-      "ip": "192.168.100.90",
-      "role": "Endpoint Management",
-      "tags": [
-        "sccm",
-        "patching",
-        "software"
-      ],
-      "notes": [
-        "MECM Primary Site",
-        "Software deployment"
-      ],
-      "mac": "00:50:56:SC:01:01",
-      "rackUnit": 3,
-      "uHeight": "2",
-      "layer": "logical",
-      "assignedRack": "mgmt-rack",
-      "rackCapacity": "24",
+    "acc1b": {
+      "shape": "switch",
+      "name": "Access 1B",
+      "ip": "10.20.0.42",
+      "role": "48 port PoE",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
       "isRack": false,
       "locked": false,
-      "groupId": null
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     },
-    "voip-cluster": {
+    "acc2a": {
+      "shape": "switch",
+      "name": "Access 2A",
+      "ip": "10.20.0.43",
+      "role": "48 port PoE",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "acc2b": {
+      "shape": "switch",
+      "name": "Access 2B",
+      "ip": "10.20.0.44",
+      "role": "48 port PoE",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "pcs": {
+      "shape": "pc",
+      "name": "Desktops",
+      "ip": "VLAN 30",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "phones": {
       "shape": "phone",
-      "name": "VoIP Cluster",
-      "ip": "10.50.0.0/24",
-      "role": "Voice Services",
-      "tags": [
-        "voip",
-        "cisco",
-        "ucm"
-      ],
-      "notes": [
-        "Cisco UCM Cluster",
-        "3000 endpoints"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "video-conf": {
-      "shape": "laptop",
-      "name": "Video Conference",
-      "ip": "10.51.0.0/24",
-      "role": "Video Services",
-      "tags": [
-        "video",
-        "webex",
-        "teams"
-      ],
-      "notes": [
-        "Webex/Teams integration",
-        "Meeting rooms"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "security-cameras": {
-      "shape": "camera",
-      "name": "Security Cameras",
-      "ip": "10.60.0.0/24",
-      "role": "Physical Security",
-      "tags": [
-        "cctv",
-        "surveillance",
-        "security"
-      ],
-      "notes": [
-        "150+ IP cameras",
-        "30-day retention"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "nvr-cluster": {
-      "shape": "server",
-      "name": "NVR Cluster",
-      "ip": "10.60.0.10",
-      "role": "Video Recording",
-      "tags": [
-        "nvr",
-        "surveillance",
-        "storage"
-      ],
-      "notes": [
-        "Milestone XProtect",
-        "500TB storage"
-      ],
-      "mac": "00:50:56:NV:01:01",
-      "rackUnit": 15,
-      "uHeight": "4",
-      "layer": "physical",
-      "assignedRack": "dc-rack-b2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dev-server-1": {
-      "shape": "server",
-      "name": "Dev Server 1",
-      "ip": "10.80.0.10",
-      "role": "Development",
-      "tags": [
-        "dev",
-        "gitlab",
-        "ci-cd",
-        {
-          "type": "icon",
-          "library": "selfhst",
-          "name": "dokku"
-        }
-      ],
-      "notes": [
-        "GitLab Server",
-        "CI/CD pipelines"
-      ],
-      "mac": "00:50:56:DV:01:01",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dev-server-2": {
-      "shape": "server",
-      "name": "Dev Server 2",
-      "ip": "10.80.0.11",
-      "role": "Development",
-      "tags": [
-        "dev",
-        "jenkins",
-        "ci-cd"
-      ],
-      "notes": [
-        "Jenkins Server",
-        "Build automation"
-      ],
-      "mac": "00:50:56:DV:01:02",
-      "rackUnit": "",
-      "uHeight": "2",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "test-environment": {
-      "shape": "hexagon",
-      "name": "Test Environment",
-      "ip": "10.81.0.0/24",
-      "role": "QA/Testing",
-      "tags": [
-        "test",
-        "qa",
-        "staging"
-      ],
-      "notes": [
-        "Staging environment",
-        "Pre-prod validation"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "erp-system": {
-      "shape": "database",
-      "name": "ERP System",
-      "ip": "10.90.0.10",
-      "role": "Business Application",
-      "tags": [
-        "erp",
-        "sap",
-        "business"
-      ],
-      "notes": [
-        "SAP S/4HANA",
-        "Financial/HR systems"
-      ],
-      "mac": "00:50:56:ER:01:01",
-      "rackUnit": "",
-      "uHeight": "4",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "crm-system": {
-      "shape": "database",
-      "name": "CRM System",
-      "ip": "10.91.0.10",
-      "role": "Business Application",
-      "tags": [
-        "crm",
-        "salesforce",
-        "business"
-      ],
-      "notes": [
-        "Salesforce integration",
-        "Sales/Marketing"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "application",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "endpoint-1000": {
-      "shape": "laptop",
-      "name": "Corporate Endpoints",
-      "ip": "10.70.0.0/22",
-      "role": "User Workstations",
-      "tags": [
-        "endpoints",
-        "workstations",
-        "users"
-      ],
-      "notes": [
-        "~1000 corporate laptops",
-        "Windows 11"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dist-switch-floor1": {
-      "shape": "switch",
-      "name": "Floor 1 Switch",
-      "ip": "10.1.1.1",
-      "role": "Distribution",
-      "tags": [
-        "distribution",
-        "floor-1",
-        "access"
-      ],
-      "notes": [
-        "Cisco C9300-48P",
-        "PoE+ enabled"
-      ],
-      "mac": "00:1A:2B:FL:01:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dist-switch-floor2": {
-      "shape": "switch",
-      "name": "Floor 2 Switch",
-      "ip": "10.1.2.1",
-      "role": "Distribution",
-      "tags": [
-        "distribution",
-        "floor-2",
-        "access"
-      ],
-      "notes": [
-        "Cisco C9300-48P",
-        "PoE+ enabled"
-      ],
-      "mac": "00:1A:2B:FL:02:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dist-switch-floor3": {
-      "shape": "switch",
-      "name": "Floor 3 Switch",
-      "ip": "10.1.3.1",
-      "role": "Distribution",
-      "tags": [
-        "distribution",
-        "floor-3",
-        "access"
-      ],
-      "notes": [
-        "Cisco C9300-48P",
-        "PoE+ enabled"
-      ],
-      "mac": "00:1A:2B:FL:03:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "dist-switch-floor4": {
-      "shape": "switch",
-      "name": "Floor 4 Switch",
-      "ip": "10.1.4.1",
-      "role": "Distribution",
-      "tags": [
-        "distribution",
-        "floor-4",
-        "access"
-      ],
-      "notes": [
-        "Cisco C9300-48P",
-        "PoE+ enabled"
-      ],
-      "mac": "00:1A:2B:FL:04:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ap-floor1-zone1": {
-      "shape": "wifi",
-      "name": "AP Floor 1 Zone 1",
-      "ip": "10.20.1.10",
-      "role": "Wireless Access",
-      "tags": [
-        "wifi",
-        "ap",
-        "floor-1"
-      ],
-      "notes": [
-        "Cisco 9120AX",
-        "Wi-Fi 6"
-      ],
-      "mac": "00:1A:2B:AP:01:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ap-floor2-zone1": {
-      "shape": "wifi",
-      "name": "AP Floor 2 Zone 1",
-      "ip": "10.20.2.10",
-      "role": "Wireless Access",
-      "tags": [
-        "wifi",
-        "ap",
-        "floor-2"
-      ],
-      "notes": [
-        "Cisco 9120AX",
-        "Wi-Fi 6"
-      ],
-      "mac": "00:1A:2B:AP:02:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ap-floor3-zone1": {
-      "shape": "wifi",
-      "name": "AP Floor 3 Zone 1",
-      "ip": "10.20.3.10",
-      "role": "Wireless Access",
-      "tags": [
-        "wifi",
-        "ap",
-        "floor-3"
-      ],
-      "notes": [
-        "Cisco 9120AX",
-        "Wi-Fi 6"
-      ],
-      "mac": "00:1A:2B:AP:03:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ap-floor4-zone1": {
-      "shape": "wifi",
-      "name": "AP Floor 4 Zone 1",
-      "ip": "10.20.4.10",
-      "role": "Wireless Access",
-      "tags": [
-        "wifi",
-        "ap",
-        "floor-4"
-      ],
-      "notes": [
-        "Cisco 9120AX",
-        "Wi-Fi 6"
-      ],
-      "mac": "00:1A:2B:AP:04:01",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ups-dc-1": {
-      "shape": "rectangle",
-      "name": "UPS DC-1",
-      "ip": "192.168.200.10",
-      "role": "Power Management",
-      "tags": [
-        "power",
-        "ups",
-        "datacenter"
-      ],
-      "notes": [
-        "APC Symmetra",
-        "80kVA",
-        "30 min runtime"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "ups-dc-2": {
-      "shape": "rectangle",
-      "name": "UPS DC-2",
-      "ip": "192.168.200.11",
-      "role": "Power Management",
-      "tags": [
-        "power",
-        "ups",
-        "datacenter"
-      ],
-      "notes": [
-        "APC Symmetra",
-        "80kVA",
-        "Redundant"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "pdu-rack-a1": {
-      "shape": "rectangle",
-      "name": "PDU Rack A1",
-      "ip": "192.168.200.21",
-      "role": "Power Distribution",
-      "tags": [
-        "power",
-        "pdu",
-        "rack-a1"
-      ],
-      "notes": [
-        "APC Switched PDU",
-        "Per-outlet metering"
-      ],
-      "mac": "",
-      "rackUnit": 1,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a1",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "pdu-rack-a2": {
-      "shape": "rectangle",
-      "name": "PDU Rack A2",
-      "ip": "192.168.200.22",
-      "role": "Power Distribution",
-      "tags": [
-        "power",
-        "pdu",
-        "rack-a2"
-      ],
-      "notes": [
-        "APC Switched PDU",
-        "Per-outlet metering"
-      ],
-      "mac": "",
-      "rackUnit": 1,
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "dc-rack-a2",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "cooling-1": {
-      "shape": "rectangle",
-      "name": "CRAC Unit 1",
-      "ip": "192.168.200.30",
-      "role": "Cooling",
-      "tags": [
-        "cooling",
-        "hvac",
-        "datacenter"
-      ],
-      "notes": [
-        "Liebert CRV",
-        "Row-based cooling"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "cooling-2": {
-      "shape": "rectangle",
-      "name": "CRAC Unit 2",
-      "ip": "192.168.200.31",
-      "role": "Cooling",
-      "tags": [
-        "cooling",
-        "hvac",
-        "datacenter"
-      ],
-      "notes": [
-        "Liebert CRV",
-        "N+1 redundancy"
-      ],
-      "mac": "",
-      "rackUnit": "",
-      "uHeight": "1",
-      "layer": "physical",
-      "assignedRack": "",
-      "rackCapacity": "42",
-      "isRack": false,
-      "locked": false,
-      "groupId": null
-    },
-    "camera-a": {
-      "shape": "camera",
-      "name": "camera A",
-      "ip": "0.0.0.0",
+      "name": "IP Phones",
+      "ip": "VLAN 40",
       "role": "",
-      "tags": [],
+      "tags": [
+        "voice"
+      ],
       "notes": [],
       "mac": "",
       "rackUnit": "",
       "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
       "ping": {
         "enabled": false,
         "protocol": "http",
@@ -2571,26 +827,24 @@
         "timeout": 3000,
         "status": "unknown",
         "lastCheck": null
-      },
-      "locked": false,
-      "groupId": null,
-      "fovEnabled": true,
-      "fovRotation": 104,
-      "fovDistance": 500,
-      "fovSweep": 60,
-      "fovSpeed": 10,
-      "fovAnimate": true
+      }
     },
-    "camera-a-copy": {
-      "shape": "camera",
-      "name": "camera B",
-      "ip": "0.0.0.0",
+    "printer": {
+      "shape": "printer",
+      "name": "Printers",
+      "ip": "VLAN 50",
       "role": "",
       "tags": [],
       "notes": [],
       "mac": "",
       "rackUnit": "",
       "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
       "ping": {
         "enabled": false,
         "protocol": "http",
@@ -2598,1203 +852,970 @@
         "timeout": 3000,
         "status": "unknown",
         "lastCheck": null
-      },
+      }
+    },
+    "laptops": {
+      "shape": "laptop",
+      "name": "Docked Laptops",
+      "ip": "VLAN 30",
+      "role": "",
+      "tags": [],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
       "locked": false,
       "groupId": null,
-      "fovEnabled": true,
-      "fovRotation": 162,
-      "fovDistance": 500,
-      "fovSweep": 60,
-      "fovSpeed": 10,
-      "fovAnimate": false
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "ap1": {
+      "shape": "access-point",
+      "name": "AP Floor 1",
+      "ip": "10.20.10.21",
+      "role": "",
+      "tags": [
+        "wifi"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "ap2": {
+      "shape": "access-point",
+      "name": "AP Floor 2",
+      "ip": "10.20.10.22",
+      "role": "",
+      "tags": [
+        "wifi"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
+    },
+    "ap3": {
+      "shape": "access-point",
+      "name": "AP Lobby",
+      "ip": "10.20.10.23",
+      "role": "",
+      "tags": [
+        "wifi"
+      ],
+      "notes": [],
+      "mac": "",
+      "rackUnit": "",
+      "uHeight": "1",
+      "layer": "layer1",
+      "assignedRack": "",
+      "hostedOn": "",
+      "isRack": false,
+      "locked": false,
+      "groupId": null,
+      "ping": {
+        "enabled": false,
+        "protocol": "http",
+        "customUrl": "",
+        "timeout": 3000,
+        "status": "unknown",
+        "lastCheck": null
+      }
     }
   },
   "edgeData": {
     "list": [
       {
-        "id": "isp1-router1",
-        "from": "isp-primary",
-        "to": "core-router-1",
-        "width": 6,
-        "color": "#10b981",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "Primary WAN link"
-        ],
-        "fromPort": "Gi0/0",
-        "toPort": "Gi1/0/1",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "isp2-router2",
-        "from": "isp-secondary",
-        "to": "core-router-2",
-        "width": 6,
-        "color": "#10b981",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "Backup WAN link"
-        ],
-        "fromPort": "Gi0/0",
-        "toPort": "Gi1/0/1",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-router2",
-        "from": "core-router-1",
-        "to": "core-router-2",
-        "width": 4,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "HSRP Peering"
-        ],
-        "fromPort": "Gi1/0/24",
-        "toPort": "Gi1/0/24",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-fw1",
-        "from": "core-router-1",
-        "to": "fw-external-1",
-        "width": 4,
-        "color": "#ef4444",
-        "direction": "both",
+        "id": "edge-hq-18",
+        "from": "ispa",
+        "to": "fw1",
+        "width": 5,
+        "color": "#22c55e",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
+        "label": "1 Gbps fiber",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "router2-fw2",
-        "from": "core-router-2",
-        "to": "fw-external-2",
-        "width": 4,
-        "color": "#ef4444",
-        "direction": "both",
+        "id": "edge-hq-19",
+        "from": "ispb",
+        "to": "fw2",
+        "width": 5,
+        "color": "#eab308",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
+        "label": "500 Mbps coax",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "fw1-fw2",
-        "from": "fw-external-1",
-        "to": "fw-external-2",
-        "width": 3,
-        "color": "#f59e0b",
-        "direction": "both",
+        "id": "edge-hq-20",
+        "from": "fw1",
+        "to": "fw2",
+        "width": 4,
+        "color": "#f43f5e",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "HA heartbeat"
-        ],
-        "fromPort": "",
-        "toPort": "",
+        "notes": [],
+        "fromPort": "ha0",
+        "toPort": "ha0",
         "lineStyle": "dashed",
+        "routing": "straight",
+        "label": "HA sync",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "fw1-coresw1",
-        "from": "fw-external-1",
-        "to": "core-switch-1",
-        "width": 4,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fw2-coresw2",
-        "from": "fw-external-2",
-        "to": "core-switch-2",
-        "width": 4,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-coresw2",
-        "from": "core-switch-1",
-        "to": "core-switch-2",
+        "id": "edge-hq-21",
+        "from": "fw1",
+        "to": "core1",
         "width": 5,
         "color": "#3b82f6",
-        "direction": "both",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "VPC peer-link"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
+        "label": "10G",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-fwint",
-        "from": "core-switch-1",
-        "to": "fw-internal",
-        "width": 3,
+        "id": "edge-hq-22",
+        "from": "fw2",
+        "to": "core2",
+        "width": 5,
+        "color": "#3b82f6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "10G",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-23",
+        "from": "core1",
+        "to": "core2",
+        "width": 7,
+        "color": "#3b82f6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "40G stack",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-24",
+        "from": "fw2",
+        "to": "dmzsw",
+        "width": 4,
         "color": "#ef4444",
-        "direction": "both",
+        "direction": "none",
         "type": "main",
         "notes": [],
-        "fromPort": "",
+        "fromPort": "port5",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
+        "label": "VLAN 100",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw2-fwint",
-        "from": "core-switch-2",
-        "to": "fw-internal",
-        "width": 3,
+        "id": "edge-hq-25",
+        "from": "dmzsw",
+        "to": "web",
+        "width": 4,
         "color": "#ef4444",
-        "direction": "both",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-racka1",
-        "from": "core-switch-1",
-        "to": "dc-rack-a1",
+        "id": "edge-hq-26",
+        "from": "dmzsw",
+        "to": "mail",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#ef4444",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw2-racka1",
-        "from": "core-switch-2",
-        "to": "dc-rack-a1",
+        "id": "edge-hq-27",
+        "from": "dmzsw",
+        "to": "rproxy",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#ef4444",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-racka2",
-        "from": "core-switch-1",
-        "to": "dc-rack-a2",
+        "id": "edge-hq-28",
+        "from": "dmzsw",
+        "to": "vpn",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#ef4444",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw2-racka2",
-        "from": "core-switch-2",
-        "to": "dc-rack-a2",
+        "id": "edge-hq-29",
+        "from": "core1",
+        "to": "srvsw",
+        "width": 5,
+        "color": "#3b82f6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "2 x 25G",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-30",
+        "from": "srvsw",
+        "to": "hv1",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#3b82f6",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-rackb1",
-        "from": "core-switch-1",
-        "to": "dc-rack-b1",
+        "id": "edge-hq-31",
+        "from": "srvsw",
+        "to": "hv2",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#3b82f6",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw2-rackb1",
-        "from": "core-switch-2",
-        "to": "dc-rack-b1",
+        "id": "edge-hq-32",
+        "from": "srvsw",
+        "to": "hv3",
         "width": 4,
-        "color": "#475569",
-        "direction": "both",
+        "color": "#3b82f6",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-rackb2",
-        "from": "core-switch-1",
-        "to": "dc-rack-b2",
-        "width": 4,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw2-rackb2",
-        "from": "core-switch-2",
-        "to": "dc-rack-b2",
-        "width": 4,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fw1-dmz",
-        "from": "fw-external-1",
-        "to": "dmz-rack",
-        "width": 3,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "DMZ segment"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fw2-dmz",
-        "from": "fw-external-2",
-        "to": "dmz-rack",
-        "width": 3,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "DMZ segment"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-mgmt",
-        "from": "core-switch-1",
-        "to": "mgmt-rack",
-        "width": 3,
-        "color": "#8b5cf6",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "OOB management"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-wlc1",
-        "from": "core-switch-1",
-        "to": "wlc-primary",
-        "width": 3,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw2-wlc2",
-        "from": "core-switch-2",
-        "to": "wlc-secondary",
-        "width": 3,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal",
-        "animate": true
-      },
-      {
-        "id": "wlc1-wlc2",
-        "from": "wlc-primary",
-        "to": "wlc-secondary",
-        "width": 2,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "HA pair"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "wlc1-mobile-hq",
-        "from": "wlc-primary",
-        "to": "mobile-zone-hq",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "wlc1-mobile-guest",
-        "from": "wlc-primary",
-        "to": "mobile-zone-guest",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "wlc1-mobile-iot",
-        "from": "wlc-primary",
-        "to": "mobile-zone-iot",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-branch-ny",
-        "from": "core-router-1",
-        "to": "branch-router-ny",
-        "width": 3,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "SD-WAN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-branch-la",
-        "from": "core-router-1",
-        "to": "branch-router-la",
-        "width": 3,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "SD-WAN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-branch-chi",
-        "from": "core-router-1",
-        "to": "branch-router-chi",
-        "width": 3,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "SD-WAN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-branch-lon",
-        "from": "core-router-1",
-        "to": "branch-router-lon",
-        "width": 3,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "SD-WAN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-branch-tokyo",
-        "from": "core-router-1",
-        "to": "branch-router-tokyo",
-        "width": 3,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "SD-WAN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "router1-aws",
-        "from": "core-router-1",
-        "to": "cloud-aws",
-        "width": 3,
+        "id": "edge-hq-33",
+        "from": "srvsw",
+        "to": "san",
+        "width": 5,
         "color": "#f97316",
-        "direction": "both",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Direct Connect"
-        ],
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "iSCSI",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-34",
+        "from": "srvsw",
+        "to": "bkp",
+        "width": 5,
+        "color": "#f97316",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "Backup",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-35",
+        "from": "core1",
+        "to": "dist1",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "10G",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-36",
+        "from": "core2",
+        "to": "dist2",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "10G",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-37",
+        "from": "core1",
+        "to": "dist2",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "dashed",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "router2-azure",
-        "from": "core-router-2",
-        "to": "cloud-azure",
-        "width": 3,
-        "color": "#0ea5e9",
-        "direction": "both",
+        "id": "edge-hq-38",
+        "from": "core2",
+        "to": "dist1",
+        "width": 4,
+        "color": "#06b6d4",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "ExpressRoute"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "dashed",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "fwint-gcp",
-        "from": "fw-internal",
-        "to": "cloud-gcp",
-        "width": 2,
-        "color": "#22c55e",
-        "direction": "both",
-        "type": "main",
-        "notes": [
-          "VPN tunnel"
-        ],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "dashed",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-floor1",
-        "from": "core-switch-1",
-        "to": "dist-switch-floor1",
-        "width": 3,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-floor2",
-        "from": "core-switch-1",
-        "to": "dist-switch-floor2",
-        "width": 3,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw2-floor3",
-        "from": "core-switch-2",
-        "to": "dist-switch-floor3",
-        "width": 3,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw2-floor4",
-        "from": "core-switch-2",
-        "to": "dist-switch-floor4",
-        "width": 3,
-        "color": "#475569",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "floor1-endpoints",
-        "from": "dist-switch-floor1",
-        "to": "endpoint-1000",
-        "width": 2,
-        "color": "#94a3b8",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "floor1-ap1",
-        "from": "dist-switch-floor1",
-        "to": "ap-floor1-zone1",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "floor2-ap2",
-        "from": "dist-switch-floor2",
-        "to": "ap-floor2-zone1",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "floor3-ap3",
-        "from": "dist-switch-floor3",
-        "to": "ap-floor3-zone1",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "floor4-ap4",
-        "from": "dist-switch-floor4",
-        "to": "ap-floor4-zone1",
-        "width": 2,
-        "color": "#06b6d4",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwint-proxy1",
-        "from": "fw-internal",
-        "to": "proxy-server-1",
-        "width": 2,
-        "color": "#ef4444",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwint-proxy2",
-        "from": "fw-internal",
-        "to": "proxy-server-2",
-        "width": 2,
-        "color": "#ef4444",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwext1-vpn",
-        "from": "fw-external-1",
-        "to": "vpn-concentrator",
-        "width": 3,
+        "id": "edge-hq-39",
+        "from": "core2",
+        "to": "wlc",
+        "width": 4,
         "color": "#8b5cf6",
-        "direction": "both",
+        "direction": "none",
         "type": "main",
         "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
+        "label": "VLAN 10",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "coresw1-nac",
-        "from": "core-switch-1",
-        "to": "nac-server",
-        "width": 2,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-voip",
-        "from": "core-switch-1",
-        "to": "voip-cluster",
-        "width": 3,
-        "color": "#22c55e",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw2-video",
-        "from": "core-switch-2",
-        "to": "video-conf",
-        "width": 3,
-        "color": "#22c55e",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-cameras",
-        "from": "core-switch-1",
-        "to": "security-cameras",
-        "width": 2,
-        "color": "#94a3b8",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwint-dev1",
-        "from": "fw-internal",
-        "to": "dev-server-1",
-        "width": 2,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwint-dev2",
-        "from": "fw-internal",
-        "to": "dev-server-2",
-        "width": 2,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal",
-        "animate": true,
-        "animationSpeed": "1.5"
-      },
-      {
-        "id": "fwint-test",
-        "from": "fw-internal",
-        "to": "test-environment",
-        "width": 2,
-        "color": "#a855f7",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "coresw1-erp",
-        "from": "core-switch-1",
-        "to": "erp-system",
-        "width": 3,
-        "color": "#f59e0b",
-        "direction": "both",
-        "type": "main",
-        "notes": [],
-        "fromPort": "",
-        "toPort": "",
-        "lineStyle": "solid",
-        "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
-      },
-      {
-        "id": "fwext1-crm",
-        "from": "fw-external-1",
-        "to": "crm-system",
-        "width": 2,
-        "color": "#f59e0b",
-        "direction": "both",
+        "id": "edge-hq-40",
+        "from": "core2",
+        "to": "pbx",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "none",
         "type": "main",
         "notes": [
-          "Salesforce cloud"
+          "Voice VLAN 40"
         ],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-41",
+        "from": "pbx",
+        "to": "sip",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "dashed",
+        "routing": "straight",
+        "label": "SIP over TLS",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "ups1-racka1",
-        "from": "ups-dc-1",
-        "to": "dc-rack-a1",
-        "width": 2,
-        "color": "#fbbf24",
-        "direction": "forward",
+        "id": "edge-hq-42",
+        "from": "dist1",
+        "to": "acc1a",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Power feed A"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "ups2-racka2",
-        "from": "ups-dc-2",
-        "to": "dc-rack-a2",
-        "width": 2,
-        "color": "#fbbf24",
-        "direction": "forward",
+        "id": "edge-hq-43",
+        "from": "dist1",
+        "to": "acc1b",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Power feed B"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "ups1-rackb1",
-        "from": "ups-dc-1",
-        "to": "dc-rack-b1",
-        "width": 2,
-        "color": "#fbbf24",
-        "direction": "forward",
+        "id": "edge-hq-44",
+        "from": "dist2",
+        "to": "acc2a",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Power feed A"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal",
-        "animate": true,
-        "animationSpeed": "4"
+        "_pairTotal": 1
       },
       {
-        "id": "ups2-rackb2",
-        "from": "ups-dc-2",
-        "to": "dc-rack-b2",
-        "width": 2,
-        "color": "#fbbf24",
-        "direction": "forward",
+        "id": "edge-hq-45",
+        "from": "dist2",
+        "to": "acc2b",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Power feed B"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "solid",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "cooling1-racka1",
-        "from": "cooling-1",
-        "to": "dc-rack-a1",
-        "width": 2,
-        "color": "#38bdf8",
-        "direction": "forward",
+        "id": "edge-hq-46",
+        "from": "acc1a",
+        "to": "pcs",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Cooling zone"
-        ],
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-47",
+        "from": "acc1b",
+        "to": "phones",
+        "width": 4,
+        "color": "#ec4899",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-48",
+        "from": "acc2a",
+        "to": "printer",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-49",
+        "from": "acc2b",
+        "to": "laptops",
+        "width": 4,
+        "color": "#14b8a6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-50",
+        "from": "acc2b",
+        "to": "ap1",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
+        "fromPort": "g1/0/47",
+        "toPort": "",
+        "lineStyle": "solid",
+        "routing": "straight",
+        "label": "PoE",
+        "_pairIndex": 0,
+        "_pairTotal": 1
+      },
+      {
+        "id": "edge-hq-51",
+        "from": "wlc",
+        "to": "ap2",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "none",
+        "type": "main",
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "dotted",
+        "routing": "straight",
+        "label": "CAPWAP",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "cooling2-rackb1",
-        "from": "cooling-2",
-        "to": "dc-rack-b1",
-        "width": 2,
-        "color": "#38bdf8",
-        "direction": "forward",
+        "id": "edge-hq-52",
+        "from": "wlc",
+        "to": "ap3",
+        "width": 4,
+        "color": "#8b5cf6",
+        "direction": "none",
         "type": "main",
-        "notes": [
-          "Cooling zone"
-        ],
+        "notes": [],
         "fromPort": "",
         "toPort": "",
         "lineStyle": "dotted",
+        "routing": "straight",
         "_pairIndex": 0,
-        "_pairTotal": 1,
-        "routing": "orthogonal"
+        "_pairTotal": 1
       },
       {
-        "id": "custom-1765237881452",
-        "type": "custom",
-        "color": "#c800ff",
+        "id": "edge-hq-53",
+        "from": "wlc",
+        "to": "ap1",
         "width": 4,
-        "lineStyle": "solid",
-        "direction": "forward",
-        "points": [
-          {
-            "x": 3492.3994140625,
-            "y": 1526.9556884765625
-          },
-          {
-            "x": 3500.609619140625,
-            "y": 1830.7386474609375
-          },
-          {
-            "x": 3303.561279296875,
-            "y": 1732.2144775390625
-          }
-        ],
+        "color": "#8b5cf6",
+        "direction": "none",
+        "type": "main",
         "notes": [],
-        "routing": "orthogonal"
-      },
-      {
-        "id": "custom-1765239355462",
-        "type": "custom",
-        "color": "#f97316",
-        "width": 4,
-        "lineStyle": "solid",
-        "direction": "forward",
-        "points": [
-          {
-            "x": 2467.182861328125,
-            "y": 156.12173461914062
-          },
-          {
-            "x": 2146.36376953125,
-            "y": 146.32574462890625
-          },
-          {
-            "x": 2305.548828125,
-            "y": 244.28573608398438
-          }
-        ],
-        "notes": [],
-        "routing": "orthogonal"
+        "fromPort": "",
+        "toPort": "",
+        "lineStyle": "dotted",
+        "routing": "straight",
+        "_pairIndex": 0,
+        "_pairTotal": 1
       }
     ]
   },
   "rectData": {
     "list": [
       {
-        "id": "rect-1765237540610",
-        "x": 2879.214599609375,
-        "y": 159.71981811523438,
-        "width": 992.196044921875,
-        "height": 538.8650817871094,
-        "color": "#f97316",
+        "id": "rect-hq-3",
+        "x": 40,
+        "y": 250,
+        "width": 760,
+        "height": 760,
+        "color": "#3b82f6",
         "style": "filled",
-        "lineStyle": "solid",
+        "lineStyle": "dashed",
+        "fillOpacity": 0.12,
+        "borderWidth": 2,
         "notes": []
       },
       {
-        "id": "rect-1765237681216",
-        "x": 448.3926696777344,
-        "y": 1671.651123046875,
-        "width": 916.3436584472656,
-        "height": 924.27734375,
-        "color": "#c800ff",
-        "style": "outlined",
-        "lineStyle": "solid",
+        "id": "rect-hq-6",
+        "x": 1840,
+        "y": 230,
+        "width": 920,
+        "height": 440,
+        "color": "#ef4444",
+        "style": "filled",
+        "lineStyle": "dashed",
+        "fillOpacity": 0.12,
+        "borderWidth": 2,
         "notes": []
       },
       {
-        "id": "rect-1766437913740",
-        "x": 904.5889892578125,
-        "y": 115.40318298339844,
-        "width": 110.93878173828125,
-        "height": 919.6242218017578,
-        "color": "#5215f9",
+        "id": "rect-hq-9",
+        "x": 1840,
+        "y": 740,
+        "width": 920,
+        "height": 380,
+        "color": "#ec4899",
         "style": "filled",
-        "lineStyle": "wall",
-        "notes": [],
-        "borderWidth": 13
+        "lineStyle": "dashed",
+        "fillOpacity": 0.12,
+        "borderWidth": 2,
+        "notes": []
       },
       {
-        "id": "rect-1766437935414",
-        "x": 130.93685150146484,
-        "y": 1072.3624877929688,
-        "width": 872.9131851196289,
-        "height": 99.260986328125,
-        "color": "#5215f9",
+        "id": "rect-hq-12",
+        "x": 780,
+        "y": 1200,
+        "width": 960,
+        "height": 420,
+        "color": "#14b8a6",
         "style": "filled",
-        "lineStyle": "wall",
-        "notes": [],
-        "borderWidth": 13
+        "lineStyle": "dashed",
+        "fillOpacity": 0.12,
+        "borderWidth": 2,
+        "notes": []
+      },
+      {
+        "id": "rect-hq-15",
+        "x": 1840,
+        "y": 1200,
+        "width": 920,
+        "height": 420,
+        "color": "#8b5cf6",
+        "style": "filled",
+        "lineStyle": "dashed",
+        "fillOpacity": 0.12,
+        "borderWidth": 2,
+        "notes": []
       }
     ]
   },
   "textData": {
     "list": [
       {
-        "id": "text-1765237828167",
-        "x": 3411.458740234375,
-        "y": 1390.00439453125,
-        "content": "Double click on desktop\nor long press on mobile\nto enter rack canvas view",
+        "id": "text-hq-1",
+        "x": 60,
+        "y": 100,
+        "content": "Larkspur Logistics HQ",
         "fontSize": 46,
         "color": "#e2e8f0",
         "fontWeight": "bold",
-        "fontStyle": "italic",
-        "textAlign": "middle",
+        "fontStyle": "normal",
+        "textAlign": "start",
         "textDecoration": "none",
         "bgColor": "#000000",
         "bgEnabled": false,
         "opacity": 1
       },
       {
-        "id": "text-1765239331126",
-        "x": 2454.5615234375,
-        "y": 160.73322105407715,
-        "content": "Google is live!",
-        "fontSize": 56,
+        "id": "text-hq-2",
+        "x": 60,
+        "y": 150,
+        "content": "Internet edge, DMZ, core, server room, Wi Fi and voice",
+        "fontSize": 20,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-4",
+        "x": 58,
+        "y": 284,
+        "content": "Server Room",
+        "fontSize": 24,
+        "color": "#3b82f6",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-5",
+        "x": 58,
+        "y": 314,
+        "content": "VLAN 20  10.20.20.0/24",
+        "fontSize": 16,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-7",
+        "x": 1858,
+        "y": 264,
+        "content": "DMZ  VLAN 100",
+        "fontSize": 24,
+        "color": "#ef4444",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-8",
+        "x": 1858,
+        "y": 294,
+        "content": "203.0.113.0/29 published services",
+        "fontSize": 16,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-10",
+        "x": 1858,
+        "y": 774,
+        "content": "Wi Fi and Voice",
+        "fontSize": 24,
+        "color": "#ec4899",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-11",
+        "x": 1858,
+        "y": 804,
+        "content": "Controllers and call control",
+        "fontSize": 16,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-13",
+        "x": 798,
+        "y": 1234,
+        "content": "Floors 1 and 2",
+        "fontSize": 24,
+        "color": "#14b8a6",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-14",
+        "x": 798,
+        "y": 1264,
+        "content": "User VLAN 30, voice VLAN 40, print VLAN 50",
+        "fontSize": 16,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-16",
+        "x": 1858,
+        "y": 1234,
+        "content": "Access Points",
+        "fontSize": 24,
+        "color": "#8b5cf6",
+        "fontWeight": "bold",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-17",
+        "x": 1858,
+        "y": 1264,
+        "content": "Corporate, guest and IoT SSIDs",
+        "fontSize": 16,
+        "color": "#94a3b8",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textAlign": "start",
+        "textDecoration": "none",
+        "bgColor": "#000000",
+        "bgEnabled": false,
+        "opacity": 1
+      },
+      {
+        "id": "text-hq-54",
+        "x": 60,
+        "y": 1150,
+        "content": "Site summary",
+        "fontSize": 24,
         "color": "#e2e8f0",
         "fontWeight": "bold",
         "fontStyle": "normal",
@@ -3805,12 +1826,12 @@
         "opacity": 1
       },
       {
-        "id": "text-1766446595277",
-        "x": 654.3878479003906,
-        "y": 1367.7945556640625,
-        "content": "SITE A",
-        "fontSize": 101,
-        "color": "#e2e8f0",
+        "id": "text-hq-55",
+        "x": 60,
+        "y": 1190,
+        "content": "VLAN 10  Management\nVLAN 20  Servers\nVLAN 30  Users\nVLAN 40  Voice\nVLAN 50  Printers\nVLAN 100  DMZ\n\n220 staff, 2 floors, 18 APs",
+        "fontSize": 18,
+        "color": "#cbd5e1",
         "fontWeight": "normal",
         "fontStyle": "normal",
         "textAlign": "start",
@@ -3818,643 +1839,528 @@
         "bgColor": "#000000",
         "bgEnabled": false,
         "opacity": 1
-      },
-      {
-        "id": "text-1766446610211",
-        "x": 180.63662719726562,
-        "y": 1128.822998046875,
-        "content": "SITE A",
-        "fontSize": 101,
-        "color": "#e2e8f0",
-        "fontWeight": "normal",
-        "fontStyle": "normal",
-        "textAlign": "start",
-        "textDecoration": "none",
-        "bgColor": "#000000",
-        "bgEnabled": false,
-        "opacity": 1
-      },
-      {
-        "id": "text-1766453024797",
-        "x": 968.6458740234375,
-        "y": 1028.6621398925781,
-        "content": "SITE A",
-        "fontSize": 101,
-        "color": "#e2e8f0",
-        "fontWeight": "normal",
-        "fontStyle": "normal",
-        "textAlign": "start",
-        "textDecoration": "none",
-        "bgColor": "#000000",
-        "bgEnabled": false,
-        "opacity": 1,
-        "rotation": -89,
-        "_dragStartX": 972.46826171875,
-        "_dragStartY": 1009.5499572753906
-      },
-      {
-        "id": "text-1766453070975",
-        "x": 613.1589965820312,
-        "y": 1139.512939453125,
-        "content": "SITE A",
-        "fontSize": 101,
-        "color": "#e2e8f0",
-        "fontWeight": "normal",
-        "fontStyle": "normal",
-        "textAlign": "start",
-        "textDecoration": "none",
-        "bgColor": "#000000",
-        "bgEnabled": false,
-        "opacity": 1
-      },
-      {
-        "id": "text-1766453072857",
-        "x": 968.64599609375,
-        "y": 474.40818786621094,
-        "content": "SITE A",
-        "fontSize": 101,
-        "color": "#e2e8f0",
-        "fontWeight": "normal",
-        "fontStyle": "normal",
-        "textAlign": "start",
-        "textDecoration": "none",
-        "bgColor": "#000000",
-        "bgEnabled": false,
-        "opacity": 1,
-        "rotation": 269,
-        "_dragStartX": 1480.85302734375,
-        "_dragStartY": 822.2503356933594
       }
     ]
   },
-  "edgeLegend": {
-    "#10b981": "Trusted Lan",
-    "#f59e0b": "Secure Lan",
-    "#ef4444": "DMZ",
-    "#475569": "Main ISP",
-    "#3b82f6": "Alternate ISP",
-    "#8b5cf6": "you can edit me too",
-    "#06b6d4": "you can edit me too",
-    "#a855f7": "you can edit me too",
-    "#f97316": "you can edit me too",
-    "#0ea5e9": "you can edit me too",
-    "#22c55e": "you can edit me too",
-    "#94a3b8": "you can edit me too",
-    "#fbbf24": "you can edit me too",
-    "#38bdf8": "you can edit me too",
-    "#c800ff": "you can edit me too"
+  "imageData": {
+    "list": []
   },
+  "edgeLegend": {
+    "#22c55e": "ISP A fiber",
+    "#eab308": "ISP B coax",
+    "#f43f5e": "HA and state sync",
+    "#3b82f6": "40G and 10G core",
+    "#06b6d4": "10G distribution",
+    "#14b8a6": "1G and PoE access",
+    "#ef4444": "DMZ",
+    "#f97316": "Storage network",
+    "#8b5cf6": "Wireless",
+    "#ec4899": "Voice"
+  },
+  "zoneLegend": {
+    "#3b82f6": "Wi Fi coverage",
+    "#f59e0b": "Camera view"
+  },
+  "zonePresets": {},
   "nodePositions": {
-    "core-router-1": {
-      "x": 3720.166015625,
-      "y": 245.9932403564453
-    },
-    "core-router-2": {
-      "x": 2499.883407638303,
-      "y": 329.99503430389154
-    },
-    "fw-external-1": {
-      "x": 3221.7385182723783,
-      "y": 1016.1364499992887
-    },
-    "fw-external-2": {
-      "x": 1915.5213706410505,
-      "y": 224.43528858865443
-    },
-    "fw-internal": {
-      "x": 1746.9168185079352,
-      "y": 477.5300527221864
-    },
-    "core-switch-1": {
-      "x": 449.39860669455675,
-      "y": 384.4578707617695
-    },
-    "core-switch-2": {
-      "x": 761.1664921394672,
-      "y": 180.89283910873155
-    },
-    "dc-rack-a1": {
-      "x": 783.7017241128451,
-      "y": 647.4086870405963
-    },
-    "dc-rack-a2": {
-      "x": 209.25701628255229,
-      "y": 228.01593190351014
-    },
-    "dc-rack-b1": {
-      "x": 3184.3186625759854,
-      "y": 1627.4495531027196
-    },
-    "dc-rack-b2": {
-      "x": 245.37065918741246,
-      "y": 499.6191264194081
-    },
-    "dmz-rack": {
-      "x": 2176.4105289561007,
-      "y": 610.8312056412005
-    },
-    "mgmt-rack": {
-      "x": 1601.2987201807314,
-      "y": 1281.4753424975324
-    },
-    "esxi-host-01": {
-      "x": 2162.2166789540615,
-      "y": 2608.110619289529
-    },
-    "esxi-host-02": {
-      "x": 2205.94717202368,
-      "y": 2689.67539624076
-    },
-    "esxi-host-03": {
-      "x": 2154.6015436939074,
-      "y": 2771.203009774913
-    },
-    "esxi-host-04": {
-      "x": 2195.986926025096,
-      "y": 2845
-    },
-    "tor-switch-a1": {
-      "x": 2146.8943639962963,
-      "y": 2845
-    },
-    "esxi-host-05": {
-      "x": 2185.9099961569727,
-      "y": 2845
-    },
-    "esxi-host-06": {
-      "x": 2139.099728450725,
-      "y": 2845
-    },
-    "esxi-host-07": {
-      "x": 2175.7223818764883,
-      "y": 2845
-    },
-    "esxi-host-08": {
-      "x": 2131.2222777148922,
-      "y": 2845
-    },
-    "tor-switch-a2": {
-      "x": 2165.4301485385085,
-      "y": 2845
-    },
-    "san-primary": {
-      "x": 2123.2667017518106,
-      "y": 2845
-    },
-    "san-secondary": {
-      "x": 2155.0394237844876,
-      "y": 2845
-    },
-    "fc-switch-1": {
-      "x": 2115.2377370375634,
-      "y": 2845
-    },
-    "fc-switch-2": {
-      "x": 2144.5563938942755,
-      "y": 2845
-    },
-    "backup-server-1": {
-      "x": 2107.1401637413705,
-      "y": 2845
-    },
-    "backup-server-2": {
-      "x": 2133.987300103025,
-      "y": 2845
-    },
-    "tape-library": {
-      "x": 2098.9788028796397,
-      "y": 2845
-    },
-    "tor-switch-b1": {
-      "x": 2123.338434885373,
-      "y": 2845
-    },
-    "tor-switch-b2": {
-      "x": 2090.7585134456995,
-      "y": 2845
-    },
-    "web-server-1": {
-      "x": 2112.6161382091163,
-      "y": 2845
-    },
-    "web-server-2": {
-      "x": 2082.484189516922,
-      "y": 2845
-    },
-    "waf-1": {
-      "x": 2101.826793760617,
-      "y": 2845
-    },
-    "load-balancer-dmz": {
-      "x": 2074.1607573409574,
-      "y": 2845
-    },
-    "mail-gateway": {
-      "x": 2090.97682514417,
-      "y": 2845
-    },
-    "dns-external-1": {
-      "x": 2065.7931724028163,
-      "y": 2845
-    },
-    "dns-external-2": {
-      "x": 2080.0726920576153,
-      "y": 2845
-    },
-    "vcenter": {
-      "x": 2057.3864164745437,
-      "y": 2845
-    },
-    "nsx-manager": {
-      "x": 2069.1208864464534,
-      "y": 2845
-    },
-    "siem-server": {
-      "x": 2048.945494649244,
-      "y": 2845
-    },
-    "nms-server": {
-      "x": 2058.1279286387635,
-      "y": 2845
-    },
-    "jump-server": {
-      "x": 2040.4754323612206,
-      "y": 2845
-    },
-    "ipam-server": {
-      "x": 2047.1003634632284,
-      "y": 2845
-    },
-    "wlc-primary": {
-      "x": 1575.9723612611924,
-      "y": 2306.135986328125
-    },
-    "wlc-secondary": {
-      "x": 1468.1361870166274,
-      "y": 1563.733642578125
-    },
-    "mobile-zone-hq": {
-      "x": 2354.901177346808,
-      "y": 2806.0078125
-    },
-    "mobile-zone-guest": {
-      "x": 2307.6605605284435,
-      "y": 2611.047119140625
-    },
-    "mobile-zone-iot": {
-      "x": 2229.397686389302,
-      "y": 2299.110107421875
-    },
-    "branch-router-ny": {
-      "x": 3151.903101363964,
-      "y": 633.6580810546875
-    },
-    "branch-router-la": {
-      "x": 3083.8876194705945,
-      "y": 506.90625
-    },
-    "branch-router-chi": {
-      "x": 3355.02409980103,
-      "y": 393.1805725097656
-    },
-    "branch-router-lon": {
-      "x": 3113.609823320121,
-      "y": 260.4093322753906
-    },
-    "branch-router-tokyo": {
-      "x": 3699.3234994733834,
-      "y": 471.4241027832031
-    },
-    "cloud-aws": {
-      "x": 3436.528122523513,
-      "y": 545.9614868164062
-    },
-    "cloud-azure": {
-      "x": 2592.566210818907,
-      "y": 2724.068115234375
-    },
-    "cloud-gcp": {
-      "x": 2827.3183770424234,
-      "y": 2731.397216796875
-    },
-    "isp-primary": {
-      "x": 3712.192068081962,
-      "y": 615.64990234375
-    },
-    "isp-secondary": {
-      "x": 2702.3789772348055,
-      "y": 467.890869140625
-    },
-    "dc-internal-1": {
-      "x": 1958.4243458877936,
-      "y": 2845
-    },
-    "dc-internal-2": {
-      "x": 1963.768951182132,
-      "y": 2845
-    },
-    "app-server-1": {
-      "x": 1947.3819379304134,
-      "y": 2845
-    },
-    "app-server-2": {
-      "x": 1955.2862087394126,
-      "y": 2845
-    },
-    "db-server-1": {
-      "x": 1936.3708569559828,
-      "y": 2845
-    },
-    "db-server-2": {
-      "x": 1946.8300873488822,
-      "y": 2845
-    },
-    "k8s-master-1": {
-      "x": 1925.397658583093,
-      "y": 2845
-    },
-    "k8s-master-2": {
-      "x": 1938.405621494142,
-      "y": 2845
-    },
-    "k8s-master-3": {
-      "x": 1914.4688758763386,
-      "y": 2845
-    },
-    "k8s-worker-1": {
-      "x": 1930.017826812177,
-      "y": 2845
-    },
-    "k8s-worker-2": {
-      "x": 1903.5910154567553,
-      "y": 2845
-    },
-    "k8s-worker-3": {
-      "x": 1921.6716971072178,
-      "y": 2845
-    },
-    "k8s-worker-4": {
-      "x": 1892.7705536280016,
-      "y": 2845
-    },
-    "proxy-server-1": {
-      "x": 1806.1152433697903,
-      "y": 653.7529296875
-    },
-    "proxy-server-2": {
-      "x": 2937.4207928721535,
-      "y": 2628.7880859375
-    },
-    "vpn-concentrator": {
-      "x": 3642.252088474593,
-      "y": 946.7255249023438
-    },
-    "nac-server": {
-      "x": 1153.2626148502184,
-      "y": 1172.1895751953125
-    },
-    "print-server": {
-      "x": 1896.9328460745962,
-      "y": 2845
-    },
-    "file-server": {
-      "x": 1860.7177871362182,
-      "y": 2845
-    },
-    "ca-server": {
-      "x": 1888.8027739274805,
-      "y": 2845
-    },
-    "sccm-server": {
-      "x": 1850.1909418511675,
-      "y": 2845
-    },
-    "voip-cluster": {
-      "x": 1777.038465328039,
-      "y": 1616.8961181640625
-    },
-    "video-conf": {
-      "x": 1993.8373941679588,
-      "y": 2244.936309814453
-    },
-    "security-cameras": {
-      "x": 1674.413336949044,
-      "y": 2046.0380859375
-    },
-    "nvr-cluster": {
-      "x": 1829.4110389706402,
-      "y": 2845
-    },
-    "dev-server-1": {
-      "x": 2800.5894350649614,
-      "y": 1175.623291015625
-    },
-    "dev-server-2": {
-      "x": 1945.0822182484326,
-      "y": 1164.5184783935547
-    },
-    "test-environment": {
-      "x": 2566.9100352578575,
-      "y": 885.2827758789062
-    },
-    "erp-system": {
-      "x": 789.9880103985649,
-      "y": 473.7113342285156
-    },
-    "crm-system": {
-      "x": 3514.6003232048542,
-      "y": 1137.7720947265625
-    },
-    "endpoint-1000": {
-      "x": 991.6812012057328,
-      "y": 2284.42236328125
-    },
-    "dist-switch-floor1": {
-      "x": 654.2091033261356,
-      "y": 2020.0086669921875
-    },
-    "dist-switch-floor2": {
-      "x": 853.8845527112826,
-      "y": 1843.2872314453125
-    },
-    "dist-switch-floor3": {
-      "x": 1899.4353951584517,
-      "y": 1456.5068359375
-    },
-    "dist-switch-floor4": {
-      "x": 488.5289313756234,
-      "y": 181.47256469726562
-    },
-    "ap-floor1-zone1": {
-      "x": 1140.16846970184,
-      "y": 2070.2916259765625
-    },
-    "ap-floor2-zone1": {
-      "x": 688.1952143592268,
-      "y": 2384.4775390625
-    },
-    "ap-floor3-zone1": {
-      "x": 2145.3803027919676,
-      "y": 1890.2816162109375
-    },
-    "ap-floor4-zone1": {
-      "x": 517.646146409649,
-      "y": 565.59716796875
-    },
-    "ups-dc-1": {
-      "x": 771.1406786539856,
-      "y": 295.9266662597656
-    },
-    "ups-dc-2": {
-      "x": 216.2410855890687,
-      "y": 330.3345947265625
-    },
-    "pdu-rack-a1": {
-      "x": 1804.774444371901,
-      "y": 2845
-    },
-    "pdu-rack-a2": {
-      "x": 1741.6184034693686,
-      "y": 2845
-    },
-    "cooling-1": {
-      "x": 245.7080801919958,
-      "y": 626.1914672851562
-    },
-    "cooling-2": {
-      "x": 1603.293611085831,
-      "y": 981.0621185302734
-    },
-    "camera-a": {
-      "x": 166.57075412676295,
-      "y": 145
-    },
-    "camera-a-copy": {
-      "x": 1040.653076171875,
-      "y": 738.42822265625
+    "ispa": {
+      "x": 900,
+      "y": 160
+    },
+    "ispb": {
+      "x": 1500,
+      "y": 160
+    },
+    "fw1": {
+      "x": 900,
+      "y": 400
+    },
+    "fw2": {
+      "x": 1500,
+      "y": 400
+    },
+    "core1": {
+      "x": 900,
+      "y": 660
+    },
+    "core2": {
+      "x": 1500,
+      "y": 660
+    },
+    "dmzsw": {
+      "x": 2420,
+      "y": 480
+    },
+    "web": {
+      "x": 2140,
+      "y": 380
+    },
+    "mail": {
+      "x": 2680,
+      "y": 380
+    },
+    "rproxy": {
+      "x": 2140,
+      "y": 580
+    },
+    "vpn": {
+      "x": 2680,
+      "y": 580
+    },
+    "hv1": {
+      "x": 180,
+      "y": 640
+    },
+    "hv2": {
+      "x": 420,
+      "y": 640
+    },
+    "hv3": {
+      "x": 660,
+      "y": 640
+    },
+    "dc01": {
+      "x": 180,
+      "y": 410
+    },
+    "fs01": {
+      "x": 420,
+      "y": 410
+    },
+    "erp01": {
+      "x": 660,
+      "y": 410
+    },
+    "srvsw": {
+      "x": 420,
+      "y": 880
+    },
+    "san": {
+      "x": 180,
+      "y": 880
+    },
+    "bkp": {
+      "x": 660,
+      "y": 880
+    },
+    "dist1": {
+      "x": 1050,
+      "y": 920
+    },
+    "dist2": {
+      "x": 1350,
+      "y": 920
+    },
+    "wlc": {
+      "x": 2000,
+      "y": 960
+    },
+    "pbx": {
+      "x": 2300,
+      "y": 960
+    },
+    "sip": {
+      "x": 2600,
+      "y": 960
+    },
+    "acc1a": {
+      "x": 900,
+      "y": 1370
+    },
+    "acc1b": {
+      "x": 1140,
+      "y": 1370
+    },
+    "acc2a": {
+      "x": 1380,
+      "y": 1370
+    },
+    "acc2b": {
+      "x": 1620,
+      "y": 1370
+    },
+    "pcs": {
+      "x": 900,
+      "y": 1530
+    },
+    "phones": {
+      "x": 1140,
+      "y": 1530
+    },
+    "printer": {
+      "x": 1380,
+      "y": 1530
+    },
+    "laptops": {
+      "x": 1620,
+      "y": 1530
+    },
+    "ap1": {
+      "x": 2000,
+      "y": 1420
+    },
+    "ap2": {
+      "x": 2280,
+      "y": 1420
+    },
+    "ap3": {
+      "x": 2560,
+      "y": 1420
     }
   },
   "nodeSizes": {
-    "isp-secondary": 139,
-    "test-environment": 148,
-    "dev-server-1": 128,
-    "core-router-2": 120,
-    "camera-a": 45,
-    "camera-a-copy": 45
+    "ispa": 60,
+    "ispb": 60,
+    "fw1": 54,
+    "fw2": 54,
+    "core1": 54,
+    "core2": 54,
+    "dmzsw": 46,
+    "web": 44,
+    "mail": 44,
+    "rproxy": 44,
+    "vpn": 44,
+    "hv1": 46,
+    "hv2": 46,
+    "hv3": 46,
+    "dc01": 38,
+    "fs01": 38,
+    "erp01": 38,
+    "srvsw": 46,
+    "san": 44,
+    "bkp": 44,
+    "dist1": 46,
+    "dist2": 46,
+    "wlc": 44,
+    "pbx": 44,
+    "sip": 46,
+    "acc1a": 42,
+    "acc1b": 42,
+    "acc2a": 42,
+    "acc2b": 42,
+    "pcs": 34,
+    "phones": 32,
+    "printer": 34,
+    "laptops": 34,
+    "ap1": 40,
+    "ap2": 40,
+    "ap3": 40
   },
   "nodeStyles": {
-    "dc-rack-b2": {
-      "all": {
-        "circleColor": "#ff0000"
-      }
-    },
-    "dc-rack-a1": {
-      "all": {
-        "circleColor": "#ff0000"
-      }
-    },
-    "dc-rack-b1": {
-      "all": {
-        "circleColor": "#ff0000",
-        "titleSize": 59
-      }
-    },
-    "isp-secondary": {
+    "ispa": {
       "all": {
         "icon": {
-          "library": "selfhst",
-          "name": "alist"
+          "library": "mdi",
+          "name": "earth"
         }
       }
     },
-    "core-router-2": {
+    "ispb": {
       "all": {
         "icon": {
-          "library": "selfhst",
-          "name": "actual-budget"
-        },
-        "pingOffsetX": -15,
-        "pingOffsetY": -38
-      }
-    },
-    "fw-external-1": {
-      "all": {
-        "icon": {
-          "library": "selfhst",
-          "name": "anonaddy"
+          "library": "mdi",
+          "name": "earth"
         }
       }
     },
-    "cloud-aws": {
+    "fw1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "wall-fire"
+        }
+      }
+    },
+    "fw2": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "wall-fire"
+        }
+      }
+    },
+    "core1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "core2": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "dmzsw": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "web": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "web"
+        }
+      }
+    },
+    "mail": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "email-fast"
+        }
+      }
+    },
+    "rproxy": {
       "all": {
         "icon": {
           "library": "selfhst",
-          "name": "ansible"
+          "name": "nginx"
         }
       }
     },
-    "isp-primary": {
+    "vpn": {
       "all": {
         "icon": {
-          "library": "selfhst",
-          "name": "wikidocs"
+          "library": "mdi",
+          "name": "vpn"
         }
       }
     },
-    "branch-router-tokyo": {
+    "hv1": {
       "all": {
         "icon": {
-          "library": "selfhst",
-          "name": "adguard-home"
+          "library": "mdi",
+          "name": "server"
         }
       }
     },
-    "core-router-1": {
+    "hv2": {
       "all": {
         "icon": {
-          "library": "selfhst",
-          "name": "borg"
+          "library": "mdi",
+          "name": "server"
         }
       }
     },
-    "test-environment": {
+    "hv3": {
       "all": {
         "icon": {
-          "library": "simple",
-          "name": "apple"
+          "library": "mdi",
+          "name": "server"
         }
       }
     },
-    "dev-server-1": {
+    "dc01": {
       "all": {
         "icon": {
-          "library": "simple",
-          "name": "amazonwebservices"
+          "library": "mdi",
+          "name": "account-key"
+        }
+      }
+    },
+    "fs01": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "folder-network"
+        }
+      }
+    },
+    "erp01": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "application-cog"
+        }
+      }
+    },
+    "srvsw": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "san": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "database"
+        }
+      }
+    },
+    "bkp": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "backup-restore"
+        }
+      }
+    },
+    "dist1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "dist2": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "wlc": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "router-wireless"
+        }
+      }
+    },
+    "pbx": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "phone-voip"
+        }
+      }
+    },
+    "sip": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "phone-classic"
+        }
+      }
+    },
+    "acc1a": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "acc1b": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "acc2a": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "acc2b": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "switch"
+        }
+      }
+    },
+    "pcs": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "desktop-classic"
+        }
+      }
+    },
+    "phones": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "deskphone"
+        }
+      }
+    },
+    "printer": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "printer"
+        }
+      }
+    },
+    "laptops": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "laptop"
+        }
+      }
+    },
+    "ap1": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "access-point"
+        }
+      }
+    },
+    "ap2": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "access-point"
+        }
+      }
+    },
+    "ap3": {
+      "all": {
+        "icon": {
+          "library": "mdi",
+          "name": "access-point"
         }
       }
     }
   },
   "iconCache": {
-    "selfhst-borg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M331 102.2H204.5V0h197.9L505 102.2v104.2l-51.3 51.3L505 309v100.7L402.4 512H204.5V409.8H331V300.6H204.5v-89.1H331zM6.9 0h170.5v512H6.9z\" style=\"fill:#0d0\"/></svg>",
-    "selfhst-actual-budget": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M378.5 512h-245C59.8 512 0 452.2 0 378.5v-245C0 59.8 59.8 0 133.5 0h245C452.2 0 512 59.8 512 133.5v245c0 73.7-59.8 133.5-133.5 133.5\" style=\"fill:#805ad5\"/><path d=\"m407.7 384.1-33.2-68.2 26.9-10.4c1.7-.6 2.6-2.6 1.9-4.3l-7.8-20.2c-.6-1.7-2.6-2.6-4.3-1.9L362 290.3 268.8 99.2c-.6-1.2-1.7-1.9-3-1.9h-6.3c-1.3 0-2.4.7-3 1.9l-95 201.6-55.2 20.3c-1.8.6-2.6 2.6-2 4.3l7.4 20.3c.6 1.8 2.6 2.6 4.3 2l28.4-10.4-32.2 68.3c-.3.8-.4 1.7 0 2.5l1.6 4.3v.1c.6 1.7 2.6 2.6 4.3 1.9l229.8-88.3 34.3 70.4c.8 1.7 2.8 2.4 4.5 1.6l19.5-9.5c1.6-.8 2.3-2.8 1.5-4.5M263 151.8l46.1 94.9L199.4 287zM161.5 367.4l20.7-44 139.4-51.1 13.7 28.3z\" style=\"fill:#fff\"/></svg>",
-    "selfhst-anonaddy": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><linearGradient id=\"anonaddy_svg__a\" x1=\"44.378\" x2=\"447.022\" y1=\"386.378\" y2=\"789.022\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M320 224H192c-17.7 0-32 14.3-32 32v128c0 17.7 14.3 32 32 32h128c17.7 0 32-14.3 32-32V256c0-17.7-14.3-32-32-32m-32 128h-64v-64h64z\" style=\"fill:url(#anonaddy_svg__a)\"/><linearGradient id=\"anonaddy_svg__b\" x1=\"44.337\" x2=\"446.981\" y1=\"386.418\" y2=\"789.062\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M384 384c0 5.5-.8 10.9-2.1 16 39.4-21.8 66.1-63.8 66.1-112v-32c0-47.4-25.8-88.6-64-110.7-18.8-10.9-40.7-17.3-64-17.3H192c-23.3 0-45.2 6.4-64 17.3-38.2 22.1-64 63.3-64 110.7v128c0 70.7 57.3 128 128 128h128c0-35.3-28.7-64-64-64h-64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64h128c35.3 0 64 28.7 64 64z\" style=\"fill:url(#anonaddy_svg__b)\"/><path d=\"M384 288c0 23.7-12.9 44.3-32 55.4V384c0 17.7-14.3 32-32 32 22.5 0 43.5-5.8 61.9-16 1.3-5.1 2.1-10.5 2.1-16zM128 145.3c18.8-10.9 40.7-17.3 64-17.3 0-11.7 3.2-22.6 8.7-32H192c-21.4 0-42.7 4.4-62.4 12.8-1 6.3-1.6 12.7-1.6 19.2zM311.3 96c5.5 9.4 8.7 20.3 8.7 32 23.3 0 45.2 6.4 64 17.3V128c0-6.5-.6-12.9-1.6-19.2-19.7-8.4-41-12.8-62.4-12.8z\" style=\"fill:#2d7aae\"/><linearGradient id=\"anonaddy_svg__c\" x1=\"158.782\" x2=\"561.426\" y1=\"271.974\" y2=\"674.618\" gradientTransform=\"translate(0 -278)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#3ae7e1\"/><stop offset=\".948\" style=\"stop-color:#1993d2\"/></linearGradient><path d=\"M200.7 96c11.1-19.1 31.7-32 55.3-32s44.3 12.9 55.3 32h8.7c21.4 0 42.7 4.4 62.4 12.8C373.1 47.3 320 0 256 0S138.9 47.3 129.6 108.8c19.7-8.4 41-12.8 62.4-12.8z\" style=\"fill:url(#anonaddy_svg__c)\"/></svg>",
-    "selfhst-adguard-home": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M505.8 58.8C428.2 18.4 334.1 0 256 0h-.3v511.8c-21.5-12.7-41.1-26-59.1-39.6 18 13.7 37.8 27 59.4 39.8C506.8 363.4 505.8 146 505.8 58.8\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#68bc71\"/><path d=\"M255.7 511.8C5.2 363.3 6.2 146 6.2 58.8 83.7 18.4 177.7 0 255.7 0z\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#67b279\"/><path d=\"m246.9 341.6 151-203.6c-11.1-8.9-20.8-2.6-26.1 2.2h-.2l-125.9 131-47.4-57.1c-22.6-26.2-53.4-6.2-60.6-.9z\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#fff\"/></svg>",
-    "selfhst-ansible": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256\" style=\"fill:#c32214\"/><path d=\"m260.3 156.4 66.2 163.5-100.1-78.8zM378 357.6 276.1 112.3c-2.9-7.1-8.7-10.8-15.8-10.8s-13.3 3.7-16.2 10.8l-111.8 269h38.3l44.3-110.9L347 377.1c5.3 4.3 9.1 6.2 14.1 6.2 10 0 18.7-7.5 18.7-18.3-.1-1.7-.7-4.4-1.8-7.4\" style=\"fill:#fff\"/></svg>",
-    "selfhst-wikidocs": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M488.8 72.1h-90.7c-8.4 0-15.1 6.7-15.1 15.1v206.4c0 8.4-6.7 15.1-15.1 15.1h-45.3c-8.4 0-15.1-6.7-15.1-15.1V87.2c0-8.4-6.7-15.1-15.1-15.1h-72.5c-8.4 0-15.1 6.7-15.1 15.1v206.4c0 8.4-6.7 15.1-15.1 15.1h-45.3c-8.4 0-15.1-6.7-15.1-15.1V87.2c0-8.4-6.7-15.1-15.1-15.1H23.4c-8.4 0-15.1 6.7-15.1 15.1v257.2c0 50.1 38.6 91.2 87.5 95.3v.3h392.9c8.4 0 15.1-6.7 15.1-15.1V87.2c0-8.4-6.7-15.1-15-15.1\" style=\"fill:#4caf50\"/><path d=\"M488.6 448.2H95.7c-1.1 0-2.1-.2-3.1-.6-24.9-2.7-48-14.2-65.1-32.8C9.8 395.6 0 370.5 0 344.3V87.2c0-12.9 10.5-23.4 23.4-23.4h90.9c12.9 0 23.4 10.5 23.4 23.4v206.4c0 3.8 3 6.8 6.8 6.8h45.3c3.8 0 6.8-3 6.8-6.8V87.2c0-12.9 10.5-23.4 23.4-23.4h72.5c12.9 0 23.4 10.5 23.4 23.4v206.4c0 3.8 3 6.8 6.8 6.8H368c3.8 0 6.8-3 6.8-6.8V87.2c0-12.9 10.5-23.4 23.4-23.4h90.7c6.3 0 12.2 2.5 16.6 6.9s6.7 10.3 6.6 16.6v337.6c-.1 12.8-10.6 23.3-23.5 23.3M98.1 431.7h390.6c3.8 0 6.8-3 6.8-6.8V87.2c0-1.9-.6-3.6-1.9-4.8-1.3-1.3-3-2-4.8-2h-90.7c-3.8 0-6.8 3-6.8 6.8v206.4c0 12.9-10.5 23.4-23.4 23.4h-45.3c-12.9 0-23.4-10.5-23.4-23.4V87.2c0-3.8-3-6.8-6.8-6.8h-72.5c-3.8 0-6.8 3-6.8 6.8v206.4c0 12.9-10.5 23.4-23.4 23.4h-45.3c-12.9 0-23.4-10.5-23.4-23.4V87.2c0-3.8-3-6.8-6.8-6.8H23.4c-3.8 0-6.8 3-6.8 6.8v257.2c0 45.1 35.1 83.3 79.9 87.1.5-.1 1 0 1.6.2\" style=\"fill:#fff\"/></svg>",
-    "selfhst-alist": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M260.5 30.8c5.4-.6 11 .6 15.5 3.7 6.8 4.4 11.6 11.1 15.7 17.9 18.4 30.9 37 61.7 55.4 92.6 24.5 41.3 49.1 82.7 73.6 124q25.35 42.9 51 85.8c11.2 19.1 22.8 37.9 33.5 57.3 4.6 8.1 7.2 17.5 6.8 26.8-.3 7.2-1.6 14.7-5.4 20.9-5.3 8.8-14.3 15.1-23.9 18.3-5.2 1.9-10.6 3.1-16.1 3.1H286.3c-5.2-.1-10.4-.7-15.3-2.6-3.5-1.5-7-3.4-9.8-6.1-4.7-4.7-7.8-11.3-7-18.1.4-4.7 1.6-9.4 3.5-13.7 1.9-4.4 4.5-8.5 6.8-12.7 10.1-17.9 20.6-35.6 31.5-53 3.5-5.5 6.6-11.4 11.4-15.8 5.2-4.7 11.6-8.4 18.7-8.9 5.7-.2 11.3 1.7 16.1 4.8 5.4 3.1 9.6 8.4 11 14.5 2 7.7-.2 15.8-3.4 22.9-3.7 8-8.9 15.3-11.7 23.7-.5 1.9-1.2 4.3.2 6 1.4 1.4 3.5 1.9 5.3 2.4 5.5 1.2 11.1.9 16.6.9h61.3c4-.1 8.1.1 12.1-.1 2.9-.3 6.1-.8 8.4-2.9 1.5-1.3 1.7-3.6 1.1-5.4-1.2-4-3.4-7.7-5.5-11.3C383.2 312.9 329 219.7 274 126.9c-1.8-3-3.3-6.2-5.9-8.6-1.3-1.2-3.2-1.9-4.9-1.4-1.5.5-2.5 1.8-3.5 3-2.4 3.1-4.6 6.4-6.6 9.8-9.5 15.4-18.6 31.1-27.9 46.6-53.6 90.1-107.1 180.3-160.7 270.4-3.3 6.1-6.9 12.1-10.7 17.9-3.4 5-7.5 9.6-12.8 12.6-6.2 3.6-13.9 5-20.9 3-5.1-1.6-10-4.1-13.7-8.1-4.6-4.6-6.7-11.3-6.4-17.7.2-6.7 2.5-13.3 5.9-19.1C38.4 380.1 71.1 325 104 269.9c16.9-28.5 33.7-57.1 50.7-85.6 17.2-28.8 34.4-57.7 51.5-86.5 9.5-16.3 19.2-32.5 29.2-48.5 3.1-5.1 7.1-9.6 11.9-13.1 4-2.7 8.4-5 13.2-5.4\" style=\"fill:#70c6be\"/><path d=\"M257.8 244.3c8.1-1.3 16.7.6 23.4 5.4 5.1 3.9 8.6 9.8 9.7 16.2.7 4.9.2 9.9-1.6 14.5-1.4 4-3.3 7.7-5.5 11.3-31.2 52.5-62.5 105-93.7 157.5-4 6.6-7.6 13.4-12.2 19.6-3.3 4.1-7.5 7.7-12.4 9.9-10.2 5.4-23.5 2.1-31.3-6.1-3.9-3.9-6.2-9.4-6.5-14.9-.4-5.7.8-11.5 3.4-16.7 2.3-5 5-9.7 7.8-14.4 13.7-23.1 27.3-46.3 41-69.4 18.7-31.8 37.8-63.4 56.6-95.1 2-3.6 4.5-6.9 7.3-9.9 3.8-4 8.6-7.1 14-7.9\" style=\"fill:#1ba0d8\"/></svg>",
-    "simple-amazonwebservices": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Amazon Web Services</title><path d=\"M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.183 0 .08-.048.16-.152.24l-.503.335a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.239-.112a2.47 2.47 0 0 1-.287-.375 6.18 6.18 0 0 1-.248-.471c-.622.734-1.405 1.101-2.347 1.101-.67 0-1.205-.191-1.596-.574-.391-.384-.59-.894-.59-1.533 0-.678.239-1.23.726-1.644.487-.415 1.133-.623 1.955-.623.272 0 .551.024.846.064.296.04.6.104.918.176v-.583c0-.607-.127-1.03-.375-1.277-.255-.248-.686-.367-1.3-.367-.28 0-.568.031-.863.103-.295.072-.583.16-.862.272a2.287 2.287 0 0 1-.28.104.488.488 0 0 1-.127.023c-.112 0-.168-.08-.168-.247v-.391c0-.128.016-.224.056-.28a.597.597 0 0 1 .224-.167c.279-.144.614-.264 1.005-.36a4.84 4.84 0 0 1 1.246-.151c.95 0 1.644.216 2.091.647.439.43.662 1.085.662 1.963v2.586zm-3.24 1.214c.263 0 .534-.048.822-.144.287-.096.543-.271.758-.51.128-.152.224-.32.272-.512.047-.191.08-.423.08-.694v-.335a6.66 6.66 0 0 0-.735-.136 6.02 6.02 0 0 0-.75-.048c-.535 0-.926.104-1.19.32-.263.215-.39.518-.39.917 0 .375.095.655.295.846.191.2.47.296.838.296zm6.41.862c-.144 0-.24-.024-.304-.08-.064-.048-.12-.16-.168-.311L7.586 5.55a1.398 1.398 0 0 1-.072-.32c0-.128.064-.2.191-.2h.783c.151 0 .255.025.31.08.065.048.113.16.16.312l1.342 5.284 1.245-5.284c.04-.16.088-.264.151-.312a.549.549 0 0 1 .32-.08h.638c.152 0 .256.025.32.08.063.048.12.16.151.312l1.261 5.348 1.381-5.348c.048-.16.104-.264.16-.312a.52.52 0 0 1 .311-.08h.743c.127 0 .2.065.2.2 0 .04-.009.08-.017.128a1.137 1.137 0 0 1-.056.2l-1.923 6.17c-.048.16-.104.263-.168.311a.51.51 0 0 1-.303.08h-.687c-.151 0-.255-.024-.32-.08-.063-.056-.119-.16-.15-.32l-1.238-5.148-1.23 5.14c-.04.16-.087.264-.15.32-.065.056-.177.08-.32.08zm10.256.215c-.415 0-.83-.048-1.229-.143-.399-.096-.71-.2-.918-.32-.128-.071-.215-.151-.247-.223a.563.563 0 0 1-.048-.224v-.407c0-.167.064-.247.183-.247.048 0 .096.008.144.024.048.016.12.048.2.08.271.12.566.215.878.279.319.064.63.096.95.096.502 0 .894-.088 1.165-.264a.86.86 0 0 0 .415-.758.777.777 0 0 0-.215-.559c-.144-.151-.416-.287-.807-.415l-1.157-.36c-.583-.183-1.014-.454-1.277-.813a1.902 1.902 0 0 1-.4-1.158c0-.335.073-.63.216-.886.144-.255.335-.479.575-.654.24-.184.51-.32.83-.415.32-.096.655-.136 1.006-.136.175 0 .359.008.535.032.183.024.35.056.518.088.16.04.312.08.455.127.144.048.256.096.336.144a.69.69 0 0 1 .24.2.43.43 0 0 1 .071.263v.375c0 .168-.064.256-.184.256a.83.83 0 0 1-.303-.096 3.652 3.652 0 0 0-1.532-.311c-.455 0-.815.071-1.062.223-.248.152-.375.383-.375.71 0 .224.08.416.24.567.159.152.454.304.877.44l1.134.358c.574.184.99.44 1.237.767.247.327.367.702.367 1.117 0 .343-.072.655-.207.926-.144.272-.336.511-.583.703-.248.2-.543.343-.886.447-.36.111-.734.167-1.142.167zM21.698 16.207c-2.626 1.94-6.442 2.969-9.722 2.969-4.598 0-8.74-1.7-11.87-4.526-.247-.223-.024-.527.272-.351 3.384 1.963 7.559 3.153 11.877 3.153 2.914 0 6.114-.607 9.06-1.852.439-.2.814.287.383.607zM22.792 14.961c-.336-.43-2.22-.207-3.074-.103-.255.032-.295-.192-.063-.36 1.5-1.053 3.967-.75 4.254-.399.287.36-.08 2.826-1.485 4.007-.215.184-.423.088-.327-.151.32-.79 1.03-2.57.695-2.994z\"/></svg>",
-    "simple-apple": "<svg role=\"img\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><title>Apple</title><path d=\"M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701\"/></svg>",
-    "selfhst-amazon-web-services": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M144.3 214.1c0 6.3.7 11.4 1.9 15.2 1.4 3.7 3.1 7.8 5.4 12.3.9 1.4 1.2 2.7 1.2 3.9 0 1.7-1 3.4-3.2 5.1l-10.7 7.2c-1.5 1-3.1 1.5-4.4 1.5-1.7 0-3.4-.9-5.1-2.4-2.4-2.6-4.4-5.3-6.1-8-1.7-2.9-3.4-6.1-5.3-10-13.3 15.7-30 23.5-50.1 23.5-14.3 0-25.7-4.1-34.1-12.3-8.3-8.2-12.6-19.1-12.6-32.7 0-14.5 5.1-26.2 15.5-35.1S60.8 169 78.4 169c5.8 0 11.7.5 18.1 1.4s12.8 2.2 19.6 3.7v-12.4c0-12.9-2.7-22-8-27.2-5.4-5.3-14.6-7.8-27.8-7.8-6 0-12.1.7-18.4 2.2s-12.4 3.4-18.4 5.8c-2.7 1.2-4.8 1.9-6 2.2s-2 .5-2.7.5c-2.4 0-3.6-1.7-3.6-5.3v-8.3c0-2.7.3-4.8 1.2-6s2.4-2.4 4.8-3.6c6-3.1 13.1-5.6 21.5-7.7 8.3-2.2 17.2-3.2 26.6-3.2 20.3 0 35.1 4.6 44.6 13.8 9.4 9.2 14.1 23.2 14.1 41.9v55.2zM75.2 240c5.6 0 11.4-1 17.5-3.1 6.1-2 11.6-5.8 16.2-10.9 2.7-3.2 4.8-6.8 5.8-10.9s1.7-9 1.7-14.8v-7.2c-4.9-1.2-10.2-2.2-15.7-2.9-5.4-.7-10.7-1-16-1-11.4 0-19.8 2.2-25.4 6.8S51 207.1 51 215.6c0 8 2 14 6.3 18.1 4.1 4.2 10 6.3 17.9 6.3m136.7 18.4c-3.1 0-5.1-.5-6.5-1.7-1.4-1-2.6-3.4-3.6-6.6l-40-131.6c-1-3.4-1.5-5.6-1.5-6.8 0-2.7 1.4-4.3 4.1-4.3h16.7c3.2 0 5.4.5 6.6 1.7 1.4 1 2.4 3.4 3.4 6.6l28.6 112.7 26.6-112.7c.9-3.4 1.9-5.6 3.2-6.6 1.4-1 3.7-1.7 6.8-1.7H270c3.2 0 5.4.5 6.8 1.7 1.4 1 2.6 3.4 3.2 6.6l26.9 114.1 29.5-114.1c1-3.4 2.2-5.6 3.4-6.6 1.4-1 3.6-1.7 6.6-1.7h15.8c2.7 0 4.3 1.4 4.3 4.3 0 .9-.2 1.7-.3 2.7-.2 1-.5 2.4-1.2 4.3l-41 131.6q-1.5 5.1-3.6 6.6c-1.4 1-3.6 1.7-6.5 1.7h-14.6c-3.2 0-5.4-.5-6.8-1.7s-2.6-3.4-3.2-6.8l-26.4-109.8L236.7 250c-.9 3.4-1.9 5.6-3.2 6.8-1.4 1.2-3.7 1.7-6.8 1.7zm218.8 4.6c-8.9 0-17.7-1-26.2-3.1-8.5-2-15.2-4.3-19.6-6.8-2.7-1.5-4.6-3.2-5.3-4.8s-1-3.2-1-4.8v-8.7c0-3.6 1.4-5.3 3.9-5.3 1 0 2 .2 3.1.5 1 .3 2.6 1 4.3 1.7 5.8 2.6 12.1 4.6 18.7 6 6.8 1.4 13.5 2 20.3 2 10.7 0 19.1-1.9 24.9-5.6s8.9-9.2 8.9-16.2c0-4.8-1.5-8.7-4.6-11.9s-8.9-6.1-17.2-8.9l-24.7-7.7c-12.4-3.9-21.6-9.7-27.2-17.4-5.6-7.5-8.5-15.8-8.5-24.7 0-7.2 1.5-13.5 4.6-18.9s7.2-10.2 12.3-14c5.1-3.9 10.9-6.8 17.7-8.9 6.8-2 14-2.9 21.5-2.9 3.7 0 7.7.2 11.4.7 3.9.5 7.5 1.2 11.1 1.9 3.4.9 6.6 1.7 9.7 2.7s5.4 2 7.2 3.1c2.4 1.4 4.1 2.7 5.1 4.3 1 1.4 1.5 3.2 1.5 5.6v8c0 3.6-1.4 5.4-3.9 5.4-1.4 0-3.6-.7-6.5-2q-14.55-6.6-32.7-6.6c-9.7 0-17.4 1.5-22.6 4.8s-8 8.2-8 15.2c0 4.8 1.7 8.9 5.1 12.1s9.7 6.5 18.7 9.4l24.2 7.7c12.3 3.9 21.1 9.4 26.4 16.3s7.8 15 7.8 23.8c0 7.3-1.5 14-4.4 19.8-3.1 5.8-7.2 10.9-12.4 15-5.3 4.3-11.6 7.3-18.9 9.5-8 2.5-16 3.7-24.7 3.7\"/><path d=\"M462.9 345.7c-56 41.4-137.4 63.3-207.4 63.3-98.1 0-186.5-36.3-253.2-96.6-5.3-4.8-.5-11.2 5.8-7.5 72.2 41.9 161.3 67.3 253.4 67.3 62.2 0 130.4-12.9 193.3-39.5 9.3-4.2 17.3 6.2 8.1 13m23.3-26.5c-7.2-9.2-47.3-4.4-65.6-2.2-5.4.7-6.3-4.1-1.4-7.7 32-22.5 84.6-16 90.8-8.5 6.1 7.7-1.7 60.3-31.7 85.5-4.6 3.9-9 1.9-7-3.2 6.9-16.9 22.1-54.9 14.9-63.9\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#f90\"/></svg>",
-    "selfhst-opnsense": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M512 160.2V400H400V112H112V0h240.4zM112 112H0v240.4L160.2 512H400V400H112z\" style=\"fill:#de3c07\"/></svg>",
-    "selfhst-portainer": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M462.2 512H49.8C22.3 512 0 489.7 0 462.2V49.8C0 22.3 22.3 0 49.8 0h412.4C489.7 0 512 22.3 512 49.8v412.4c0 27.5-22.3 49.8-49.8 49.8\" style=\"fill:#2e2f33\"/><path d=\"M108.2 63.9h140.9c97.2 0 154.6 30.4 154.6 129.5v3.4c0 99.4-57.2 129.5-154.5 129.5h-30.7V447H108.2zm134.5 177.8c30.1 0 46-11.2 46-44.6v-3.9c0-33.2-15.8-44.6-46-44.6h-24.2v93.1zM313 358h90.3v90.1H313z\" style=\"fill:#f7f6f3\"/></svg>",
-    "selfhst-jotty": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M438.6 0H73.4C33.1 0 .3 32.8.3 73.1v365.7c0 40.3 32.8 73.1 73.1 73.1h365.3c40.3 0 73.1-32.8 73.1-73.1V73.1C511.7 32.8 478.9 0 438.6 0\" style=\"fill-rule:evenodd;clip-rule:evenodd;fill:#8b3bd0\"/><path d=\"M356.8 53.6v261.3c0 39.3-13.9 72.8-41.8 100.7s-61.4 41.8-100.7 41.8l-23.8-95h23.8c13 0 24.1-4.6 33.2-13.8 9.5-9.5 14.3-20.7 14.3-33.7V148.6H157.3v-95z\" style=\"fill:#fff\"/></svg>",
-    "selfhst-authportal": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M0 0h512v512H0z\" style=\"fill:#111827\"/><path d=\"M170.7 85.3 369.8 256 170.7 426.7z\" style=\"fill:#f59e0b\"/></svg>",
-    "selfhst-docker": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M501.4 212.3c-11.5-8-38-11-58.6-7-2.4-20-13.5-37.5-32.7-53l-11-8-7.7 11.5c-9.6 15-14.4 36-13 56 .5 7 2.9 19.5 10.1 30.5-6.7 4-20.7 9-38.9 9H2.3l-1 4c-3.4 20-3.4 82.5 36 130.5 29.8 36.5 74 55 132.1 55 125.9 0 219.1-60.5 262.8-170 17.3.5 54.3 0 73-37.5.5-1 1.4-3 4.8-10.5l1.9-4zM280 71.3h-52.8v50H280zm0 60h-52.8v50H280zm-62.5 0h-52.8v50h52.8zm-62.4 0h-52.8v50h52.8zm-62.5 60H39.8v50h52.8zm62.5 0h-52.8v50h52.8zm62.4 0h-52.8v50h52.8zm62.5 0h-52.8v50H280zm62.4 0h-52.8v50h52.8z\" style=\"fill:#2396ed\"/></svg>",
-    "selfhst-opnsense-v1": "<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" viewBox=\"0 0 512 512\"><path d=\"M503.1 465.4v2.1c-6 25.5-28.4 44.5-55 44.5H7.3v-46.6h38.3v7.3h403c1.1 0 2 0 2.9-.1 1.8-.1 3.6-.6 5.2-1.3 2.9-1.3 5.3-3.3 7-5.9zM63.9 0c-26.5 0-49 19-55 44.5V47H48c2.7-4.3 7.3-7.2 12.6-7.6 1-.1 2-.1 3.2-.1h402.6V47h38.3V0z\" style=\"fill:#898b8d\"/><path d=\"M466.1 157.7V197H319.5v-39.3zM45.9 315.4v39.3h146.6v-39.3zm0-157.7V197h146.6v-39.3zm273.6 157.7v39.3h146.6v-39.3z\" style=\"fill:#58595b\"/><path d=\"M83.8 78.6H428v39.3H83.8zm0 315.9H428v39.3H83.8z\" style=\"fill:#403f41\"/><linearGradient id=\"opnsense-v1_svg__a\" x1=\"-1460.617\" x2=\"-1375.11\" y1=\"1248.095\" y2=\"1248.095\" gradientTransform=\"matrix(.1853 .356 .6722 -.353 -90.66 993.802)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"m466.5 78.6 38.2-20.5.1-39.5-38.3 20.7\" style=\"fill:url(#opnsense-v1_svg__a)\"/><linearGradient id=\"opnsense-v1_svg__b\" x1=\"4.634\" x2=\"50.301\" y1=\"462.6\" y2=\"462.6\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 64.5v-8.9c0-5.3 2.6-10 6.5-13l-34-18.5c-6.7 9.5-10.8 21.3-10.9 34l38.3 20.6v-14c.1-.1.1-.2.1-.2\" style=\"fill:url(#opnsense-v1_svg__b)\"/><linearGradient id=\"opnsense-v1_svg__c\" x1=\"-1587.887\" x2=\"-1498.137\" y1=\"-2208.165\" y2=\"-2208.165\" gradientTransform=\"matrix(-.1853 -.356 -.6722 .353 -1743.836 694.098)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M45.6 472.7v-38.9L7.3 454.5v39.7l39.9-21.5z\" style=\"fill:url(#opnsense-v1_svg__c)\"/><linearGradient id=\"opnsense-v1_svg__d\" x1=\"460.439\" x2=\"504.436\" y1=\"53\" y2=\"53\" gradientTransform=\"matrix(1 0 0 -1 0 514)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\"0\" style=\"stop-color:#737373\"/><stop offset=\"1\" style=\"stop-color:#333\"/></linearGradient><path d=\"M466.5 456.4c0 5.5-2.7 10.3-6.9 13.2l34.2 18.4c6.8-9.5 10.8-21.2 10.9-33.8L466.5 434v12.8\" style=\"fill:url(#opnsense-v1_svg__d)\"/><linearGradient id=\"opnsense-v1_svg__e\" x1=\"2521.902\" x2=\"2684.464\" y1=\"-2476.233\" y2=\"-2476.233\" gradientTransform=\"matrix(-1.508 -1.0166 -3.1265 -1.519 -3697.438 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 197v-.4l-72.4-38.9H45.9v.2l72.5 39.1z\" style=\"fill:url(#opnsense-v1_svg__e)\"/><linearGradient id=\"opnsense-v1_svg__f\" x1=\"-1594.953\" x2=\"-1432.391\" y1=\"278.458\" y2=\"278.458\" gradientTransform=\"matrix(1.508 -1.0166 3.1265 -1.519 1804.196 -937.952)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 157.7h-74l-72.6 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__f)\"/><linearGradient id=\"opnsense-v1_svg__g\" x1=\"-4327.142\" x2=\"-4164.581\" y1=\"1572.387\" y2=\"1572.387\" gradientTransform=\"matrix(1.508 1.0166 3.1265 1.519 1863.938 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M466.1 354.7v-.4l-72.4-38.9h-74.2v.2l72.6 39.1z\" style=\"fill:url(#opnsense-v1_svg__g)\"/><linearGradient id=\"opnsense-v1_svg__h\" x1=\"-413.668\" x2=\"-246.99\" y1=\"-1046.618\" y2=\"-1046.618\" gradientTransform=\"matrix(-1.508 1.0166 -3.1265 1.519 -3638.692 2252.352)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".107\" style=\"stop-color:#58595b\"/><stop offset=\"1\" style=\"stop-color:#000\"/></linearGradient><path d=\"M192.5 315.4h-74.1l-72.5 39.1v.2h74.2l72.4-38.9z\" style=\"fill:url(#opnsense-v1_svg__h)\"/><linearGradient id=\"opnsense-v1_svg__i\" x1=\"74.725\" x2=\"261.062\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(.9914 0 0 -1 -66.782 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 157.7V197L7.3 97.4V58.1z\" style=\"fill:url(#opnsense-v1_svg__i)\"/><linearGradient id=\"opnsense-v1_svg__j\" x1=\"-2461.056\" x2=\"-2274.718\" y1=\"132.65\" y2=\"132.65\" gradientTransform=\"matrix(-.9914 0 0 -1 -1935.19 260.2)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 157.7V197l185.5-99.6V58.1z\" style=\"fill:url(#opnsense-v1_svg__j)\"/><linearGradient id=\"opnsense-v1_svg__k\" x1=\"-2291.845\" x2=\"-2105.508\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(-.9914 0 0 1 -1767.435 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M319.2 355.2v-39.8L504.7 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__k)\"/><linearGradient id=\"opnsense-v1_svg__l\" x1=\"-94.103\" x2=\"91.934\" y1=\"-739.55\" y2=\"-739.55\" gradientTransform=\"matrix(.9914 0 0 1 100.993 1124.6)\" gradientUnits=\"userSpaceOnUse\"><stop offset=\".237\" style=\"stop-color:#a6a8ab\"/><stop offset=\"1\" style=\"stop-color:#404040\"/></linearGradient><path d=\"M192.8 355.2v-39.8L7.3 415v39.7z\" style=\"fill:url(#opnsense-v1_svg__l)\"/><path d=\"m319.2 276.1 108.9 58.5v-39.7l-35.3-18.8h111.9v-39.8H392.8l35.3-18.8v-39.3l-108.9 58.1zM83.8 334.6l109-58.5v-39.8l-109-58.1v39.3l35.7 18.8H7.3v39.8h111.9l-35.3 18.8v39.7z\" style=\"fill:#e24525\"/></svg>",
-    "mdi-server-security": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server-security\" viewBox=\"0 0 24 24\"><path d=\"M3,1H19A1,1 0 0,1 20,2V6A1,1 0 0,1 19,7H3A1,1 0 0,1 2,6V2A1,1 0 0,1 3,1M3,9H19A1,1 0 0,1 20,10V10.67L17.5,9.56L11,12.44V15H3A1,1 0 0,1 2,14V10A1,1 0 0,1 3,9M3,17H11C11.06,19.25 12,21.4 13.46,23H3A1,1 0 0,1 2,22V18A1,1 0 0,1 3,17M8,5H9V3H8V5M8,13H9V11H8V13M8,21H9V19H8V21M4,3V5H6V3H4M4,11V13H6V11H4M4,19V21H6V19H4M17.5,12L22,14V17C22,19.78 20.08,22.37 17.5,23C14.92,22.37 13,19.78 13,17V14L17.5,12M17.5,13.94L15,15.06V17.72C15,19.26 16.07,20.7 17.5,21.06V13.94Z\" /></svg>"
+    "mdi-earth": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-earth\" viewBox=\"0 0 24 24\"><path d=\"M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.08 19.2,15.97 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z\"/></svg>",
+    "mdi-wall-fire": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-wall-fire\" viewBox=\"0 0 24 24\"><path d=\"M22.14 15.34L22.12 15.35C22.35 15.63 22.55 15.94 22.7 16.27L22.79 16.46C23.5 18.15 23 20.1 21.69 21.32C20.5 22.41 18.84 22.7 17.3 22.5C15.84 22.32 14.5 21.4 13.73 20.13C13.5 19.74 13.3 19.3 13.2 18.85C13.07 18.5 13.03 18.12 13 17.75C12.91 16.15 13.55 14.45 14.76 13.45C14.21 14.66 14.34 16.17 15.15 17.22L15.26 17.35C15.4 17.47 15.57 17.5 15.73 17.44C15.88 17.38 16 17.23 16 17.07L15.93 16.83C15.05 14.5 15.79 11.8 17.66 10.27C18.17 9.85 18.8 9.47 19.46 9.3C18.78 10.66 19 12.44 20.09 13.5C20.55 14 21.11 14.29 21.58 14.73L22.14 15.34M19.86 20L19.85 19.97C20.3 19.58 20.55 18.91 20.53 18.31L20.5 18C20.3 17 19.43 16.66 18.87 15.93L18.44 15.15C18.22 15.65 18.2 16.12 18.29 16.66C18.39 17.23 18.61 17.72 18.5 18.31C18.34 18.96 17.83 19.61 16.94 19.82C17.44 20.31 18.25 20.7 19.06 20.42C19.32 20.35 19.65 20.16 19.86 20M3 16H11.06L11 17C11 18.41 11.36 19.73 12 20.88V21H3V16M2 10H8V15H2V10M9 10H15V10.07C13.17 11.13 11.79 12.9 11.25 15H9V10M3 4H11V9H3V4M12 4H21V9H12V4Z\"/></svg>",
+    "mdi-switch": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-switch\" viewBox=\"0 0 24 24\"><path d=\"M13,18H14A1,1 0 0,1 15,19H22V21H15A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21H2V19H9A1,1 0 0,1 10,18H11V16H8A1,1 0 0,1 7,15V3A1,1 0 0,1 8,2H16A1,1 0 0,1 17,3V15A1,1 0 0,1 16,16H13V18M13,6H14V4H13V6M9,4V6H11V4H9M9,8V10H11V8H9M9,12V14H11V12H9Z\"/></svg>",
+    "mdi-web": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-web\" viewBox=\"0 0 24 24\"><path d=\"M16.36,14C16.44,13.34 16.5,12.68 16.5,12C16.5,11.32 16.44,10.66 16.36,10H19.74C19.9,10.64 20,11.31 20,12C20,12.69 19.9,13.36 19.74,14M14.59,19.56C15.19,18.45 15.65,17.25 15.97,16H18.92C17.96,17.65 16.43,18.93 14.59,19.56M14.34,14H9.66C9.56,13.34 9.5,12.68 9.5,12C9.5,11.32 9.56,10.65 9.66,10H14.34C14.43,10.65 14.5,11.32 14.5,12C14.5,12.68 14.43,13.34 14.34,14M12,19.96C11.17,18.76 10.5,17.43 10.09,16H13.91C13.5,17.43 12.83,18.76 12,19.96M8,8H5.08C6.03,6.34 7.57,5.06 9.4,4.44C8.8,5.55 8.35,6.75 8,8M5.08,16H8C8.35,17.25 8.8,18.45 9.4,19.56C7.57,18.93 6.03,17.65 5.08,16M4.26,14C4.1,13.36 4,12.69 4,12C4,11.31 4.1,10.64 4.26,10H7.64C7.56,10.66 7.5,11.32 7.5,12C7.5,12.68 7.56,13.34 7.64,14M12,4.03C12.83,5.23 13.5,6.57 13.91,8H10.09C10.5,6.57 11.17,5.23 12,4.03M18.92,8H15.97C15.65,6.75 15.19,5.55 14.59,4.44C16.43,5.07 17.96,6.34 18.92,8M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z\"/></svg>",
+    "mdi-email-fast": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-email-fast\" viewBox=\"0 0 24 24\"><path d=\"M22 5.5H9C7.9 5.5 7 6.4 7 7.5V16.5C7 17.61 7.9 18.5 9 18.5H22C23.11 18.5 24 17.61 24 16.5V7.5C24 6.4 23.11 5.5 22 5.5M22 9.17L15.5 12.5L9 9.17V7.5L15.5 10.81L22 7.5V9.17M5 16.5C5 16.67 5.03 16.83 5.05 17H1C.448 17 0 16.55 0 16S.448 15 1 15H5V16.5M3 7H5.05C5.03 7.17 5 7.33 5 7.5V9H3C2.45 9 2 8.55 2 8S2.45 7 3 7M1 12C1 11.45 1.45 11 2 11H5V13H2C1.45 13 1 12.55 1 12Z\"/></svg>",
+    "selfhst-nginx": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" data-selfhst=\"nginx\"><path d=\"m255 0h1.2c6.1 2.9 12 6.1 17.8 9.7 66.2 38.1 132.4 76.1 198.6 114.2 5.2 2.8 8.2 8.5 7.6 14.4-.1 80.3 0 160.5-.1 240.7-.9 3.8-3.2 7.2-6.5 9.3L262.4 509.8c-3.5 2.7-8.2 2.9-12 .7-70.5-40.4-140.9-80.9-211.3-121.5-4.7-2.2-7.6-7-7.3-12.2V136.1c-.4-5.1 2.4-10 7.1-12.3 66.1-37.9 132.2-76 198.3-114 5.9-3.4 11.7-6.9 17.8-9.8\" fill=\"#019639\"/><path d=\"m123.7 156.1v198.6c-.2 7.4 2.6 14.6 7.8 19.9 10.1 10 25.8 11.5 37.7 3.8 7.8-5.3 12.5-14.2 12.5-23.6 0-47.9-.1-95.8 0-143.7 43.7 52.3 87.5 104.5 131.3 156.7 12.4 12.5 30.3 17.9 47.5 14.3 12.3-2.4 21.6-12.6 22.9-25.1.1-67.6.1-135.1 0-202.6-1.4-15.9-15.4-27.7-31.3-26.3-14 1.2-25.1 12.3-26.3 26.3 0 48.7-.3 97.3 0 146-42.9-50.6-85.3-101.6-128-152.4-11.5-14.7-30-22.1-48.4-19.2-14.2 1.4-25.1 13.1-25.7 27.3\" fill=\"#fff\"/></svg>",
+    "mdi-vpn": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-vpn\" viewBox=\"0 0 24 24\"><path d=\"M9,5H15L12,8L9,5M10.5,14.66C10.2,15 10,15.5 10,16A2,2 0 0,0 12,18A2,2 0 0,0 14,16C14,15.45 13.78,14.95 13.41,14.59L14.83,13.17C15.55,13.9 16,14.9 16,16A4,4 0 0,1 12,20A4,4 0 0,1 8,16C8,14.93 8.42,13.96 9.1,13.25L9.09,13.24L16.17,6.17V6.17C16.89,5.45 17.89,5 19,5A4,4 0 0,1 23,9A4,4 0 0,1 19,13C17.9,13 16.9,12.55 16.17,11.83L17.59,10.41C17.95,10.78 18.45,11 19,11A2,2 0 0,0 21,9A2,2 0 0,0 19,7C18.45,7 17.95,7.22 17.59,7.59L10.5,14.66M6.41,7.59C6.05,7.22 5.55,7 5,7A2,2 0 0,0 3,9A2,2 0 0,0 5,11C5.55,11 6.05,10.78 6.41,10.41L7.83,11.83C7.1,12.55 6.1,13 5,13A4,4 0 0,1 1,9A4,4 0 0,1 5,5C6.11,5 7.11,5.45 7.83,6.17V6.17L10.59,8.93L9.17,10.35L6.41,7.59Z\"/></svg>",
+    "mdi-server": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-server\" viewBox=\"0 0 24 24\"><path d=\"M4,1H20A1,1 0 0,1 21,2V6A1,1 0 0,1 20,7H4A1,1 0 0,1 3,6V2A1,1 0 0,1 4,1M4,9H20A1,1 0 0,1 21,10V14A1,1 0 0,1 20,15H4A1,1 0 0,1 3,14V10A1,1 0 0,1 4,9M4,17H20A1,1 0 0,1 21,18V22A1,1 0 0,1 20,23H4A1,1 0 0,1 3,22V18A1,1 0 0,1 4,17M9,5H10V3H9V5M9,13H10V11H9V13M9,21H10V19H9V21M5,3V5H7V3H5M5,11V13H7V11H5M5,19V21H7V19H5Z\"/></svg>",
+    "mdi-account-key": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-account-key\" viewBox=\"0 0 24 24\"><path d=\"M11 10V12H9V14H7V12H5.8C5.4 13.2 4.3 14 3 14C1.3 14 0 12.7 0 11S1.3 8 3 8C4.3 8 5.4 8.8 5.8 10H11M3 10C2.4 10 2 10.4 2 11S2.4 12 3 12 4 11.6 4 11 3.6 10 3 10M16 14C18.7 14 24 15.3 24 18V20H8V18C8 15.3 13.3 14 16 14M16 12C13.8 12 12 10.2 12 8S13.8 4 16 4 20 5.8 20 8 18.2 12 16 12Z\"/></svg>",
+    "mdi-folder-network": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-folder-network\" viewBox=\"0 0 24 24\"><path d=\"M3,15V5A2,2 0 0,1 5,3H11L13,5H19A2,2 0 0,1 21,7V15A2,2 0 0,1 19,17H13V19H14A1,1 0 0,1 15,20H22V22H15A1,1 0 0,1 14,23H10A1,1 0 0,1 9,22H2V20H9A1,1 0 0,1 10,19H11V17H5A2,2 0 0,1 3,15Z\"/></svg>",
+    "mdi-application-cog": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-application-cog\" viewBox=\"0 0 24 24\"><path d=\"M21.7 18.6V17.6L22.8 16.8C22.9 16.7 23 16.6 22.9 16.5L21.9 14.8C21.9 14.7 21.7 14.7 21.6 14.7L20.4 15.2C20.1 15 19.8 14.8 19.5 14.7L19.3 13.4C19.3 13.3 19.2 13.2 19.1 13.2H17.1C16.9 13.2 16.8 13.3 16.8 13.4L16.6 14.7C16.3 14.9 16.1 15 15.8 15.2L14.6 14.7C14.5 14.7 14.4 14.7 14.3 14.8L13.3 16.5C13.3 16.6 13.3 16.7 13.4 16.8L14.5 17.6V18.6L13.4 19.4C13.3 19.5 13.2 19.6 13.3 19.7L14.3 21.4C14.4 21.5 14.5 21.5 14.6 21.5L15.8 21C16 21.2 16.3 21.4 16.6 21.5L16.8 22.8C16.9 22.9 17 23 17.1 23H19.1C19.2 23 19.3 22.9 19.3 22.8L19.5 21.5C19.8 21.3 20 21.2 20.3 21L21.5 21.4C21.6 21.4 21.7 21.4 21.8 21.3L22.8 19.6C22.9 19.5 22.9 19.4 22.8 19.4L21.7 18.6M18 19.5C17.2 19.5 16.5 18.8 16.5 18S17.2 16.5 18 16.5 19.5 17.2 19.5 18 18.8 19.5 18 19.5M11 18C11 14.1 14.1 11 18 11C20 11 21.7 11.8 23 13.1V4C23 2.9 22.1 2 21 2H3C1.9 2 1 2.9 1 4V20C1 21.1 1.9 22 3 22H12.3C11.5 20.9 11 19.5 11 18M3 4H21V7H3V4Z\"/></svg>",
+    "mdi-database": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-database\" viewBox=\"0 0 24 24\"><path d=\"M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z\"/></svg>",
+    "mdi-backup-restore": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-backup-restore\" viewBox=\"0 0 24 24\"><path d=\"M12,3A9,9 0 0,0 3,12H0L4,16L8,12H5A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19C10.5,19 9.09,18.5 7.94,17.7L6.5,19.14C8.04,20.3 9.94,21 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M14,12A2,2 0 0,0 12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12Z\"/></svg>",
+    "mdi-router-wireless": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-router-wireless\" viewBox=\"0 0 24 24\"><path d=\"M20.2,5.9L21,5.1C19.6,3.7 17.8,3 16,3C14.2,3 12.4,3.7 11,5.1L11.8,5.9C13,4.8 14.5,4.2 16,4.2C17.5,4.2 19,4.8 20.2,5.9M19.3,6.7C18.4,5.8 17.2,5.3 16,5.3C14.8,5.3 13.6,5.8 12.7,6.7L13.5,7.5C14.2,6.8 15.1,6.5 16,6.5C16.9,6.5 17.8,6.8 18.5,7.5L19.3,6.7M19,13H17V9H15V13H5A2,2 0 0,0 3,15V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V15A2,2 0 0,0 19,13M8,18H6V16H8V18M11.5,18H9.5V16H11.5V18M15,18H13V16H15V18Z\"/></svg>",
+    "mdi-phone-voip": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-phone-voip\" viewBox=\"0 0 24 24\"><path d=\"M13,17V19H14A1,1 0 0,1 15,20H22V22H15A1,1 0 0,1 14,23H10A1,1 0 0,1 9,22H2V20H9A1,1 0 0,1 10,19H11V17H13M23.7,7.67C23.88,7.85 24,8.09 24,8.37C24,8.65 23.89,8.9 23.71,9.08L21.23,11.56C21.05,11.74 20.8,11.85 20.5,11.85C20.25,11.85 20,11.75 19.82,11.57C19,10.84 18.13,10.21 17.15,9.72C16.82,9.56 16.59,9.21 16.59,8.82V5.72C15.14,5.25 13.59,5 12,5C10.4,5 8.85,5.25 7.4,5.73V8.83C7.4,9.23 7.17,9.57 6.84,9.73C5.87,10.22 4.97,10.84 4.18,11.58C4,11.75 3.75,11.86 3.5,11.86C3.2,11.86 2.95,11.75 2.77,11.57L0.29,9.09C0.11,8.91 0,8.66 0,8.38C0,8.1 0.11,7.85 0.29,7.67C3.34,4.78 7.46,3 12,3C16.53,3 20.65,4.78 23.7,7.67M11,10V15H10V10H11M12,10H15V13H13V15H12V10M14,12V11H13V12H14Z\"/></svg>",
+    "mdi-phone-classic": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-phone-classic\" viewBox=\"0 0 24 24\"><path d=\"M12,3C7.46,3 3.34,4.78 0.29,7.67C0.11,7.85 0,8.1 0,8.38C0,8.66 0.11,8.91 0.29,9.09L2.77,11.57C2.95,11.75 3.2,11.86 3.5,11.86C3.75,11.86 4,11.75 4.18,11.58C4.97,10.84 5.87,10.22 6.84,9.73C7.17,9.57 7.4,9.23 7.4,8.83V5.73C8.85,5.25 10.39,5 12,5C13.59,5 15.14,5.25 16.59,5.72V8.82C16.59,9.21 16.82,9.56 17.15,9.72C18.13,10.21 19,10.84 19.82,11.57C20,11.75 20.25,11.85 20.5,11.85C20.8,11.85 21.05,11.74 21.23,11.56L23.71,9.08C23.89,8.9 24,8.65 24,8.37C24,8.09 23.88,7.85 23.7,7.67C20.65,4.78 16.53,3 12,3M9,7V10C9,10 3,15 3,18V22H21V18C21,15 15,10 15,10V7H13V9H11V7H9M12,12A4,4 0 0,1 16,16A4,4 0 0,1 12,20A4,4 0 0,1 8,16A4,4 0 0,1 12,12M12,13.5A2.5,2.5 0 0,0 9.5,16A2.5,2.5 0 0,0 12,18.5A2.5,2.5 0 0,0 14.5,16A2.5,2.5 0 0,0 12,13.5Z\"/></svg>",
+    "mdi-desktop-classic": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-desktop-classic\" viewBox=\"0 0 24 24\"><path d=\"M6,2C4.89,2 4,2.89 4,4V12C4,13.11 4.89,14 6,14H18C19.11,14 20,13.11 20,12V4C20,2.89 19.11,2 18,2H6M6,4H18V12H6V4M4,15C2.89,15 2,15.89 2,17V20C2,21.11 2.89,22 4,22H20C21.11,22 22,21.11 22,20V17C22,15.89 21.11,15 20,15H4M8,17H20V20H8V17M9,17.75V19.25H13V17.75H9M15,17.75V19.25H19V17.75H15Z\"/></svg>",
+    "mdi-deskphone": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-deskphone\" viewBox=\"0 0 24 24\"><path d=\"M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M15,5V19H19V5H15M5,5V9H13V5H5M5,11V13H7V11H5M8,11V13H10V11H8M11,11V13H13V11H11M5,14V16H7V14H5M8,14V16H10V14H8M11,14V16H13V14H11M11,17V19H13V17H11M8,17V19H10V17H8M5,17V19H7V17H5Z\"/></svg>",
+    "mdi-printer": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-printer\" viewBox=\"0 0 24 24\"><path d=\"M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z\"/></svg>",
+    "mdi-laptop": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-laptop\" viewBox=\"0 0 24 24\"><path d=\"M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z\"/></svg>",
+    "mdi-access-point": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"mdi-access-point\" viewBox=\"0 0 24 24\"><path d=\"M4.93,4.93C3.12,6.74 2,9.24 2,12C2,14.76 3.12,17.26 4.93,19.07L6.34,17.66C4.89,16.22 4,14.22 4,12C4,9.79 4.89,7.78 6.34,6.34L4.93,4.93M19.07,4.93L17.66,6.34C19.11,7.78 20,9.79 20,12C20,14.22 19.11,16.22 17.66,17.66L19.07,19.07C20.88,17.26 22,14.76 22,12C22,9.24 20.88,6.74 19.07,4.93M7.76,7.76C6.67,8.85 6,10.35 6,12C6,13.65 6.67,15.15 7.76,16.24L9.17,14.83C8.45,14.11 8,13.11 8,12C8,10.89 8.45,9.89 9.17,9.17L7.76,7.76M16.24,7.76L14.83,9.17C15.55,9.89 16,10.89 16,12C16,13.11 15.55,14.11 14.83,14.83L16.24,16.24C17.33,15.15 18,13.65 18,12C18,10.35 17.33,8.85 16.24,7.76M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10Z\"/></svg>"
   },
   "page": {
-    "title": "The One File Corporate",
+    "title": "Larkspur Logistics Network",
     "background": "",
     "topbarBg": "rgba(9, 12, 20, 0.9)",
     "topbarBorder": "#1f2533",
@@ -4485,7 +2391,7 @@
     "danger": "#f56565",
     "textMain": "#e2e8f0",
     "textSoft": "#94a3b8",
-    "topbarHeight": 103,
+    "topbarHeight": 52,
     "sidebarWidth": 350,
     "mobileFooterHeight": 40,
     "sidebarCollapsed": false,
@@ -4493,9 +2399,9 @@
     "nodeStroke": "#475569",
     "nodeTitle": "#e2e8f0",
     "nodeSub": "#94a3b8",
-    "nodeTitleSize": 41,
-    "nodeSubSize": 27,
-    "nodeFont": "monospace",
+    "nodeTitleSize": 18,
+    "nodeSubSize": 13,
+    "nodeFont": "Inter, system-ui, sans-serif",
     "defaultEdge": "#475569",
     "selectionHandle": "#f59e0b",
     "selectionHandleSize": 8,
@@ -4512,2594 +2418,875 @@
     "rackTextColor": "#4fd1c5",
     "rackGridEnabled": true,
     "viewOnly": false,
-    "defaultEdgeRouting": "orthogonal",
+    "defaultEdgeRouting": "straight",
     "animateConnections": false,
     "animationStyle": "arrows",
     "animationDirection": "all",
-    "animationSpeed": 4,
+    "animationSpeed": 1.5,
+    "motionTrailsEnabled": true,
+    "motionTrailLength": 8,
+    "motionTrailStyle": "solid",
+    "motionTrailArrow": true,
+    "showPortLabels": true,
+    "snapToGrid": true,
+    "canvasWidth": 4000,
+    "canvasHeight": 3000,
+    "layerNames": {
+      "layer1": "Physical",
+      "layer2": "Routing",
+      "layer3": "Security",
+      "layer4": "Services"
+    },
+    "markDuplicateIps": false,
+    "showHostedOnLinks": true,
+    "mappingMode": "network",
     "autoPingEnabled": false,
-    "autoPingInterval": 30
+    "autoPingInterval": 30,
+    "canvasTemplate": "grid"
   },
   "autoPingEnabled": false,
   "autoPingInterval": 30,
   "canvas": {
-    "zoom": 0.9921985961590549,
-    "panX": -5.584863670202822,
-    "panY": -99.90831573327841
+    "zoom": 1.7253278122843339,
+    "panX": 240.79999999999995,
+    "panY": -34.40000000000009
   },
   "savedTopologyView": {
-    "zoom": 0.9325110211947125,
-    "panX": -563.7108933103631,
-    "panY": -561.6887674556383
+    "zoom": 1.7253278122843339,
+    "panX": 240.79999999999995,
+    "panY": -34.40000000000009
+  },
+  "tabViews": {
+    "main": {
+      "zoom": 1.7253278122843339,
+      "panX": 240.79999999999995,
+      "panY": -34.40000000000009
+    }
   },
   "documentTabs": [
     {
       "id": "main",
-      "name": "Corporate Site B",
+      "name": "HQ",
       "nodes": {
-        "core-router-1": {
-          "shape": "router",
-          "name": "Core Router 1",
-          "ip": "10.0.0.1",
-          "role": "Core Routing",
+        "ispa": {
+          "shape": "cloud",
+          "name": "ISP A",
+          "ip": "",
+          "role": "",
           "tags": [
-            "core",
-            "tier-1",
-            "redundant"
+            "wan"
           ],
-          "notes": [
-            "Primary core router",
-            "BGP peering enabled"
-          ],
-          "mac": "00:1A:2B:3C:4D:01",
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
+          "uHeight": "1",
+          "layer": "layer1",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "core-router-2": {
-          "shape": "router",
-          "name": "Core Router 2",
-          "ip": "10.0.0.2",
-          "role": "Core Routing",
+        "ispb": {
+          "shape": "cloud",
+          "name": "ISP B",
+          "ip": "",
+          "role": "",
           "tags": [
-            "core",
-            "tier-1",
-            "redundant"
+            "wan"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fw1": {
+          "shape": "firewall",
+          "name": "FW 1 Active",
+          "ip": "10.20.0.2",
+          "role": "Edge firewall",
+          "tags": [
+            "edge",
+            "ha"
           ],
           "notes": [
-            "Secondary core router",
-            "HSRP standby"
+            "<h3>Edge firewall cluster</h3><p>Active and passive pair. State sync over a dedicated 10G link, both WAN circuits on each node.</p><table><thead><tr><th>Circuit</th><th>Block</th><th>Speed</th></tr></thead><tbody><tr><td>ISP A fiber</td><td>203.0.113.0/29</td><td>1 Gbps</td></tr><tr><td>ISP B coax</td><td>198.51.100.0/29</td><td>500 Mbps</td></tr></tbody></table><ul><li>SD WAN hub for every branch</li><li>DMZ on VLAN 100</li><li>IPS on, TLS inspection for user VLANs only</li></ul>"
           ],
-          "mac": "00:1A:2B:3C:4D:02",
+          "mac": "02:00:5E:20:00:02",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
+          "uHeight": "1",
+          "layer": "layer3",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
           "groupId": null,
           "ping": {
             "enabled": true,
-            "protocol": "custom",
-            "customUrl": "https://google.com",
+            "protocol": "https",
+            "customUrl": "",
             "timeout": 3000,
-            "status": "online",
-            "lastCheck": "2025-12-09T00:15:04.343Z"
+            "status": "unknown",
+            "lastCheck": null
           }
         },
-        "fw-external-1": {
+        "fw2": {
           "shape": "firewall",
-          "name": "External FW 1",
-          "ip": "10.0.1.1",
-          "role": "Perimeter Security",
+          "name": "FW 2 Passive",
+          "ip": "10.20.0.3",
+          "role": "Edge firewall",
           "tags": [
-            "security",
-            "perimeter",
-            "ha-pair"
+            "edge",
+            "ha"
           ],
-          "notes": [
-            "Palo Alto PA-5250",
-            "Active node"
-          ],
-          "mac": "00:1A:2B:3C:4D:10",
+          "notes": [],
+          "mac": "02:00:5E:20:00:03",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "security",
+          "uHeight": "1",
+          "layer": "layer3",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "fw-external-2": {
-          "shape": "firewall",
-          "name": "External FW 2",
-          "ip": "10.0.1.2",
-          "role": "Perimeter Security",
-          "tags": [
-            "security",
-            "perimeter",
-            "ha-pair"
-          ],
-          "notes": [
-            "Palo Alto PA-5250",
-            "Passive node"
-          ],
-          "mac": "00:1A:2B:3C:4D:11",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "security",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "fw-internal": {
-          "shape": "firewall",
-          "name": "Internal FW",
-          "ip": "10.0.2.1",
-          "role": "Internal Segmentation",
-          "tags": [
-            "security",
-            "internal"
-          ],
-          "notes": [
-            "East-West traffic inspection"
-          ],
-          "mac": "00:1A:2B:3C:4D:12",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "security",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "core-switch-1": {
+        "core1": {
           "shape": "switch",
-          "name": "Core Switch 1",
-          "ip": "10.0.10.1",
-          "role": "Core Switching",
+          "name": "Core 1",
+          "ip": "10.20.0.11",
+          "role": "Core switch, stack member 1",
           "tags": [
-            "core",
-            "layer3",
-            "redundant"
+            "core"
           ],
-          "notes": [
-            "Cisco Nexus 9000",
-            "VPC Domain 1"
-          ],
-          "mac": "00:1A:2B:3C:4D:20",
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
+          "uHeight": "1",
+          "layer": "layer2",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "core-switch-2": {
+        "core2": {
           "shape": "switch",
-          "name": "Core Switch 2",
-          "ip": "10.0.10.2",
-          "role": "Core Switching",
+          "name": "Core 2",
+          "ip": "10.20.0.12",
+          "role": "Core switch, stack member 2",
           "tags": [
-            "core",
-            "layer3",
-            "redundant"
+            "core"
           ],
-          "notes": [
-            "Cisco Nexus 9000",
-            "VPC Domain 1"
-          ],
-          "mac": "00:1A:2B:3C:4D:21",
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
+          "uHeight": "1",
+          "layer": "layer2",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "dc-rack-a1": {
-          "shape": "server",
-          "name": "DC Rack A1",
-          "ip": "10.10.0.0/24",
-          "role": "Data Center Rack",
-          "tags": [
-            "datacenter",
-            "row-a",
-            "production"
-          ],
-          "notes": [
-            "Row A, Position 1",
-            "Primary compute"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "dc-rack-a2": {
-          "shape": "server",
-          "name": "DC Rack A2",
-          "ip": "10.10.1.0/24",
-          "role": "Data Center Rack",
-          "tags": [
-            "datacenter",
-            "row-a",
-            "production"
-          ],
-          "notes": [
-            "Row A, Position 2",
-            "Primary compute"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "dc-rack-b1": {
-          "shape": "server",
-          "name": "DC Rack B1",
-          "ip": "10.10.2.0/24",
-          "role": "Data Center Rack",
-          "tags": [
-            "datacenter",
-            "row-b",
-            "storage"
-          ],
-          "notes": [
-            "Row B, Position 1",
-            "Storage systems"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "dc-rack-b2": {
-          "shape": "server",
-          "name": "DC Rack B2",
-          "ip": "10.10.3.0/24",
-          "role": "Data Center Rack",
-          "tags": [
-            "datacenter",
-            "row-b",
-            "storage"
-          ],
-          "notes": [
-            "Row B, Position 2",
-            "Storage systems"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "dmz-rack": {
-          "shape": "server",
-          "name": "DMZ Rack",
-          "ip": "172.16.0.0/24",
-          "role": "DMZ Infrastructure",
-          "tags": [
-            "dmz",
-            "security",
-            "public-facing",
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "booklogr"
-            },
-            {
-              "type": "icon",
-              "library": "simple",
-              "name": "gmail"
-            }
-          ],
-          "notes": [
-            "Isolated DMZ zone",
-            "Public-facing services"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "",
-          "rackCapacity": "24",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "mgmt-rack": {
-          "shape": "server",
-          "name": "Management Rack",
-          "ip": "192.168.100.0/24",
-          "role": "Management Infrastructure",
-          "tags": [
-            "management",
-            "oob",
-            "noc"
-          ],
-          "notes": [
-            "Out-of-band management",
-            "NOC equipment"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "",
-          "rackCapacity": "24",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-01": {
-          "shape": "server",
-          "name": "ESXi Host 01",
-          "ip": "10.10.0.11",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-a"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "512GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:01:01",
-          "rackUnit": 38,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-02": {
-          "shape": "server",
-          "name": "ESXi Host 02",
-          "ip": "10.10.0.12",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-a"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "512GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:01:02",
-          "rackUnit": 35,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-03": {
-          "shape": "server",
-          "name": "ESXi Host 03",
-          "ip": "10.10.0.13",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-a"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "512GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:01:03",
-          "rackUnit": 32,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-04": {
-          "shape": "server",
-          "name": "ESXi Host 04",
-          "ip": "10.10.0.14",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-a"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "512GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:01:04",
-          "rackUnit": 29,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "tor-switch-a1": {
+        "dmzsw": {
           "shape": "switch",
-          "name": "ToR Switch A1",
-          "ip": "10.10.0.1",
-          "role": "Top of Rack",
-          "tags": [
-            "tor",
-            "access",
-            "rack-a1"
-          ],
-          "notes": [
-            "Cisco Nexus 93180YC-FX",
-            "48x25G ports"
-          ],
-          "mac": "00:1A:2B:3C:5D:01",
-          "rackUnit": 42,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-05": {
-          "shape": "server",
-          "name": "ESXi Host 05",
-          "ip": "10.10.1.11",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-b"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "768GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:02:01",
-          "rackUnit": 38,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-06": {
-          "shape": "server",
-          "name": "ESXi Host 06",
-          "ip": "10.10.1.12",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-b"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "768GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:02:02",
-          "rackUnit": 35,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-07": {
-          "shape": "server",
-          "name": "ESXi Host 07",
-          "ip": "10.10.1.13",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-b"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "768GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:02:03",
-          "rackUnit": 32,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "esxi-host-08": {
-          "shape": "server",
-          "name": "ESXi Host 08",
-          "ip": "10.10.1.14",
-          "role": "Hypervisor",
-          "tags": [
-            "vmware",
-            "compute",
-            "cluster-b"
-          ],
-          "notes": [
-            "Dell PowerEdge R750",
-            "768GB RAM",
-            "vSphere 8.0"
-          ],
-          "mac": "00:50:56:AA:02:04",
-          "rackUnit": 29,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "tor-switch-a2": {
-          "shape": "switch",
-          "name": "ToR Switch A2",
-          "ip": "10.10.1.1",
-          "role": "Top of Rack",
-          "tags": [
-            "tor",
-            "access",
-            "rack-a2"
-          ],
-          "notes": [
-            "Cisco Nexus 93180YC-FX",
-            "48x25G ports"
-          ],
-          "mac": "00:1A:2B:3C:5D:02",
-          "rackUnit": 42,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "san-primary": {
-          "shape": "database",
-          "name": "SAN Primary",
-          "ip": "10.10.2.10",
-          "role": "Primary Storage",
-          "tags": [
-            "storage",
-            "san",
-            "netapp"
-          ],
-          "notes": [
-            "NetApp AFF A400",
-            "500TB Raw",
-            "FC 32Gb"
-          ],
-          "mac": "00:A0:98:AA:01:01",
-          "rackUnit": 36,
-          "uHeight": "6",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "san-secondary": {
-          "shape": "database",
-          "name": "SAN Secondary",
-          "ip": "10.10.2.11",
-          "role": "Secondary Storage",
-          "tags": [
-            "storage",
-            "san",
-            "netapp"
-          ],
-          "notes": [
-            "NetApp AFF A400",
-            "500TB Raw",
-            "FC 32Gb"
-          ],
-          "mac": "00:A0:98:AA:01:02",
-          "rackUnit": 28,
-          "uHeight": "6",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "fc-switch-1": {
-          "shape": "switch",
-          "name": "FC Switch 1",
-          "ip": "10.10.2.1",
-          "role": "Fibre Channel",
-          "tags": [
-            "storage",
-            "fc",
-            "fabric-a"
-          ],
-          "notes": [
-            "Brocade G620",
-            "Fabric A"
-          ],
-          "mac": "00:1A:2B:FC:01:01",
-          "rackUnit": 42,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "fc-switch-2": {
-          "shape": "switch",
-          "name": "FC Switch 2",
-          "ip": "10.10.2.2",
-          "role": "Fibre Channel",
-          "tags": [
-            "storage",
-            "fc",
-            "fabric-b"
-          ],
-          "notes": [
-            "Brocade G620",
-            "Fabric B"
-          ],
-          "mac": "00:1A:2B:FC:01:02",
-          "rackUnit": 41,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "backup-server-1": {
-          "shape": "server",
-          "name": "Backup Server 1",
-          "ip": "10.10.3.10",
-          "role": "Backup Infrastructure",
-          "tags": [
-            "backup",
-            "veeam",
-            "protection"
-          ],
-          "notes": [
-            "Veeam Backup Server",
-            "Dell R740xd",
-            "200TB"
-          ],
-          "mac": "00:50:56:BB:01:01",
-          "rackUnit": 36,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "backup-server-2": {
-          "shape": "server",
-          "name": "Backup Server 2",
-          "ip": "10.10.3.11",
-          "role": "Backup Infrastructure",
-          "tags": [
-            "backup",
-            "veeam",
-            "protection"
-          ],
-          "notes": [
-            "Veeam Backup Server",
-            "Dell R740xd",
-            "200TB"
-          ],
-          "mac": "00:50:56:BB:01:02",
-          "rackUnit": 33,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "tape-library": {
-          "shape": "database",
-          "name": "Tape Library",
-          "ip": "10.10.3.20",
-          "role": "Archival Storage",
-          "tags": [
-            "backup",
-            "tape",
-            "lto9"
-          ],
-          "notes": [
-            "IBM TS4500",
-            "LTO-9",
-            "Long-term archive"
-          ],
-          "mac": "00:50:56:BB:02:01",
-          "rackUnit": 20,
-          "uHeight": "10",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "tor-switch-b1": {
-          "shape": "switch",
-          "name": "ToR Switch B1",
-          "ip": "10.10.2.3",
-          "role": "Top of Rack",
-          "tags": [
-            "tor",
-            "access",
-            "rack-b1"
-          ],
-          "notes": [
-            "Cisco Nexus 93180YC-FX"
-          ],
-          "mac": "00:1A:2B:3C:5D:03",
-          "rackUnit": 40,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "tor-switch-b2": {
-          "shape": "switch",
-          "name": "ToR Switch B2",
-          "ip": "10.10.3.1",
-          "role": "Top of Rack",
-          "tags": [
-            "tor",
-            "access",
-            "rack-b2"
-          ],
-          "notes": [
-            "Cisco Nexus 93180YC-FX"
-          ],
-          "mac": "00:1A:2B:3C:5D:04",
-          "rackUnit": 42,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "web-server-1": {
-          "shape": "server",
-          "name": "Web Server 1",
-          "ip": "172.16.0.11",
-          "role": "Web Frontend",
-          "tags": [
-            "dmz",
-            "web",
-            "nginx"
-          ],
-          "notes": [
-            "NGINX reverse proxy",
-            "Public facing"
-          ],
-          "mac": "00:50:56:CC:01:01",
-          "rackUnit": 20,
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "web-server-2": {
-          "shape": "server",
-          "name": "Web Server 2",
-          "ip": "172.16.0.12",
-          "role": "Web Frontend",
-          "tags": [
-            "dmz",
-            "web",
-            "nginx"
-          ],
-          "notes": [
-            "NGINX reverse proxy",
-            "Public facing"
-          ],
-          "mac": "00:50:56:CC:01:02",
-          "rackUnit": 18,
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "waf-1": {
-          "shape": "firewall",
-          "name": "WAF Appliance",
-          "ip": "172.16.0.5",
-          "role": "Web Application Firewall",
-          "tags": [
-            "dmz",
-            "security",
-            "waf"
-          ],
-          "notes": [
-            "F5 BIG-IP ASM",
-            "OWASP protection"
-          ],
-          "mac": "00:50:56:CC:02:01",
-          "rackUnit": 22,
-          "uHeight": "2",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "load-balancer-dmz": {
-          "shape": "switch",
-          "name": "DMZ Load Balancer",
-          "ip": "172.16.0.3",
-          "role": "Load Balancing",
-          "tags": [
-            "dmz",
-            "lb",
-            "f5"
-          ],
-          "notes": [
-            "F5 BIG-IP LTM",
-            "VIP: 172.16.0.100"
-          ],
-          "mac": "00:50:56:CC:03:01",
-          "rackUnit": 16,
-          "uHeight": "2",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "mail-gateway": {
-          "shape": "server",
-          "name": "Mail Gateway",
-          "ip": "172.16.0.25",
-          "role": "Email Security",
-          "tags": [
-            "dmz",
-            "email",
-            "security"
-          ],
-          "notes": [
-            "Proofpoint Email Gateway",
-            "Spam/malware filtering"
-          ],
-          "mac": "00:50:56:CC:04:01",
-          "rackUnit": 14,
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dns-external-1": {
-          "shape": "circle",
-          "name": "External DNS 1",
-          "ip": "172.16.0.53",
-          "role": "External DNS",
-          "tags": [
-            "dmz",
-            "dns",
-            "public"
-          ],
-          "notes": [
-            "BIND DNS",
-            "Authoritative for corp.com"
-          ],
-          "mac": "00:50:56:CC:05:01",
-          "rackUnit": 12,
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dns-external-2": {
-          "shape": "circle",
-          "name": "External DNS 2",
-          "ip": "172.16.0.54",
-          "role": "External DNS",
-          "tags": [
-            "dmz",
-            "dns",
-            "public"
-          ],
-          "notes": [
-            "BIND DNS",
-            "Secondary for corp.com"
-          ],
-          "mac": "00:50:56:CC:05:02",
-          "rackUnit": 10,
-          "uHeight": "1",
-          "layer": "security",
-          "assignedRack": "dmz-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "vcenter": {
-          "shape": "server",
-          "name": "vCenter Server",
-          "ip": "192.168.100.10",
-          "role": "Virtualization Management",
-          "tags": [
-            "management",
-            "vmware",
-            "vcsa"
-          ],
-          "notes": [
-            "vCenter Server Appliance 8.0",
-            "Single SSO domain"
-          ],
-          "mac": "00:50:56:DD:01:01",
-          "rackUnit": 20,
-          "uHeight": "2",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "nsx-manager": {
-          "shape": "server",
-          "name": "NSX Manager",
-          "ip": "192.168.100.15",
-          "role": "Network Virtualization",
-          "tags": [
-            "management",
-            "vmware",
-            "nsx"
-          ],
-          "notes": [
-            "NSX-T 4.1 Manager Cluster"
-          ],
-          "mac": "00:50:56:DD:02:01",
-          "rackUnit": 17,
-          "uHeight": "2",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "siem-server": {
-          "shape": "server",
-          "name": "SIEM Server",
-          "ip": "192.168.100.50",
-          "role": "Security Monitoring",
-          "tags": [
-            "management",
-            "security",
-            "splunk"
-          ],
-          "notes": [
-            "Splunk Enterprise",
-            "Security monitoring"
-          ],
-          "mac": "00:50:56:DD:03:01",
-          "rackUnit": 14,
-          "uHeight": "2",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "nms-server": {
-          "shape": "server",
-          "name": "Network Monitoring",
-          "ip": "192.168.100.60",
-          "role": "Network Management",
-          "tags": [
-            "management",
-            "monitoring",
-            "prtg"
-          ],
-          "notes": [
-            "PRTG Network Monitor",
-            "5000 sensors"
-          ],
-          "mac": "00:50:56:DD:04:01",
-          "rackUnit": 11,
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "jump-server": {
-          "shape": "server",
-          "name": "Jump Server",
-          "ip": "192.168.100.100",
-          "role": "Bastion Host",
-          "tags": [
-            "management",
-            "security",
-            "bastion"
-          ],
-          "notes": [
-            "Windows Server 2022",
-            "MFA enabled"
-          ],
-          "mac": "00:50:56:DD:05:01",
-          "rackUnit": 9,
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ipam-server": {
-          "shape": "server",
-          "name": "IPAM/DDI",
-          "ip": "192.168.100.70",
-          "role": "IP Management",
-          "tags": [
-            "management",
-            "dns",
-            "dhcp"
-          ],
-          "notes": [
-            "Infoblox DDI",
-            "DNS/DHCP/IPAM"
-          ],
-          "mac": "00:50:56:DD:06:01",
-          "rackUnit": 7,
-          "uHeight": "2",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "wlc-primary": {
-          "shape": "wifi",
-          "name": "WLC Primary",
-          "ip": "10.20.0.1",
-          "role": "Wireless Controller",
-          "tags": [
-            "wireless",
-            "cisco",
-            "9800"
-          ],
-          "notes": [
-            "Cisco C9800-40",
-            "Primary controller"
-          ],
-          "mac": "00:1A:2B:WL:01:01",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "wlc-secondary": {
-          "shape": "wifi",
-          "name": "WLC Secondary",
-          "ip": "10.20.0.2",
-          "role": "Wireless Controller",
-          "tags": [
-            "wireless",
-            "cisco",
-            "9800"
-          ],
-          "notes": [
-            "Cisco C9800-40",
-            "HA Secondary"
-          ],
-          "mac": "00:1A:2B:WL:01:02",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "mobile-zone-hq": {
-          "shape": "phone",
-          "name": "HQ Mobile Zone",
-          "ip": "10.20.10.0/24",
-          "role": "Mobile Device Zone",
-          "tags": [
-            "wireless",
-            "byod",
-            "mobile"
-          ],
-          "notes": [
-            "Corporate BYOD",
-            "MDM enrolled devices"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "mobile-zone-guest": {
-          "shape": "phone",
-          "name": "Guest WiFi Zone",
-          "ip": "10.30.0.0/24",
-          "role": "Guest Network",
-          "tags": [
-            "wireless",
-            "guest",
-            "isolated"
-          ],
-          "notes": [
-            "Captive portal",
-            "Internet only"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "mobile-zone-iot": {
-          "shape": "phone",
-          "name": "IoT Device Zone",
-          "ip": "10.40.0.0/24",
-          "role": "IoT Network",
-          "tags": [
-            "wireless",
-            "iot",
-            "building"
-          ],
-          "notes": [
-            "Building automation",
-            "Smart devices"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "branch-router-ny": {
-          "shape": "router",
-          "name": "NYC Branch Router",
-          "ip": "10.100.0.1",
-          "role": "Branch Gateway",
-          "tags": [
-            "branch",
-            "nyc",
-            "sd-wan"
-          ],
-          "notes": [
-            "Cisco Viptela vEdge",
-            "SD-WAN enabled"
-          ],
-          "mac": "00:1A:2B:BR:01:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "branch-router-la": {
-          "shape": "router",
-          "name": "LA Branch Router",
-          "ip": "10.101.0.1",
-          "role": "Branch Gateway",
-          "tags": [
-            "branch",
-            "la",
-            "sd-wan"
-          ],
-          "notes": [
-            "Cisco Viptela vEdge",
-            "SD-WAN enabled"
-          ],
-          "mac": "00:1A:2B:BR:02:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "branch-router-chi": {
-          "shape": "router",
-          "name": "Chicago Branch Router",
-          "ip": "10.102.0.1",
-          "role": "Branch Gateway",
-          "tags": [
-            "branch",
-            "chicago",
-            "sd-wan"
-          ],
-          "notes": [
-            "Cisco Viptela vEdge",
-            "SD-WAN enabled"
-          ],
-          "mac": "00:1A:2B:BR:03:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "branch-router-lon": {
-          "shape": "router",
-          "name": "London Branch Router",
-          "ip": "10.200.0.1",
-          "role": "Branch Gateway",
-          "tags": [
-            "branch",
-            "london",
-            "sd-wan"
-          ],
-          "notes": [
-            "Cisco Viptela vEdge",
-            "EMEA region"
-          ],
-          "mac": "00:1A:2B:BR:04:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "branch-router-tokyo": {
-          "shape": "router",
-          "name": "Tokyo Branch Router",
-          "ip": "10.201.0.1",
-          "role": "Branch Gateway",
-          "tags": [
-            "branch",
-            "tokyo",
-            "sd-wan"
-          ],
-          "notes": [
-            "Cisco Viptela vEdge",
-            "APAC region"
-          ],
-          "mac": "00:1A:2B:BR:05:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "cloud-aws": {
-          "shape": "cloud",
-          "name": "AWS Cloud",
-          "ip": "vpc-0a1b2c3d",
-          "role": "Public Cloud",
-          "tags": [
-            "cloud",
-            "aws",
-            "hybrid"
-          ],
-          "notes": [
-            "AWS US-East-1",
-            "VPC peering to HQ"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "cloud-azure": {
-          "shape": "cloud",
-          "name": "Azure Cloud",
-          "ip": "vnet-corp-prod",
-          "role": "Public Cloud",
-          "tags": [
-            "cloud",
-            "azure",
-            "hybrid"
-          ],
-          "notes": [
-            "Azure East US 2",
-            "ExpressRoute"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "cloud-gcp": {
-          "shape": "cloud",
-          "name": "GCP Cloud",
-          "ip": "vpc-gcp-corp",
-          "role": "Public Cloud",
-          "tags": [
-            "cloud",
-            "gcp",
-            "dev"
-          ],
-          "notes": [
-            "GCP us-central1",
-            "Dev/Test workloads"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "isp-primary": {
-          "shape": "globe",
-          "name": "ISP Primary",
+          "name": "DMZ Switch",
           "ip": "203.0.113.1",
-          "role": "Internet Uplink",
+          "role": "",
           "tags": [
-            "wan",
-            "internet",
-            "primary"
+            "dmz"
           ],
-          "notes": [
-            "AT&T MPLS",
-            "1 Gbps dedicated"
-          ],
+          "notes": [],
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "physical",
+          "layer": "layer1",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "isp-secondary": {
-          "shape": "globe",
-          "name": "ISP Secondary",
-          "ip": "198.51.100.1",
-          "role": "Internet Uplink",
+        "web": {
+          "shape": "server",
+          "name": "Web Server",
+          "ip": "203.0.113.3",
+          "role": "Customer portal",
           "tags": [
-            "wan",
-            "internet",
+            "dmz",
+            "web"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "mail": {
+          "shape": "server",
+          "name": "Mail Relay",
+          "ip": "203.0.113.4",
+          "role": "SMTP relay",
+          "tags": [
+            "dmz",
+            "mail"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "rproxy": {
+          "shape": "load-balancer",
+          "name": "Reverse Proxy",
+          "ip": "203.0.113.5",
+          "role": "TLS offload",
+          "tags": [
+            "dmz"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "vpn": {
+          "shape": "vpn",
+          "name": "Remote Access",
+          "ip": "203.0.113.6",
+          "role": "Client VPN",
+          "tags": [
+            "dmz",
+            "vpn"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "hv1": {
+          "shape": "server",
+          "name": "HV 01",
+          "ip": "10.20.20.11",
+          "role": "Hypervisor",
+          "tags": [
+            "cluster"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "hv2": {
+          "shape": "server",
+          "name": "HV 02",
+          "ip": "10.20.20.12",
+          "role": "Hypervisor",
+          "tags": [
+            "cluster"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "hv3": {
+          "shape": "server",
+          "name": "HV 03",
+          "ip": "10.20.20.13",
+          "role": "Hypervisor",
+          "tags": [
+            "cluster"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "dc01": {
+          "shape": "vm",
+          "name": "DC01",
+          "ip": "10.20.20.21",
+          "role": "Domain controller, DNS",
+          "tags": [
+            "identity"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "hv1",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fs01": {
+          "shape": "vm",
+          "name": "FS01",
+          "ip": "10.20.20.22",
+          "role": "File server",
+          "tags": [
+            "files"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "hv2",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "erp01": {
+          "shape": "vm",
+          "name": "ERP01",
+          "ip": "10.20.20.23",
+          "role": "ERP application",
+          "tags": [
+            "erp"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "hv3",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "srvsw": {
+          "shape": "switch",
+          "name": "Server Switch",
+          "ip": "10.20.0.21",
+          "role": "25G leaf",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "san": {
+          "shape": "database",
+          "name": "SAN",
+          "ip": "10.20.21.10",
+          "role": "iSCSI, 120 TB",
+          "tags": [
+            "storage"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "bkp": {
+          "shape": "nas",
+          "name": "Backup Appliance",
+          "ip": "10.20.21.20",
+          "role": "Immutable backups",
+          "tags": [
             "backup"
           ],
-          "notes": [
-            "Verizon Business",
-            "500 Mbps backup"
-          ],
+          "notes": [],
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "physical",
+          "layer": "layer1",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "dc-internal-1": {
-          "shape": "circle",
-          "name": "DC1 Int DNS",
-          "ip": "10.10.0.53",
-          "role": "Internal DNS/AD",
-          "tags": [
-            "dns",
-            "ad",
-            "dc1"
-          ],
-          "notes": [
-            "Windows Server 2022",
-            "Primary DC"
-          ],
-          "mac": "00:50:56:AD:01:01",
-          "rackUnit": 26,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dc-internal-2": {
-          "shape": "circle",
-          "name": "DC2 Int DNS",
-          "ip": "10.10.1.53",
-          "role": "Internal DNS/AD",
-          "tags": [
-            "dns",
-            "ad",
-            "dc2"
-          ],
-          "notes": [
-            "Windows Server 2022",
-            "Secondary DC"
-          ],
-          "mac": "00:50:56:AD:01:02",
-          "rackUnit": 26,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "app-server-1": {
-          "shape": "server",
-          "name": "App Server 01",
-          "ip": "10.10.0.101",
-          "role": "Application",
-          "tags": [
-            "app",
-            "iis",
-            "web"
-          ],
-          "notes": [
-            "Windows Server 2022",
-            "IIS Application"
-          ],
-          "mac": "00:50:56:AP:01:01",
-          "rackUnit": 24,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "app-server-2": {
-          "shape": "server",
-          "name": "App Server 02",
-          "ip": "10.10.0.102",
-          "role": "Application",
-          "tags": [
-            "app",
-            "iis",
-            "web"
-          ],
-          "notes": [
-            "Windows Server 2022",
-            "IIS Application"
-          ],
-          "mac": "00:50:56:AP:01:02",
-          "rackUnit": 22,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "db-server-1": {
-          "shape": "database",
-          "name": "SQL Server 01",
-          "ip": "10.10.0.201",
-          "role": "Database",
-          "tags": [
-            "db",
-            "sql",
-            "primary"
-          ],
-          "notes": [
-            "SQL Server 2022 Enterprise",
-            "AlwaysOn Primary"
-          ],
-          "mac": "00:50:56:DB:01:01",
-          "rackUnit": 20,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "db-server-2": {
-          "shape": "database",
-          "name": "SQL Server 02",
-          "ip": "10.10.1.201",
-          "role": "Database",
-          "tags": [
-            "db",
-            "sql",
-            "secondary"
-          ],
-          "notes": [
-            "SQL Server 2022 Enterprise",
-            "AlwaysOn Secondary"
-          ],
-          "mac": "00:50:56:DB:01:02",
-          "rackUnit": 24,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-master-1": {
-          "shape": "hexagon",
-          "name": "K8s Master 1",
-          "ip": "10.10.1.50",
-          "role": "Container Orchestration",
-          "tags": [
-            "kubernetes",
-            "master",
-            "container"
-          ],
-          "notes": [
-            "K8s Control Plane",
-            "etcd member"
-          ],
-          "mac": "00:50:56:K8:01:01",
-          "rackUnit": 21,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-master-2": {
-          "shape": "hexagon",
-          "name": "K8s Master 2",
-          "ip": "10.10.1.51",
-          "role": "Container Orchestration",
-          "tags": [
-            "kubernetes",
-            "master",
-            "container"
-          ],
-          "notes": [
-            "K8s Control Plane",
-            "etcd member"
-          ],
-          "mac": "00:50:56:K8:01:02",
-          "rackUnit": 19,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-master-3": {
-          "shape": "hexagon",
-          "name": "K8s Master 3",
-          "ip": "10.10.1.52",
-          "role": "Container Orchestration",
-          "tags": [
-            "kubernetes",
-            "master",
-            "container"
-          ],
-          "notes": [
-            "K8s Control Plane",
-            "etcd member"
-          ],
-          "mac": "00:50:56:K8:01:03",
-          "rackUnit": 17,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-worker-1": {
-          "shape": "server",
-          "name": "K8s Worker 1",
-          "ip": "10.10.1.60",
-          "role": "Container Workload",
-          "tags": [
-            "kubernetes",
-            "worker",
-            "container"
-          ],
-          "notes": [
-            "K8s Worker Node",
-            "64GB RAM"
-          ],
-          "mac": "00:50:56:K8:02:01",
-          "rackUnit": 15,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-worker-2": {
-          "shape": "server",
-          "name": "K8s Worker 2",
-          "ip": "10.10.1.61",
-          "role": "Container Workload",
-          "tags": [
-            "kubernetes",
-            "worker",
-            "container"
-          ],
-          "notes": [
-            "K8s Worker Node",
-            "64GB RAM"
-          ],
-          "mac": "00:50:56:K8:02:02",
-          "rackUnit": 13,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-worker-3": {
-          "shape": "server",
-          "name": "K8s Worker 3",
-          "ip": "10.10.1.62",
-          "role": "Container Workload",
-          "tags": [
-            "kubernetes",
-            "worker",
-            "container"
-          ],
-          "notes": [
-            "K8s Worker Node",
-            "64GB RAM"
-          ],
-          "mac": "00:50:56:K8:02:03",
-          "rackUnit": 11,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "k8s-worker-4": {
-          "shape": "server",
-          "name": "K8s Worker 4",
-          "ip": "10.10.1.63",
-          "role": "Container Workload",
-          "tags": [
-            "kubernetes",
-            "worker",
-            "container"
-          ],
-          "notes": [
-            "K8s Worker Node",
-            "64GB RAM"
-          ],
-          "mac": "00:50:56:K8:02:04",
-          "rackUnit": 9,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "proxy-server-1": {
-          "shape": "server",
-          "name": "Proxy Server 1",
-          "ip": "10.5.0.10",
-          "role": "Web Proxy",
-          "tags": [
-            "proxy",
-            "squid",
-            "filtering"
-          ],
-          "notes": [
-            "Squid Proxy",
-            "Content filtering"
-          ],
-          "mac": "00:50:56:PX:01:01",
+        "dist1": {
+          "shape": "switch",
+          "name": "Dist Floor 1",
+          "ip": "10.20.0.31",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "security",
+          "layer": "layer2",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "proxy-server-2": {
-          "shape": "server",
-          "name": "Proxy Server 2",
-          "ip": "10.5.0.11",
-          "role": "Web Proxy",
-          "tags": [
-            "proxy",
-            "squid",
-            "filtering"
-          ],
-          "notes": [
-            "Squid Proxy",
-            "HA pair"
-          ],
-          "mac": "00:50:56:PX:01:02",
+        "dist2": {
+          "shape": "switch",
+          "name": "Dist Floor 2",
+          "ip": "10.20.0.32",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
           "uHeight": "1",
-          "layer": "security",
+          "layer": "layer2",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "vpn-concentrator": {
-          "shape": "firewall",
-          "name": "VPN Concentrator",
-          "ip": "10.0.5.1",
-          "role": "Remote Access VPN",
+        "wlc": {
+          "shape": "router",
+          "name": "Wi Fi Controller",
+          "ip": "10.20.10.5",
+          "role": "Manages 18 APs",
           "tags": [
-            "vpn",
-            "remote",
-            "security"
+            "wifi"
           ],
-          "notes": [
-            "Cisco ASA 5555-X",
-            "AnyConnect SSL VPN"
-          ],
-          "mac": "00:1A:2B:VP:01:01",
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "security",
+          "uHeight": "1",
+          "layer": "layer2",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "nac-server": {
+        "pbx": {
           "shape": "server",
-          "name": "NAC Server",
-          "ip": "10.5.5.10",
-          "role": "Network Access Control",
+          "name": "Call Manager",
+          "ip": "10.20.40.5",
+          "role": "SIP and voicemail",
           "tags": [
-            "nac",
-            "ise",
-            "802.1x"
+            "voice"
           ],
-          "notes": [
-            "Cisco ISE 3.1",
-            "RADIUS/TACACS+"
-          ],
-          "mac": "00:50:56:NA:01:01",
+          "notes": [],
+          "mac": "",
           "rackUnit": "",
-          "uHeight": "2",
-          "layer": "security",
+          "uHeight": "1",
+          "layer": "layer4",
           "assignedRack": "",
-          "rackCapacity": "42",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "print-server": {
-          "shape": "server",
-          "name": "Print Server",
-          "ip": "10.10.0.150",
-          "role": "Print Services",
+        "sip": {
+          "shape": "cloud",
+          "name": "SIP Trunk",
+          "ip": "",
+          "role": "30 channels",
           "tags": [
-            "print",
-            "windows",
-            "services"
+            "voice"
           ],
-          "notes": [
-            "Windows Print Server",
-            "50+ printers"
-          ],
-          "mac": "00:50:56:PR:01:01",
-          "rackUnit": 18,
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
           "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "file-server": {
-          "shape": "database",
-          "name": "File Server",
-          "ip": "10.10.0.160",
-          "role": "File Services",
-          "tags": [
-            "file",
-            "smb",
-            "dfs"
-          ],
-          "notes": [
-            "Windows File Server",
-            "DFS namespace"
-          ],
-          "mac": "00:50:56:FS:01:01",
-          "rackUnit": 16,
-          "uHeight": "2",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ca-server": {
-          "shape": "server",
-          "name": "Certificate Authority",
-          "ip": "192.168.100.80",
-          "role": "PKI Infrastructure",
-          "tags": [
-            "pki",
-            "ca",
-            "security"
-          ],
-          "notes": [
-            "Windows CA",
-            "Enterprise Root CA"
-          ],
-          "mac": "00:50:56:CA:01:01",
-          "rackUnit": 5,
+        "acc1a": {
+          "shape": "switch",
+          "name": "Access 1A",
+          "ip": "10.20.0.41",
+          "role": "48 port PoE",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
           "uHeight": "1",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "sccm-server": {
-          "shape": "server",
-          "name": "SCCM Server",
-          "ip": "192.168.100.90",
-          "role": "Endpoint Management",
-          "tags": [
-            "sccm",
-            "patching",
-            "software"
-          ],
-          "notes": [
-            "MECM Primary Site",
-            "Software deployment"
-          ],
-          "mac": "00:50:56:SC:01:01",
-          "rackUnit": 3,
-          "uHeight": "2",
-          "layer": "logical",
-          "assignedRack": "mgmt-rack",
-          "rackCapacity": "24",
+        "acc1b": {
+          "shape": "switch",
+          "name": "Access 1B",
+          "ip": "10.20.0.42",
+          "role": "48 port PoE",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
           "isRack": false,
           "locked": false,
-          "groupId": null
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         },
-        "voip-cluster": {
+        "acc2a": {
+          "shape": "switch",
+          "name": "Access 2A",
+          "ip": "10.20.0.43",
+          "role": "48 port PoE",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "acc2b": {
+          "shape": "switch",
+          "name": "Access 2B",
+          "ip": "10.20.0.44",
+          "role": "48 port PoE",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "pcs": {
+          "shape": "pc",
+          "name": "Desktops",
+          "ip": "VLAN 30",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "phones": {
           "shape": "phone",
-          "name": "VoIP Cluster",
-          "ip": "10.50.0.0/24",
-          "role": "Voice Services",
-          "tags": [
-            "voip",
-            "cisco",
-            "ucm"
-          ],
-          "notes": [
-            "Cisco UCM Cluster",
-            "3000 endpoints"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "video-conf": {
-          "shape": "laptop",
-          "name": "Video Conference",
-          "ip": "10.51.0.0/24",
-          "role": "Video Services",
-          "tags": [
-            "video",
-            "webex",
-            "teams"
-          ],
-          "notes": [
-            "Webex/Teams integration",
-            "Meeting rooms"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "security-cameras": {
-          "shape": "camera",
-          "name": "Security Cameras",
-          "ip": "10.60.0.0/24",
-          "role": "Physical Security",
-          "tags": [
-            "cctv",
-            "surveillance",
-            "security"
-          ],
-          "notes": [
-            "150+ IP cameras",
-            "30-day retention"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "nvr-cluster": {
-          "shape": "server",
-          "name": "NVR Cluster",
-          "ip": "10.60.0.10",
-          "role": "Video Recording",
-          "tags": [
-            "nvr",
-            "surveillance",
-            "storage"
-          ],
-          "notes": [
-            "Milestone XProtect",
-            "500TB storage"
-          ],
-          "mac": "00:50:56:NV:01:01",
-          "rackUnit": 15,
-          "uHeight": "4",
-          "layer": "physical",
-          "assignedRack": "dc-rack-b2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dev-server-1": {
-          "shape": "server",
-          "name": "Dev Server 1",
-          "ip": "10.80.0.10",
-          "role": "Development",
-          "tags": [
-            "dev",
-            "gitlab",
-            "ci-cd",
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "dokku"
-            }
-          ],
-          "notes": [
-            "GitLab Server",
-            "CI/CD pipelines"
-          ],
-          "mac": "00:50:56:DV:01:01",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dev-server-2": {
-          "shape": "server",
-          "name": "Dev Server 2",
-          "ip": "10.80.0.11",
-          "role": "Development",
-          "tags": [
-            "dev",
-            "jenkins",
-            "ci-cd"
-          ],
-          "notes": [
-            "Jenkins Server",
-            "Build automation"
-          ],
-          "mac": "00:50:56:DV:01:02",
-          "rackUnit": "",
-          "uHeight": "2",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "test-environment": {
-          "shape": "hexagon",
-          "name": "Test Environment",
-          "ip": "10.81.0.0/24",
-          "role": "QA/Testing",
-          "tags": [
-            "test",
-            "qa",
-            "staging"
-          ],
-          "notes": [
-            "Staging environment",
-            "Pre-prod validation"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "erp-system": {
-          "shape": "database",
-          "name": "ERP System",
-          "ip": "10.90.0.10",
-          "role": "Business Application",
-          "tags": [
-            "erp",
-            "sap",
-            "business"
-          ],
-          "notes": [
-            "SAP S/4HANA",
-            "Financial/HR systems"
-          ],
-          "mac": "00:50:56:ER:01:01",
-          "rackUnit": "",
-          "uHeight": "4",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "crm-system": {
-          "shape": "database",
-          "name": "CRM System",
-          "ip": "10.91.0.10",
-          "role": "Business Application",
-          "tags": [
-            "crm",
-            "salesforce",
-            "business"
-          ],
-          "notes": [
-            "Salesforce integration",
-            "Sales/Marketing"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "application",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "endpoint-1000": {
-          "shape": "laptop",
-          "name": "Corporate Endpoints",
-          "ip": "10.70.0.0/22",
-          "role": "User Workstations",
-          "tags": [
-            "endpoints",
-            "workstations",
-            "users"
-          ],
-          "notes": [
-            "~1000 corporate laptops",
-            "Windows 11"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dist-switch-floor1": {
-          "shape": "switch",
-          "name": "Floor 1 Switch",
-          "ip": "10.1.1.1",
-          "role": "Distribution",
-          "tags": [
-            "distribution",
-            "floor-1",
-            "access"
-          ],
-          "notes": [
-            "Cisco C9300-48P",
-            "PoE+ enabled"
-          ],
-          "mac": "00:1A:2B:FL:01:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dist-switch-floor2": {
-          "shape": "switch",
-          "name": "Floor 2 Switch",
-          "ip": "10.1.2.1",
-          "role": "Distribution",
-          "tags": [
-            "distribution",
-            "floor-2",
-            "access"
-          ],
-          "notes": [
-            "Cisco C9300-48P",
-            "PoE+ enabled"
-          ],
-          "mac": "00:1A:2B:FL:02:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dist-switch-floor3": {
-          "shape": "switch",
-          "name": "Floor 3 Switch",
-          "ip": "10.1.3.1",
-          "role": "Distribution",
-          "tags": [
-            "distribution",
-            "floor-3",
-            "access"
-          ],
-          "notes": [
-            "Cisco C9300-48P",
-            "PoE+ enabled"
-          ],
-          "mac": "00:1A:2B:FL:03:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dist-switch-floor4": {
-          "shape": "switch",
-          "name": "Floor 4 Switch",
-          "ip": "10.1.4.1",
-          "role": "Distribution",
-          "tags": [
-            "distribution",
-            "floor-4",
-            "access"
-          ],
-          "notes": [
-            "Cisco C9300-48P",
-            "PoE+ enabled"
-          ],
-          "mac": "00:1A:2B:FL:04:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ap-floor1-zone1": {
-          "shape": "wifi",
-          "name": "AP Floor 1 Zone 1",
-          "ip": "10.20.1.10",
-          "role": "Wireless Access",
-          "tags": [
-            "wifi",
-            "ap",
-            "floor-1"
-          ],
-          "notes": [
-            "Cisco 9120AX",
-            "Wi-Fi 6"
-          ],
-          "mac": "00:1A:2B:AP:01:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ap-floor2-zone1": {
-          "shape": "wifi",
-          "name": "AP Floor 2 Zone 1",
-          "ip": "10.20.2.10",
-          "role": "Wireless Access",
-          "tags": [
-            "wifi",
-            "ap",
-            "floor-2"
-          ],
-          "notes": [
-            "Cisco 9120AX",
-            "Wi-Fi 6"
-          ],
-          "mac": "00:1A:2B:AP:02:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ap-floor3-zone1": {
-          "shape": "wifi",
-          "name": "AP Floor 3 Zone 1",
-          "ip": "10.20.3.10",
-          "role": "Wireless Access",
-          "tags": [
-            "wifi",
-            "ap",
-            "floor-3"
-          ],
-          "notes": [
-            "Cisco 9120AX",
-            "Wi-Fi 6"
-          ],
-          "mac": "00:1A:2B:AP:03:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ap-floor4-zone1": {
-          "shape": "wifi",
-          "name": "AP Floor 4 Zone 1",
-          "ip": "10.20.4.10",
-          "role": "Wireless Access",
-          "tags": [
-            "wifi",
-            "ap",
-            "floor-4"
-          ],
-          "notes": [
-            "Cisco 9120AX",
-            "Wi-Fi 6"
-          ],
-          "mac": "00:1A:2B:AP:04:01",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ups-dc-1": {
-          "shape": "rectangle",
-          "name": "UPS DC-1",
-          "ip": "192.168.200.10",
-          "role": "Power Management",
-          "tags": [
-            "power",
-            "ups",
-            "datacenter"
-          ],
-          "notes": [
-            "APC Symmetra",
-            "80kVA",
-            "30 min runtime"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "ups-dc-2": {
-          "shape": "rectangle",
-          "name": "UPS DC-2",
-          "ip": "192.168.200.11",
-          "role": "Power Management",
-          "tags": [
-            "power",
-            "ups",
-            "datacenter"
-          ],
-          "notes": [
-            "APC Symmetra",
-            "80kVA",
-            "Redundant"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "pdu-rack-a1": {
-          "shape": "rectangle",
-          "name": "PDU Rack A1",
-          "ip": "192.168.200.21",
-          "role": "Power Distribution",
-          "tags": [
-            "power",
-            "pdu",
-            "rack-a1"
-          ],
-          "notes": [
-            "APC Switched PDU",
-            "Per-outlet metering"
-          ],
-          "mac": "",
-          "rackUnit": 1,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a1",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "pdu-rack-a2": {
-          "shape": "rectangle",
-          "name": "PDU Rack A2",
-          "ip": "192.168.200.22",
-          "role": "Power Distribution",
-          "tags": [
-            "power",
-            "pdu",
-            "rack-a2"
-          ],
-          "notes": [
-            "APC Switched PDU",
-            "Per-outlet metering"
-          ],
-          "mac": "",
-          "rackUnit": 1,
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "dc-rack-a2",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "cooling-1": {
-          "shape": "rectangle",
-          "name": "CRAC Unit 1",
-          "ip": "192.168.200.30",
-          "role": "Cooling",
-          "tags": [
-            "cooling",
-            "hvac",
-            "datacenter"
-          ],
-          "notes": [
-            "Liebert CRV",
-            "Row-based cooling"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "cooling-2": {
-          "shape": "rectangle",
-          "name": "CRAC Unit 2",
-          "ip": "192.168.200.31",
-          "role": "Cooling",
-          "tags": [
-            "cooling",
-            "hvac",
-            "datacenter"
-          ],
-          "notes": [
-            "Liebert CRV",
-            "N+1 redundancy"
-          ],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "camera-a": {
-          "shape": "camera",
-          "name": "camera A",
-          "ip": "0.0.0.0",
+          "name": "IP Phones",
+          "ip": "VLAN 40",
           "role": "",
-          "tags": [],
+          "tags": [
+            "voice"
+          ],
           "notes": [],
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
           "ping": {
             "enabled": false,
             "protocol": "http",
@@ -7107,26 +3294,24 @@
             "timeout": 3000,
             "status": "unknown",
             "lastCheck": null
-          },
-          "locked": false,
-          "groupId": null,
-          "fovEnabled": true,
-          "fovRotation": 104,
-          "fovDistance": 500,
-          "fovSweep": 60,
-          "fovSpeed": 10,
-          "fovAnimate": true
+          }
         },
-        "camera-a-copy": {
-          "shape": "camera",
-          "name": "camera B",
-          "ip": "0.0.0.0",
+        "printer": {
+          "shape": "printer",
+          "name": "Printers",
+          "ip": "VLAN 50",
           "role": "",
           "tags": [],
           "notes": [],
           "mac": "",
           "rackUnit": "",
           "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
           "ping": {
             "enabled": false,
             "protocol": "http",
@@ -7134,1750 +3319,1456 @@
             "timeout": 3000,
             "status": "unknown",
             "lastCheck": null
-          },
+          }
+        },
+        "laptops": {
+          "shape": "laptop",
+          "name": "Docked Laptops",
+          "ip": "VLAN 30",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
           "locked": false,
           "groupId": null,
-          "fovEnabled": true,
-          "fovRotation": 162,
-          "fovDistance": 500,
-          "fovSweep": 60,
-          "fovSpeed": 10,
-          "fovAnimate": false
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "ap1": {
+          "shape": "access-point",
+          "name": "AP Floor 1",
+          "ip": "10.20.10.21",
+          "role": "",
+          "tags": [
+            "wifi"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "ap2": {
+          "shape": "access-point",
+          "name": "AP Floor 2",
+          "ip": "10.20.10.22",
+          "role": "",
+          "tags": [
+            "wifi"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "ap3": {
+          "shape": "access-point",
+          "name": "AP Lobby",
+          "ip": "10.20.10.23",
+          "role": "",
+          "tags": [
+            "wifi"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
         }
       },
       "edges": {
         "list": [
           {
-            "id": "isp1-router1",
-            "from": "isp-primary",
-            "to": "core-router-1",
-            "width": 6,
-            "color": "#10b981",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "Primary WAN link"
-            ],
-            "fromPort": "Gi0/0",
-            "toPort": "Gi1/0/1",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "isp2-router2",
-            "from": "isp-secondary",
-            "to": "core-router-2",
-            "width": 6,
-            "color": "#10b981",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "Backup WAN link"
-            ],
-            "fromPort": "Gi0/0",
-            "toPort": "Gi1/0/1",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-router2",
-            "from": "core-router-1",
-            "to": "core-router-2",
-            "width": 4,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "HSRP Peering"
-            ],
-            "fromPort": "Gi1/0/24",
-            "toPort": "Gi1/0/24",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-fw1",
-            "from": "core-router-1",
-            "to": "fw-external-1",
-            "width": 4,
-            "color": "#ef4444",
-            "direction": "both",
+            "id": "edge-hq-18",
+            "from": "ispa",
+            "to": "fw1",
+            "width": 5,
+            "color": "#22c55e",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
+            "label": "1 Gbps fiber",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "router2-fw2",
-            "from": "core-router-2",
-            "to": "fw-external-2",
-            "width": 4,
-            "color": "#ef4444",
-            "direction": "both",
+            "id": "edge-hq-19",
+            "from": "ispb",
+            "to": "fw2",
+            "width": 5,
+            "color": "#eab308",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
+            "label": "500 Mbps coax",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "fw1-fw2",
-            "from": "fw-external-1",
-            "to": "fw-external-2",
-            "width": 3,
-            "color": "#f59e0b",
-            "direction": "both",
+            "id": "edge-hq-20",
+            "from": "fw1",
+            "to": "fw2",
+            "width": 4,
+            "color": "#f43f5e",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "HA heartbeat"
-            ],
-            "fromPort": "",
-            "toPort": "",
+            "notes": [],
+            "fromPort": "ha0",
+            "toPort": "ha0",
             "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "HA sync",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "fw1-coresw1",
-            "from": "fw-external-1",
-            "to": "core-switch-1",
-            "width": 4,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fw2-coresw2",
-            "from": "fw-external-2",
-            "to": "core-switch-2",
-            "width": 4,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-coresw2",
-            "from": "core-switch-1",
-            "to": "core-switch-2",
+            "id": "edge-hq-21",
+            "from": "fw1",
+            "to": "core1",
             "width": 5,
             "color": "#3b82f6",
-            "direction": "both",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "VPC peer-link"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-fwint",
-            "from": "core-switch-1",
-            "to": "fw-internal",
-            "width": 3,
+            "id": "edge-hq-22",
+            "from": "fw2",
+            "to": "core2",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-23",
+            "from": "core1",
+            "to": "core2",
+            "width": 7,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "40G stack",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-24",
+            "from": "fw2",
+            "to": "dmzsw",
+            "width": 4,
             "color": "#ef4444",
-            "direction": "both",
+            "direction": "none",
             "type": "main",
             "notes": [],
-            "fromPort": "",
+            "fromPort": "port5",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
+            "label": "VLAN 100",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw2-fwint",
-            "from": "core-switch-2",
-            "to": "fw-internal",
-            "width": 3,
+            "id": "edge-hq-25",
+            "from": "dmzsw",
+            "to": "web",
+            "width": 4,
             "color": "#ef4444",
-            "direction": "both",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-racka1",
-            "from": "core-switch-1",
-            "to": "dc-rack-a1",
+            "id": "edge-hq-26",
+            "from": "dmzsw",
+            "to": "mail",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#ef4444",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw2-racka1",
-            "from": "core-switch-2",
-            "to": "dc-rack-a1",
+            "id": "edge-hq-27",
+            "from": "dmzsw",
+            "to": "rproxy",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#ef4444",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-racka2",
-            "from": "core-switch-1",
-            "to": "dc-rack-a2",
+            "id": "edge-hq-28",
+            "from": "dmzsw",
+            "to": "vpn",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#ef4444",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw2-racka2",
-            "from": "core-switch-2",
-            "to": "dc-rack-a2",
+            "id": "edge-hq-29",
+            "from": "core1",
+            "to": "srvsw",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "2 x 25G",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-30",
+            "from": "srvsw",
+            "to": "hv1",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#3b82f6",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-rackb1",
-            "from": "core-switch-1",
-            "to": "dc-rack-b1",
+            "id": "edge-hq-31",
+            "from": "srvsw",
+            "to": "hv2",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#3b82f6",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw2-rackb1",
-            "from": "core-switch-2",
-            "to": "dc-rack-b1",
+            "id": "edge-hq-32",
+            "from": "srvsw",
+            "to": "hv3",
             "width": 4,
-            "color": "#475569",
-            "direction": "both",
+            "color": "#3b82f6",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-rackb2",
-            "from": "core-switch-1",
-            "to": "dc-rack-b2",
-            "width": 4,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw2-rackb2",
-            "from": "core-switch-2",
-            "to": "dc-rack-b2",
-            "width": 4,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fw1-dmz",
-            "from": "fw-external-1",
-            "to": "dmz-rack",
-            "width": 3,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "DMZ segment"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fw2-dmz",
-            "from": "fw-external-2",
-            "to": "dmz-rack",
-            "width": 3,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "DMZ segment"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-mgmt",
-            "from": "core-switch-1",
-            "to": "mgmt-rack",
-            "width": 3,
-            "color": "#8b5cf6",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "OOB management"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-wlc1",
-            "from": "core-switch-1",
-            "to": "wlc-primary",
-            "width": 3,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw2-wlc2",
-            "from": "core-switch-2",
-            "to": "wlc-secondary",
-            "width": 3,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal",
-            "animate": true
-          },
-          {
-            "id": "wlc1-wlc2",
-            "from": "wlc-primary",
-            "to": "wlc-secondary",
-            "width": 2,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "HA pair"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "wlc1-mobile-hq",
-            "from": "wlc-primary",
-            "to": "mobile-zone-hq",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "wlc1-mobile-guest",
-            "from": "wlc-primary",
-            "to": "mobile-zone-guest",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "wlc1-mobile-iot",
-            "from": "wlc-primary",
-            "to": "mobile-zone-iot",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-branch-ny",
-            "from": "core-router-1",
-            "to": "branch-router-ny",
-            "width": 3,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "SD-WAN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-branch-la",
-            "from": "core-router-1",
-            "to": "branch-router-la",
-            "width": 3,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "SD-WAN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-branch-chi",
-            "from": "core-router-1",
-            "to": "branch-router-chi",
-            "width": 3,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "SD-WAN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-branch-lon",
-            "from": "core-router-1",
-            "to": "branch-router-lon",
-            "width": 3,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "SD-WAN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-branch-tokyo",
-            "from": "core-router-1",
-            "to": "branch-router-tokyo",
-            "width": 3,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "SD-WAN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "router1-aws",
-            "from": "core-router-1",
-            "to": "cloud-aws",
-            "width": 3,
+            "id": "edge-hq-33",
+            "from": "srvsw",
+            "to": "san",
+            "width": 5,
             "color": "#f97316",
-            "direction": "both",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Direct Connect"
-            ],
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "iSCSI",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-34",
+            "from": "srvsw",
+            "to": "bkp",
+            "width": 5,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "Backup",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-35",
+            "from": "core1",
+            "to": "dist1",
+            "width": 4,
+            "color": "#06b6d4",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-36",
+            "from": "core2",
+            "to": "dist2",
+            "width": 4,
+            "color": "#06b6d4",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-37",
+            "from": "core1",
+            "to": "dist2",
+            "width": 4,
+            "color": "#06b6d4",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "dashed",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "router2-azure",
-            "from": "core-router-2",
-            "to": "cloud-azure",
-            "width": 3,
-            "color": "#0ea5e9",
-            "direction": "both",
+            "id": "edge-hq-38",
+            "from": "core2",
+            "to": "dist1",
+            "width": 4,
+            "color": "#06b6d4",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "ExpressRoute"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "dashed",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "fwint-gcp",
-            "from": "fw-internal",
-            "to": "cloud-gcp",
-            "width": 2,
-            "color": "#22c55e",
-            "direction": "both",
-            "type": "main",
-            "notes": [
-              "VPN tunnel"
-            ],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "dashed",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-floor1",
-            "from": "core-switch-1",
-            "to": "dist-switch-floor1",
-            "width": 3,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-floor2",
-            "from": "core-switch-1",
-            "to": "dist-switch-floor2",
-            "width": 3,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw2-floor3",
-            "from": "core-switch-2",
-            "to": "dist-switch-floor3",
-            "width": 3,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw2-floor4",
-            "from": "core-switch-2",
-            "to": "dist-switch-floor4",
-            "width": 3,
-            "color": "#475569",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "floor1-endpoints",
-            "from": "dist-switch-floor1",
-            "to": "endpoint-1000",
-            "width": 2,
-            "color": "#94a3b8",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "floor1-ap1",
-            "from": "dist-switch-floor1",
-            "to": "ap-floor1-zone1",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "floor2-ap2",
-            "from": "dist-switch-floor2",
-            "to": "ap-floor2-zone1",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "floor3-ap3",
-            "from": "dist-switch-floor3",
-            "to": "ap-floor3-zone1",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "floor4-ap4",
-            "from": "dist-switch-floor4",
-            "to": "ap-floor4-zone1",
-            "width": 2,
-            "color": "#06b6d4",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwint-proxy1",
-            "from": "fw-internal",
-            "to": "proxy-server-1",
-            "width": 2,
-            "color": "#ef4444",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwint-proxy2",
-            "from": "fw-internal",
-            "to": "proxy-server-2",
-            "width": 2,
-            "color": "#ef4444",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwext1-vpn",
-            "from": "fw-external-1",
-            "to": "vpn-concentrator",
-            "width": 3,
+            "id": "edge-hq-39",
+            "from": "core2",
+            "to": "wlc",
+            "width": 4,
             "color": "#8b5cf6",
-            "direction": "both",
+            "direction": "none",
             "type": "main",
             "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
+            "label": "VLAN 10",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "coresw1-nac",
-            "from": "core-switch-1",
-            "to": "nac-server",
-            "width": 2,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-voip",
-            "from": "core-switch-1",
-            "to": "voip-cluster",
-            "width": 3,
-            "color": "#22c55e",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw2-video",
-            "from": "core-switch-2",
-            "to": "video-conf",
-            "width": 3,
-            "color": "#22c55e",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-cameras",
-            "from": "core-switch-1",
-            "to": "security-cameras",
-            "width": 2,
-            "color": "#94a3b8",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwint-dev1",
-            "from": "fw-internal",
-            "to": "dev-server-1",
-            "width": 2,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwint-dev2",
-            "from": "fw-internal",
-            "to": "dev-server-2",
-            "width": 2,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal",
-            "animate": true,
-            "animationSpeed": "1.5"
-          },
-          {
-            "id": "fwint-test",
-            "from": "fw-internal",
-            "to": "test-environment",
-            "width": 2,
-            "color": "#a855f7",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "coresw1-erp",
-            "from": "core-switch-1",
-            "to": "erp-system",
-            "width": 3,
-            "color": "#f59e0b",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
-          },
-          {
-            "id": "fwext1-crm",
-            "from": "fw-external-1",
-            "to": "crm-system",
-            "width": 2,
-            "color": "#f59e0b",
-            "direction": "both",
+            "id": "edge-hq-40",
+            "from": "core2",
+            "to": "pbx",
+            "width": 4,
+            "color": "#ec4899",
+            "direction": "none",
             "type": "main",
             "notes": [
-              "Salesforce cloud"
+              "Voice VLAN 40"
             ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-41",
+            "from": "pbx",
+            "to": "sip",
+            "width": 4,
+            "color": "#ec4899",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "SIP over TLS",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "ups1-racka1",
-            "from": "ups-dc-1",
-            "to": "dc-rack-a1",
-            "width": 2,
-            "color": "#fbbf24",
-            "direction": "forward",
+            "id": "edge-hq-42",
+            "from": "dist1",
+            "to": "acc1a",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Power feed A"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "ups2-racka2",
-            "from": "ups-dc-2",
-            "to": "dc-rack-a2",
-            "width": 2,
-            "color": "#fbbf24",
-            "direction": "forward",
+            "id": "edge-hq-43",
+            "from": "dist1",
+            "to": "acc1b",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Power feed B"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "ups1-rackb1",
-            "from": "ups-dc-1",
-            "to": "dc-rack-b1",
-            "width": 2,
-            "color": "#fbbf24",
-            "direction": "forward",
+            "id": "edge-hq-44",
+            "from": "dist2",
+            "to": "acc2a",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Power feed A"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal",
-            "animate": true,
-            "animationSpeed": "4"
+            "_pairTotal": 1
           },
           {
-            "id": "ups2-rackb2",
-            "from": "ups-dc-2",
-            "to": "dc-rack-b2",
-            "width": 2,
-            "color": "#fbbf24",
-            "direction": "forward",
+            "id": "edge-hq-45",
+            "from": "dist2",
+            "to": "acc2b",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Power feed B"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "solid",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "cooling1-racka1",
-            "from": "cooling-1",
-            "to": "dc-rack-a1",
-            "width": 2,
-            "color": "#38bdf8",
-            "direction": "forward",
+            "id": "edge-hq-46",
+            "from": "acc1a",
+            "to": "pcs",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Cooling zone"
-            ],
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-47",
+            "from": "acc1b",
+            "to": "phones",
+            "width": 4,
+            "color": "#ec4899",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-48",
+            "from": "acc2a",
+            "to": "printer",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-49",
+            "from": "acc2b",
+            "to": "laptops",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-50",
+            "from": "acc2b",
+            "to": "ap1",
+            "width": 4,
+            "color": "#8b5cf6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "g1/0/47",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "PoE",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-hq-51",
+            "from": "wlc",
+            "to": "ap2",
+            "width": 4,
+            "color": "#8b5cf6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "dotted",
+            "routing": "straight",
+            "label": "CAPWAP",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "cooling2-rackb1",
-            "from": "cooling-2",
-            "to": "dc-rack-b1",
-            "width": 2,
-            "color": "#38bdf8",
-            "direction": "forward",
+            "id": "edge-hq-52",
+            "from": "wlc",
+            "to": "ap3",
+            "width": 4,
+            "color": "#8b5cf6",
+            "direction": "none",
             "type": "main",
-            "notes": [
-              "Cooling zone"
-            ],
+            "notes": [],
             "fromPort": "",
             "toPort": "",
             "lineStyle": "dotted",
+            "routing": "straight",
             "_pairIndex": 0,
-            "_pairTotal": 1,
-            "routing": "orthogonal"
+            "_pairTotal": 1
           },
           {
-            "id": "custom-1765237881452",
-            "type": "custom",
-            "color": "#c800ff",
+            "id": "edge-hq-53",
+            "from": "wlc",
+            "to": "ap1",
             "width": 4,
-            "lineStyle": "solid",
-            "direction": "forward",
-            "points": [
-              {
-                "x": 3492.3994140625,
-                "y": 1526.9556884765625
-              },
-              {
-                "x": 3500.609619140625,
-                "y": 1830.7386474609375
-              },
-              {
-                "x": 3303.561279296875,
-                "y": 1732.2144775390625
-              }
-            ],
+            "color": "#8b5cf6",
+            "direction": "none",
+            "type": "main",
             "notes": [],
-            "routing": "orthogonal"
-          },
-          {
-            "id": "custom-1765239355462",
-            "type": "custom",
-            "color": "#f97316",
-            "width": 4,
-            "lineStyle": "solid",
-            "direction": "forward",
-            "points": [
-              {
-                "x": 2467.182861328125,
-                "y": 156.12173461914062
-              },
-              {
-                "x": 2146.36376953125,
-                "y": 146.32574462890625
-              },
-              {
-                "x": 2305.548828125,
-                "y": 244.28573608398438
-              }
-            ],
-            "notes": [],
-            "routing": "orthogonal"
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
           }
         ]
       },
       "positions": {
-        "core-router-1": {
-          "x": 3720.166015625,
-          "y": 245.9932403564453
-        },
-        "core-router-2": {
-          "x": 2499.883407638303,
-          "y": 329.99503430389154
-        },
-        "fw-external-1": {
-          "x": 3221.7385182723783,
-          "y": 1016.1364499992887
-        },
-        "fw-external-2": {
-          "x": 1915.5213706410505,
-          "y": 224.43528858865443
-        },
-        "fw-internal": {
-          "x": 1746.9168185079352,
-          "y": 477.5300527221864
-        },
-        "core-switch-1": {
-          "x": 449.39860669455675,
-          "y": 384.4578707617695
-        },
-        "core-switch-2": {
-          "x": 761.1664921394672,
-          "y": 180.89283910873155
-        },
-        "dc-rack-a1": {
-          "x": 783.7017241128451,
-          "y": 647.4086870405963
-        },
-        "dc-rack-a2": {
-          "x": 209.25701628255229,
-          "y": 228.01593190351014
-        },
-        "dc-rack-b1": {
-          "x": 3184.3186625759854,
-          "y": 1627.4495531027196
-        },
-        "dc-rack-b2": {
-          "x": 245.37065918741246,
-          "y": 499.6191264194081
-        },
-        "dmz-rack": {
-          "x": 2176.4105289561007,
-          "y": 610.8312056412005
-        },
-        "mgmt-rack": {
-          "x": 1601.2987201807314,
-          "y": 1281.4753424975324
-        },
-        "esxi-host-01": {
-          "x": 2162.2166789540615,
-          "y": 2608.110619289529
-        },
-        "esxi-host-02": {
-          "x": 2205.94717202368,
-          "y": 2689.67539624076
-        },
-        "esxi-host-03": {
-          "x": 2154.6015436939074,
-          "y": 2771.203009774913
-        },
-        "esxi-host-04": {
-          "x": 2195.986926025096,
-          "y": 2845
-        },
-        "tor-switch-a1": {
-          "x": 2146.8943639962963,
-          "y": 2845
-        },
-        "esxi-host-05": {
-          "x": 2185.9099961569727,
-          "y": 2845
-        },
-        "esxi-host-06": {
-          "x": 2139.099728450725,
-          "y": 2845
-        },
-        "esxi-host-07": {
-          "x": 2175.7223818764883,
-          "y": 2845
-        },
-        "esxi-host-08": {
-          "x": 2131.2222777148922,
-          "y": 2845
-        },
-        "tor-switch-a2": {
-          "x": 2165.4301485385085,
-          "y": 2845
-        },
-        "san-primary": {
-          "x": 2123.2667017518106,
-          "y": 2845
-        },
-        "san-secondary": {
-          "x": 2155.0394237844876,
-          "y": 2845
-        },
-        "fc-switch-1": {
-          "x": 2115.2377370375634,
-          "y": 2845
-        },
-        "fc-switch-2": {
-          "x": 2144.5563938942755,
-          "y": 2845
-        },
-        "backup-server-1": {
-          "x": 2107.1401637413705,
-          "y": 2845
-        },
-        "backup-server-2": {
-          "x": 2133.987300103025,
-          "y": 2845
-        },
-        "tape-library": {
-          "x": 2098.9788028796397,
-          "y": 2845
-        },
-        "tor-switch-b1": {
-          "x": 2123.338434885373,
-          "y": 2845
-        },
-        "tor-switch-b2": {
-          "x": 2090.7585134456995,
-          "y": 2845
-        },
-        "web-server-1": {
-          "x": 2112.6161382091163,
-          "y": 2845
-        },
-        "web-server-2": {
-          "x": 2082.484189516922,
-          "y": 2845
-        },
-        "waf-1": {
-          "x": 2101.826793760617,
-          "y": 2845
-        },
-        "load-balancer-dmz": {
-          "x": 2074.1607573409574,
-          "y": 2845
-        },
-        "mail-gateway": {
-          "x": 2090.97682514417,
-          "y": 2845
-        },
-        "dns-external-1": {
-          "x": 2065.7931724028163,
-          "y": 2845
-        },
-        "dns-external-2": {
-          "x": 2080.0726920576153,
-          "y": 2845
-        },
-        "vcenter": {
-          "x": 2057.3864164745437,
-          "y": 2845
-        },
-        "nsx-manager": {
-          "x": 2069.1208864464534,
-          "y": 2845
-        },
-        "siem-server": {
-          "x": 2048.945494649244,
-          "y": 2845
-        },
-        "nms-server": {
-          "x": 2058.1279286387635,
-          "y": 2845
-        },
-        "jump-server": {
-          "x": 2040.4754323612206,
-          "y": 2845
-        },
-        "ipam-server": {
-          "x": 2047.1003634632284,
-          "y": 2845
-        },
-        "wlc-primary": {
-          "x": 1575.9723612611924,
-          "y": 2306.135986328125
-        },
-        "wlc-secondary": {
-          "x": 1468.1361870166274,
-          "y": 1563.733642578125
-        },
-        "mobile-zone-hq": {
-          "x": 2354.901177346808,
-          "y": 2806.0078125
-        },
-        "mobile-zone-guest": {
-          "x": 2307.6605605284435,
-          "y": 2611.047119140625
-        },
-        "mobile-zone-iot": {
-          "x": 2229.397686389302,
-          "y": 2299.110107421875
-        },
-        "branch-router-ny": {
-          "x": 3151.903101363964,
-          "y": 633.6580810546875
-        },
-        "branch-router-la": {
-          "x": 3083.8876194705945,
-          "y": 506.90625
-        },
-        "branch-router-chi": {
-          "x": 3355.02409980103,
-          "y": 393.1805725097656
-        },
-        "branch-router-lon": {
-          "x": 3113.609823320121,
-          "y": 260.4093322753906
-        },
-        "branch-router-tokyo": {
-          "x": 3699.3234994733834,
-          "y": 471.4241027832031
-        },
-        "cloud-aws": {
-          "x": 3436.528122523513,
-          "y": 545.9614868164062
-        },
-        "cloud-azure": {
-          "x": 2592.566210818907,
-          "y": 2724.068115234375
-        },
-        "cloud-gcp": {
-          "x": 2827.3183770424234,
-          "y": 2731.397216796875
-        },
-        "isp-primary": {
-          "x": 3712.192068081962,
-          "y": 615.64990234375
-        },
-        "isp-secondary": {
-          "x": 2702.3789772348055,
-          "y": 467.890869140625
-        },
-        "dc-internal-1": {
-          "x": 1958.4243458877936,
-          "y": 2845
-        },
-        "dc-internal-2": {
-          "x": 1963.768951182132,
-          "y": 2845
-        },
-        "app-server-1": {
-          "x": 1947.3819379304134,
-          "y": 2845
-        },
-        "app-server-2": {
-          "x": 1955.2862087394126,
-          "y": 2845
-        },
-        "db-server-1": {
-          "x": 1936.3708569559828,
-          "y": 2845
-        },
-        "db-server-2": {
-          "x": 1946.8300873488822,
-          "y": 2845
-        },
-        "k8s-master-1": {
-          "x": 1925.397658583093,
-          "y": 2845
-        },
-        "k8s-master-2": {
-          "x": 1938.405621494142,
-          "y": 2845
-        },
-        "k8s-master-3": {
-          "x": 1914.4688758763386,
-          "y": 2845
-        },
-        "k8s-worker-1": {
-          "x": 1930.017826812177,
-          "y": 2845
-        },
-        "k8s-worker-2": {
-          "x": 1903.5910154567553,
-          "y": 2845
-        },
-        "k8s-worker-3": {
-          "x": 1921.6716971072178,
-          "y": 2845
-        },
-        "k8s-worker-4": {
-          "x": 1892.7705536280016,
-          "y": 2845
-        },
-        "proxy-server-1": {
-          "x": 1806.1152433697903,
-          "y": 653.7529296875
-        },
-        "proxy-server-2": {
-          "x": 2937.4207928721535,
-          "y": 2628.7880859375
-        },
-        "vpn-concentrator": {
-          "x": 3642.252088474593,
-          "y": 946.7255249023438
-        },
-        "nac-server": {
-          "x": 1153.2626148502184,
-          "y": 1172.1895751953125
-        },
-        "print-server": {
-          "x": 1896.9328460745962,
-          "y": 2845
-        },
-        "file-server": {
-          "x": 1860.7177871362182,
-          "y": 2845
-        },
-        "ca-server": {
-          "x": 1888.8027739274805,
-          "y": 2845
-        },
-        "sccm-server": {
-          "x": 1850.1909418511675,
-          "y": 2845
-        },
-        "voip-cluster": {
-          "x": 1777.038465328039,
-          "y": 1616.8961181640625
-        },
-        "video-conf": {
-          "x": 1993.8373941679588,
-          "y": 2244.936309814453
-        },
-        "security-cameras": {
-          "x": 1674.413336949044,
-          "y": 2046.0380859375
-        },
-        "nvr-cluster": {
-          "x": 1829.4110389706402,
-          "y": 2845
-        },
-        "dev-server-1": {
-          "x": 2800.5894350649614,
-          "y": 1175.623291015625
-        },
-        "dev-server-2": {
-          "x": 1945.0822182484326,
-          "y": 1164.5184783935547
-        },
-        "test-environment": {
-          "x": 2566.9100352578575,
-          "y": 885.2827758789062
-        },
-        "erp-system": {
-          "x": 789.9880103985649,
-          "y": 473.7113342285156
-        },
-        "crm-system": {
-          "x": 3514.6003232048542,
-          "y": 1137.7720947265625
-        },
-        "endpoint-1000": {
-          "x": 991.6812012057328,
-          "y": 2284.42236328125
-        },
-        "dist-switch-floor1": {
-          "x": 654.2091033261356,
-          "y": 2020.0086669921875
-        },
-        "dist-switch-floor2": {
-          "x": 853.8845527112826,
-          "y": 1843.2872314453125
-        },
-        "dist-switch-floor3": {
-          "x": 1899.4353951584517,
-          "y": 1456.5068359375
-        },
-        "dist-switch-floor4": {
-          "x": 488.5289313756234,
-          "y": 181.47256469726562
-        },
-        "ap-floor1-zone1": {
-          "x": 1140.16846970184,
-          "y": 2070.2916259765625
-        },
-        "ap-floor2-zone1": {
-          "x": 688.1952143592268,
-          "y": 2384.4775390625
-        },
-        "ap-floor3-zone1": {
-          "x": 2145.3803027919676,
-          "y": 1890.2816162109375
-        },
-        "ap-floor4-zone1": {
-          "x": 517.646146409649,
-          "y": 565.59716796875
-        },
-        "ups-dc-1": {
-          "x": 771.1406786539856,
-          "y": 295.9266662597656
-        },
-        "ups-dc-2": {
-          "x": 216.2410855890687,
-          "y": 330.3345947265625
-        },
-        "pdu-rack-a1": {
-          "x": 1804.774444371901,
-          "y": 2845
-        },
-        "pdu-rack-a2": {
-          "x": 1741.6184034693686,
-          "y": 2845
-        },
-        "cooling-1": {
-          "x": 245.7080801919958,
-          "y": 626.1914672851562
-        },
-        "cooling-2": {
-          "x": 1603.293611085831,
-          "y": 981.0621185302734
-        },
-        "camera-a": {
-          "x": 166.57075412676295,
-          "y": 145
-        },
-        "camera-a-copy": {
-          "x": 1040.653076171875,
-          "y": 738.42822265625
+        "ispa": {
+          "x": 900,
+          "y": 160
+        },
+        "ispb": {
+          "x": 1500,
+          "y": 160
+        },
+        "fw1": {
+          "x": 900,
+          "y": 400
+        },
+        "fw2": {
+          "x": 1500,
+          "y": 400
+        },
+        "core1": {
+          "x": 900,
+          "y": 660
+        },
+        "core2": {
+          "x": 1500,
+          "y": 660
+        },
+        "dmzsw": {
+          "x": 2420,
+          "y": 480
+        },
+        "web": {
+          "x": 2140,
+          "y": 380
+        },
+        "mail": {
+          "x": 2680,
+          "y": 380
+        },
+        "rproxy": {
+          "x": 2140,
+          "y": 580
+        },
+        "vpn": {
+          "x": 2680,
+          "y": 580
+        },
+        "hv1": {
+          "x": 180,
+          "y": 640
+        },
+        "hv2": {
+          "x": 420,
+          "y": 640
+        },
+        "hv3": {
+          "x": 660,
+          "y": 640
+        },
+        "dc01": {
+          "x": 180,
+          "y": 410
+        },
+        "fs01": {
+          "x": 420,
+          "y": 410
+        },
+        "erp01": {
+          "x": 660,
+          "y": 410
+        },
+        "srvsw": {
+          "x": 420,
+          "y": 880
+        },
+        "san": {
+          "x": 180,
+          "y": 880
+        },
+        "bkp": {
+          "x": 660,
+          "y": 880
+        },
+        "dist1": {
+          "x": 1050,
+          "y": 920
+        },
+        "dist2": {
+          "x": 1350,
+          "y": 920
+        },
+        "wlc": {
+          "x": 2000,
+          "y": 960
+        },
+        "pbx": {
+          "x": 2300,
+          "y": 960
+        },
+        "sip": {
+          "x": 2600,
+          "y": 960
+        },
+        "acc1a": {
+          "x": 900,
+          "y": 1370
+        },
+        "acc1b": {
+          "x": 1140,
+          "y": 1370
+        },
+        "acc2a": {
+          "x": 1380,
+          "y": 1370
+        },
+        "acc2b": {
+          "x": 1620,
+          "y": 1370
+        },
+        "pcs": {
+          "x": 900,
+          "y": 1530
+        },
+        "phones": {
+          "x": 1140,
+          "y": 1530
+        },
+        "printer": {
+          "x": 1380,
+          "y": 1530
+        },
+        "laptops": {
+          "x": 1620,
+          "y": 1530
+        },
+        "ap1": {
+          "x": 2000,
+          "y": 1420
+        },
+        "ap2": {
+          "x": 2280,
+          "y": 1420
+        },
+        "ap3": {
+          "x": 2560,
+          "y": 1420
         }
       },
       "sizes": {
-        "isp-secondary": 139,
-        "test-environment": 148,
-        "dev-server-1": 128,
-        "core-router-2": 120,
-        "camera-a": 45,
-        "camera-a-copy": 45
+        "ispa": 60,
+        "ispb": 60,
+        "fw1": 54,
+        "fw2": 54,
+        "core1": 54,
+        "core2": 54,
+        "dmzsw": 46,
+        "web": 44,
+        "mail": 44,
+        "rproxy": 44,
+        "vpn": 44,
+        "hv1": 46,
+        "hv2": 46,
+        "hv3": 46,
+        "dc01": 38,
+        "fs01": 38,
+        "erp01": 38,
+        "srvsw": 46,
+        "san": 44,
+        "bkp": 44,
+        "dist1": 46,
+        "dist2": 46,
+        "wlc": 44,
+        "pbx": 44,
+        "sip": 46,
+        "acc1a": 42,
+        "acc1b": 42,
+        "acc2a": 42,
+        "acc2b": 42,
+        "pcs": 34,
+        "phones": 32,
+        "printer": 34,
+        "laptops": 34,
+        "ap1": 40,
+        "ap2": 40,
+        "ap3": 40
       },
       "styles": {
-        "dc-rack-b2": {
-          "all": {
-            "circleColor": "#ff0000"
-          }
-        },
-        "dc-rack-a1": {
-          "all": {
-            "circleColor": "#ff0000"
-          }
-        },
-        "dc-rack-b1": {
-          "all": {
-            "circleColor": "#ff0000",
-            "titleSize": 59
-          }
-        },
-        "isp-secondary": {
+        "ispa": {
           "all": {
             "icon": {
-              "library": "selfhst",
-              "name": "alist"
+              "library": "mdi",
+              "name": "earth"
             }
           }
         },
-        "core-router-2": {
+        "ispb": {
           "all": {
             "icon": {
-              "library": "selfhst",
-              "name": "actual-budget"
-            },
-            "pingOffsetX": -15,
-            "pingOffsetY": -38
-          }
-        },
-        "fw-external-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "anonaddy"
+              "library": "mdi",
+              "name": "earth"
             }
           }
         },
-        "cloud-aws": {
+        "fw1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "wall-fire"
+            }
+          }
+        },
+        "fw2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "wall-fire"
+            }
+          }
+        },
+        "core1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "core2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "dmzsw": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "web": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "web"
+            }
+          }
+        },
+        "mail": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "email-fast"
+            }
+          }
+        },
+        "rproxy": {
           "all": {
             "icon": {
               "library": "selfhst",
-              "name": "ansible"
+              "name": "nginx"
             }
           }
         },
-        "isp-primary": {
+        "vpn": {
           "all": {
             "icon": {
-              "library": "selfhst",
-              "name": "wikidocs"
+              "library": "mdi",
+              "name": "vpn"
             }
           }
         },
-        "branch-router-tokyo": {
+        "hv1": {
           "all": {
             "icon": {
-              "library": "selfhst",
-              "name": "adguard-home"
+              "library": "mdi",
+              "name": "server"
             }
           }
         },
-        "core-router-1": {
+        "hv2": {
           "all": {
             "icon": {
-              "library": "selfhst",
-              "name": "borg"
+              "library": "mdi",
+              "name": "server"
             }
           }
         },
-        "test-environment": {
+        "hv3": {
           "all": {
             "icon": {
-              "library": "simple",
-              "name": "apple"
+              "library": "mdi",
+              "name": "server"
             }
           }
         },
-        "dev-server-1": {
+        "dc01": {
           "all": {
             "icon": {
-              "library": "simple",
-              "name": "amazonwebservices"
+              "library": "mdi",
+              "name": "account-key"
+            }
+          }
+        },
+        "fs01": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "folder-network"
+            }
+          }
+        },
+        "erp01": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "application-cog"
+            }
+          }
+        },
+        "srvsw": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "san": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "database"
+            }
+          }
+        },
+        "bkp": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "backup-restore"
+            }
+          }
+        },
+        "dist1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "dist2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "wlc": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "router-wireless"
+            }
+          }
+        },
+        "pbx": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "phone-voip"
+            }
+          }
+        },
+        "sip": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "phone-classic"
+            }
+          }
+        },
+        "acc1a": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "acc1b": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "acc2a": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "acc2b": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "pcs": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "desktop-classic"
+            }
+          }
+        },
+        "phones": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "deskphone"
+            }
+          }
+        },
+        "printer": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "printer"
+            }
+          }
+        },
+        "laptops": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "laptop"
+            }
+          }
+        },
+        "ap1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "ap2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "ap3": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
             }
           }
         }
       },
       "legend": {
-        "#10b981": "Trusted Lan",
-        "#f59e0b": "Secure Lan",
+        "#22c55e": "ISP A fiber",
+        "#eab308": "ISP B coax",
+        "#f43f5e": "HA and state sync",
+        "#3b82f6": "40G and 10G core",
+        "#06b6d4": "10G distribution",
+        "#14b8a6": "1G and PoE access",
         "#ef4444": "DMZ",
-        "#475569": "Main ISP",
-        "#3b82f6": "Alternate ISP",
-        "#8b5cf6": "you can edit me too",
-        "#06b6d4": "you can edit me too",
-        "#a855f7": "you can edit me too",
-        "#f97316": "you can edit me too",
-        "#0ea5e9": "you can edit me too",
-        "#22c55e": "you can edit me too",
-        "#94a3b8": "you can edit me too",
-        "#fbbf24": "you can edit me too",
-        "#38bdf8": "you can edit me too",
-        "#c800ff": "you can edit me too"
+        "#f97316": "Storage network",
+        "#8b5cf6": "Wireless",
+        "#ec4899": "Voice"
       },
       "rects": {
         "list": [
           {
-            "id": "rect-1765237540610",
-            "x": 2879.214599609375,
-            "y": 159.71981811523438,
-            "width": 992.196044921875,
-            "height": 538.8650817871094,
-            "color": "#f97316",
+            "id": "rect-hq-3",
+            "x": 40,
+            "y": 250,
+            "width": 760,
+            "height": 760,
+            "color": "#3b82f6",
             "style": "filled",
-            "lineStyle": "solid",
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
             "notes": []
           },
           {
-            "id": "rect-1765237681216",
-            "x": 448.3926696777344,
-            "y": 1671.651123046875,
-            "width": 916.3436584472656,
-            "height": 924.27734375,
-            "color": "#c800ff",
-            "style": "outlined",
-            "lineStyle": "solid",
+            "id": "rect-hq-6",
+            "x": 1840,
+            "y": 230,
+            "width": 920,
+            "height": 440,
+            "color": "#ef4444",
+            "style": "filled",
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
             "notes": []
           },
           {
-            "id": "rect-1766437913740",
-            "x": 904.5889892578125,
-            "y": 115.40318298339844,
-            "width": 110.93878173828125,
-            "height": 919.6242218017578,
-            "color": "#5215f9",
+            "id": "rect-hq-9",
+            "x": 1840,
+            "y": 740,
+            "width": 920,
+            "height": 380,
+            "color": "#ec4899",
             "style": "filled",
-            "lineStyle": "wall",
-            "notes": [],
-            "borderWidth": 13
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
+            "notes": []
           },
           {
-            "id": "rect-1766437935414",
-            "x": 130.93685150146484,
-            "y": 1072.3624877929688,
-            "width": 872.9131851196289,
-            "height": 99.260986328125,
-            "color": "#5215f9",
+            "id": "rect-hq-12",
+            "x": 780,
+            "y": 1200,
+            "width": 960,
+            "height": 420,
+            "color": "#14b8a6",
             "style": "filled",
-            "lineStyle": "wall",
-            "notes": [],
-            "borderWidth": 13
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-hq-15",
+            "x": 1840,
+            "y": 1200,
+            "width": 920,
+            "height": 420,
+            "color": "#8b5cf6",
+            "style": "filled",
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
+            "notes": []
           }
         ]
       },
       "texts": {
         "list": [
           {
-            "id": "text-1765237828167",
-            "x": 3411.458740234375,
-            "y": 1390.00439453125,
-            "content": "Double click on desktop\nor long press on mobile\nto enter rack canvas view",
+            "id": "text-hq-1",
+            "x": 60,
+            "y": 100,
+            "content": "Larkspur Logistics HQ",
             "fontSize": 46,
             "color": "#e2e8f0",
             "fontWeight": "bold",
-            "fontStyle": "italic",
-            "textAlign": "middle",
+            "fontStyle": "normal",
+            "textAlign": "start",
             "textDecoration": "none",
             "bgColor": "#000000",
             "bgEnabled": false,
             "opacity": 1
           },
           {
-            "id": "text-1765239331126",
-            "x": 2454.5615234375,
-            "y": 160.73322105407715,
-            "content": "Google is live!",
-            "fontSize": 56,
+            "id": "text-hq-2",
+            "x": 60,
+            "y": 150,
+            "content": "Internet edge, DMZ, core, server room, Wi Fi and voice",
+            "fontSize": 20,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-4",
+            "x": 58,
+            "y": 284,
+            "content": "Server Room",
+            "fontSize": 24,
+            "color": "#3b82f6",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-5",
+            "x": 58,
+            "y": 314,
+            "content": "VLAN 20  10.20.20.0/24",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-7",
+            "x": 1858,
+            "y": 264,
+            "content": "DMZ  VLAN 100",
+            "fontSize": 24,
+            "color": "#ef4444",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-8",
+            "x": 1858,
+            "y": 294,
+            "content": "203.0.113.0/29 published services",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-10",
+            "x": 1858,
+            "y": 774,
+            "content": "Wi Fi and Voice",
+            "fontSize": 24,
+            "color": "#ec4899",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-11",
+            "x": 1858,
+            "y": 804,
+            "content": "Controllers and call control",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-13",
+            "x": 798,
+            "y": 1234,
+            "content": "Floors 1 and 2",
+            "fontSize": 24,
+            "color": "#14b8a6",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-14",
+            "x": 798,
+            "y": 1264,
+            "content": "User VLAN 30, voice VLAN 40, print VLAN 50",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-16",
+            "x": 1858,
+            "y": 1234,
+            "content": "Access Points",
+            "fontSize": 24,
+            "color": "#8b5cf6",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-17",
+            "x": 1858,
+            "y": 1264,
+            "content": "Corporate, guest and IoT SSIDs",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-hq-54",
+            "x": 60,
+            "y": 1150,
+            "content": "Site summary",
+            "fontSize": 24,
             "color": "#e2e8f0",
             "fontWeight": "bold",
             "fontStyle": "normal",
@@ -8888,12 +4779,12 @@
             "opacity": 1
           },
           {
-            "id": "text-1766446595277",
-            "x": 654.3878479003906,
-            "y": 1367.7945556640625,
-            "content": "SITE A",
-            "fontSize": 101,
-            "color": "#e2e8f0",
+            "id": "text-hq-55",
+            "x": 60,
+            "y": 1190,
+            "content": "VLAN 10  Management\nVLAN 20  Servers\nVLAN 30  Users\nVLAN 40  Voice\nVLAN 50  Printers\nVLAN 100  DMZ\n\n220 staff, 2 floors, 18 APs",
+            "fontSize": 18,
+            "color": "#cbd5e1",
             "fontWeight": "normal",
             "fontStyle": "normal",
             "textAlign": "start",
@@ -8901,77 +4792,14 @@
             "bgColor": "#000000",
             "bgEnabled": false,
             "opacity": 1
-          },
-          {
-            "id": "text-1766446610211",
-            "x": 180.63662719726562,
-            "y": 1128.822998046875,
-            "content": "SITE A",
-            "fontSize": 101,
-            "color": "#e2e8f0",
-            "fontWeight": "normal",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1
-          },
-          {
-            "id": "text-1766453024797",
-            "x": 968.6458740234375,
-            "y": 1028.6621398925781,
-            "content": "SITE A",
-            "fontSize": 101,
-            "color": "#e2e8f0",
-            "fontWeight": "normal",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1,
-            "rotation": -89,
-            "_dragStartX": 972.46826171875,
-            "_dragStartY": 1009.5499572753906
-          },
-          {
-            "id": "text-1766453070975",
-            "x": 613.1589965820312,
-            "y": 1139.512939453125,
-            "content": "SITE A",
-            "fontSize": 101,
-            "color": "#e2e8f0",
-            "fontWeight": "normal",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1
-          },
-          {
-            "id": "text-1766453072857",
-            "x": 968.64599609375,
-            "y": 474.40818786621094,
-            "content": "SITE A",
-            "fontSize": 101,
-            "color": "#e2e8f0",
-            "fontWeight": "normal",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1,
-            "rotation": 269,
-            "_dragStartX": 1480.85302734375,
-            "_dragStartY": 822.2503356933594
           }
         ]
       },
+      "images": {
+        "list": []
+      },
       "pageState": {
-        "title": "The One File Corporate",
+        "title": "Larkspur Logistics Network",
         "background": "",
         "topbarBg": "rgba(9, 12, 20, 0.9)",
         "topbarBorder": "#1f2533",
@@ -9002,796 +4830,7 @@
         "danger": "#f56565",
         "textMain": "#e2e8f0",
         "textSoft": "#94a3b8",
-        "topbarHeight": 103,
-        "sidebarWidth": 350,
-        "mobileFooterHeight": 40,
-        "sidebarCollapsed": false,
-        "nodeFill": "#1e293b",
-        "nodeStroke": "#475569",
-        "nodeTitle": "#e2e8f0",
-        "nodeSub": "#94a3b8",
-        "nodeTitleSize": 41,
-        "nodeSubSize": 27,
-        "nodeFont": "monospace",
-        "defaultEdge": "#475569",
-        "selectionHandle": "#f59e0b",
-        "selectionHandleSize": 8,
-        "groupIndicator": "#4fd1c5",
-        "canvasGradientTop": "#1e2532",
-        "canvasGradientBottom": "#050608",
-        "canvasBorder": "#475569",
-        "canvasGrid": "#475569",
-        "canvasGridSize": 50,
-        "canvasGridEnabled": true,
-        "rackFrameFill": "#0f172a",
-        "rackFrameStroke": "#4fd1c5",
-        "rackLineColor": "#475569",
-        "rackTextColor": "#4fd1c5",
-        "rackGridEnabled": true,
-        "viewOnly": false,
-        "defaultEdgeRouting": "orthogonal",
-        "animateConnections": false,
-        "animationStyle": "arrows",
-        "animationDirection": "all",
-        "animationSpeed": 4,
-        "autoPingEnabled": false,
-        "autoPingInterval": 30
-      }
-    },
-    {
-      "id": "tab-1765235136918",
-      "name": "Homelab 2",
-      "nodes": {
-        "internet": {
-          "shape": "square",
-          "name": "Internet",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "internet-copy": {
-          "shape": "firewall",
-          "name": "OPNSENSE",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "opnsense-copy": {
-          "shape": "firewall",
-          "name": "Docker",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "docker-copy": {
-          "shape": "firewall",
-          "name": "Docker2",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "docker-copy-1": {
-          "shape": "firewall",
-          "name": "Docker3",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "docker-copy-2": {
-          "shape": "firewall",
-          "name": "Docker 4",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "docker"
-            },
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "authentik"
-            },
-            {
-              "type": "icon",
-              "library": "selfhst",
-              "name": "immich"
-            }
-          ],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "opnsense-copy-1": {
-          "shape": "firewall",
-          "name": "OPNSENSE GUEST",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "phone": {
-          "shape": "phone",
-          "name": "Phone",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "desktop": {
-          "shape": "pc",
-          "name": "Desktop",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "dns": {
-          "shape": "cloud",
-          "name": "DNS",
-          "ip": "0.0.0.0",
-          "role": "",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": false,
-          "locked": false,
-          "groupId": null
-        },
-        "racked": {
-          "shape": "server",
-          "name": "Racked",
-          "ip": "",
-          "role": "Rack",
-          "tags": [],
-          "notes": [],
-          "mac": "",
-          "rackUnit": "",
-          "uHeight": "1",
-          "layer": "physical",
-          "assignedRack": "",
-          "rackCapacity": "42",
-          "isRack": true,
-          "locked": false,
-          "groupId": null
-        }
-      },
-      "edges": {
-        "list": [
-          {
-            "id": "internet-internet-copy-1765238145151",
-            "from": "internet",
-            "to": "internet-copy",
-            "width": 4,
-            "color": "#55e208",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "internet-copy-opnsense-copy-1765238187451",
-            "from": "internet-copy",
-            "to": "opnsense-copy",
-            "width": 4,
-            "color": "#4c00ff",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "internet-copy-docker-copy-1765238242477",
-            "from": "internet-copy",
-            "to": "docker-copy",
-            "width": 4,
-            "color": "#4c00ff",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "internet-copy-docker-copy-1-1765238244637",
-            "from": "internet-copy",
-            "to": "docker-copy-1",
-            "width": 4,
-            "color": "#4c00ff",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "internet-copy-docker-copy-2-1765238246233",
-            "from": "internet-copy",
-            "to": "docker-copy-2",
-            "width": 4,
-            "color": "#4c00ff",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "internet-opnsense-copy-1-1765238266117",
-            "from": "internet",
-            "to": "opnsense-copy-1",
-            "width": 4,
-            "color": "#80ff00",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "opnsense-copy-1-dns-1765238347996",
-            "from": "opnsense-copy-1",
-            "to": "dns",
-            "width": 4,
-            "color": "#fb00ff",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "dns-desktop-1765238386101",
-            "from": "dns",
-            "to": "desktop",
-            "width": 4,
-            "color": "#ff00d0",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "phone-dns-1765238391156",
-            "from": "phone",
-            "to": "dns",
-            "width": 4,
-            "color": "#ff00d0",
-            "direction": "both",
-            "type": "main",
-            "notes": [],
-            "fromPort": "",
-            "toPort": "",
-            "lineStyle": "solid",
-            "_pairIndex": 0,
-            "_pairTotal": 1
-          },
-          {
-            "id": "custom-1765239449323",
-            "type": "custom",
-            "color": "#f97316",
-            "width": 4,
-            "lineStyle": "solid",
-            "direction": "forward",
-            "points": [
-              {
-                "x": 2936.464111328125,
-                "y": 786.07958984375
-              },
-              {
-                "x": 3184.112060546875,
-                "y": 887.6153564453125
-              },
-              {
-                "x": 2763.110107421875,
-                "y": 981.7216796875
-              }
-            ],
-            "notes": []
-          }
-        ]
-      },
-      "positions": {
-        "internet": {
-          "x": 2103.968290880771,
-          "y": 268
-        },
-        "internet-copy": {
-          "x": 2066.9677515897347,
-          "y": 473.4119134177565
-        },
-        "opnsense-copy": {
-          "x": 1773.8400660428597,
-          "y": 666.5758233298659
-        },
-        "docker-copy": {
-          "x": 1931.1978950081452,
-          "y": 782.2775961320921
-        },
-        "docker-copy-1": {
-          "x": 2158.1262397347077,
-          "y": 767.7122274797483
-        },
-        "docker-copy-2": {
-          "x": 2342.2663764534577,
-          "y": 631.7681967180296
-        },
-        "opnsense-copy-1": {
-          "x": 2757.879480087803,
-          "y": 307.6117116091891
-        },
-        "phone": {
-          "x": 3312.857751572178,
-          "y": 502.58220111114224
-        },
-        "desktop": {
-          "x": 2971.700036728428,
-          "y": 480.7287465212985
-        },
-        "dns": {
-          "x": 3200.4643189549906,
-          "y": 320.469591247861
-        },
-        "racked": {
-          "x": 2645.5845448279656,
-          "y": 970.7820678889219
-        }
-      },
-      "sizes": {
-        "core-router-1": 36,
-        "internet": 168,
-        "phone": 121,
-        "desktop": 147,
-        "racked": 137,
-        "docker-copy-2": 82
-      },
-      "styles": {
-        "internet": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "amazon-web-services"
-            },
-            "circleColor": "#ffffff",
-            "circleBorder": "#ffffff"
-          }
-        },
-        "opnsense-copy-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "opnsense-v1"
-            }
-          }
-        },
-        "internet-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "opnsense"
-            }
-          }
-        },
-        "docker-copy-2": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "docker"
-            }
-          }
-        },
-        "docker-copy-1": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "authportal"
-            }
-          }
-        },
-        "docker-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "jotty"
-            }
-          }
-        },
-        "opnsense-copy": {
-          "all": {
-            "icon": {
-              "library": "selfhst",
-              "name": "portainer"
-            }
-          }
-        },
-        "racked": {
-          "all": {
-            "icon": {
-              "library": "mdi",
-              "name": "server-security"
-            },
-            "circleColor": "#010813",
-            "circleBorder": "#ffffff"
-          }
-        }
-      },
-      "legend": {
-        "#475569": "you can edit me too",
-        "#65758b": "you can edit me too",
-        "#63748c": "you can edit me too",
-        "#5e6f87": "you can edit me too",
-        "#586a84": "you can edit me too",
-        "#4f627d": "you can edit me too",
-        "#455873": "you can edit me too",
-        "#3d506c": "you can edit me too",
-        "#354964": "you can edit me too",
-        "#2e415c": "you can edit me too",
-        "#293c56": "you can edit me too",
-        "#273a53": "you can edit me too",
-        "#253750": "you can edit me too",
-        "#23354d": "you can edit me too",
-        "#203046": "you can edit me too",
-        "#1e2d43": "you can edit me too",
-        "#1a283d": "you can edit me too",
-        "#172435": "you can edit me too",
-        "#141f2e": "you can edit me too",
-        "#111a27": "you can edit me too",
-        "#0f1824": "you can edit me too",
-        "#0d1521": "you can edit me too",
-        "#0c131d": "you can edit me too",
-        "#0c1d1c": "you can edit me too",
-        "#0c1c1d": "you can edit me too",
-        "#0c191d": "you can edit me too",
-        "#0c141d": "you can edit me too",
-        "#0c0d1d": "you can edit me too",
-        "#130c1d": "you can edit me too",
-        "#1b0c1d": "you can edit me too",
-        "#1d0c17": "you can edit me too",
-        "#1d0c10": "you can edit me too",
-        "#1d0c0c": "you can edit me too",
-        "#3b1b1b": "you can edit me too",
-        "#3c1a1a": "you can edit me too",
-        "#3f1c1c": "you can edit me too",
-        "#401c1c": "you can edit me too",
-        "#451c1c": "you can edit me too",
-        "#461b1b": "you can edit me too",
-        "#4c1a1a": "you can edit me too",
-        "#521919": "you can edit me too",
-        "#571919": "you can edit me too",
-        "#5d1818": "you can edit me too",
-        "#631717": "you can edit me too",
-        "#651515": "you can edit me too",
-        "#6a1616": "you can edit me too",
-        "#6f1515": "you can edit me too",
-        "#711414": "you can edit me too",
-        "#761414": "you can edit me too",
-        "#771313": "you can edit me too",
-        "#7c1313": "you can edit me too",
-        "#811313": "you can edit me too",
-        "#821212": "you can edit me too",
-        "#871212": "you can edit me too",
-        "#881111": "you can edit me too",
-        "#8d1111": "you can edit me too",
-        "#8e1010": "you can edit me too",
-        "#8f0f0f": "you can edit me too",
-        "#900e0e": "you can edit me too",
-        "#8e0b0b": "you can edit me too",
-        "#8c0d0d": "you can edit me too",
-        "#880c0c": "you can edit me too",
-        "#830c0c": "you can edit me too",
-        "#7e0c0c": "you can edit me too",
-        "#790c0c": "you can edit me too",
-        "#730c0c": "you can edit me too",
-        "#6f0b0b": "you can edit me too",
-        "#0b6f64": "you can edit me too",
-        "#0b6f5f": "you can edit me too",
-        "#0b6f56": "you can edit me too",
-        "#0b6f49": "you can edit me too",
-        "#0b6f31": "you can edit me too",
-        "#0b6f1f": "you can edit me too",
-        "#0b6f0d": "you can edit me too",
-        "#176f0b": "you can edit me too",
-        "#266f0b": "you can edit me too",
-        "#296f0b": "you can edit me too",
-        "#2e6f0b": "you can edit me too",
-        "#1a2d10": "you can edit me too",
-        "#1c3111": "you can edit me too",
-        "#213814": "you can edit me too",
-        "#233c15": "you can edit me too",
-        "#254017": "you can edit me too",
-        "#294918": "you can edit me too",
-        "#2b4d1a": "you can edit me too",
-        "#2d511a": "you can edit me too",
-        "#315a1b": "you can edit me too",
-        "#35631c": "you can edit me too",
-        "#37681d": "you can edit me too",
-        "#3b721d": "you can edit me too",
-        "#3f7b1e": "you can edit me too",
-        "#42851e": "you can edit me too",
-        "#46901d": "you can edit me too",
-        "#499a1d": "you can edit me too",
-        "#4b9f1d": "you can edit me too",
-        "#4ca61c": "you can edit me too",
-        "#50b01c": "you can edit me too",
-        "#51b71a": "you can edit me too",
-        "#50b918": "you can edit me too",
-        "#51c115": "you can edit me too",
-        "#53c615": "you can edit me too",
-        "#53c814": "you can edit me too",
-        "#52c913": "you can edit me too",
-        "#54d011": "you can edit me too",
-        "#53d110": "you can edit me too",
-        "#55d510": "you can edit me too",
-        "#55d70f": "you can edit me too",
-        "#54d80e": "you can edit me too",
-        "#54da0b": "you can edit me too",
-        "#56df0c": "you can edit me too",
-        "#53db0a": "you can edit me too",
-        "#55e00b": "you can edit me too",
-        "#55e109": "you can edit me too",
-        "#55e208": "ISP LINE",
-        "#4c00ff": "MY Guest NETWORK",
-        "#80ff00": "you can edit me too",
-        "#3b4234": "you can edit me too",
-        "#3a3442": "you can edit me too",
-        "#3b3442": "you can edit me too",
-        "#3c3442": "you can edit me too",
-        "#3d3442": "you can edit me too",
-        "#3e3442": "you can edit me too",
-        "#3f3442": "you can edit me too",
-        "#403442": "you can edit me too",
-        "#413442": "you can edit me too",
-        "#653d66": "you can edit me too",
-        "#683f69": "you can edit me too",
-        "#6c416c": "you can edit me too",
-        "#6f4370": "you can edit me too",
-        "#704270": "you can edit me too",
-        "#734474": "you can edit me too",
-        "#784479": "you can edit me too",
-        "#7d447e": "you can edit me too",
-        "#7e437f": "you can edit me too",
-        "#834384": "you can edit me too",
-        "#844285": "you can edit me too",
-        "#89418b": "you can edit me too",
-        "#8e428f": "you can edit me too",
-        "#904091": "you can edit me too",
-        "#923e93": "you can edit me too",
-        "#973e98": "you can edit me too",
-        "#943c96": "you can edit me too",
-        "#993c9a": "you can edit me too",
-        "#963a98": "you can edit me too",
-        "#973899": "you can edit me too",
-        "#99369b": "you can edit me too",
-        "#9a359c": "you can edit me too",
-        "#9b349d": "you can edit me too",
-        "#9d329f": "you can edit me too",
-        "#9e31a0": "you can edit me too",
-        "#a02fa2": "you can edit me too",
-        "#9d2d9f": "you can edit me too",
-        "#9f2ba1": "you can edit me too",
-        "#a129a3": "you can edit me too",
-        "#a327a5": "you can edit me too",
-        "#a525a7": "you can edit me too",
-        "#a723a9": "you can edit me too",
-        "#a921ab": "you can edit me too",
-        "#ab1fad": "you can edit me too",
-        "#ad1daf": "you can edit me too",
-        "#ae1cb0": "you can edit me too",
-        "#b019b3": "you can edit me too",
-        "#b118b4": "you can edit me too",
-        "#b316b6": "you can edit me too",
-        "#b816bb": "you can edit me too",
-        "#b514b8": "you can edit me too",
-        "#ba14bd": "you can edit me too",
-        "#b712ba": "you can edit me too",
-        "#bb13be": "you can edit me too",
-        "#b811bb": "you can edit me too",
-        "#be10c1": "you can edit me too",
-        "#bb0ebe": "you can edit me too",
-        "#bd0cc0": "you can edit me too",
-        "#be0bc1": "you can edit me too",
-        "#c108c4": "you can edit me too",
-        "#be06c1": "you can edit me too",
-        "#c103c4": "you can edit me too",
-        "#c301c6": "you can edit me too",
-        "#c400c7": "you can edit me too",
-        "#c900cc": "you can edit me too",
-        "#ce00d1": "you can edit me too",
-        "#d300d6": "you can edit me too",
-        "#d800db": "you can edit me too",
-        "#dd00e0": "you can edit me too",
-        "#e200e6": "you can edit me too",
-        "#ec00f0": "you can edit me too",
-        "#f100f5": "you can edit me too",
-        "#f600fa": "you can edit me too",
-        "#fb00ff": "you can edit me too",
-        "#ff00d0": "iPhone (always guest iPhone)",
-        "#f97316": "you can edit me too"
-      },
-      "rects": {
-        "list": [
-          {
-            "id": "rect-1765238219615",
-            "x": 2680.053955078125,
-            "y": 251.44879150390625,
-            "width": 814.10400390625,
-            "height": 389.26678466796875,
-            "color": "#ec0999",
-            "style": "filled",
-            "lineStyle": "solid",
-            "notes": []
-          }
-        ]
-      },
-      "texts": {
-        "list": [
-          {
-            "id": "text-1765238422602",
-            "x": 2466.35986328125,
-            "y": 741.6801147460938,
-            "content": "Double click on desktop\nor long press on mobile\nto enter rack canvas view",
-            "fontSize": 40,
-            "color": "#e2e8f0",
-            "fontWeight": "normal",
-            "fontStyle": "normal",
-            "textAlign": "start",
-            "textDecoration": "none",
-            "bgColor": "#000000",
-            "bgEnabled": false,
-            "opacity": 1
-          }
-        ]
-      },
-      "pageState": {
-        "title": "The One File",
-        "background": "",
-        "topbarBg": "rgba(9, 12, 20, 0.9)",
-        "topbarBorder": "#1f2533",
-        "panel": "#2f0e0e",
-        "panelAlt": "#10141b",
-        "accent": "#a75252",
-        "sidebarBg": "#10141b",
-        "btnBg": "#0b0e13",
-        "btnText": "#e2e8f0",
-        "tagFill": "#1e293b",
-        "tagText": "#e2e8f0",
-        "tagBorder": "#475569",
-        "inputBg": "#0b0e13",
-        "inputText": "#e2e8f0",
-        "inputBorder": "#1f2937",
-        "inputFont": "Inter, system-ui, sans-serif",
-        "inputFontSize": 14,
-        "toolbarBg": "#441215",
-        "toolbarBorder": "#1f2937",
-        "toolbarText": "#94a3b8",
-        "toolbarBtnBg": "#0b0e13",
-        "toolbarBtnText": "#e2e8f0",
-        "minimapDots": "#94a3b8",
-        "canvasHintEnabled": true,
-        "canvasHintText": "",
-        "canvasHintBg": "#0f172a",
-        "canvasHintColor": "#94a3b8",
-        "danger": "#f56565",
-        "textMain": "#e2e8f0",
-        "textSoft": "#94a3b8",
-        "topbarHeight": 112,
+        "topbarHeight": 52,
         "sidebarWidth": 350,
         "mobileFooterHeight": 40,
         "sidebarCollapsed": false,
@@ -9818,11 +4857,5705 @@
         "rackTextColor": "#4fd1c5",
         "rackGridEnabled": true,
         "viewOnly": false,
-        "defaultEdgeRouting": "curved",
+        "defaultEdgeRouting": "straight",
         "animateConnections": false,
         "animationStyle": "arrows",
         "animationDirection": "all",
-        "animationSpeed": 1.5
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {
+          "layer1": "Physical",
+          "layer2": "Routing",
+          "layer3": "Security",
+          "layer4": "Services"
+        },
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "network",
+        "autoPingEnabled": false,
+        "autoPingInterval": 30,
+        "canvasTemplate": "grid"
+      }
+    },
+    {
+      "id": "tab-corporate-branch",
+      "name": "Branch Office",
+      "nodes": {
+        "b-hqfw": {
+          "shape": "firewall",
+          "name": "HQ Firewall Pair",
+          "ip": "203.0.113.2",
+          "role": "SD WAN hub",
+          "tags": [
+            "hub"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-hqcore": {
+          "shape": "switch",
+          "name": "HQ Core",
+          "ip": "10.20.0.11",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-inet": {
+          "shape": "cloud",
+          "name": "Internet",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-lte": {
+          "shape": "cloud",
+          "name": "LTE Carrier",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-edge": {
+          "shape": "router",
+          "name": "SD WAN Edge",
+          "ip": "10.30.0.1",
+          "role": "Branch router",
+          "tags": [
+            "sdwan"
+          ],
+          "notes": [
+            "<h3>Path policy</h3><table><thead><tr><th>Traffic</th><th>Preferred</th><th>Fallback</th></tr></thead><tbody><tr><td>Voice</td><td>Tunnel 1</td><td>Tunnel 2</td></tr><tr><td>ERP</td><td>Tunnel 1</td><td>Tunnel 2</td></tr><tr><td>Web</td><td>Local breakout</td><td>Tunnel 1</td></tr><tr><td>Updates</td><td>Local breakout</td><td>Paused on LTE</td></tr></tbody></table><pre><code>tunnel 1: ipsec, bfd 300ms, mtu 1400\ntunnel 2: ipsec over lte, bfd 1s</code></pre>"
+          ],
+          "mac": "02:00:5E:30:00:01",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-sw": {
+          "shape": "switch",
+          "name": "Branch Switch",
+          "ip": "10.30.0.2",
+          "role": "24 port PoE",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-ap": {
+          "shape": "access-point",
+          "name": "Branch AP",
+          "ip": "10.30.0.21",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-pc": {
+          "shape": "pc",
+          "name": "Workstations",
+          "ip": "10.30.1.0/24",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-phone": {
+          "shape": "phone",
+          "name": "IP Phones",
+          "ip": "10.30.2.0/24",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-prn": {
+          "shape": "printer",
+          "name": "Printer",
+          "ip": "10.30.0.50",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-nvr": {
+          "shape": "camera",
+          "name": "Camera NVR",
+          "ip": "10.30.3.10",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "b-cache": {
+          "shape": "server",
+          "name": "Update Cache",
+          "ip": "10.30.0.40",
+          "role": "Local software cache",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-branch-9",
+            "from": "b-hqfw",
+            "to": "b-inet",
+            "width": 5,
+            "color": "#22c55e",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "1 Gbps",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-10",
+            "from": "b-edge",
+            "to": "b-inet",
+            "width": 5,
+            "color": "#22c55e",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "wan1",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "500 Mbps fiber",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-11",
+            "from": "b-edge",
+            "to": "b-lte",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "wan2",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "LTE backup",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-12",
+            "from": "b-hqfw",
+            "to": "b-hqcore",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-13",
+            "from": "b-hqfw",
+            "to": "b-edge",
+            "width": 5,
+            "color": "#a855f7",
+            "direction": "both",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Tunnel 1  primary over fiber",
+            "animate": true,
+            "animationStyle": "dots",
+            "animationSpeed": 1.5,
+            "waypoints": [
+              {
+                "x": 800,
+                "y": 540
+              },
+              {
+                "x": 1900,
+                "y": 540
+              }
+            ],
+            "_pairIndex": 0,
+            "_pairTotal": 2
+          },
+          {
+            "id": "edge-branch-14",
+            "from": "b-hqfw",
+            "to": "b-edge",
+            "width": 4,
+            "color": "#f43f5e",
+            "direction": "both",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Tunnel 2  backup over LTE",
+            "waypoints": [
+              {
+                "x": 800,
+                "y": 740
+              },
+              {
+                "x": 1900,
+                "y": 740
+              }
+            ],
+            "_pairIndex": 1,
+            "_pairTotal": 2
+          },
+          {
+            "id": "edge-branch-15",
+            "from": "b-edge",
+            "to": "b-sw",
+            "width": 5,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "1G trunk",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-16",
+            "from": "b-sw",
+            "to": "b-ap",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-17",
+            "from": "b-sw",
+            "to": "b-pc",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-18",
+            "from": "b-sw",
+            "to": "b-phone",
+            "width": 4,
+            "color": "#ec4899",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-19",
+            "from": "b-sw",
+            "to": "b-prn",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-20",
+            "from": "b-sw",
+            "to": "b-nvr",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-branch-21",
+            "from": "b-sw",
+            "to": "b-cache",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          }
+        ]
+      },
+      "positions": {
+        "b-hqfw": {
+          "x": 420,
+          "y": 640
+        },
+        "b-hqcore": {
+          "x": 420,
+          "y": 960
+        },
+        "b-inet": {
+          "x": 1340,
+          "y": 300
+        },
+        "b-lte": {
+          "x": 1340,
+          "y": 960
+        },
+        "b-edge": {
+          "x": 2200,
+          "y": 640
+        },
+        "b-sw": {
+          "x": 2280,
+          "y": 980
+        },
+        "b-ap": {
+          "x": 1880,
+          "y": 1280
+        },
+        "b-pc": {
+          "x": 2040,
+          "y": 1280
+        },
+        "b-phone": {
+          "x": 2200,
+          "y": 1280
+        },
+        "b-prn": {
+          "x": 2360,
+          "y": 1280
+        },
+        "b-nvr": {
+          "x": 2520,
+          "y": 1280
+        },
+        "b-cache": {
+          "x": 2680,
+          "y": 1280
+        }
+      },
+      "sizes": {
+        "b-hqfw": 56,
+        "b-hqcore": 50,
+        "b-inet": 66,
+        "b-lte": 60,
+        "b-edge": 54,
+        "b-sw": 46,
+        "b-ap": 36,
+        "b-pc": 34,
+        "b-phone": 32,
+        "b-prn": 34,
+        "b-nvr": 34,
+        "b-cache": 34
+      },
+      "styles": {
+        "b-hqfw": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "wall-fire"
+            }
+          }
+        },
+        "b-hqcore": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "b-inet": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "earth"
+            }
+          }
+        },
+        "b-lte": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "signal-cellular-3"
+            }
+          }
+        },
+        "b-edge": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "router-network"
+            }
+          }
+        },
+        "b-sw": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "b-ap": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "b-pc": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "desktop-classic"
+            }
+          }
+        },
+        "b-phone": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "deskphone"
+            }
+          }
+        },
+        "b-prn": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "printer"
+            }
+          }
+        },
+        "b-nvr": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "b-cache": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cached"
+            }
+          }
+        }
+      },
+      "legend": {
+        "#22c55e": "Fiber internet",
+        "#f59e0b": "LTE backup",
+        "#a855f7": "Primary tunnel",
+        "#f43f5e": "Backup tunnel",
+        "#14b8a6": "Branch LAN",
+        "#3b82f6": "Uplink",
+        "#ec4899": "Voice"
+      },
+      "rects": {
+        "list": [
+          {
+            "id": "rect-branch-3",
+            "x": 60,
+            "y": 300,
+            "width": 720,
+            "height": 900,
+            "color": "#3b82f6",
+            "style": "filled",
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
+            "notes": []
+          },
+          {
+            "id": "rect-branch-6",
+            "x": 1800,
+            "y": 800,
+            "width": 960,
+            "height": 720,
+            "color": "#14b8a6",
+            "style": "filled",
+            "lineStyle": "dashed",
+            "fillOpacity": 0.12,
+            "borderWidth": 2,
+            "notes": []
+          }
+        ]
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-branch-1",
+            "x": 60,
+            "y": 100,
+            "content": "Riverside Branch",
+            "fontSize": 46,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-2",
+            "x": 60,
+            "y": 150,
+            "content": "SD WAN edge with two tunnels back to HQ",
+            "fontSize": 20,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-4",
+            "x": 78,
+            "y": 334,
+            "content": "HQ",
+            "fontSize": 24,
+            "color": "#3b82f6",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-5",
+            "x": 78,
+            "y": 364,
+            "content": "Hub for every branch",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-7",
+            "x": 1818,
+            "y": 834,
+            "content": "Branch LAN",
+            "fontSize": 24,
+            "color": "#14b8a6",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-8",
+            "x": 1818,
+            "y": 864,
+            "content": "10.30.0.0/22, 24 staff",
+            "fontSize": 16,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-branch-22",
+            "x": 860,
+            "y": 1300,
+            "content": "Voice and ERP always ride a tunnel.\nWeb traffic breaks out locally.\nIf fiber fails, both tunnels move to LTE\nand software updates pause.",
+            "fontSize": 18,
+            "color": "#cbd5e1",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      },
+      "images": {
+        "list": []
+      },
+      "pageState": {
+        "title": "Larkspur Logistics Network",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 52,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "canvasGridEnabled": true,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
+        "viewOnly": false,
+        "defaultEdgeRouting": "straight",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {
+          "layer1": "Physical",
+          "layer2": "Routing",
+          "layer3": "Security",
+          "layer4": "Services"
+        },
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "network",
+        "autoPingEnabled": false,
+        "autoPingInterval": 60,
+        "canvasTemplate": "grid"
+      }
+    },
+    {
+      "id": "tab-corporate-dc",
+      "name": "Data Center",
+      "nodes": {
+        "rackA1": {
+          "shape": "server",
+          "name": "Rack A1 42U",
+          "ip": "",
+          "role": "rack",
+          "tags": [
+            "rack"
+          ],
+          "notes": [
+            "Compute rack. 2 x 32A feeds, A and B PDUs on the side rails."
+          ],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": true,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackCapacity": 42,
+          "rackFaceView": "split"
+        },
+        "rackA2": {
+          "shape": "server",
+          "name": "Rack A2 48U",
+          "ip": "",
+          "role": "rack",
+          "tags": [
+            "rack"
+          ],
+          "notes": [
+            "Storage, network core and Kubernetes. Taller 48U rack."
+          ],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": true,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackCapacity": 48,
+          "rackFaceView": "split"
+        },
+        "a1-pp": {
+          "shape": "patch-panel",
+          "name": "Copper Patch A1",
+          "ip": "48 port Cat6A",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "42",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-fpp": {
+          "shape": "patch-panel",
+          "name": "Fiber Patch A1",
+          "ip": "24 LC duplex",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "42",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFace": "rear"
+        },
+        "a1-cm1": {
+          "shape": "cable-management",
+          "name": "Cable Manager",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "41",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-tor1": {
+          "shape": "switch",
+          "name": "Leaf A1 1",
+          "ip": "10.40.0.11",
+          "role": "48 x 25G, 8 x 100G",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "40",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-tor2": {
+          "shape": "switch",
+          "name": "Leaf A1 2",
+          "ip": "10.40.0.12",
+          "role": "48 x 25G, 8 x 100G",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "39",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-cm2": {
+          "shape": "cable-management",
+          "name": "Cable Manager",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "38",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-mgmt": {
+          "shape": "switch",
+          "name": "Mgmt Switch A1",
+          "ip": "10.40.255.11",
+          "role": "1G out of band",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "37",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-edge": {
+          "shape": "router",
+          "name": "Edge Router 1",
+          "ip": "203.0.113.17",
+          "role": "BGP to Carrier A",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "35",
+          "uHeight": "2",
+          "layer": "layer2",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-blank1": {
+          "shape": "blank-panel",
+          "name": "Blank 2U",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "33",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-esx01": {
+          "shape": "server",
+          "name": "ESX 01",
+          "ip": "10.40.10.11",
+          "role": "2U, 1 TB RAM",
+          "tags": [
+            "compute"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "31",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-esx02": {
+          "shape": "server",
+          "name": "ESX 02",
+          "ip": "10.40.10.12",
+          "role": "2U, 1 TB RAM",
+          "tags": [
+            "compute"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "29",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-esx03": {
+          "shape": "server",
+          "name": "ESX 03",
+          "ip": "10.40.10.13",
+          "role": "2U, 1 TB RAM",
+          "tags": [
+            "compute"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "27",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-esx04": {
+          "shape": "server",
+          "name": "ESX 04",
+          "ip": "10.40.10.14",
+          "role": "2U, 1 TB RAM",
+          "tags": [
+            "compute"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "25",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-db01": {
+          "shape": "database",
+          "name": "DB 01",
+          "ip": "10.40.11.11",
+          "role": "Primary database",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "23",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-db02": {
+          "shape": "database",
+          "name": "DB 02",
+          "ip": "10.40.11.12",
+          "role": "Replica",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "21",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-kvm": {
+          "shape": "kvm",
+          "name": "KVM Console",
+          "ip": "10.40.255.20",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "20",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-blank2": {
+          "shape": "blank-panel",
+          "name": "Blank 3U",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "17",
+          "uHeight": "3",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-bkp": {
+          "shape": "server",
+          "name": "Backup Server",
+          "ip": "10.40.12.10",
+          "role": "4U, 400 TB",
+          "tags": [
+            "backup"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "13",
+          "uHeight": "4",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-tape": {
+          "shape": "nas",
+          "name": "Tape Library",
+          "ip": "10.40.12.20",
+          "role": "LTO 9, 40 slots",
+          "tags": [
+            "backup"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "9",
+          "uHeight": "4",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a1-spare": {
+          "shape": "blank-panel",
+          "name": "Reserved 6U",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [
+            "Reserved for two more ESX hosts in Q2."
+          ],
+          "mac": "",
+          "rackUnit": "3",
+          "uHeight": "6",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a1-ats": {
+          "shape": "pdu",
+          "name": "Transfer Switch",
+          "ip": "",
+          "role": "ATS, A and B feed",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "1",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFace": "rear"
+        },
+        "a1-pdua": {
+          "shape": "pdu",
+          "name": "PDU A",
+          "ip": "",
+          "role": "0U, 32A feed A",
+          "tags": [
+            "power"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackMount": "left"
+        },
+        "a1-pdub": {
+          "shape": "pdu",
+          "name": "PDU B",
+          "ip": "",
+          "role": "0U, 32A feed B",
+          "tags": [
+            "power"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA1",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackMount": "right"
+        },
+        "a2-pp": {
+          "shape": "patch-panel",
+          "name": "Copper Patch A2",
+          "ip": "48 port Cat6A",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "48",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-fpp": {
+          "shape": "patch-panel",
+          "name": "Fiber Patch A2",
+          "ip": "24 LC duplex",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "48",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFace": "rear"
+        },
+        "a2-cm1": {
+          "shape": "cable-management",
+          "name": "Cable Manager",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "47",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-spine1": {
+          "shape": "switch",
+          "name": "Spine 1",
+          "ip": "10.40.0.1",
+          "role": "32 x 100G",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "46",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": true,
+            "protocol": "https",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-spine2": {
+          "shape": "switch",
+          "name": "Spine 2",
+          "ip": "10.40.0.2",
+          "role": "32 x 100G",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "45",
+          "uHeight": "1",
+          "layer": "layer2",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-edge": {
+          "shape": "router",
+          "name": "Edge Router 2",
+          "ip": "198.51.100.17",
+          "role": "BGP to Carrier B",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "43",
+          "uHeight": "2",
+          "layer": "layer2",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-fw": {
+          "shape": "firewall",
+          "name": "DC Firewall",
+          "ip": "10.40.0.5",
+          "role": "East west inspection",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "41",
+          "uHeight": "2",
+          "layer": "layer3",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-ctrl": {
+          "shape": "database",
+          "name": "Storage Controller",
+          "ip": "10.40.20.10",
+          "role": "Dual controller, NVMe",
+          "tags": [
+            "storage"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "37",
+          "uHeight": "4",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-shelf1": {
+          "shape": "nas",
+          "name": "Disk Shelf 1",
+          "ip": "",
+          "role": "24 x 15 TB",
+          "tags": [
+            "storage"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "35",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-shelf2": {
+          "shape": "nas",
+          "name": "Disk Shelf 2",
+          "ip": "",
+          "role": "24 x 15 TB",
+          "tags": [
+            "storage"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "33",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s1": {
+          "shape": "server",
+          "name": "K8s Node 1",
+          "ip": "10.40.30.11",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "32",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s2": {
+          "shape": "server",
+          "name": "K8s Node 2",
+          "ip": "10.40.30.12",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "31",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s3": {
+          "shape": "server",
+          "name": "K8s Node 3",
+          "ip": "10.40.30.13",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "30",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s4": {
+          "shape": "server",
+          "name": "K8s Node 4",
+          "ip": "10.40.30.14",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "29",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s5": {
+          "shape": "server",
+          "name": "K8s Node 5",
+          "ip": "10.40.30.15",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "28",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-k8s6": {
+          "shape": "server",
+          "name": "K8s Node 6",
+          "ip": "10.40.30.16",
+          "role": "1U",
+          "tags": [
+            "kubernetes"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "27",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-gpu": {
+          "shape": "server",
+          "name": "GPU Server",
+          "ip": "10.40.31.10",
+          "role": "4U, 8 GPUs",
+          "tags": [
+            "ml"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "22",
+          "uHeight": "4",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFullDepth": true
+        },
+        "a2-blank": {
+          "shape": "blank-panel",
+          "name": "Blank 2U",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "20",
+          "uHeight": "2",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-console": {
+          "shape": "server",
+          "name": "Console Server",
+          "ip": "10.40.255.2",
+          "role": "48 serial ports",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "4",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackFace": "rear"
+        },
+        "a2-mgmt": {
+          "shape": "switch",
+          "name": "Mgmt Switch A2",
+          "ip": "10.40.255.12",
+          "role": "1G out of band",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "4",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "a2-pdua": {
+          "shape": "pdu",
+          "name": "PDU A",
+          "ip": "",
+          "role": "0U, 32A feed A",
+          "tags": [
+            "power"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackMount": "left"
+        },
+        "a2-pdub": {
+          "shape": "pdu",
+          "name": "PDU B",
+          "ip": "",
+          "role": "0U, 32A feed B",
+          "tags": [
+            "power"
+          ],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "rackA2",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "rackMount": "right"
+        },
+        "carA": {
+          "shape": "cloud",
+          "name": "Carrier A",
+          "ip": "AS64500",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "carB": {
+          "shape": "cloud",
+          "name": "Carrier B",
+          "ip": "AS64501",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "hqfiber": {
+          "shape": "gateway",
+          "name": "HQ Dark Fiber",
+          "ip": "2 x 100G DWDM",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "offsite": {
+          "shape": "bucket",
+          "name": "Vault Site",
+          "ip": "Tape rotation, weekly",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "oob": {
+          "shape": "router",
+          "name": "OOB LTE Router",
+          "ip": "10.40.255.1",
+          "role": "Out of band access",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "noc": {
+          "shape": "monitor",
+          "name": "NOC Screens",
+          "ip": "10.40.255.50",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer4",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-dc-4",
+            "from": "carA",
+            "to": "a1-edge",
+            "width": 5,
+            "color": "#22c55e",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "xe0",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G cross connect",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-dc-5",
+            "from": "carB",
+            "to": "a2-edge",
+            "width": 5,
+            "color": "#eab308",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "xe0",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "10G cross connect",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-dc-6",
+            "from": "hqfiber",
+            "to": "a2-fpp",
+            "width": 6,
+            "color": "#a855f7",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "100G to HQ",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-dc-7",
+            "from": "a1-edge",
+            "to": "a2-spine1",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [
+              "100G, et1 to Eth1"
+            ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 4
+          },
+          {
+            "id": "edge-dc-8",
+            "from": "a2-edge",
+            "to": "a2-spine2",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-9",
+            "from": "a2-fpp",
+            "to": "a2-spine1",
+            "width": 4,
+            "color": "#a855f7",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 1,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-10",
+            "from": "a1-tor1",
+            "to": "a2-spine1",
+            "width": 6,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [
+              "Eth49 to Eth2"
+            ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "4 x 100G uplinks",
+            "_pairIndex": 1,
+            "_pairTotal": 4
+          },
+          {
+            "id": "edge-dc-11",
+            "from": "a1-tor2",
+            "to": "a2-spine2",
+            "width": 5,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [
+              "Eth49 to Eth2"
+            ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 2,
+            "_pairTotal": 4
+          },
+          {
+            "id": "edge-dc-12",
+            "from": "a1-tor1",
+            "to": "a1-esx01",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-13",
+            "from": "a1-tor1",
+            "to": "a1-esx02",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 1,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-14",
+            "from": "a1-tor1",
+            "to": "a1-esx03",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 2,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-15",
+            "from": "a1-tor1",
+            "to": "a1-esx04",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 3,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-16",
+            "from": "a1-tor1",
+            "to": "a1-db01",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 4,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-17",
+            "from": "a1-tor1",
+            "to": "a1-db02",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 5,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-18",
+            "from": "a1-tor2",
+            "to": "a1-bkp",
+            "width": 4,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 6,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-19",
+            "from": "a1-bkp",
+            "to": "a1-tape",
+            "width": 4,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [
+              "SAS"
+            ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 7,
+            "_pairTotal": 8
+          },
+          {
+            "id": "edge-dc-20",
+            "from": "a2-spine1",
+            "to": "a2-fw",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 2,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-21",
+            "from": "a2-spine1",
+            "to": "a2-ctrl",
+            "width": 4,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 3,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-22",
+            "from": "a2-ctrl",
+            "to": "a2-shelf1",
+            "width": 4,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 4,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-23",
+            "from": "a2-ctrl",
+            "to": "a2-shelf2",
+            "width": 4,
+            "color": "#f97316",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 5,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-24",
+            "from": "a2-spine2",
+            "to": "a2-k8s1",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 6,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-25",
+            "from": "a2-spine2",
+            "to": "a2-k8s2",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 7,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-26",
+            "from": "a2-spine2",
+            "to": "a2-k8s3",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 8,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-27",
+            "from": "a2-spine2",
+            "to": "a2-k8s4",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 9,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-28",
+            "from": "a2-spine2",
+            "to": "a2-k8s5",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 10,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-29",
+            "from": "a2-spine2",
+            "to": "a2-k8s6",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 11,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-30",
+            "from": "a2-spine2",
+            "to": "a2-gpu",
+            "width": 4,
+            "color": "#3b82f6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "_pairIndex": 12,
+            "_pairTotal": 13
+          },
+          {
+            "id": "edge-dc-31",
+            "from": "a1-tape",
+            "to": "offsite",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Courier, weekly",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-dc-32",
+            "from": "a2-console",
+            "to": "oob",
+            "width": 4,
+            "color": "#94a3b8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dashed",
+            "routing": "straight",
+            "label": "Serial and LTE",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-dc-33",
+            "from": "a1-mgmt",
+            "to": "a2-mgmt",
+            "width": 4,
+            "color": "#94a3b8",
+            "direction": "none",
+            "type": "main",
+            "notes": [
+              "Out of band ring"
+            ],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 3,
+            "_pairTotal": 4
+          },
+          {
+            "id": "edge-dc-34",
+            "from": "a1-mgmt",
+            "to": "noc",
+            "width": 4,
+            "color": "#94a3b8",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "solid",
+            "routing": "straight",
+            "label": "Monitoring",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          }
+        ]
+      },
+      "positions": {
+        "rackA1": {
+          "x": 1000,
+          "y": 760
+        },
+        "rackA2": {
+          "x": 1800,
+          "y": 760
+        },
+        "a1-pp": {
+          "x": 1440,
+          "y": 235
+        },
+        "a1-fpp": {
+          "x": 2560,
+          "y": 235
+        },
+        "a1-cm1": {
+          "x": 1440,
+          "y": 305
+        },
+        "a1-tor1": {
+          "x": 1440,
+          "y": 375
+        },
+        "a1-tor2": {
+          "x": 1440,
+          "y": 445
+        },
+        "a1-cm2": {
+          "x": 1440,
+          "y": 515
+        },
+        "a1-mgmt": {
+          "x": 1440,
+          "y": 585
+        },
+        "a1-edge": {
+          "x": 1440,
+          "y": 690
+        },
+        "a1-blank1": {
+          "x": 1440,
+          "y": 830
+        },
+        "a1-esx01": {
+          "x": 1440,
+          "y": 970
+        },
+        "a1-esx02": {
+          "x": 1440,
+          "y": 1110
+        },
+        "a1-esx03": {
+          "x": 1440,
+          "y": 1250
+        },
+        "a1-esx04": {
+          "x": 1440,
+          "y": 1390
+        },
+        "a1-db01": {
+          "x": 1440,
+          "y": 1530
+        },
+        "a1-db02": {
+          "x": 1440,
+          "y": 1670
+        },
+        "a1-kvm": {
+          "x": 1440,
+          "y": 1775
+        },
+        "a1-blank2": {
+          "x": 1440,
+          "y": 1915
+        },
+        "a1-bkp": {
+          "x": 1440,
+          "y": 2160
+        },
+        "a1-tape": {
+          "x": 1440,
+          "y": 2440
+        },
+        "a1-spare": {
+          "x": 1440,
+          "y": 2790
+        },
+        "a1-ats": {
+          "x": 2560,
+          "y": 2882
+        },
+        "a1-pdua": {
+          "x": 1030,
+          "y": 200
+        },
+        "a1-pdub": {
+          "x": 1850,
+          "y": 200
+        },
+        "a2-pp": {
+          "x": 1440,
+          "y": 235
+        },
+        "a2-fpp": {
+          "x": 2560,
+          "y": 235
+        },
+        "a2-cm1": {
+          "x": 1440,
+          "y": 305
+        },
+        "a2-spine1": {
+          "x": 1440,
+          "y": 375
+        },
+        "a2-spine2": {
+          "x": 1440,
+          "y": 445
+        },
+        "a2-edge": {
+          "x": 1440,
+          "y": 550
+        },
+        "a2-fw": {
+          "x": 1440,
+          "y": 690
+        },
+        "a2-ctrl": {
+          "x": 1440,
+          "y": 900
+        },
+        "a2-shelf1": {
+          "x": 1440,
+          "y": 1110
+        },
+        "a2-shelf2": {
+          "x": 1440,
+          "y": 1250
+        },
+        "a2-k8s1": {
+          "x": 1440,
+          "y": 1355
+        },
+        "a2-k8s2": {
+          "x": 1440,
+          "y": 1425
+        },
+        "a2-k8s3": {
+          "x": 1440,
+          "y": 1495
+        },
+        "a2-k8s4": {
+          "x": 1440,
+          "y": 1565
+        },
+        "a2-k8s5": {
+          "x": 1440,
+          "y": 1635
+        },
+        "a2-k8s6": {
+          "x": 1440,
+          "y": 1705
+        },
+        "a2-gpu": {
+          "x": 1440,
+          "y": 1950
+        },
+        "a2-blank": {
+          "x": 1440,
+          "y": 2160
+        },
+        "a2-console": {
+          "x": 2560,
+          "y": 2884
+        },
+        "a2-mgmt": {
+          "x": 1440,
+          "y": 2884
+        },
+        "a2-pdua": {
+          "x": 1030,
+          "y": 200
+        },
+        "a2-pdub": {
+          "x": 1850,
+          "y": 200
+        },
+        "carA": {
+          "x": 500,
+          "y": 330
+        },
+        "carB": {
+          "x": 2060,
+          "y": 330
+        },
+        "hqfiber": {
+          "x": 1400,
+          "y": 330
+        },
+        "offsite": {
+          "x": 500,
+          "y": 1240
+        },
+        "oob": {
+          "x": 2300,
+          "y": 1240
+        },
+        "noc": {
+          "x": 1400,
+          "y": 1240
+        }
+      },
+      "sizes": {
+        "rackA1": 110,
+        "rackA2": 110,
+        "a1-pp": 12,
+        "a1-fpp": 12,
+        "a1-cm1": 12,
+        "a1-tor1": 18,
+        "a1-tor2": 18,
+        "a1-cm2": 12,
+        "a1-mgmt": 18,
+        "a1-edge": 37,
+        "a1-blank1": 24,
+        "a1-esx01": 37,
+        "a1-esx02": 37,
+        "a1-esx03": 37,
+        "a1-esx04": 37,
+        "a1-db01": 37,
+        "a1-db02": 37,
+        "a1-kvm": 12,
+        "a1-blank2": 37,
+        "a1-bkp": 73,
+        "a1-tape": 73,
+        "a1-spare": 73,
+        "a1-ats": 18,
+        "a1-pdua": 18,
+        "a1-pdub": 18,
+        "a2-pp": 12,
+        "a2-fpp": 12,
+        "a2-cm1": 12,
+        "a2-spine1": 16,
+        "a2-spine2": 16,
+        "a2-edge": 32,
+        "a2-fw": 32,
+        "a2-ctrl": 65,
+        "a2-shelf1": 32,
+        "a2-shelf2": 32,
+        "a2-k8s1": 16,
+        "a2-k8s2": 16,
+        "a2-k8s3": 16,
+        "a2-k8s4": 16,
+        "a2-k8s5": 16,
+        "a2-k8s6": 16,
+        "a2-gpu": 65,
+        "a2-blank": 22,
+        "a2-console": 16,
+        "a2-mgmt": 16,
+        "a2-pdua": 18,
+        "a2-pdub": 18,
+        "carA": 60,
+        "carB": 60,
+        "hqfiber": 50,
+        "offsite": 50,
+        "oob": 46,
+        "noc": 46
+      },
+      "styles": {
+        "a1-pp": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a1-fpp": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a1-cm1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a1-tor1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 16,
+            "subOffsetX": 185,
+            "subOffsetY": -24,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "a1-tor2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 16,
+            "subOffsetX": 185,
+            "subOffsetY": -24,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "a1-cm2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a1-mgmt": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 16,
+            "subOffsetX": 185,
+            "subOffsetY": -24,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "a1-edge": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "router-network"
+            }
+          }
+        },
+        "a1-blank1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 22,
+            "subOffsetX": 185,
+            "subOffsetY": -30
+          }
+        },
+        "a1-esx01": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "server"
+            }
+          }
+        },
+        "a1-esx02": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "server"
+            }
+          }
+        },
+        "a1-esx03": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "server"
+            }
+          }
+        },
+        "a1-esx04": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "server"
+            }
+          }
+        },
+        "a1-db01": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "database"
+            }
+          }
+        },
+        "a1-db02": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43,
+            "icon": {
+              "library": "mdi",
+              "name": "database"
+            }
+          }
+        },
+        "a1-kvm": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a1-blank2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 35,
+            "subOffsetX": 185,
+            "subOffsetY": -43
+          }
+        },
+        "a1-bkp": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 71,
+            "subOffsetX": 185,
+            "subOffsetY": -79,
+            "icon": {
+              "library": "mdi",
+              "name": "backup-restore"
+            }
+          }
+        },
+        "a1-tape": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 71,
+            "subOffsetX": 185,
+            "subOffsetY": -79,
+            "icon": {
+              "library": "mdi",
+              "name": "cassette"
+            }
+          }
+        },
+        "a1-spare": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 71,
+            "subOffsetX": 185,
+            "subOffsetY": -79
+          }
+        },
+        "a1-ats": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 16,
+            "subOffsetX": 185,
+            "subOffsetY": -24
+          }
+        },
+        "a2-pp": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a2-fpp": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a2-cm1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 10,
+            "subOffsetX": 185,
+            "subOffsetY": -18
+          }
+        },
+        "a2-spine1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "a2-spine2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "a2-edge": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 30,
+            "subOffsetX": 185,
+            "subOffsetY": -38,
+            "icon": {
+              "library": "mdi",
+              "name": "router-network"
+            }
+          }
+        },
+        "a2-fw": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 30,
+            "subOffsetX": 185,
+            "subOffsetY": -38,
+            "icon": {
+              "library": "mdi",
+              "name": "wall-fire"
+            }
+          }
+        },
+        "a2-ctrl": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 63,
+            "subOffsetX": 185,
+            "subOffsetY": -71,
+            "icon": {
+              "library": "mdi",
+              "name": "database"
+            }
+          }
+        },
+        "a2-shelf1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 30,
+            "subOffsetX": 185,
+            "subOffsetY": -38
+          }
+        },
+        "a2-shelf2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 30,
+            "subOffsetX": 185,
+            "subOffsetY": -38
+          }
+        },
+        "a2-k8s1": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-k8s2": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-k8s3": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-k8s4": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-k8s5": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-k8s6": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "selfhst",
+              "name": "kubernetes"
+            }
+          }
+        },
+        "a2-gpu": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 63,
+            "subOffsetX": 185,
+            "subOffsetY": -71,
+            "icon": {
+              "library": "mdi",
+              "name": "expansion-card"
+            }
+          }
+        },
+        "a2-blank": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 20,
+            "subOffsetX": 185,
+            "subOffsetY": -28
+          }
+        },
+        "a2-console": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "mdi",
+              "name": "console"
+            }
+          }
+        },
+        "a2-mgmt": {
+          "all": {
+            "titleSize": 13,
+            "subSize": 11,
+            "titleOffsetX": 185,
+            "titleOffsetY": 14,
+            "subOffsetX": 185,
+            "subOffsetY": -22,
+            "icon": {
+              "library": "mdi",
+              "name": "switch"
+            }
+          }
+        },
+        "carA": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "earth"
+            }
+          }
+        },
+        "carB": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "earth"
+            }
+          }
+        },
+        "hqfiber": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "transit-connection-variant"
+            }
+          }
+        },
+        "offsite": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "safe"
+            }
+          }
+        },
+        "oob": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "signal-cellular-3"
+            }
+          }
+        },
+        "noc": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "monitor-dashboard"
+            }
+          }
+        }
+      },
+      "legend": {
+        "#22c55e": "Carrier A",
+        "#eab308": "Carrier B",
+        "#3b82f6": "100G spine",
+        "#f97316": "Storage",
+        "#94a3b8": "Out of band",
+        "#a855f7": "Dark fiber to HQ",
+        "#f59e0b": "Camera cabling"
+      },
+      "rects": {
+        "list": []
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-dc-1",
+            "x": 60,
+            "y": 100,
+            "content": "Data Center Cage 4",
+            "fontSize": 46,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-2",
+            "x": 60,
+            "y": 150,
+            "content": "Two racks with full elevations: 42U Rack A1 and 48U Rack A2",
+            "fontSize": 20,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-3",
+            "x": 60,
+            "y": 190,
+            "content": "Open a rack to see the front and rear side by side, both PDUs and every cable leaving the rack",
+            "fontSize": 16,
+            "color": "#64748b",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-35",
+            "x": 60,
+            "y": 560,
+            "content": "Rack A1  42U",
+            "fontSize": 26,
+            "color": "#4fd1c5",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-36",
+            "x": 60,
+            "y": 600,
+            "content": "Leaf switches, edge router 1,\nfour ESX hosts, two databases,\nbackup server and tape library.\nRear: fiber patch and transfer switch.\nPDU A and PDU B on the side rails.",
+            "fontSize": 18,
+            "color": "#cbd5e1",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-37",
+            "x": 2180,
+            "y": 560,
+            "content": "Rack A2  48U",
+            "fontSize": 26,
+            "color": "#4fd1c5",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-dc-38",
+            "x": 2180,
+            "y": 600,
+            "content": "Spines, edge router 2, DC firewall,\nNVMe storage with two shelves,\nsix Kubernetes nodes and a GPU server.\nRear: fiber patch and console server.",
+            "fontSize": 18,
+            "color": "#cbd5e1",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      },
+      "images": {
+        "list": []
+      },
+      "pageState": {
+        "title": "Larkspur Logistics Network",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 52,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "canvasGridEnabled": true,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
+        "viewOnly": false,
+        "defaultEdgeRouting": "straight",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {
+          "layer1": "Physical",
+          "layer2": "Routing",
+          "layer3": "Security",
+          "layer4": "Services"
+        },
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "network",
+        "autoPingEnabled": false,
+        "autoPingInterval": 60,
+        "canvasTemplate": "grid"
+      }
+    },
+    {
+      "id": "tab-corporate-floor",
+      "name": "HQ Floor Plan",
+      "nodes": {
+        "fp-ap1": {
+          "shape": "access-point",
+          "name": "AP 1",
+          "ip": "Ceiling, Wi Fi 6E",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 330,
+          "fovColor": "#3b82f6",
+          "fovOpacity": 10,
+          "fovGradient": true,
+          "fovAnimationType": "rings",
+          "fovAnimate": true,
+          "fovSpeed": 5,
+          "fovBorderColor": "#3b82f6",
+          "fovBorderOpacity": 40,
+          "fovBorderStyle": "dashed"
+        },
+        "fp-ap2": {
+          "shape": "access-point",
+          "name": "AP 2",
+          "ip": "Ceiling, Wi Fi 6E",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 330,
+          "fovColor": "#3b82f6",
+          "fovOpacity": 10,
+          "fovGradient": true,
+          "fovAnimationType": "rings",
+          "fovAnimate": true,
+          "fovSpeed": 5,
+          "fovBorderColor": "#3b82f6",
+          "fovBorderOpacity": 40,
+          "fovBorderStyle": "dashed"
+        },
+        "fp-ap3": {
+          "shape": "access-point",
+          "name": "AP 3",
+          "ip": "Conference",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 280,
+          "fovColor": "#3b82f6",
+          "fovOpacity": 10,
+          "fovGradient": true,
+          "fovAnimationType": "rings",
+          "fovAnimate": true,
+          "fovSpeed": 5,
+          "fovBorderColor": "#3b82f6",
+          "fovBorderOpacity": 40,
+          "fovBorderStyle": "dashed"
+        },
+        "fp-ap4": {
+          "shape": "access-point",
+          "name": "AP 4",
+          "ip": "Break room",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 280,
+          "fovColor": "#3b82f6",
+          "fovOpacity": 10,
+          "fovGradient": true,
+          "fovAnimationType": "rings",
+          "fovAnimate": true,
+          "fovSpeed": 5,
+          "fovBorderColor": "#3b82f6",
+          "fovBorderOpacity": 40,
+          "fovBorderStyle": "dashed"
+        },
+        "fp-ap5": {
+          "shape": "access-point",
+          "name": "AP 5",
+          "ip": "Corridor and lab",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 360,
+          "fovDistance": 300,
+          "fovColor": "#3b82f6",
+          "fovOpacity": 10,
+          "fovGradient": true,
+          "fovAnimationType": "rings",
+          "fovAnimate": true,
+          "fovSpeed": 5,
+          "fovBorderColor": "#3b82f6",
+          "fovBorderOpacity": 40,
+          "fovBorderStyle": "dashed"
+        },
+        "fp-cam1": {
+          "shape": "camera",
+          "name": "Cam Lobby",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 80,
+          "fovDistance": 300,
+          "fovRotation": 45,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "fp-cam2": {
+          "shape": "camera",
+          "name": "Cam Corridor",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 80,
+          "fovDistance": 300,
+          "fovRotation": 270,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "fp-cam3": {
+          "shape": "camera",
+          "name": "Cam IT Closet",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer3",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          },
+          "fovEnabled": true,
+          "fovAngle": 80,
+          "fovDistance": 300,
+          "fovRotation": 225,
+          "fovColor": "#f59e0b",
+          "fovOpacity": 18,
+          "fovAnimationType": "sweep",
+          "fovAnimate": false,
+          "fovBorderColor": "#f59e0b",
+          "fovBorderOpacity": 60
+        },
+        "fp-idf": {
+          "shape": "server",
+          "name": "IDF Rack",
+          "ip": "Access 1A, 1B",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-printer": {
+          "shape": "printer",
+          "name": "MFP Printer",
+          "ip": "Drop P1",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-tv": {
+          "shape": "smart-tv",
+          "name": "Video Bar",
+          "ip": "",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-desk": {
+          "shape": "rectangle",
+          "name": "Front Desk",
+          "ip": "Drops R1, R2",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-mgr": {
+          "shape": "rectangle",
+          "name": "Desk",
+          "ip": "Drop M1",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod1": {
+          "shape": "rounded-square",
+          "name": "Pod 1",
+          "ip": "Drops 1 to 6",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod2": {
+          "shape": "rounded-square",
+          "name": "Pod 2",
+          "ip": "Drops 7 to 12",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod3": {
+          "shape": "rounded-square",
+          "name": "Pod 3",
+          "ip": "Drops 13 to 18",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod4": {
+          "shape": "rounded-square",
+          "name": "Pod 4",
+          "ip": "Drops 19 to 24",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod5": {
+          "shape": "rounded-square",
+          "name": "Pod 5",
+          "ip": "Drops 25 to 30",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod6": {
+          "shape": "rounded-square",
+          "name": "Pod 6",
+          "ip": "Drops 31 to 36",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod7": {
+          "shape": "rounded-square",
+          "name": "Pod 7",
+          "ip": "Drops 37 to 42",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-pod8": {
+          "shape": "rounded-square",
+          "name": "Pod 8",
+          "ip": "Drops 43 to 48",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": "grp-pods",
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-train": {
+          "shape": "monitor",
+          "name": "Projector",
+          "ip": "Drop T1",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        },
+        "fp-bench": {
+          "shape": "rectangle",
+          "name": "Test Bench",
+          "ip": "Drops L1 to L8",
+          "role": "",
+          "tags": [],
+          "notes": [],
+          "mac": "",
+          "rackUnit": "",
+          "uHeight": "1",
+          "layer": "layer1",
+          "assignedRack": "",
+          "hostedOn": "",
+          "isRack": false,
+          "locked": false,
+          "groupId": null,
+          "ping": {
+            "enabled": false,
+            "protocol": "http",
+            "customUrl": "",
+            "timeout": 3000,
+            "status": "unknown",
+            "lastCheck": null
+          }
+        }
+      },
+      "edges": {
+        "list": [
+          {
+            "id": "edge-floor-48",
+            "from": "fp-idf",
+            "to": "fp-ap3",
+            "width": 4,
+            "color": "#8b5cf6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "label": "Cat6A",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-floor-49",
+            "from": "fp-idf",
+            "to": "fp-printer",
+            "width": 4,
+            "color": "#14b8a6",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          },
+          {
+            "id": "edge-floor-50",
+            "from": "fp-idf",
+            "to": "fp-cam3",
+            "width": 4,
+            "color": "#f59e0b",
+            "direction": "none",
+            "type": "main",
+            "notes": [],
+            "fromPort": "",
+            "toPort": "",
+            "lineStyle": "dotted",
+            "routing": "straight",
+            "_pairIndex": 0,
+            "_pairTotal": 1
+          }
+        ]
+      },
+      "positions": {
+        "fp-ap1": {
+          "x": 920,
+          "y": 560
+        },
+        "fp-ap2": {
+          "x": 1380,
+          "y": 560
+        },
+        "fp-ap3": {
+          "x": 1900,
+          "y": 480
+        },
+        "fp-ap4": {
+          "x": 400,
+          "y": 940
+        },
+        "fp-ap5": {
+          "x": 1640,
+          "y": 1180
+        },
+        "fp-cam1": {
+          "x": 190,
+          "y": 640
+        },
+        "fp-cam2": {
+          "x": 2540,
+          "y": 1020
+        },
+        "fp-cam3": {
+          "x": 2560,
+          "y": 730
+        },
+        "fp-idf": {
+          "x": 2370,
+          "y": 860
+        },
+        "fp-printer": {
+          "x": 1890,
+          "y": 860
+        },
+        "fp-tv": {
+          "x": 1900,
+          "y": 640
+        },
+        "fp-desk": {
+          "x": 400,
+          "y": 500
+        },
+        "fp-mgr": {
+          "x": 2370,
+          "y": 500
+        },
+        "fp-pod1": {
+          "x": 780,
+          "y": 710
+        },
+        "fp-pod2": {
+          "x": 1000,
+          "y": 710
+        },
+        "fp-pod3": {
+          "x": 1220,
+          "y": 710
+        },
+        "fp-pod4": {
+          "x": 1440,
+          "y": 710
+        },
+        "fp-pod5": {
+          "x": 780,
+          "y": 860
+        },
+        "fp-pod6": {
+          "x": 1000,
+          "y": 860
+        },
+        "fp-pod7": {
+          "x": 1220,
+          "y": 860
+        },
+        "fp-pod8": {
+          "x": 1440,
+          "y": 860
+        },
+        "fp-train": {
+          "x": 990,
+          "y": 1190
+        },
+        "fp-bench": {
+          "x": 2270,
+          "y": 1200
+        }
+      },
+      "sizes": {
+        "fp-ap1": 30,
+        "fp-ap2": 30,
+        "fp-ap3": 30,
+        "fp-ap4": 30,
+        "fp-ap5": 30,
+        "fp-cam1": 26,
+        "fp-cam2": 26,
+        "fp-cam3": 26,
+        "fp-idf": 34,
+        "fp-printer": 30,
+        "fp-tv": 26,
+        "fp-desk": 34,
+        "fp-mgr": 30,
+        "fp-pod1": 26,
+        "fp-pod2": 26,
+        "fp-pod3": 26,
+        "fp-pod4": 26,
+        "fp-pod5": 26,
+        "fp-pod6": 26,
+        "fp-pod7": 26,
+        "fp-pod8": 26,
+        "fp-train": 26,
+        "fp-bench": 28
+      },
+      "styles": {
+        "fp-ap1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "fp-ap2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "fp-ap3": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "fp-ap4": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "fp-ap5": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "access-point"
+            }
+          }
+        },
+        "fp-cam1": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "fp-cam2": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "fp-cam3": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "cctv"
+            }
+          }
+        },
+        "fp-idf": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "server-network"
+            }
+          }
+        },
+        "fp-printer": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "printer"
+            }
+          }
+        },
+        "fp-tv": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "television"
+            }
+          }
+        },
+        "fp-pod1": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod2": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod3": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod4": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod5": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod6": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod7": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-pod8": {
+          "all": {
+            "circleColor": "#1e3a5f",
+            "circleBorder": "#3b82f6"
+          }
+        },
+        "fp-train": {
+          "all": {
+            "icon": {
+              "library": "mdi",
+              "name": "projector"
+            }
+          }
+        }
+      },
+      "legend": {
+        "#8b5cf6": "Cabling to the IDF",
+        "#14b8a6": "Copper",
+        "#f59e0b": "Camera cabling"
+      },
+      "rects": {
+        "list": [
+          {
+            "id": "rect-floor-3",
+            "x": 140,
+            "y": 260,
+            "width": 500,
+            "height": 420,
+            "color": "#f59e0b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-6",
+            "x": 640,
+            "y": 260,
+            "width": 1000,
+            "height": 700,
+            "color": "#3b82f6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-9",
+            "x": 1640,
+            "y": 260,
+            "width": 500,
+            "height": 420,
+            "color": "#a855f7",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-12",
+            "x": 2140,
+            "y": 260,
+            "width": 460,
+            "height": 420,
+            "color": "#14b8a6",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-14",
+            "x": 140,
+            "y": 680,
+            "width": 500,
+            "height": 600,
+            "color": "#22c55e",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-17",
+            "x": 1640,
+            "y": 680,
+            "width": 500,
+            "height": 280,
+            "color": "#64748b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-19",
+            "x": 2140,
+            "y": 680,
+            "width": 460,
+            "height": 280,
+            "color": "#ef4444",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-22",
+            "x": 640,
+            "y": 960,
+            "width": 1960,
+            "height": 120,
+            "color": "#475569",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-24",
+            "x": 640,
+            "y": 1080,
+            "width": 700,
+            "height": 200,
+            "color": "#ec4899",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-26",
+            "x": 1340,
+            "y": 1080,
+            "width": 600,
+            "height": 200,
+            "color": "#64748b",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-28",
+            "x": 1940,
+            "y": 1080,
+            "width": 660,
+            "height": 200,
+            "color": "#06b6d4",
+            "style": "filled",
+            "lineStyle": "solid",
+            "fillOpacity": 0.08,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-31",
+            "x": 126,
+            "y": 246,
+            "width": 2488,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-32",
+            "x": 126,
+            "y": 1280,
+            "width": 2488,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-33",
+            "x": 126,
+            "y": 260,
+            "width": 14,
+            "height": 1020,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-34",
+            "x": 2600,
+            "y": 260,
+            "width": 14,
+            "height": 1020,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-35",
+            "x": 640,
+            "y": 260,
+            "width": 14,
+            "height": 300,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-36",
+            "x": 640,
+            "y": 640,
+            "width": 14,
+            "height": 320,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-37",
+            "x": 140,
+            "y": 680,
+            "width": 380,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-38",
+            "x": 1640,
+            "y": 260,
+            "width": 14,
+            "height": 300,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-39",
+            "x": 1640,
+            "y": 640,
+            "width": 14,
+            "height": 320,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-40",
+            "x": 2140,
+            "y": 260,
+            "width": 14,
+            "height": 700,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-41",
+            "x": 1640,
+            "y": 680,
+            "width": 960,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-42",
+            "x": 740,
+            "y": 960,
+            "width": 1860,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-43",
+            "x": 640,
+            "y": 1080,
+            "width": 560,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-44",
+            "x": 1280,
+            "y": 1080,
+            "width": 1320,
+            "height": 14,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-45",
+            "x": 1340,
+            "y": 1080,
+            "width": 14,
+            "height": 200,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-46",
+            "x": 1940,
+            "y": 1080,
+            "width": 14,
+            "height": 200,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          },
+          {
+            "id": "rect-floor-47",
+            "x": 640,
+            "y": 1080,
+            "width": 14,
+            "height": 200,
+            "color": "#94a3b8",
+            "style": "filled",
+            "lineStyle": "wall",
+            "fillOpacity": 0.5,
+            "borderWidth": 1,
+            "notes": []
+          }
+        ]
+      },
+      "texts": {
+        "list": [
+          {
+            "id": "text-floor-1",
+            "x": 60,
+            "y": 100,
+            "content": "HQ Floor 1 Plan",
+            "fontSize": 46,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-2",
+            "x": 60,
+            "y": 150,
+            "content": "Rooms, Wi Fi coverage, cameras and network drops",
+            "fontSize": 20,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-4",
+            "x": 158,
+            "y": 294,
+            "content": "Reception",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-5",
+            "x": 158,
+            "y": 322,
+            "content": "Visitor check in",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-7",
+            "x": 658,
+            "y": 294,
+            "content": "Open Office",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-8",
+            "x": 658,
+            "y": 322,
+            "content": "48 desks, hot desking",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-10",
+            "x": 1658,
+            "y": 294,
+            "content": "Conference Room",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-11",
+            "x": 1658,
+            "y": 322,
+            "content": "16 seats, video bar",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-13",
+            "x": 2158,
+            "y": 294,
+            "content": "Manager Office",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-15",
+            "x": 158,
+            "y": 714,
+            "content": "Break Room",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-16",
+            "x": 158,
+            "y": 742,
+            "content": "Kitchen and lounge",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-18",
+            "x": 1658,
+            "y": 714,
+            "content": "Print and Copy",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-20",
+            "x": 2158,
+            "y": 714,
+            "content": "IT Closet",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-21",
+            "x": 2158,
+            "y": 742,
+            "content": "IDF 1, badge access",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-23",
+            "x": 658,
+            "y": 994,
+            "content": "Corridor",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-25",
+            "x": 658,
+            "y": 1114,
+            "content": "Training Room",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-27",
+            "x": 1358,
+            "y": 1114,
+            "content": "Storage",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-29",
+            "x": 1958,
+            "y": 1114,
+            "content": "Lab",
+            "fontSize": 22,
+            "color": "#e2e8f0",
+            "fontWeight": "bold",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-30",
+            "x": 1958,
+            "y": 1142,
+            "content": "Test benches",
+            "fontSize": 15,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          },
+          {
+            "id": "text-floor-51",
+            "x": 140,
+            "y": 1360,
+            "content": "Coverage rings are drawn from the AP placement survey. Camera cones show the field of view.\nDesk pods share one group, so they move together.",
+            "fontSize": 17,
+            "color": "#94a3b8",
+            "fontWeight": "normal",
+            "fontStyle": "normal",
+            "textAlign": "start",
+            "textDecoration": "none",
+            "bgColor": "#000000",
+            "bgEnabled": false,
+            "opacity": 1
+          }
+        ]
+      },
+      "images": {
+        "list": []
+      },
+      "pageState": {
+        "title": "Larkspur Logistics Network",
+        "background": "",
+        "topbarBg": "rgba(9, 12, 20, 0.9)",
+        "topbarBorder": "#1f2533",
+        "panel": "#0b0e13",
+        "panelAlt": "#10141b",
+        "accent": "#4fd1c5",
+        "sidebarBg": "#10141b",
+        "btnBg": "#0b0e13",
+        "btnText": "#e2e8f0",
+        "tagFill": "#1e293b",
+        "tagText": "#e2e8f0",
+        "tagBorder": "#475569",
+        "inputBg": "#0b0e13",
+        "inputText": "#e2e8f0",
+        "inputBorder": "#1f2937",
+        "inputFont": "Inter, system-ui, sans-serif",
+        "inputFontSize": 14,
+        "toolbarBg": "#0f172a",
+        "toolbarBorder": "#1f2937",
+        "toolbarText": "#94a3b8",
+        "toolbarBtnBg": "#0b0e13",
+        "toolbarBtnText": "#e2e8f0",
+        "minimapDots": "#94a3b8",
+        "canvasHintEnabled": true,
+        "canvasHintText": "",
+        "canvasHintBg": "#0f172a",
+        "canvasHintColor": "#94a3b8",
+        "danger": "#f56565",
+        "textMain": "#e2e8f0",
+        "textSoft": "#94a3b8",
+        "topbarHeight": 52,
+        "sidebarWidth": 350,
+        "mobileFooterHeight": 40,
+        "sidebarCollapsed": false,
+        "nodeFill": "#1e293b",
+        "nodeStroke": "#475569",
+        "nodeTitle": "#e2e8f0",
+        "nodeSub": "#94a3b8",
+        "nodeTitleSize": 18,
+        "nodeSubSize": 13,
+        "nodeFont": "Inter, system-ui, sans-serif",
+        "defaultEdge": "#475569",
+        "selectionHandle": "#f59e0b",
+        "selectionHandleSize": 8,
+        "groupIndicator": "#4fd1c5",
+        "canvasGradientTop": "#1e2532",
+        "canvasGradientBottom": "#050608",
+        "canvasBorder": "#475569",
+        "canvasGrid": "#475569",
+        "canvasGridSize": 50,
+        "canvasGridEnabled": true,
+        "rackFrameFill": "#0f172a",
+        "rackFrameStroke": "#4fd1c5",
+        "rackLineColor": "#475569",
+        "rackTextColor": "#4fd1c5",
+        "rackGridEnabled": true,
+        "viewOnly": false,
+        "defaultEdgeRouting": "straight",
+        "animateConnections": false,
+        "animationStyle": "arrows",
+        "animationDirection": "all",
+        "animationSpeed": 1.5,
+        "motionTrailsEnabled": true,
+        "motionTrailLength": 8,
+        "motionTrailStyle": "solid",
+        "motionTrailArrow": true,
+        "showPortLabels": true,
+        "snapToGrid": true,
+        "canvasWidth": 4000,
+        "canvasHeight": 3000,
+        "layerNames": {},
+        "markDuplicateIps": false,
+        "showHostedOnLinks": true,
+        "mappingMode": "floorplan",
+        "autoPingEnabled": false,
+        "autoPingInterval": 60,
+        "canvasTemplate": "blueprint"
       }
     }
   ],
@@ -9830,4460 +10563,669 @@
   "encryptedSections": {},
   "auditLog": [
     {
-      "timestamp": 1766459540242,
+      "timestamp": 1794457273730,
       "type": "export",
-      "description": "Exported CSV: the-one-file-corporate.csv",
+      "description": "Exported CSV: larkspur-logistics-network.csv",
       "details": {},
-      "tab": "Corporate Site B"
+      "tab": "HQ"
     },
     {
-      "timestamp": 1766459536815,
-      "type": "export",
-      "description": "Exported JSON: the-one-file-corporate.json",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766459534490,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766459525616,
-      "type": "export",
-      "description": "Exported CSV: the-one-file.csv",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459518367,
-      "type": "export",
-      "description": "Exported Markdown: the-one-file.md",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459511746,
-      "type": "export",
-      "description": "Exported JSON: the-one-file.json",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459504374,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459500911,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459497380,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766459491436,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766459483682,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766459477676,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766457578277,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766457564726,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766457564253,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766457560309,
+      "timestamp": 1794457272263,
       "type": "import",
-      "description": "Imported JSON: the-one-file-corporate.json (107 nodes, 65 connections)",
+      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (36 nodes, 36 connections)",
       "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455847368,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455844534,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455844054,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455843762,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455843560,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455843371,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455843162,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842852,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842747,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842601,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842449,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842348,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455842098,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455841678,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455841236,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455841053,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455840901,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455840650,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455839427,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455839234,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455839061,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455837247,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455837081,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455836893,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455836377,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455836198,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455835455,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455834630,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455831880,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455831676,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455831451,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455830817,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455830687,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455830176,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455830048,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455829944,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455829816,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378795,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378693,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378459,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378316,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378180,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455378069,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377956,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377677,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377558,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377448,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377318,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766455377209,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453090534,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453090317,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453090213,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453090112,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453090009,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453089903,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088895,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088793,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088689,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088584,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088480,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453088250,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453087236,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453086725,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453086485,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453086373,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453086142,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453086043,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453072857,
-      "type": "text",
-      "description": "paste text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453070975,
-      "type": "text",
-      "description": "paste text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453054439,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453053127,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453052450,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453052106,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453051948,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453051806,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453051334,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453050207,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453042725,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453042179,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453041797,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453041570,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453039703,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453039291,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453039168,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453039065,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453038481,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453038365,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453038237,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453038105,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453038001,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037850,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037745,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037495,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037378,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037182,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453037078,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453036972,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453036860,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453036147,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035945,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035825,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035720,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035443,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035337,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035233,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035127,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453035026,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453034917,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453031063,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453030955,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453030833,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453030732,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453030225,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453030104,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453029968,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453029796,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453029474,
-      "type": "edit",
-      "description": "rotate text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766453024797,
-      "type": "text",
-      "description": "paste text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766451118553,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450929324,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450817210,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450257424,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450255024,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450254395,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450253241,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450251598,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450250392,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450248756,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450244072,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450242166,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450240998,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450236492,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450233672,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450232384,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450231012,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450230254,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450229302,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766450228132,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446610211,
-      "type": "text",
-      "description": "paste text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604849,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604702,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604550,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604404,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604305,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604204,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446604099,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603952,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603849,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603702,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603599,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603452,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603348,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603202,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446603099,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602953,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602850,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602702,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602600,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602453,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602349,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602204,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602101,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446602000,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601848,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601702,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601601,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601452,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601301,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601154,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446601049,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446600948,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446600802,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446600550,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446598595,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446598461,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446598171,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446598017,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446597219,
-      "type": "text",
-      "description": "edit text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766446595278,
-      "type": "text",
-      "description": "add text",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445633355,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445632515,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445631735,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445630757,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445627846,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445625085,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445618645,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445617784,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608998,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608720,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608540,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608376,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608204,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445608038,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445607852,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445607678,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445607506,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445607319,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445607154,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445604410,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445604244,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445604066,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603900,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603743,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603563,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603406,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603226,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445603052,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445602880,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445602641,
-      "type": "edit",
-      "description": "edit zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445576567,
-      "type": "edit",
-      "description": "edit edge animation speed",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445570290,
-      "type": "edit",
-      "description": "edit edge animation speed",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445567192,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445566766,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445565520,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445398115,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445390895,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445385694,
-      "type": "edit",
-      "description": "toggle fov animation",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445383241,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445382911,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445381695,
-      "type": "edit",
-      "description": "edit node name",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445375383,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445374665,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445373273,
-      "type": "node",
-      "description": "paste node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766445372205,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438157980,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438157430,
-      "type": "edit",
-      "description": "edit edge animation speed",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438152691,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438151948,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438151286,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438146174,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438145649,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438144555,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438143655,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438142504,
-      "type": "edit",
-      "description": "edit edge animation speed",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438130077,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438129561,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438128772,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438128398,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438122820,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438122062,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438119836,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438119588,
-      "type": "edit",
-      "description": "edit edge animate",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438095045,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438093965,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438062827,
-      "type": "edit",
-      "description": "toggle fov animation",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438047679,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438044161,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438041852,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039668,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039562,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039421,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039260,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039150,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438039039,
-      "type": "edit",
-      "description": "resize node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438028508,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438021410,
-      "type": "edit",
-      "description": "toggle fov",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438019234,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438017562,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766438014356,
-      "type": "node",
-      "description": "add node",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437981696,
-      "type": "edit",
-      "description": "apply routing to all",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437966551,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437964879,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437963627,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437961813,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437961193,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437957989,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437956467,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437953437,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437952239,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437950807,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437944990,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437943699,
-      "type": "node",
-      "description": "move nodes",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437935414,
-      "type": "zone",
-      "description": "draw zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437919019,
-      "type": "zone",
-      "description": "delete zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437917758,
-      "type": "zone",
-      "description": "draw zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437913740,
-      "type": "zone",
-      "description": "draw zone",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766437882832,
-      "type": "import",
-      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766263279163,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766263270414,
-      "type": "export",
-      "description": "Exported JSON: the-one-file.json",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766263260682,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766263259518,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766263249401,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766263246362,
-      "type": "import",
-      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766190721141,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766190717499,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766190710946,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766190705273,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766190703463,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1766190695709,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1766190688417,
-      "type": "import",
-      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765402888416,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765402884873,
-      "type": "tab",
-      "description": "Switched to tab: Corporate Site B",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765402878108,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1765402866440,
-      "type": "save",
-      "description": "File saved: the-one-file.html",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1765402865008,
-      "type": "tab",
-      "description": "Switched to tab: Homelab 2",
-      "details": {},
-      "tab": "Homelab 2"
-    },
-    {
-      "timestamp": 1765402860428,
-      "type": "save",
-      "description": "File saved: the-one-file-corporate.html",
-      "details": {},
-      "tab": "Corporate Site B"
-    },
-    {
-      "timestamp": 1765402858103,
-      "type": "import",
-      "description": "Imported JSON: theonefile-networkening-corporate-demo.json (105 nodes, 65 connections)",
-      "details": {},
-      "tab": "Corporate Site B"
+      "tab": "HQ"
     }
   ],
-  "savedStyleSets": []
+  "savedStyleSets": [],
+  "recordings": [],
+  "customLanguage": null
 }
 THEONEFILE_CONFIG-->
 
-# The One File Corporate
+# Larkspur Logistics Network
 
-> Exported from The One File on 2025-12-23T03:12:24.252Z
+> Exported from The One File on 2026-11-12T04:21:13.739Z
 
 ## Legend
 
-- #10b981: Trusted Lan
-- #f59e0b: Secure Lan
+- #22c55e: ISP A fiber
+- #eab308: ISP B coax
+- #f43f5e: HA and state sync
+- #3b82f6: 40G and 10G core
+- #06b6d4: 10G distribution
+- #14b8a6: 1G and PoE access
 - #ef4444: DMZ
-- #475569: Main ISP
-- #3b82f6: Alternate ISP
-- #8b5cf6: you can edit me too
-- #06b6d4: you can edit me too
-- #a855f7: you can edit me too
-- #f97316: you can edit me too
-- #0ea5e9: you can edit me too
-- #22c55e: you can edit me too
-- #94a3b8: you can edit me too
-- #fbbf24: you can edit me too
-- #38bdf8: you can edit me too
-- #c800ff: you can edit me too
+- #f97316: Storage network
+- #8b5cf6: Wireless
+- #ec4899: Voice
+
+## Zone Legend
+
+- #3b82f6: Wi Fi coverage
+- #f59e0b: Camera view
+
+## Layers
+
+- layer1: Physical
+- layer2: Routing
+- layer3: Security
+- layer4: Services
 
 ## Nodes
 
-### core-router-1
-- **Name:** Core Router 1
-- **IP:** 10.0.0.1
-- **Role:** Core Routing
-- **Shape:** router
-- **Tags:** core; tier-1; redundant
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:4D:01
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3720, 246
-- **Size:** 50
-- **Notes:**
-  - Primary core router
-  - BGP peering enabled
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"borg"}}}`
-
-### core-router-2
-- **Name:** Core Router 2
-- **IP:** 10.0.0.2
-- **Role:** Core Routing
-- **Shape:** router
-- **Tags:** core; tier-1; redundant
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:4D:02
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2500, 330
-- **Size:** 120
-- **Notes:**
-  - Secondary core router
-  - HSRP standby
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"actual-budget"},"pingOffsetX":-15,"pingOffsetY":-38}}`
-
-### fw-external-1
-- **Name:** External FW 1
-- **IP:** 10.0.1.1
-- **Role:** Perimeter Security
-- **Shape:** firewall
-- **Tags:** security; perimeter; ha-pair
-- **Layer:** security
-- **MAC:** 00:1A:2B:3C:4D:10
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3222, 1016
-- **Size:** 50
-- **Notes:**
-  - Palo Alto PA-5250
-  - Active node
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"anonaddy"}}}`
-
-### fw-external-2
-- **Name:** External FW 2
-- **IP:** 10.0.1.2
-- **Role:** Perimeter Security
-- **Shape:** firewall
-- **Tags:** security; perimeter; ha-pair
-- **Layer:** security
-- **MAC:** 00:1A:2B:3C:4D:11
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1916, 224
-- **Size:** 50
-- **Notes:**
-  - Palo Alto PA-5250
-  - Passive node
-
-### fw-internal
-- **Name:** Internal FW
-- **IP:** 10.0.2.1
-- **Role:** Internal Segmentation
-- **Shape:** firewall
-- **Tags:** security; internal
-- **Layer:** security
-- **MAC:** 00:1A:2B:3C:4D:12
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1747, 478
-- **Size:** 50
-- **Notes:**
-  - East-West traffic inspection
-
-### core-switch-1
-- **Name:** Core Switch 1
-- **IP:** 10.0.10.1
-- **Role:** Core Switching
-- **Shape:** switch
-- **Tags:** core; layer3; redundant
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:4D:20
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 449, 384
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 9000
-  - VPC Domain 1
-
-### core-switch-2
-- **Name:** Core Switch 2
-- **IP:** 10.0.10.2
-- **Role:** Core Switching
-- **Shape:** switch
-- **Tags:** core; layer3; redundant
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:4D:21
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 761, 181
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 9000
-  - VPC Domain 1
-
-### dc-rack-a1
-- **Name:** DC Rack A1
-- **IP:** 10.10.0.0/24
-- **Role:** Data Center Rack
-- **Shape:** server
-- **Tags:** datacenter; row-a; production
-- **Layer:** physical
+### ispa
+- **Name:** ISP A
+- **IP:** 
+- **Role:** 
+- **Shape:** cloud
+- **Tags:** wan
+- **Layer:** layer1
 - **MAC:** 
 - **Rack Unit:** 
 - **U Height:** 1
 - **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** true
+- **Rack Capacity:** 
+- **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 784, 647
-- **Size:** 50
-- **Notes:**
-  - Row A, Position 1
-  - Primary compute
-- **Styles:** `{"all":{"circleColor":"#ff0000"}}`
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 900, 160
+- **Size:** 60
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"earth"}}}`
 
-### dc-rack-a2
-- **Name:** DC Rack A2
-- **IP:** 10.10.1.0/24
-- **Role:** Data Center Rack
-- **Shape:** server
-- **Tags:** datacenter; row-a; production
-- **Layer:** physical
+### ispb
+- **Name:** ISP B
+- **IP:** 
+- **Role:** 
+- **Shape:** cloud
+- **Tags:** wan
+- **Layer:** layer1
 - **MAC:** 
 - **Rack Unit:** 
 - **U Height:** 1
 - **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** true
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 209, 228
-- **Size:** 50
-- **Notes:**
-  - Row A, Position 2
-  - Primary compute
-
-### dc-rack-b1
-- **Name:** DC Rack B1
-- **IP:** 10.10.2.0/24
-- **Role:** Data Center Rack
-- **Shape:** server
-- **Tags:** datacenter; row-b; storage
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** true
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3184, 1627
-- **Size:** 50
-- **Notes:**
-  - Row B, Position 1
-  - Storage systems
-- **Styles:** `{"all":{"circleColor":"#ff0000","titleSize":59}}`
-
-### dc-rack-b2
-- **Name:** DC Rack B2
-- **IP:** 10.10.3.0/24
-- **Role:** Data Center Rack
-- **Shape:** server
-- **Tags:** datacenter; row-b; storage
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** true
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 245, 500
-- **Size:** 50
-- **Notes:**
-  - Row B, Position 2
-  - Storage systems
-- **Styles:** `{"all":{"circleColor":"#ff0000"}}`
-
-### dmz-rack
-- **Name:** DMZ Rack
-- **IP:** 172.16.0.0/24
-- **Role:** DMZ Infrastructure
-- **Shape:** server
-- **Tags:** dmz; security; public-facing; [object Object]; [object Object]
-- **Layer:** security
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 24
-- **Is Rack:** true
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2176, 611
-- **Size:** 50
-- **Notes:**
-  - Isolated DMZ zone
-  - Public-facing services
-
-### mgmt-rack
-- **Name:** Management Rack
-- **IP:** 192.168.100.0/24
-- **Role:** Management Infrastructure
-- **Shape:** server
-- **Tags:** management; oob; noc
-- **Layer:** logical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 24
-- **Is Rack:** true
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1601, 1281
-- **Size:** 50
-- **Notes:**
-  - Out-of-band management
-  - NOC equipment
-
-### esxi-host-01
-- **Name:** ESXi Host 01
-- **IP:** 10.10.0.11
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-a
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:01:01
-- **Rack Unit:** 38
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
+- **Rack Capacity:** 
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 2162, 2608
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 512GB RAM
-  - vSphere 8.0
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1500, 160
+- **Size:** 60
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"earth"}}}`
 
-### esxi-host-02
-- **Name:** ESXi Host 02
-- **IP:** 10.10.0.12
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-a
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:01:02
-- **Rack Unit:** 35
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2206, 2690
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 512GB RAM
-  - vSphere 8.0
-
-### esxi-host-03
-- **Name:** ESXi Host 03
-- **IP:** 10.10.0.13
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-a
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:01:03
-- **Rack Unit:** 32
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2155, 2771
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 512GB RAM
-  - vSphere 8.0
-
-### esxi-host-04
-- **Name:** ESXi Host 04
-- **IP:** 10.10.0.14
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-a
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:01:04
-- **Rack Unit:** 29
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2196, 2845
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 512GB RAM
-  - vSphere 8.0
-
-### tor-switch-a1
-- **Name:** ToR Switch A1
-- **IP:** 10.10.0.1
-- **Role:** Top of Rack
-- **Shape:** switch
-- **Tags:** tor; access; rack-a1
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:5D:01
-- **Rack Unit:** 42
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2147, 2845
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 93180YC-FX
-  - 48x25G ports
-
-### esxi-host-05
-- **Name:** ESXi Host 05
-- **IP:** 10.10.1.11
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-b
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:02:01
-- **Rack Unit:** 38
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2186, 2845
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 768GB RAM
-  - vSphere 8.0
-
-### esxi-host-06
-- **Name:** ESXi Host 06
-- **IP:** 10.10.1.12
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-b
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:02:02
-- **Rack Unit:** 35
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2139, 2845
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 768GB RAM
-  - vSphere 8.0
-
-### esxi-host-07
-- **Name:** ESXi Host 07
-- **IP:** 10.10.1.13
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-b
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:02:03
-- **Rack Unit:** 32
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2176, 2845
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 768GB RAM
-  - vSphere 8.0
-
-### esxi-host-08
-- **Name:** ESXi Host 08
-- **IP:** 10.10.1.14
-- **Role:** Hypervisor
-- **Shape:** server
-- **Tags:** vmware; compute; cluster-b
-- **Layer:** physical
-- **MAC:** 00:50:56:AA:02:04
-- **Rack Unit:** 29
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2131, 2845
-- **Size:** 50
-- **Notes:**
-  - Dell PowerEdge R750
-  - 768GB RAM
-  - vSphere 8.0
-
-### tor-switch-a2
-- **Name:** ToR Switch A2
-- **IP:** 10.10.1.1
-- **Role:** Top of Rack
-- **Shape:** switch
-- **Tags:** tor; access; rack-a2
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:5D:02
-- **Rack Unit:** 42
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2165, 2845
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 93180YC-FX
-  - 48x25G ports
-
-### san-primary
-- **Name:** SAN Primary
-- **IP:** 10.10.2.10
-- **Role:** Primary Storage
-- **Shape:** database
-- **Tags:** storage; san; netapp
-- **Layer:** physical
-- **MAC:** 00:A0:98:AA:01:01
-- **Rack Unit:** 36
-- **U Height:** 6
-- **Assigned Rack:** dc-rack-b1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2123, 2845
-- **Size:** 50
-- **Notes:**
-  - NetApp AFF A400
-  - 500TB Raw
-  - FC 32Gb
-
-### san-secondary
-- **Name:** SAN Secondary
-- **IP:** 10.10.2.11
-- **Role:** Secondary Storage
-- **Shape:** database
-- **Tags:** storage; san; netapp
-- **Layer:** physical
-- **MAC:** 00:A0:98:AA:01:02
-- **Rack Unit:** 28
-- **U Height:** 6
-- **Assigned Rack:** dc-rack-b1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2155, 2845
-- **Size:** 50
-- **Notes:**
-  - NetApp AFF A400
-  - 500TB Raw
-  - FC 32Gb
-
-### fc-switch-1
-- **Name:** FC Switch 1
-- **IP:** 10.10.2.1
-- **Role:** Fibre Channel
-- **Shape:** switch
-- **Tags:** storage; fc; fabric-a
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FC:01:01
-- **Rack Unit:** 42
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-b1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2115, 2845
-- **Size:** 50
-- **Notes:**
-  - Brocade G620
-  - Fabric A
-
-### fc-switch-2
-- **Name:** FC Switch 2
-- **IP:** 10.10.2.2
-- **Role:** Fibre Channel
-- **Shape:** switch
-- **Tags:** storage; fc; fabric-b
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FC:01:02
-- **Rack Unit:** 41
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-b1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2145, 2845
-- **Size:** 50
-- **Notes:**
-  - Brocade G620
-  - Fabric B
-
-### backup-server-1
-- **Name:** Backup Server 1
-- **IP:** 10.10.3.10
-- **Role:** Backup Infrastructure
-- **Shape:** server
-- **Tags:** backup; veeam; protection
-- **Layer:** physical
-- **MAC:** 00:50:56:BB:01:01
-- **Rack Unit:** 36
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-b2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2107, 2845
-- **Size:** 50
-- **Notes:**
-  - Veeam Backup Server
-  - Dell R740xd
-  - 200TB
-
-### backup-server-2
-- **Name:** Backup Server 2
-- **IP:** 10.10.3.11
-- **Role:** Backup Infrastructure
-- **Shape:** server
-- **Tags:** backup; veeam; protection
-- **Layer:** physical
-- **MAC:** 00:50:56:BB:01:02
-- **Rack Unit:** 33
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-b2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2134, 2845
-- **Size:** 50
-- **Notes:**
-  - Veeam Backup Server
-  - Dell R740xd
-  - 200TB
-
-### tape-library
-- **Name:** Tape Library
-- **IP:** 10.10.3.20
-- **Role:** Archival Storage
-- **Shape:** database
-- **Tags:** backup; tape; lto9
-- **Layer:** physical
-- **MAC:** 00:50:56:BB:02:01
-- **Rack Unit:** 20
-- **U Height:** 10
-- **Assigned Rack:** dc-rack-b2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2099, 2845
-- **Size:** 50
-- **Notes:**
-  - IBM TS4500
-  - LTO-9
-  - Long-term archive
-
-### tor-switch-b1
-- **Name:** ToR Switch B1
-- **IP:** 10.10.2.3
-- **Role:** Top of Rack
-- **Shape:** switch
-- **Tags:** tor; access; rack-b1
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:5D:03
-- **Rack Unit:** 40
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-b1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2123, 2845
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 93180YC-FX
-
-### tor-switch-b2
-- **Name:** ToR Switch B2
-- **IP:** 10.10.3.1
-- **Role:** Top of Rack
-- **Shape:** switch
-- **Tags:** tor; access; rack-b2
-- **Layer:** physical
-- **MAC:** 00:1A:2B:3C:5D:04
-- **Rack Unit:** 42
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-b2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2091, 2845
-- **Size:** 50
-- **Notes:**
-  - Cisco Nexus 93180YC-FX
-
-### web-server-1
-- **Name:** Web Server 1
-- **IP:** 172.16.0.11
-- **Role:** Web Frontend
-- **Shape:** server
-- **Tags:** dmz; web; nginx
-- **Layer:** security
-- **MAC:** 00:50:56:CC:01:01
-- **Rack Unit:** 20
-- **U Height:** 1
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2113, 2845
-- **Size:** 50
-- **Notes:**
-  - NGINX reverse proxy
-  - Public facing
-
-### web-server-2
-- **Name:** Web Server 2
-- **IP:** 172.16.0.12
-- **Role:** Web Frontend
-- **Shape:** server
-- **Tags:** dmz; web; nginx
-- **Layer:** security
-- **MAC:** 00:50:56:CC:01:02
-- **Rack Unit:** 18
-- **U Height:** 1
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2082, 2845
-- **Size:** 50
-- **Notes:**
-  - NGINX reverse proxy
-  - Public facing
-
-### waf-1
-- **Name:** WAF Appliance
-- **IP:** 172.16.0.5
-- **Role:** Web Application Firewall
-- **Shape:** firewall
-- **Tags:** dmz; security; waf
-- **Layer:** security
-- **MAC:** 00:50:56:CC:02:01
-- **Rack Unit:** 22
-- **U Height:** 2
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2102, 2845
-- **Size:** 50
-- **Notes:**
-  - F5 BIG-IP ASM
-  - OWASP protection
-
-### load-balancer-dmz
-- **Name:** DMZ Load Balancer
-- **IP:** 172.16.0.3
-- **Role:** Load Balancing
-- **Shape:** switch
-- **Tags:** dmz; lb; f5
-- **Layer:** security
-- **MAC:** 00:50:56:CC:03:01
-- **Rack Unit:** 16
-- **U Height:** 2
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2074, 2845
-- **Size:** 50
-- **Notes:**
-  - F5 BIG-IP LTM
-  - VIP: 172.16.0.100
-
-### mail-gateway
-- **Name:** Mail Gateway
-- **IP:** 172.16.0.25
-- **Role:** Email Security
-- **Shape:** server
-- **Tags:** dmz; email; security
-- **Layer:** security
-- **MAC:** 00:50:56:CC:04:01
-- **Rack Unit:** 14
-- **U Height:** 1
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2091, 2845
-- **Size:** 50
-- **Notes:**
-  - Proofpoint Email Gateway
-  - Spam/malware filtering
-
-### dns-external-1
-- **Name:** External DNS 1
-- **IP:** 172.16.0.53
-- **Role:** External DNS
-- **Shape:** circle
-- **Tags:** dmz; dns; public
-- **Layer:** security
-- **MAC:** 00:50:56:CC:05:01
-- **Rack Unit:** 12
-- **U Height:** 1
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2066, 2845
-- **Size:** 50
-- **Notes:**
-  - BIND DNS
-  - Authoritative for corp.com
-
-### dns-external-2
-- **Name:** External DNS 2
-- **IP:** 172.16.0.54
-- **Role:** External DNS
-- **Shape:** circle
-- **Tags:** dmz; dns; public
-- **Layer:** security
-- **MAC:** 00:50:56:CC:05:02
-- **Rack Unit:** 10
-- **U Height:** 1
-- **Assigned Rack:** dmz-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2080, 2845
-- **Size:** 50
-- **Notes:**
-  - BIND DNS
-  - Secondary for corp.com
-
-### vcenter
-- **Name:** vCenter Server
-- **IP:** 192.168.100.10
-- **Role:** Virtualization Management
-- **Shape:** server
-- **Tags:** management; vmware; vcsa
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:01:01
-- **Rack Unit:** 20
-- **U Height:** 2
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2057, 2845
-- **Size:** 50
-- **Notes:**
-  - vCenter Server Appliance 8.0
-  - Single SSO domain
-
-### nsx-manager
-- **Name:** NSX Manager
-- **IP:** 192.168.100.15
-- **Role:** Network Virtualization
-- **Shape:** server
-- **Tags:** management; vmware; nsx
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:02:01
-- **Rack Unit:** 17
-- **U Height:** 2
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2069, 2845
-- **Size:** 50
-- **Notes:**
-  - NSX-T 4.1 Manager Cluster
-
-### siem-server
-- **Name:** SIEM Server
-- **IP:** 192.168.100.50
-- **Role:** Security Monitoring
-- **Shape:** server
-- **Tags:** management; security; splunk
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:03:01
-- **Rack Unit:** 14
-- **U Height:** 2
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2049, 2845
-- **Size:** 50
-- **Notes:**
-  - Splunk Enterprise
-  - Security monitoring
-
-### nms-server
-- **Name:** Network Monitoring
-- **IP:** 192.168.100.60
-- **Role:** Network Management
-- **Shape:** server
-- **Tags:** management; monitoring; prtg
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:04:01
-- **Rack Unit:** 11
-- **U Height:** 1
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2058, 2845
-- **Size:** 50
-- **Notes:**
-  - PRTG Network Monitor
-  - 5000 sensors
-
-### jump-server
-- **Name:** Jump Server
-- **IP:** 192.168.100.100
-- **Role:** Bastion Host
-- **Shape:** server
-- **Tags:** management; security; bastion
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:05:01
-- **Rack Unit:** 9
-- **U Height:** 1
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2040, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows Server 2022
-  - MFA enabled
-
-### ipam-server
-- **Name:** IPAM/DDI
-- **IP:** 192.168.100.70
-- **Role:** IP Management
-- **Shape:** server
-- **Tags:** management; dns; dhcp
-- **Layer:** logical
-- **MAC:** 00:50:56:DD:06:01
-- **Rack Unit:** 7
-- **U Height:** 2
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2047, 2845
-- **Size:** 50
-- **Notes:**
-  - Infoblox DDI
-  - DNS/DHCP/IPAM
-
-### wlc-primary
-- **Name:** WLC Primary
-- **IP:** 10.20.0.1
-- **Role:** Wireless Controller
-- **Shape:** wifi
-- **Tags:** wireless; cisco; 9800
-- **Layer:** physical
-- **MAC:** 00:1A:2B:WL:01:01
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1576, 2306
-- **Size:** 50
-- **Notes:**
-  - Cisco C9800-40
-  - Primary controller
-
-### wlc-secondary
-- **Name:** WLC Secondary
+### fw1
+- **Name:** FW 1 Active
 - **IP:** 10.20.0.2
-- **Role:** Wireless Controller
-- **Shape:** wifi
-- **Tags:** wireless; cisco; 9800
-- **Layer:** physical
-- **MAC:** 00:1A:2B:WL:01:02
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1468, 1564
-- **Size:** 50
-- **Notes:**
-  - Cisco C9800-40
-  - HA Secondary
-
-### mobile-zone-hq
-- **Name:** HQ Mobile Zone
-- **IP:** 10.20.10.0/24
-- **Role:** Mobile Device Zone
-- **Shape:** phone
-- **Tags:** wireless; byod; mobile
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2355, 2806
-- **Size:** 50
-- **Notes:**
-  - Corporate BYOD
-  - MDM enrolled devices
-
-### mobile-zone-guest
-- **Name:** Guest WiFi Zone
-- **IP:** 10.30.0.0/24
-- **Role:** Guest Network
-- **Shape:** phone
-- **Tags:** wireless; guest; isolated
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2308, 2611
-- **Size:** 50
-- **Notes:**
-  - Captive portal
-  - Internet only
-
-### mobile-zone-iot
-- **Name:** IoT Device Zone
-- **IP:** 10.40.0.0/24
-- **Role:** IoT Network
-- **Shape:** phone
-- **Tags:** wireless; iot; building
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2229, 2299
-- **Size:** 50
-- **Notes:**
-  - Building automation
-  - Smart devices
-
-### branch-router-ny
-- **Name:** NYC Branch Router
-- **IP:** 10.100.0.1
-- **Role:** Branch Gateway
-- **Shape:** router
-- **Tags:** branch; nyc; sd-wan
-- **Layer:** physical
-- **MAC:** 00:1A:2B:BR:01:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3152, 634
-- **Size:** 50
-- **Notes:**
-  - Cisco Viptela vEdge
-  - SD-WAN enabled
-
-### branch-router-la
-- **Name:** LA Branch Router
-- **IP:** 10.101.0.1
-- **Role:** Branch Gateway
-- **Shape:** router
-- **Tags:** branch; la; sd-wan
-- **Layer:** physical
-- **MAC:** 00:1A:2B:BR:02:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3084, 507
-- **Size:** 50
-- **Notes:**
-  - Cisco Viptela vEdge
-  - SD-WAN enabled
-
-### branch-router-chi
-- **Name:** Chicago Branch Router
-- **IP:** 10.102.0.1
-- **Role:** Branch Gateway
-- **Shape:** router
-- **Tags:** branch; chicago; sd-wan
-- **Layer:** physical
-- **MAC:** 00:1A:2B:BR:03:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3355, 393
-- **Size:** 50
-- **Notes:**
-  - Cisco Viptela vEdge
-  - SD-WAN enabled
-
-### branch-router-lon
-- **Name:** London Branch Router
-- **IP:** 10.200.0.1
-- **Role:** Branch Gateway
-- **Shape:** router
-- **Tags:** branch; london; sd-wan
-- **Layer:** physical
-- **MAC:** 00:1A:2B:BR:04:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3114, 260
-- **Size:** 50
-- **Notes:**
-  - Cisco Viptela vEdge
-  - EMEA region
-
-### branch-router-tokyo
-- **Name:** Tokyo Branch Router
-- **IP:** 10.201.0.1
-- **Role:** Branch Gateway
-- **Shape:** router
-- **Tags:** branch; tokyo; sd-wan
-- **Layer:** physical
-- **MAC:** 00:1A:2B:BR:05:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3699, 471
-- **Size:** 50
-- **Notes:**
-  - Cisco Viptela vEdge
-  - APAC region
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"adguard-home"}}}`
-
-### cloud-aws
-- **Name:** AWS Cloud
-- **IP:** vpc-0a1b2c3d
-- **Role:** Public Cloud
-- **Shape:** cloud
-- **Tags:** cloud; aws; hybrid
-- **Layer:** logical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3437, 546
-- **Size:** 50
-- **Notes:**
-  - AWS US-East-1
-  - VPC peering to HQ
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"ansible"}}}`
-
-### cloud-azure
-- **Name:** Azure Cloud
-- **IP:** vnet-corp-prod
-- **Role:** Public Cloud
-- **Shape:** cloud
-- **Tags:** cloud; azure; hybrid
-- **Layer:** logical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2593, 2724
-- **Size:** 50
-- **Notes:**
-  - Azure East US 2
-  - ExpressRoute
-
-### cloud-gcp
-- **Name:** GCP Cloud
-- **IP:** vpc-gcp-corp
-- **Role:** Public Cloud
-- **Shape:** cloud
-- **Tags:** cloud; gcp; dev
-- **Layer:** logical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2827, 2731
-- **Size:** 50
-- **Notes:**
-  - GCP us-central1
-  - Dev/Test workloads
-
-### isp-primary
-- **Name:** ISP Primary
-- **IP:** 203.0.113.1
-- **Role:** Internet Uplink
-- **Shape:** globe
-- **Tags:** wan; internet; primary
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3712, 616
-- **Size:** 50
-- **Notes:**
-  - AT&T MPLS
-  - 1 Gbps dedicated
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"wikidocs"}}}`
-
-### isp-secondary
-- **Name:** ISP Secondary
-- **IP:** 198.51.100.1
-- **Role:** Internet Uplink
-- **Shape:** globe
-- **Tags:** wan; internet; backup
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2702, 468
-- **Size:** 139
-- **Notes:**
-  - Verizon Business
-  - 500 Mbps backup
-- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"alist"}}}`
-
-### dc-internal-1
-- **Name:** DC1 Int DNS
-- **IP:** 10.10.0.53
-- **Role:** Internal DNS/AD
-- **Shape:** circle
-- **Tags:** dns; ad; dc1
-- **Layer:** physical
-- **MAC:** 00:50:56:AD:01:01
-- **Rack Unit:** 26
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1958, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows Server 2022
-  - Primary DC
-
-### dc-internal-2
-- **Name:** DC2 Int DNS
-- **IP:** 10.10.1.53
-- **Role:** Internal DNS/AD
-- **Shape:** circle
-- **Tags:** dns; ad; dc2
-- **Layer:** physical
-- **MAC:** 00:50:56:AD:01:02
-- **Rack Unit:** 26
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1964, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows Server 2022
-  - Secondary DC
-
-### app-server-1
-- **Name:** App Server 01
-- **IP:** 10.10.0.101
-- **Role:** Application
-- **Shape:** server
-- **Tags:** app; iis; web
-- **Layer:** physical
-- **MAC:** 00:50:56:AP:01:01
-- **Rack Unit:** 24
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1947, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows Server 2022
-  - IIS Application
-
-### app-server-2
-- **Name:** App Server 02
-- **IP:** 10.10.0.102
-- **Role:** Application
-- **Shape:** server
-- **Tags:** app; iis; web
-- **Layer:** physical
-- **MAC:** 00:50:56:AP:01:02
-- **Rack Unit:** 22
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1955, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows Server 2022
-  - IIS Application
-
-### db-server-1
-- **Name:** SQL Server 01
-- **IP:** 10.10.0.201
-- **Role:** Database
-- **Shape:** database
-- **Tags:** db; sql; primary
-- **Layer:** physical
-- **MAC:** 00:50:56:DB:01:01
-- **Rack Unit:** 20
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1936, 2845
-- **Size:** 50
-- **Notes:**
-  - SQL Server 2022 Enterprise
-  - AlwaysOn Primary
-
-### db-server-2
-- **Name:** SQL Server 02
-- **IP:** 10.10.1.201
-- **Role:** Database
-- **Shape:** database
-- **Tags:** db; sql; secondary
-- **Layer:** physical
-- **MAC:** 00:50:56:DB:01:02
-- **Rack Unit:** 24
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1947, 2845
-- **Size:** 50
-- **Notes:**
-  - SQL Server 2022 Enterprise
-  - AlwaysOn Secondary
-
-### k8s-master-1
-- **Name:** K8s Master 1
-- **IP:** 10.10.1.50
-- **Role:** Container Orchestration
-- **Shape:** hexagon
-- **Tags:** kubernetes; master; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:01:01
-- **Rack Unit:** 21
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1925, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Control Plane
-  - etcd member
-
-### k8s-master-2
-- **Name:** K8s Master 2
-- **IP:** 10.10.1.51
-- **Role:** Container Orchestration
-- **Shape:** hexagon
-- **Tags:** kubernetes; master; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:01:02
-- **Rack Unit:** 19
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1938, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Control Plane
-  - etcd member
-
-### k8s-master-3
-- **Name:** K8s Master 3
-- **IP:** 10.10.1.52
-- **Role:** Container Orchestration
-- **Shape:** hexagon
-- **Tags:** kubernetes; master; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:01:03
-- **Rack Unit:** 17
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1914, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Control Plane
-  - etcd member
-
-### k8s-worker-1
-- **Name:** K8s Worker 1
-- **IP:** 10.10.1.60
-- **Role:** Container Workload
-- **Shape:** server
-- **Tags:** kubernetes; worker; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:02:01
-- **Rack Unit:** 15
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1930, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Worker Node
-  - 64GB RAM
-
-### k8s-worker-2
-- **Name:** K8s Worker 2
-- **IP:** 10.10.1.61
-- **Role:** Container Workload
-- **Shape:** server
-- **Tags:** kubernetes; worker; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:02:02
-- **Rack Unit:** 13
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1904, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Worker Node
-  - 64GB RAM
-
-### k8s-worker-3
-- **Name:** K8s Worker 3
-- **IP:** 10.10.1.62
-- **Role:** Container Workload
-- **Shape:** server
-- **Tags:** kubernetes; worker; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:02:03
-- **Rack Unit:** 11
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1922, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Worker Node
-  - 64GB RAM
-
-### k8s-worker-4
-- **Name:** K8s Worker 4
-- **IP:** 10.10.1.63
-- **Role:** Container Workload
-- **Shape:** server
-- **Tags:** kubernetes; worker; container
-- **Layer:** physical
-- **MAC:** 00:50:56:K8:02:04
-- **Rack Unit:** 9
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1893, 2845
-- **Size:** 50
-- **Notes:**
-  - K8s Worker Node
-  - 64GB RAM
-
-### proxy-server-1
-- **Name:** Proxy Server 1
-- **IP:** 10.5.0.10
-- **Role:** Web Proxy
-- **Shape:** server
-- **Tags:** proxy; squid; filtering
-- **Layer:** security
-- **MAC:** 00:50:56:PX:01:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1806, 654
-- **Size:** 50
-- **Notes:**
-  - Squid Proxy
-  - Content filtering
-
-### proxy-server-2
-- **Name:** Proxy Server 2
-- **IP:** 10.5.0.11
-- **Role:** Web Proxy
-- **Shape:** server
-- **Tags:** proxy; squid; filtering
-- **Layer:** security
-- **MAC:** 00:50:56:PX:01:02
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2937, 2629
-- **Size:** 50
-- **Notes:**
-  - Squid Proxy
-  - HA pair
-
-### vpn-concentrator
-- **Name:** VPN Concentrator
-- **IP:** 10.0.5.1
-- **Role:** Remote Access VPN
+- **Role:** Edge firewall
 - **Shape:** firewall
-- **Tags:** vpn; remote; security
-- **Layer:** security
-- **MAC:** 00:1A:2B:VP:01:01
+- **Tags:** edge; ha
+- **Layer:** layer3
+- **MAC:** 02:00:5E:20:00:02
 - **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3642, 947
-- **Size:** 50
-- **Notes:**
-  - Cisco ASA 5555-X
-  - AnyConnect SSL VPN
-
-### nac-server
-- **Name:** NAC Server
-- **IP:** 10.5.5.10
-- **Role:** Network Access Control
-- **Shape:** server
-- **Tags:** nac; ise; 802.1x
-- **Layer:** security
-- **MAC:** 00:50:56:NA:01:01
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1153, 1172
-- **Size:** 50
-- **Notes:**
-  - Cisco ISE 3.1
-  - RADIUS/TACACS+
-
-### print-server
-- **Name:** Print Server
-- **IP:** 10.10.0.150
-- **Role:** Print Services
-- **Shape:** server
-- **Tags:** print; windows; services
-- **Layer:** physical
-- **MAC:** 00:50:56:PR:01:01
-- **Rack Unit:** 18
 - **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
+- **Assigned Rack:** 
+- **Rack Capacity:** 
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 1897, 2845
-- **Size:** 50
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 900, 400
+- **Size:** 54
 - **Notes:**
-  - Windows Print Server
-  - 50+ printers
+  - <h3>Edge firewall cluster</h3><p>Active and passive pair. State sync over a dedicated 10G link, both WAN circuits on each node.</p><table><thead><tr><th>Circuit</th><th>Block</th><th>Speed</th></tr></thead><tbody><tr><td>ISP A fiber</td><td>203.0.113.0/29</td><td>1 Gbps</td></tr><tr><td>ISP B coax</td><td>198.51.100.0/29</td><td>500 Mbps</td></tr></tbody></table><ul><li>SD WAN hub for every branch</li><li>DMZ on VLAN 100</li><li>IPS on, TLS inspection for user VLANs only</li></ul>
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"wall-fire"}}}`
 
-### file-server
-- **Name:** File Server
-- **IP:** 10.10.0.160
-- **Role:** File Services
+### fw2
+- **Name:** FW 2 Passive
+- **IP:** 10.20.0.3
+- **Role:** Edge firewall
+- **Shape:** firewall
+- **Tags:** edge; ha
+- **Layer:** layer3
+- **MAC:** 02:00:5E:20:00:03
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1500, 400
+- **Size:** 54
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"wall-fire"}}}`
+
+### core1
+- **Name:** Core 1
+- **IP:** 10.20.0.11
+- **Role:** Core switch, stack member 1
+- **Shape:** switch
+- **Tags:** core
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 900, 660
+- **Size:** 54
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### core2
+- **Name:** Core 2
+- **IP:** 10.20.0.12
+- **Role:** Core switch, stack member 2
+- **Shape:** switch
+- **Tags:** core
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1500, 660
+- **Size:** 54
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### dmzsw
+- **Name:** DMZ Switch
+- **IP:** 203.0.113.1
+- **Role:** 
+- **Shape:** switch
+- **Tags:** dmz
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2420, 480
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### web
+- **Name:** Web Server
+- **IP:** 203.0.113.3
+- **Role:** Customer portal
+- **Shape:** server
+- **Tags:** dmz; web
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2140, 380
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"web"}}}`
+
+### mail
+- **Name:** Mail Relay
+- **IP:** 203.0.113.4
+- **Role:** SMTP relay
+- **Shape:** server
+- **Tags:** dmz; mail
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2680, 380
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"email-fast"}}}`
+
+### rproxy
+- **Name:** Reverse Proxy
+- **IP:** 203.0.113.5
+- **Role:** TLS offload
+- **Shape:** load-balancer
+- **Tags:** dmz
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2140, 580
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"selfhst","name":"nginx"}}}`
+
+### vpn
+- **Name:** Remote Access
+- **IP:** 203.0.113.6
+- **Role:** Client VPN
+- **Shape:** vpn
+- **Tags:** dmz; vpn
+- **Layer:** layer3
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2680, 580
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"vpn"}}}`
+
+### hv1
+- **Name:** HV 01
+- **IP:** 10.20.20.11
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** cluster
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 180, 640
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"server"}}}`
+
+### hv2
+- **Name:** HV 02
+- **IP:** 10.20.20.12
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** cluster
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 420, 640
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"server"}}}`
+
+### hv3
+- **Name:** HV 03
+- **IP:** 10.20.20.13
+- **Role:** Hypervisor
+- **Shape:** server
+- **Tags:** cluster
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":true,"protocol":"https","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 660, 640
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"server"}}}`
+
+### dc01
+- **Name:** DC01
+- **IP:** 10.20.20.21
+- **Role:** Domain controller, DNS
+- **Shape:** vm
+- **Tags:** identity
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Hosted On:** hv1
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 180, 410
+- **Size:** 38
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"account-key"}}}`
+
+### fs01
+- **Name:** FS01
+- **IP:** 10.20.20.22
+- **Role:** File server
+- **Shape:** vm
+- **Tags:** files
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Hosted On:** hv2
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 420, 410
+- **Size:** 38
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"folder-network"}}}`
+
+### erp01
+- **Name:** ERP01
+- **IP:** 10.20.20.23
+- **Role:** ERP application
+- **Shape:** vm
+- **Tags:** erp
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Hosted On:** hv3
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 660, 410
+- **Size:** 38
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"application-cog"}}}`
+
+### srvsw
+- **Name:** Server Switch
+- **IP:** 10.20.0.21
+- **Role:** 25G leaf
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 420, 880
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### san
+- **Name:** SAN
+- **IP:** 10.20.21.10
+- **Role:** iSCSI, 120 TB
 - **Shape:** database
-- **Tags:** file; smb; dfs
-- **Layer:** physical
-- **MAC:** 00:50:56:FS:01:01
-- **Rack Unit:** 16
-- **U Height:** 2
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1861, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows File Server
-  - DFS namespace
-
-### ca-server
-- **Name:** Certificate Authority
-- **IP:** 192.168.100.80
-- **Role:** PKI Infrastructure
-- **Shape:** server
-- **Tags:** pki; ca; security
-- **Layer:** logical
-- **MAC:** 00:50:56:CA:01:01
-- **Rack Unit:** 5
+- **Tags:** storage
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
 - **U Height:** 1
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
+- **Assigned Rack:** 
+- **Rack Capacity:** 
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 1889, 2845
-- **Size:** 50
-- **Notes:**
-  - Windows CA
-  - Enterprise Root CA
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 180, 880
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"database"}}}`
 
-### sccm-server
-- **Name:** SCCM Server
-- **IP:** 192.168.100.90
-- **Role:** Endpoint Management
+### bkp
+- **Name:** Backup Appliance
+- **IP:** 10.20.21.20
+- **Role:** Immutable backups
+- **Shape:** nas
+- **Tags:** backup
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 660, 880
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"backup-restore"}}}`
+
+### dist1
+- **Name:** Dist Floor 1
+- **IP:** 10.20.0.31
+- **Role:** 
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1050, 920
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### dist2
+- **Name:** Dist Floor 2
+- **IP:** 10.20.0.32
+- **Role:** 
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1350, 920
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### wlc
+- **Name:** Wi Fi Controller
+- **IP:** 10.20.10.5
+- **Role:** Manages 18 APs
+- **Shape:** router
+- **Tags:** wifi
+- **Layer:** layer2
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2000, 960
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"router-wireless"}}}`
+
+### pbx
+- **Name:** Call Manager
+- **IP:** 10.20.40.5
+- **Role:** SIP and voicemail
 - **Shape:** server
-- **Tags:** sccm; patching; software
-- **Layer:** logical
-- **MAC:** 00:50:56:SC:01:01
-- **Rack Unit:** 3
-- **U Height:** 2
-- **Assigned Rack:** mgmt-rack
-- **Rack Capacity:** 24
+- **Tags:** voice
+- **Layer:** layer4
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 1850, 2845
-- **Size:** 50
-- **Notes:**
-  - MECM Primary Site
-  - Software deployment
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2300, 960
+- **Size:** 44
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"phone-voip"}}}`
 
-### voip-cluster
-- **Name:** VoIP Cluster
-- **IP:** 10.50.0.0/24
-- **Role:** Voice Services
+### sip
+- **Name:** SIP Trunk
+- **IP:** 
+- **Role:** 30 channels
+- **Shape:** cloud
+- **Tags:** voice
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2600, 960
+- **Size:** 46
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"phone-classic"}}}`
+
+### acc1a
+- **Name:** Access 1A
+- **IP:** 10.20.0.41
+- **Role:** 48 port PoE
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 900, 1370
+- **Size:** 42
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### acc1b
+- **Name:** Access 1B
+- **IP:** 10.20.0.42
+- **Role:** 48 port PoE
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1140, 1370
+- **Size:** 42
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### acc2a
+- **Name:** Access 2A
+- **IP:** 10.20.0.43
+- **Role:** 48 port PoE
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1380, 1370
+- **Size:** 42
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### acc2b
+- **Name:** Access 2B
+- **IP:** 10.20.0.44
+- **Role:** 48 port PoE
+- **Shape:** switch
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1620, 1370
+- **Size:** 42
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"switch"}}}`
+
+### pcs
+- **Name:** Desktops
+- **IP:** VLAN 30
+- **Role:** 
+- **Shape:** pc
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 900, 1530
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"desktop-classic"}}}`
+
+### phones
+- **Name:** IP Phones
+- **IP:** VLAN 40
+- **Role:** 
 - **Shape:** phone
-- **Tags:** voip; cisco; ucm
-- **Layer:** application
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1777, 1617
-- **Size:** 50
-- **Notes:**
-  - Cisco UCM Cluster
-  - 3000 endpoints
-
-### video-conf
-- **Name:** Video Conference
-- **IP:** 10.51.0.0/24
-- **Role:** Video Services
-- **Shape:** laptop
-- **Tags:** video; webex; teams
-- **Layer:** application
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1994, 2245
-- **Size:** 50
-- **Notes:**
-  - Webex/Teams integration
-  - Meeting rooms
-
-### security-cameras
-- **Name:** Security Cameras
-- **IP:** 10.60.0.0/24
-- **Role:** Physical Security
-- **Shape:** camera
-- **Tags:** cctv; surveillance; security
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1674, 2046
-- **Size:** 50
-- **Notes:**
-  - 150+ IP cameras
-  - 30-day retention
-
-### nvr-cluster
-- **Name:** NVR Cluster
-- **IP:** 10.60.0.10
-- **Role:** Video Recording
-- **Shape:** server
-- **Tags:** nvr; surveillance; storage
-- **Layer:** physical
-- **MAC:** 00:50:56:NV:01:01
-- **Rack Unit:** 15
-- **U Height:** 4
-- **Assigned Rack:** dc-rack-b2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1829, 2845
-- **Size:** 50
-- **Notes:**
-  - Milestone XProtect
-  - 500TB storage
-
-### dev-server-1
-- **Name:** Dev Server 1
-- **IP:** 10.80.0.10
-- **Role:** Development
-- **Shape:** server
-- **Tags:** dev; gitlab; ci-cd; [object Object]
-- **Layer:** application
-- **MAC:** 00:50:56:DV:01:01
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2801, 1176
-- **Size:** 128
-- **Notes:**
-  - GitLab Server
-  - CI/CD pipelines
-- **Styles:** `{"all":{"icon":{"library":"simple","name":"amazonwebservices"}}}`
-
-### dev-server-2
-- **Name:** Dev Server 2
-- **IP:** 10.80.0.11
-- **Role:** Development
-- **Shape:** server
-- **Tags:** dev; jenkins; ci-cd
-- **Layer:** application
-- **MAC:** 00:50:56:DV:01:02
-- **Rack Unit:** 
-- **U Height:** 2
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1945, 1165
-- **Size:** 50
-- **Notes:**
-  - Jenkins Server
-  - Build automation
-
-### test-environment
-- **Name:** Test Environment
-- **IP:** 10.81.0.0/24
-- **Role:** QA/Testing
-- **Shape:** hexagon
-- **Tags:** test; qa; staging
-- **Layer:** application
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2567, 885
-- **Size:** 148
-- **Notes:**
-  - Staging environment
-  - Pre-prod validation
-- **Styles:** `{"all":{"icon":{"library":"simple","name":"apple"}}}`
-
-### erp-system
-- **Name:** ERP System
-- **IP:** 10.90.0.10
-- **Role:** Business Application
-- **Shape:** database
-- **Tags:** erp; sap; business
-- **Layer:** application
-- **MAC:** 00:50:56:ER:01:01
-- **Rack Unit:** 
-- **U Height:** 4
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 790, 474
-- **Size:** 50
-- **Notes:**
-  - SAP S/4HANA
-  - Financial/HR systems
-
-### crm-system
-- **Name:** CRM System
-- **IP:** 10.91.0.10
-- **Role:** Business Application
-- **Shape:** database
-- **Tags:** crm; salesforce; business
-- **Layer:** application
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 3515, 1138
-- **Size:** 50
-- **Notes:**
-  - Salesforce integration
-  - Sales/Marketing
-
-### endpoint-1000
-- **Name:** Corporate Endpoints
-- **IP:** 10.70.0.0/22
-- **Role:** User Workstations
-- **Shape:** laptop
-- **Tags:** endpoints; workstations; users
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 992, 2284
-- **Size:** 50
-- **Notes:**
-  - ~1000 corporate laptops
-  - Windows 11
-
-### dist-switch-floor1
-- **Name:** Floor 1 Switch
-- **IP:** 10.1.1.1
-- **Role:** Distribution
-- **Shape:** switch
-- **Tags:** distribution; floor-1; access
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FL:01:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 654, 2020
-- **Size:** 50
-- **Notes:**
-  - Cisco C9300-48P
-  - PoE+ enabled
-
-### dist-switch-floor2
-- **Name:** Floor 2 Switch
-- **IP:** 10.1.2.1
-- **Role:** Distribution
-- **Shape:** switch
-- **Tags:** distribution; floor-2; access
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FL:02:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 854, 1843
-- **Size:** 50
-- **Notes:**
-  - Cisco C9300-48P
-  - PoE+ enabled
-
-### dist-switch-floor3
-- **Name:** Floor 3 Switch
-- **IP:** 10.1.3.1
-- **Role:** Distribution
-- **Shape:** switch
-- **Tags:** distribution; floor-3; access
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FL:03:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1899, 1457
-- **Size:** 50
-- **Notes:**
-  - Cisco C9300-48P
-  - PoE+ enabled
-
-### dist-switch-floor4
-- **Name:** Floor 4 Switch
-- **IP:** 10.1.4.1
-- **Role:** Distribution
-- **Shape:** switch
-- **Tags:** distribution; floor-4; access
-- **Layer:** physical
-- **MAC:** 00:1A:2B:FL:04:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 489, 181
-- **Size:** 50
-- **Notes:**
-  - Cisco C9300-48P
-  - PoE+ enabled
-
-### ap-floor1-zone1
-- **Name:** AP Floor 1 Zone 1
-- **IP:** 10.20.1.10
-- **Role:** Wireless Access
-- **Shape:** wifi
-- **Tags:** wifi; ap; floor-1
-- **Layer:** physical
-- **MAC:** 00:1A:2B:AP:01:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1140, 2070
-- **Size:** 50
-- **Notes:**
-  - Cisco 9120AX
-  - Wi-Fi 6
-
-### ap-floor2-zone1
-- **Name:** AP Floor 2 Zone 1
-- **IP:** 10.20.2.10
-- **Role:** Wireless Access
-- **Shape:** wifi
-- **Tags:** wifi; ap; floor-2
-- **Layer:** physical
-- **MAC:** 00:1A:2B:AP:02:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 688, 2384
-- **Size:** 50
-- **Notes:**
-  - Cisco 9120AX
-  - Wi-Fi 6
-
-### ap-floor3-zone1
-- **Name:** AP Floor 3 Zone 1
-- **IP:** 10.20.3.10
-- **Role:** Wireless Access
-- **Shape:** wifi
-- **Tags:** wifi; ap; floor-3
-- **Layer:** physical
-- **MAC:** 00:1A:2B:AP:03:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 2145, 1890
-- **Size:** 50
-- **Notes:**
-  - Cisco 9120AX
-  - Wi-Fi 6
-
-### ap-floor4-zone1
-- **Name:** AP Floor 4 Zone 1
-- **IP:** 10.20.4.10
-- **Role:** Wireless Access
-- **Shape:** wifi
-- **Tags:** wifi; ap; floor-4
-- **Layer:** physical
-- **MAC:** 00:1A:2B:AP:04:01
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 518, 566
-- **Size:** 50
-- **Notes:**
-  - Cisco 9120AX
-  - Wi-Fi 6
-
-### ups-dc-1
-- **Name:** UPS DC-1
-- **IP:** 192.168.200.10
-- **Role:** Power Management
-- **Shape:** rectangle
-- **Tags:** power; ups; datacenter
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 771, 296
-- **Size:** 50
-- **Notes:**
-  - APC Symmetra
-  - 80kVA
-  - 30 min runtime
-
-### ups-dc-2
-- **Name:** UPS DC-2
-- **IP:** 192.168.200.11
-- **Role:** Power Management
-- **Shape:** rectangle
-- **Tags:** power; ups; datacenter
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 216, 330
-- **Size:** 50
-- **Notes:**
-  - APC Symmetra
-  - 80kVA
-  - Redundant
-
-### pdu-rack-a1
-- **Name:** PDU Rack A1
-- **IP:** 192.168.200.21
-- **Role:** Power Distribution
-- **Shape:** rectangle
-- **Tags:** power; pdu; rack-a1
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 1
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a1
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1805, 2845
-- **Size:** 50
-- **Notes:**
-  - APC Switched PDU
-  - Per-outlet metering
-
-### pdu-rack-a2
-- **Name:** PDU Rack A2
-- **IP:** 192.168.200.22
-- **Role:** Power Distribution
-- **Shape:** rectangle
-- **Tags:** power; pdu; rack-a2
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 1
-- **U Height:** 1
-- **Assigned Rack:** dc-rack-a2
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1742, 2845
-- **Size:** 50
-- **Notes:**
-  - APC Switched PDU
-  - Per-outlet metering
-
-### cooling-1
-- **Name:** CRAC Unit 1
-- **IP:** 192.168.200.30
-- **Role:** Cooling
-- **Shape:** rectangle
-- **Tags:** cooling; hvac; datacenter
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 246, 626
-- **Size:** 50
-- **Notes:**
-  - Liebert CRV
-  - Row-based cooling
-
-### cooling-2
-- **Name:** CRAC Unit 2
-- **IP:** 192.168.200.31
-- **Role:** Cooling
-- **Shape:** rectangle
-- **Tags:** cooling; hvac; datacenter
-- **Layer:** physical
-- **MAC:** 
-- **Rack Unit:** 
-- **U Height:** 1
-- **Assigned Rack:** 
-- **Rack Capacity:** 42
-- **Is Rack:** false
-- **Locked:** false
-- **Group ID:** 
-- **Position:** 1603, 981
-- **Size:** 50
-- **Notes:**
-  - Liebert CRV
-  - N+1 redundancy
-
-### camera-a
-- **Name:** camera A
-- **IP:** 0.0.0.0
-- **Role:** 
-- **Shape:** camera
-- **Tags:** _none_
-- **Layer:** physical
+- **Tags:** voice
+- **Layer:** layer1
 - **MAC:** 
 - **Rack Unit:** 
 - **U Height:** 1
@@ -14292,16 +11234,18 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 167, 145
-- **Size:** 45
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1140, 1530
+- **Size:** 32
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"deskphone"}}}`
 
-### camera-a-copy
-- **Name:** camera B
-- **IP:** 0.0.0.0
+### printer
+- **Name:** Printers
+- **IP:** VLAN 50
 - **Role:** 
-- **Shape:** camera
+- **Shape:** printer
 - **Tags:** _none_
-- **Layer:** physical
+- **Layer:** layer1
 - **MAC:** 
 - **Rack Unit:** 
 - **U Height:** 1
@@ -14310,833 +11254,722 @@ THEONEFILE_CONFIG-->
 - **Is Rack:** false
 - **Locked:** false
 - **Group ID:** 
-- **Position:** 1041, 738
-- **Size:** 45
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1380, 1530
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"printer"}}}`
+
+### laptops
+- **Name:** Docked Laptops
+- **IP:** VLAN 30
+- **Role:** 
+- **Shape:** laptop
+- **Tags:** _none_
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 1620, 1530
+- **Size:** 34
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"laptop"}}}`
+
+### ap1
+- **Name:** AP Floor 1
+- **IP:** 10.20.10.21
+- **Role:** 
+- **Shape:** access-point
+- **Tags:** wifi
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2000, 1420
+- **Size:** 40
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"access-point"}}}`
+
+### ap2
+- **Name:** AP Floor 2
+- **IP:** 10.20.10.22
+- **Role:** 
+- **Shape:** access-point
+- **Tags:** wifi
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2280, 1420
+- **Size:** 40
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"access-point"}}}`
+
+### ap3
+- **Name:** AP Lobby
+- **IP:** 10.20.10.23
+- **Role:** 
+- **Shape:** access-point
+- **Tags:** wifi
+- **Layer:** layer1
+- **MAC:** 
+- **Rack Unit:** 
+- **U Height:** 1
+- **Assigned Rack:** 
+- **Rack Capacity:** 
+- **Is Rack:** false
+- **Locked:** false
+- **Group ID:** 
+- **Ping:** `{"enabled":false,"protocol":"http","customUrl":"","timeout":3000,"status":"unknown","lastCheck":null}`
+- **Position:** 2560, 1420
+- **Size:** 40
+- **Styles:** `{"all":{"icon":{"library":"mdi","name":"access-point"}}}`
 
 ## Connections
 
-- isp-primary (Gi0/0) --> core-router-1 (Gi1/0/1)
-  - **ID:** isp1-router1
-  - **Label:** 
-  - **Color:** #10b981
-  - **Width:** 6
-  - **Direction:** both
-  - **Routing:** orthogonal
+- ispa --> fw1
+  - **ID:** edge-hq-18
+  - **Label:** 1 Gbps fiber
+  - **Color:** #22c55e
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Primary WAN link
 
-- isp-secondary (Gi0/0) --> core-router-2 (Gi1/0/1)
-  - **ID:** isp2-router2
-  - **Label:** 
-  - **Color:** #10b981
-  - **Width:** 6
-  - **Direction:** both
-  - **Routing:** orthogonal
+- ispb --> fw2
+  - **ID:** edge-hq-19
+  - **Label:** 500 Mbps coax
+  - **Color:** #eab308
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Backup WAN link
 
-- core-router-1 (Gi1/0/24) --> core-router-2 (Gi1/0/24)
-  - **ID:** router1-router2
-  - **Label:** 
-  - **Color:** #f59e0b
+- fw1 (ha0) --> fw2 (ha0)
+  - **ID:** edge-hq-20
+  - **Label:** HA sync
+  - **Color:** #f43f5e
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-  - **Notes:**
-    - HSRP Peering
-
-- core-router-1 --> fw-external-1
-  - **ID:** router1-fw1
-  - **Label:** 
-  - **Color:** #ef4444
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-router-2 --> fw-external-2
-  - **ID:** router2-fw2
-  - **Label:** 
-  - **Color:** #ef4444
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-external-1 --> fw-external-2
-  - **ID:** fw1-fw2
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
-  - **Notes:**
-    - HA heartbeat
 
-- fw-external-1 --> core-switch-1
-  - **ID:** fw1-coresw1
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-external-2 --> core-switch-2
-  - **ID:** fw2-coresw2
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-1 --> core-switch-2
-  - **ID:** coresw1-coresw2
-  - **Label:** 
+- fw1 --> core1
+  - **ID:** edge-hq-21
+  - **Label:** 10G
   - **Color:** #3b82f6
   - **Width:** 5
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - VPC peer-link
 
-- core-switch-1 --> fw-internal
-  - **ID:** coresw1-fwint
+- fw2 --> core2
+  - **ID:** edge-hq-22
+  - **Label:** 10G
+  - **Color:** #3b82f6
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core1 --> core2
+  - **ID:** edge-hq-23
+  - **Label:** 40G stack
+  - **Color:** #3b82f6
+  - **Width:** 7
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- fw2 (port5) --> dmzsw
+  - **ID:** edge-hq-24
+  - **Label:** VLAN 100
+  - **Color:** #ef4444
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- dmzsw --> web
+  - **ID:** edge-hq-25
   - **Label:** 
   - **Color:** #ef4444
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-2 --> fw-internal
-  - **ID:** coresw2-fwint
+- dmzsw --> mail
+  - **ID:** edge-hq-26
   - **Label:** 
   - **Color:** #ef4444
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-1 --> dc-rack-a1
-  - **ID:** coresw1-racka1
-  - **Label:** 
-  - **Color:** #475569
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-2 --> dc-rack-a1
-  - **ID:** coresw2-racka1
+- dmzsw --> rproxy
+  - **ID:** edge-hq-27
   - **Label:** 
-  - **Color:** #475569
+  - **Color:** #ef4444
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-1 --> dc-rack-a2
-  - **ID:** coresw1-racka2
+- dmzsw --> vpn
+  - **ID:** edge-hq-28
   - **Label:** 
-  - **Color:** #475569
+  - **Color:** #ef4444
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-2 --> dc-rack-a2
-  - **ID:** coresw2-racka2
+- core1 --> srvsw
+  - **ID:** edge-hq-29
+  - **Label:** 2 x 25G
+  - **Color:** #3b82f6
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- srvsw --> hv1
+  - **ID:** edge-hq-30
   - **Label:** 
-  - **Color:** #475569
+  - **Color:** #3b82f6
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-1 --> dc-rack-b1
-  - **ID:** coresw1-rackb1
+- srvsw --> hv2
+  - **ID:** edge-hq-31
   - **Label:** 
-  - **Color:** #475569
+  - **Color:** #3b82f6
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-2 --> dc-rack-b1
-  - **ID:** coresw2-rackb1
+- srvsw --> hv3
+  - **ID:** edge-hq-32
   - **Label:** 
-  - **Color:** #475569
+  - **Color:** #3b82f6
   - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-1 --> dc-rack-b2
-  - **ID:** coresw1-rackb2
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-2 --> dc-rack-b2
-  - **ID:** coresw2-rackb2
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 4
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-external-1 --> dmz-rack
-  - **ID:** fw1-dmz
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-  - **Notes:**
-    - DMZ segment
-
-- fw-external-2 --> dmz-rack
-  - **ID:** fw2-dmz
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-  - **Notes:**
-    - DMZ segment
-
-- core-switch-1 --> mgmt-rack
-  - **ID:** coresw1-mgmt
-  - **Label:** 
-  - **Color:** #8b5cf6
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-  - **Notes:**
-    - OOB management
-
-- core-switch-1 --> wlc-primary
-  - **ID:** coresw1-wlc1
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-2 --> wlc-secondary
-  - **ID:** coresw2-wlc2
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- wlc-primary --> wlc-secondary
-  - **ID:** wlc1-wlc2
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - HA pair
-
-- wlc-primary --> mobile-zone-hq
-  - **ID:** wlc1-mobile-hq
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- wlc-primary --> mobile-zone-guest
-  - **ID:** wlc1-mobile-guest
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- wlc-primary --> mobile-zone-iot
-  - **ID:** wlc1-mobile-iot
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-router-1 --> branch-router-ny
-  - **ID:** router1-branch-ny
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - SD-WAN tunnel
-
-- core-router-1 --> branch-router-la
-  - **ID:** router1-branch-la
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - SD-WAN tunnel
-
-- core-router-1 --> branch-router-chi
-  - **ID:** router1-branch-chi
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - SD-WAN tunnel
-
-- core-router-1 --> branch-router-lon
-  - **ID:** router1-branch-lon
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - SD-WAN tunnel
-
-- core-router-1 --> branch-router-tokyo
-  - **ID:** router1-branch-tokyo
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - SD-WAN tunnel
-
-- core-router-1 --> cloud-aws
-  - **ID:** router1-aws
-  - **Label:** 
+- srvsw --> san
+  - **ID:** edge-hq-33
+  - **Label:** iSCSI
   - **Color:** #f97316
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- srvsw --> bkp
+  - **ID:** edge-hq-34
+  - **Label:** Backup
+  - **Color:** #f97316
+  - **Width:** 5
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core1 --> dist1
+  - **ID:** edge-hq-35
+  - **Label:** 10G
+  - **Color:** #06b6d4
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core2 --> dist2
+  - **ID:** edge-hq-36
+  - **Label:** 10G
+  - **Color:** #06b6d4
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- core1 --> dist2
+  - **ID:** edge-hq-37
+  - **Label:** 
+  - **Color:** #06b6d4
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
-  - **Notes:**
-    - Direct Connect
 
-- core-router-2 --> cloud-azure
-  - **ID:** router2-azure
+- core2 --> dist1
+  - **ID:** edge-hq-38
   - **Label:** 
-  - **Color:** #0ea5e9
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Color:** #06b6d4
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
-  - **Notes:**
-    - ExpressRoute
 
-- fw-internal --> cloud-gcp
-  - **ID:** fwint-gcp
-  - **Label:** 
-  - **Color:** #22c55e
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** dashed
-  - **Group ID:** 
-  - **Notes:**
-    - VPN tunnel
-
-- core-switch-1 --> dist-switch-floor1
-  - **ID:** coresw1-floor1
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-1 --> dist-switch-floor2
-  - **ID:** coresw1-floor2
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-2 --> dist-switch-floor3
-  - **ID:** coresw2-floor3
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-2 --> dist-switch-floor4
-  - **ID:** coresw2-floor4
-  - **Label:** 
-  - **Color:** #475569
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- dist-switch-floor1 --> endpoint-1000
-  - **ID:** floor1-endpoints
-  - **Label:** 
-  - **Color:** #94a3b8
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- dist-switch-floor1 --> ap-floor1-zone1
-  - **ID:** floor1-ap1
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- dist-switch-floor2 --> ap-floor2-zone1
-  - **ID:** floor2-ap2
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- dist-switch-floor3 --> ap-floor3-zone1
-  - **ID:** floor3-ap3
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- dist-switch-floor4 --> ap-floor4-zone1
-  - **ID:** floor4-ap4
-  - **Label:** 
-  - **Color:** #06b6d4
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-internal --> proxy-server-1
-  - **ID:** fwint-proxy1
-  - **Label:** 
-  - **Color:** #ef4444
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-internal --> proxy-server-2
-  - **ID:** fwint-proxy2
-  - **Label:** 
-  - **Color:** #ef4444
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-external-1 --> vpn-concentrator
-  - **ID:** fwext1-vpn
-  - **Label:** 
+- core2 --> wlc
+  - **ID:** edge-hq-39
+  - **Label:** VLAN 10
   - **Color:** #8b5cf6
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
 
-- core-switch-1 --> nac-server
-  - **ID:** coresw1-nac
+- core2 --> pbx
+  - **ID:** edge-hq-40
   - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
+  - **Color:** #ec4899
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
+  - **Notes:**
+    - Voice VLAN 40
 
-- core-switch-1 --> voip-cluster
-  - **ID:** coresw1-voip
-  - **Label:** 
-  - **Color:** #22c55e
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-2 --> video-conf
-  - **ID:** coresw2-video
-  - **Label:** 
-  - **Color:** #22c55e
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-1 --> security-cameras
-  - **ID:** coresw1-cameras
-  - **Label:** 
-  - **Color:** #94a3b8
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-internal --> dev-server-1
-  - **ID:** fwint-dev1
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-internal --> dev-server-2
-  - **ID:** fwint-dev2
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-internal --> test-environment
-  - **ID:** fwint-test
-  - **Label:** 
-  - **Color:** #a855f7
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- core-switch-1 --> erp-system
-  - **ID:** coresw1-erp
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 3
-  - **Direction:** both
-  - **Routing:** orthogonal
-  - **Type:** main
-  - **Line Style:** solid
-  - **Group ID:** 
-
-- fw-external-1 --> crm-system
-  - **ID:** fwext1-crm
-  - **Label:** 
-  - **Color:** #f59e0b
-  - **Width:** 2
-  - **Direction:** both
-  - **Routing:** orthogonal
+- pbx --> sip
+  - **ID:** edge-hq-41
+  - **Label:** SIP over TLS
+  - **Color:** #ec4899
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dashed
   - **Group ID:** 
-  - **Notes:**
-    - Salesforce cloud
 
-- ups-dc-1 --> dc-rack-a1
-  - **ID:** ups1-racka1
+- dist1 --> acc1a
+  - **ID:** edge-hq-42
   - **Label:** 
-  - **Color:** #fbbf24
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Power feed A
 
-- ups-dc-2 --> dc-rack-a2
-  - **ID:** ups2-racka2
+- dist1 --> acc1b
+  - **ID:** edge-hq-43
   - **Label:** 
-  - **Color:** #fbbf24
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Power feed B
 
-- ups-dc-1 --> dc-rack-b1
-  - **ID:** ups1-rackb1
+- dist2 --> acc2a
+  - **ID:** edge-hq-44
   - **Label:** 
-  - **Color:** #fbbf24
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Power feed A
 
-- ups-dc-2 --> dc-rack-b2
-  - **ID:** ups2-rackb2
+- dist2 --> acc2b
+  - **ID:** edge-hq-45
   - **Label:** 
-  - **Color:** #fbbf24
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** solid
   - **Group ID:** 
-  - **Notes:**
-    - Power feed B
 
-- cooling-1 --> dc-rack-a1
-  - **ID:** cooling1-racka1
+- acc1a --> pcs
+  - **ID:** edge-hq-46
   - **Label:** 
-  - **Color:** #38bdf8
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- acc1b --> phones
+  - **ID:** edge-hq-47
+  - **Label:** 
+  - **Color:** #ec4899
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- acc2a --> printer
+  - **ID:** edge-hq-48
+  - **Label:** 
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- acc2b --> laptops
+  - **ID:** edge-hq-49
+  - **Label:** 
+  - **Color:** #14b8a6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- acc2b (g1/0/47) --> ap1
+  - **ID:** edge-hq-50
+  - **Label:** PoE
+  - **Color:** #8b5cf6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** solid
+  - **Group ID:** 
+
+- wlc --> ap2
+  - **ID:** edge-hq-51
+  - **Label:** CAPWAP
+  - **Color:** #8b5cf6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dotted
   - **Group ID:** 
-  - **Notes:**
-    - Cooling zone
 
-- cooling-2 --> dc-rack-b1
-  - **ID:** cooling2-rackb1
+- wlc --> ap3
+  - **ID:** edge-hq-52
   - **Label:** 
-  - **Color:** #38bdf8
-  - **Width:** 2
-  - **Direction:** forward
-  - **Routing:** orthogonal
+  - **Color:** #8b5cf6
+  - **Width:** 4
+  - **Direction:** none
+  - **Routing:** straight
   - **Type:** main
   - **Line Style:** dotted
   - **Group ID:** 
-  - **Notes:**
-    - Cooling zone
 
-- undefined --> undefined
-  - **ID:** custom-1765237881452
+- wlc --> ap1
+  - **ID:** edge-hq-53
   - **Label:** 
-  - **Color:** #c800ff
+  - **Color:** #8b5cf6
   - **Width:** 4
-  - **Direction:** forward
-  - **Routing:** orthogonal
-  - **Type:** custom
-  - **Line Style:** solid
+  - **Direction:** none
+  - **Routing:** straight
+  - **Type:** main
+  - **Line Style:** dotted
   - **Group ID:** 
-  - **Points:** 3492,1527 3501,1831 3304,1732
-
-- undefined --> undefined
-  - **ID:** custom-1765239355462
-  - **Label:** 
-  - **Color:** #f97316
-  - **Width:** 4
-  - **Direction:** forward
-  - **Routing:** orthogonal
-  - **Type:** custom
-  - **Line Style:** solid
-  - **Group ID:** 
-  - **Points:** 2467,156 2146,146 2306,244
 
 ## Zones
 
-### rect-1765237540610
-- **Position:** 2879, 160
-- **Size:** 992 x 539
-- **Color:** #f97316
+### rect-hq-3
+- **Position:** 40, 250
+- **Size:** 760 x 760
+- **Color:** #3b82f6
 - **Style:** filled
-- **Line Style:** solid
+- **Line Style:** dashed
 - **Border Color:** 
 - **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.12
 
-### rect-1765237681216
-- **Position:** 448, 1672
-- **Size:** 916 x 924
-- **Color:** #c800ff
-- **Style:** outlined
-- **Line Style:** solid
+### rect-hq-6
+- **Position:** 1840, 230
+- **Size:** 920 x 440
+- **Color:** #ef4444
+- **Style:** filled
+- **Line Style:** dashed
 - **Border Color:** 
 - **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.12
 
-### rect-1766437913740
-- **Position:** 905, 115
-- **Size:** 111 x 920
-- **Color:** #5215f9
+### rect-hq-9
+- **Position:** 1840, 740
+- **Size:** 920 x 380
+- **Color:** #ec4899
 - **Style:** filled
-- **Line Style:** wall
+- **Line Style:** dashed
 - **Border Color:** 
-- **Border Width:** 13
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.12
 
-### rect-1766437935414
-- **Position:** 131, 1072
-- **Size:** 873 x 99
-- **Color:** #5215f9
+### rect-hq-12
+- **Position:** 780, 1200
+- **Size:** 960 x 420
+- **Color:** #14b8a6
 - **Style:** filled
-- **Line Style:** wall
+- **Line Style:** dashed
 - **Border Color:** 
-- **Border Width:** 13
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.12
+
+### rect-hq-15
+- **Position:** 1840, 1200
+- **Size:** 920 x 420
+- **Color:** #8b5cf6
+- **Style:** filled
+- **Line Style:** dashed
+- **Border Color:** 
+- **Border Width:** 2
+- **Group ID:** 
+- **Fill Opacity:** 0.12
 
 ## Text Labels
 
-### text-1765237828167
-- **Content:** Double click on desktop<br>or long press on mobile<br>to enter rack canvas view
-- **Position:** 3411, 1390
+### text-hq-1
+- **Position:** 60, 100
+- **Content:** Larkspur Logistics HQ
 - **Font Size:** 46
 - **Color:** #e2e8f0
 - **Font Weight:** bold
-- **Font Style:** italic
-- **Text Align:** middle
+- **Font Style:** normal
+- **Text Align:** start
 - **Text Decoration:** none
 - **Background Color:** #000000
 - **Background Enabled:** false
 - **Opacity:** 1
+- **Group ID:** 
 
-### text-1765239331126
-- **Content:** Google is live!
-- **Position:** 2455, 161
-- **Font Size:** 56
+### text-hq-2
+- **Position:** 60, 150
+- **Content:** Internet edge, DMZ, core, server room, Wi Fi and voice
+- **Font Size:** 20
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-4
+- **Position:** 58, 284
+- **Content:** Server Room
+- **Font Size:** 24
+- **Color:** #3b82f6
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-5
+- **Position:** 58, 314
+- **Content:** VLAN 20  10.20.20.0/24
+- **Font Size:** 16
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-7
+- **Position:** 1858, 264
+- **Content:** DMZ  VLAN 100
+- **Font Size:** 24
+- **Color:** #ef4444
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-8
+- **Position:** 1858, 294
+- **Content:** 203.0.113.0/29 published services
+- **Font Size:** 16
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-10
+- **Position:** 1858, 774
+- **Content:** Wi Fi and Voice
+- **Font Size:** 24
+- **Color:** #ec4899
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-11
+- **Position:** 1858, 804
+- **Content:** Controllers and call control
+- **Font Size:** 16
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-13
+- **Position:** 798, 1234
+- **Content:** Floors 1 and 2
+- **Font Size:** 24
+- **Color:** #14b8a6
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-14
+- **Position:** 798, 1264
+- **Content:** User VLAN 30, voice VLAN 40, print VLAN 50
+- **Font Size:** 16
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-16
+- **Position:** 1858, 1234
+- **Content:** Access Points
+- **Font Size:** 24
+- **Color:** #8b5cf6
+- **Font Weight:** bold
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-17
+- **Position:** 1858, 1264
+- **Content:** Corporate, guest and IoT SSIDs
+- **Font Size:** 16
+- **Color:** #94a3b8
+- **Font Weight:** normal
+- **Font Style:** normal
+- **Text Align:** start
+- **Text Decoration:** none
+- **Background Color:** #000000
+- **Background Enabled:** false
+- **Opacity:** 1
+- **Group ID:** 
+
+### text-hq-54
+- **Position:** 60, 1150
+- **Content:** Site summary
+- **Font Size:** 24
 - **Color:** #e2e8f0
 - **Font Weight:** bold
 - **Font Style:** normal
@@ -15145,12 +11978,13 @@ THEONEFILE_CONFIG-->
 - **Background Color:** #000000
 - **Background Enabled:** false
 - **Opacity:** 1
+- **Group ID:** 
 
-### text-1766446595277
-- **Content:** SITE A
-- **Position:** 654, 1368
-- **Font Size:** 101
-- **Color:** #e2e8f0
+### text-hq-55
+- **Position:** 60, 1190
+- **Content:** VLAN 10  Management<br>VLAN 20  Servers<br>VLAN 30  Users<br>VLAN 40  Voice<br>VLAN 50  Printers<br>VLAN 100  DMZ<br><br>220 staff, 2 floors, 18 APs
+- **Font Size:** 18
+- **Color:** #cbd5e1
 - **Font Weight:** normal
 - **Font Style:** normal
 - **Text Align:** start
@@ -15158,56 +11992,5 @@ THEONEFILE_CONFIG-->
 - **Background Color:** #000000
 - **Background Enabled:** false
 - **Opacity:** 1
-
-### text-1766446610211
-- **Content:** SITE A
-- **Position:** 181, 1129
-- **Font Size:** 101
-- **Color:** #e2e8f0
-- **Font Weight:** normal
-- **Font Style:** normal
-- **Text Align:** start
-- **Text Decoration:** none
-- **Background Color:** #000000
-- **Background Enabled:** false
-- **Opacity:** 1
-
-### text-1766453024797
-- **Content:** SITE A
-- **Position:** 969, 1029
-- **Font Size:** 101
-- **Color:** #e2e8f0
-- **Font Weight:** normal
-- **Font Style:** normal
-- **Text Align:** start
-- **Text Decoration:** none
-- **Background Color:** #000000
-- **Background Enabled:** false
-- **Opacity:** 1
-
-### text-1766453070975
-- **Content:** SITE A
-- **Position:** 613, 1140
-- **Font Size:** 101
-- **Color:** #e2e8f0
-- **Font Weight:** normal
-- **Font Style:** normal
-- **Text Align:** start
-- **Text Decoration:** none
-- **Background Color:** #000000
-- **Background Enabled:** false
-- **Opacity:** 1
-
-### text-1766453072857
-- **Content:** SITE A
-- **Position:** 969, 474
-- **Font Size:** 101
-- **Color:** #e2e8f0
-- **Font Weight:** normal
-- **Font Style:** normal
-- **Text Align:** start
-- **Text Decoration:** none
-- **Background Color:** #000000
-- **Background Enabled:** false
-- **Opacity:** 1
+- **Group ID:** 
 

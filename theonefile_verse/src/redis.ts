@@ -2,6 +2,17 @@ import { createClient, RedisClientType } from "redis";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
+export function redactRedisUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.username) u.username = "***";
+    if (u.password) u.password = "***";
+    return u.toString();
+  } catch {
+    return "[unparseable redis url]";
+  }
+}
+
 let client: RedisClientType | null = null;
 let subscriber: RedisClientType | null = null;
 let isConnected = false;
@@ -32,7 +43,7 @@ export async function connectRedis(): Promise<boolean> {
     await subscriber.connect();
 
     isConnected = true;
-    console.log("[Redis] Connected to", REDIS_URL);
+    console.log("[Redis] Connected to", redactRedisUrl(REDIS_URL));
 
 
     return true;

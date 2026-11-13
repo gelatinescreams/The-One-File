@@ -1,7 +1,7 @@
 import * as auth from "../auth";
 import * as oidc from "../oidc";
 import * as db from "../database";
-import { isAdminConfigured, getSettings, getExternalOrigin, isHttpsRequest } from "../config";
+import { isAdminConfigured, getSettings, getConfiguredOrigin, isHttpsRequest } from "../config";
 import { getClientIP, serveHtml, apiError, readJsonLimited } from "../security";
 import { checkRateLimit } from "../rate-limit";
 import { setupPageHtml } from "../templates";
@@ -38,8 +38,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!passwordValidation.valid) {
         return Response.json({ error: passwordValidation.error }, { status: 400, headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
-      const result = await auth.registerUser(body.email, body.password, body.email.split('@')[0], baseUrl);
+      const result = await auth.registerUser(body.email, body.password, body.email.split('@')[0], getConfiguredOrigin() || undefined);
       if (!result.success) {
         return Response.json({ error: result.error || "Registration failed" }, { status: 400, headers: corsHeaders });
       }

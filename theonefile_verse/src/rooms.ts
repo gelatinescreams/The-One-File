@@ -5,8 +5,10 @@ import { parseFragment } from "parse5";
 import * as db from "./database";
 import * as redis from "./redis";
 import * as auth from "./auth";
-import { DATA_DIR, ROOMS_DIR, getSettings, updateSettings, getMaxRoomSizeBytes, isValidUUID, REDIS_FANOUT, type InstanceSettings } from "./config";
+import { DATA_DIR, ROOMS_DIR, getSettings, updateSettings, getMaxRoomSizeBytes, getMaxTotalRoomStorageBytes, isValidUUID, REDIS_FANOUT, MAX_UPDATE_INTERVAL_HOURS, type InstanceSettings } from "./config";
 import { sanitizeScene3d, SCENE3D_CODE_TTL_DAYS } from "./scene3d";
+import { hostResolvesPublic } from "./net-guard";
+import { enforceTopologyShape } from "./topology-shape";
 
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 if (!existsSync(ROOMS_DIR)) mkdirSync(ROOMS_DIR, { recursive: true });
@@ -99,11 +101,49 @@ function commitRoomWrite(roomId: string): void {
   }
 }
 
+const ROOM_STORAGE_CACHE_MS = 15000;
+const roomStorageCache = { bytes: 0, at: 0 };
+const knownRoomBytes = new Map<string, number>();
+
+export function totalRoomStorageBytes(): number {
+  const now = Date.now();
+  if (now - roomStorageCache.at > ROOM_STORAGE_CACHE_MS) {
+    try { roomStorageCache.bytes = db.totalRoomStorageBytes(); } catch { roomStorageCache.bytes = 0; }
+    roomStorageCache.at = now;
+  }
+  return roomStorageCache.bytes;
+}
+
+export function invalidateRoomStorageCache(): void {
+  roomStorageCache.at = 0;
+}
+
+export function storedRoomBytes(roomId: string): number {
+  const known = knownRoomBytes.get(roomId);
+  if (known !== undefined) return known;
+  let bytes = 0;
+  try { bytes = db.roomTopologyBytes(roomId); } catch { bytes = 0; }
+  knownRoomBytes.set(roomId, bytes);
+  return bytes;
+}
+
+export function storageQuotaAllows(newBytes: number, previousBytes: number = 0): boolean {
+  const cap = getMaxTotalRoomStorageBytes();
+  if (!cap) return true;
+  if (newBytes <= previousBytes) return true;
+  return totalRoomStorageBytes() - previousBytes + newBytes <= cap;
+}
+
+export const STORAGE_QUOTA_ERROR = "This server has reached its storage limit. Ask the administrator to free space or raise the limit.";
+
 export function persistTopology(roomId: string, topology: any, json: string, lastActivity: string): boolean {
   if (!isValidUUID(roomId)) return false;
   const hash = hashTopologyString(json);
   if (lastPersistedHash.get(roomId) === hash) return false;
   lastPersistedHash.set(roomId, hash);
+  const previous = knownRoomBytes.get(roomId);
+  knownRoomBytes.set(roomId, json.length);
+  if (previous !== undefined && roomStorageCache.at) roomStorageCache.bytes += json.length - previous;
   const existing = pendingRoomWrites.get(roomId);
   if (existing) clearTimeout(existing.timer);
   const timer = setTimeout(() => commitRoomWrite(roomId), ROOM_SAVE_DEBOUNCE_MS);
@@ -137,11 +177,14 @@ export function clearTopologyCache(roomId?: string): void {
     if (pending) clearTimeout(pending.timer);
     pendingRoomWrites.delete(roomId);
     lastPersistedHash.delete(roomId);
+    knownRoomBytes.delete(roomId);
   } else {
     for (const p of pendingRoomWrites.values()) clearTimeout(p.timer);
     pendingRoomWrites.clear();
     lastPersistedHash.clear();
+    knownRoomBytes.clear();
   }
+  invalidateRoomStorageCache();
 }
 
 
@@ -453,9 +496,10 @@ export function restartUpdateTimer(): void {
   if (updateTimer) clearInterval(updateTimer);
   updateTimer = null;
   if (settings.updateIntervalHours > 0 && !settings.skipUpdates) {
-    updateTimer = setInterval(() => { fetchLatestFromGitHub(); }, settings.updateIntervalHours * 60 * 60 * 1000);
+    const hours = Math.min(MAX_UPDATE_INTERVAL_HOURS, settings.updateIntervalHours);
+    updateTimer = setInterval(() => { fetchLatestFromGitHub(); }, hours * 60 * 60 * 1000);
     if (typeof (updateTimer as any).unref === 'function') (updateTimer as any).unref();
-    console.log(`[Update] Auto update every ${settings.updateIntervalHours} hours`);
+    console.log(`[Update] Auto update every ${hours} hours`);
   }
 }
 
@@ -677,22 +721,26 @@ function sanitizeHtmlPass(str: string): string {
   });
 }
 
-export function sanitizeTopologyStrings(obj: any): any {
+function sanitizeStringsDeep(obj: any): any {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj === 'string') return sanitizeHtmlString(obj);
-  if (Array.isArray(obj)) return obj.map(sanitizeTopologyStrings);
+  if (Array.isArray(obj)) return obj.map(sanitizeStringsDeep);
   if (typeof obj === 'object') {
     const result: any = {};
     for (const key of Object.keys(obj)) {
       if (key === '__proto__') continue;
-      result[key] = sanitizeTopologyStrings(obj[key]);
+      result[key] = sanitizeStringsDeep(obj[key]);
     }
     return result;
   }
   return obj;
 }
 
-export function validateTopology(topology: any): TopologyValidationResult {
+export function sanitizeTopologyStrings(obj: any): any {
+  return enforceTopologyShape(sanitizeStringsDeep(obj));
+}
+
+export function validateTopology(topology: any, maxBytesOverride?: number): TopologyValidationResult {
   if (topology === null || topology === undefined) {
     return { valid: true, sanitized: null };
   }
@@ -702,7 +750,7 @@ export function validateTopology(topology: any): TopologyValidationResult {
   } catch {
     return { valid: false, error: "Topology is not valid JSON" };
   }
-  const maxSizeBytes = getMaxRoomSizeBytes();
+  const maxSizeBytes = maxBytesOverride && maxBytesOverride > 0 ? Math.min(maxBytesOverride, getMaxRoomSizeBytes()) : getMaxRoomSizeBytes();
   if (jsonStr.length > maxSizeBytes) {
     return { valid: false, error: `Topology exceeds maximum size of ${Math.round(maxSizeBytes / (1024 * 1024))}MB` };
   }
@@ -889,15 +937,25 @@ export async function sendWebhook(event: string, data: any): Promise<void> {
   const settings = getSettings();
   if (!settings.webhookEnabled || !settings.webhookUrl) return;
   if (!isValidWebhookUrl(settings.webhookUrl)) {
-    console.error('[Webhook] Blocked request to disallowed URL:', settings.webhookUrl);
+    console.error('[Webhook] Blocked request to disallowed URL host:', (() => { try { return new URL(settings.webhookUrl).host; } catch { return '[invalid]'; } })());
     return;
   }
   try {
-    await fetch(settings.webhookUrl, {
+    const host = new URL(settings.webhookUrl).hostname;
+    if (!(await hostResolvesPublic(host))) {
+      console.error('[Webhook] Blocked request: host resolves to a private, loopback or link local address:', host);
+      return;
+    }
+    const res = await fetch(settings.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event, timestamp: new Date().toISOString(), data })
+      body: JSON.stringify({ event, timestamp: new Date().toISOString(), data }),
+      redirect: "manual",
+      signal: AbortSignal.timeout(10000)
     });
+    if (res.status >= 300 && res.status < 400) {
+      console.error('[Webhook] Redirect not followed, status', res.status);
+    }
   } catch (e: any) {
     console.error('[Webhook] Failed to send webhook:', e.message);
   }

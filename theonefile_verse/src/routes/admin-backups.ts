@@ -44,7 +44,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
   }
 
   if (path.match(/^\/api\/admin\/backups\/[\w-]+\/download$/) && req.method === "GET") {
-    const { user, apiKey } = await validateAdminOrApiKey(req, "read");
+    const { user, apiKey } = await validateAdminOrApiKey(req, "admin");
     if (!user && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }

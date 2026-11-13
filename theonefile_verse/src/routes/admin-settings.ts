@@ -1,7 +1,8 @@
 import * as db from "../database";
-import { getSettings, updateSettings, saveSettings, validateAdminPath, ENV_ADMIN_PASSWORD, APP_VERSION, MAX_ROOM_SIZE_MB_CEILING, normalizeOrigin, ENV_TRUSTED_PROXY_COUNT, ENV_TRUSTED_PROXIES } from "../config";
+import { getSettings, updateSettings, saveSettings, validateAdminPath, ENV_ADMIN_PASSWORD, APP_VERSION, MAX_ROOM_SIZE_MB_CEILING, MAX_UPDATE_INTERVAL_HOURS, normalizeOrigin, ENV_TRUSTED_PROXY_COUNT, ENV_TRUSTED_PROXIES } from "../config";
 import { getClientIP, apiError, validateAdminUser, validateAdminOrApiKey, validateRequestCsrf, csrfReject, readJsonLimited, tooLargeResponse, redactForAudit } from "../security";
 import { runAssetSweepNow } from "../assets";
+import { hostResolvesPublic } from "../net-guard";
 import { hashPassword, theOneFileHtml, currentFileVersion, extractThemePresets, computeSha256Hash, validateTheOneFileHtml, fetchLatestFromGitHub, getExpectedTheOneFileHash, setExpectedTheOneFileHash, setTheOneFileHtml, getTheOneFilePath, restartUpdateTimer, clearUpdateTimer, isValidWebhookUrl, restartBackupTimer, extractVersionFromHtml, isNewerVersion } from "../rooms";
 
 const GITHUB_RAW_URL = "https://raw.githubusercontent.com/gelatinescreams/The-One-File/main/theonefile-networkening.html";
@@ -16,6 +17,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     }
     const settings = getSettings();
     const { instancePasswordHash, ...safeSettings } = settings;
+    if (apiKey && !apiKey.permissions.includes("admin")) (safeSettings as any).webhookUrl = null;
     const fileValidation = validateTheOneFileHtml(theOneFileHtml);
     const currentFileHash = theOneFileHtml ? await computeSha256Hash(theOneFileHtml) : null;
     const expectedFileHash = getExpectedTheOneFileHash();
@@ -51,8 +53,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (body.instancePassword !== undefined && body.instancePassword !== "" && body.instancePassword.length < 10) {
         return Response.json({ error: "Password must be at least 10 characters" }, { status: 400, headers: corsHeaders });
       }
-      if (body.webhookUrl && !isValidWebhookUrl(body.webhookUrl)) {
+      if (body.webhookUrl && (typeof body.webhookUrl !== "string" || !isValidWebhookUrl(body.webhookUrl))) {
         return Response.json({ error: "Invalid webhook URL: must be http(s) and not point to private/internal addresses" }, { status: 400, headers: corsHeaders });
+      }
+      if (body.webhookUrl && !(await hostResolvesPublic(new URL(body.webhookUrl).hostname))) {
+        return Response.json({ error: "Invalid webhook URL: the host does not resolve, or resolves to a private or internal address" }, { status: 400, headers: corsHeaders });
       }
       if (body.adminPath !== undefined) {
         const validation = validateAdminPath(body.adminPath);
@@ -106,7 +111,8 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
         }
       }
       if (typeof body.updateIntervalHours === "number") {
-        settings.updateIntervalHours = Math.max(0, body.updateIntervalHours);
+        if (!Number.isFinite(body.updateIntervalHours)) return Response.json({ error: "Update interval must be a number of hours" }, { status: 400, headers: corsHeaders });
+        settings.updateIntervalHours = Math.max(0, Math.min(MAX_UPDATE_INTERVAL_HOURS, body.updateIntervalHours));
       }
       if (typeof body.skipUpdates === "boolean") {
         settings.skipUpdates = body.skipUpdates;
@@ -114,11 +120,20 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (typeof body.allowPublicRoomCreation === "boolean") {
         settings.allowPublicRoomCreation = body.allowPublicRoomCreation;
       }
-      if (typeof body.maxRoomsPerInstance === "number") {
-        settings.maxRoomsPerInstance = Math.max(0, body.maxRoomsPerInstance);
+      if (typeof body.maxRoomsPerInstance === "number" && Number.isFinite(body.maxRoomsPerInstance)) {
+        settings.maxRoomsPerInstance = Math.max(0, Math.round(body.maxRoomsPerInstance));
       }
       if (typeof body.maxRoomSizeMB === "number") {
         settings.maxRoomSizeMB = Math.max(1, Math.min(MAX_ROOM_SIZE_MB_CEILING, Math.round(body.maxRoomSizeMB)));
+      }
+      if (typeof body.maxGuestRooms === "number" && Number.isFinite(body.maxGuestRooms)) {
+        settings.maxGuestRooms = Math.max(0, Math.min(1000000, Math.round(body.maxGuestRooms)));
+      }
+      if (typeof body.maxGuestRoomSizeMB === "number" && Number.isFinite(body.maxGuestRoomSizeMB)) {
+        settings.maxGuestRoomSizeMB = Math.max(1, Math.min(MAX_ROOM_SIZE_MB_CEILING, Math.round(body.maxGuestRoomSizeMB)));
+      }
+      if (typeof body.maxTotalRoomStorageMB === "number" && Number.isFinite(body.maxTotalRoomStorageMB)) {
+        settings.maxTotalRoomStorageMB = Math.max(0, Math.min(1048576, Math.round(body.maxTotalRoomStorageMB)));
       }
       if (body.defaultDestructMode && ["time", "empty", "never"].includes(body.defaultDestructMode)) {
         settings.defaultDestructMode = body.defaultDestructMode;

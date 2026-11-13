@@ -61,8 +61,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     if (!user && !apiKey) {
       return Response.json({ error: "Unauthorized" }, { status: 401, headers: corsHeaders });
     }
-    const rooms = db.listRooms();
-    const settings = withoutSecretSettings(db.getAllSettings());
+    const fullScope = !!user || !!apiKey?.permissions.includes("admin");
+    const rooms = fullScope ? db.listRooms() : db.listRooms().map((r: any) => ({ ...r, passwordHash: null, hasPassword: !!r.passwordHash }));
+    const settings: Record<string, any> = withoutSecretSettings(db.getAllSettings());
+    if (!fullScope) delete settings.webhookUrl;
     const exportData = { version: 1, exportedAt: new Date().toISOString(), rooms, settings };
     const actor = user ? user.id : `apikey:${apiKey!.name}`;
     db.addAuditLog({ timestamp: new Date().toISOString(), action: "data_exported", actor, actorIp: getClientIP(req), details: { roomCount: rooms.length } });

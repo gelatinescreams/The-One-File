@@ -186,6 +186,9 @@
     document.getElementById('default-destruct-hours').value = settings.defaultDestructHours || 24;
     document.getElementById('max-rooms').value = settings.maxRoomsPerInstance || 0;
     document.getElementById('max-room-size-mb').value = settings.maxRoomSizeMB || 50;
+    setNumberField('max-guest-rooms', settings.maxGuestRooms, 300);
+    setNumberField('max-guest-room-size-mb', settings.maxGuestRoomSizeMB, 5);
+    setNumberField('max-total-room-storage-mb', settings.maxTotalRoomStorageMB, 4096);
     document.getElementById('forced-theme').value = settings.forcedTheme || 'user';
     var themeSelect = document.getElementById('default-room-theme');
     if (themeSelect) {
@@ -484,6 +487,9 @@
         defaultDestructHours: parseInt(document.getElementById('default-destruct-hours').value) || 24,
         maxRoomsPerInstance: parseInt(document.getElementById('max-rooms').value) || 0,
         maxRoomSizeMB: parseInt(document.getElementById('max-room-size-mb').value) || 50,
+        maxGuestRooms: parseInt(document.getElementById('max-guest-rooms').value) || 0,
+        maxGuestRoomSizeMB: parseInt(document.getElementById('max-guest-room-size-mb').value) || 5,
+        maxTotalRoomStorageMB: parseInt(document.getElementById('max-total-room-storage-mb').value) || 0,
         defaultRoomTheme: document.getElementById('default-room-theme').value
       }))) return;
     showStatus('Room defaults saved', 'success');

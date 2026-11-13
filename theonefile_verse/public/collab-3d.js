@@ -4,8 +4,10 @@ import * as THREE from '/vendor/three/three.module.min.js';
   'use strict';
   if (!document.getElementById('room-config')) return;
 
-  const WORLD_W = 4000, WORLD_D = 3000, PAD = 100;
-  const RACK_WIDTH_3D = 320, RACK_DEPTH_3D = 220, RACK_PER_U = 40;
+  let WORLD_W = 4000, WORLD_D = 3000;
+  const PAD = 100;
+  const RACK_WIDTH_3D = 60, RACK_DEPTH_3D = 100, RACK_PER_U = 4.75, RACK_RAIL_GAP = 4, RACK_RAIL_W = 6;
+  const ICON_MAX_SIZE = 32, DEVICE_REAL_K = 0.35, AVATAR_K = 0.82, AVATAR_TAG_Y = 200;
   const WALL_HEIGHT_3D = 150, WALL_THICK_3D = 14;
 
   const LIGHT = {
@@ -36,6 +38,12 @@ import * as THREE from '/vendor/three/three.module.min.js';
 
   function getVar(n) { try { return typeof window.__collabGetVar === 'function' ? window.__collabGetVar(n) : undefined; } catch (e) { return undefined; } }
   function setVar(n, v) { try { if (typeof window.__collabSetVar === 'function') window.__collabSetVar(n, v); } catch (e) {} }
+  function syncWorldSize() {
+    const ps = getVar('PAGE_STATE') || {};
+    const w = Math.round(Number(ps.canvasWidth)), d = Math.round(Number(ps.canvasHeight));
+    WORLD_W = Number.isFinite(w) && w > 0 ? Math.max(2000, Math.min(20000, w)) : 4000;
+    WORLD_D = Number.isFinite(d) && d > 0 ? Math.max(1500, Math.min(15000, d)) : 3000;
+  }
   const sx = (x) => x - WORLD_W / 2, sz = (y) => y - WORLD_D / 2;
   const wx = (X) => X + WORLD_W / 2, wy = (Z) => Z + WORLD_D / 2;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -257,7 +265,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
   let mode = 'orbit';
   const target = new THREE.Vector3(0, 60, 0);
   let radius = 2600, theta = Math.PI * 0.25, phi = Math.PI * 0.34;
-  const EYE_HEIGHT = 120;
+  const EYE_HEIGHT = 160;
   const WALK_SPEED = 320;
   const RUN_MULT = 2.6;
   const SNEAK_MULT = 0.35;
@@ -743,7 +751,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     { id: 'zone',  icon: '🟧', label: 'Zone',  cat: 'Structure', place: 'rect', rectKind: 'zone' },
     { id: 'text',  icon: '🔤', label: 'Text',  cat: 'Structure', place: 'text' },
     { id: 'image', icon: '🏞️', label: 'Image', cat: 'Structure', place: 'image' },
-    { id: 'table', icon: '🪑', label: 'Table', cat: 'Furniture', place: 'furniture', furnKind: 'table' },
+    { id: 'table', icon: '🍽️', label: 'Table', cat: 'Furniture', place: 'furniture', furnKind: 'table' },
     { id: 'shelf', icon: '📚', label: 'Shelf', cat: 'Furniture', place: 'furniture', furnKind: 'shelf' },
     { id: 'lamp',  icon: '💡', label: 'Lamp',  cat: 'Furniture', place: 'furniture', furnKind: 'lamp' },
     { id: 'panel', icon: '🚧', label: 'Panel', cat: 'Furniture', place: 'furniture', furnKind: 'wall' },
@@ -793,7 +801,108 @@ import * as THREE from '/vendor/three/three.module.min.js';
   const BOOK_FOV_LABEL_POS = [['center', 'Center'], ['edge', 'Edge'], ['outside', 'Outside']];
   const BOOK_ICON_LIBS = ['mdi', 'simple', 'selfhst'];
   const BOOK_LAYERS = ['layer1', 'layer2', 'layer3', 'layer4'];
-  const BOOK_RACK_CAPS = ['42', '48', '24', '12', '6'];
+  const BOOK_RACK_MAX = 100;
+  function bookRackUnits(v) { const n = parseInt(v, 10); return Number.isFinite(n) ? Math.max(1, Math.min(BOOK_RACK_MAX, n)) : 42; }
+  function layerName(L) {
+    let k = L || 'layer1'; if (LAYER_ALIAS[k]) k = LAYER_ALIAS[k];
+    const i = LAYER_IDS.indexOf(k);
+    if (i < 0) return String(L);
+    const el = document.getElementById('node-layer-opt' + (i + 1)) || document.getElementById('layer-' + (i + 1) + '-label');
+    return (el && el.textContent.trim()) || ('Layer ' + (i + 1));
+  }
+  function bookLayerOptions(cur) {
+    const opts = LAYER_IDS.map((L) => [L, layerName(L)]);
+    if (cur && !LAYER_IDS.includes(cur)) opts.unshift([cur, layerName(cur)]);
+    return opts;
+  }
+  function rackIsZeroU(d) { return !!d && (d.rackMount === 'left' || d.rackMount === 'right'); }
+  function rackDevH(d) { const h = parseInt(d && d.uHeight, 10); return Number.isFinite(h) && h >= 1 ? Math.min(h, BOOK_RACK_MAX) : 1; }
+  function rackDevStart(d) { const u = parseInt(d && d.rackUnit, 10); return Number.isFinite(u) && u >= 1 && u <= BOOK_RACK_MAX ? u : null; }
+  function rackCapOf(nd, rackId) { return bookRackUnits(nd[rackId] && nd[rackId].rackCapacity); }
+  function rackShownUnit(nd, rackId, unit, h) { return nd[rackId] && nd[rackId].rackNumbering === 'top' ? rackCapOf(nd, rackId) + 2 - unit - h : unit; }
+  function rackFaceOf(d) { return d && d.rackFace === 'rear' ? 'rear' : 'front'; }
+  function rackFullOf(d) { return !!d && d.rackFullDepth === true && !rackIsZeroU(d); }
+  function rackOccupantOf(nd, rackId, unit, h, skip, face, full) {
+    if (face !== 'front' && face !== 'rear') face = rackFaceOf(nd[skip]);
+    if (typeof full !== 'boolean') full = rackFullOf(nd[skip]);
+    for (const k of Object.keys(nd)) {
+      const d = nd[k];
+      if (k === skip || !d || isTrue(d.isRack) || d.assignedRack !== rackId || rackIsZeroU(d)) continue;
+      if (!full && !rackFullOf(d) && face !== rackFaceOf(d)) continue;
+      const s = rackDevStart(d); if (s === null) continue;
+      if (unit <= s + rackDevH(d) - 1 && s <= unit + h - 1) return k;
+    }
+    return null;
+  }
+  function rackHighestUsed(nd, rackId) {
+    let hi = 0;
+    Object.keys(nd).forEach((k) => {
+      const d = nd[k];
+      if (!d || isTrue(d.isRack) || d.assignedRack !== rackId || rackIsZeroU(d)) return;
+      const s = rackDevStart(d); if (s === null) return;
+      hi = Math.max(hi, Math.min(BOOK_RACK_MAX, s + rackDevH(d) - 1));
+    });
+    return hi;
+  }
+  function rackDeviceText(nd, d) {
+    if (rackIsZeroU(d)) return d.rackMount === 'left' ? '0U left rail' : '0U right rail';
+    const s = rackDevStart(d);
+    if (s === null) return 'not placed';
+    return 'U' + rackShownUnit(nd, d.assignedRack, s, rackDevH(d)) + ' (' + rackDevH(d) + 'U' + (d.rackFace === 'rear' ? ', rear' : '') + ')';
+  }
+  function bookError(msg) {
+    guardToast(msg);
+    if (!bookBody) return;
+    let e = document.getElementById('threed-book-error');
+    if (!e) {
+      e = document.createElement('div'); e.id = 'threed-book-error';
+      e.setAttribute('role', 'alert');
+      e.style.cssText = 'margin:6px 0;padding:7px 9px;border:1px solid #b45309;border-radius:6px;background:#fef3c7;color:#7c2d12;font:600 12px/1.4 system-ui';
+    }
+    e.textContent = msg;
+    bookBody.insertBefore(e, bookBody.firstChild);
+    bookBody.scrollTop = 0;
+  }
+  function bookCapPlan(nd, id, raw) {
+    const cur = rackCapOf(nd, id);
+    const n = parseInt(String(raw == null ? '' : raw).trim(), 10);
+    if (!Number.isFinite(n)) return { cap: String(cur) };
+    const want = Math.max(1, Math.min(BOOK_RACK_MAX, n));
+    const hi = rackHighestUsed(nd, id);
+    if (want < hi) return { error: 'Devices in this rack reach up to U' + hi + '. Move them lower first, or keep the rack at ' + hi + 'U or taller. The capacity stays at ' + cur + 'U.' };
+    return { cap: String(want) };
+  }
+  function bookRackPlan(nd, id, f) {
+    const node = nd[id] || {};
+    const rv = f.rack.value;
+    const rack = (rv && rv !== id && nd[rv] && isTrue(nd[rv].isRack)) ? rv : '';
+    const mount = f.mount && (f.mount.value === 'left' || f.mount.value === 'right') ? f.mount.value : '';
+    const cap = rack ? rackCapOf(nd, rack) : BOOK_RACK_MAX;
+    const face = f.face && f.face.value === 'rear' ? 'rear' : 'front';
+    const full = !mount && !!(f.full && f.full.checked);
+    const hRaw = String(f.uHeight.value).trim();
+    const h = hRaw === '' ? 1 : Number(hRaw);
+    if (!Number.isInteger(h) || h < 1 || h > cap) return { error: 'U height must be a whole number from 1 to ' + cap + '.' };
+    const uRaw = String(f.rackUnit.value).trim();
+    let unit = null;
+    if (uRaw !== '') {
+      const shown = Number(uRaw);
+      if (!Number.isInteger(shown) || shown < 1 || shown > cap) return { error: 'Rack U position must be a whole number from 1 to ' + cap + ', or empty to leave the device unplaced.' };
+      unit = rack && !mount && nd[rack].rackNumbering === 'top' ? cap + 2 - shown - h : shown;
+    }
+    if (rack && !mount) {
+      if (unit === null && rack !== (node.assignedRack || '')) {
+        for (let u = 1; u + h - 1 <= cap; u++) { if (!rackOccupantOf(nd, rack, u, h, id, face, full)) { unit = u; break; } }
+        if (unit === null) return { error: (nd[rack].name || rack) + ' has no free space for a ' + h + 'U device.' };
+      }
+      if (unit !== null) {
+        if (unit < 1 || unit + h - 1 > cap) return { error: 'This device needs ' + h + 'U from that position but the rack only has ' + cap + 'U.' };
+        const occ = rackOccupantOf(nd, rack, unit, h, id, face, full);
+        if (occ) return { error: 'That space is already used by ' + (nd[occ].name || occ) + '.' };
+      }
+    }
+    return { rack: rack, unit: unit === null ? '' : String(unit), h: String(h), mount: mount, face: face === 'rear' ? 'rear' : '', full: full };
+  }
   const BOOK_PING_PROTOS = ['http', 'https', 'custom'];
   const BOOK_FLAT_STYLE_PROPS = ['circleColor', 'circleBorder', 'titleColor', 'titleFont', 'titleSize', 'subColor', 'subFont', 'subSize'];
   function bookBreakpoint() { const w = window.innerWidth; return w <= 380 ? 'fold' : w <= 768 ? 'mobile' : w <= 1024 ? 'tablet' : 'desktop'; }
@@ -1086,13 +1195,13 @@ import * as THREE from '/vendor/three/three.module.min.js';
     title.style.cssText = 'font-weight:700;font-size:14px;color:#7dd3c8;margin-bottom:6px';
     title.textContent = n.name || id;
     inspectEl.appendChild(title);
-    const rows = [['IP', n.ip], ['Role', n.role], ['Shape', n.shape], ['Layer', n.layer],
+    const rows = [['IP', n.ip], ['Role', n.role], ['Shape', n.shape], ['Layer', layerName(n.layer)],
       n.groupId ? ['Group', n.groupId] : null,
       n.locked ? ['Locked', '🔒 yes, unlock in 2D to move/edit'] : null,
       ['Tags', Array.isArray(n.tags) ? n.tags.join(', ') : n.tags],
       isTrue(n.isRack) ? ['Rack', (n.rackCapacity || '?') + 'U'] : null,
       n.assignedRack ? ['In rack', (nd[n.assignedRack] && nd[n.assignedRack].name) || n.assignedRack] : null,
-      n.assignedRack ? ['U position', n.rackUnit + ' (' + (n.uHeight || 1) + 'U)'] : null];
+      n.assignedRack ? ['U position', rackDeviceText(nd, n)] : null];
     rows.forEach((r) => {
       if (!r || r[1] == null || r[1] === '') return;
       const row = document.createElement('div');
@@ -1373,8 +1482,8 @@ import * as THREE from '/vendor/three/three.module.min.js';
     fillShapes(f.cat.value, n.shape); T(f.shape);
     f.cat.onchange = function () { fillShapes(this.value, f.shape.value); syncCoverage(); };
     f.shape.onchange = syncCoverage;
-    f.layer = T(bookField('Layer', bookSelect(BOOK_LAYERS, n.layer || 'layer1'), gId));
-    if (isRack) f.rackCap = T(bookField('Rack capacity (U)', bookSelect(BOOK_RACK_CAPS, String(n.rackCapacity || '42')), gId));
+    f.layer = T(bookField('Layer', bookSelect(bookLayerOptions(n.layer || 'layer1'), n.layer || 'layer1'), gId));
+    if (isRack) { f.rackCap = bookInput('number', String(bookRackUnits(n.rackCapacity))); f.rackCap.min = '1'; f.rackCap.max = String(BOOK_RACK_MAX); f.rackCap.step = '1'; T(bookField('Rack capacity (U)', f.rackCap, gId)); }
     f.tags = T(bookField('Tags (comma separated)', bookInput('text', (Array.isArray(n.tags) ? n.tags.filter((t) => typeof t === 'string') : []).join(', ')), gId));
     const iconTags = (Array.isArray(n.tags) ? n.tags : []).filter((t) => t && typeof t === 'object');
     if (iconTags.length) {
@@ -1484,17 +1593,24 @@ import * as THREE from '/vendor/three/three.module.min.js';
       const rackOpts = [['', '(none)']].concat(Object.keys(nd).filter((k) => k !== id && isTrue(nd[k].isRack)).map((k) => [k, nd[k].name || k]));
       const hostOpts = [['', '(none)']].concat(Object.keys(nd).filter((k) => k !== id && !isTrue(nd[k].isRack)).map((k) => [k, nd[k].name || k]));
       f.rack = T(bookField('Mounted in rack', bookSelect(rackOpts, n.assignedRack || ''), gPl));
-      f.rackUnit = T(bookField('Rack U position', bookInput('number', n.rackUnit || ''), gPl));
+      const st0 = rackDevStart(n), shown0 = st0 !== null && n.assignedRack && nd[n.assignedRack] && !rackIsZeroU(n) ? rackShownUnit(nd, n.assignedRack, st0, rackDevH(n)) : (n.rackUnit || '');
+      f.rackUnit = T(bookField('Rack U position' + (n.assignedRack && nd[n.assignedRack] && nd[n.assignedRack].rackNumbering === 'top' ? ' (U1 at top)' : ''), bookInput('number', shown0), gPl));
       f.uHeight = T(bookField('U height (slots)', bookInput('number', n.uHeight || '1'), gPl));
+      f.face = T(bookField('Rack face', bookSelect([['front', 'Front'], ['rear', 'Rear']], n.rackFace === 'rear' ? 'rear' : 'front'), gPl));
+      f.full = T(bookField('Full depth', bookInput('checkbox', n.rackFullDepth === true), gPl));
+      f.mount = T(bookField('Mounting', bookSelect([['', 'In rack units'], ['left', '0U left rail'], ['right', '0U right rail']], rackIsZeroU(n) ? n.rackMount : ''), gPl));
       f.host = T(bookField('Hosted on', bookSelect(hostOpts, n.hostedOn || ''), gPl));
     }
     bookSave.onclick = function () {
       const cur = getVar('NODE_DATA'); if (!cur || !cur[id]) { closeBook(); return; }
       const node = cur[id];
+      let capPlan = null, rackPlan = null;
+      if (isRack && f.rackCap && bookChanged(f.rackCap)) { capPlan = bookCapPlan(cur, id, f.rackCap.value); if (capPlan.error) { bookError(capPlan.error); f.rackCap.value = String(rackCapOf(cur, id)); return; } }
+      if (!isRack && f.rack && [f.rack, f.rackUnit, f.uHeight, f.mount, f.face, f.full].some((el) => bookChanged(el))) { rackPlan = bookRackPlan(cur, id, f); if (rackPlan.error) { bookError(rackPlan.error); return; } }
       const push = getVar('pushUndo'); if (typeof push === 'function') { try { push('edit node (3D)'); } catch (e) {} }
       node.name = f.name.value; node.ip = f.ip.value; node.mac = f.mac.value; node.role = f.role.value; node.layer = f.layer.value;
       bookApply(node, 'shape', f.shape, null, true);
-      if (isRack && f.rackCap) node.rackCapacity = f.rackCap.value;
+      if (capPlan) node.rackCapacity = capPlan.cap;
       node.tags = f.tags.value.split(',').map((t) => t.trim()).filter(Boolean).concat(iconTags);
       node.notes = f.notes.value.split('\n').map((s) => s.trim()).filter(Boolean);
       const pg = Object.assign({ protocol: 'http', customUrl: '', timeout: 3000, status: 'unknown', lastCheck: null }, node.ping || {}, { enabled: f.ping.checked, protocol: f.proto.value });
@@ -1533,10 +1649,17 @@ import * as THREE from '/vendor/three/three.module.min.js';
       bookApply(node, 'trailEnabled', f.trail);
       if (!isRack) {
         if (f.size) { const sz = getVar('savedSizes') || {}; sz[id] = clamp(num(f.size.value, 55), 8, 400); setVar('savedSizes', sz); }
-        { const rv = f.rack.value; node.assignedRack = (rv && cur[rv] && isTrue(cur[rv].isRack)) ? rv : ''; }
-        if (!node.assignedRack) { const spx = getVar('savedPositions') || {}; if (!spx[id]) { const or = spx[n.assignedRack]; spx[id] = or ? { x: Math.round(clamp(or.x + 160, PAD, WORLD_W - PAD)), y: or.y } : { x: 2000, y: 1500 }; setVar('savedPositions', spx); } }
-        node.rackUnit = f.rackUnit.value === '' ? '' : String(Math.max(1, Math.round(num(f.rackUnit.value, 1))));
-        node.uHeight = f.uHeight.value === '' ? '1' : String(Math.max(1, Math.round(num(f.uHeight.value, 1))));
+        if (rackPlan) {
+          const wasRack = node.assignedRack;
+          node.assignedRack = rackPlan.rack;
+          if (!node.assignedRack) { const spx = getVar('savedPositions') || {}; if (!spx[id]) { const or = spx[wasRack]; spx[id] = or ? { x: Math.round(clamp(or.x + 160, PAD, WORLD_W - PAD)), y: or.y } : { x: 2000, y: 1500 }; setVar('savedPositions', spx); } }
+          node.rackUnit = rackPlan.unit;
+          node.uHeight = rackPlan.h;
+          if (rackPlan.mount) node.rackMount = rackPlan.mount; else delete node.rackMount;
+          if (rackPlan.face) node.rackFace = rackPlan.face; else delete node.rackFace;
+          if (rackPlan.full) node.rackFullDepth = true; else delete node.rackFullDepth;
+          const snap = window.snapRackDevice; if (typeof snap === 'function') { try { snap(id); } catch (e) {} }
+        }
         node.hostedOn = f.host.value;
       }
       const styleEls = [f.fill, f.border, f.titleColor, f.titleFont, f.titleSize, f.titleOX, f.titleOY, f.subColor, f.subFont, f.subSize, f.subOX, f.subOY, f.icon, f.iconCustom];
@@ -1833,11 +1956,10 @@ import * as THREE from '/vendor/three/three.module.min.js';
     Object.keys(nd).forEach((k) => { if (k === skip || !nd[k] || !isTrue(nd[k].isRack)) return; const p = sp[k]; if (!p) return; const d = Math.hypot(p.x - wxp, p.y - wyp); if (d < bestD) { bestD = d; best = k; } });
     return best;
   }
-  function nextFreeUnit(rackId) {
-    const nd = getVar('NODE_DATA') || {}, cap = parseInt(nd[rackId] && nd[rackId].rackCapacity, 10) || 42, used = {};
-    Object.keys(nd).forEach((k) => { if (nd[k] && nd[k].assignedRack === rackId) { const u = parseInt(nd[k].rackUnit, 10) || 1, uh = Math.max(1, parseInt(nd[k].uHeight, 10) || 1); for (let i = 0; i < uh; i++) used[u + i] = 1; } });
-    for (let u = 1; u <= cap; u++) { if (!used[u]) return u; }
-    return 1;
+  function nextFreeUnit(rackId, h, skip) {
+    const nd = getVar('NODE_DATA') || {}, cap = rackCapOf(nd, rackId), need = Math.max(1, h || 1);
+    for (let u = 1; u + need - 1 <= cap; u++) { if (!rackOccupantOf(nd, rackId, u, need, skip)) return u; }
+    return null;
   }
   function deleteNodeData(id, keepChildren) {
     const nd = getVar('NODE_DATA'); if (!nd || !nd[id]) return false;
@@ -2074,8 +2196,14 @@ import * as THREE from '/vendor/three/three.module.min.js';
       const wxp = Math.round(clamp(wx(dragObj.position.x), PAD, WORLD_W - PAD)), wyp = Math.round(clamp(wy(dragObj.position.z), PAD, WORLD_D - PAD));
       const rackId = isTrue(node.isRack) ? null : (mountRackHint || rackAtWorld(wxp, wyp, dragId));
       if (rackId && rackId !== dragId) {
-        node.assignedRack = rackId; node.rackUnit = String(nextFreeUnit(rackId)); if (!node.uHeight) node.uHeight = '1';
-        setVar('NODE_DATA', nd);
+        const fu = rackIsZeroU(node) ? (rackDevStart(node) || 1) : nextFreeUnit(rackId, rackDevH(node), dragId);
+        if (fu === null) {
+          guardToast('🗄️ ' + ((nd[rackId] && nd[rackId].name) || 'This rack') + ' has no free space for a ' + rackDevH(node) + 'U device, it was not mounted.');
+          sp[dragId] = { x: wxp, y: wyp }; setVar('savedPositions', sp);
+        } else {
+          node.assignedRack = rackId; node.rackUnit = String(fu); if (!node.uHeight) node.uHeight = '1';
+          setVar('NODE_DATA', nd);
+        }
       } else {
         sp[dragId] = { x: wxp, y: wyp }; setVar('savedPositions', sp);
       }
@@ -2103,15 +2231,16 @@ import * as THREE from '/vendor/three/three.module.min.js';
     const c = new THREE.Color(color || '#4fd1c5');
     const shape = avatarShapeName(userId);
     g.userData.avatarShape = shape;
+    const fig = new THREE.Group(); fig.scale.setScalar(AVATAR_K); g.add(fig);
     const body = new THREE.Mesh(new THREE.BoxGeometry(70, 150, 45), new THREE.MeshStandardMaterial({ color: c, roughness: 0.6 }));
-    body.position.y = 75; g.add(body);
+    body.position.y = 75; fig.add(body);
     const headMat = new THREE.MeshStandardMaterial({ color: c.clone().offsetHSL(0, 0, 0.12), roughness: 0.5 });
     const head = new THREE.Mesh(avatarHeadGeometry(shape), headMat);
-    head.position.y = 185; g.add(head);
+    head.position.y = 185; fig.add(head);
     const badge = new THREE.Mesh(avatarHeadGeometry(shape), new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4 }));
-    badge.scale.setScalar(0.28); badge.position.set(0, 110, 24); g.add(badge);
+    badge.scale.setScalar(0.28); badge.position.set(0, 110, 24); fig.add(badge);
     const nose = new THREE.Mesh(new THREE.BoxGeometry(14, 14, 26), new THREE.MeshStandardMaterial({ color: 0x111827 }));
-    nose.position.set(0, 150, 30); g.add(nose);
+    nose.position.set(0, 150, 30); fig.add(nose);
     return g;
   }
   const OP_WIRE_LIMIT = 1024;
@@ -2283,7 +2412,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
       const u = window.__collab3d.getUser(msg.userId);
       const grp = makeAvatar(u && u.color, msg.userId);
       const tag = textSprite(((u && u.name) || 'user') + ' (' + grp.userData.avatarShape + ')', (u && u.color) || '#e2e8f0');
-      tag.position.set(0, 250, 0); grp.add(tag);
+      tag.scale.set(88, 22, 1); tag.position.set(0, AVATAR_TAG_Y, 0); grp.add(tag);
       if (scene) scene.add(grp);
       a = avatars[msg.userId] = { grp: grp, tx: sx(msg.x), ty: msg.z3d || 0, tz: sz(msg.y), yaw: msg.yaw3d || 0, seen: performance.now() };
       grp.position.set(a.tx, 0, a.tz);
@@ -2910,6 +3039,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
     const k = NODE_LABEL_SCALE / ss;
     spr.scale.set(cw * k, ch * k, 1);
+    spr.userData.vrLabel = 'node';
     return spr;
   }
   function textSprite(txt, color) {
@@ -2920,7 +3050,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     g.fillStyle = color || '#e2e8f0'; g.fillText(String(txt || '').slice(0, 22), 128, 32);
     const tex = new THREE.CanvasTexture(c); tex.minFilter = THREE.LinearFilter;
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
-    spr.scale.set(220, 55, 1); return spr;
+    spr.scale.set(220, 55, 1); spr.userData.vrLabel = 'tag'; return spr;
   }
   let _lockTex = null;
   function lockTexture() {
@@ -2973,6 +3103,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     const op = t.opacity != null ? clamp(num(t.opacity, 1), 0, 1) : 1;
     const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: op, depthTest: false }));
     const k = TEXT_WORLD_SCALE; spr.scale.set(cw * k, ch * k, 1);
+    spr.userData.vrLabel = 'text'; spr.userData.vrLines = lines.length;
     return spr;
   }
   function rectBorderWidth(r) { return clamp(Math.round(num(r && r.borderWidth !== undefined ? r.borderWidth : 2, 2)), 0, 20); }
@@ -3053,6 +3184,9 @@ import * as THREE from '/vendor/three/three.module.min.js';
     mounted.forEach((id) => {
       const d = ND[id] || {}, u = parseInt(d.rackUnit, 10) || 1, uh = Math.max(1, parseInt(d.uHeight, 10) || 1), dh = uh * RACK_PER_U * 0.9;
       const slotY = (u - 1) * RACK_PER_U + dh / 2;
+      const railX = d.rackMount === 'left' ? -(RACK_WIDTH_3D / 2 + RACK_RAIL_GAP) : d.rackMount === 'right' ? (RACK_WIDTH_3D / 2 + RACK_RAIL_GAP) : 0;
+      const faceZ = (d.rackFace === 'rear' ? -1 : 1) * RACK_DEPTH_3D * 0.06;
+      const slotW = railX ? RACK_RAIL_W : SLOT_W;
       const dst = bookResolveStyles(styles && styles[id]);
       const dCol = nodeColor(id, d, styles, dst);
       const dPing = (d.ping && d.ping.enabled) ? PING_COLORS[d.ping.status] : null;
@@ -3064,10 +3198,10 @@ import * as THREE from '/vendor/three/three.module.min.js';
           const bb = new THREE.Box3().setFromObject(built.g);
           const bw = bb.max.x - bb.min.x, bh = bb.max.y - bb.min.y, bd = bb.max.z - bb.min.z;
           if (Number.isFinite(bw) && bw > 0 && Number.isFinite(bh) && bh > 0 && Number.isFinite(bd) && bd > 0) {
-            const k = Math.min(SLOT_W / bw, dh / bh, SLOT_D / bd);
+            const k = Math.min(slotW / bw, dh / bh, SLOT_D / bd);
             built.g.scale.setScalar(k);
             const cx = (bb.min.x + bb.max.x) / 2 * k, cy = (bb.min.y + bb.max.y) / 2 * k, cz = (bb.min.z + bb.max.z) / 2 * k;
-            built.g.position.set(-cx, slotY - cy, RACK_DEPTH_3D * 0.06 - cz);
+            built.g.position.set(railX - cx, slotY - cy, faceZ - cz);
             g.add(built.g); placed = built.g;
           } else {
             built.g.traverse(function (c) { if (c.geometry) c.geometry.dispose(); });
@@ -3076,10 +3210,12 @@ import * as THREE from '/vendor/three/three.module.min.js';
       }
       if (!placed) {
         const box = new THREE.Mesh(new THREE.BoxGeometry(SLOT_W, dh, SLOT_D), dMat);
-        box.position.set(0, slotY, RACK_DEPTH_3D * 0.06); g.add(box);
+        if (railX) box.scale.x = slotW / SLOT_W;
+        box.position.set(railX, slotY, faceZ); g.add(box);
       }
       if (dPing && fxAllowed() && (d.ping.status === 'offline' || d.ping.status === 'checking')) { dMat.emissive = hexColor(dPing); anims.ping.push({ mat: dMat, status: d.ping.status }); }
-      const lbl = textSprite(d.name || id, '#dbeafe'); lbl.scale.set(150, 38, 1); lbl.position.set(RACK_WIDTH_3D * 0.7, slotY, 0); g.add(lbl);
+      const lbl = textSprite(d.name || id, '#dbeafe'); const lh = clamp(dh * 0.9, 3.6, 9), lw = lh * 4; lbl.scale.set(lw, lh, 1); lbl.userData.vrLabel = 'rackdev';
+      lbl.position.set((railX < 0 ? -1 : 1) * (RACK_WIDTH_3D / 2 + RACK_RAIL_GAP + RACK_RAIL_W + lw / 2 + 2), slotY, (d.rackFace === 'rear' ? -1 : 1) * RACK_DEPTH_3D * 0.5); g.add(lbl);
     });
     const rst = Object.assign({ titleColor: theme.nodeTitle || '#4fd1c5' }, bookResolveStyles(styles && styles[node.__id]));
     const cl = nodeLabelSprite((node.name || 'Rack') + '  (' + cap + 'U)', nodeSubtitle(node), rst, 55);
@@ -4031,7 +4167,16 @@ import * as THREE from '/vendor/three/three.module.min.js';
       + '|' + (buried ? 1 : 0) + '|' + (flowing ? 1 : 0)
       + '|' + (e.animationStyle || '') + '|' + (e.animationSpeed == null ? '' : e.animationSpeed);
   }
+  function rackAwarePositions(positions) {
+    const ND = getVar('NODE_DATA') || {}; let out = null;
+    for (const id in ND) {
+      const ar = ND[id] && ND[id].assignedRack;
+      if (ar && ND[ar] && isTrue(ND[ar].isRack) && positions[ar]) { if (!out) out = Object.assign({}, positions); out[id] = positions[ar]; }
+    }
+    return out || positions;
+  }
   function buildEdgeLayer(positions, edgeList, full) {
+    positions = rackAwarePositions(positions);
     if (!wireRoot) wireRoot = new THREE.Group();
     { const root = contentRoot() || scene; if (wireRoot.parent !== root) { if (wireRoot.parent) wireRoot.parent.remove(wireRoot); root.add(wireRoot); } }
     anims.flow.length = 0;
@@ -4109,6 +4254,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
       }
       if (!e.from || !e.to) return;
       if (!nodeCenters[e.from] || !nodeCenters[e.to]) return;
+      if (nodeCenters[e.from] === nodeCenters[e.to]) return;
       if (wdef.hidden) return;
       const buried = !!(scene3d.buried && scene3d.buried[e.id]);
       const wireY = buried ? WIRE_MODES[1].y : wdef.y, floorLike = buried || wdef.floor;
@@ -4134,6 +4280,8 @@ import * as THREE from '/vendor/three/three.module.min.js';
   }
 
   function buildScene() {
+    vrUnbatch();
+    syncWorldSize();
     disposeOldScene();
     followReset();
     theme = readTheme();
@@ -4189,7 +4337,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
       if (node.assignedRack && ND[node.assignedRack] && isTrue(ND[node.assignedRack].isRack)) return;
       grow(sx(p.x), sz(p.y));
       const dim = []; let nodeFovAnim = null;
-      dim.push(addShadowBlob(sx(p.x), sz(p.y), isTrue(node.isRack) ? RACK_WIDTH_3D * 0.62 : (Number(sizes[id]) || 55) * 1.3));
+      dim.push(addShadowBlob(sx(p.x), sz(p.y), isTrue(node.isRack) ? RACK_DEPTH_3D * 0.62 : (Number(sizes[id]) || 55) * (devModelsOn && deviceModelKey(node.shape, NODE_SHAPE_ALIAS) ? DEVICE_REAL_K : 1) * 1.3));
       const elev = clamp(num(heights[id], 0), 0, MAX_ELEVATION);
       if (elev > 1) dim.push(addStem(sx(p.x), sz(p.y), elev));
       if (isTrue(node.isRack)) {
@@ -4199,10 +4347,11 @@ import * as THREE from '/vendor/three/three.module.min.js';
         r.group.rotation.y = -rad(node.rotation);
         scene.add(r.group); pickables.push(r.group); dim.push(r.group);
         if (node.locked) dim.push(addLockBadge(sx(p.x) + RACK_WIDTH_3D * 0.62, elev + r.topY + 46, sz(p.y), 60));
-        if (node.groupId) { const gi = groupRing(RACK_WIDTH_3D * 0.62 + 4); gi.position.set(sx(p.x), elev + GROUP_Y, sz(p.y)); scene.add(gi); dim.push(gi); nGroups++; }
+        if (node.groupId) { const gi = groupRing(RACK_DEPTH_3D * 0.62 + 4); gi.position.set(sx(p.x), elev + GROUP_Y, sz(p.y)); scene.add(gi); dim.push(gi); nGroups++; }
         nodeCenters[id] = new THREE.Vector3(sx(p.x), elev + r.topY * 0.5, sz(p.y)); nRacks++;
+        (mountedByRack[id] || []).forEach((mid) => { nodeCenters[mid] = nodeCenters[id]; });
       } else {
-        const size = Number(sizes[id]) || 55;
+        const size = (Number(sizes[id]) || 55) * (devModelsOn && deviceModelKey(node.shape, NODE_SHAPE_ALIAS) ? DEVICE_REAL_K : 1);
         const st = bookResolveStyles(styles[id]);
         const ping = node.ping || {}, pingHex = ping.enabled ? PING_COLORS[ping.status] : null;
         const baseCol = nodeColor(id, node, styles, st);
@@ -4218,16 +4367,17 @@ import * as THREE from '/vendor/three/three.module.min.js';
         const ic = st.icon;
         if (ic && ic.library && ic.name) {
           const tint = st.circleColor || ('#' + baseCol.getHexString());
-          const emb = buildIconEmblem(String(ic.library), String(ic.name), size, st.circleColor || tint, st.circleBorder || null);
+          const isize = Math.min(size, ICON_MAX_SIZE);
+          const emb = buildIconEmblem(String(ic.library), String(ic.name), isize, st.circleColor || tint, st.circleBorder || null);
           const itex = emb ? null : getIconTexture(String(ic.library), String(ic.name), st.circleColor || null, st.circleBorder || null, tint);
           if (emb) {
-            const esz = size * 1.6;
+            const esz = isize * 1.6;
             emb.position.set(0, h + esz * 0.55, 0);
             body.g.add(emb);
             iconTop = h + esz; nIcons++;
           } else if (itex) {
             if (icon3dOn) _emblemFallback++;
-            const isz = size * 1.9;
+            const isz = isize * 1.9;
             const isp = new THREE.Sprite(new THREE.SpriteMaterial({ map: itex, transparent: true }));
             isp.scale.set(isz, isz, 1); isp.position.set(0, h + isz * 0.5, 0); body.g.add(isp);
             iconTop = h + isz; nIcons++;
@@ -4292,7 +4442,9 @@ import * as THREE from '/vendor/three/three.module.min.js';
         const sm = new THREE.Mesh(new THREE.PlaneGeometry(w + shN * 2, h + shN * 2), new THREE.MeshBasicMaterial({ map: imageShadowTexture(), transparent: true, depthWrite: false }));
         sm.rotation.x = -Math.PI / 2; sm.position.set(cxI + shN / 2, 1.15, czI + shN / 2); sm.renderOrder = -1; scene.add(sm);
       }
-      const tex = getImgTexture(img.src);
+      const safeSrc = typeof window.imageRenderSrc === 'function' ? window.imageRenderSrc(img) : (/^(data:image\/|blob:)/i.test(String(img.src)) ? img.src : '');
+      if (!safeSrc) return;
+      const tex = getImgTexture(safeSrc);
       const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: img.opacity != null ? img.opacity : 1, side: THREE.DoubleSide }));
       m.rotation.x = -Math.PI / 2; m.position.set(cxI, 1.5, czI); m.userData.imageId = img.id; scene.add(m); pickables.push(m); grow(sx(img.x), sz(img.y));
       const bwI = IMG_BORDER_PX[img.border] || 0;
@@ -4328,6 +4480,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     if (_envTex) { scene.environment = _envTex; scene.environmentIntensity = LIGHT.env; }
     if (renderPass) { renderPass.scene = scene; renderPass.camera = camera; }
     applyVRWorldScale();
+    if (!(renderer && renderer.xr && renderer.xr.isPresenting)) deskPrepLabels(scene);
     pruneImgTexCache(_imgUsed); _imgUsed = null;
     pruneIconTexCache(_iconUsed); _iconUsed = null;
     pruneEmblemCache(_emblemUsed); _emblemUsed = null;
@@ -4348,7 +4501,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
       const keys = Object.keys(nd); mix(keys.length);
       for (let k = 0; k < keys.length && budget > 0; k++) {
         const id = keys[k], n = nd[id] || {}, p = sp[id] || {}, sty = bookResolveStyles(st[id]);
-        mix(id); mix(n.name); mix(n.shape); mix(n.ip); mix(n.role); mix(n.layer); mix(n.isRack ? 1 : 0); mix(n.rackCapacity); mix(n.assignedRack); mix(n.rackUnit);
+        mix(id); mix(n.name); mix(n.shape); mix(n.ip); mix(n.role); mix(n.layer); mix(n.isRack ? 1 : 0); mix(n.rackCapacity); mix(n.assignedRack); mix(n.rackUnit); mix(n.uHeight); mix(n.rackFace); mix(n.rackMount); mix(n.rackNumbering); mix(n.rackFullDepth ? 1 : 0);
         mix(n.fovEnabled ? 1 : 0); mix(n.fovAngle); mix(n.fovDistance); mix(n.fovRotation); mix(p.x); mix(p.y); mix(sz[id]); mix(sty.circleColor); mix(sty.circleBorder);
         mix(n.fovAnimate ? 1 : 0); mix(n.fovAnimationType); mix(n.fovSpeed); mix(n.ping && n.ping.enabled ? 1 : 0); mix(n.ping && n.ping.status);
         mix(n.fovColor); mix(n.fovOpacity); mix(n.fovInnerRadius); mix(n.fovBorderColor); mix(n.fovSweep);
@@ -5127,7 +5280,9 @@ import * as THREE from '/vendor/three/three.module.min.js';
         xrSession = session;
         session.addEventListener('end', onXRSessionEnd);
         renderer.xr.enabled = true;
+        window.__collabXRActive = true;
         try { renderer.xr.setReferenceSpaceType('local-floor'); } catch (e) {}
+        try { renderer.xr.setFoveation(1); } catch (e) {}
         return renderer.xr.setSession(session);
       })
       .then(function () {
@@ -5138,10 +5293,10 @@ import * as THREE from '/vendor/three/three.module.min.js';
         if (scene) xrObjects.forEach(function (o) { scene.add(o); });
         buildScene(); recenterVR();
       })
-      .catch(function (e) { xrRequestPending = false; xrSession = null; try { renderer.xr.enabled = false; } catch (x) {} if (statEl) statEl.textContent = 'VR unavailable: ' + (e && e.message || e); });
+      .catch(function (e) { xrRequestPending = false; xrSession = null; window.__collabXRActive = false; try { renderer.xr.enabled = false; } catch (x) {} if (statEl) statEl.textContent = 'VR unavailable: ' + (e && e.message || e); });
   }
   function onXRSessionEnd() {
-    xrSession = null; try { renderer.xr.enabled = false; } catch (e) {}
+    xrSession = null; window.__collabXRActive = false; try { renderer.xr.enabled = false; } catch (e) {}
     xrObjects.forEach(function (o) { if (o.parent) o.parent.remove(o); });
     teleporting[0] = teleporting[1] = false; if (teleportMarker) teleportMarker.visible = false;
     if (xrBtn) xrBtn.textContent = '🥽 VR';
@@ -5153,11 +5308,11 @@ import * as THREE from '/vendor/three/three.module.min.js';
     var box = new THREE.Box3(), any = false;
     scene.traverse(function (o) { if (o.userData && (o.userData.nodeId || o.userData.furnId)) { box.expandByObject(o); any = true; } });
     if (!any) return;
-    var c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
-    var back = Math.max(1.2, Math.min(8, Math.max(sz.x, sz.z) * 0.6 + 1));
-    xrOffset.x = -c.x; xrOffset.z = -(c.z + back); xrOffset.y = 0; applyXROffset();
+    var c = box.getCenter(new THREE.Vector3());
+    xrOffset.x = -c.x; xrOffset.z = -(box.max.z + VR_SPAWN_MARGIN); xrOffset.y = 0; applyXROffset();
   }
 
+  const VR_SPAWN_MARGIN = 1.5;
   const xrControllers = [], xrGrips = [], xrHands = [], xrObjects = [];
   let xrInputReady = false, xrBaseRefSpace = null; const xrOffset = { x: 0, y: 0, z: 0 };
   const teleporting = [false, false]; let teleportMarker = null;
@@ -5208,9 +5363,9 @@ import * as THREE from '/vendor/three/three.module.min.js';
     _handDotGeo = new THREE.SphereGeometry(0.008, 6, 6); _handDotMat = new THREE.MeshStandardMaterial({ color: 0xffe0bd, roughness: 0.7 });
     for (let i = 0; i < 2; i++) {
       const ctrl = renderer.xr.getController(i); ctrl.userData.idx = i;
-      ctrl.addEventListener('selectstart', function () { onXRSelect(ctrl); });
+      ctrl.addEventListener('selectstart', function () { try { onXRSelect(ctrl); } catch (e) {} });
       ctrl.addEventListener('squeezestart', function () { teleporting[ctrl.userData.idx] = true; });
-      ctrl.addEventListener('squeezeend', function () { endTeleport(ctrl); });
+      ctrl.addEventListener('squeezeend', function () { try { endTeleport(ctrl); } catch (e) { teleporting[ctrl.userData.idx] = false; } });
       ctrl.addEventListener('connected', function (e) { ctrl.userData.src = e.data; attachHandModel(ctrl.userData.idx, e.data && e.data.handedness); });
       ctrl.addEventListener('disconnected', function () { ctrl.userData.src = null; detachHandModel(ctrl.userData.idx); });
       const ray = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -1)]), new THREE.LineBasicMaterial({ color: 0x4fd1c5 }));
@@ -5229,7 +5384,9 @@ import * as THREE from '/vendor/three/three.module.min.js';
     const m = new THREE.Matrix4().extractRotation(ctrl.matrixWorld);
     raycaster.ray.origin.setFromMatrixPosition(ctrl.matrixWorld);
     raycaster.ray.direction.set(0, 0, -1).applyMatrix4(m).normalize();
-    let picked = null; const hits = raycaster.intersectObjects(pickables, true);
+    raycaster.camera = renderer.xr.getCamera();
+    let picked = null; let hits = [];
+    try { hits = raycaster.intersectObjects(pickables, true); } catch (e) { hits = []; }
     if (hits.length) {
       let o = hits[0].object;
       while (o && !(o.userData && (o.userData.nodeId || o.userData.furnId || o.userData.rectId || o.userData.textId || o.userData.imageId || o.userData.edgeId))) o = o.parent;
@@ -5292,6 +5449,137 @@ import * as THREE from '/vendor/three/three.module.min.js';
       world.add(c);
     });
     scene.add(world);
+    vrPrepLabels(world);
+    vrBatchStatic(world);
+  }
+
+  const VR_LABEL_H = { node: 0.12, tag: 0.07, text: 0.15 };
+  const VR_FADE = { near: [0.45, 1.1, 14, 18], close: [0.12, 0.3, 4, 6] };
+  const vrLabels = [];
+  function vrPrepLabels(world) {
+    vrLabels.length = 0;
+    world.updateMatrixWorld(true);
+    const ws = new THREE.Vector3();
+    world.traverse(function (o) {
+      if (!o.isSprite || !o.userData || !o.userData.vrLabel || !o.parent) return;
+      const kind = o.userData.vrLabel;
+      o.parent.getWorldScale(ws);
+      const unit = Math.abs(ws.y) > 1e-9 ? ws.y : 1;
+      const lines = kind === 'text' ? clamp(num(o.userData.vrLines, 1), 1, 6) : 1;
+      const keep = kind === 'rackdev';
+      const hM = keep ? o.scale.y * unit : (VR_LABEL_H[kind] || VR_LABEL_H.tag) * lines;
+      const h = hM / unit, w = o.scale.y > 0 ? h * (o.scale.x / o.scale.y) : h * 4;
+      const bottom = kind === 'node' ? o.position.y - o.scale.y / 2 : null;
+      const m = o.material;
+      if (m) { m.depthTest = true; m.depthWrite = false; m.needsUpdate = true; }
+      vrLabels.push({ s: o, w: w, h: h, bottom: bottom, op: m ? m.opacity : 1, f: -1, a: -1, fade: keep ? VR_FADE.close : VR_FADE.near, grow: !keep });
+      o.scale.set(w, h, 1);
+      if (bottom !== null) o.position.y = bottom + h / 2;
+    });
+  }
+  const DESK_LABEL_K = 0.045, DESK_FADE = [60, 160];
+  function deskPrepLabels(root) {
+    vrLabels.length = 0;
+    root.traverse(function (o) {
+      if (!o.isSprite || !o.userData || !o.userData.vrLabel) return;
+      const m = o.material;
+      vrLabels.push({ s: o, w: o.scale.x, h: o.scale.y, bottom: o.userData.vrLabel === 'node' ? o.position.y - o.scale.y / 2 : null, op: m ? m.opacity : 1, f: -1, a: -1, desk: true });
+    });
+  }
+  function smooth01(a, b, x) { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+  function updateVRLabels() {
+    if (!vrLabels.length || !camera) return;
+    const cx = camera.position.x, cy = camera.position.y, cz = camera.position.z;
+    for (let i = 0; i < vrLabels.length; i++) {
+      const L = vrLabels[i], s = L.s, e = s.matrixWorld.elements;
+      const dx = e[12] - cx, dy = e[13] - cy, dz = e[14] - cz;
+      const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+      const fd = L.fade, a = L.desk ? smooth01(DESK_FADE[0], DESK_FADE[1], d) : smooth01(fd[0], fd[1], d) * (1 - smooth01(fd[2], fd[3], d));
+      const vis = a > 0.02;
+      if (s.visible !== vis) s.visible = vis;
+      if (!vis) continue;
+      const qa = Math.round(a * 32) / 32;
+      if (qa !== L.a && s.material) { L.a = qa; s.material.opacity = L.op * qa; }
+      const f = L.desk ? Math.round(clamp(d * DESK_LABEL_K / L.h, 0.04, 1) * 64) / 64 : (L.grow ? Math.round(clamp(d / 2.5, 1, 3) * 16) / 16 : 1);
+      if (f !== L.f) {
+        L.f = f; s.scale.set(L.w * f, L.h * f, 1);
+        if (L.bottom !== null) s.position.y = L.bottom + L.h * f / 2;
+      }
+    }
+  }
+
+  const vrBatches = [], vrHidden = [];
+  let vrBatchStats = { batches: 0, merged: 0 };
+  function vrUnbatch(keepLabels) {
+    if (!keepLabels) vrLabels.length = 0;
+    for (let i = 0; i < vrHidden.length; i++) vrHidden[i].visible = true;
+    vrHidden.length = 0;
+    for (let i = 0; i < vrBatches.length; i++) {
+      const b = vrBatches[i]; if (b.parent) b.parent.remove(b);
+      try { b.geometry.dispose(); b.material.dispose(); } catch (e) {}
+    }
+    vrBatches.length = 0;
+  }
+  const VR_BATCH_TYPES = { MeshStandardMaterial: 1, MeshBasicMaterial: 1, MeshLambertMaterial: 1, MeshPhongMaterial: 1 };
+  function vrMatKey(m, o) {
+    const c = (x) => (x && x.isColor) ? x.getHexString() : '';
+    return [m.type, c(m.color), c(m.emissive), m.emissiveIntensity, m.roughness, m.metalness, m.opacity, m.transparent ? 1 : 0, m.side, m.depthWrite ? 1 : 0, m.depthTest ? 1 : 0,
+      m.map ? m.map.uuid : '', m.vertexColors ? 1 : 0, m.flatShading ? 1 : 0, m.fog ? 1 : 0, m.toneMapped ? 1 : 0, m.alphaTest, o.renderOrder].join('|');
+  }
+  function vrGeoKey(g) {
+    const names = Object.keys(g.attributes).sort();
+    return (g.index ? 'i' : 'n') + ':' + names.map(function (n) { const a = g.attributes[n]; return n + a.itemSize + (a.normalized ? 'n' : '') + (a.array && a.array.constructor ? a.array.constructor.name : ''); }).join(',');
+  }
+  function vrBatchStatic(world) {
+    vrBatchStats = { batches: 0, merged: 0 };
+    if (!_bguMod || !_bguMod.mergeGeometries) { getBGU(); return; }
+    const rs = recState(); if (rs && rs.isPlaying) return;
+    const skipMats = new Set(), skipObjs = new Set();
+    for (let i = 0; i < anims.ping.length; i++) skipMats.add(anims.ping[i].mat);
+    for (let i = 0; i < anims.flow.length; i++) { const mk = anims.flow[i].markers; for (let j = 0; j < mk.length; j++) skipObjs.add(mk[j].mesh); }
+    for (let i = 0; i < anims.fov.length; i++) skipObjs.add(anims.fov[i].group);
+    for (const id in avatars) skipObjs.add(avatars[id].grp);
+    for (let i = 0; i < xrObjects.length; i++) skipObjs.add(xrObjects[i]);
+    if (trailRoot) skipObjs.add(trailRoot);
+    world.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(world.matrixWorld).invert();
+    const groups = new Map();
+    const walk = function (o) {
+      if (skipObjs.has(o) || !o.visible) return;
+      if (o.isMesh && !o.isInstancedMesh && !o.isSkinnedMesh && !o.isBatchedMesh) {
+        const m = o.material, g = o.geometry;
+        if (m && !Array.isArray(m) && VR_BATCH_TYPES[m.type] && !skipMats.has(m) && g && g.isBufferGeometry && g.attributes.position && !Object.keys(g.morphAttributes || {}).length && (!m.transparent || !m.depthWrite) && (m.side === THREE.DoubleSide || o.matrixWorld.determinant() > 0)) {
+          const key = vrMatKey(m, o) + '#' + vrGeoKey(g);
+          let list = groups.get(key); if (!list) { list = []; groups.set(key, list); }
+          list.push(o);
+        }
+      }
+      const ch = o.children;
+      for (let i = 0; i < ch.length; i++) walk(ch[i]);
+    };
+    walk(world);
+    const tmp = new THREE.Matrix4();
+    groups.forEach(function (list) {
+      if (list.length < 2) return;
+      const geos = [];
+      for (let i = 0; i < list.length; i++) {
+        const src = list[i].geometry, g = new THREE.BufferGeometry();
+        for (const n in src.attributes) g.setAttribute(n, src.attributes[n].clone());
+        if (src.index) g.setIndex(src.index.clone());
+        g.applyMatrix4(tmp.multiplyMatrices(inv, list[i].matrixWorld));
+        geos.push(g);
+      }
+      let merged = null;
+      try { merged = _bguMod.mergeGeometries(geos, false); } catch (e) { merged = null; }
+      geos.forEach(function (g) { g.dispose(); });
+      if (!merged) return;
+      const rep = list[0], mat = rep.material.clone();
+      const b = new THREE.Mesh(merged, mat);
+      b.name = '__vrbatch'; b.renderOrder = rep.renderOrder; b.matrixAutoUpdate = false; b.updateMatrix();
+      world.add(b); vrBatches.push(b);
+      for (let i = 0; i < list.length; i++) { list[i].visible = false; vrHidden.push(list[i]); }
+      vrBatchStats.batches++; vrBatchStats.merged += list.length;
+    });
   }
 
   let composer = null, bloomPass = null, renderPass = null, _envTex = null;
@@ -5329,10 +5617,10 @@ import * as THREE from '/vendor/three/three.module.min.js';
     const dt = Math.min(0.05, Math.max(0.001, (now - (lastFrameAt || now - 16)) / 1000));
     lastFrameAt = now;
     const inXR = !!(renderer.xr && renderer.xr.isPresenting);
-    if (!inXR) { pollGamepad(dt); applyKeys(dt); stepCameraGoal(); (mode === 'walk' ? updateCameraWalk : updateCameraOrbit)(); }
-    else updateXR();
+    if (!inXR) { pollGamepad(dt); applyKeys(dt); stepCameraGoal(); (mode === 'walk' ? updateCameraWalk : updateCameraOrbit)(); updateVRLabels(); }
+    else { try { updateXR(); } catch (e) {} updateVRLabels(); }
     const rsNow = recState(), playing = !!(rsNow && rsNow.isPlaying);
-    if (playing !== wasPlaying) { wasPlaying = playing; trailDirty = true; if (!playing) { disposeTrailLayer(); followPending = true; } }
+    if (playing !== wasPlaying) { wasPlaying = playing; trailDirty = true; if (playing) vrUnbatch(true); else { disposeTrailLayer(); followPending = true; } }
     if ((playing || followPending) && !dragId) {
       const forced = followPending; followPending = false;
       if (playbackFollow(forced) && playing) followHoldUntil = now + 450;
@@ -5341,7 +5629,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
     updateAnimations(now);
     updateAvatars();
     sendPose(now);
-    if (now - lastTopoCheckAt > 500 && !dragId && now >= followHoldUntil) {
+    if (now - lastTopoCheckAt > (inXR ? 1500 : 500) && !dragId && now >= followHoldUntil) {
       lastTopoCheckAt = now;
       flushConflictRebuild();
 
@@ -5355,6 +5643,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
   let _prevSuppressWelcome = false;
   function enter3D() {
     if (active) return;
+    syncWorldSize();
     if (!overlay) makeOverlay();
     overlay.style.display = 'block'; active = true;
     _prevSuppressWelcome = window.__collabSuppressWelcome;
@@ -5461,6 +5750,7 @@ import * as THREE from '/vendor/three/three.module.min.js';
       devModels: { on: devModelsOn, built: _devModelCount, merger: !!_bguMod },
       emblems: { on: icon3dOn, built: _emblemCount, fellBackToSprite: _emblemFallback, cached: Object.keys(emblemGeoCache).length, mats: Object.keys(emblemMatCache).length, loader: !!_svgMod },
       cam: { tx: Math.round(target.x), tz: Math.round(target.z), theta: +theta.toFixed(3), radius: Math.round(radius), wx: Math.round(walkPos.x), wz: Math.round(walkPos.z) },
+      vr: { batches: vrBatchStats.batches, merged: vrBatchStats.merged, hidden: vrHidden.length, labels: vrLabels.length, drawCalls: renderer && renderer.info ? renderer.info.render.calls : 0, triangles: renderer && renderer.info ? renderer.info.render.triangles : 0 },
       xrButtonShown: !!(xrBtn && xrBtn.style.display !== 'none'), xrPresenting: !!(renderer && renderer.xr && renderer.xr.isPresenting), xrOffset: { x: Math.round(xrOffset.x * 100) / 100, y: Math.round(xrOffset.y * 100) / 100, z: Math.round(xrOffset.z * 100) / 100 }, xrTeleporting: teleporting.slice(), xrTeleportMarker: !!(teleportMarker && teleportMarker.visible), xrControllers: xrControllers.map(function (c) { return c.userData.src ? (c.userData.src.handedness || 'unknown') : null; }),
       postFX: { composer: !!composer, bloom: !!bloomPass, env: !!_envTex, sceneHasEnv: !!(scene && scene.environment) },
       controls: { moveArmed: moveArmed, flying: walkFlying, grounded: walkFly <= 0, walkY: Math.round(walkPos.y), velY: Math.round(walkVelY) },

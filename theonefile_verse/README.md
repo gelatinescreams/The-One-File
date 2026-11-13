@@ -2,15 +2,15 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/badge/TheOneFile-4.1.5-blue" alt="TheOneFile 4.1.5">
+  <img src="https://img.shields.io/badge/TheOneFile-4.2.1-blue" alt="TheOneFile 4.2.1">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.0-blue" alt="Docker Version 2.1.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.1-blue" alt="Docker Version 2.1.1">
   </a>
 </p>
 
 *As it turns out, there can be more than one (and now in 2D,3D and 4D "VR")*
 
-![The One File Verse Mutli User Collaboration](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/collab-preview.gif)
+![Three people editing the same homelab map live in TheOneFile_Verse](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/clips/verse-multiplayer.gif)
 
 An easily deployable, Docker based, real time collaboration server with mutli network device discovery, auto service & selfh.st/icons tagging, user accounts, email authentication, SSO, role based access control and more. All configurable via a robust admin panel.
 
@@ -75,6 +75,7 @@ All settings are configured via the admin panel at `/admin`. On first run, you'l
 | `MAX_ROOM_CONNECTIONS` | `64` | Maximum simultaneous WebSocket connections to a single room; further joins are refused. `0` disables the cap |
 | `DEBUG_OIDC` | `false` | Enable OIDC debug logging (dev only) |
 | `SMTP_DEBUG` | `false` | `true` logs the full SMTP conversation. **Development only**, the transcript includes recipient addresses. The AUTH exchange itself is masked either way |
+| `SMTP_ALLOW_LOOPBACK` | `false` | `true` lets the admin SMTP test reach a mail server on loopback, for a local relay. Off by default so the test can't be used to probe the server itself **NEW 2.1.1** |
 | `SCENE3D_CODE_TTL_DAYS` | `90` | Age at which an orphaned portable 3D scene snapshot (`3d:<code>`) whose room no longer exists is garbage collected. `0`, `off`, `false`, `no`, `disabled` or `never` turns it off; anything unparseable falls back to 90, so a typo cannot silently stop maintenance |
 
 ### Instance settings (admin panel)
@@ -89,6 +90,10 @@ panel.
 | `maxAssetsPerRoomMB` | `200` | Per room ceiling on stored 3D asset bytes (uploaded images and `.glb` models). `0` means unlimited |
 | `maxAssetsTotalGB` | `5` | Instance wide ceiling on stored 3D asset bytes. `0` means unlimited |
 | `maxRoomSizeMB` | `50` | Per room topology size cap, 1-64 |
+| `maxGuestRoomSizeMB` | `5` | Size cap for rooms created or grown by guests (not signed in) **NEW 2.1.1** |
+| `maxGuestRooms` | `300` | How many guest created rooms can exist at once **NEW 2.1.1** |
+| `maxRoomsPerInstance` | `1000` | Total room limit for the instance. Was unlimited before 2.1.1 **NEW 2.1.1** |
+| `maxTotalRoomStorageMB` | `4096` | Total room storage limit for the instance **NEW 2.1.1** |
 
 Orphaned assets are swept on a 6 hour timer with a 24 hour grace period measured from the moment
 they stopped being referenced, and an asset a portable `3d:<code>` snapshot still names is never
@@ -122,8 +127,8 @@ the proxy's address) and the origin used for password reset / magic link / email
 URLs.
 
 ### TheOneFile_Verse Features
-* **Current Version 2.1.0**
-  * See [changelog](changelog.md) for the full 2.1.0 list of changes
+* **Current Version 2.1.1** Furthering 3d,4d(VR) and a few bug/security fixes
+  * See [changelog](changelog.md) for the full list of changes
 
 #### Core Collaboration
 * Realtime sync via WebSocket
@@ -139,6 +144,16 @@ URLs.
 * All the functions of TheOneFile_Networkening
 
 #### Enter 3D: a walkable, editable, multiplayer 3D view
+
+![Orbiting a rack room in 3D (beta)](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/clips/verse-3d-orbit.gif)
+
+| Walk it in 3D (beta) | VR (alpha) |
+|:---:|:---:|
+| ![Walking through the rack room in first person](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/clips/verse-walk.gif) | ![Both eyes of a VR session in the rack room](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/clips/vr-view.gif) |
+| | *Recorded in desktop Chrome with the WebXR API Emulator* |
+
+![The 3D view with its hotbar and side panel](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/screens/verse-3d-ui.jpg)
+
 * **Enter 3D** button in every room turns the 2D map into a walkable 3D space (Minecraft style controls, Roblox style visuals). Orbit, first person walk, gamepad, and **WebXR VR** on an HTTPS instance
 * Everything the 2D map has is rendered and **editable in 3D**: nodes, racks with U mounted devices, wires with the real 2D routing, walls, zones, text, images, per node elevation, per wall height, per edge burial
 * **Procedural device models by node type**, server, router, switch, firewall, workstation, laptop, phone, printer, camera, access point, NAS, cloud, plus the node's own web icon extruded from its SVG into real geometry. Both are viewer side toggles
@@ -149,6 +164,7 @@ URLs.
 * Uploadable images and `.glb` models via a content addressed asset store, with per room and instance wide quotas
 * **Portable `3d:<code>`**, the exported One File carries an inert token, and importing it back into a Verse re materialises the 3D world
 * **WebXR VR** tested on Quest 3: controller pointing and select, place items, squeeze to teleport, thumbstick movement **NEW 2.1.0**
+* **Smooth VR** on Quest 3 at the headset's full frame rate, labels sized for VR, and real world sizes for people, racks and devices in 3D and VR **NEW 2.1.1**
 * Turn the whole feature off instance wide with the `enable3d` admin toggle
 
 #### Full User Account System
@@ -177,6 +193,9 @@ URLs.
 * Custom user ports
   
 #### Network Discovery
+
+![Network Discovery listing found hosts, their open services and icons](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/screens/verse-discovery-table.jpg)
+
 * Added "Discover Network Hosts" button to settings panel under Auto Status Checking section (at the bottom)
 * Full subnet discovery with CIDR range input and preset common ranges
 * Multiple range support
@@ -227,6 +246,9 @@ URLs.
 * Multiple SMTP configurations supported
 
 #### Admin Dashboard
+
+![The admin dashboard rooms tab](https://raw.githubusercontent.com/gelatinescreams/The-One-File/refs/heads/main/assets/screens/verse-admin.jpg)
+
 * Full user management (create, edit, deactivate, delete)
 * Role based access control (admin, user, guest)
 * OIDC provider configuration
@@ -260,11 +282,17 @@ URLs.
 * Configurable trusted proxy support with environment variable overrides, now also in the admin panel **Enhanced 2.1.0**
 * Custom admin path (security through obscurity but not everyone likes the default)
 * Constant time token comparison with length padding
-* SSRF protection on webhook URLs
+* SSRF protection on webhook URLs, checked by DNS at save and send time with redirects off **Enhanced 2.1.1**
 * Automatic admin token cleanup
 * Full HTML entity escaping on all user generated content
 * Shared map text is sanitized and then checked with a real HTML parser before anyone sees it **NEW 2.1.0**
 * Network probes require a signed in user **NEW 2.1.0**
+* Network probes only reach devices that are on that room's map, with an hourly budget per user **NEW 2.1.1**
+* Password reset and magic link emails only ever use `PUBLIC_URL`, and refuse to send without it **NEW 2.1.1**
+* Magic link and SSO sign in ask for the two factor code when it is turned on **NEW 2.1.1**
+* Room ids, colours and recordings are shape checked on the server so they can't carry scripts **NEW 2.1.1**
+* Disabled or demoted users and old room passwords lose access immediately, including open connections **NEW 2.1.1**
+* Guest room size, guest room count, total rooms and total storage limits **NEW 2.1.1**
 * CRLF injection prevention in email headers
 * STARTTLS downgrade protection
 * File upload size limits

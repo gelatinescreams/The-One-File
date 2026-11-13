@@ -106,14 +106,22 @@
     window.__authCsrfRefresh().then(function() { csrfToken = window.__authCsrfToken; });
     window.__authRenderOidcProviders('oidc-buttons', 'divider', '');
     var userLoginForm = document.getElementById('login-form');
+    var mfaFromLink = new URLSearchParams(window.location.search).get('mfa') === '1';
+    if (mfaFromLink) {
+      pendingToken = '';
+      build2FAForm(userLoginForm);
+      document.querySelector('h1').textContent = 'Two Factor Authentication';
+      document.querySelector('p').textContent = 'Enter the 6 digit code from your authenticator app to finish signing in';
+    }
     userLoginForm.addEventListener('submit', withFormLoading(userLoginForm, async function() {
       var error = document.getElementById('error');
       error.classList.remove('active');
-      if (pendingToken) {
+      if (pendingToken !== null) {
         var code = document.getElementById('2fa-code').value.trim();
         if (!code) { error.textContent = 'Please enter your 2FA code'; error.setAttribute('role', 'alert'); error.classList.add('active'); return; }
         try {
-          var res = await fetch('/api/auth/2fa/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pendingToken: pendingToken, code: code }) });
+          var mfaBody = pendingToken ? { pendingToken: pendingToken, code: code } : { code: code };
+          var res = await fetch('/api/auth/2fa/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(mfaBody) });
           var d = await res.json();
           if (res.ok && d.success) { var redirect = new URLSearchParams(window.location.search).get('redirect') || '/'; if (redirect.startsWith('/') && !redirect.startsWith('//')) { window.location.href = redirect; } else { window.location.href = '/'; } }
           else { error.textContent = d.error || 'Invalid code'; error.setAttribute('role', 'alert'); error.classList.add('active'); }

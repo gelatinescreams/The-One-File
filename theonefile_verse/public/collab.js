@@ -1206,6 +1206,17 @@
     return false;
   }
 
+  function adoptRemoteIcons(remote) {
+    if (!remote || typeof remote !== 'object') return;
+    const local = getGlobal('iconCache');
+    if (!local || typeof local !== 'object') return;
+    for (const k of Object.keys(remote)) {
+      const v = remote[k];
+      if (Object.prototype.hasOwnProperty.call(local, k) || typeof v !== 'string') continue;
+      if (/^\s*<svg[\s>]/i.test(v) || /^data:image\//i.test(v)) local[k] = v;
+    }
+  }
+
   function captureState() {
     let state = null;
 
@@ -1213,7 +1224,9 @@
       try {
         state = captureTheQuickening();
         delete state.canvas;
+        delete state.tabViews;
         delete state.customLanguage;
+        delete state.iconCache;
         if (state.documentTabs) {
           state.documentTabs = state.documentTabs.map(tab => {
             const copy = { ...tab };
@@ -1243,7 +1256,6 @@
         zonePresets: getGlobal('ZONE_PRESETS'),
         documentTabs: getGlobal('documentTabs'),
         currentTabIndex: getGlobal('currentTabIndex'),
-        iconCache: getGlobal('iconCache'),
         auditLog: getGlobal('auditLog'),
         savedStyleSets: getGlobal('savedStyleSets'),
         autoPingEnabled: getGlobal('autoPingEnabled'),
@@ -1810,7 +1822,7 @@
         pageApplied = true;
       }
 
-      if (state.iconCache) setGlobal('iconCache', state.iconCache);
+      adoptRemoteIcons(state.iconCache);
       if (state.auditLog) setGlobal('auditLog', state.auditLog);
       if (state.savedStyleSets) setGlobal('savedStyleSets', state.savedStyleSets);
       if (state.autoPingEnabled !== undefined) setGlobal('autoPingEnabled', state.autoPingEnabled);
@@ -1819,7 +1831,10 @@
       if (state.animSettings) setGlobal('ANIM_SETTINGS', state.animSettings);
       if (state.rollbackVersions) setGlobal('rollbackVersions', state.rollbackVersions);
       const remoteLang = state.customLang || state.customLanguage;
-      if (remoteLang) setGlobal('CUSTOM_LANG', remoteLang);
+      if (remoteLang && typeof window.sanitizeLanguageData === 'function') {
+        const cleanLang = window.sanitizeLanguageData(remoteLang);
+        if (cleanLang) setGlobal('CUSTOM_LANG', cleanLang);
+      }
       if (state.encryptedSections) setGlobal('encryptedSections', state.encryptedSections);
       if (Array.isArray(state.recordings)) applyRemoteRecordings(state.recordings);
 
@@ -1900,9 +1915,17 @@
     } catch (e) { return String(list.length); }
   }
 
+  function sanitizeIncomingRecordings(list) {
+    if (typeof window.sanitizeRecordings === 'function') return window.sanitizeRecordings(list);
+    if (!Array.isArray(list)) return [];
+    return list.filter(r => r && typeof r === 'object' && (typeof r.id === 'string' || typeof r.id === 'number') &&
+      /^[A-Za-z0-9_.:-]{1,80}$/.test(String(r.id)) && Array.isArray(r.frames) && (r.name === undefined || typeof r.name === 'string'));
+  }
+
   function applyRemoteRecordings(list) {
     const rs = getGlobal('RECORDING_STATE');
     if (!rs) return;
+    list = sanitizeIncomingRecordings(list);
     if (isRecordingBusy(rs)) {
       pendingRecordings = mergeRemoteRecordings(
         list, pendingRecordings || rs.recordings, seenRecordingIds);
@@ -1943,6 +1966,7 @@
 
   const STATE_SYNC_MIN_INTERVAL = 500;
   const STATE_SYNC_DEBOUNCE = 300;
+  const STATE_SYNC_XR_INTERVAL = 2000;
   let lastStateSyncTime = 0;
   let stateSyncTimeout = null;
 
@@ -2003,11 +2027,16 @@
   }
 
   function startStatePolling() {
+    let lastXRPollAt = 0;
     setInterval(() => {
       if (syncPaused || !hasReceivedInitialState) return;
+      const now = Date.now();
+      if (window.__collabXRActive) {
+        if (now - lastXRPollAt < STATE_SYNC_XR_INTERVAL) return;
+        lastXRPollAt = now;
+      }
       flushPendingRecordings();
 
-      const now = Date.now();
       const timeSinceLastSync = now - lastStateSyncTime;
 
       if (timeSinceLastSync < STATE_SYNC_MIN_INTERVAL) {
@@ -2823,10 +2852,9 @@
     var probes = [{ type: 'icmp' }];
     if (ping.protocol === 'custom' && ping.customUrl) {
       probes.push({ type: 'http', url: ping.customUrl });
-    } else if (ping.protocol === 'https') {
-      probes.push({ type: 'http' });
     } else {
-      probes.push({ type: 'http' });
+      var pp = parseInt(ping.port, 10);
+      probes.push(pp > 0 && pp < 65536 ? { type: 'tcp', port: pp } : { type: 'http' });
     }
     return probes;
   }
@@ -2883,7 +2911,7 @@
         var resp = await fetch('/api/probe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
-          body: JSON.stringify({ target: target, probes: probes, timeout: data.ping.timeout || 3000 })
+          body: JSON.stringify({ roomId: ROOM_ID, target: target, probes: probes, timeout: data.ping.timeout || 3000 })
         });
         refreshCsrf();
         var result = await resp.json();
@@ -2932,7 +2960,7 @@
             var resp = await fetch('/api/probe/batch', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'x-csrf-token': window.CSRF_TOKEN },
-              body: JSON.stringify({ targets: batch })
+              body: JSON.stringify({ roomId: ROOM_ID, targets: batch })
             });
             refreshCsrf();
             if (!resp.ok) { checked += batch.length; continue; }

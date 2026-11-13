@@ -1,8 +1,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/License-Unlicense-576169?style=for-the-badge&labelColor=01284b" alt="License: Unlicense">
-  <img src="https://img.shields.io/badge/TheOneFile-4.2.0-blue" alt="TheOneFile 4.2.0">
+  <img src="https://img.shields.io/badge/TheOneFile-4.2.1-blue" alt="TheOneFile 4.2.1">
   <a href="https://github.com/gelatinescreams/The-One-File/tree/main/theonefile_verse">
-  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.0-blue" alt="TheOneFile_Verse Docker Version 2.1.0">
+  <img src="https://img.shields.io/badge/TheOneFile_Verse-2.1.1-blue" alt="TheOneFile_Verse Docker Version 2.1.1">
   </a>
 </p>
 
@@ -14,7 +14,20 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 *TheOneFile_Verse adds an easily deployable, Docker based, real time collaboration wrapper that enables multiple users to create, edit and share together!*
 
-![The One File corporate preview](assets/corporate-preview.gif) ![The One File routing preview](assets/routing-preview.gif) ![The One File homelab preview](assets/homelab-preview.gif) ![The One File mobile previews](assets/mobilepreviews.jpg)
+![Touring the Willow Creek homelab demo in TheOneFile](assets/clips/homelab-tour.gif)
+
+| | | |
+|:---:|:---:|:---:|
+| [![Homelab demo](assets/screens/homelab.jpg)](https://therecanonlybe.one/demos/homelab?edition=networkening) **Homelab** | [![Corporate demo](assets/screens/corporate.jpg)](https://therecanonlybe.one/demos/corporate?edition=networkening) **Corporate** | [![Smart home demo](assets/screens/smarthome.jpg)](https://therecanonlybe.one/demos/smarthome?edition=networkening) **Smart Home** |
+| [![Floor plan demo](assets/screens/floorplan.jpg)](https://therecanonlybe.one/demos/floorplan?edition=networkening) **Floor Plan** | [![Mind map demo](assets/screens/mindmap.jpg)](https://therecanonlybe.one/demos/mindmap?edition=networkening) **Mind Map** | [![Sports playbook demo](assets/screens/sports.jpg)](https://therecanonlybe.one/demos/sports?edition=networkening) **Sports** |
+
+### Version 4.2.1 /\ 11-11-26 : Custom racks sizes, a few additions and bug fixes
+* **Custom Rack Sizes** ([#53](https://github.com/gelatinescreams/The-One-File/issues/53)) Thanks @Otterface 
+  * Racks can now be any size from 1U to 100U. Pick "Custom size" when adding a rack or in the rack's side panel
+* **New Stuff**
+  * Connection labels, snap to grid, custom canvas size, tidy layout, bulk edit, multi copy and paste, duplicate tabs, nmap import and more
+* **Bug & Security Fixes**
+  * See [Changelog](changelog.md) for full update details
 
 ### Version 4.2.0 /\ 11-3-26 : Accessibility, completion and squashing a pile of bugs
 * **Accessibility**
@@ -25,22 +38,36 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
   * Tons fixes. Thank you to everyone testing!
   * See [Changelog](changelog.md) for full update details
 
+### TheOneFile_Verse /\ 2.1.1 11-11-26 : Locked down, custom racks, smooth VR and quieter logs
+* **Includes The One File 4.2.1**, plus a big security pass. **Set PUBLIC_URL**, password reset and magic link emails won't send without it
+* **Smooth VR on Quest 3** at full frame rate, readable labels, and real world sizes for people, racks and devices in 3D and VR
+  * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for details
+
 ### TheOneFile_Verse /\ 2.1.0 11-3-26 : 2d,3d,4d(VR) and much more
 * **Thank you to everyone who has/will use. Thank you to everyone who has helped in every way**
   * See [TheOneFile_Verse changelog](theonefile_verse/changelog.md) for full 2.1.0 list
 
-<img width="1525" height="770" alt="Screenshot 2026-03-11 094906" src="https://github.com/user-attachments/assets/43196f4e-f6c4-4d9d-aae0-d311b2bf94ec" />
-<img width="1521" height="770" alt="Screenshot 2026-03-11 094937" src="https://github.com/user-attachments/assets/c47e1cea-dd33-47ac-ac62-cef7fe92e3a3" />  
+![Three people editing the same homelab map live in TheOneFile_Verse](assets/clips/verse-multiplayer.gif)
+
+![A TheOneFile_Verse rack room in 3D (beta)](assets/clips/verse-3d-orbit.gif)
 
 ### Demos
 
 * **Core Edition**
-  * [Core: Corporation Demo](https://therecanonlybe.one/demos/?version=core&demo=corporate)
-  * [Core: Homelab Demo](https://therecanonlybe.one/demos/?version=core&demo=homelab)
+  * [Core: Corporation Demo](https://therecanonlybe.one/demos/corporate?edition=core)
+  * [Core: Homelab Demo](https://therecanonlybe.one/demos/homelab?edition=core)
+  * [Core: Smart Home Demo](https://therecanonlybe.one/demos/smarthome?edition=core)
+  * [Core: Floor Plan Demo](https://therecanonlybe.one/demos/floorplan?edition=core)
+  * [Core: Mind Map Demo](https://therecanonlybe.one/demos/mindmap?edition=core)
+  * [Core: Sports Playbook Demo](https://therecanonlybe.one/demos/sports?edition=core)
   
 * **Networkening Edition**
-  * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/?version=networkening&demo=corporate)
-  * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/?version=networkening&demo=homelab)
+  * [Networkening: Corporate Demo](https://therecanonlybe.one/demos/corporate?edition=networkening)
+  * [Networkening: Homelab Demo](https://therecanonlybe.one/demos/homelab?edition=networkening)
+  * [Networkening: Smart Home Demo](https://therecanonlybe.one/demos/smarthome?edition=networkening)
+  * [Networkening: Floor Plan Demo](https://therecanonlybe.one/demos/floorplan?edition=networkening)
+  * [Networkening: Mind Map Demo](https://therecanonlybe.one/demos/mindmap?edition=networkening)
+  * [Networkening: Sports Playbook Demo](https://therecanonlybe.one/demos/sports?edition=networkening)
   
 * **TheOneFile_Verse Edition** 
   * [TheOneFile_Verse online demo](https://multiverse.therecanonlybe.one/s/0388e827-e374-435a-bea1-8702db394e73)
@@ -50,8 +77,8 @@ There can only be One File. Map networks, smart homes, sports plays, mind maps, 
 
 ### Download
 
-* [the-one-file.html](https://github.com/user-attachments/files/34349573/the-one-file.html)
-* [theonefile-networkening.html](https://github.com/user-attachments/files/34349572/theonefile-networkening.html)
+* [the-one-file.html](https://github.com/gelatinescreams/The-One-File/releases/latest/download/the-one-file.html)
+* [theonefile-networkening.html](https://github.com/gelatinescreams/The-One-File/releases/latest/download/theonefile-networkening.html)
   
 ### Core vs Networkening vs TheOneFile_Verse
 
@@ -158,6 +185,9 @@ Open `http://localhost:10101`
 * Visual indicators for locked and grouped nodes
 
 #### Racks
+
+![Front and rear rack view with a 20U rack and a 10 inch mini rack](assets/screens/racks.jpg)
+
 * Create rack nodes to represent physical server racks
 * Enter rack view by double clicking a rack node (or long press on mobile)
 * Inside rack view, see a vertical rack with U unit markings
@@ -201,6 +231,9 @@ Open `http://localhost:10101`
 * **Desktop and mobile toolbars** optimized for each platform
 
 ### Network Monitoring *(theonefile-networkening.html only)*
+
+![The NAS goes down and comes back up on the homelab map](assets/clips/status-flip.gif)
+
 * **Live status indicators** on nodes (online/offline/checking)
 * **Manual ping/status check** for individual nodes
 * **Auto Status Checking** with configurable intervals (5-3600 seconds)
@@ -230,8 +263,14 @@ Open `http://localhost:10101`
 * Browser native crypto only  
 * No servers involved  
 * *Version theonefile-networkening.html uses 3 server calls from cdn.jsdelivr.net to load icons*
+* Import JSON, CSV, Markdown and nmap scans ([import-export-save.md](import-export-save.md))
+
+![Importing an nmap scan straight onto the map](assets/clips/nmap-import.gif)
 
 ### Security & Encryption
+
+![An encrypted file asking for its password before anything is shown](assets/screens/locked.jpg)
+
 **Industry Standard Protection:**
 * **AES 256 GCM** encryption (authenticated encryption with 256 bit keys)
 * **PBKDF2** key derivation with:
@@ -249,6 +288,9 @@ Open `http://localhost:10101`
 * **Encrypted data format**: Salt + IV + ciphertext embedded directly in the HTML file
 
 ### Mobile Experience
+
+<img src="assets/screens/homelab-mobile.jpg" alt="The homelab demo on a phone" width="300">
+
 * **Completely rewritten mobile UI** in version 3.0
 * **Resizable mobile footer** with drag handle for custom panel sizing
 * **Touch optimized controls** throughout the interface
@@ -264,6 +306,8 @@ Open `http://localhost:10101`
 ### Keyboard Shortcuts
 
 [keyboard-shortcuts.md](keyboard-shortcuts.md)
+
+![The keyboard shortcuts sheet, opened with ?](assets/screens/shortcuts.jpg)
 
 | Shortcut | Action |
 |----------|--------|

@@ -5,7 +5,17 @@ import * as db from "./database";
 const INSTANCE_TOKENS = new Map<string, number>();
 const TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000;
 
-const ROOM_ACCESS_TOKENS = new Map<string, { roomId: string; expiresAt: number }>();
+const ROOM_ACCESS_TOKENS = new Map<string, { roomId: string; expiresAt: number; pw?: string }>();
+
+export function roomPasswordFingerprint(passwordHash: string | null | undefined): string {
+  if (!passwordHash) return "";
+  return oidc.hashTokenSync(`room-password:${passwordHash}`).slice(0, 32);
+}
+
+function fingerprintMatches(stored: string | undefined, passwordHash: string | null | undefined): boolean {
+  if (passwordHash === undefined) return true;
+  return (stored || "") === roomPasswordFingerprint(passwordHash);
+}
 const ROOM_ACCESS_EXPIRY = 24 * 60 * 60 * 1000;
 
 interface WsSessionToken {
@@ -65,11 +75,12 @@ function mirror(p: Promise<unknown>): void {
   p.catch((e: any) => console.error("[Tokens] Redis mirror failed:", e?.message));
 }
 
-export function generateRoomAccessToken(roomId: string): string {
+export function generateRoomAccessToken(roomId: string, passwordHash?: string | null): string {
   const token = oidc.generateSecureToken(32);
   const key = oidc.hashTokenSync(token);
   const expiresAt = Date.now() + ROOM_ACCESS_EXPIRY;
-  ROOM_ACCESS_TOKENS.set(key, { roomId, expiresAt });
+  const pw = roomPasswordFingerprint(passwordHash);
+  ROOM_ACCESS_TOKENS.set(key, { roomId, expiresAt, pw });
   if (ROOM_ACCESS_TOKENS.size > 10000) {
     const now = Date.now();
     for (const [k, v] of ROOM_ACCESS_TOKENS) {
@@ -77,34 +88,48 @@ export function generateRoomAccessToken(roomId: string): string {
     }
   }
   if (redisOn()) {
-    mirror(redis.setSessionToken(`${ROOM_REDIS_PREFIX}${key}`, { roomId, expiresAt }, Math.ceil(ROOM_ACCESS_EXPIRY / 1000)));
+    mirror(redis.setSessionToken(`${ROOM_REDIS_PREFIX}${key}`, { roomId, expiresAt, pw }, Math.ceil(ROOM_ACCESS_EXPIRY / 1000)));
   }
   return token;
 }
 
-export function validateRoomAccessToken(token: string, roomId: string): boolean {
+export function validateRoomAccessToken(token: string, roomId: string, passwordHash?: string | null): boolean {
   if (!token) return false;
   const key = oidc.hashTokenSync(token);
   const data = ROOM_ACCESS_TOKENS.get(key);
   if (!data) return false;
   if (Date.now() > data.expiresAt) { ROOM_ACCESS_TOKENS.delete(key); return false; }
-  return data.roomId === roomId;
+  if (data.roomId !== roomId) return false;
+  if (!fingerprintMatches(data.pw, passwordHash)) { ROOM_ACCESS_TOKENS.delete(key); return false; }
+  return true;
 }
 
-export async function validateRoomAccessTokenAsync(token: string, roomId: string): Promise<boolean> {
+export async function validateRoomAccessTokenAsync(token: string, roomId: string, passwordHash?: string | null): Promise<boolean> {
   if (!token) return false;
-  if (validateRoomAccessToken(token, roomId)) return true;
+  if (validateRoomAccessToken(token, roomId, passwordHash)) return true;
   if (!redisOn()) return false;
   const key = oidc.hashTokenSync(token);
-  const data = await redis.getSessionToken(`${ROOM_REDIS_PREFIX}${key}`) as unknown as { roomId: string; expiresAt: number } | null;
+  const data = await redis.getSessionToken(`${ROOM_REDIS_PREFIX}${key}`) as unknown as { roomId: string; expiresAt: number; pw?: string } | null;
   if (!data || typeof data.expiresAt !== "number") return false;
   if (Date.now() > data.expiresAt) {
     mirror(redis.deleteSessionToken(`${ROOM_REDIS_PREFIX}${key}`));
     return false;
   }
   if (data.roomId !== roomId) return false;
-  ROOM_ACCESS_TOKENS.set(key, { roomId: data.roomId, expiresAt: data.expiresAt });
+  if (!fingerprintMatches(data.pw, passwordHash)) {
+    mirror(redis.deleteSessionToken(`${ROOM_REDIS_PREFIX}${key}`));
+    return false;
+  }
+  ROOM_ACCESS_TOKENS.set(key, { roomId: data.roomId, expiresAt: data.expiresAt, pw: data.pw });
   return true;
+}
+
+export function revokeRoomAccessTokensForRoom(roomId: string): number {
+  let removed = 0;
+  for (const [k, v] of ROOM_ACCESS_TOKENS) {
+    if (v.roomId === roomId) { ROOM_ACCESS_TOKENS.delete(k); removed++; }
+  }
+  return removed;
 }
 
 export function generateInstanceToken(): string {

@@ -1,8 +1,9 @@
 import * as db from "../database";
 import { isValidUUID, getSettings, getMaxRoomSizeBytes } from "../config";
 import { getClientIP, validateAdminOrApiKey, readJsonLimited, apiError } from "../security";
-import { roomMeta, deleteRoomData, saveRoom, loadRoom, scheduleDestruction, setRoomViewOnly, isRoomViewOnly, hashPassword, clearTopologyCache, validateTopology, type Room } from "../rooms";
-import { pushRoomReset } from "../websocket";
+import { roomMeta, deleteRoomData, saveRoom, loadRoom, scheduleDestruction, setRoomViewOnly, isRoomViewOnly, hashPassword, clearTopologyCache, validateTopology, storageQuotaAllows, storedRoomBytes, STORAGE_QUOTA_ERROR, type Room } from "../rooms";
+import { pushRoomReset, disconnectRoomGuestsAfterPasswordChange } from "../websocket";
+import { revokeRoomAccessTokensForRoom } from "../tokens";
 
 const ROOM_BODY_CAP = 16 * 1024;
 const MAX_DESTRUCT_MS = 30 * 24 * 60 * 60 * 1000;
@@ -89,6 +90,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       const body = await readJsonLimited(req, getMaxRoomSizeBytes() + 1024 * 1024);
       const v = validateTopology(body.topology);
       if (!v.valid || !v.sanitized) return Response.json({ error: v.error || "Invalid topology" }, { status: 400, headers: corsHeaders });
+      if (!storageQuotaAllows(JSON.stringify(v.sanitized).length, storedRoomBytes(id))) return Response.json({ error: STORAGE_QUOTA_ERROR }, { status: 507, headers: corsHeaders });
       clearTopologyCache(id);
       room.topology = v.sanitized;
       room.lastActivity = new Date().toISOString();
@@ -115,9 +117,11 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       }
       db.updateRoomPassword(id, body.password ? await hashPassword(body.password) : null);
       clearTopologyCache(id);
+      const revoked = revokeRoomAccessTokensForRoom(id);
+      const disconnected = body.password ? disconnectRoomGuestsAfterPasswordChange(id) : 0;
       const actor = user ? user.id : `apikey:${apiKey!.name}`;
-      db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_password_changed", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { hasPassword: !!body.password } });
-      return Response.json({ success: true, hasPassword: !!body.password }, { headers: corsHeaders });
+      db.addAuditLog({ timestamp: new Date().toISOString(), action: "room_password_changed", actor, actorIp: getClientIP(req), targetType: "room", targetId: id, details: { hasPassword: !!body.password, revoked, disconnected } });
+      return Response.json({ success: true, hasPassword: !!body.password, disconnected }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
   }
 

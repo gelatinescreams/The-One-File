@@ -1,0 +1,3 @@
+
+[test]
+preload = ["./tests/helpers/preload.ts"]

@@ -1,5 +1,56 @@
 ### TheOneFile_Verse changelog
 
+**11/11/26 Theonefile_verse 2.1.1** : **Locked down, custom racks, smooth VR and quieter logs**
+
+* **Heads up before you update**
+  * Password reset and magic link emails now only use your `PUBLIC_URL`. If it isn't set they won't send at all. Set `PUBLIC_URL`!
+  * New limits for guests and storage, see Security below. All of them can be changed in admin settings
+
+* **The One File 4.2.1 included**
+  * Custom rack sizes, front and rear side by side, 0U side rails, connection labels, snap to grid, custom canvas size, tidy layout, bulk edit, multi copy and paste, duplicate tabs and much more. All of it syncs live between everyone in the room
+  * See the main [changelog](../changelog.md) for the full list
+
+* **VR**
+  * Runs at the headset's full frame rate on Quest 3. The corporate demo went from 34 fps with a third of frames dropped to 87 fps on a 90 Hz headset with under 1% dropped
+  * Static parts of the scene are combined into far fewer draw calls while you are in VR (1170 down to under 300 per frame)
+  * Labels have a real world size, face you, grow a little with distance so they stay readable, fade out when you get close and hide when far away. They no longer show through racks and walls
+  * You start just in front of your map instead of inside it, so no label fills your view when VR opens
+  * Pressing the trigger or grip no longer freezes VR when the controller points at a label
+
+* **3D and VR sizes**
+  * People, racks and devices now have real world sizes: a 42U rack is 2 m tall, a person 1.75 m, and a laptop or desktop device fits on a desk. Racks used to be over 16 m tall and avatars over 2 m
+  * Icons on top of shapes are capped at about half a metre
+  * Labels in the 3D view shrink as you zoom in and fade when the camera is right on top of them, so they no longer cover what you are looking at
+  * The page behind the headset checks for changes less often while you are in VR
+
+* **Rooms**
+  * Fixed a loop where every open room kept resending its icons to the server and redrawing the whole map about twice a second, even with nobody editing. Icons now stay on each device
+
+* **3D**
+  * The edit book takes any rack size, won't shrink a rack below its mounted devices, and tells you why
+  * The node book has rack, U position, U height, face and mounting fields with the same checks as 2D, and shows your layer names instead of layer1 to layer4
+  * 0U side rail and rear devices are drawn in 3D, and connections to racked devices are drawn from the rack
+  * Custom canvas sizes up to 20000 x 15000
+  * Images from other websites are not loaded into 3D
+  * The hotbar table now shows a table icon
+
+* **Security**
+  * Password reset and magic link links can no longer be pointed at another website by a faked request
+  * Magic link and SSO sign in now ask for your two factor code when you have it turned on
+  * Room data is checked on the way in and out, so ids, colours and recordings can't carry scripts to other users
+  * Status checks only reach devices that are on that room's map, only for people who can open the room, with an hourly budget per user
+  * Guest rooms are capped at 5 MB each and 300 in total, with an instance room limit of 1000 and a 4 GB total storage limit
+  * Disabled or demoted users lose access right away, and changing a room password drops guests and old access
+  * Only the owner or an admin can cancel a scan, and scans are tied to rooms you can open
+  * Webhooks and the SMTP test refuse private and loopback addresses, and webhooks no longer follow redirects
+  * The guest join switch now applies to 3D scenes and uploads too
+  * Read only API keys can't download backups, and exports hide password hashes and webhook URLs
+  * Logins with an unknown email take the same time as real ones, and the update interval is capped at 168 hours
+  * Server logs no longer print the Redis password or full webhook URLs
+
+* **Fixes**
+  * Forgot password and magic link forms show the real error instead of always saying the email was sent
+
 **11/2/26 Theonefile_verse 2.1.0** : **2d,3d,4d(VR) and much more**
 
 * **Enter 3D (CURRENTLY IN BETA)**

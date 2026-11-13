@@ -207,14 +207,33 @@ export function getTokenFromRequest(req: Request): string | null {
   return null;
 }
 
+export function parseCookies(header: string | null | undefined): Map<string, string> {
+  const out = new Map<string, string>();
+  if (!header) return out;
+  for (const part of header.split(";")) {
+    const eq = part.indexOf("=");
+    if (eq <= 0) continue;
+    const name = part.slice(0, eq).trim();
+    const value = part.slice(eq + 1).trim();
+    if (!name || out.has(name)) continue;
+    out.set(name, value);
+  }
+  return out;
+}
+
+export function getPrefixedCookie(req: Request, baseName: string): string | null {
+  const cookies = parseCookies(req.headers.get("cookie"));
+  let prodMode = false;
+  try { prodMode = oidc.getAuthSettings().productionMode === true; } catch { prodMode = false; }
+  const value = prodMode ? cookies.get(`__Host-${baseName}`) : (cookies.get(baseName) ?? cookies.get(`__Host-${baseName}`));
+  return value ? value : null;
+}
+
 export function getUserTokenFromRequest(req: Request): string | null {
-  const cookie = req.headers.get("cookie") || "";
-  const hostMatch = cookie.match(/__Host-user_token=([^;]+)/);
-  if (hostMatch) return hostMatch[1];
-  const match = cookie.match(/user_token=([^;]+)/);
-  if (match) return match[1];
+  const fromCookie = getPrefixedCookie(req, "user_token");
+  if (fromCookie) return fromCookie;
   const auth = req.headers.get("authorization") || "";
-  if (auth.startsWith("Bearer ")) return auth.slice(7);
+  if (auth.startsWith("Bearer ") && !auth.startsWith("Bearer tof_")) return auth.slice(7);
   return null;
 }
 

@@ -8,12 +8,14 @@ import {
   scheduleEmptyDestruction, cancelEmptyDestruction, scheduleIdleCleanup, cancelIdleCleanup,
   EMPTY_DESTRUCT_OWNERLESS_GRACE_MS,
   persistTopology, isRoomViewOnly, noteForeignPersist, presence, currentTopology,
-  validateTopology, sanitizeTopologyStrings, type Room, type RoomMeta
+  validateTopology, sanitizeTopologyStrings, storedRoomBytes, storageQuotaAllows, STORAGE_QUOTA_ERROR,
+  type Room, type RoomMeta
 } from "./rooms";
 import { validateWsSessionToken } from "./tokens";
 import { mergeChangedOntoStored, validChangedKeys } from "./state-merge";
+import { isSafeId, remapUnsafeId } from "./topology-shape";
 import { checkWsRateLimit, wsRateLimitRetryAfterMs } from "./rate-limit";
-import { getSettings, isValidUUID, getMaxRoomSizeBytes, REDIS_FANOUT } from "./config";
+import { getSettings, isValidUUID, getMaxRoomSizeBytes, getMaxGuestRoomSizeBytes, REDIS_FANOUT } from "./config";
 
 export interface WsData {
   roomId?: string;
@@ -25,6 +27,7 @@ export interface WsData {
   attached?: boolean;
   joined?: boolean;
   role?: RoomRole;
+  identityCheckedAt?: number;
 }
 
 
@@ -46,12 +49,99 @@ export type RoomRole = 'owner' | 'admin' | 'editor' | 'viewer' | 'guest';
 
 export function resolveRoomRole(room: Room | null, verifiedUserId: string | undefined): RoomRole {
   if (!verifiedUserId) return 'guest';
-  if (room?.ownerUserId && verifiedUserId === room.ownerUserId) return 'owner';
   let user: any = null;
   try { user = db.getUserById(verifiedUserId); } catch { user = null; }
+  if (user && user.isActive === false) return 'guest';
+  if (room?.ownerUserId && verifiedUserId === room.ownerUserId) return 'owner';
   if (!user) return 'guest';
   if (user.role === 'admin') return 'admin';
   return 'editor';
+}
+
+export function remapChangedKey(key: string): string {
+  const parts = key.split("\u001f");
+  if (parts.length !== 3 || parts[0] === "__top" || parts[0] === "__tabs") return key;
+  if (!isSafeId(parts[1])) parts[1] = remapUnsafeId(parts[1]);
+  return parts.join("\u001f");
+}
+
+export const IDENTITY_RECHECK_MS = 15000;
+
+function socketIdentity(data: WsData | undefined): string | undefined {
+  return data?.verifiedUserId || data?.sessionUserId;
+}
+
+function sendPermissions(ws: any, roomId: string): void {
+  const data = ws.data as WsData;
+  const viewOnly = isRoomViewOnly(roomId);
+  try {
+    ws.send(JSON.stringify({
+      type: 'permissions',
+      role: data.role || 'guest',
+      canWrite: canWrite(data.role, viewOnly),
+      viewOnly,
+      pingIntervalMs: WS_PING_INTERVAL_MS
+    }));
+  } catch {  }
+}
+
+function closeForIdentity(ws: any, code: number, reason: string, message: string, errCode: string): void {
+  try { ws.send(JSON.stringify({ type: 'error', code: errCode, error: message })); } catch {  }
+  try { ws.close(code, reason); } catch {  }
+}
+
+export function revalidateSocketIdentity(ws: any, force = false): boolean {
+  const data = ws.data as WsData | undefined;
+  if (!data?.roomId) return false;
+  const userId = socketIdentity(data);
+  if (!userId) return true;
+  const now = Date.now();
+  if (!force && data.identityCheckedAt && now - data.identityCheckedAt < IDENTITY_RECHECK_MS) return true;
+  data.identityCheckedAt = now;
+  let user: any = null;
+  try { user = db.getUserById(userId); } catch { user = null; }
+  const room = loadRoom(data.roomId);
+  const isOwner = !!(room?.ownerUserId && room.ownerUserId === userId);
+  if (!user && !isOwner) {
+    if (!data.role || data.role === 'guest') return true;
+    closeForIdentity(ws, 4003, 'Account disabled', 'Your account is no longer active. Sign in again to continue.', 'account-disabled');
+    return false;
+  }
+  if (user && user.isActive === false) {
+    closeForIdentity(ws, 4003, 'Account disabled', 'Your account is no longer active. Sign in again to continue.', 'account-disabled');
+    return false;
+  }
+  const next = resolveRoomRole(room, userId);
+  if (next !== data.role) {
+    data.role = next;
+    if (data.joined) sendPermissions(ws, data.roomId);
+  }
+  return true;
+}
+
+export function refreshUserSockets(userId: string): number {
+  let touched = 0;
+  for (const [, connections] of roomConnections) {
+    for (const ws of [...connections]) {
+      if (socketIdentity(ws.data as WsData) !== userId) continue;
+      touched++;
+      revalidateSocketIdentity(ws, true);
+    }
+  }
+  return touched;
+}
+
+export function disconnectRoomGuestsAfterPasswordChange(roomId: string): number {
+  const connections = roomConnections.get(roomId);
+  if (!connections) return 0;
+  let closed = 0;
+  for (const ws of [...connections]) {
+    const role = (ws.data as WsData | undefined)?.role;
+    if (role === 'owner' || role === 'admin') continue;
+    closeForIdentity(ws, 4004, 'Room password changed', 'The room password was changed. Enter the new password to rejoin.', 'room-password-changed');
+    closed++;
+  }
+  return closed;
 }
 
 export function canWrite(role: RoomRole | undefined, viewOnly: boolean): boolean {
@@ -241,6 +331,7 @@ export const websocketHandlers = {
     data.connectionId = crypto.randomUUID();
     if (data.authenticated) {
       data.role = resolveRoomRole(loadRoom(data.roomId), data.sessionUserId);
+      data.identityCheckedAt = Date.now();
       attachToRoom(ws);
     }
   },
@@ -276,6 +367,7 @@ export const websocketHandlers = {
       (ws.data as WsData).authenticated = true;
       (ws.data as WsData).verifiedUserId = tokenValidation.collabUserId;
       (ws.data as WsData).role = resolveRoomRole(loadRoom(roomId), tokenValidation.collabUserId);
+      (ws.data as WsData).identityCheckedAt = Date.now();
       if (!attachToRoom(ws)) return;
       ws.send(JSON.stringify({ type: 'auth-ok', pingIntervalMs: WS_PING_INTERVAL_MS }));
       return;
@@ -328,6 +420,7 @@ export const websocketHandlers = {
     if (Buffer.byteLength(messageStr, 'utf8') > maxSize) return;
 
     if (isWriteAction(msg)) {
+      if (!revalidateSocketIdentity(ws)) return;
       const role = (ws.data as WsData).role;
       if (!canWrite(role, isRoomViewOnly(roomId))) {
         denyWrite(ws, msg);
@@ -497,7 +590,8 @@ export const websocketHandlers = {
         }
         let next = topologyValidation.sanitized;
         let corrected = false;
-        const changed = msg.changed !== undefined ? validChangedKeys(msg.changed) : null;
+        const rawChanged = msg.changed !== undefined ? validChangedKeys(msg.changed) : null;
+        const changed = rawChanged ? rawChanged.map(remapChangedKey) : null;
         if (changed) {
           const merged = mergeChangedOntoStored(currentTopology(roomId), next, changed);
           if (merged) {
@@ -509,6 +603,15 @@ export const websocketHandlers = {
           }
         }
         const json = JSON.stringify(next);
+        const previousBytes = storedRoomBytes(roomId);
+        if ((ws.data as WsData).role === 'guest' && json.length > getMaxGuestRoomSizeBytes() && json.length > previousBytes) {
+          ws.send(JSON.stringify({ type: 'error', code: 'room-too-large', error: 'This room is larger than guests may save. Sign in to keep editing, or remove large images and recordings.' }));
+          return;
+        }
+        if (!storageQuotaAllows(json.length, previousBytes)) {
+          ws.send(JSON.stringify({ type: 'error', code: 'storage-full', error: STORAGE_QUOTA_ERROR }));
+          return;
+        }
         broadcastRoom(ws, roomId, STATE_PREFIX + json + '}');
         if (corrected && ws.readyState === 1) ws.send(STATE_PREFIX + json + '}');
         persistTopology(roomId, next, json, new Date().toISOString());

@@ -770,6 +770,7 @@
         body: JSON.stringify({ email: email })
       });
       var data = await res.json();
+      if (!res.ok) { showError('forgot', (data && data.error) || 'Something went wrong'); return; }
       document.getElementById('forgot-error').classList.remove('active');
       var success = document.getElementById('forgot-success');
       success.textContent = 'If an account exists, we\'ve sent a reset link.';
@@ -790,6 +791,7 @@
         body: JSON.stringify({ email: email })
       });
       var data = await res.json();
+      if (!res.ok) { showError('magic', (data && data.error) || 'Something went wrong'); return; }
       document.getElementById('magic-error').classList.remove('active');
       var success = document.getElementById('magic-success');
       success.textContent = 'If an account exists, we\'ve sent a magic link.';

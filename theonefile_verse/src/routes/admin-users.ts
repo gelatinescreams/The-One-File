@@ -1,7 +1,8 @@
 import * as auth from "../auth";
 import * as db from "../database";
 import { getClientIP, apiError, validateAdminUser, readJsonLimited, BodyTooLargeError } from "../security";
-import { getExternalOrigin } from "../config";
+import { getEmailLinkOrigin } from "../config";
+import { refreshUserSockets } from "../websocket";
 
 const ROUTE_BODY_CAP = 64 * 1024;
 
@@ -83,6 +84,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!result.success) {
         return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
       }
+      refreshUserSockets(userId);
       db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_updated", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: userId, details: updates });
       return Response.json({ success: true }, { headers: corsHeaders });
     } catch (e: any) { return apiError(e, corsHeaders); }
@@ -102,7 +104,10 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
       if (!user.email) {
         return Response.json({ error: "User has no email address" }, { status: 400, headers: corsHeaders });
       }
-      const baseUrl = getExternalOrigin(req);
+      const baseUrl = getEmailLinkOrigin("password reset");
+      if (!baseUrl) {
+        return Response.json({ error: "Set the public URL in instance settings before sending password reset emails." }, { status: 400, headers: corsHeaders });
+      }
       await auth.requestPasswordReset(user.email, baseUrl);
       db.addAuditLog({ timestamp: new Date().toISOString(), action: "user_password_reset_sent", actor: adminUser.id, actorIp: getClientIP(req), targetType: "user", targetId: userId });
       return Response.json({ success: true }, { headers: corsHeaders });
@@ -180,6 +185,7 @@ export async function handle(req: Request, path: string, url: URL, corsHeaders: 
     }
     const result = auth.adminDeleteUser(userId);
     if (result.success) db.setPendingApproval(userId, false);
+    if (result.success) refreshUserSockets(userId);
     if (!result.success) {
       return Response.json({ error: result.error }, { status: 400, headers: corsHeaders });
     }

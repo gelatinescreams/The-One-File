@@ -68,6 +68,9 @@ export interface InstanceSettings {
   enable3d: boolean;
   maxAssetsPerRoomMB: number;
   maxAssetsTotalGB: number;
+  maxGuestRoomSizeMB: number;
+  maxGuestRooms: number;
+  maxTotalRoomStorageMB: number;
 }
 
 export const defaultSettings: InstanceSettings = {
@@ -76,7 +79,7 @@ export const defaultSettings: InstanceSettings = {
   updateIntervalHours: 0,
   skipUpdates: false,
   allowPublicRoomCreation: true,
-  maxRoomsPerInstance: 0,
+  maxRoomsPerInstance: 1000,
   maxRoomSizeMB: 50,
   defaultDestructMode: "time",
   defaultDestructHours: 24,
@@ -106,7 +109,10 @@ export const defaultSettings: InstanceSettings = {
   publicUrl: "",
   enable3d: true,
   maxAssetsPerRoomMB: 200,
-  maxAssetsTotalGB: 5
+  maxAssetsTotalGB: 5,
+  maxGuestRoomSizeMB: 5,
+  maxGuestRooms: 300,
+  maxTotalRoomStorageMB: 4096
 };
 
 export function loadSettings(): InstanceSettings {
@@ -149,12 +155,26 @@ export function getSettings(): InstanceSettings { return instanceSettings; }
 export function updateSettings(s: InstanceSettings): void { instanceSettings = s; }
 
 export const MAX_ROOM_SIZE_MB_CEILING = 64;
+export const MAX_UPDATE_INTERVAL_HOURS = 168;
 
 export function getMaxRoomSizeBytes(): number {
   const mb = getSettings().maxRoomSizeMB;
   const clamped = Math.max(1, Math.min(MAX_ROOM_SIZE_MB_CEILING, typeof mb === "number" && mb > 0 ? mb : 50));
   return clamped * 1024 * 1024;
 }
+export function getMaxGuestRoomSizeBytes(): number {
+  const mb = getSettings().maxGuestRoomSizeMB;
+  const full = getMaxRoomSizeBytes();
+  if (typeof mb !== "number" || !(mb > 0)) return full;
+  return Math.min(full, Math.max(1, Math.floor(mb)) * 1024 * 1024);
+}
+
+export function getMaxTotalRoomStorageBytes(): number {
+  const mb = getSettings().maxTotalRoomStorageMB;
+  if (typeof mb !== "number" || !(mb > 0)) return 0;
+  return Math.floor(mb) * 1024 * 1024;
+}
+
 export function getMaxAssetsPerRoomBytes(): number {
   const mb = getSettings().maxAssetsPerRoomMB;
   if (typeof mb !== "number" || !(mb > 0)) return 0;
@@ -296,8 +316,18 @@ export function getConfiguredOrigin(): string | null {
     console.error(
       `[Config] publicUrl ${JSON.stringify(raw)} is not a valid http(s) origin and is being IGNORED. ` +
       `Expected e.g. "https://verse.example.com" (scheme required, no path). ` +
-      `Email links and the same-origin CSRF check are falling back to the request URL.`
+      `Email links are disabled and the same-origin CSRF check falls back to the request URL.`
     );
+  }
+  return origin;
+}
+
+export const EMAIL_LINK_ORIGIN_ERROR = "Email links are unavailable because the server public URL is not configured. Please contact the administrator.";
+
+export function getEmailLinkOrigin(purpose: string): string | null {
+  const origin = getConfiguredOrigin();
+  if (!origin) {
+    console.error(`[Config] Not sending ${purpose} email: no valid PUBLIC_URL / publicUrl setting. Email links are only built from the configured public origin, never from request headers.`);
   }
   return origin;
 }

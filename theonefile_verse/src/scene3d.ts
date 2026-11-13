@@ -5,7 +5,7 @@ export const SCENE3D_MAX_MAP_KEYS = 2000;
 export const SCENE3D_MAX_TABS = 32;
 export const SCENE3D_MAX_TOTAL_FURNITURE = 8000;
 export const SCENE3D_MAX_TOTAL_MAP_KEYS = 24000;
-export const SCENE3D_WORLD_W = 4000, SCENE3D_WORLD_D = 3000;
+export const SCENE3D_WORLD_W = 20000, SCENE3D_WORLD_D = 15000;
 export const SCENE3D_MAX_ELEVATION = 3000;
 export const SCENE3D_MIN_WALL_HEIGHT = 4;
 export const SCENE3D_MAX_WALL_HEIGHT = 3000;
@@ -77,8 +77,8 @@ function sanitizeTabBucket(src: any, budget: { furn: number; keys: number }, dro
     const item: any = {
       id: (typeof f.id === "string" && f.id) ? f.id.slice(0, 80) : ("f-s" + furniture.length),
       kind: f.kind,
-      x: Math.round(scene3dClamp(scene3dFinite(f.x, SCENE3D_WORLD_W / 2), 0, SCENE3D_WORLD_W)),
-      z: Math.round(scene3dClamp(scene3dFinite(f.z, SCENE3D_WORLD_D / 2), 0, SCENE3D_WORLD_D)),
+      x: Math.round(scene3dClamp(scene3dFinite(f.x, 2000), 0, SCENE3D_WORLD_W)),
+      z: Math.round(scene3dClamp(scene3dFinite(f.z, 1500), 0, SCENE3D_WORLD_D)),
       y: scene3dClamp(scene3dFinite(f.y, 0), -200, SCENE3D_MAX_ELEVATION),
       rotY: scene3dWrapAngle(f.rotY),
       scale: scene3dClamp(scene3dFinite(f.scale, 1), 0.2, 6),
